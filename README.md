@@ -13,7 +13,17 @@ El proyecto tiene dos planos:
 
 ## Estado
 
-Fase de diseño. Los documentos están pendientes de aprobación y todavía no hay implementación.
+- Diseño aprobado el 2026-11-06.
+- Fase 0 (cimientos) completada: proyecto Godot, tests y CI.
+- Siguiente paso: Fase 1, el núcleo v0.1.
+
+**Alcance del aprendizaje:** solo IA. La plataforma Godot la construye Claude y no forma parte de la formación. Tus ejercicios se escriben en Python, en `forja/ejercicios/`.
+
+### Ejecutar los tests de la plataforma
+
+```powershell
+& "C:\Users\Ruben\Desktop\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64_console.exe" --headless --path game -s res://tests/run_tests.gd
+```
 
 ## Documentación
 

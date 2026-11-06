@@ -10,7 +10,9 @@ Godot 4.7.x · GDScript con tipado estático (`var x: int`, `func f() -> void`).
 4. **Ningún acceso al mundo exterior.** Un test lo verifica (ver §9).
 5. **Composición antes que herencia** para los comandos, los validadores y las simulaciones (patrón *registry*).
 
-> 🎓 **Concepto Godot — Autoload.** Un autoload es un nodo que Godot crea al arrancar y que es accesible globalmente por su nombre (Proyecto → Configuración → Autoload). Lo usaremos **solo** para servicios de vida global. Abusar de los autoloads crea acoplamiento oculto, así que lo limitaremos a 6.
+> Nota técnica: los autoloads se limitan a 6 servicios de vida global para evitar acoplamiento oculto.
+>
+> Este documento es referencia técnica de la plataforma. **No forma parte del contenido formativo.**
 
 ## 2. Vista de capas
 
@@ -223,7 +225,7 @@ Los **códigos de diagnóstico** (por ejemplo, `DATA_LEAKAGE_TEST_USED_IN_TRAINI
 
 ## 9. Tests
 
-- **Runner propio** (`tests/run_tests.gd`, unas 80 líneas), en lugar de GUT o gdUnit4. Así no hay dependencias y entiendes cómo funciona un framework de tests.
+- **Runner propio** (`tests/run_tests.gd`, unas 100 líneas), en lugar de GUT o gdUnit4, para no tener dependencias. Admite `-- --filter=texto`.
 - Se ejecuta en modo headless:
   ```powershell
   & "C:\Users\Ruben\Desktop\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64_console.exe" --headless --path game -s res://tests/run_tests.gd
@@ -235,7 +237,7 @@ Los **códigos de diagnóstico** (por ejemplo, `DATA_LEAKAGE_TEST_USED_IN_TRAINI
   4. Maestría y XP.
   5. Migraciones del guardado.
   6. **Test de aislamiento:** busca en los `.gd` del Dojo cualquier API prohibida (`HTTPRequest`, `HTTPClient`, `StreamPeerTCP`, `PacketPeerUDP`, `WebSocketPeer`, `TCPServer`, `UDPServer`, `OS.execute`, `OS.create_process`, `OS.shell_open`, `OS.execute_with_pipe`).
-- Más adelante: un workflow de GitHub Actions que ejecute los tests en cada push. Corre en GitHub, no en el Dojo.
+- CI: `.github/workflows/tests.yml` descarga Godot oficial y ejecuta los tests en cada push. Corre en GitHub, no en el Dojo.
 
 ## 10. Cómo se amplía
 
@@ -248,12 +250,11 @@ Los **códigos de diagnóstico** (por ejemplo, `DATA_LEAKAGE_TEST_USED_IN_TRAINI
 | Un laboratorio de la Forja | Una carpeta en `forja/labs/`, el esquema de `evidence.json` y un validador `evidence` en la misión |
 | Actualizar una referencia | Editar `references.json` (versión, fecha y `review_by`) |
 
-## 11. Conceptos de Godot que aprenderás en cada fase
+## 11. Ejercicios Python del alumno (`forja/ejercicios/`)
 
-| Fase | Conceptos |
-|---|---|
-| Núcleo | `class_name`, `RefCounted` frente a `Node`, tipado estático, señales, autoloads, `FileAccess`, `JSON`, `user://` frente a `res://` |
-| UI | Nodos `Control`, contenedores (`VBoxContainer`, `HSplitContainer`), anclas, `Theme` y variaciones de tema, `RichTextLabel` con BBCode, `LineEdit` y `_gui_input` |
-| Visualización | `_draw()` personalizado, `queue_redraw()`, `Tween`, shaders `canvas_item` sencillos |
-| Tests | `SceneTree` como script principal, modo headless, códigos de salida |
-| Distribución | Plantillas de exportación, `export_presets.cfg` y firma de ejecutables (opcional) |
+Las tareas 🛠 que implementas tú están en Python, no en GDScript.
+
+- Cada ejercicio es un fichero con funciones vacías y su docstring (`forja/ejercicios/T1-02_distancia.py`), más sus tests (`test_T1-02_distancia.py`, con pytest).
+- Al pasar los tests, `python -m ronin_check T1-02` genera `evidence.json`, que el Dojo importa con el validador `evidence`. Es el mismo mecanismo que usará la Forja.
+- El Dojo tiene su propia implementación de cada algoritmo para las visualizaciones interactivas. Tu versión en Python se compara con ella sobre los mismos datos.
+- Solo dependencias estándar al principio (sin numpy). NumPy entra en T3, cuando ya sepas qué hace por debajo.

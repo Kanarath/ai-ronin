@@ -130,7 +130,7 @@ Las misiones de seguridad completan los 9 puntos, que se rellenan a lo largo de 
 
 1. **Predice → ejecuta → explica.** Antes de cada experimento clave, registras una predicción. Acertar no puntúa; contrastar sí.
 2. **Error productivo.** Algunas misiones te dejan caer en un error típico (fuga de datos, overfitting, confiar en el modelo para autorizar) y después lo diagnosticas tú.
-3. **Construye tú una pieza.** Cada unidad tiene al menos una tarea de implementación en GDScript o Python. RONIN revisa el resultado con tests.
+3. **Construye tú una pieza.** Cada unidad tiene al menos una tarea de implementación **en Python** (`forja/ejercicios/`). Los tests automáticos la verifican y el Dojo importa la evidencia. Nunca hay tareas de Godot ni de GDScript.
 4. **Sin suposiciones.** Cada misión comprueba sus requisitos con un mini reto de calentamiento, aunque la competencia ya conste como *Dominada*.
 5. **Simulación frente a realidad.** El debrief dice qué estaba simplificado y qué haría falta en producción.
 

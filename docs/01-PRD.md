@@ -26,8 +26,8 @@ Un solo usuario principal: tú.
 | Dimensión | Punto de partida | Implicación de diseño |
 |---|---|---|
 | Pentesting | Experiencia previa | La pista de oficio (metodología, informes) puede ir más rápido. Hay que reaprender el modelo de amenaza propio de la IA. |
-| Desarrollo | Experiencia previa, incluido Godot | Se pueden proponer tareas de implementación propias en GDScript. |
-| Python | Básico | Pista **P0 «Python para IA»** obligatoria antes de los laboratorios de la Forja. |
+| Desarrollo | Experiencia previa | Las tareas de implementación propias se hacen en **Python**, nunca en GDScript. |
+| Python | Básico | Pista **P0 «Python para IA»** desde el principio, en paralelo al tronco común. |
 | Matemáticas (álgebra lineal, cálculo, probabilidad) | Oxidadas | Se enseñan «justo a tiempo» dentro del tronco común, nunca como bloque teórico aislado. |
 | ML e interioridades de los LLM | No se presupone | El tronco común es obligatorio. |
 
@@ -48,7 +48,9 @@ Perfiles profesionales de destino: AI Security Engineer, AI Red Teamer, AI Appli
 | O4 | Defenderlos y **verificar** que la mitigación funciona | Comparativa antes y después (tasa de éxito del ataque) |
 | O5 | Entender y auditar despliegues reales | Laboratorios de la fase «Desplegar» en la Forja |
 | O6 | Redactar informes de seguridad profesionales | Informes estructurados evaluados con rúbrica |
-| O7 | Aprender Godot de verdad mientras construyes la plataforma | Partes implementadas por ti y revisadas |
+| O7 | Programar IA con tus manos, en Python (el lenguaje estándar de la industria) | Ejercicios 🛠 con tests automáticos superados |
+
+> **Alcance del aprendizaje:** solo IA. Godot es la herramienta con la que se construye la plataforma, pero **no es contenido formativo**. Toda la infraestructura de la app (terminal, UI, guardado, tests, CI) la desarrolla el equipo técnico (Claude) y no forma parte de tu ruta.
 
 ## 4. No-objetivos
 
@@ -235,3 +237,4 @@ El detalle está en [03-curriculo.md](03-curriculo.md).
 | Idioma | Castellano con términos técnicos en inglés y biblioteca local de referencias |
 | Primera versión jugable | Núcleo y 3 misiones del tronco común |
 | Repositorio | `C:\Users\Ruben\Desktop\AI Ronin`, repositorio privado `Kanarath/ai-ronin` |
+| Godot (decisión del 2026-11-06) | Fuera del alcance de aprendizaje. Claude construye la app; tus tareas 🛠 son siempre de IA y en Python |

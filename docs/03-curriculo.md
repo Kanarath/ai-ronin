@@ -60,6 +60,7 @@ flowchart TD
   A2 --> O2[O2 Reconocimiento]
   A2 --> A3[A3 Agentes]
   A3 --> O3[O3 Threat modeling]
+  A3 --> O6[O6 Detección y respuesta]
   A3 --> A4[A4 MCP y superficies de herramientas]
   A4 --> A5[A5 Multiagente y A2A]
   A3 --> A6[A6 Supply chain e infraestructura]
@@ -95,13 +96,15 @@ Las matemáticas se introducen **justo a tiempo**, solo cuando la misión las ne
 
 *Etiquetas:* T1–T4 son `consolidado`. En T6, las cifras y las prácticas de los modelos comerciales son `práctica-industria` y llevan fecha.
 
-### P0 — Python para IA (Forja, paralela al tronco)
-1. Sintaxis, estructuras de datos, funciones y módulos.
-2. Entornos virtuales y pip.
-3. JSON, HTTP con `httpx` y `async` básico.
-4. Ejercicios con autocorrección local (pytest). **Se escriben con tus manos.**
+### P0 — Python para IA (en paralelo desde la primera misión)
+Python se aprende **a través de los ejercicios de IA**, no como un curso aparte. Cada ejercicio 🛠 introduce justo la parte de Python que necesita:
 
-Es requisito para los laboratorios Forja de A1.
+1. **T1–T2:** funciones, listas, diccionarios, bucles, lectura de CSV, pytest. Sin librerías.
+2. **T3–T4:** clases, NumPy (cuando ya sepas qué calcula por debajo), matplotlib opcional.
+3. **T5–T6:** cadenas y Unicode, generadores.
+4. **Forja (A1 en adelante):** entornos virtuales y pip, JSON, HTTP con `httpx`, `async`, FastAPI, Docker.
+
+**Se escriben con tus manos.** Los tests automáticos dan feedback inmediato.
 
 ## 5. Arcos de sistema
 
@@ -285,6 +288,23 @@ Cada arco tiene 4 fases con laboratorio en el Dojo (mecanismo) y en la Forja (re
 | O3 | Threat modeling: activos, fronteras de confianza, rutas de ataque; STRIDE adaptado; MITRE ATLAS | A3 | Bloque 10 |
 | O4 | Demostración de impacto e informes: severidad, reproducibilidad, evidencias, recomendaciones y verificación | O1, y se practica en cada arco | — |
 | O5 | Marcos y gobernanza: NIST AI RMF, ISO/IEC 42001, EU AI Act (qué es cada uno y qué no); mapear hallazgos a controles | O4 | — |
+| O6 | **Detección y respuesta** (blue team de IA): qué registrar en apps LLM y agentes, detectar inyecciones y abuso de herramientas en las trazas, respuesta a incidentes de IA, forense de un agente comprometido | A3 | — |
+
+### 6.1 Ampliaciones propuestas por Claude (añadidas al currículo)
+
+Huecos que no estaban en las especificaciones originales y que son relevantes para los perfiles profesionales de destino:
+
+| Ampliación | Dónde se integra | Por qué |
+|---|---|---|
+| **Evals como competencia transversal:** conjuntos de referencia, LLM-as-judge y sus sesgos, tests de regresión de prompts, evaluación adversarial automatizada | A1 (se introduce) y todos los arcos | Sin medir no se puede afirmar que una defensa funciona. Es la base del «antes y después». |
+| **Guardrails y clasificadores de seguridad:** filtros de entrada y salida, modelos clasificadores, sus tasas de falsos positivos y negativos, cómo se evaden | A1 y A2, Defender | Es la mitigación más desplegada en la industria, y también la más sobrevalorada. |
+| **Privacidad y memorización:** PII en datos de entrenamiento, extracción de datos memorizados, membership inference, nociones de privacidad diferencial | A2 y E2 | Componente del riesgo LLM02 y de cualquier evaluación de impacto del RGPD o el AI Act |
+| **Inyección multimodal:** instrucciones ocultas en imágenes, documentos y audio | A2 Atacar, E1 | Cada vez más sistemas aceptan entradas que no son texto |
+| **Riesgos del código generado por IA:** dependencias inventadas por el modelo (*package hallucination* / *slopsquatting*), código inseguro sugerido, asistentes de código como superficie de ataque | A6 | Supply chain moderna; enlaza con tu experiencia de pentesting |
+| **Coste y disponibilidad:** tokens, caché, límites, ataques de consumo | A1 Desplegar | LLM10 Unbounded Consumption |
+| **O6 Detección y respuesta** | Pista de oficio | Un AI Security Engineer también defiende en producción, no solo ataca |
+
+Cada ampliación sigue las mismas reglas que el resto: etiqueta epistemológica, referencias con fecha y laboratorio práctico.
 
 ## 7. Especializaciones y capstones
 
