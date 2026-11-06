@@ -9,6 +9,9 @@ func _initialize() -> void:
 	var out := args[0] if not args.is_empty() else "user://screenshot.png"
 	var dojo: Node = root.get_node("Dojo")
 	dojo.game = DojoGame.new("user://screenshot_save.json")
+	# unlock_all: marca como completadas todas las misiones para poder capturar cualquiera.
+	for m in dojo.game.catalog.missions:
+		dojo.game.progress.data["missions"][m["id"]] = {"completed": true}
 	change_scene_to_file("res://ui/hub/hub_screen.tscn")
 	for i in 10:
 		await process_frame

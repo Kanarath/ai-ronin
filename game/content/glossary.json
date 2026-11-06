@@ -160,6 +160,102 @@
       "short": "Aprender una relación entrada → salida a partir de ejemplos etiquetados.",
       "body": "Se divide en clasificación (predecir una categoría) y regresión (predecir un número). Frente a él están el aprendizaje no supervisado (encontrar estructura sin etiquetas, como k-means) y el aprendizaje por refuerzo (aprender por recompensas al actuar en un entorno).",
       "epistemic": "consolidado"
+    },
+    {
+      "id": "funcion-perdida",
+      "term": "función de pérdida",
+      "aliases": ["pérdida", "loss", "función de coste", "MSE", "error cuadrático medio"],
+      "short": "Número que mide lo mal que lo hace un modelo con unos parámetros concretos. Entrenar es minimizarlo.",
+      "body": "En regresión se usa a menudo el error cuadrático medio (MSE): la media de (predicción − real)². En clasificación, la entropía cruzada. Los LLM se entrenan minimizando la entropía cruzada de predecir el siguiente token. La pérdida es lo que se optimiza; las métricas (accuracy, F1…) son lo que se reporta, y no siempre coinciden.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "descenso-gradiente",
+      "term": "descenso por gradiente",
+      "aliases": ["gradient descent", "descenso de gradiente", "SGD"],
+      "short": "Método iterativo de optimización: dar pasos en la dirección contraria al gradiente para reducir la pérdida.",
+      "body": "En cada paso: parámetro ← parámetro − lr · ∂pérdida/∂parámetro. Con todos los datos en cada paso es «batch»; con un ejemplo, «estocástico» (SGD); con un subconjunto, «mini-batch», que es lo habitual en deep learning. Es el algoritmo con el que se entrenan las redes neuronales.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "gradiente",
+      "term": "gradiente",
+      "aliases": ["derivada", "pendiente"],
+      "short": "Vector de derivadas parciales: indica hacia dónde y cuánto crece una función.",
+      "body": "Para una pérdida L(w, b), el gradiente es (∂L/∂w, ∂L/∂b). Apunta cuesta arriba; por eso el descenso resta el gradiente. Cuando vale (casi) cero, estás en un mínimo (o en una meseta o un punto de silla).",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "learning-rate",
+      "term": "learning rate",
+      "aliases": ["tasa de aprendizaje", "lr", "tamaño de paso"],
+      "short": "Tamaño de cada paso del descenso por gradiente. Es probablemente el hiperparámetro más importante del entrenamiento.",
+      "body": "Demasiado pequeño: el entrenamiento es lentísimo o se queda atascado. Demasiado grande: la pérdida oscila o diverge (crece sin control, NaN). El valor máximo estable depende de la «curvatura» de la pérdida, que a su vez depende de la escala de las features: por eso normalizar permite usar learning rates mayores.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "epoca",
+      "term": "época",
+      "aliases": ["epoch", "epochs", "épocas"],
+      "short": "Una pasada completa por todos los datos de entrenamiento.",
+      "body": "Con descenso por gradiente batch, una época es un paso. Con mini-batches, una época contiene muchos pasos. Más épocas no siempre es mejor: a partir de cierto punto el modelo empieza a sobreajustar.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "regresion-lineal",
+      "term": "regresión lineal",
+      "aliases": ["regresión", "linear regression"],
+      "short": "Modelo que predice un número como combinación lineal de las features: y = w·x + b.",
+      "body": "Es el modelo más simple de aprendizaje supervisado para regresión. Se puede resolver de forma exacta (mínimos cuadrados) o con descenso por gradiente. Una neurona sin función de activación es exactamente una regresión lineal.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "divergencia",
+      "term": "divergencia",
+      "aliases": ["diverge", "explosión", "NaN"],
+      "short": "El entrenamiento se descontrola: la pérdida crece en lugar de bajar, hasta infinito o NaN.",
+      "body": "La causa más común es un learning rate demasiado alto para la escala del problema. Remedios: bajar el lr, normalizar las features, recortar los gradientes (gradient clipping) o usar optimizadores adaptativos.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "precision",
+      "term": "precision",
+      "aliases": ["precisión", "valor predictivo positivo"],
+      "short": "De todo lo que el modelo marcó como positivo, ¿qué fracción lo era? TP / (TP + FP).",
+      "body": "Penaliza las falsas alarmas. Alta precision = cuando el modelo dice «positivo», suele acertar. Ojo: en castellano «precisión» se usa a veces para la accuracy; en ML son métricas distintas.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "recall",
+      "term": "recall",
+      "aliases": ["sensibilidad", "exhaustividad", "tasa de verdaderos positivos", "TPR"],
+      "short": "De todos los positivos reales, ¿qué fracción encontró el modelo? TP / (TP + FN).",
+      "body": "Penaliza los positivos que se escapan. En detección de fallos, fraude o ataques, un recall bajo significa que lo peligroso pasa sin ser visto.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "f1",
+      "term": "F1",
+      "aliases": ["F1-score", "puntuación F1", "f-score"],
+      "short": "Media armónica de precision y recall: 2·P·R / (P + R).",
+      "body": "Resume las dos en un número y castiga que una de ellas sea muy baja. Útil para comparar modelos, pero esconde qué tipo de error predomina: para decidir, mira siempre precision y recall por separado.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "umbral",
+      "term": "umbral de decisión",
+      "aliases": ["umbral", "threshold"],
+      "short": "Puntuación a partir de la cual un ejemplo se clasifica como positivo.",
+      "body": "Bajar el umbral aumenta el recall y suele bajar la precision; subirlo hace lo contrario. 0,5 es solo una convención: el umbral correcto depende del coste de cada tipo de error y se elige con datos de validación.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "falsos",
+      "term": "falso positivo / falso negativo",
+      "aliases": ["falso positivo", "falso negativo", "FP", "FN", "TP", "TN", "verdadero positivo"],
+      "short": "FP: el modelo dice positivo y no lo es. FN: el modelo dice negativo y era positivo.",
+      "body": "TP y TN son los aciertos. Qué cuenta como «positivo» lo decides tú: es la clase que quieres detectar. En seguridad, un FN es un ataque que pasa desapercibido; un FP, una alerta falsa que hace perder tiempo (y que, en exceso, provoca que se ignoren las alertas).",
+      "epistemic": "consolidado"
     }
   ]
 }

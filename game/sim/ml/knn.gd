@@ -59,6 +59,24 @@ func predict_one(x: PackedFloat64Array) -> String:
 	return ""
 
 
+## «Probabilidad» de la clase positiva: fracción de los k vecinos que la tienen.
+## No es una probabilidad calibrada; es una puntuación entre 0 y 1 útil para fijar umbrales.
+func positive_score(x: PackedFloat64Array, positive: String) -> float:
+	var nb := neighbors(x)
+	var hits := 0
+	for item in nb:
+		if item["label"] == positive:
+			hits += 1
+	return float(hits) / maxf(nb.size(), 1)
+
+
+func positive_scores(ds: Dataset, positive: String) -> PackedFloat64Array:
+	var out := PackedFloat64Array()
+	for r in ds.rows:
+		out.append(positive_score(r, positive))
+	return out
+
+
 func predict(ds: Dataset) -> PackedStringArray:
 	var out := PackedStringArray()
 	for r in ds.rows:

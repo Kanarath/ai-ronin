@@ -46,8 +46,10 @@ func start_mission(id: String) -> String:
 			return "Error cargando el laboratorio: " + err
 	active_mission = m
 	progress.mark_seen(m.get("competencies", {}).get("trains", []))
-	runner.start(m, shell.event_log[-1]["seq"] if not shell.event_log.is_empty() else 0)
+	# Primero se avisa a la UI (que limpia el panel del mentor) y DESPUÉS arranca el runner,
+	# cuyos primeros mensajes (introducción y primer objetivo) deben quedar visibles.
 	mission_started.emit(m)
+	runner.start(m, shell.event_log[-1]["seq"] if not shell.event_log.is_empty() else 0)
 	return ""
 
 

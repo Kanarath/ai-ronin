@@ -113,11 +113,11 @@ func _convert(raw: String, spec: Dictionary, label: String, world: Object) -> Di
 			if not raw.is_valid_float():
 				return {"error": "%s debe ser un número (recibido '%s'). Usa punto decimal: 0.3" % [label, raw]}
 			return {"value": raw.to_float()}
-		"dataset", "model":
+		"dataset", "model", "regressor", "network":
 			if world != null:
 				var names: PackedStringArray = world.call("names_of", spec["type"])
 				if not raw in names:
-					var what := "dataset" if spec["type"] == "dataset" else "modelo"
+					var what: String = SimWorld.KIND_NAMES.get(spec["type"], spec["type"])
 					var suggestion := TextUtils.closest(raw, names)
 					var extra := " ¿Quisiste decir '%s'?" % suggestion if not suggestion.is_empty() else ""
 					return {"error": "no existe el %s '%s'.%s Disponibles: %s" % [what, raw, extra, ", ".join(names) if not names.is_empty() else "(ninguno)"]}

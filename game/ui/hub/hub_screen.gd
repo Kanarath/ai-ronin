@@ -2,14 +2,15 @@ extends Control
 ## Hub del laboratorio: currículo · laboratorio (visualización) · misión + mentor · terminal.
 ## Solo presenta: toda la lógica está en DojoGame (autoload Dojo).
 
-const UNITS := [
-	{"id": "T1", "title": "T1 · Datos y vectores"},
-	{"id": "T2", "title": "T2 · Aprender de datos"},
-]
-const FUTURE_UNITS := [
-	"T3 · Optimización y métricas", "T4 · Redes neuronales", "T5 · Del texto al vector", "T6 · Transformers y LLM",
-	"A1 · Aplicación LLM", "A2 · RAG y embeddings", "A3 · Agentes", "A4 · MCP", "A5 · Multiagente y A2A", "A6 · Supply chain e infra",
-]
+## Títulos de las unidades. Las que tienen misiones en el catálogo aparecen activas;
+## el resto se muestra como «próximamente».
+const UNIT_TITLES := {
+	"T1": "T1 · Datos y vectores", "T2": "T2 · Aprender de datos", "T3": "T3 · Optimización y métricas",
+	"T4": "T4 · Redes neuronales", "T5": "T5 · Del texto al vector", "T6": "T6 · Transformers y LLM",
+	"A1": "A1 · Aplicación LLM", "A2": "A2 · RAG y embeddings", "A3": "A3 · Agentes", "A4": "A4 · MCP",
+	"A5": "A5 · Multiagente y A2A", "A6": "A6 · Supply chain e infra",
+}
+const SERIES_COLORS: Array[Color] = [RoninPalette.CYAN, RoninPalette.GOLD, RoninPalette.TEAL, RoninPalette.VIOLET, RoninPalette.TEXT]
 const MENTOR_COLORS := {
 	"info": RoninPalette.TEXT,
 	"question": RoninPalette.CYAN,
@@ -22,6 +23,7 @@ const MENTOR_COLORS := {
 var game: DojoGame
 var _terminal: TerminalView
 var _plot: ScatterPlot
+var _chart: LineChart
 var _curriculum_box: VBoxContainer
 var _mission_text: RichTextLabel
 var _mentor_log: RichTextLabel
@@ -105,8 +107,12 @@ func _build_layout() -> void:
 	upper.add_child(lab)
 	_plot = ScatterPlot.new()
 	_plot.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_plot.custom_minimum_size = Vector2(380, 260)
+	_plot.custom_minimum_size = Vector2(380, 220)
 	lab.get_child(0).add_child(_plot)
+	_chart = LineChart.new()
+	_chart.custom_minimum_size = Vector2(380, 170)
+	_chart.visible = false
+	lab.get_child(0).add_child(_chart)
 
 	var right := VBoxContainer.new()
 	right.custom_minimum_size = Vector2(420, 0)
@@ -180,13 +186,17 @@ func _refresh_top() -> void:
 func _refresh_curriculum() -> void:
 	for c in _curriculum_box.get_children():
 		c.queue_free()
-	for unit: Dictionary in UNITS:
+	var active_units: Array[String] = []
+	for m in game.catalog.missions:
+		if not m["unit"] in active_units:
+			active_units.append(m["unit"])
+	for unit_id: String in active_units:
 		var header := Label.new()
-		header.text = unit["title"]
+		header.text = UNIT_TITLES.get(unit_id, unit_id)
 		header.add_theme_color_override("font_color", RoninPalette.CYAN)
 		_curriculum_box.add_child(header)
 		for m in game.catalog.missions:
-			if m["unit"] != unit["id"]:
+			if m["unit"] != unit_id:
 				continue
 			var status := game.mission_status(m["id"])
 			var icon: String = {"dominada": "◆", "completada": "✓", "en curso": "▶", "bloqueada": "🔒", "disponible": "·"}[status]
@@ -208,9 +218,11 @@ func _refresh_curriculum() -> void:
 	sep.add_theme_color_override("font_color", RoninPalette.MUTED)
 	sep.add_theme_font_size_override("font_size", 12)
 	_curriculum_box.add_child(sep)
-	for u: String in FUTURE_UNITS:
+	for unit_id: String in UNIT_TITLES:
+		if unit_id in active_units:
+			continue
 		var l := Label.new()
-		l.text = "🔒 " + u
+		l.text = "🔒 " + UNIT_TITLES[unit_id]
 		l.add_theme_color_override("font_color", RoninPalette.LINE.lightened(0.3))
 		_curriculum_box.add_child(l)
 
@@ -282,6 +294,7 @@ func _run(line: String) -> void:
 
 func _on_mission_started(m: Dictionary) -> void:
 	_mentor_log.clear()
+	_chart.visible = false
 	var viz: Dictionary = m.get("lab", {}).get("viz", {})
 	var ds := game.shell.world.get_dataset(viz.get("dataset", ""))
 	if ds != null:
@@ -317,10 +330,34 @@ func _on_sim_event(e: Dictionary) -> void:
 				if axes.size() == 2:
 					_plot.show_dataset(ds, axes[0], axes[1])
 			_plot.set_highlight(d["id"], PackedStringArray(d.get("neighbors", [])))
+		"regress.trained":
+			_show_regression(d)
 		"dataset.normalized":
 			var axes := _plot.current_axes()
 			if axes.size() == 2:
 				_plot.show_dataset(game.shell.world.get_dataset(d["target"]), axes[0], axes[1])
+
+
+func _show_regression(d: Dictionary) -> void:
+	var series: Array[Dictionary] = []
+	var names := game.shell.world.names_of("regressor")
+	var i := 0
+	for n in names:
+		var m: LinearRegressionGD = game.shell.world.regressors[n]
+		if m.history.is_empty():
+			continue
+		var pts := PackedVector2Array()
+		for h in m.history:
+			pts.append(Vector2(h["epoch"], h["loss"]))
+		series.append({"name": "%s lr=%s" % [n, String.num(m.lr, 4)], "points": pts, "color": SERIES_COLORS[i % SERIES_COLORS.size()]})
+		i += 1
+	_chart.set_series("Pérdida (MSE) por época", series)
+	_chart.visible = true
+	var ds := game.shell.world.get_dataset(d["dataset"])
+	if ds != null:
+		_plot.show_dataset(ds, d["x"], d["y"])
+		if not d["diverged"]:
+			_plot.set_regression_line(d["w"], d["b"], d["x"], d["y"])
 
 
 static func _hex(c: Color) -> String:

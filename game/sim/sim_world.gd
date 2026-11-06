@@ -1,12 +1,19 @@
 class_name SimWorld
 extends RefCounted
-## Estado del laboratorio activo: datasets y modelos con los que trabaja el terminal.
+## Estado del laboratorio activo: datasets, modelos y demás objetos con los que trabaja el terminal.
 
 const DATASETS_DIR := "res://content/datasets"
+## Tipos de objeto con nombre (sirven también como tipos de argumento en CommandSignature).
+const KINDS: Array[String] = ["dataset", "model", "regressor", "network"]
+const KIND_NAMES := {"dataset": "dataset", "model": "modelo", "regressor": "regresor", "network": "red"}
 
 var datasets: Dictionary = {}  # nombre -> Dataset
 ## nombre -> {"model": KNNClassifier, "trained_on": String}
 var models: Dictionary = {}
+## nombre -> LinearRegressionGD
+var regressors: Dictionary = {}
+## nombre -> MLP
+var networks: Dictionary = {}
 
 
 func add_dataset(ds: Dataset) -> void:
@@ -21,10 +28,18 @@ func get_model(model_name: String) -> Dictionary:
 	return models.get(model_name, {})
 
 
-## Nombres de datasets o modelos (lo usa la validación de argumentos y el autocompletado).
+func store_of(kind: String) -> Dictionary:
+	match kind:
+		"dataset": return datasets
+		"model": return models
+		"regressor": return regressors
+		"network": return networks
+	return {}
+
+
+## Nombres de objetos de un tipo (lo usa la validación de argumentos y el autocompletado).
 func names_of(kind: String) -> PackedStringArray:
-	var source: Dictionary = datasets if kind == "dataset" else models
-	var out := PackedStringArray(source.keys())
+	var out := PackedStringArray(store_of(kind).keys())
 	out.sort()
 	return out
 
@@ -42,5 +57,5 @@ func load_dataset(file_name: String, ds_name: String, label_column: String) -> S
 
 
 func reset() -> void:
-	datasets.clear()
-	models.clear()
+	for kind in KINDS:
+		store_of(kind).clear()

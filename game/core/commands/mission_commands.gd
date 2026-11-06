@@ -149,7 +149,7 @@ static func _answer(c: CommandContext, a: Dictionary) -> CommandResult:
 	if g == null:
 		return _no_game()
 	var obj := g.runner.current_objective()
-	if obj.is_empty() or obj["validator"].get("type") != "answer":
+	if obj.is_empty() or not ConditionEval.contains_type(obj["validator"], "answer"):
 		return CommandResult.error("El objetivo actual no pide una respuesta con 'answer'. Mira: mission status")
 	c.emit("answer.submitted", {"value": a["valor"], "objective": obj["id"]})
 	return CommandResult.new().line("Respuesta enviada: %s" % a["valor"], "muted")

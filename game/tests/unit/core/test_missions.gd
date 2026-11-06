@@ -57,7 +57,8 @@ func test_respuestas_numericas_con_tolerancia_y_coma() -> void:
 
 func test_catalogo_sin_errores() -> void:
 	assert_eq(game.catalog.errors.size(), 0, "\n".join(game.catalog.errors))
-	assert_eq(game.catalog.ids(), PackedStringArray(["T1-01", "T1-02", "T2-01"]))
+	for id in ["T1-01", "T1-02", "T2-01", "T3-01", "T3-02"]:
+		assert_has(game.catalog.ids(), id)
 
 
 func test_catalogo_detecta_mision_mal_formada() -> void:
@@ -140,6 +141,53 @@ func test_mision_T2_01_completa_con_error_productivo_y_diagnostico() -> void:
 	assert_eq(finished.size(), 1)
 	assert_true(finished[0]["trial_passed"])
 	assert_eq(game.progress.competency_state("T2.overfitting"), "dominada")
+
+
+const REFLEXION_LARGA := "reflexion el learning rate es el tamano del paso si es pequeno avanza muy despacio y si es grande se pasa del valle y diverge normalizar redondea la superficie de error y permite pasos mas grandes en todas las direcciones sin explotar"
+
+
+func test_mision_T3_01_completa() -> void:
+	game.progress.data["missions"]["T2-01"] = {"completed": true}
+	assert_eq(game.start_mission("T3-01"), "")
+	var xy := " --x minutos_enfriado --y dureza_hrc"
+	run(["plot temple" + xy])
+	run(["hipotesis no", "regress create r1 --lr 0.001", "regress train r1 temple" + xy + " --epochs 100", "answer 435.8"])
+	run(["hipotesis diverge", "regress create r2 --lr 0.03", "regress train r2 temple" + xy + " --epochs 100"])
+	assert_true(game.shell.events_named("regress.trained")[-1]["data"]["diverged"])
+	run(["regress create r3 --lr 0.02", "regress train r3 temple" + xy + " --epochs 500"])
+	assert_eq(game.runner.index, 5, "lr 0.02 en 500 épocas cumple el reto")
+	run(["hipotesis menos de 10", "dataset normalize temple --method zscore --only minutos_enfriado --as tz",
+		"regress create r4 --lr 0.5", "regress train r4 tz" + xy + " --epochs 20", REFLEXION_LARGA])
+	assert_eq(game.runner.phase, "trial")
+	run(["regress info r4", "dataset stats temple", "answer 1.51"])
+	assert_eq(finished.size(), 1)
+	assert_true(finished[0]["trial_passed"])
+
+
+func test_T3_01_diagnostico_de_lr_lento() -> void:
+	game.progress.data["missions"]["T2-01"] = {"completed": true}
+	game.start_mission("T3-01")
+	var xy := " --x minutos_enfriado --y dureza_hrc"
+	run(["plot temple" + xy, "hipotesis no", "regress create r1 --lr 0.001", "regress train r1 temple" + xy + " --epochs 100", "answer 435.8",
+		"hipotesis diverge", "regress create r2 --lr 0.03", "regress train r2 temple" + xy])
+	run(["regress create r3 --lr 0.005", "regress train r3 temple" + xy + " --epochs 500"])
+	assert_eq(game.runner.index, 4, "lr 0.005 no llega en 500 épocas")
+	assert_true(mentor_said("Converge, pero no llega"))
+
+
+func test_mision_T3_02_completa() -> void:
+	game.progress.data["missions"]["T2-01"] = {"completed": true}
+	assert_eq(game.start_mission("T3-02"), "")
+	run(["dataset split katanas --test 0.3 --seed 42", "dataset normalize katanas_train --as tr",
+		"dataset normalize katanas_test --fit katanas_train --as te", "model create m --k 9", "model train m tr"])
+	run(["metrics m te --positive defectuosa", "answer 4"])
+	run(["hipotesis sube recall y baja precision", "metrics m te --positive defectuosa --threshold 0.3"])
+	run(["metrics curve m te --positive defectuosa", "answer 0.222", "answer 27"])
+	run(["reflexion la accuracy trata igual los dos errores pero vender una katana defectuosa es mucho peor que desechar una buena por eso miro el recall de la clase defectuosa y elijo un umbral bajo aunque baje la precision y aumenten los descartes"])
+	assert_eq(game.runner.phase, "trial")
+	run(["model create m15 --k 15", "model train m15 tr", "metrics curve m15 te --positive defectuosa", "answer 0.531"])
+	assert_eq(finished.size(), 1)
+	assert_true(finished[0]["trial_passed"])
 
 
 # ── Pistas y maestría ────────────────────────────────────────────────────────

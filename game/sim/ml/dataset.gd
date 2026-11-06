@@ -30,8 +30,9 @@ static func from_csv_text(dataset_name: String, text: String, label_column: Stri
 		return ds
 	var header := lines[0].split(",")
 	var id_col := header.find("id")
-	var label_col := header.find(label_column)
-	if label_col == -1:
+	# label_column vacío = dataset sin etiqueta (p. ej. para regresión, donde el objetivo es una feature).
+	var label_col := header.find(label_column) if not label_column.is_empty() else -1
+	if label_col == -1 and not label_column.is_empty():
 		ds.error = "no existe la columna de etiqueta '%s'" % label_column
 		return ds
 	var feature_cols: Array[int] = []
@@ -52,7 +53,7 @@ static func from_csv_text(dataset_name: String, text: String, label_column: Stri
 				return ds
 			row.append(cell.to_float())
 		ds.rows.append(row)
-		ds.labels.append(cells[label_col].strip_edges())
+		ds.labels.append(cells[label_col].strip_edges() if label_col != -1 else "")
 		ds.ids.append(cells[id_col].strip_edges() if id_col != -1 else str(line_index))
 	return ds
 

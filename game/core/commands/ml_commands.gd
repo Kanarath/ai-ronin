@@ -31,7 +31,9 @@ static func register(reg: CommandRegistry) -> void:
 			.opt("method", "método de normalización", "string", "minmax", ["minmax", "zscore"])
 			.opt("fit", "dataset del que se APRENDEN los parámetros (por defecto, el mismo)", "dataset")
 			.opt("as", "nombre del nuevo dataset", "string")
+			.opt("only", "normaliza solo estas features (separadas por comas)", "string")
 			.example("dataset normalize katanas --method minmax")
+			.example("dataset normalize temple --method zscore --only minutos_enfriado")
 			.example("dataset normalize katanas_test --fit katanas_train --as test_n"))
 		.with_details("Los parámetros (mín/máx o media/desviación) se aprenden de --fit y se aplican al dataset. Piensa bien de qué datos los aprendes: ver 'explain fuga de datos'."))
 
@@ -166,7 +168,14 @@ static func _ds_normalize(c: CommandContext, a: Dictionary) -> CommandResult:
 		return CommandResult.error("'%s' y '%s' no tienen las mismas features." % [fit_name, ds.name])
 	var method: String = a["method"]
 	var target: String = a["as"] if a["as"] != null else "%s_%s" % [ds.name, method]
-	var norm := Normalizer.new(method)
+	var only := PackedStringArray()
+	if a["only"] != null:
+		for f in String(a["only"]).split(",", false):
+			var fname := f.strip_edges()
+			if ds.feature_index(fname) == -1:
+				return CommandResult.error("'%s' no es una feature de %s. Features: %s" % [fname, ds.name, ", ".join(ds.feature_names)])
+			only.append(fname)
+	var norm := Normalizer.new(method, only)
 	norm.fit(fit_ds)
 	var out := norm.transform(ds, target)
 	c.world.add_dataset(out)
@@ -176,9 +185,12 @@ static func _ds_normalize(c: CommandContext, a: Dictionary) -> CommandResult:
 	var pa := "mín" if method == "minmax" else "media"
 	var pb := "máx" if method == "minmax" else "desv.típica"
 	for i in ds.dims():
-		data.append([ds.feature_names[i], _num(norm.param_a[i]), _num(norm.param_b[i])])
+		if only.is_empty() or ds.feature_names[i] in only:
+			data.append([ds.feature_names[i], _num(norm.param_a[i]), _num(norm.param_b[i])])
+		else:
+			data.append([ds.feature_names[i], "(sin cambios)", ""])
 	r.table(PackedStringArray(["feature", pa, pb]), data)
-	c.emit("dataset.normalized", {"source": ds.name, "method": method, "fit_on": fit_name, "target": target,
+	c.emit("dataset.normalized", {"source": ds.name, "method": method, "fit_on": fit_name, "target": target, "only": ",".join(only),
 		"fit_overlap_with_source": fit_ds.overlap_count(ds), "fit_size": fit_ds.size()})
 	return r
 

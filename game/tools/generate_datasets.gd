@@ -58,7 +58,26 @@ func _initialize() -> void:
 	f.close()
 	print("katanas.csv: %d filas" % body.size())
 	_report(Dataset.from_csv_text("katanas", csv, "calidad"))
+	_generate_temple()
 	quit(0)
+
+
+## «Temple»: relación lineal con ruido entre minutos de enfriado y dureza (T3, regresión).
+## dureza ≈ 50 + 1.5·minutos + ruido(σ=1). Generador propio para no alterar katanas.csv.
+## x en [0, 10] sin normalizar → problema mal condicionado: el descenso por gradiente
+## diverge con lr ≥ ~0.03 y converge muy despacio en b con lr pequeños.
+func _generate_temple() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = SEED + 3
+	var lines := PackedStringArray(["id,minutos_enfriado,dureza_hrc"])
+	for i in 60:
+		var x := snappedf(rng.randf_range(0.0, 10.0), 0.1)
+		var y := 50.0 + 1.5 * x + rng.randfn(0.0, 1.0)
+		lines.append("temple-%03d,%.1f,%.2f" % [i + 1, x, y])
+	var f := FileAccess.open(OUT_DIR.path_join("temple.csv"), FileAccess.WRITE)
+	f.store_string("\n".join(lines) + "\n")
+	f.close()
+	print("temple.csv: 60 filas")
 
 
 func _report(ds: Dataset) -> void:

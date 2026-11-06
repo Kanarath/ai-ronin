@@ -14,6 +14,8 @@ var fx: int = 0
 var fy: int = 1
 var query_id: String = ""
 var neighbor_ids: PackedStringArray = []
+## Recta y = w·x + b superpuesta (regresión): {w, b, x, y} o vacío.
+var regression_line: Dictionary = {}
 
 
 func show_dataset(ds: Dataset, x_name: String, y_name: String) -> void:
@@ -22,6 +24,7 @@ func show_dataset(ds: Dataset, x_name: String, y_name: String) -> void:
 	fy = maxi(ds.feature_index(y_name), 0)
 	query_id = ""
 	neighbor_ids = []
+	regression_line = {}
 	queue_redraw()
 
 
@@ -29,6 +32,11 @@ func current_axes() -> PackedStringArray:
 	if dataset == null:
 		return PackedStringArray()
 	return PackedStringArray([dataset.feature_names[fx], dataset.feature_names[fy]])
+
+
+func set_regression_line(w: float, b: float, x_name: String, y_name: String) -> void:
+	regression_line = {"w": w, "b": b, "x": x_name, "y": y_name}
+	queue_redraw()
 
 
 func set_highlight(p_query: String, p_neighbors: PackedStringArray) -> void:
@@ -74,7 +82,8 @@ func _draw() -> void:
 	var classes := dataset.classes()
 	var lx := plot.end.x - 220.0
 	draw_string(font, Vector2(lx - 120, 18), dataset.name, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, RoninPalette.MUTED)
-	for c in classes.size():
+	var labelled := not (classes.size() == 1 and classes[0] == "")
+	for c in classes.size() if labelled else 0:
 		var col := CLASS_COLORS[c % CLASS_COLORS.size()]
 		draw_circle(Vector2(lx + c * 110, 13), 5, col)
 		draw_string(font, Vector2(lx + c * 110 + 10, 18), classes[c], HORIZONTAL_ALIGNMENT_LEFT, -1, 12, RoninPalette.TEXT)
@@ -92,9 +101,40 @@ func _draw() -> void:
 		draw_circle(p, 3.5, Color(col, 0.85))
 		if id == query_id:
 			query_pos = p
+	if not regression_line.is_empty() and regression_line["x"] == dataset.feature_names[fx] and regression_line["y"] == dataset.feature_names[fy]:
+		var pts := PackedVector2Array()
+		for t in [xr.x, xr.y]:
+			var yv: float = regression_line["w"] * t + regression_line["b"]
+			pts.append(Vector2(plot.position.x + inverse_lerp(xr.x, xr.y, t) * plot.size.x, plot.end.y - inverse_lerp(yr.x, yr.y, yv) * plot.size.y))
+		if is_finite(pts[0].y) and is_finite(pts[1].y):
+			var clipped := _clip_segment(pts[0], pts[1], plot)
+			if clipped.size() == 2:
+				draw_line(clipped[0], clipped[1], RoninPalette.CYAN, 2.0, true)
 	if query_pos.x >= 0:
 		draw_arc(query_pos, 12, 0, TAU, 28, RoninPalette.CYAN, 2.0)
 		draw_string(font, query_pos + Vector2(14, -10), query_id, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, RoninPalette.CYAN)
+
+
+## Recorta un segmento al rectángulo (algoritmo de Liang-Barsky).
+static func _clip_segment(a: Vector2, b: Vector2, r: Rect2) -> PackedVector2Array:
+	var t0 := 0.0
+	var t1 := 1.0
+	var d := b - a
+	for edge in [[-d.x, a.x - r.position.x], [d.x, r.end.x - a.x], [-d.y, a.y - r.position.y], [d.y, r.end.y - a.y]]:
+		var pp: float = edge[0]
+		var qq: float = edge[1]
+		if is_zero_approx(pp):
+			if qq < 0:
+				return PackedVector2Array()
+			continue
+		var u := qq / pp
+		if pp < 0:
+			t0 = maxf(t0, u)
+		else:
+			t1 = minf(t1, u)
+	if t0 > t1:
+		return PackedVector2Array()
+	return PackedVector2Array([a + d * t0, a + d * t1])
 
 
 static func _range(values: PackedFloat64Array) -> Vector2:

@@ -26,6 +26,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	CoreCommands.register(registry)
 	MlCommands.register(registry)
 	MissionCommands.register(registry)
+	OptimCommands.register(registry)
 
 
 func execute(line: String) -> CommandResult:
@@ -117,7 +118,7 @@ func contextual_help(tokens: Array[Dictionary]) -> CommandResult:
 		r.line(cmd.summary)
 		r.line("Uso: " + cmd.signature.usage(cmd.path), "data")
 		for p in cmd.signature.positionals:
-			if p["type"] == "dataset" or p["type"] == "model":
+			if p["type"] in SimWorld.KINDS:
 				var names := world.names_of(p["type"])
 				r.line("  <%s> disponibles: %s" % [p["name"], ", ".join(names) if not names.is_empty() else "(ninguno todavía)"], "muted")
 		return r
@@ -152,7 +153,7 @@ func complete(line: String) -> PackedStringArray:
 				var pos_index: int = prior.size() - resolved["consumed"]
 				if pos_index < cmd.signature.positionals.size():
 					var p: Dictionary = cmd.signature.positionals[pos_index]
-					if p["type"] == "dataset" or p["type"] == "model":
+					if p["type"] in SimWorld.KINDS:
 						candidates = world.names_of(p["type"])
 					else:
 						candidates = PackedStringArray(p["choices"])

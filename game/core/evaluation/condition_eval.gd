@@ -59,6 +59,23 @@ static func evaluate(spec: Dictionary, events: Array[Dictionary], min_seq: int =
 	return false
 
 
+## ¿Contiene el validador (o alguno de sus hijos) un validador de este tipo?
+static func contains_type(spec: Variant, type: String) -> bool:
+	if not spec is Dictionary:
+		return false
+	if spec.get("type", "") == type:
+		return true
+	for key in ["of", "steps"]:
+		var child: Variant = spec.get(key)
+		if child is Array:
+			for c in child:
+				if contains_type(c, type):
+					return true
+		elif child is Dictionary and contains_type(child, type):
+			return true
+	return false
+
+
 static func answer_matches(spec: Dictionary, raw: Variant) -> bool:
 	var expected: Variant = spec.get("expected")
 	var text := str(raw).strip_edges().replace(",", ".").trim_suffix("%").strip_edges()

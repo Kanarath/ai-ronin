@@ -2,6 +2,33 @@
   "schema_version": 1,
   "references": [
     {
+      "id": "ref.goodfellow-dl-ch4",
+      "title": "Deep Learning, capítulo 4: Numerical Computation (descenso por gradiente, condicionamiento)",
+      "authors": "I. Goodfellow, Y. Bengio, A. Courville",
+      "source": "MIT Press, 2016",
+      "type": "libro",
+      "url": "https://www.deeplearningbook.org/contents/numerical.html",
+      "consulted": "2026-11-06"
+    },
+    {
+      "id": "ref.google-mlcc-linreg",
+      "title": "Machine Learning Crash Course: Linear regression (loss, gradient descent, hyperparameters)",
+      "source": "Google for Developers",
+      "type": "curso",
+      "url": "https://developers.google.com/machine-learning/crash-course/linear-regression",
+      "consulted": "2026-11-06",
+      "review_by": "2027-11-06"
+    },
+    {
+      "id": "ref.sklearn-precision-recall",
+      "title": "scikit-learn: Precision-Recall (ejemplo y explicación)",
+      "source": "scikit-learn",
+      "type": "documentacion-oficial",
+      "url": "https://scikit-learn.org/stable/auto_examples/model_selection/plot_precision_recall.html",
+      "consulted": "2026-11-06",
+      "review_by": "2027-11-06"
+    },
+    {
       "id": "ref.cover-hart-1967",
       "title": "Nearest neighbor pattern classification",
       "authors": "T. Cover, P. Hart",

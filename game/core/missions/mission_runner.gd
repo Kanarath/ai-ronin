@@ -112,7 +112,7 @@ func _check_current() -> void:
 	var last: Dictionary = events[-1] if not events.is_empty() else {}
 	if last.is_empty() or last["seq"] <= min_seq:
 		return
-	if validator.get("type") == "answer" and last["name"] == "answer.submitted":
+	if ConditionEval.contains_type(validator, "answer") and last["name"] == "answer.submitted":
 		mentor_message.emit(obj.get("wrong_answer", "No es correcto. Revisa el resultado y vuelve a intentarlo. Si te atascas: hint"), "warn")
 	elif validator.get("type") == "reflection" and last["name"] == "reflection.submitted":
 		mentor_message.emit("Desarrolla un poco más tu explicación (mínimo %d palabras). Escribe como si se lo explicaras a un compañero." % int(validator.get("min_words", 10)), "warn")

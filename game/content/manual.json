@@ -2,6 +2,29 @@
   "schema_version": 1,
   "topics": [
     {
+      "id": "gradiente",
+      "title": "Descenso por gradiente",
+      "body": [
+        "Entrenar un modelo es buscar los parámetros que minimizan una función de pérdida. Para una regresión lineal y = w·x + b con MSE, la pérdida es una «superficie» sobre el plano (w, b) con forma de cuenco.",
+        "El gradiente (∂pérdida/∂w, ∂pérdida/∂b) señala cuesta arriba. El descenso por gradiente da un paso en sentido contrario: w ← w − lr·∂w, b ← b − lr·∂b, y repite.",
+        "Para la regresión lineal: ∂MSE/∂w = (2/n)·Σ(error·x) y ∂MSE/∂b = (2/n)·Σ error, con error = w·x + b − y.",
+        "Si las features tienen escalas muy distintas, el cuenco es un valle estrecho y alargado: un lr que va bien en una dirección se pasa en la otra. Normalizar redondea el cuenco y permite pasos grandes en todas las direcciones.",
+        "Comandos: regress create, regress train, regress info, regress predict, regress reset."
+      ],
+      "see_also": ["normalizacion", "metricas"]
+    },
+    {
+      "id": "metricas",
+      "title": "Precision, recall, F1 y umbrales",
+      "body": [
+        "Elige la clase positiva: la que quieres detectar. Cada predicción cae en una de cuatro casillas: TP (positivo detectado), FN (positivo que se escapa), FP (falsa alarma), TN (negativo bien descartado).",
+        "precision = TP/(TP+FP): fiabilidad de las alarmas. recall = TP/(TP+FN): cobertura de los positivos. F1 = 2·P·R/(P+R).",
+        "Muchos modelos dan una puntuación y no solo una clase. El umbral convierte la puntuación en decisión. Bajarlo sube el recall y baja la precision: elige el umbral según el coste de cada error, con datos de validación.",
+        "Comandos: metrics <modelo> <dataset> --positive <clase> [--threshold t] · metrics curve <modelo> <dataset> --positive <clase>."
+      ],
+      "see_also": ["evaluacion"]
+    },
+    {
       "id": "python",
       "title": "Python y los ejercicios de la Forja",
       "body": [

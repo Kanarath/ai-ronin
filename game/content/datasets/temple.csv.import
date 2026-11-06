@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://8narltmv5r4r"
+
+[deps]
+
+files=["res://content/datasets/temple.minutos.translation", "res://content/datasets/temple.dureza.translation"]
+
+source_file="res://content/datasets/temple.csv"
+dest_files=["res://content/datasets/temple.minutos.translation", "res://content/datasets/temple.dureza.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true
