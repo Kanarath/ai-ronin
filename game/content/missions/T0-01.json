@@ -1,0 +1,94 @@
+{
+  "id": "T0-01",
+  "schema_version": 1,
+  "title": "Primeros pasos",
+  "unit": "T0",
+  "difficulty": 1,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 8,
+  "requires_missions": [],
+  "competencies": { "requires": [], "trains": ["T0.dojo"] },
+  "briefing": "Antes de forjar nada, conoce tu taller. En 8 minutos aprenderás a moverte por el Dojo: dar órdenes al terminal, pedir ayuda sin miedo, consultar el glosario, ver datos dibujados y practicar con retos rápidos. Aquí no se puede romper nada: experimenta.",
+  "learning_objectives": [
+    "Usar el terminal: escribir un comando y leer su respuesta",
+    "Saber dónde está la ayuda: pistas, glosario, manual y chuleta",
+    "Responder preguntas y practicar con retos rápidos"
+  ],
+  "mentor_intro": "Bienvenido al Dojo. Soy RONIN, tu mentor. Te iré explicando cada paso antes de pedírtelo. Si en algún momento te pierdes, pulsa el botón «Pista» de abajo: pedir ayuda es parte del camino.",
+  "lab": {
+    "datasets": [{ "file": "katanas.csv", "name": "katanas", "label": "calidad" }],
+    "viz": {}
+  },
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Escribe help en el terminal y pulsa Enter.",
+      "teach": "El terminal\nAbajo tienes el terminal: es tu herramienta principal. Escribe una orden (un «comando») y pulsa Enter. El comando help muestra la lista de todo lo que puedes hacer. No hace falta memorizarla: siempre estará ahí.",
+      "validator": { "type": "event", "event": "command.executed", "where": { "path": "help" } },
+      "hints": ["Haz clic en la línea de abajo (donde pone «escribe un comando»), escribe help y pulsa Enter."],
+      "on_complete": "¡Tu primer comando! Fíjate en que los comandos están agrupados por familias: misiones, datos, modelos, ayuda…"
+    },
+    {
+      "id": "o2",
+      "text": "Pide una pista: pulsa el botón «Pista» o escribe hint.",
+      "teach": "Las pistas\nCada objetivo tiene hasta 5 pistas, de más sutil a más explícita. La primera es gratis. Las de nivel 3 o más reducen un poco tu puntuación de maestría, y la 5 (el ejemplo resuelto) pide confirmación. Pedir pistas no es hacer trampa: es aprender.",
+      "validator": { "type": "event", "event": "hint.used" },
+      "hints": ["El botón «Pista» está debajo de este panel del mentor. También vale escribir hint."],
+      "on_complete": "Así de fácil. Las pistas aparecen aquí, en el panel de RONIN."
+    },
+    {
+      "id": "o3",
+      "text": "Pregunta al glosario qué es un dataset: explain dataset",
+      "teach": "Glosario y manual\nexplain <término> te da la definición de cualquier concepto que aparezca en el Dojo, y man <tema> una explicación más larga. Cada entrada indica qué tipo de conocimiento es (concepto consolidado, técnica emergente, modelo simplificado…).",
+      "validator": { "type": "event", "event": "help.explain", "where": { "term": "dataset" } },
+      "hints": ["Escribe exactamente: explain dataset"],
+      "on_complete": "Un dataset es una colección de ejemplos. Hoy trabajarás con uno: 240 katanas inspeccionadas por los maestros de la forja."
+    },
+    {
+      "id": "o4",
+      "text": "Dibuja el dataset de katanas: plot katanas",
+      "teach": "Ver los datos\nplot <dataset> dibuja los ejemplos en el panel del LABORATORIO (arriba). Cada punto es una katana y su color indica si era apta o defectuosa. Mirar los datos dibujados es lo primero que hace cualquier ingeniero.",
+      "validator": { "type": "event", "event": "viz.scatter", "where": { "dataset": "katanas" } },
+      "hints": ["Escribe: plot katanas"],
+      "on_complete": "Mira el gráfico: las katanas aptas (verde azulado) forman un grupo en el centro y las defectuosas (dorado) aparecen a los lados. En T1 descubrirás por qué."
+    },
+    {
+      "id": "o5",
+      "text": "¿Cuántas katanas hay en el dataset? Averígualo con dataset list y responde con answer <número>.",
+      "teach": "Responder\nAlgunos objetivos te hacen una pregunta. Busca el dato con los comandos y responde con answer seguido del número, por ejemplo answer 7. Si fallas no pasa nada: RONIN te dirá dónde mirar.",
+      "validator": { "type": "answer", "expected": 240, "tolerance": 0 },
+      "wrong_answer": "No es ese número. Escribe dataset list y mira la columna «filas».",
+      "hints": ["dataset list muestra una tabla con el número de filas de cada dataset.", "Cada fila es una katana. Responde: answer <ese número>"],
+      "on_complete": "240. Ya sabes encontrar un dato y responder."
+    },
+    {
+      "id": "o6",
+      "text": "Resuelve un reto rápido: escribe reto y responde con reto responder <valor>.",
+      "teach": "Retos rápidos\nreto te propone un problema corto con números nuevos cada vez, sobre lo que ya has aprendido. Al responder verás la solución paso a paso. Son la mejor forma de no olvidar: haz uno cuando tengas dos minutos. Si uno se te atraganta, reto saltar te enseña la solución y puedes pedir otro.",
+      "validator": { "type": "event", "event": "challenge.solved" },
+      "hints": [
+        "Escribe reto, lee la pregunta y responde con reto responder <número>.",
+        "Si es una media: suma los números y divide entre cuántos hay. Si te bloqueas: reto saltar y después reto otra vez."
+      ],
+      "on_complete": "+XP. Los retos dan experiencia y algunos sellos."
+    },
+    {
+      "id": "o7",
+      "text": "Mira tus sellos (logros) con el comando logros.",
+      "teach": "Sellos\nCada logro es un sello con un kanji. Algunos se ganan avanzando y otros… equivocándote de formas muy instructivas. logros muestra los que tienes y los que te faltan.",
+      "validator": { "type": "event", "event": "achievements.viewed" },
+      "hints": ["Escribe: logros"],
+      "on_complete": "Ya conoces el Dojo. Tu primera misión de verdad te espera: T1-01 «Despertar en el Dojo». ¡Adelante!"
+    }
+  ],
+  "debrief": {
+    "what_happened": "Has usado el terminal, has pedido una pista, has consultado el glosario, has visto datos dibujados, has respondido una pregunta y has resuelto un reto.",
+    "why": "Son las herramientas que usarás en todas las misiones. Lo más importante: en el Dojo, equivocarse y pedir ayuda forma parte del aprendizaje.",
+    "in_production": "Los ingenieros de IA trabajan a diario en terminales, notebooks y documentación. La habilidad clave no es memorizar comandos, sino saber dónde buscar ayuda y comprobar las cosas por uno mismo.",
+    "simplifications": []
+  },
+  "further_reading": [],
+  "xp": { "base": 50 }
+}

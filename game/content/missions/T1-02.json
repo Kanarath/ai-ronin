@@ -64,7 +64,7 @@
     {
       "id": "o3",
       "text": "Crea una versión normalizada del dataset con min-max.",
-      "teach": "Normalizar\nNormalizar es poner todas las features en una escala comparable para que ninguna domine solo por su unidad de medida. MIN-MAX transforma cada valor así: (valor − mínimo) / (máximo − mínimo). El mínimo pasa a ser 0, el máximo 1 y todo lo demás queda entre medias.\nComando: dataset normalize <dataset> --method minmax. Crea un dataset NUEVO (katanas_minmax); el original no se toca.",
+      "teach": "Normalizar\nNormalizar es poner todas las features en una escala comparable para que ninguna domine solo por su unidad de medida. MIN-MAX transforma cada valor así: (valor − mínimo) / (máximo − mínimo). El mínimo pasa a ser 0, el máximo 1 y todo lo demás queda entre medias.\nComando: dataset normalize <dataset> --method minmax. Crea un dataset NUEVO (katanas_minmax); el original no se toca.\nOtro método que usarás pronto: Z-SCORE, (valor − media) / desviación típica, deja cada feature con media 0 y desviación 1. Comando: dataset normalize katanas --method zscore (crea katanas_zscore).",
       "validator": { "type": "event", "event": "dataset.normalized", "where": { "source": "katanas", "method": "minmax" } },
       "hints": [
         "Es un subcomando de dataset. Míralo con: help dataset",

@@ -10,7 +10,7 @@ import re
 
 
 def tokenizar(texto):
-    """Minúsculas + re.findall(r"\\w+|[^\\w\\s]", ...). Igual que el Dojo."""
+    r"""Minúsculas + re.findall(r"\w+|[^\w\s]", ...). Igual que el Dojo."""
     raise NotImplementedError("Tu turno: implementa tokenizar")
 
 

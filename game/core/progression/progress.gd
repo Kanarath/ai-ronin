@@ -33,6 +33,29 @@ func level() -> int:
 	return 1 + int(floor(sqrt(xp() / 50.0)))
 
 
+## Rangos del Dojo según el nivel (los mismos nombres que la dificultad de las misiones).
+const RANKS := [
+	{"from": 1, "name": "Initiate", "kanji": "入門", "es": "iniciado"},
+	{"from": 3, "name": "Apprentice", "kanji": "弟子", "es": "aprendiz"},
+	{"from": 5, "name": "Engineer", "kanji": "技師", "es": "ingeniero"},
+	{"from": 7, "name": "Specialist", "kanji": "専門家", "es": "especialista"},
+	{"from": 9, "name": "Master", "kanji": "師範", "es": "maestro"},
+]
+
+
+func rank() -> Dictionary:
+	var r: Dictionary = RANKS[0]
+	for candidate: Dictionary in RANKS:
+		if level() >= int(candidate["from"]):
+			r = candidate
+	return r
+
+
+## XP directa (retos rápidos): no pasa por misiones.
+func add_xp(amount: int) -> void:
+	data["xp"] = xp() + amount
+
+
 func xp_for_level(lv: int) -> int:
 	return 50 * (lv - 1) * (lv - 1)
 

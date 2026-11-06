@@ -76,7 +76,7 @@
     {
       "id": "o4",
       "text": "Haz una evaluación honesta: separa train/test (test 0.3, seed 42), normaliza con min-max aprendiendo los parámetros SOLO del train, entrena un k-NN con k=1 en el train normalizado y evalúalo en el test normalizado.",
-      "teach": "Evaluación honesta: train y test\nLa pregunta real es cómo funcionará con hojas NUEVAS. Para estimarlo se aparta ANTES un conjunto de test que el modelo nunca ve: dataset split <dataset> --test 0.3 --seed 42 crea <dataset>_train (70 %) y <dataset>_test (30 %).\nOjo: la normalización también «aprende» algo (los mínimos y máximos). Esos parámetros deben salir SOLO del train y aplicarse igual al test, como se haría con una hoja nueva en producción: dataset normalize <test> --fit <train>.",
+      "teach": "Evaluación honesta: train y test\nLa pregunta real es cómo funcionará con hojas NUEVAS. Para estimarlo se aparta ANTES un conjunto de test que el modelo nunca ve: dataset split <dataset> --test 0.3 --seed 42 crea <dataset>_train (70 %) y <dataset>_test (30 %).\nNormalización sin trampas: la normalización también «aprende» algo (mínimos y máximos), y eso debe salir SOLO del train, igual que se haría con una hoja nueva en producción. Primero: dataset normalize katanas_train (crea katanas_train_minmax). Después: dataset normalize katanas_test --fit katanas_train (crea katanas_test_minmax con los parámetros del train ORIGINAL, nunca del ya normalizado). Con --as <nombre> eliges un nombre más corto, por ejemplo --as tr y --as te.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -86,6 +86,7 @@
         ]
       },
       "diagnostics": [
+        { "id": "fit-normalized", "when": { "type": "event", "event": "dataset.normalized", "where": { "fit_on": { "ends_with": "_minmax" } } }, "message": "Has aprendido los parámetros de un dataset que YA estaba normalizado (su mínimo es 0 y su máximo 1), así que al aplicarlos no cambia nada útil. ¿De qué dataset deberían salir el mínimo y el máximo reales? Usa --fit con el train ORIGINAL (katanas_train)." },
         {
           "id": "fit-test",
           "when": { "type": "event", "event": "dataset.normalized", "where": { "fit_on": { "ends_with": "_test" } } },

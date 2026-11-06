@@ -13,6 +13,8 @@ extends RefCounted
 signal mentor_message(text: String, kind: String)  # kind: info, question, praise, warn, hint, debrief
 signal state_changed()
 signal mission_finished(result: Dictionary)
+## XP ganada durante la misión (se consolida al terminarla; la UI la muestra al momento).
+signal xp_awarded(amount: int, reason: String)
 
 const HINT_PENALTY: Array[int] = [0, 0, 5, 20, 35, 60]
 const TRIAL_MAX_HINT := 2
@@ -244,3 +246,4 @@ func _announce_current() -> void:
 
 func _xp(amount: int, reason: String) -> void:
 	xp_log.append({"amount": amount, "reason": reason})
+	xp_awarded.emit(amount, reason)

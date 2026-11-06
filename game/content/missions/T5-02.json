@@ -37,7 +37,7 @@
     {
       "id": "o2",
       "text": "¿Cuál es la palabra más parecida a «katana»? (answer <palabra>)",
-      "teach": "Vecinos semánticos\nembed similar <palabra> busca las palabras cuyo vector apunta en una dirección más parecida (similitud coseno). Es una búsqueda de vecinos más cercanos, como el k-NN de T2, pero sobre significados.",
+      "teach": "Vecinos semánticos\nembed similar <palabra> busca las palabras cuyo vector apunta en una dirección más parecida (similitud coseno). Es una búsqueda de vecinos más cercanos, como el k-NN de T2, pero sobre significados.\nOpciones: --k <n> cambia cuántos vecinos muestra; --metric euclidean ordena por distancia euclídea (la de T1) en lugar de por coseno.",
       "validator": { "type": "all", "of": [
         { "type": "event", "event": "embed.similar", "where": { "word": "katana" } },
         { "type": "answer", "expected": "espada", "accept": ["espada"] }
@@ -48,6 +48,7 @@
     {
       "id": "o3",
       "text": "Compara «fuego» y «hielo». ¿Qué similitud coseno tienen? (answer <número>)",
+      "teach": "Comparar dos palabras\nembed compare <a> <b> calcula la similitud coseno entre dos vectores, con la cuenta paso a paso: (a·b)/(|a|·|b|). Vale 1 si apuntan igual, 0 si no tienen relación y −1 si son opuestos. También muestra su distancia euclídea.",
       "prediction": { "prompt": "¿Cómo crees que será la similitud coseno entre fuego y hielo?", "options": ["cerca de 1", "cerca de 0", "cerca de −1"] },
       "validator": { "type": "all", "of": [
         { "type": "event", "event": "embed.compare", "where": { "a": { "in": ["fuego", "hielo"] }, "b": { "in": ["fuego", "hielo"] } } },
@@ -82,6 +83,7 @@
     {
       "id": "o6",
       "text": "Dibuja las palabras en las dimensiones persona (horizontal) y femenino (vertical).",
+      "teach": "Dibujar palabras\nPara ver las palabras en dos dimensiones del embedding: embed plot --x <dimensión> --y <dimensión>, por ejemplo embed plot --x arma --y metal. Las dimensiones se llaman arma, metal, persona, femenino, calor y herramienta (las ves en embed show y embed list).",
       "validator": { "type": "event", "event": "viz.scatter", "where": { "dataset": "embeddings", "x": "persona", "y": "femenino" } },
       "hints": ["embed plot --x persona --y femenino"],
       "on_complete": "Verás las personas separadas por género, y aprendiz en medio, donde no debería estar. Con embeddings reales de cientos de dimensiones se usan técnicas de proyección (PCA, t-SNE, UMAP) para dibujarlos en 2D, perdiendo información."

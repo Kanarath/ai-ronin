@@ -1,0 +1,78 @@
+# Pistas de los ejercicios
+
+Ábrelas de una en una, solo si te atascas. 🟢 = empujoncito · 🟡 = técnica · 🔴 = casi la solución.
+Antes de abrir una pista, ejecuta el test y lee el mensaje de error: suele decir exactamente qué falla.
+
+---
+
+## T1_01 · estadísticas
+
+<details><summary>🟢 cargar_csv</summary>Lee todas las líneas; la primera es la cabecera y el resto, los datos. Cada línea de datos se convierte en un diccionario.</details>
+<details><summary>🟡 cargar_csv</summary><code>lineas = f.read().splitlines()</code> · <code>claves = lineas[0].split(",")</code> · para cada línea no vacía: <code>dict(zip(claves, linea.split(",")))</code>. Ver PYTHON.md §10.</details>
+<details><summary>🔴 desviacion_tipica</summary>Calcula primero la media m. Después, la media de <code>(x − m) ** 2</code> para todos los x. Por último, la raíz cuadrada: <code>** 0.5</code>.</details>
+<details><summary>🟡 recuento</summary>Diccionario vacío y, para cada etiqueta, <code>d[e] = d.get(e, 0) + 1</code> (PYTHON.md §8).</details>
+
+## T1_02 · distancia
+
+<details><summary>🟢 distancia_euclidea</summary>Primero comprueba <code>len(a) != len(b)</code> y lanza ValueError. Después, suma las diferencias al cuadrado de cada pareja de coordenadas.</details>
+<details><summary>🟡 distancia_euclidea</summary><code>sum((x - y) ** 2 for x, y in zip(a, b)) ** 0.5</code></details>
+<details><summary>🟢 ajustar_minmax</summary>Necesitas las COLUMNAS de X, no las filas: <code>zip(*X)</code> te las da (PYTHON.md §6).</details>
+<details><summary>🔴 aplicar_minmax</summary>Una fila nueva por cada fila de X: para cada valor x de la columna j con parámetros (lo, hi): <code>0.0 if hi == lo else (x - lo) / (hi - lo)</code>. Construye listas nuevas; no modifiques X.</details>
+
+## T2_01 · k-NN
+
+<details><summary>🟢 dividir</summary>Crea <code>indices = list(range(n))</code>, barájalos con <code>random.Random(semilla).shuffle(indices)</code> (no asignes el resultado: devuelve None), corta y ordena las dos partes.</details>
+<details><summary>🟡 dividir</summary><code>n_test = min(max(int(n * proporcion_test), 1), n - 1)</code> · test = <code>sorted(indices[:n_test])</code> · train = <code>sorted(indices[n_test:])</code></details>
+<details><summary>🟡 vecinos</summary>Construye una tupla <code>(i, distancia, y_train[i])</code> por cada ejemplo, ordénalas con <code>key=lambda t: (t[1], t[0])</code> y quédate con las k primeras (PYTHON.md §7).</details>
+<details><summary>🔴 predecir</summary>Cuenta votos con un diccionario. Halla el máximo de votos. Recorre los vecinos EN ORDEN y devuelve la etiqueta del primero cuya clase tenga ese máximo: así se resuelven los empates.</details>
+<details><summary>🟡 matriz_confusion</summary><code>m = [[0] * len(clases) for _ in clases]</code> y, para cada pareja (real, pred): <code>m[clases.index(real)][clases.index(pred)] += 1</code>.</details>
+
+## T3_01 · descenso por gradiente
+
+<details><summary>🟢 gradientes</summary>Recorre los ejemplos calculando el error <code>e = w*x + b - y</code>; acumula <code>e*x</code> para dw y <code>e</code> para db. Al final, multiplica por 2/n.</details>
+<details><summary>🟡 entrenar</summary>w = b = 0; historial = [mse inicial]. En cada época: gradientes → actualizar → <code>historial.append(mse(...))</code> → si <code>ha_divergido(historial)</code>: <code>break</code>.</details>
+<details><summary>🔴 ha_divergido</summary><code>ultima = historial[-1]</code>; devuelve <code>not math.isfinite(ultima) or ultima > LIMITE_DIVERGENCIA</code>. En mse usa <code>e * e</code>, no <code>e ** 2</code> (PYTHON.md §12).</details>
+
+## T3_02 · métricas
+
+<details><summary>🟢 contar</summary>Recorre <code>zip(y_true, y_pred)</code>. Pregúntate en cada pareja: ¿era positiva? ¿la predije positiva? Las cuatro combinaciones son TP, FP, FN y TN.</details>
+<details><summary>🟡 precision / recall</summary>Reutiliza <code>contar</code>. Para evitar dividir entre cero: <code>c["tp"] / (c["tp"] + c["fp"]) if c["tp"] + c["fp"] > 0 else 0.0</code>.</details>
+<details><summary>🟡 curva</summary>Para cada umbral: <code>pred = aplicar_umbral(...)</code> y añade <code>(umbral, precision(...), recall(...))</code> a la lista.</details>
+
+## T4_01 · neurona
+
+<details><summary>🟢 neurona</summary>z = suma de pesos[i] · x[i] + sesgo; devuelve sigmoide(z). <code>sum(w * xi for w, xi in zip(pesos, x))</code>.</details>
+<details><summary>🟡 entropia_cruzada</summary>Recorta primero: <code>p = min(max(p, 1e-12), 1 - 1e-12)</code>. Después, <code>-(y * math.log(p) + (1 - y) * math.log(1 - p))</code>.</details>
+<details><summary>🔴 entrenar_neurona</summary><code>pesos = list(pesos_iniciales)</code>. En cada época, para cada ejemplo: <code>err = neurona(x, pesos, sesgo) - y</code>; acumula <code>err * x[i]</code> para cada peso y <code>err</code> para el sesgo; divide entre n; actualiza con lr; añade la pérdida media al historial.</details>
+
+## T4_02 · backpropagation
+
+<details><summary>🟢 crear_red</summary><code>rng = random.Random(semilla)</code>. Primero W1 fila a fila (<code>rng.uniform(-1, 1)</code> por cada peso), después w2. b1 = ceros y b2 = 0.0.</details>
+<details><summary>🟡 gradientes</summary>Prepara un diccionario de ceros con la misma forma que la red (comprensiones, PYTHON.md §5). Para cada ejemplo: forward → d2 = p − y → acumula los de la salida → d1[j] = d2·w2[j]·a1[j]·(1 − a1[j]) → acumula los de la capa oculta. Al final, divide todo entre n.</details>
+<details><summary>🟡 gradiente_numerico</summary><code>mas = copy.deepcopy(red)</code> y <code>menos = copy.deepcopy(red)</code>. Suma eps al parámetro de la ruta en <code>mas</code> y réstalo en <code>menos</code>. Para llegar al parámetro: si la ruta es ("b2",), cambia <code>red["b2"]</code>; si tiene 2 elementos, <code>red[ruta[0]][ruta[1]]</code>; si tiene 3, <code>red[ruta[0]][ruta[1]][ruta[2]]</code>.</details>
+<details><summary>🔴 paso</summary>Devuelve un diccionario nuevo: <code>{"W1": [[w - lr*g for w, g in zip(fw, fg)] for fw, fg in zip(red["W1"], grads["W1"])], ...}</code> y lo mismo para b1, w2 y b2.</details>
+
+## T5_01 · BPE
+
+<details><summary>🟢 entrenar_bpe</summary>Cuenta las palabras con <code>Counter(pre_tokenizar(texto))</code>. Guarda cada palabra como lista de símbolos junto a su frecuencia. En cada vuelta: cuenta pares, elige el mejor, fusiónalo en todas las palabras.</details>
+<details><summary>🟡 contar pares</summary><code>pares = Counter()</code>; para cada (simbolos, freq): <code>for a, b in zip(simbolos, simbolos[1:]): pares[(a, b)] += freq</code>.</details>
+<details><summary>🔴 elegir el par</summary><code>mejor = min(pares, key=lambda p: (-pares[p], p))</code>: el que más aparece y, si empatan, la tupla menor. (<code>most_common</code> no garantiza este desempate).</details>
+<details><summary>🟡 aplicar_fusion</summary>Usa un índice i y un <code>while i &lt; len(syms)</code>: si <code>syms[i] == a</code> y <code>syms[i+1] == b</code>, añade a+b y salta 2; si no, añade syms[i] y salta 1.</details>
+
+## T5_02 · embeddings
+
+<details><summary>🟢 coseno</summary>Producto escalar: <code>sum(x*y for x, y in zip(a, b))</code>. Longitud: <code>math.sqrt(sum(x*x for x in a))</code>. Si alguna longitud es 0, devuelve 0.0.</details>
+<details><summary>🟡 vecinos</summary>Lista de <code>(palabra, coseno(vector, tabla[palabra]))</code> para las palabras que no estén en <code>excluir</code>; ordénala con <code>key=lambda t: (-t[1], t[0])</code> y corta <code>[:k]</code>.</details>
+<details><summary>🔴 analogia</summary><code>v = [x - y + z for x, y, z in zip(tabla[a], tabla[b], tabla[c])]</code> y devuelve <code>vecinos(tabla, v, 1, excluir=(a, b, c))[0][0]</code>.</details>
+
+## T6_01 · muestreo
+
+<details><summary>🟢 contar_bigramas</summary>Recorre las parejas consecutivas: <code>for a, b in zip(tokens, tokens[1:])</code> y cuenta en un diccionario de diccionarios (<code>setdefault</code>, PYTHON.md §8).</details>
+<details><summary>🟡 con_temperatura</summary>Si t == 0: <code>[(dist[0][0], 1.0)]</code>. Si no: <code>nuevas = [(tok, p ** (1 / t)) for tok, p in dist]</code>, suma total y divide cada una entre el total.</details>
+<details><summary>🔴 top_p</summary>Recorre dist acumulando probabilidad; añade cada token y para (<code>break</code>) en cuanto <code>acumulada &gt;= p - 1e-9</code>. Después, renormaliza los que quedan.</details>
+
+## T6_02 · atención
+
+<details><summary>🟢 softmax</summary><code>m = max(fila)</code>; <code>exps = [math.exp(x - m) for x in fila]</code>; divide cada una entre la suma. <code>math.exp(float("-inf"))</code> vale 0.0.</details>
+<details><summary>🟡 pesos_atencion</summary>d = <code>len(vectores[0])</code>. Puntuación (i, j) = producto escalar / <code>math.sqrt(d)</code> (si escalar). Con causal y j &gt; i: <code>float("-inf")</code>. Softmax a cada fila.</details>
+<details><summary>🔴 salida_atencion</summary>Para cada i: <code>[sum(pesos[i][j] * vectores[j][k] for j in range(n)) for k in range(d)]</code>.</details>

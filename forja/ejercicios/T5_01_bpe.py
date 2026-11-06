@@ -15,9 +15,9 @@ DESCONOCIDO = "<?>"
 
 
 def pre_tokenizar(texto):
-    """Separa el texto en palabras (letras/números) y signos de puntuación sueltos.
+    r"""Separa el texto en palabras (letras/números) y signos de puntuación sueltos.
 
-    Usa re.findall(r"\\w+|[^\\w\\s]", texto).
+    Usa re.findall(r"\w+|[^\w\s]", texto).
     Ejemplo: pre_tokenizar("Hola, katana.") → ["Hola", ",", "katana", "."]
     """
     raise NotImplementedError("Tu turno: implementa pre_tokenizar")

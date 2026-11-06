@@ -5,6 +5,7 @@ extends Control
 ## Títulos de las unidades. Las que tienen misiones en el catálogo aparecen activas;
 ## el resto se muestra como «próximamente».
 const UNIT_TITLES := {
+	"T0": "T0 · Primeros pasos",
 	"T1": "T1 · Datos y vectores", "T2": "T2 · Aprender de datos", "T3": "T3 · Optimización y métricas",
 	"T4": "T4 · Redes neuronales", "T5": "T5 · Del texto al vector", "T6": "T6 · Transformers y LLM",
 	"A1": "A1 · Aplicación LLM", "A2": "A2 · RAG y embeddings", "A3": "A3 · Agentes", "A4": "A4 · MCP",
@@ -32,7 +33,10 @@ var _mission_text: RichTextLabel
 var _mentor_log: RichTextLabel
 var _prediction_box: HFlowContainer
 var _xp_label: Label
+var _xp_bar: ProgressBar
+var _toaster: Toaster
 var _mission_label: Label
+var _pending_xp: int = 0
 
 
 func _ready() -> void:
@@ -43,6 +47,17 @@ func _ready() -> void:
 	game.runner.mentor_message.connect(_on_mentor)
 	game.runner.state_changed.connect(_refresh_mission)
 	game.shell.event_emitted.connect(_on_sim_event)
+	game.runner.xp_awarded.connect(func(amount: int, reason: String) -> void:
+		_pending_xp += amount
+		_toaster.xp(amount, reason)
+		_refresh_top())
+	game.achievement_unlocked.connect(func(a: Dictionary) -> void:
+		_toaster.toast("%s  SELLO CONSEGUIDO\n%s\n%s" % [a["seal"], a["title"], a["description"]], RoninPalette.CYAN, true))
+	game.level_up.connect(func(lv: int, rk: Dictionary) -> void:
+		_toaster.toast("⬆ NIVEL %d\nRango: %s %s (%s)" % [lv, rk["name"], rk["kanji"], rk["es"]], RoninPalette.GOLD, true))
+	game.progress_changed.connect(func() -> void:
+		_pending_xp = 0
+		_refresh_top())
 	_refresh_all()
 	_welcome()
 	_terminal.focus_input()
@@ -80,6 +95,26 @@ func _build_layout() -> void:
 	_xp_label = Label.new()
 	_xp_label.add_theme_color_override("font_color", RoninPalette.GOLD)
 	top.add_child(_xp_label)
+	_xp_bar = ProgressBar.new()
+	_xp_bar.custom_minimum_size = Vector2(140, 10)
+	_xp_bar.show_percentage = false
+	_xp_bar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var bg := StyleBoxFlat.new()
+	bg.bg_color = RoninPalette.PANEL_ALT
+	var fill := StyleBoxFlat.new()
+	fill.bg_color = RoninPalette.GOLD
+	_xp_bar.add_theme_stylebox_override("background", bg)
+	_xp_bar.add_theme_stylebox_override("fill", fill)
+	top.add_child(_xp_bar)
+
+	# Capa de notificaciones (encima de todo, esquina superior derecha)
+	_toaster = Toaster.new()
+	# Sobre el panel del laboratorio (a la izquierda de la columna de misión y mentor).
+	_toaster.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	_toaster.position = Vector2(-780, 60)
+	_toaster.custom_minimum_size = Vector2(340, 0)
+	_toaster.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	add_child(_toaster)
 
 	# Cuerpo
 	var body := HSplitContainer.new()
@@ -191,7 +226,14 @@ func _refresh_all() -> void:
 
 func _refresh_top() -> void:
 	var p := game.progress
-	_xp_label.text = "Nivel %d · %d XP" % [p.level(), p.xp()]
+	var rk := p.rank()
+	var lv := p.level()
+	var pending := "  (+%d en curso)" % _pending_xp if _pending_xp > 0 else ""
+	_xp_label.text = "%s %s · Nivel %d · %d XP%s  " % [rk["kanji"], rk["name"], lv, p.xp(), pending]
+	_xp_bar.min_value = p.xp_for_level(lv)
+	_xp_bar.max_value = p.xp_for_level(lv + 1)
+	_xp_bar.value = p.xp()
+	_xp_bar.tooltip_text = "%d / %d XP para el nivel %d" % [p.xp(), p.xp_for_level(lv + 1), lv + 1]
 	var m := game.active_mission
 	_mission_label.text = "" if m.is_empty() else "▶ %s · %s" % [m["id"], m["title"]]
 

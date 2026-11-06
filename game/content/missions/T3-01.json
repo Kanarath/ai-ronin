@@ -35,7 +35,7 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Mira los datos: dibuja la dureza frente a los minutos de enfriado.",
+      "text": "Mira los datos: dibuja dureza_hrc (eje vertical) frente a minutos_enfriado (eje horizontal) con plot.",
       "validator": { "type": "event", "event": "viz.scatter", "where": { "dataset": "temple" } },
       "hints": [
         "El comando para dibujar lo usaste en T1-01.",
@@ -63,7 +63,7 @@
       "id": "o3",
       "text": "¿Cuál es la pérdida tras esas 100 épocas? (answer <número>, con un decimal)",
       "validator": { "type": "answer", "expected": 435.8, "tolerance": 0.5 },
-      "wrong_answer": "Mira la última fila de la tabla de regress train (o regress info).",
+      "wrong_answer": "Mira la última fila de la tabla de regress train (o regress info). Si has seguido entrenando ese regresor, las épocas se acumulan: crea uno nuevo con lr 0.001 y entrénalo exactamente 100 épocas.",
       "hints": [
         "Está en la última línea de la salida del entrenamiento.",
         "regress info <nombre> la muestra también."
@@ -110,7 +110,7 @@
     {
       "id": "o6",
       "text": "Normaliza SOLO la feature minutos_enfriado con z-score y entrena un regresor nuevo con lr 0.5 y como mucho 20 épocas sobre el dataset normalizado.",
-      "teach": "Normalizar solo la entrada\nAquí queremos seguir prediciendo la dureza en HRC, así que solo normalizamos la entrada (minutos). Z-SCORE transforma así: (valor − media) / desviación típica, y deja la feature centrada en 0 con dispersión 1. La opción --only elige qué features se transforman.",
+      "teach": "Normalizar solo la entrada\nAquí queremos seguir prediciendo la dureza en HRC, así que solo normalizamos la entrada (minutos). Z-SCORE transforma así: (valor − media) / desviación típica, y deja la feature centrada en 0 con dispersión 1. La opción --only elige qué features se transforman.\nComando: dataset normalize temple --method zscore --only minutos_enfriado → crea temple_zscore (o el nombre que des con --as). Entrena el regresor NUEVO sobre ese dataset, con las mismas --x y --y.",
       "prediction": {
         "prompt": "Con x normalizada y lr 0.5, ¿cuántas épocas crees que necesitará para converger?",
         "options": ["menos de 10", "unas 100", "más de 500"]
@@ -121,7 +121,7 @@
         "dataset normalize temple --method zscore --only minutos_enfriado --as tz",
         "Después: regress create r4 --lr 0.5 · regress train r4 tz --x minutos_enfriado --y dureza_hrc --epochs 20"
       ],
-      "on_complete": "Converge en unas 3 épocas, con un learning rate 25 veces mayor. Normalizar ha redondeado la montaña: ahora la pendiente es igual de empinada en todas las direcciones y se puede bajar a grandes pasos. Esto es exactamente lo que hacen (de forma más sofisticada) la normalización de capas y los optimizadores como Adam en las redes neuronales."
+      "on_complete": "Converge en unas 3 épocas, con un learning rate 25 veces mayor. Normalizar ha redondeado la montaña: ahora la pendiente es igual de empinada en todas las direcciones y se puede bajar a grandes pasos. Esto es exactamente lo que hacen (de forma más sofisticada) la normalización de capas y los optimizadores como Adam en las redes neuronales. Ojo con las unidades: ahora x se mide en desviaciones típicas, así que w significa «HRC por cada desviación típica de minutos». Una desviación típica equivale a σ minutos (la ves en la tabla de parámetros de la normalización); para volver a «HRC por minuto» se divide w entre σ."
     },
     {
       "id": "o7",

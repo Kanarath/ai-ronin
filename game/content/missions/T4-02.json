@@ -107,9 +107,9 @@
       "id": "o6",
       "text": "¿Qué accuracy en el test obtiene la red de 8 ocultas? (answer <número>, 3 decimales)",
       "validator": { "type": "answer", "expected": 0.861, "tolerance": 0.002 },
-      "wrong_answer": "Es la accuracy de nn evaluate de la red de 8 ocultas sobre el test (semilla 1, lr 1, 3000 épocas).",
+      "wrong_answer": "Es la accuracy de nn evaluate de la red de 8 ocultas sobre el test (semilla 1, lr 1, 3000 épocas). Si la entrenaste más de una vez, las épocas se acumulan: créala de nuevo (nn create) o usa nn reset y entrena 3000 épocas.",
       "hints": ["Última línea de nn evaluate con la red de 8 ocultas sobre te."],
-      "on_complete": "0,861, frente al 0,847 del k-NN con k=9 en T3-02. En este problema pequeño la red apenas gana, y es mucho menos interpretable. Elegir modelo es siempre un compromiso."
+      "on_complete": "0,861. Como referencia, un k-NN con k=9 obtiene 0,847 en este mismo test. En este problema pequeño la red apenas gana, y es mucho menos interpretable. Elegir modelo es siempre un compromiso."
     },
     {
       "id": "o7",
@@ -126,7 +126,7 @@
     "objectives": [
       {
         "id": "d1",
-        "text": "Con los mismos tr y te, entrena una red de 4 ocultas con semilla 2, lr 1 y 3000 épocas (clase 1: defectuosa). ¿Qué accuracy obtiene en el test? (answer <número>, 3 decimales)",
+        "text": "Con los mismos datasets de train y test normalizados del objetivo 5, entrena una red de 4 ocultas con semilla 2, lr 1 y 3000 épocas (clase 1: defectuosa). ¿Qué accuracy obtiene en el test? (answer <número>, 3 decimales)",
         "validator": { "type": "answer", "expected": 0.847, "tolerance": 0.002 },
         "wrong_answer": "Revisa: --inputs 3 --hidden 4 --seed 2 --lr 1, 3000 épocas con --positive defectuosa, evaluada sobre el test.",
         "hints": ["Mismo procedimiento que el objetivo 5 con otra arquitectura.", "nn create, nn train … --positive defectuosa, nn evaluate … te"],

@@ -36,6 +36,17 @@ static func register(reg: CommandRegistry) -> void:
 			.opt("y", "feature del eje vertical", "string")
 			.example("plot katanas --x dureza_hrc --y flexibilidad")))
 
+	reg.register(Command.new("logros", "Tus sellos (logros): conseguidos y pendientes.",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _achievements(c, a), "misiones"))
+	reg.register(Command.new("reto", "Reto rápido: un problema corto con números nuevos para practicar lo aprendido.",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _challenge(c, a), "misiones")
+		.with_details("Se responde con: reto responder <valor>. Al responder verás la solución paso a paso, aciertes o no."))
+	reg.register(Command.new("reto responder", "Responde al reto rápido actual.",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _challenge_answer(c, a), "misiones")
+		.with_signature(CommandSignature.new().pos("valor", "tu respuesta", "rest").example("reto responder 5")))
+	reg.register(Command.new("reto saltar", "Descarta el reto actual y muestra su solución.",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _challenge_skip(c, a), "misiones"))
+
 	reg.register(Command.new("status", "Tu progreso: nivel, XP, misiones y competencias.",
 		func(c: CommandContext, a: Dictionary) -> CommandResult: return _progress_status(c, a), "misiones"))
 
@@ -118,6 +129,8 @@ static func _hint(c: CommandContext, a: Dictionary) -> CommandResult:
 	if g == null:
 		return _no_game()
 	var res := g.runner.request_hint(bool(a["confirm"]))
+	if res["ok"]:
+		c.emit("hint.used", {"level": res["level"]})
 	var r := CommandResult.new()
 	r.line(res["text"], "mentor" if res["ok"] else "warn")
 	return r
@@ -185,7 +198,9 @@ static func _progress_status(c: CommandContext, _a: Dictionary) -> CommandResult
 	var p := g.progress
 	var r := CommandResult.new()
 	var lv := p.level()
-	r.line("Nivel %d · %d XP (siguiente nivel: %d XP)" % [lv, p.xp(), p.xp_for_level(lv + 1)], "accent")
+	var rk := p.rank()
+	r.line("Nivel %d · rango %s %s (%s) · %d XP (siguiente nivel: %d XP)" % [lv, rk["name"], rk["kanji"], rk["es"], p.xp(), p.xp_for_level(lv + 1)], "accent")
+	r.line("Sellos: %d de %d (logros)" % [p.data.get("achievements", {}).size(), g.achievements.list.size()], "muted")
 	var comps: Dictionary = p.data["competencies"]
 	if comps.is_empty():
 		r.line("Todavía no hay competencias registradas.", "muted")
@@ -196,4 +211,67 @@ static func _progress_status(c: CommandContext, _a: Dictionary) -> CommandResult
 		for k: String in keys:
 			data.append([k, comps[k]["state"], comps[k]["score"]])
 		r.table(PackedStringArray(["competencia", "estado", "maestría"]), data)
+	return r
+
+
+static func _achievements(c: CommandContext, _a: Dictionary) -> CommandResult:
+	var g := _game(c)
+	if g == null:
+		return _no_game()
+	c.emit("achievements.viewed")
+	var r := CommandResult.new()
+	r.line("SELLOS DEL DOJO · %d de %d" % [g.progress.data["achievements"].size(), g.achievements.list.size()], "accent")
+	for a: Dictionary in g.achievements.list:
+		if g.achievements.is_unlocked(a["id"]):
+			r.line("%s  %s — %s" % [a["seal"], a["title"], a["description"]], "ok")
+		else:
+			var cond: Dictionary = a["condition"]
+			var prog := ""
+			if cond.has("count") and int(cond["count"]) > 1:
+				prog = " (%d/%d)" % [g.achievements.counter(a["id"]), int(cond["count"])]
+			r.line("・ %s — %s%s" % [a["title"], a["description"], prog], "muted")
+	return r
+
+
+static func _challenge(c: CommandContext, _a: Dictionary) -> CommandResult:
+	var g := _game(c)
+	if g == null:
+		return _no_game()
+	var ch := g.new_challenge()
+	if ch.size() <= 1:
+		return CommandResult.error("Todavía no hay retos disponibles.")
+	var r := CommandResult.new()
+	r.line("⚔ RETO RÁPIDO (%s) · +%d XP" % [ch["unit"], DojoGame.CHALLENGE_XP], "accent")
+	r.line(ch["question"])
+	r.line("Responde con: reto responder <valor>   ·   ¿Atascado? reto saltar", "muted")
+	c.emit("challenge.started", {"unit": ch["unit"]})
+	return r
+
+
+static func _challenge_answer(c: CommandContext, a: Dictionary) -> CommandResult:
+	var g := _game(c)
+	if g == null:
+		return _no_game()
+	if g.current_challenge.is_empty():
+		return CommandResult.error("No hay ningún reto activo. Pide uno con: reto")
+	var res := g.answer_challenge(String(a["valor"]))
+	var r := CommandResult.new()
+	if res["correct"]:
+		r.line("✓ ¡Correcto! +%d XP" % res["xp"], "ok")
+		r.line(res["explanation"], "muted")
+		r.line("Otro: reto", "muted")
+	else:
+		r.line("✗ No es correcto. Inténtalo otra vez (o reto saltar para ver la solución).", "warn")
+	return r
+
+
+static func _challenge_skip(c: CommandContext, _a: Dictionary) -> CommandResult:
+	var g := _game(c)
+	if g == null:
+		return _no_game()
+	if g.current_challenge.is_empty():
+		return CommandResult.error("No hay ningún reto activo.")
+	var r := CommandResult.new()
+	r.line("Solución: %s" % g.current_challenge["explanation"], "mentor")
+	g.current_challenge = {}
 	return r

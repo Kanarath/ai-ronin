@@ -40,7 +40,7 @@
       "id": "o2",
       "text": "Repite la consulta con temperatura 0.1. ¿Qué probabilidad final tiene «forja»? (answer <número>, 3 decimales)",
       "prediction": { "prompt": "Con temperatura baja (0.1), ¿qué le pasará a la distribución?", "options": ["se concentra en el más probable", "se aplana", "no cambia"] },
-      "teach": "Temperatura\nAntes de elegir, la distribución se puede deformar. Con temperatura T, cada probabilidad se eleva a 1/T y se vuelve a normalizar. T < 1 exagera las diferencias (el favorito gana más); T > 1 las suaviza (todo se iguala); T = 0 es «greedy»: siempre el más probable. Opción: --temperature.",
+      "teach": "Temperatura\nAntes de elegir, la distribución se puede deformar. Con temperatura T, cada probabilidad se eleva a 1/T y después se divide cada una entre la suma de todas, para que vuelvan a sumar 1. T < 1 exagera las diferencias (el favorito gana más); T > 1 las suaviza (todo se iguala); T = 0 es «greedy»: siempre el más probable. Opción: --temperature.",
       "validator": { "type": "all", "of": [
         { "type": "event", "event": "lm.next", "where": { "context": "la", "temperature": 0.1 } },
         { "type": "answer", "expected": 0.824, "tolerance": 0.002 }
@@ -60,6 +60,7 @@
     {
       "id": "o4",
       "text": "Genera desde «el maestro» con temperatura 1 usando dos semillas distintas y compara.",
+      "teach": "Semilla del muestreo\nCon temperatura > 0 el modelo SORTEA cada token según su probabilidad. --seed <n> fija ese sorteo: la misma semilla da el mismo texto y otra semilla, otro texto. Ejemplo: lm generate <modelo> el maestro --temperature 1 --seed 2. Si no la indicas, usa la semilla 1.",
       "validator": { "type": "event", "event": "lm.generated", "where": { "temperature": 1.0, "order": 2 }, "count": { "gte": 2 } },
       "hints": ["lm generate lm2 el maestro --temperature 1 --seed 1", "Repite con --seed 2."],
       "on_complete": "Dos textos distintos, ambos con apariencia de castellano… y sin sentido: «el modelo aprende que nunca ha visto». El modelo encadena transiciones probables sin ninguna noción de verdad. Las ALUCINACIONES de un LLM tienen la misma raíz: el modelo genera lo plausible, no lo verdadero. Uno grande es plausible a un nivel mucho más alto, y por eso sus errores convencen más."

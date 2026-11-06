@@ -44,6 +44,7 @@
           { "type": "event", "event": "model.trained", "where": { "k": 9, "normalized": true, "dataset": { "ne": "katanas_minmax" } } }
         ]
       },
+      "diagnostics": [ { "id": "fit-normalized", "when": { "type": "event", "event": "dataset.normalized", "where": { "fit_on": { "ends_with": "_minmax" } } }, "message": "Has aprendido los parámetros de un dataset que YA estaba normalizado (su mínimo es 0 y su máximo 1), así que al aplicarlos no cambia nada útil. ¿De qué dataset deberían salir el mínimo y el máximo reales? Usa --fit con el train ORIGINAL (katanas_train)." } ],
       "hints": [
         "Es el procedimiento honesto que construiste en T2-01, con k=9.",
         "dataset split … · dataset normalize <train> · dataset normalize <test> --fit <train> · model create --k 9 · model train",

@@ -16,6 +16,10 @@ Cada misión del Dojo tiene un ejercicio en Python. Implementas tú las funcione
 | `T6_01_sampling.py` | T6-01 | Modelo de bigramas, temperatura y top-p |
 | `T6_02_atencion.py` | T6-02 | Softmax estable, self-attention y máscara causal |
 
+**Ayudas:**
+- [PYTHON.md](PYTHON.md) explica, con ejemplos, todo el Python que usan los ejercicios, y tiene una tabla con las secciones que necesita cada uno. Léela antes de cada ejercicio.
+- [PISTAS.md](PISTAS.md) tiene pistas progresivas (🟢 🟡 🔴) para cada función.
+
 **Reglas:**
 - Solo Python estándar: nada de numpy, pandas ni scikit-learn todavía. Primero entiendes qué hacen por dentro y después usas las librerías.
 - No copies soluciones de internet ni de una IA. Si te atascas, pide pistas a Claude: tiene la misma escalera de 5 niveles que el Dojo.

@@ -74,7 +74,7 @@
     {
       "id": "o4",
       "text": "Programa una neurona a mano: crea una neurona NUEVA y, sin entrenarla, ajusta sus pesos y su sesgo con nn set para que implemente OR (salida 1 si a=1 o b=1). Compruébalo con nn evaluate.",
-      "teach": "Pesos a mano\nLa neurona dice 1 cuando z = w₁·a + w₂·b + bias es mayor que 0. Para OR quieres: (0,0) → z negativo; (1,0), (0,1) y (1,1) → z positivo. Elige números: un sesgo negativo y pesos que, con UNA sola entrada a 1, ya superen al sesgo. Valores grandes (como 10) hacen que la sigmoide dé casi exactamente 0 o 1.\nComando: nn set <red> <parámetro> <valor>, con los nombres que ves en nn weights.",
+      "teach": "Pesos a mano\nLa neurona dice 1 cuando z = w₁·a + w₂·b + bias es mayor que 0. Para OR quieres: (0,0) → z negativo; (1,0), (0,1) y (1,1) → z positivo. Elige números: un sesgo negativo y pesos que, con UNA sola entrada a 1, ya superen al sesgo. Valores grandes (como 10) hacen que la sigmoide dé casi exactamente 0 o 1.\nComando: nn set <red> <parámetro> <valor>, con los nombres que ves en nn weights.\nPara comprobarla: nn evaluate <red> <dataset> (por ejemplo nn evaluate o puerta_or) muestra la accuracy y, en datasets pequeños, la predicción de cada caso.",
       "validator": { "type": "event", "event": "nn.evaluated", "where": { "dataset": "puerta_or", "accuracy": 1.0, "epochs": 0, "manual_edits": { "gte": 1 } } },
       "diagnostics": [
         {
@@ -92,7 +92,7 @@
     },
     {
       "id": "o5",
-      "text": "Entrena una neurona con la puerta XOR (salida 1 si a y b son distintas).",
+      "text": "Crea una neurona nueva y entrénala con la puerta XOR (salida 1 si a y b son distintas) durante al menos 1000 épocas.",
       "prediction": { "prompt": "Con suficientes épocas, ¿aprenderá una sola neurona XOR?", "options": ["sí", "no"] },
       "validator": { "type": "event", "event": "nn.trained", "where": { "dataset": "puerta_xor", "hidden": 0, "epochs": { "gte": 1000 } } },
       "hints": [
