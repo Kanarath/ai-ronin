@@ -4,8 +4,8 @@ extends RefCounted
 
 const DATASETS_DIR := "res://content/datasets"
 ## Tipos de objeto con nombre (sirven también como tipos de argumento en CommandSignature).
-const KINDS: Array[String] = ["dataset", "model", "regressor", "network", "tokenizer", "lm"]
-const KIND_NAMES := {"dataset": "dataset", "model": "modelo", "regressor": "regresor", "network": "red", "tokenizer": "tokenizador", "lm": "modelo de lenguaje"}
+const KINDS: Array[String] = ["dataset", "model", "regressor", "network", "tokenizer", "lm", "bot"]
+const KIND_NAMES := {"dataset": "dataset", "model": "modelo", "regressor": "regresor", "network": "red", "tokenizer": "tokenizador", "lm": "modelo de lenguaje", "bot": "chatbot"}
 
 var datasets: Dictionary = {}  # nombre -> Dataset
 ## nombre -> {"model": KNNClassifier, "trained_on": String}
@@ -18,6 +18,8 @@ var networks: Dictionary = {}
 var tokenizers: Dictionary = {}
 ## nombre -> NGramLM
 var lms: Dictionary = {}
+## nombre -> MockChatbot
+var bots: Dictionary = {}
 ## Tabla de embeddings (se carga al usarla)
 var embeddings: EmbeddingTable = null
 
@@ -42,6 +44,7 @@ func store_of(kind: String) -> Dictionary:
 		"network": return networks
 		"tokenizer": return tokenizers
 		"lm": return lms
+		"bot": return bots
 	return {}
 
 

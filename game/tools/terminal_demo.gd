@@ -6,7 +6,8 @@ const STYLE_PREFIX := {"error": "✗ ", "warn": "! ", "ok": "", "accent": "", "m
 
 
 func _initialize() -> void:
-	var shell := Shell.new(ContentLibrary.load_default())
+	var game := DojoGame.new("")
+	var shell := game.shell
 	shell.world.load_dataset("katanas.csv", "katanas", "calidad")
 	shell.world.load_dataset("temple.csv", "temple", "")
 	for gate in ["and", "or", "xor", "nand"]:

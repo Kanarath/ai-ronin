@@ -37,6 +37,9 @@ var _xp_bar: ProgressBar
 var _toaster: Toaster
 var _mission_label: Label
 var _pending_xp: int = 0
+## Historial de rondas de seguridad (A1): tasa de éxito de ataques y de eval.
+var _attack_history := PackedVector2Array()
+var _eval_history := PackedVector2Array()
 
 
 func _ready() -> void:
@@ -350,6 +353,8 @@ func _run(line: String) -> void:
 func _on_mission_started(m: Dictionary) -> void:
 	_mentor_log.clear()
 	_chart.visible = false
+	_attack_history.clear()
+	_eval_history.clear()
 	_show_plot()
 	var viz: Dictionary = m.get("lab", {}).get("viz", {})
 	var ds := game.shell.world.get_dataset(viz.get("dataset", ""))
@@ -414,12 +419,34 @@ func _on_sim_event(e: Dictionary) -> void:
 				if axes.size() == 2:
 					_plot.show_dataset(ds, axes[0], axes[1])
 			_plot.set_highlight(d["id"], PackedStringArray(d.get("neighbors", [])))
+		"bot.attacks", "bot.eval":
+			_show_security(e["name"], d)
 		"regress.trained":
 			_show_regression(d)
 		"dataset.normalized":
 			var axes := _plot.current_axes()
 			if axes.size() == 2:
 				_plot.show_dataset(game.shell.world.get_dataset(d["target"]), axes[0], axes[1])
+
+
+func _show_security(event_name: String, d: Dictionary) -> void:
+	var round_n := float(_attack_history.size() + _eval_history.size() + 1)
+	if event_name == "bot.attacks":
+		_attack_history.append(Vector2(round_n, d["success_rate"]))
+	else:
+		_eval_history.append(Vector2(round_n, d["pass_rate"]))
+	var series: Array[Dictionary] = []
+	if not _attack_history.is_empty():
+		series.append({"name": "ataques con éxito", "points": _attack_history, "color": RoninPalette.RED})
+	if not _eval_history.is_empty():
+		series.append({"name": "eval clientes", "points": _eval_history, "color": RoninPalette.TEAL})
+	_plot.visible = false
+	_net_view.visible = false
+	_heatmap.visible = false
+	_chart.custom_minimum_size = Vector2(380, 300)
+	_chart.x_label = "ronda"
+	_chart.set_series("Seguridad del chatbot: tasa por ronda (0 = nada, 1 = todo)", series, false)
+	_chart.visible = true
 
 
 func _show_plot() -> void:

@@ -11,6 +11,7 @@ const CATEGORY_NAMES := {
 	"optimizacion": "Optimización y métricas",
 	"redes": "Redes neuronales",
 	"lenguaje": "Texto, tokens y LLM",
+	"seguridad": "Seguridad de aplicaciones LLM",
 	"mentor": "Mentor RONIN",
 }
 
@@ -98,7 +99,7 @@ static func _help_overview(ctx: CommandContext) -> CommandResult:
 		if not by_cat.has(cmd.category):
 			by_cat[cmd.category] = []
 		by_cat[cmd.category].append(cmd)
-	for cat: String in ["misiones", "mentor", "datos", "modelos", "optimizacion", "redes", "lenguaje", "ayuda", "terminal"]:
+	for cat: String in ["misiones", "mentor", "datos", "modelos", "optimizacion", "redes", "lenguaje", "seguridad", "ayuda", "terminal"]:
 		if not by_cat.has(cat):
 			continue
 		r.line("")
@@ -107,7 +108,7 @@ static func _help_overview(ctx: CommandContext) -> CommandResult:
 			var lock := "  🔒" if cmd.tier > ctx.shell.tier else ""
 			r.line("  %s %s%s" % [cmd.path.rpad(22), cmd.summary, lock], "data")
 	r.line("")
-	r.line("Trucos: Tab autocompleta · ↑↓ historial · termina una línea con ? para ver opciones · <comando> --help", "muted")
+	r.line("Trucos: Tab autocompleta · ↑↓ historial · termina una línea con « ?» (espacio e interrogación) para ver opciones · <comando> --help", "muted")
 	return r
 
 
@@ -185,7 +186,7 @@ static func _cheatsheet(ctx: CommandContext, _a: Dictionary) -> CommandResult:
 		if not cmd.signature.examples.is_empty():
 			r.line("    p. ej.: " + cmd.signature.examples[0], "muted")
 	r.line("")
-	r.line("Ayuda: help <cmd> · <cmd> --help · man <tema> · explain <término> · línea terminada en ?", "muted")
+	r.line("Ayuda: help <cmd> · <cmd> --help · man <tema> · explain <término> · línea terminada en « ?»", "muted")
 	r.line("✓ = ya lo has usado", "muted")
 	return r
 

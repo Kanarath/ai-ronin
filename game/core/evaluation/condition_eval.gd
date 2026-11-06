@@ -12,7 +12,7 @@ extends RefCounted
 ##   {"type":"reflection", "min_words":15}                    → comando reflexion
 ##
 ## Condiciones en "where": valor literal (igualdad) o {"op": arg} con op en
-##   eq, ne, gt, gte, lt, lte, in, contains, starts_with, ends_with, exists.
+##   eq, ne, gt, gte, lt, lte, in, contains, icontains, not_contains, starts_with, ends_with, exists.
 
 const NUMERIC_EPS := 1e-9
 
@@ -165,6 +165,15 @@ static func _op(op: String, value: Variant, arg: Variant) -> bool:
 			return false
 		"contains":
 			return value != null and str(value).contains(str(arg))
+		"not_contains":
+			return value == null or not str(value).to_lower().contains(str(arg).to_lower())
+		"not_contains_any":
+			for w in arg:
+				if value != null and str(value).to_lower().contains(str(w).to_lower()):
+					return false
+			return true
+		"icontains":
+			return value != null and str(value).to_lower().contains(str(arg).to_lower())
 		"starts_with":
 			return value != null and str(value).begins_with(str(arg))
 		"ends_with":

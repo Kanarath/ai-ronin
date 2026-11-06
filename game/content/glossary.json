@@ -448,6 +448,86 @@
       "short": "Cuando un modelo reproduce literalmente fragmentos de sus datos de entrenamiento.",
       "body": "Carlini et al. (2021) extrajeron de GPT-2 cientos de secuencias memorizadas, incluidos datos personales. Es un riesgo de privacidad y de propiedad intelectual (OWASP LLM02, divulgación de información sensible). Aumenta con datos duplicados y con modelos más grandes.",
       "epistemic": "consolidado"
+    },
+    {
+      "id": "prompt-injection",
+      "term": "inyección de prompts",
+      "aliases": ["prompt injection", "inyeccion de prompts", "inyección directa", "inyección indirecta", "LLM01"],
+      "short": "Texto que el modelo interpreta como instrucciones y que altera su comportamiento previsto.",
+      "body": "Directa: la escribe el propio usuario («ignora las instrucciones anteriores…»). Indirecta: llega escondida en contenido que el modelo procesa (una web, un documento, un correo), sin que el usuario la vea. Es posible porque instrucciones y datos comparten el mismo canal de tokens. Es el riesgo LLM01 del OWASP Top 10 for LLM Applications 2025, que señala que no hay una prevención completa conocida, solo mitigaciones.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "jailbreak",
+      "term": "jailbreak",
+      "aliases": ["jailbreaking", "evasión de restricciones"],
+      "short": "Forma de inyección de prompts que busca que el modelo ignore sus restricciones de seguridad o de comportamiento.",
+      "body": "Técnicas habituales: juegos de rol («actúa como…»), escenarios hipotéticos, ofuscación, otros idiomas, dividir la petición en partes. OWASP lo trata como un subtipo de inyección de prompts (LLM01).",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "fuga-prompt",
+      "term": "fuga del system prompt",
+      "aliases": ["system prompt leakage", "LLM07", "filtración del prompt"],
+      "short": "Revelación de las instrucciones internas de una aplicación LLM.",
+      "body": "El problema real no es que se vea el prompt, sino lo que contiene: credenciales, reglas internas o la lógica de autorización. OWASP (LLM07:2025) recomienda no guardar secretos en el prompt ni usarlo como control de seguridad.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "salida-insegura",
+      "term": "salida insegura",
+      "aliases": ["improper output handling", "LLM05", "XSS", "manejo inseguro de la salida"],
+      "short": "Usar la salida de un LLM sin validarla ni escaparla: como HTML, como comando, como consulta SQL…",
+      "body": "La salida del modelo puede contener lo que un atacante haya conseguido inyectar. Debe tratarse como entrada no fiable de un usuario: escapar antes de pintar en una web, validar antes de ejecutar, parametrizar consultas. OWASP LLM05:2025.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "consumo-sin-limite",
+      "term": "consumo sin límite",
+      "aliases": ["unbounded consumption", "LLM10", "denegación de servicio", "denial of wallet"],
+      "short": "Uso sin límites de un servicio LLM que dispara costes o degrada el servicio.",
+      "body": "Respuestas larguísimas, peticiones masivas automatizadas o entradas muy largas. Mitigaciones: límites de tokens por respuesta, límites de peticiones por usuario (rate limiting), cuotas y alertas de gasto. OWASP LLM10:2025.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "defensa-profundidad",
+      "term": "defensa en profundidad",
+      "aliases": ["defense in depth", "capas de defensa"],
+      "short": "Combinar varias capas de controles para que el fallo de una no comprometa el sistema.",
+      "body": "En aplicaciones LLM, como la inyección de prompts no se puede eliminar del todo, se combinan: mínimo privilegio (el modelo no accede a lo que no necesita), salida tratada como no fiable, límites, monitorización y revisión humana en acciones sensibles.",
+      "epistemic": "practica-industria"
+    },
+    {
+      "id": "minimo-privilegio",
+      "term": "mínimo privilegio",
+      "aliases": ["least privilege", "principio de mínimo privilegio"],
+      "short": "Dar a cada componente solo los datos y permisos imprescindibles para su tarea.",
+      "body": "Un chatbot que no conoce el código de descuento no puede revelarlo, por mucho que se le engañe. Es la mitigación más eficaz contra el impacto de la inyección de prompts, y la base de la seguridad de agentes con herramientas (arco A3).",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "red-teaming",
+      "term": "red teaming de IA",
+      "aliases": ["red teaming", "red team", "evaluación ofensiva"],
+      "short": "Evaluación autorizada que simula ataques reales contra un sistema de IA para descubrir y medir sus fallos.",
+      "body": "Se hace con permiso explícito, alcance definido y reglas de enfrentamiento. Su producto no es «haberlo roto», sino hallazgos reproducibles, medidos e informados para que se puedan corregir y verificar.",
+      "epistemic": "practica-industria"
+    },
+    {
+      "id": "evals",
+      "term": "evals",
+      "aliases": ["eval", "evaluaciones", "conjunto de evaluación"],
+      "short": "Conjuntos de casos con resultado esperado para medir la calidad y la seguridad de una aplicación LLM.",
+      "body": "Son el equivalente del conjunto de test para aplicaciones LLM. Hay evals de funcionalidad (¿responde bien?) y de seguridad (¿resiste los ataques?). Se ejecutan antes y después de cada cambio de modelo, de prompt o de defensa.",
+      "epistemic": "practica-industria"
+    },
+    {
+      "id": "informe-vulnerabilidad",
+      "term": "informe de vulnerabilidad",
+      "aliases": ["informe", "hallazgo", "finding", "report"],
+      "short": "Documento que describe un fallo de seguridad de forma reproducible, con su impacto, su mitigación y su verificación.",
+      "body": "Campos habituales: título, severidad, componente, categoría (p. ej. OWASP LLM01), descripción, pasos para reproducir, impacto, evidencia, mitigación y verificación. Un buen informe permite a otra persona reproducir el fallo y comprobar que está corregido.",
+      "epistemic": "practica-industria"
     }
   ]
 }

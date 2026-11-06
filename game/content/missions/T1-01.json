@@ -31,7 +31,7 @@
     {
       "id": "o1",
       "text": "Descubre qué datasets hay en el laboratorio.",
-      "teach": "Cómo se usa el terminal\nLos comandos tienen la forma «familia acción»: todo lo relativo a datos empieza por dataset. Para ver qué datasets hay en el laboratorio se escribe dataset list y se pulsa Enter.\nSi en algún momento no sabes qué hacer: botón Pista (o el comando hint), help para ver todos los comandos, o termina cualquier línea con ? para ver opciones sin ejecutar nada.",
+      "teach": "Cómo se usa el terminal\nLos comandos tienen la forma «familia acción»: todo lo relativo a datos empieza por dataset. Para ver qué datasets hay en el laboratorio se escribe dataset list y se pulsa Enter.\nSi en algún momento no sabes qué hacer: botón Pista (o el comando hint), help para ver todos los comandos, o termina cualquier línea con « ?» (espacio e interrogación) para ver opciones sin ejecutar nada.",
       "validator": { "type": "event", "event": "dataset.listed" },
       "hints": [
         "Todo lo relacionado con datos empieza por la misma palabra. Prueba a escribir help.",

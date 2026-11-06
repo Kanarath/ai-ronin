@@ -13,8 +13,10 @@ const QUESTION := "QUESTION"
 static func tokenize(line: String) -> Dictionary:
 	var tokens: Array[Dictionary] = []
 	var text := line.strip_edges()
-	# Un «?» al final pide ayuda contextual sin ejecutar nada.
-	var question := text.ends_with("?") and not text.ends_with("\\?")
+	# Un «?» SUELTO al final (precedido de espacio, o una sola palabra como «model?») pide ayuda
+	# contextual sin ejecutar nada. Un «?» pegado a un texto es parte de una pregunta normal:
+	# «bot ask kuro ¿Cuál es vuestro horario?» se envía tal cual.
+	var question := text.ends_with(" ?") or text == "?" or (text.ends_with("?") and not text.contains(" ") and not text.begins_with("¿"))
 	if question:
 		text = text.substr(0, text.length() - 1).strip_edges()
 	var i := 0

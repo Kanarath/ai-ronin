@@ -15,8 +15,14 @@ El proyecto tiene dos planos:
 
 - Diseño aprobado el 2026-11-06.
 - Fase 0 (cimientos) completada: proyecto Godot, tests y CI. La CI está bloqueada por un problema de facturación de la cuenta de GitHub; los tests se ejecutan en local.
-- **v0.1 jugable:** hub, terminal, 3 misiones (T1-01, T1-02, T2-01) con mentor, pistas, prueba de dominio y guardado, más ejercicios Python en `forja/ejercicios/`.
-- Siguiente paso: Fase 2, validar la experiencia jugándola.
+- **Contenido jugable:** 17 misiones.
+  - Tutorial T0.
+  - Tronco común T1–T6: datos, k-NN, descenso por gradiente, métricas, redes neuronales con backprop, tokens BPE, embeddings, modelo de lenguaje, muestreo y atención.
+  - Arco de seguridad A1 completo (construir, atacar, defender y desplegar un chatbot), con informes de vulnerabilidad.
+- **En cada misión:** lecciones antes de cada objetivo, pistas en 5 niveles, prueba de dominio y debrief.
+- **Gamificación:** 18 sellos (logros), rangos Initiate→Master, retos rápidos con solución paso a paso, notificaciones y barra de XP.
+- **Ejercicios Python:** 15, en `forja/ejercicios/`, con guía de Python (`PYTHON.md`) y pistas (`PISTAS.md`).
+- **Siguiente paso:** arco A2 (RAG y embeddings: inyección indirecta, envenenamiento, inversión de embeddings).
 
 ### Jugar
 

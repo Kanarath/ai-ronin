@@ -20,6 +20,8 @@ var progress: Progress
 var achievements: Achievements
 var challenges := ChallengeBank.new()
 var current_challenge: Dictionary = {}
+## Informe de vulnerabilidad en edición (A1+).
+var report: Dictionary = {}
 var save_path: String
 var load_warning: String = ""
 var active_mission: Dictionary = {}

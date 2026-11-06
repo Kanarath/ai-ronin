@@ -15,6 +15,7 @@ var errors: PackedStringArray = []
 static func load_default() -> MissionCatalog:
 	var cat := MissionCatalog.new()
 	cat.load_dir(MISSIONS_DIR)
+	cat._sort()
 	return cat
 
 
@@ -42,6 +43,15 @@ func load_dir(dir_path: String) -> void:
 		else:
 			for p in problems:
 				errors.append("%s: %s" % [f, p])
+
+
+## Orden del currículo: primero el tronco común (T…), después los arcos (A…), luego el resto.
+func _sort() -> void:
+	var rank := func(m: Dictionary) -> String:
+		var u: String = m["unit"]
+		var group := "0" if u.begins_with("T") else ("1" if u.begins_with("A") else "2")
+		return group + String(m["id"])
+	missions.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return rank.call(a) < rank.call(b))
 
 
 func get_mission(id: String) -> Dictionary:

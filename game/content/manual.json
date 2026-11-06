@@ -2,6 +2,43 @@
   "schema_version": 1,
   "topics": [
     {
+      "id": "appllm",
+      "title": "Anatomía de una aplicación LLM",
+      "body": [
+        "La aplicación envía al modelo una conversación con roles: system (instrucciones del desarrollador), user (mensaje del usuario) y assistant (respuestas anteriores). El modelo genera la respuesta y la aplicación la muestra o la usa.",
+        "Para el modelo todo es una secuencia de tokens: no hay una separación física entre instrucciones y datos. Por eso las reglas escritas en el system prompt son orientaciones, no controles de seguridad.",
+        "Se evalúa con evals: casos con resultado esperado que se ejecutan antes y después de cada cambio.",
+        "⚗ El chatbot del Dojo es un LLM simulado por reglas que imita comportamientos documentados de los LLM reales.",
+        "Comandos: bot create · bot show · bot system · bot ask · bot eval."
+      ],
+      "see_also": ["inyeccion", "produccion"]
+    },
+    {
+      "id": "inyeccion",
+      "title": "Ataques a aplicaciones LLM (OWASP 2025)",
+      "body": [
+        "LLM01 Inyección de prompts: texto que el modelo trata como instrucciones. Directa (la escribe el usuario) o indirecta (escondida en contenido que el modelo lee). No tiene una prevención completa conocida.",
+        "LLM07 Fuga del system prompt: el modelo revela sus instrucciones. Grave si contienen secretos o reglas de autorización.",
+        "LLM02 Divulgación de información sensible: el modelo revela datos que no debería (secretos, datos personales, datos de entrenamiento).",
+        "LLM05 Salida insegura: la salida del modelo se usa sin validar (HTML, comandos, SQL…).",
+        "LLM10 Consumo sin límite: respuestas o peticiones sin límites que disparan costes o tumban el servicio.",
+        "Método: línea base → ataque → evidencia → batería medida → informe. Siempre con autorización. Comandos: bot ask · bot render · bot attack · informe …"
+      ],
+      "see_also": ["appllm", "produccion"]
+    },
+    {
+      "id": "produccion",
+      "title": "Defender y desplegar una aplicación LLM",
+      "body": [
+        "Arquitectura primero: nada de secretos en el prompt; autorización fuera del modelo; el modelo solo accede a lo imprescindible (mínimo privilegio).",
+        "Salida no fiable: escapar antes de mostrar, validar antes de ejecutar, esquemas estrictos para salidas estructuradas.",
+        "Límites: tokens por respuesta, peticiones por usuario y gasto. Gestión de secretos con un gestor dedicado.",
+        "Detección: los filtros y clasificadores son una capa más, nunca la única: tienen falsos negativos (se evaden) y falsos positivos (bloquean a clientes legítimos).",
+        "Verificación: repetir la misma batería de ataques y el mismo eval antes y después; registrar y monitorizar; red teaming periódico."
+      ],
+      "see_also": ["inyeccion"]
+    },
+    {
       "id": "llm",
       "title": "Cómo genera texto un LLM",
       "body": [
@@ -110,7 +147,7 @@
       "title": "Cómo usar el terminal del Dojo",
       "body": [
         "Los comandos tienen la forma: comando subcomando <argumentos> --opción valor. Ejemplo: dataset inspect katanas --rows 20.",
-        "Ayuda siempre disponible: help (lista), help <comando>, <comando> --help, man <tema> (manual), explain <término> (glosario), cheatsheet (chuleta) y cualquier línea terminada en ? para ver opciones sin ejecutar nada.",
+        "Ayuda siempre disponible: help (lista), help <comando>, <comando> --help, man <tema> (manual), explain <término> (glosario), cheatsheet (chuleta) y cualquier línea terminada en « ?» (con un espacio antes) para ver opciones sin ejecutar nada.",
         "Tab autocompleta comandos, nombres de datasets y modelos. Las flechas ↑ y ↓ recorren el historial.",
         "El terminal solo actúa sobre el laboratorio simulado: nunca sobre tu ordenador."
       ],

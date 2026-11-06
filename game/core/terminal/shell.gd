@@ -30,6 +30,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	NnCommands.register(registry)
 	LangCommands.register(registry)
 	LlmCommands.register(registry)
+	SecurityCommands.register(registry)
 
 
 func execute(line: String) -> CommandResult:
@@ -196,5 +197,5 @@ func _unknown_command(words: PackedStringArray) -> CommandResult:
 	var r := CommandResult.error("Comando desconocido: '%s'." % words[0])
 	if not suggestion.is_empty():
 		r.line("¿Quisiste decir '%s'?" % suggestion, "warn")
-	r.line("Escribe 'help' para ver los comandos, o termina una línea con '?' para ver opciones.", "muted")
+	r.line("Escribe 'help' para ver los comandos, o termina una línea con ' ?' (espacio e interrogación) para ver opciones.", "muted")
 	return r
