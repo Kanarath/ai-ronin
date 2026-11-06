@@ -58,7 +58,9 @@ func assert_almost_eq(actual: float, expected: float, tolerance: float = 1e-6, m
 
 func assert_has(collection: Variant, item: Variant, message: String = "") -> void:
 	var found := false
-	if collection is Array or collection is Dictionary or collection is String:
+	var searchable := [TYPE_ARRAY, TYPE_DICTIONARY, TYPE_STRING, TYPE_PACKED_STRING_ARRAY,
+		TYPE_PACKED_INT32_ARRAY, TYPE_PACKED_INT64_ARRAY, TYPE_PACKED_FLOAT32_ARRAY, TYPE_PACKED_FLOAT64_ARRAY]
+	if typeof(collection) in searchable:
 		found = collection.has(item)
 	if not found:
 		_fail("<%s> no contiene <%s>" % [str(collection), str(item)], message)

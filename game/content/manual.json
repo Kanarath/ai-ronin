@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "topics": [
+    {
+      "id": "terminal",
+      "title": "Cómo usar el terminal del Dojo",
+      "body": [
+        "Los comandos tienen la forma: comando subcomando <argumentos> --opción valor. Ejemplo: dataset inspect katanas --rows 20.",
+        "Ayuda siempre disponible: help (lista), help <comando>, <comando> --help, man <tema> (manual), explain <término> (glosario), cheatsheet (chuleta) y cualquier línea terminada en ? para ver opciones sin ejecutar nada.",
+        "Tab autocompleta comandos, nombres de datasets y modelos. Las flechas ↑ y ↓ recorren el historial.",
+        "El terminal solo actúa sobre el laboratorio simulado: nunca sobre tu ordenador."
+      ],
+      "see_also": ["datasets", "knn"]
+    },
+    {
+      "id": "datasets",
+      "title": "Datasets, features y etiquetas",
+      "body": [
+        "Un dataset es una tabla: cada fila es un ejemplo y cada columna una feature, salvo la etiqueta, que es lo que queremos predecir.",
+        "Antes de entrenar nada, un ingeniero mira los datos: cuántos ejemplos hay, qué rango tiene cada feature, cuántos hay de cada clase. dataset inspect y dataset stats sirven para eso.",
+        "Pregunta clave: ¿todas las features ayudan a predecir la etiqueta? Una feature puede parecer importante y no aportar información, o al revés."
+      ],
+      "see_also": ["distancia", "normalizacion"]
+    },
+    {
+      "id": "distancia",
+      "title": "Distancia entre ejemplos",
+      "body": [
+        "Si cada ejemplo es un vector, dos ejemplos «parecidos» son dos puntos cercanos. La distancia euclídea es la longitud del segmento que los une: √(Σ (aᵢ − bᵢ)²).",
+        "El comando distance muestra cuánto aporta cada feature a la suma. Si una feature aporta el 99 %, la distancia prácticamente solo «ve» esa feature.",
+        "Esto pasa cuando las escalas son distintas: una diferencia de 50 °C pesa 2.500 en la suma, mientras que una diferencia de 2 en flexibilidad pesa 4. La unidad de medida está decidiendo por ti."
+      ],
+      "see_also": ["normalizacion", "knn"]
+    },
+    {
+      "id": "normalizacion",
+      "title": "Normalización de features",
+      "body": [
+        "Normalizar es poner todas las features en escalas comparables para que ninguna domine por su unidad de medida.",
+        "Min-max: (x − mín) / (máx − mín), lleva al rango [0, 1]. Es sensible a valores extremos. Z-score: (x − media) / desviación típica, centra en 0 con dispersión 1.",
+        "Regla de oro: los parámetros se aprenden con el conjunto de entrenamiento (dataset normalize ... --fit <train>) y se aplican tal cual al test y a cualquier dato nuevo. Si los calculas con todos los datos, información del test se filtra al entrenamiento.",
+        "En producción, los parámetros de normalización forman parte del modelo: se guardan junto a él y se aplican a cada petición. Olvidarlo es un fallo real y frecuente."
+      ],
+      "see_also": ["distancia", "evaluacion"]
+    },
+    {
+      "id": "knn",
+      "title": "k vecinos más cercanos (k-NN)",
+      "body": [
+        "Para clasificar un ejemplo: 1) calcula su distancia a todos los ejemplos de entrenamiento; 2) quédate con los k más cercanos; 3) gana la clase más votada.",
+        "Desempates en el Dojo: si dos vecinos están a la misma distancia, va antes el que aparece antes en el dataset; si hay empate de votos, gana la clase del vecino más cercano entre las empatadas.",
+        "k es un hiperparámetro. k=1 memoriza (incluido el ruido): overfitting. k enorme vota con medio dataset: underfitting. El valor bueno está en medio y se elige con datos de validación.",
+        "En producción: scikit-learn (KNeighborsClassifier) usa estructuras como KD-tree o Ball-tree para no comparar con todo; con millones de vectores se usa búsqueda aproximada (ANN). Es la misma búsqueda que verás en las bases de datos vectoriales del arco RAG."
+      ],
+      "see_also": ["evaluacion", "distancia"]
+    },
+    {
+      "id": "evaluacion",
+      "title": "Evaluar un modelo honestamente",
+      "body": [
+        "La pregunta no es «¿acierta con lo que ya ha visto?», sino «¿acertará con datos nuevos?». Para estimarlo se aparta un conjunto de test antes de entrenar (dataset split).",
+        "Accuracy = aciertos / total. La matriz de confusión enseña qué tipo de error comete el modelo.",
+        "Compara siempre la accuracy de entrenamiento con la de test (model sweep). Si la de entrenamiento es mucho mayor, el modelo está sobreajustando.",
+        "Fuga de datos: cualquier información del test que influya en el entrenamiento (ejemplos repetidos, normalizar con todo, elegir k mirando el test) infla el resultado. El modelo parecerá mejor de lo que es."
+      ],
+      "see_also": ["knn", "normalizacion"]
+    }
+  ]
+}

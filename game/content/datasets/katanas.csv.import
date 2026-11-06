@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://d3q6l5cgnpv5i"
+
+[deps]
+
+files=["res://content/datasets/katanas.dureza.translation", "res://content/datasets/katanas.flexibilidad.translation", "res://content/datasets/katanas.temperatura.translation", "res://content/datasets/katanas.calidad.translation"]
+
+source_file="res://content/datasets/katanas.csv"
+dest_files=["res://content/datasets/katanas.dureza.translation", "res://content/datasets/katanas.flexibilidad.translation", "res://content/datasets/katanas.temperatura.translation", "res://content/datasets/katanas.calidad.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

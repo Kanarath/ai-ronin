@@ -9,12 +9,16 @@ extends SceneTree
 ##   - Descubre res://tests/unit/**/test_*.gd
 ##   - Cada método "test_*" se ejecuta en una instancia NUEVA:
 ##     before_each() → test → after_each() → get_failures()
+##   - Un error de ejecución durante el test (detectado con ErrorCounter) es un fallo.
 ##   - Código de salida 0 si todo pasa, 1 si algo falla o no hay tests.
 
 const TESTS_DIR := "res://tests/unit"
 
+var _errors := ErrorCounter.new()
+
 
 func _initialize() -> void:
+	OS.add_logger(_errors)
 	var filter := _read_filter()
 	var files := _find_test_files(TESTS_DIR)
 	files.sort()
@@ -65,11 +69,14 @@ func _run_file(path: String) -> Array[int]:
 	var executed := 0
 	var failures_count := 0
 	for test_name in _test_method_names(script):
+		var errors_before := _errors.snapshot()
 		var instance: Object = script.new()
 		instance.call("before_each")
 		instance.call(test_name)
 		instance.call("after_each")
-		var failures: Array = instance.call("get_failures")
+		var failures: Array = instance.call("get_failures").duplicate()
+		if _errors.snapshot() > errors_before:
+			failures.append("ERROR DE EJECUCIÓN: %s" % _errors.last_message)
 		executed += 1
 		if failures.is_empty():
 			print("  [OK]    %s" % test_name)

@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "terms": [
+    {
+      "id": "dataset",
+      "term": "dataset",
+      "aliases": ["conjunto de datos"],
+      "short": "Colección de ejemplos con la que se entrena o evalúa un modelo.",
+      "body": "En aprendizaje supervisado, cada ejemplo tiene features (lo que el modelo observa) y una etiqueta (lo que debe predecir). La calidad del dataset limita la del modelo: si los datos tienen errores o sesgos, el modelo los aprende.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "feature",
+      "term": "feature",
+      "aliases": ["característica", "atributo", "variable"],
+      "short": "Una propiedad medible de cada ejemplo (dureza, flexibilidad...).",
+      "body": "Las features son la entrada del modelo. Elegir y transformar bien las features (feature engineering) suele importar más que elegir el algoritmo. Una feature irrelevante no solo no ayuda: en métodos basados en distancias puede estropear el resultado.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "label",
+      "term": "label",
+      "aliases": ["etiqueta", "clase", "target", "objetivo"],
+      "short": "La respuesta correcta de cada ejemplo, la que el modelo debe aprender a predecir.",
+      "body": "En clasificación la etiqueta es una categoría (apta / defectuosa); en regresión es un número. Las etiquetas las pone normalmente una persona o un proceso, y pueden contener errores (ruido de etiqueta).",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "vector",
+      "term": "vector",
+      "aliases": ["vector de features"],
+      "short": "Lista ordenada de números: cada ejemplo es un punto en un espacio de tantas dimensiones como features.",
+      "body": "Representar ejemplos como vectores permite usar geometría: medir distancias, ángulos y direcciones. Es la misma idea que, más adelante, usarán los embeddings para representar palabras y documentos.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "distancia-euclidea",
+      "term": "distancia euclídea",
+      "aliases": ["distancia euclidea", "euclidean", "distancia L2"],
+      "short": "La distancia «en línea recta»: raíz cuadrada de la suma de las diferencias al cuadrado.",
+      "body": "d(a, b) = √((a₁−b₁)² + (a₂−b₂)² + ... + (aₙ−bₙ)²). Al elevar al cuadrado, las diferencias grandes pesan mucho más que las pequeñas. Por eso una feature con una escala grande (por ejemplo, grados centígrados en cientos) puede dominar la distancia aunque no sea importante.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "distancia-manhattan",
+      "term": "distancia Manhattan",
+      "aliases": ["manhattan", "distancia L1"],
+      "short": "Suma de las diferencias absolutas, como recorrer las calles de una cuadrícula.",
+      "body": "d(a, b) = |a₁−b₁| + |a₂−b₂| + ... + |aₙ−bₙ|. Penaliza menos las diferencias grandes que la euclídea, pero sigue siendo sensible a la escala de cada feature.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "normalizacion",
+      "term": "normalización",
+      "aliases": ["normalizacion", "escalado", "feature scaling", "min-max", "z-score", "estandarización"],
+      "short": "Transformar las features para que tengan escalas comparables.",
+      "body": "Min-max lleva cada feature al rango [0, 1]: (x − mín) / (máx − mín). Z-score (estandarización) la centra en 0 con desviación típica 1: (x − media) / desviación. Es imprescindible en métodos basados en distancias (k-NN, k-means) y en redes neuronales. Los parámetros (mín, máx, media...) se aprenden SOLO del conjunto de entrenamiento y se aplican igual al test y a los datos nuevos.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "knn",
+      "term": "k-NN",
+      "aliases": ["knn", "k vecinos más cercanos", "k-nearest neighbors", "vecinos"],
+      "short": "Clasifica un ejemplo por votación entre los k ejemplos de entrenamiento más cercanos.",
+      "body": "k-NN no aprende parámetros: memoriza el entrenamiento y, al predecir, calcula distancias. Con k pequeño la frontera de decisión es muy irregular y sigue el ruido (overfitting); con k muy grande todo se parece a la clase mayoritaria (underfitting). Es lento con muchos datos porque compara con todos los ejemplos; las implementaciones reales usan estructuras como KD-tree o búsqueda aproximada.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "train-test",
+      "term": "train / test",
+      "aliases": ["entrenamiento", "test", "conjunto de test", "train test split", "split"],
+      "short": "Separar los datos en un conjunto para entrenar y otro, apartado, para evaluar.",
+      "body": "El test simula datos que el modelo nunca ha visto. Si evalúas con los mismos datos con los que entrenaste, mides memoria, no generalización. En la práctica se usa también un tercer conjunto de validación para elegir hiperparámetros, de modo que el test se toque una sola vez, al final.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "validacion",
+      "term": "conjunto de validación",
+      "aliases": ["validación", "validation set", "validacion cruzada", "cross-validation"],
+      "short": "Datos apartados para elegir hiperparámetros sin «gastar» el test.",
+      "body": "Si eliges k mirando la accuracy en el test, el test deja de ser imparcial: has ajustado el modelo a él. Lo correcto es elegir con un conjunto de validación (o validación cruzada) y usar el test solo para la estimación final.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "accuracy",
+      "term": "accuracy",
+      "aliases": ["exactitud", "tasa de acierto"],
+      "short": "Proporción de predicciones correctas: aciertos / total.",
+      "body": "Es la métrica más intuitiva, pero engaña cuando las clases están desequilibradas: si el 95 % de las hojas son aptas, un modelo que siempre dice «apta» tiene un 95 % de accuracy y no sirve para nada. Por eso se complementa con la matriz de confusión, la precision y el recall.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "matriz-confusion",
+      "term": "matriz de confusión",
+      "aliases": ["matriz de confusion", "confusion matrix"],
+      "short": "Tabla que cruza la clase real (filas) con la predicha (columnas).",
+      "body": "La diagonal son los aciertos; fuera de ella están los errores, y cada tipo de error tiene un coste distinto. Dar por buena una katana defectuosa (falso negativo, si la clase positiva es «defectuosa») suele ser mucho más grave que desechar una apta.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "overfitting",
+      "term": "overfitting",
+      "aliases": ["sobreajuste", "sobreentrenamiento"],
+      "short": "El modelo aprende el ruido y los detalles del entrenamiento y generaliza mal.",
+      "body": "Señal típica: accuracy muy alta en entrenamiento y bastante más baja en test. En k-NN con k=1, cada ejemplo de entrenamiento se clasifica con su propia etiqueta (distancia 0), así que la accuracy de entrenamiento es 100 % aunque haya etiquetas erróneas: el modelo las ha memorizado.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "underfitting",
+      "term": "underfitting",
+      "aliases": ["subajuste"],
+      "short": "El modelo es demasiado simple para captar el patrón: falla en entrenamiento y en test.",
+      "body": "En k-NN aparece con k muy grande: la votación se diluye entre ejemplos lejanos y la predicción tiende a la clase mayoritaria.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "fuga-datos",
+      "term": "fuga de datos",
+      "aliases": ["data leakage", "leakage", "fuga"],
+      "short": "Información del test (o del futuro) que se cuela en el entrenamiento y da resultados falsamente buenos.",
+      "body": "Ejemplos: evaluar con ejemplos que estaban en el entrenamiento; calcular la normalización con todos los datos antes de separar el test; elegir hiperparámetros mirando el test. El modelo parece mejor de lo que es y falla en producción. Es uno de los errores más frecuentes en proyectos reales de ML.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "hiperparametro",
+      "term": "hiperparámetro",
+      "aliases": ["hiperparametro", "hyperparameter"],
+      "short": "Ajuste que eliges tú antes de entrenar (k en k-NN), a diferencia de los parámetros que aprende el modelo.",
+      "body": "Se eligen probando valores y comparando en un conjunto de validación. k, la métrica de distancia o la tasa de aprendizaje de una red son hiperparámetros.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "ground-truth",
+      "term": "ground truth",
+      "aliases": ["verdad de referencia", "valor real"],
+      "short": "La etiqueta que consideramos correcta, contra la que se comparan las predicciones.",
+      "body": "Ojo: la «verdad» también la produce alguien y puede tener errores. Un dataset con un 8 % de etiquetas erróneas pone un techo a la accuracy medible.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "ruido-etiqueta",
+      "term": "ruido de etiqueta",
+      "aliases": ["label noise", "etiquetas erróneas"],
+      "short": "Ejemplos cuya etiqueta está mal puesta.",
+      "body": "Es inevitable en datos reales (errores humanos, criterios ambiguos). Un modelo que se ajusta perfectamente al entrenamiento ha memorizado también esos errores. El dataset de katanas del Dojo tiene un ~8 % de ruido intencionado.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "desviacion-tipica",
+      "term": "desviación típica",
+      "aliases": ["desviacion tipica", "desviación estándar", "std"],
+      "short": "Medida de cuánto se dispersan los valores alrededor de la media.",
+      "body": "σ = √(media de (x − media)²). La versión poblacional divide entre n (numpy.std por defecto); la muestral divide entre n−1 (pandas .std por defecto). El Dojo usa la poblacional.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "aprendizaje-supervisado",
+      "term": "aprendizaje supervisado",
+      "aliases": ["supervisado", "supervised learning"],
+      "short": "Aprender una relación entrada → salida a partir de ejemplos etiquetados.",
+      "body": "Se divide en clasificación (predecir una categoría) y regresión (predecir un número). Frente a él están el aprendizaje no supervisado (encontrar estructura sin etiquetas, como k-means) y el aprendizaje por refuerzo (aprender por recompensas al actuar en un entorno).",
+      "epistemic": "consolidado"
+    }
+  ]
+}
