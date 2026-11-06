@@ -84,6 +84,29 @@ func test_mision_T1_01_completa_con_prueba() -> void:
 	assert_eq(game.progress.data["reflections"].size(), 1)
 
 
+func test_la_leccion_llega_antes_que_el_objetivo() -> void:
+	game.start_mission("T1-01")
+	var lesson_at := -1
+	var objective_at := -1
+	for i in mentor.size():
+		if mentor[i]["kind"] == "lesson" and mentor[i]["text"].contains("Cómo se usa el terminal"):
+			lesson_at = i
+		if mentor[i]["text"].begins_with("Objetivo 1/"):
+			objective_at = i
+	assert_true(lesson_at != -1, "hay lección para el primer objetivo")
+	assert_true(lesson_at < objective_at, "primero se enseña, después se pide")
+
+
+func test_sin_lecciones_en_la_prueba_de_dominio() -> void:
+	game.start_mission("T1-01")
+	run(["dataset list", "dataset inspect katanas", "dataset stats katanas", "hipotesis temperatura_temple", "plot katanas", "plot katanas --x temperatura_temple", "answer 119"])
+	mentor.clear()
+	run(["reflexion una feature es lo que se mide y la etiqueta es la calidad de cada hoja"])
+	assert_eq(game.runner.phase, "trial")
+	for m in mentor:
+		assert_ne(m["kind"], "lesson")
+
+
 func test_hipotesis_obligatoria_antes_de_ejecutar() -> void:
 	game.start_mission("T1-01")
 	run(["dataset list", "dataset inspect katanas", "dataset stats katanas"])

@@ -37,6 +37,7 @@
     {
       "id": "o1",
       "text": "Normaliza katanas con min-max, crea un modelo k-NN con k=1 y entrénalo con el dataset normalizado completo.",
+      "teach": "k vecinos más cercanos (k-NN)\nPara clasificar una hoja, k-NN busca las k hojas conocidas más cercanas (menor distancia) y hace que voten: gana la clase más repetida. Con k=1 decide solo el vecino más cercano.\n«Entrenar» un k-NN es simplemente guardar los ejemplos. Comandos: model create <nombre> --k <número> crea el modelo; model train <nombre> <dataset> lo entrena. Como mide distancias, entrénalo con datos normalizados (ya sabes por qué).",
       "validator": { "type": "event", "event": "model.trained", "where": { "k": 1, "normalized": true } },
       "hints": [
         "Tres pasos: normalizar, crear y entrenar. Los comandos de modelos empiezan por model.",
@@ -48,6 +49,7 @@
     {
       "id": "o2",
       "text": "Evalúa el modelo con el mismo dataset con el que lo entrenaste.",
+      "teach": "Evaluar un modelo\nEvaluar es pedir al modelo que prediga ejemplos cuya respuesta real conoces y contar cuántas acierta. ACCURACY = aciertos / total. Comando: model evaluate <modelo> <dataset>. También verás la matriz de confusión: filas = clase real, columnas = clase predicha.",
       "prediction": {
         "prompt": "¿Qué accuracy crees que sacará evaluado con sus propios datos de entrenamiento?",
         "options": ["50%", "75%", "90%", "100%"]
@@ -62,6 +64,7 @@
     {
       "id": "o3",
       "text": "¿Por qué ha salido exactamente 100 %? Compruébalo: predice una hoja cualquiera del dataset de entrenamiento y mira la distancia de su primer vecino. ¿Cuál es? (answer <número>)",
+      "teach": "Mirar dentro de una predicción\nmodel predict <modelo> <dataset> <id> muestra los vecinos que han votado por una hoja concreta y a qué distancia están. Es la mejor forma de entender POR QUÉ el modelo decide lo que decide.",
       "validator": { "type": "answer", "expected": 0, "tolerance": 0.0001 },
       "wrong_answer": "Mira la tabla de vecinos de model predict: columna distancia del vecino nº 1.",
       "hints": [
@@ -73,6 +76,7 @@
     {
       "id": "o4",
       "text": "Haz una evaluación honesta: separa train/test (test 0.3, seed 42), normaliza con min-max aprendiendo los parámetros SOLO del train, entrena un k-NN con k=1 en el train normalizado y evalúalo en el test normalizado.",
+      "teach": "Evaluación honesta: train y test\nLa pregunta real es cómo funcionará con hojas NUEVAS. Para estimarlo se aparta ANTES un conjunto de test que el modelo nunca ve: dataset split <dataset> --test 0.3 --seed 42 crea <dataset>_train (70 %) y <dataset>_test (30 %).\nOjo: la normalización también «aprende» algo (los mínimos y máximos). Esos parámetros deben salir SOLO del train y aplicarse igual al test, como se haría con una hoja nueva en producción: dataset normalize <test> --fit <train>.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -115,6 +119,7 @@
     {
       "id": "o5",
       "text": "Compara la accuracy de train y test para varios valores de k con model sweep, usando tus datasets de train y test normalizados.",
+      "teach": "Elegir k\nk lo eliges tú: es un HIPERPARÁMETRO. model sweep --train <train> --test <test> entrena un modelo para varios valores de k y muestra la accuracy en train y en test. Si la de train es mucho mayor que la de test, el modelo está memorizando (overfitting).",
       "prediction": {
         "prompt": "¿Qué valor de k crees que generalizará MEJOR (más accuracy en test)?",
         "options": ["1", "3", "9", "31"]

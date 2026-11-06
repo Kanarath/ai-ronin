@@ -18,6 +18,7 @@ const MENTOR_COLORS := {
 	"warn": RoninPalette.GOLD,
 	"hint": RoninPalette.VIOLET,
 	"debrief": RoninPalette.TEXT,
+	"lesson": RoninPalette.TEXT,
 }
 
 var game: DojoGame
@@ -313,6 +314,16 @@ func _on_mission_completed(m: Dictionary, result: Dictionary, xp_gained: int) ->
 
 func _on_mentor(text: String, kind: String) -> void:
 	var col: Color = MENTOR_COLORS.get(kind, RoninPalette.TEXT)
+	if kind == "lesson":
+		# Lección: primera línea como título destacado, el resto como cuerpo.
+		var parts := text.split("\n", true, 1)
+		var body := _esc(parts[1]) if parts.size() > 1 else ""
+		var head := _esc(parts[0]) if parts.size() > 1 else ""
+		if head.is_empty():
+			body = _esc(text)
+		_mentor_log.append_text("[bgcolor=%s][color=%s]◇ LECCIÓN %s[/color][/bgcolor]\n%s\n\n" % [_hex(RoninPalette.PANEL_ALT), _hex(RoninPalette.CYAN), head, body])
+		_refresh_mission()
+		return
 	var prefix := "◆ " if kind == "debrief" else ""
 	_mentor_log.append_text("[color=%s]%s%s[/color]\n\n" % [_hex(col), prefix, _esc(text)])
 	_refresh_mission()

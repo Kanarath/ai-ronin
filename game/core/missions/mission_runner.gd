@@ -47,6 +47,10 @@ func start(p_mission: Dictionary, start_seq: int) -> void:
 	_last_seq = start_seq
 	_active_since = start_seq
 	mentor_message.emit(mission.get("mentor_intro", "Empecemos."), "info")
+	# Teoría general de la misión (tarjetas sin «unlock_on»): se muestra al empezar.
+	for card: Dictionary in mission.get("theory_cards", []):
+		if not card.has("unlock_on") or card["unlock_on"] == "start":
+			mentor_message.emit("%s\n%s" % [card["title"], card["body"]], "lesson")
 	_announce_current()
 	state_changed.emit()
 
@@ -222,6 +226,14 @@ func _announce_current() -> void:
 	if obj.is_empty():
 		return
 	var label := "Prueba de dominio · " if phase == "trial" else ""
+	# Primero se enseña, después se pide: la lección del objetivo va antes del reto.
+	# En la prueba de dominio no hay lecciones (se trata de demostrar sin ayuda).
+	if phase == "main":
+		for card: Dictionary in mission.get("theory_cards", []):
+			if card.get("unlock_on", "") == "objective:" + str(obj["id"]):
+				mentor_message.emit("%s\n%s" % [card["title"], card["body"]], "lesson")
+		if obj.has("teach"):
+			mentor_message.emit(obj["teach"], "lesson")
 	mentor_message.emit("%sObjetivo %d/%d: %s" % [label, index + 1, objectives.size(), obj["text"]], "info")
 	if obj.has("prediction"):
 		var p: Dictionary = obj["prediction"]

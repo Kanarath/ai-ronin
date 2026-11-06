@@ -36,6 +36,7 @@
     {
       "id": "o1",
       "text": "Mide la distancia entre hoja-001 y hoja-002 en el dataset original.",
+      "teach": "Parecido = cerca\nSi cada katana es un punto con 3 coordenadas (dureza, flexibilidad, temperatura), dos katanas parecidas son dos puntos cercanos. La DISTANCIA EUCLÍDEA es la longitud de la recta que los une: se restan las coordenadas una a una, se elevan al cuadrado, se suman y se hace la raíz cuadrada.\nEl comando distance <dataset> <id_a> <id_b> la calcula y además enseña cuánto aporta cada feature a la suma (columna «peso»).",
       "prediction": {
         "prompt": "¿Qué feature crees que aportará MÁS a la distancia entre esas dos hojas?",
         "options": ["dureza_hrc", "flexibilidad", "temperatura_temple"]
@@ -51,6 +52,7 @@
     {
       "id": "o2",
       "text": "¿Qué porcentaje de la distancia al cuadrado aporta temperatura_temple entre esas dos hojas? (answer <número>)",
+      "teach": "Leer el desglose\nEn la salida de distance, la columna «diferencia²» es lo que aporta cada feature a la suma antes de la raíz, y «peso» es ese aporte en porcentaje del total.",
       "validator": { "type": "answer", "expected": 99.8, "tolerance": 0.15 },
       "wrong_answer": "No. Busca la columna «peso» en la salida de distance.",
       "hints": [
@@ -62,6 +64,7 @@
     {
       "id": "o3",
       "text": "Crea una versión normalizada del dataset con min-max.",
+      "teach": "Normalizar\nNormalizar es poner todas las features en una escala comparable para que ninguna domine solo por su unidad de medida. MIN-MAX transforma cada valor así: (valor − mínimo) / (máximo − mínimo). El mínimo pasa a ser 0, el máximo 1 y todo lo demás queda entre medias.\nComando: dataset normalize <dataset> --method minmax. Crea un dataset NUEVO (katanas_minmax); el original no se toca.",
       "validator": { "type": "event", "event": "dataset.normalized", "where": { "source": "katanas", "method": "minmax" } },
       "hints": [
         "Es un subcomando de dataset. Míralo con: help dataset",
@@ -73,6 +76,7 @@
     {
       "id": "o4",
       "text": "Vuelve a medir la distancia entre hoja-001 y hoja-002, ahora en el dataset normalizado.",
+      "teach": "Misma medida, nueva escala\nLas distancias se pueden medir en cualquier dataset del laboratorio. Usa el normalizado y compara el desglose con el de antes.",
       "prediction": {
         "prompt": "Tras normalizar, ¿la temperatura seguirá aportando más de la mitad de la distancia?",
         "options": ["sí", "no"]

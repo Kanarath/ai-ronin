@@ -31,6 +31,7 @@
     {
       "id": "o1",
       "text": "Descubre qué datasets hay en el laboratorio.",
+      "teach": "Cómo se usa el terminal\nLos comandos tienen la forma «familia acción»: todo lo relativo a datos empieza por dataset. Para ver qué datasets hay en el laboratorio se escribe dataset list y se pulsa Enter.\nSi en algún momento no sabes qué hacer: botón Pista (o el comando hint), help para ver todos los comandos, o termina cualquier línea con ? para ver opciones sin ejecutar nada.",
       "validator": { "type": "event", "event": "dataset.listed" },
       "hints": [
         "Todo lo relacionado con datos empieza por la misma palabra. Prueba a escribir help.",
@@ -41,6 +42,7 @@
     {
       "id": "o2",
       "text": "Inspecciona el dataset katanas: ¿qué columnas tiene?",
+      "teach": "Ejemplos y columnas\nUn dataset es una tabla. Cada FILA es un ejemplo (aquí, una katana concreta). Cada COLUMNA es una medida de ese ejemplo. Para ver las primeras filas: dataset inspect <nombre>, por ejemplo dataset inspect katanas. Fíjate en el nombre de cada columna.",
       "validator": { "type": "event", "event": "dataset.inspected", "where": { "dataset": "katanas" } },
       "hints": [
         "Hay un subcomando de dataset para mirar dentro. Termina la línea con ? para ver opciones: dataset ?",
@@ -52,6 +54,7 @@
     {
       "id": "o3",
       "text": "Obtén las estadísticas del dataset: medias, rangos y cuántas hojas hay de cada clase.",
+      "teach": "Resumir 240 filas\nCon muchos ejemplos no puedes mirarlos uno a uno: se resumen con estadísticas descriptivas. MEDIA: el valor típico. DESVIACIÓN TÍPICA: cuánto se alejan los valores de la media (pequeña = todos parecidos). MÍNIMO, MÁXIMO y RANGO (máx − mín): entre qué valores se mueve cada columna. También verás cuántas hojas hay de cada clase. Comando: dataset stats <nombre>.",
       "validator": { "type": "event", "event": "dataset.stats", "where": { "dataset": "katanas" } },
       "hints": [
         "¿Qué palabra en inglés significa «estadísticas»?",
@@ -62,6 +65,7 @@
     {
       "id": "o4",
       "text": "¿Qué feature separa mejor las hojas aptas de las defectuosas? Predice y después compruébalo dibujando al menos dos combinaciones de features con plot.",
+      "teach": "¿Qué feature ayuda a distinguir?\nUna feature es útil para clasificar si toma valores DISTINTOS en cada clase. El gráfico de dispersión pone una feature en el eje horizontal, otra en el vertical, y colorea cada katana según su clase. Si los colores forman grupos separados, esas features ayudan; si están mezclados, no. Comando: plot katanas --x <feature> --y <feature>.\nAntes de dibujar, elige tu predicción con los botones de abajo (o hipotesis <feature>).",
       "prediction": {
         "prompt": "¿Qué feature crees que es MENOS útil para distinguir aptas de defectuosas?",
         "options": ["dureza_hrc", "flexibilidad", "temperatura_temple"]
@@ -77,6 +81,7 @@
     {
       "id": "o5",
       "text": "¿Cuál es el rango (máximo − mínimo) de temperatura_temple? Responde con answer <número>.",
+      "teach": "Escalas\nCada feature se mide en su propia unidad: la dureza en HRC, la flexibilidad de 0 a 10, la temperatura en grados. El rango te dice en qué escala se mueven sus números. Lo tienes en la tabla de dataset stats. Para responder a una pregunta numérica: answer <número>, por ejemplo answer 42.",
       "validator": { "type": "answer", "expected": 119, "tolerance": 0.5 },
       "wrong_answer": "No. El rango es máximo menos mínimo de esa columna. Lo tienes en dataset stats.",
       "hints": [
@@ -88,6 +93,7 @@
     {
       "id": "o6",
       "text": "Explica con tus palabras qué es una feature y qué es la etiqueta en este dataset (reflexion <texto>, mínimo 12 palabras).",
+      "teach": "Explicar para entender\nEscribir con tus palabras obliga a ordenar las ideas, y es la mejor comprobación de que lo has entendido. Tus reflexiones se guardan y las revisaremos juntos. Comando: reflexion <tu texto>.",
       "validator": { "type": "reflection", "min_words": 12 },
       "hints": [
         "Piensa en qué mediría un inspector y qué decidiría al final.",

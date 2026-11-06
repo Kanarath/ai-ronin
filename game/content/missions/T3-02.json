@@ -54,6 +54,7 @@
     {
       "id": "o2",
       "text": "Calcula precision y recall en el test con «defectuosa» como clase positiva.",
+      "teach": "Separar los dos errores\nCon dos clases hay dos maneras de equivocarse. Si «defectuosa» es la clase positiva (la que queremos detectar): un FALSO NEGATIVO es una defectuosa que el modelo da por apta (se vende); un FALSO POSITIVO es una apta que el modelo marca como defectuosa (se desecha).\nPRECISION = de las que marqué como defectuosas, cuántas lo eran. RECALL = de las defectuosas reales, cuántas encontré. Comando: metrics <modelo> <dataset> --positive defectuosa.",
       "validator": { "type": "event", "event": "metrics.computed", "where": { "positive": "defectuosa", "overlap": 0 } },
       "diagnostics": [
         {
@@ -82,6 +83,7 @@
     {
       "id": "o4",
       "text": "Repite las métricas bajando el umbral a 0.3.",
+      "teach": "El umbral\nCon k=9, cada hoja recibe una puntuación: la fracción de sus 9 vecinos que son defectuosos (de 0 a 1). Por defecto se marca como defectuosa si la puntuación es ≥ 0,5, pero ese umbral lo puedes mover con --threshold.",
       "prediction": {
         "prompt": "Si bajas el umbral (marcas como defectuosa con menos votos), ¿qué crees que pasará?",
         "options": ["sube recall y baja precision", "suben los dos", "baja recall y sube precision"]
@@ -96,6 +98,7 @@
     {
       "id": "o5",
       "text": "Obtén la curva precision-recall para todos los umbrales posibles. ¿Cuál es el umbral MÁS ALTO que consigue recall 1.0 (ninguna defectuosa vendida)? (answer <número>, 3 decimales)",
+      "teach": "Todos los umbrales a la vez\nmetrics curve <modelo> <dataset> --positive defectuosa calcula precision y recall para cada umbral posible (con k=9: 1/9, 2/9… 9/9).",
       "validator": { "type": "all", "of": [
         { "type": "event", "event": "metrics.curve", "where": { "positive": "defectuosa", "overlap": 0 } },
         { "type": "answer", "expected": 0.222, "tolerance": 0.005 }

@@ -46,6 +46,7 @@
     {
       "id": "o2",
       "text": "Crea un regresor con learning rate 0.001 y entrénalo 100 épocas sobre temple (x = minutos_enfriado, y = dureza_hrc).",
+      "teach": "Aprender = bajar el error\nUna regresión lineal predice un número con una recta: dureza = w · minutos + b. Entrenar es buscar los w y b con los que la recta se ajusta mejor a los puntos. El error se mide con el MSE: la media de (predicción − real)².\nEl DESCENSO POR GRADIENTE empieza en w=0, b=0 y repite: calcula hacia dónde sube el error (el gradiente) y da un paso en sentido contrario. El tamaño del paso es el LEARNING RATE (lr). Cada repetición sobre todos los datos es una ÉPOCA.\nComandos: regress create <nombre> --lr <número> · regress train <nombre> <dataset> --x <entrada> --y <objetivo> --epochs <n>.",
       "prediction": {
         "prompt": "¿Crees que en 100 épocas la pérdida (MSE) bajará de 10?",
         "options": ["sí", "no"]
@@ -109,6 +110,7 @@
     {
       "id": "o6",
       "text": "Normaliza SOLO la feature minutos_enfriado con z-score y entrena un regresor nuevo con lr 0.5 y como mucho 20 épocas sobre el dataset normalizado.",
+      "teach": "Normalizar solo la entrada\nAquí queremos seguir prediciendo la dureza en HRC, así que solo normalizamos la entrada (minutos). Z-SCORE transforma así: (valor − media) / desviación típica, y deja la feature centrada en 0 con dispersión 1. La opción --only elige qué features se transforman.",
       "prediction": {
         "prompt": "Con x normalizada y lr 0.5, ¿cuántas épocas crees que necesitará para converger?",
         "options": ["menos de 10", "unas 100", "más de 500"]
