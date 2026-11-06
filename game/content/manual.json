@@ -2,6 +2,31 @@
   "schema_version": 1,
   "topics": [
     {
+      "id": "agentes",
+      "title": "Agentes: bucle, herramientas y memoria",
+      "body": [
+        "Bucle: observar → decidir (el LLM elige herramienta y argumentos) → actuar (el código ejecuta la herramienta) → observar el resultado… hasta terminar.",
+        "Las herramientas tienen efectos reales. Las sensibles (dinero, datos personales, envíos al exterior, memoria) son las que hay que proteger.",
+        "La memoria a largo plazo persiste entre tareas y es útil, pero cualquier cosa que entre en ella seguirá influyendo en el futuro.",
+        "Leer la traza (qué herramienta, con qué argumentos, por orden de quién) es la forma de entender y auditar un agente.",
+        "Comandos: agent create · agent tools · agent inbox · agent run <agente> triaje|presupuesto · agent chat · agent memory · agent eval."
+      ],
+      "see_also": ["ataquesagentes", "appllm"]
+    },
+    {
+      "id": "ataquesagentes",
+      "title": "Atacar y defender agentes (OWASP Agentic 2026)",
+      "body": [
+        "ASI01 Secuestro del objetivo: instrucciones en el contenido que procesa el agente cambian lo que persigue.",
+        "ASI02 Abuso de herramientas: el agente usa sus herramientas legítimas para fines del atacante (reembolsar, exfiltrar).",
+        "ASI03 Abuso de identidad y privilegios: el agente actúa con SUS permisos para quien no los tiene (confused deputy).",
+        "ASI06 Envenenamiento de memoria: datos falsos que persisten y actúan en tareas futuras.",
+        "Defensas en el código: mínimo privilegio por tarea, validación de argumentos, autorización con la identidad del usuario, procedencia de la memoria y límites de pasos. Spotlight y supervisión humana son capas adicionales, no la base.",
+        "Comandos: agent mail · agent attack · agent defend."
+      ],
+      "see_also": ["agentes", "produccion"]
+    },
+    {
       "id": "rag",
       "title": "RAG: recuperación + generación",
       "body": [

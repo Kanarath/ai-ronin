@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "note": "Estado inicial ficticio de la trastienda de la forja Kurogane (laboratorio A3). Dominio interno: kurogane.example.",
+  "orders": {
+    "P-101": {"customer": "aiko@clientes.example", "item": "Katana Kurogane básica", "amount": 800, "status": "entregado"},
+    "P-102": {"customer": "kenji@clientes.example", "item": "Katana Kurogane maestra", "amount": 2400, "status": "entregado"},
+    "P-103": {"customer": "mei@clientes.example", "item": "Encargo a medida", "amount": 3200, "status": "en forja"}
+  },
+  "inbox": [
+    {"id": "c1", "from": "aiko@clientes.example", "subject": "Llegó con un arañazo", "body": "Hola, mi katana del pedido P-101 llegó con un pequeño arañazo en la funda. ¿Qué puedo hacer?"},
+    {"id": "c2", "from": "kenji@clientes.example", "subject": "Consulta de cuidados", "body": "¿Cada cuánto tengo que aplicar aceite a la hoja de mi pedido P-102?"},
+    {"id": "c3", "from": "mei@clientes.example", "subject": "¿Cuándo está mi encargo?", "body": "Quería saber en qué estado está mi encargo P-103."}
+  ],
+  "allowed_domains": ["kurogane.example", "clientes.example"],
+  "tools": [
+    {"name": "leer_correo", "description": "Lee un correo de la bandeja de entrada.", "sensitive": false},
+    {"name": "buscar_pedido", "description": "Consulta los datos de un pedido.", "sensitive": false},
+    {"name": "enviar_correo", "description": "Envía un correo en nombre de la forja.", "sensitive": true},
+    {"name": "aplicar_reembolso", "description": "Devuelve dinero al cliente de un pedido.", "sensitive": true},
+    {"name": "listar_clientes", "description": "Devuelve los correos de todos los clientes.", "sensitive": true},
+    {"name": "guardar_memoria", "description": "Guarda una nota en la memoria permanente del agente.", "sensitive": true},
+    {"name": "leer_memoria", "description": "Lee las notas de la memoria permanente.", "sensitive": false}
+  ],
+  "task_tools": {
+    "triaje": ["leer_correo", "buscar_pedido", "enviar_correo"],
+    "chat": ["buscar_pedido", "aplicar_reembolso", "enviar_correo", "guardar_memoria", "leer_memoria"],
+    "presupuesto": ["buscar_pedido", "leer_memoria"]
+  }
+}

@@ -83,3 +83,9 @@ Antes de abrir una pista, ejecuta el test y lee el mensaje de error: suele decir
 <details><summary>🟡 construir_idf</summary>Para contar df, convierte los términos de cada fragmento en un <code>set</code> (cada fragmento cuenta una vez por término) y suma en un diccionario.</details>
 <details><summary>🟡 vectorizar</summary><code>tf</code> con un diccionario de conteos; pesos = <code>conteo / len(terminos) * idf.get(t, 1.0)</code>; norma = <code>math.sqrt(sum(w*w for w in pesos.values()))</code>; divide cada peso entre la norma (si no es 0).</details>
 <details><summary>🔴 buscar</summary>Filtra primero: <code>[e for e in indice if not acl or rol == "empleado" or e["acceso"] == "publico"]</code>. Después calcula <code>(e["id"], coseno(q, e["vector"]))</code> y ordena con <code>key=lambda t: (-t[1], t[0])</code>; corta <code>[:k]</code>.</details>
+## A3_01 · autorización del agente
+
+<details><summary>🟢 autorizar</summary>Cuatro <code>if</code> en el orden indicado; cada uno devuelve <code>(False, "motivo")</code>. Si ninguno salta, <code>return True, "ok"</code>.</details>
+<details><summary>🟡 dominio de un correo</summary><code>dominio = args.get("para", "").split("@")[-1]</code> y comprueba <code>dominio in DOMINIOS_PERMITIDOS</code>.</details>
+<details><summary>🟡 importe válido</summary><code>pedido in PEDIDOS and 0 &lt; importe &lt;= PEDIDOS[pedido]</code>.</details>
+<details><summary>🔴 ejecutar_plan</summary>Un contador de pasos. Para cada llamada: si el contador ya llegó a PRESUPUESTO_PASOS, bloquea con "step-budget" (sin autorizar). Si no, construye <code>ctx = dict(contexto, origen=llamada["origen"])</code>, llama a <code>autorizar</code>, suma 1 al contador y añade a la lista que toque.</details>

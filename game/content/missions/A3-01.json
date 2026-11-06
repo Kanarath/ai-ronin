@@ -1,0 +1,120 @@
+{
+  "id": "A3-01",
+  "schema_version": 1,
+  "title": "El ayudante de la trastienda",
+  "unit": "A3",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "modelo-simplificado",
+  "estimated_minutes": 35,
+  "requires_missions": ["A1-01"],
+  "competencies": { "requires": ["A1.construir"], "trains": ["A3.agentes", "A3.herramientas", "A3.memoria"] },
+  "briefing": "El chatbot solo HABLABA. La forja ahora quiere un agente que HAGA cosas: leer los correos de los clientes, consultar pedidos, responder, aplicar reembolsos y recordar preferencias de un día para otro. Un agente es un LLM en un bucle con herramientas: decide qué herramienta usar, observa el resultado y vuelve a decidir. Hoy lo pondrás a trabajar y aprenderás a leer su traza: el registro de cada paso que da.",
+  "learning_objectives": [
+    "Explicar la diferencia entre una aplicación LLM y un agente (bucle, herramientas, memoria)",
+    "Leer la traza de un agente: qué herramienta usó, con qué argumentos, por orden de quién",
+    "Identificar qué herramientas tienen efectos sensibles y medir el coste de la supervisión humana"
+  ],
+  "mentor_intro": "Como siempre, honestidad: el «cerebro» del agente es simulado por reglas. Las herramientas, la memoria y los controles sí actúan de verdad sobre el estado del laboratorio.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "agente",
+      "title": "Qué es un agente",
+      "body": "Un agente repite un bucle: 1) OBSERVA (lee la tarea, un correo, el resultado de una herramienta); 2) DECIDE qué hacer (el LLM elige una herramienta y sus argumentos: «function calling» o «tool use»); 3) ACTÚA (la aplicación ejecuta la herramienta); 4) vuelve a observar, hasta terminar. Puede tener MEMORIA a largo plazo que persiste entre sesiones. La diferencia clave con un chatbot: sus salidas ya no son texto, son ACCIONES con efectos reales. Más: man agentes"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Crea el agente y revisa sus herramientas. ¿Cuántas están marcadas como sensibles? (answer <número>)",
+      "teach": "Las herramientas\nagent create <nombre> crea el agente; agent tools <nombre> lista sus herramientas, qué hace cada una y si es SENSIBLE (tiene efectos importantes: mueve dinero, envía información fuera, cambia la memoria). En una auditoría de un agente, lo primero es el inventario de lo que PUEDE hacer.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "agent.tools" },
+        { "type": "answer", "expected": 4, "tolerance": 0 }
+      ] },
+      "hints": ["agent create kage · agent tools kage", "Cuenta las que tienen «⚠ sí»."],
+      "on_complete": "4 sensibles: enviar correos, reembolsar, listar clientes y escribir en la memoria. Y ahora mismo puede usarlas TODAS en cualquier tarea. Recuérdalo."
+    },
+    {
+      "id": "o2",
+      "text": "Mira la bandeja de entrada que va a procesar el agente.",
+      "teach": "La entrada del agente\nagent inbox <nombre> muestra los correos que leerá. Fíjate en quién los escribe: cualquier persona de Internet puede mandar un correo a la forja.",
+      "validator": { "type": "event", "event": "agent.inbox" },
+      "hints": ["agent inbox kage"],
+      "on_complete": "Tres consultas normales de clientes."
+    },
+    {
+      "id": "o3",
+      "text": "Ejecuta la tarea autónoma «triaje»: que el agente lea los correos y responda a cada cliente.",
+      "teach": "Una tarea autónoma y su traza\nagent run <nombre> triaje deja trabajar al agente solo. La salida es su TRAZA: cada línea es un paso (herramienta, argumentos y resultado). Leer trazas es la habilidad básica para depurar y para auditar agentes: así se sabe POR QUÉ hizo lo que hizo.",
+      "validator": { "type": "event", "event": "agent.ran", "where": { "task": "triaje", "replies": 3 } },
+      "hints": ["agent run kage triaje"],
+      "on_complete": "Para cada correo: leer_correo → buscar_pedido → enviar_correo. Nadie le ha dicho el orden: el agente lo «decide» en cada paso."
+    },
+    {
+      "id": "o4",
+      "text": "¿Cuántos pasos (llamadas a herramientas) ha necesitado el agente para el triaje? (answer <número>)",
+      "validator": { "type": "answer", "expected": 9, "tolerance": 0 },
+      "hints": ["Está en la línea «Resultado» de la traza.", "3 correos × 3 herramientas."],
+      "on_complete": "9 pasos. En un agente real, cada paso es una llamada al LLM (coste y latencia) y una oportunidad de error."
+    },
+    {
+      "id": "o5",
+      "text": "Como empleado, ordénale al agente un reembolso legítimo de 120 monedas para el pedido P-101 (por el arañazo de la funda).",
+      "teach": "Órdenes directas\nagent chat <nombre> <mensaje> --as empleado es hablar con el agente y darle una orden. Ejemplo: agent chat kage Reembolsa 120 monedas del pedido P-101 --as empleado. Mira en la traza qué herramientas usa.",
+      "validator": { "type": "event", "event": "agent.chat", "where": { "role": "empleado", "refund_total": 120 } },
+      "hints": ["agent chat kage Reembolsa 120 monedas del pedido P-101 por el arañazo --as empleado"],
+      "on_complete": "Comprueba el pedido y reembolsa. Útil… y peligroso: el agente puede mover dinero con una frase."
+    },
+    {
+      "id": "o6",
+      "text": "Usa la memoria: pide al agente que recuerde una preferencia de aiko@clientes.example y después ejecuta la tarea «presupuesto» para esa clienta.",
+      "teach": "Memoria a largo plazo\nCon «Recuerda que …» el agente guarda una nota que seguirá ahí en futuras tareas (agent memory <nombre> la muestra, con su ORIGEN). La tarea agent run <nombre> presupuesto --cliente <correo> lee la memoria antes de preparar el presupuesto.",
+      "validator": { "type": "sequence", "steps": [
+        { "type": "event", "event": "agent.chat", "where": { "message": { "icontains": "recuerda" } } },
+        { "type": "event", "event": "agent.ran", "where": { "task": "presupuesto" } }
+      ] },
+      "hints": ["agent chat kage Recuerda que aiko@clientes.example prefiere los envíos por la mañana. --as empleado", "agent run kage presupuesto --cliente aiko@clientes.example"],
+      "on_complete": "La memoria persiste entre tareas: es lo que hace útil a un agente… y lo que hace que un dato malicioso, una vez dentro, siga actuando días después."
+    },
+    {
+      "id": "o7",
+      "text": "Evalúa el agente con sus tareas legítimas.",
+      "teach": "Evals de agentes\nagent eval <nombre> comprueba tres tareas reales (triaje, reembolso legítimo y presupuesto). Como en A1 y A2, será tu línea base: las defensas no deben romperlo.",
+      "validator": { "type": "event", "event": "agent.eval", "where": { "pass_rate": 1.0 } },
+      "hints": ["agent eval kage"],
+      "on_complete": "3 de 3 y 0 aprobaciones humanas: el agente trabaja solo."
+    },
+    {
+      "id": "o8",
+      "text": "Explica con tus palabras qué diferencia a un agente de un chatbot, para qué sirve leer su traza y qué riesgo añaden las herramientas sensibles y la memoria. (reflexion <texto>, mínimo 40 palabras)",
+      "validator": { "type": "reflection", "min_words": 40 },
+      "hints": ["Bucle, herramientas con efectos, memoria persistente.", "Piensa en A1 y A2: ¿qué pasa si una instrucción maliciosa llega a un agente que puede reembolsar?"]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: el coste de la supervisión. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Activa la supervisión humana (hitl: cada herramienta sensible requiere aprobación) y repite el eval. ¿Cuántas aprobaciones humanas necesita? (answer <número>)",
+        "validator": { "type": "all", "of": [
+          { "type": "event", "event": "agent.eval", "where": { "defenses": { "icontains": "hitl" } } },
+          { "type": "answer", "expected": 4, "tolerance": 0 }
+        ] },
+        "hints": ["agent defend <agente> hitl on · agent eval <agente>", "Última línea del eval."],
+        "on_complete": "4 aprobaciones para 3 tareas normales. Con cientos de tareas al día, el revisor acaba aprobando sin leer («fatiga de aprobación»). La supervisión humana es valiosa, pero hay que reservarla para lo que de verdad la necesita."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has puesto a trabajar un agente con herramientas y memoria, has leído su traza paso a paso, has visto que puede mover dinero con una frase y has medido el coste de supervisar cada acción sensible.",
+    "why": "Los agentes son la evolución natural de las aplicaciones LLM y multiplican su impacto: ya no generan texto, ejecutan acciones. Por eso OWASP publicó en 2025 un Top 10 específico para aplicaciones agénticas, y el bloque «Attacking AI Agents» de los programas de AI Red Teaming se centra en sus instrucciones, su memoria y sus herramientas.",
+    "in_production": "Los agentes reales usan «function calling» o «tool use» de la API del LLM: el modelo devuelve el nombre de la herramienta y sus argumentos en JSON, y el código de la aplicación la ejecuta. Se registran trazas completas (observabilidad), se limitan pasos y gasto, y los permisos se aplican en el código de las herramientas, nunca solo en el prompt.",
+    "simplifications": ["Razonamiento simulado por reglas", "Siete herramientas", "Un revisor humano simulado"],
+    "exercise": "forja/ejercicios/A3_01_agente.py"
+  },
+  "further_reading": ["ref.owasp-agentic-2026", "ref.owasp-llm-2025"],
+  "xp": { "base": 250 }
+}

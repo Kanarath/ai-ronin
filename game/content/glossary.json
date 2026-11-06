@@ -592,6 +592,70 @@
       "short": "Hacer que la respuesta se base en las fuentes recuperadas y que el sistema se abstenga si no hay información relevante.",
       "body": "Técnicas: umbral mínimo de similitud, instrucciones para citar y para decir «no lo sé», y verificación posterior de que cada afirmación está respaldada por un fragmento. Reduce, sin eliminar, las alucinaciones.",
       "epistemic": "practica-industria"
+    },
+    {
+      "id": "agente",
+      "term": "agente de IA",
+      "aliases": ["agente", "agentes", "agentic", "agéntico", "bucle del agente"],
+      "short": "Sistema en el que un LLM decide, en un bucle, qué herramientas usar para cumplir un objetivo, observa los resultados y vuelve a decidir.",
+      "body": "Componentes: modelo, herramientas (acciones), memoria (corto y largo plazo) y un bucle de control. A diferencia de un chatbot, sus salidas son acciones con efectos reales. Su seguridad tiene su propio marco: OWASP Top 10 for Agentic Applications 2026.",
+      "epistemic": "practica-industria"
+    },
+    {
+      "id": "tool-calling",
+      "term": "tool calling",
+      "aliases": ["function calling", "llamada a herramientas", "uso de herramientas", "tool use", "herramientas"],
+      "short": "Capacidad de un LLM de devolver, en lugar de texto, la petición estructurada de ejecutar una herramienta con unos argumentos.",
+      "body": "El modelo NO ejecuta nada: devuelve el nombre de la herramienta y sus argumentos (normalmente en JSON) y el código de la aplicación la ejecuta. Por eso los controles de seguridad deben estar en ese código: validar argumentos, comprobar permisos y limitar efectos.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "confused-deputy",
+      "term": "confused deputy",
+      "aliases": ["diputado confundido", "ASI03", "abuso de privilegios", "abuso de identidad"],
+      "short": "Un componente con privilegios actúa en nombre de alguien que no tiene esos privilegios.",
+      "body": "Es un problema clásico de seguridad informática, descrito por Norm Hardy (1988), que reaparece en los agentes: el agente puede reembolsar, y un cliente le pide un reembolso. Se resuelve autorizando cada acción con la identidad y los permisos de quien la solicita, no con los del agente.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "excessive-agency",
+      "term": "agencia excesiva",
+      "aliases": ["excessive agency", "LLM06", "exceso de autonomía", "exceso de permisos"],
+      "short": "Un sistema basado en LLM tiene más funcionalidad, permisos o autonomía de la que necesita.",
+      "body": "OWASP LLM06:2025 identifica tres causas: funcionalidad excesiva (herramientas que la tarea no necesita), permisos excesivos y autonomía excesiva (acciones de alto impacto sin confirmación). La mitigación principal es el mínimo privilegio por tarea.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "secuestro-objetivo",
+      "term": "secuestro del objetivo",
+      "aliases": ["agent goal hijack", "ASI01", "goal hijacking"],
+      "short": "Un atacante cambia lo que el agente intenta conseguir mediante contenido que el agente procesa.",
+      "body": "Es la forma agéntica de la inyección de prompts: el agente recibe instrucciones dentro de correos, documentos, webs o resultados de herramientas y pasa a perseguir el objetivo del atacante, usando sus propias herramientas. OWASP ASI01:2026.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "envenenamiento-memoria",
+      "term": "envenenamiento de memoria",
+      "aliases": ["memory poisoning", "ASI06", "envenenamiento de contexto"],
+      "short": "Introducir información falsa o instrucciones en la memoria persistente de un agente para que actúen en tareas futuras.",
+      "body": "Es sigiloso (no hace nada visible al principio) y persistente (sigue actuando hasta que alguien lo detecta). Mitigación: procedencia de cada entrada de memoria, no escribir en memoria a partir de contenido externo sin validación, revisión y caducidad de las notas. OWASP ASI06:2026.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "hitl",
+      "term": "human in the loop",
+      "aliases": ["hitl", "supervisión humana", "aprobación humana", "fatiga de aprobación"],
+      "short": "Un humano debe aprobar ciertas acciones del sistema antes de que se ejecuten.",
+      "body": "Útil para acciones irreversibles o de alto impacto, pero tiene coste: si se pide para todo, aparece la fatiga de aprobación (se aprueba sin leer). Además, el humano solo puede juzgar lo que ve: una petición que parece legítima se aprueba aunque no esté autorizada. No sustituye a la autorización en el código.",
+      "epistemic": "practica-industria"
+    },
+    {
+      "id": "traza",
+      "term": "traza de un agente",
+      "aliases": ["traza", "trace", "observabilidad", "tracing"],
+      "short": "Registro paso a paso de lo que hizo un agente: cada llamada a herramienta, sus argumentos, su resultado y su origen.",
+      "body": "Es imprescindible para depurar, auditar e investigar incidentes. En producción se usan herramientas de observabilidad que guardan las trazas de cada ejecución (cuidando de no registrar datos sensibles innecesarios).",
+      "epistemic": "practica-industria"
     }
   ]
 }

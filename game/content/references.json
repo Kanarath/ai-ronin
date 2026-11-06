@@ -2,6 +2,15 @@
   "schema_version": 1,
   "references": [
     {
+      "id": "ref.owasp-agentic-2026",
+      "title": "OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025",
+      "source": "OWASP GenAI Security Project",
+      "type": "guia",
+      "url": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/",
+      "consulted": "2026-11-06",
+      "review_by": "2027-05-06"
+    },
+    {
       "id": "ref.lewis-2020",
       "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
       "authors": "P. Lewis et al.",

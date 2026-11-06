@@ -267,14 +267,14 @@ static func _report_check(c: CommandContext, _a: Dictionary) -> CommandResult:
 	var sev := String(rep.get("severidad", "")).to_lower().strip_edges()
 	if not sev.is_empty() and not sev in SEVERITIES:
 		problems.append("severidad debe ser: baja, media, alta o crítica.")
-	var owasp_rx := RegEx.create_from_string("LLM(0[1-9]|10)")
+	var owasp_rx := RegEx.create_from_string("LLM(0[1-9]|10)|ASI(0[1-9]|10)")
 	var owasp_ok := owasp_rx.search(String(rep.get("owasp", "")).to_upper()) != null
 	if not owasp_ok:
-		problems.append("owasp debe citar una categoría del OWASP Top 10 for LLM Applications 2025 (LLM01…LLM10).")
+		problems.append("owasp debe citar una categoría OWASP: Top 10 for LLM Applications 2025 (LLM01…LLM10) o Top 10 for Agentic Applications 2026 (ASI01…ASI10).")
 	var has_metrics := RegEx.create_from_string("\\d").search(String(rep.get("verificacion", ""))) != null
 	if not has_metrics:
 		problems.append("verificacion debe incluir una medida (p. ej. la tasa de éxito de los ataques antes y después).")
-	var steps_ok := String(rep.get("pasos", "")).contains("bot ") or String(rep.get("pasos", "")).contains("rag ") or RegEx.create_from_string("\\d\\)").search(String(rep.get("pasos", ""))) != null
+	var steps_ok := String(rep.get("pasos", "")).contains("bot ") or String(rep.get("pasos", "")).contains("rag ") or String(rep.get("pasos", "")).contains("agent ") or RegEx.create_from_string("\\d\\)").search(String(rep.get("pasos", ""))) != null
 	if not steps_ok:
 		problems.append("pasos debe ser reproducible: incluye los comandos o una lista numerada 1) 2) 3).")
 	var r := CommandResult.new()

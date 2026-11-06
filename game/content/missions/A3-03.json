@@ -1,0 +1,102 @@
+{
+  "id": "A3-03",
+  "schema_version": 1,
+  "title": "Las llaves del taller",
+  "unit": "A3",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 45,
+  "requires_missions": ["A3-02"],
+  "competencies": { "requires": ["A3.secuestro-objetivo", "A3.confused-deputy"], "trains": ["A3.minimo-privilegio", "A3.autorizacion", "A3.supervision"] },
+  "briefing": "Un buen maestro no entrega todas las llaves del taller al aprendiz el primer día. Hoy diseñarás los controles del agente comprobando, como siempre, cuánto protege cada uno y cuánto cuesta. Descubrirás algo incómodo: las dos defensas más populares —«que el modelo no obedezca instrucciones de los datos» y «que un humano lo apruebe todo»— dejan pasar el ataque más sencillo.",
+  "learning_objectives": [
+    "Medir la eficacia de spotlight y de la supervisión humana frente a los ataques a agentes",
+    "Aplicar controles FUERA del modelo: mínimo privilegio por tarea, validación de argumentos, autorización con la identidad del usuario, higiene de memoria y presupuesto de pasos",
+    "Llegar a 0 ataques sin romper las tareas legítimas y sin depender de aprobaciones humanas"
+  ],
+  "mentor_intro": "Regla de oro de la seguridad de agentes: el modelo puede ser engañado; los controles no deben depender de que no lo sea.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "controles",
+      "title": "Controles del agente",
+      "body": "spotlight: el contenido de los correos se trata como datos. hitl: un humano aprueba cada herramienta sensible. least-privilege: cada tarea solo puede usar las herramientas que necesita. arg-validation: los argumentos se validan en el código (el pedido existe, el importe no supera el del pedido, el destinatario es de un dominio permitido). user-authz: las acciones se autorizan con los permisos de QUIEN las pide, no con los del agente. memory-hygiene: nada que venga de contenido externo se escribe en la memoria. step-budget: límite de pasos por tarea. Comando: agent defend <agente> <control> on|off."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Crea el agente y mide la línea base con la batería.",
+      "validator": { "type": "event", "event": "agent.attacks", "where": { "defenses": "ninguna", "successes": 5 } },
+      "hints": ["agent create kage · agent attack kage"],
+      "on_complete": "5 de 5."
+    },
+    {
+      "id": "o2",
+      "text": "Activa spotlight y repite la batería. ¿Cuántos ataques siguen teniendo éxito? (answer <número>)",
+      "prediction": { "prompt": "Si el agente deja de obedecer las órdenes que llegan dentro de los correos, ¿qué ataques quedarán?", "options": ["ninguno", "solo el que no viene por correo", "casi todos"] },
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "agent.attacks", "where": { "defenses": { "icontains": "spotlight" } } },
+        { "type": "answer", "expected": 1, "tolerance": 0 }
+      ] },
+      "hints": ["agent defend kage spotlight on · agent attack kage"],
+      "on_complete": "Queda el confused deputy: no llega por correo y no es una orden escondida, sino una petición directa de un usuario sin permisos. Además, en A1-03 viste que las defensas contra la inyección se pueden esquivar: no construyas todo sobre ellas."
+    },
+    {
+      "id": "o3",
+      "text": "Desactiva spotlight, activa la supervisión humana (hitl) y repite la batería. ¿Cuántas aprobaciones humanas pide? (answer <número>)",
+      "teach": "Human in the loop\nCon hitl, cada uso de una herramienta sensible espera la aprobación de una persona. En el laboratorio, el revisor simulado rechaza lo que sale de un correo… pero aprueba lo que pide un usuario, porque desde fuera parece legítimo.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "agent.attacks", "where": { "defenses": "hitl" } },
+        { "type": "answer", "expected": 17, "tolerance": 0 }
+      ] },
+      "hints": ["agent defend kage spotlight off · agent defend kage hitl on · agent attack kage", "Mira la línea «Aprobaciones humanas pedidas durante la batería»."],
+      "on_complete": "17 aprobaciones para 5 escenarios, y el confused deputy sigue pasando: el revisor ve «reembolso de 2400 al cliente de P-102, pedido por el cliente» y lo aprueba. La supervisión humana es útil para acciones irreversibles concretas, pero no sustituye a la autorización y genera fatiga."
+    },
+    {
+      "id": "o4",
+      "text": "Diseña los controles en el código: desactiva hitl, activa least-privilege, arg-validation, user-authz, memory-hygiene y step-budget. Consigue 0 ataques con éxito y, después, 3/3 en el eval.",
+      "teach": "Defensa en el código, no en el prompt\nCada control corta un ataque en un punto distinto: least-privilege quita las herramientas que la tarea no necesita (el triaje no puede reembolsar); arg-validation rechaza pedidos inexistentes, importes absurdos y destinatarios externos; user-authz comprueba los permisos de quien pide; memory-hygiene impide que un correo escriba en la memoria; step-budget corta los bucles.",
+      "validator": { "type": "sequence", "steps": [
+        { "type": "event", "event": "agent.attacks", "where": { "success_rate": 0.0, "defenses": { "not_contains_any": ["hitl", "spotlight"] } } },
+        { "type": "event", "event": "agent.eval", "where": { "pass_rate": 1.0, "approvals": 0 } }
+      ] },
+      "hints": [
+        "Activa los cinco controles con agent defend kage <control> on (y desactiva hitl).",
+        "Después: agent attack kage · agent eval kage"
+      ],
+      "on_complete": "0 de 5, 3 de 3 tareas y 0 aprobaciones humanas. Mira en la batería QUÉ control bloquea cada ataque: varios están cubiertos por dos controles a la vez. Eso es defensa en profundidad."
+    },
+    {
+      "id": "o5",
+      "text": "Explica con tus palabras por qué los controles deben estar fuera del modelo, qué control detiene al confused deputy y cuál es el coste real de la supervisión humana. (reflexion <texto>, mínimo 40 palabras)",
+      "validator": { "type": "reflection", "min_words": 40 },
+      "hints": ["El modelo se puede engañar; el código de la herramienta no se deja convencer.", "Usa tus cifras: 1 de 5 con spotlight, 17 aprobaciones con hitl, 0 de 5 con los controles en el código."]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: el mínimo suficiente. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con un agente nuevo, consigue 0 ataques con éxito usando como MÁXIMO 4 controles, sin spotlight ni hitl, y con el eval a 3/3.",
+        "validator": { "type": "sequence", "steps": [
+          { "type": "event", "event": "agent.attacks", "where": { "success_rate": 0.0, "defenses": { "not_contains_any": ["hitl", "spotlight", "arg-validation"] } } },
+          { "type": "event", "event": "agent.eval", "where": { "pass_rate": 1.0 } }
+        ] },
+        "hints": ["Mira qué ataques cubre least-privilege por sí solo y qué deja.", "least-privilege + user-authz + step-budget… ¿falta algo?"],
+        "on_complete": "Con mínimo privilegio, autorización por usuario y presupuesto de pasos ya está todo cubierto: el triaje no puede reembolsar, ni listar clientes, ni escribir en la memoria. Diseñar bien los permisos hace innecesarios muchos parches."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has comprobado que spotlight deja pasar el confused deputy, que la supervisión humana aprueba ese mismo ataque tras 17 peticiones, y que los controles en el código (mínimo privilegio, validación, autorización por usuario, higiene de memoria y límite de pasos) lo cierran todo sin coste para las tareas legítimas.",
+    "why": "Es el principio que recogen OWASP Agentic 2026 y las guías de los proveedores: el modelo no es una frontera de seguridad. Los permisos, la validación y los límites se imponen en el código de las herramientas y en la infraestructura, y la supervisión humana se reserva para acciones de alto impacto bien escogidas.",
+    "in_production": "Identidades y credenciales propias para cada agente con permisos mínimos y de corta duración, autorización delegada (el agente actúa con los permisos del usuario, por ejemplo con OAuth), listas de herramientas por tarea, validación estricta de argumentos con esquemas, memoria con procedencia y revisión, límites de pasos y de gasto, trazas completas y monitorización. En el arco A4 verás cómo MCP organiza estas herramientas y sus permisos.",
+    "simplifications": ["Controles como interruptores", "Un revisor humano simulado con un criterio fijo"],
+    "exercise": ""
+  },
+  "further_reading": ["ref.owasp-agentic-2026"],
+  "xp": { "base": 300 }
+}
