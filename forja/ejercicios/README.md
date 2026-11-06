@@ -7,6 +7,14 @@ Cada misión del Dojo tiene un ejercicio en Python. Implementas tú las funcione
 | `T1_01_estadisticas.py` | T1-01 | Leer un CSV, media, desviación típica, rango, recuento de clases |
 | `T1_02_distancia.py` | T1-02 | Distancia euclídea y Manhattan, contribuciones, normalización min-max y z-score |
 | `T2_01_knn.py` | T2-01 | División train/test, k-NN, accuracy y matriz de confusión |
+| `T3_01_descenso.py` | T3-01 | MSE, gradientes y descenso por gradiente con parada por divergencia |
+| `T3_02_metricas.py` | T3-02 | Precision, recall, F1, umbrales y curva precision-recall |
+| `T4_01_neurona.py` | T4-01 | Sigmoide, neurona, entropía cruzada y entrenamiento de una neurona |
+| `T4_02_backprop.py` | T4-02 | Red 2-H-1, backpropagation a mano y gradient check |
+| `T5_01_bpe.py` | T5-01 | Tokenizador BPE: entrenamiento y codificación |
+| `T5_02_embeddings.py` | T5-02 | Similitud coseno, vecinos y analogías |
+| `T6_01_sampling.py` | T6-01 | Modelo de bigramas, temperatura y top-p |
+| `T6_02_atencion.py` | T6-02 | Softmax estable, self-attention y máscara causal |
 
 **Reglas:**
 - Solo Python estándar: nada de numpy, pandas ni scikit-learn todavía. Primero entiendes qué hacen por dentro y después usas las librerías.

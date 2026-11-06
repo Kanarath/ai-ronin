@@ -18,6 +18,22 @@ def cargar_temple():
     return [float(f["minutos_enfriado"]) for f in filas], [float(f["dureza_hrc"]) for f in filas]
 
 
+RUTA_CORPUS = RAIZ_REPO / "game" / "content" / "corpus" / "forja.txt"
+RUTA_EMBEDDINGS = RAIZ_REPO / "game" / "content" / "embeddings" / "forja_emb.json"
+
+
+def cargar_corpus():
+    """Texto completo del corpus de la forja (el mismo que usa el Dojo)."""
+    return RUTA_CORPUS.read_text(encoding="utf-8")
+
+
+def cargar_embeddings():
+    """Diccionario palabra -> lista de 6 floats (tabla de embeddings del Dojo)."""
+    import json
+    datos = json.loads(RUTA_EMBEDDINGS.read_text(encoding="utf-8"))
+    return {palabra: info["vector"] for palabra, info in datos["words"].items()}
+
+
 def cargar_katanas():
     """Devuelve (ids, X, y): ids de cada hoja, matriz de features (lista de listas) y etiquetas."""
     with open(RUTA_KATANAS, encoding="utf-8", newline="") as f:

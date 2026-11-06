@@ -1,0 +1,103 @@
+{
+  "id": "T6-02",
+  "schema_version": 1,
+  "title": "Atención",
+  "unit": "T6",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "modelo-simplificado",
+  "estimated_minutes": 35,
+  "requires_missions": ["T5-02", "T6-01"],
+  "competencies": { "requires": ["T5.embeddings", "T6.next-token"], "trains": ["T6.atencion", "T6.ventana-contexto"] },
+  "briefing": "Tu n-grama solo mira 1 o 2 palabras atrás. Para entender «la katana que el maestro forjó ayer en el horno nuevo se rompió», el modelo tiene que relacionar «se rompió» con «katana», que está muy lejos. El transformer resolvió esto en 2017 con un mecanismo: la ATENCIÓN. Cada palabra pregunta a todas las demás «¿cuánto me importas?» y mezcla su información según la respuesta. Hoy vas a calcularla.",
+  "learning_objectives": [
+    "Explicar self-attention: puntuaciones, softmax y mezcla de valores",
+    "Explicar la máscara causal y por qué la usan los LLM generativos",
+    "Relacionar el coste cuadrático de la atención con los límites de la ventana de contexto"
+  ],
+  "mentor_intro": "Aviso de honestidad: aquí la atención usa directamente los embeddings de T5 como Q, K y V. En un transformer real, Q, K y V salen de multiplicar por matrices aprendidas, hay muchos cabezales y decenas de capas. El cálculo, sin embargo, es exactamente este.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "atencion",
+      "title": "Self-attention en tres pasos",
+      "body": "1) PUNTUAR: para cada par de palabras (i, j), puntuación = Qᵢ·Kⱼ / √d (producto escalar: cuánto se parecen). 2) NORMALIZAR: softmax por filas → pesos positivos que suman 1. 3) MEZCLAR: la nueva representación de i = Σⱼ pesoᵢⱼ · Vⱼ. Cada palabra sale «contaminada» con información de las palabras a las que atiende. Más: man atencion",
+      "simplified": true
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Calcula la atención entre «herrera martillo katana fuego agua». Sin contarse a sí misma, ¿a qué palabra atiende más «katana»? (answer <palabra>)",
+      "teach": "Leer la matriz de atención\nattention <palabras> calcula los pesos. Cada FILA es una palabra preguntando (query) y cada COLUMNA, la palabra consultada (key). El peso dice qué parte de la nueva representación de la fila viene de cada columna. En el panel del laboratorio verás el mapa de calor.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "attention.computed", "where": { "words": "herrera martillo katana fuego agua", "causal": false } },
+        { "type": "answer", "expected": "martillo", "accept": ["martillo"] }
+      ] },
+      "hints": ["attention herrera martillo katana fuego agua", "Mira la fila «katana» y busca el valor más alto fuera de la diagonal."],
+      "on_complete": "martillo (0,22): comparten dimensiones de metal y herramienta. Cada palabra atiende sobre todo a sí misma y luego a las que se le parecen. En un transformer entrenado, los cabezales aprenden patrones mucho más útiles: un cabezal puede conectar verbos con su sujeto, otro pronombres con su referente…"
+    },
+    {
+      "id": "o2",
+      "text": "Repite con máscara causal. ¿Qué peso se da la primera palabra, «herrera», a sí misma? (answer <número>)",
+      "prediction": { "prompt": "Si cada palabra solo puede mirar a las anteriores, ¿a quién podrá atender la primera?", "options": ["a todas", "solo a sí misma", "a ninguna"] },
+      "teach": "Máscara causal\nUn LLM que genera texto no puede mirar el futuro: al predecir la palabra 3, la 4 todavía no existe. La máscara causal anula (con −∞ antes del softmax) las puntuaciones hacia palabras posteriores. Opción: --causal.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "attention.computed", "where": { "causal": true } },
+        { "type": "answer", "expected": 1, "tolerance": 0.001 }
+      ] },
+      "hints": ["attention herrera martillo katana fuego agua --causal", "Primera fila, primera columna."],
+      "on_complete": "1,00: la primera palabra solo se tiene a sí misma. La matriz queda triangular. Así son los LLM tipo GPT («decoder-only»): cada posición solo ve su pasado, que es justo lo que hace falta para predecir el siguiente token."
+    },
+    {
+      "id": "o3",
+      "text": "Calcula la atención de las mismas palabras SIN dividir entre √d (opción --no-scale) y compárala con la normal.",
+      "prediction": { "prompt": "Sin dividir entre √d, ¿cómo serán los pesos?", "options": ["más extremos (más concentrados)", "más planos", "iguales"] },
+      "teach": "¿Por qué √d?\nEl producto escalar crece con el número de dimensiones d. Puntuaciones grandes hacen que el softmax se dispare hacia un único ganador y sus gradientes casi desaparezcan, lo que dificulta el entrenamiento. Dividir entre √d mantiene las puntuaciones en una escala razonable. Es la «scaled dot-product attention» del paper original.",
+      "validator": { "type": "event", "event": "attention.computed", "where": { "scaled": false } },
+      "hints": ["attention herrera martillo katana fuego agua --no-scale"],
+      "on_complete": "Los pesos se vuelven más extremos: cada palabra se mira más a sí misma. Con d = 6 el efecto es moderado; con los d = 128 de un cabezal real, sin escalar, el softmax saturaría casi siempre."
+    },
+    {
+      "id": "o4",
+      "text": "Calcula la atención de una frase de 10 palabras de la tabla (las que quieras). ¿Cuántos pesos de atención hay que calcular? (answer <número>)",
+      "teach": "El coste de mirar a todos\nCada palabra puntúa a TODAS las demás: con n palabras hay n × n pesos. Duplicar el texto cuadruplica el trabajo y la memoria de la atención.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "attention.computed", "where": { "n": 10 } },
+        { "type": "answer", "expected": 100, "tolerance": 0 }
+      ] },
+      "hints": ["Elige 10 palabras de embed list.", "attention katana espada daga lanza arco escudo acero hierro fuego agua"],
+      "on_complete": "100. Con un contexto de 100.000 tokens serían 10.000 millones de pesos por cabezal y por capa. Por eso la VENTANA DE CONTEXTO de un LLM tiene un límite y los contextos largos son caros. Hay técnicas para reducir el coste (FlashAttention, atención dispersa…), pero el problema de fondo sigue ahí. Y una consecuencia de seguridad: todo lo que cabe en la ventana (también un documento malicioso) puede influir en la respuesta."
+    },
+    {
+      "id": "o5",
+      "text": "Explica con tus palabras qué hace la self-attention, para qué sirve la máscara causal y por qué la ventana de contexto es limitada. (reflexion <texto>, mínimo 40 palabras)",
+      "validator": { "type": "reflection", "min_words": 40 },
+      "hints": ["Puntuar, normalizar y mezclar; mirar solo al pasado; n² pesos.", "Compáralo con tu n-grama: ¿qué ventaja tiene la atención sobre mirar solo 1 o 2 palabras atrás?"]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con máscara causal sobre «herrera martillo katana», ¿qué peso da «katana» a «martillo»? (answer <número>, 2 decimales)",
+        "validator": { "type": "all", "of": [
+          { "type": "event", "event": "attention.computed", "where": { "words": "herrera martillo katana", "causal": true } },
+          { "type": "answer", "expected": 0.31, "tolerance": 0.01 }
+        ] },
+        "hints": ["attention con --causal y esas tres palabras.", "Fila katana, columna martillo."],
+        "on_complete": "0,31: idéntico al que tenía en la frase de 5 palabras con máscara causal. ¿Por qué? Porque con la máscara, lo que viene DESPUÉS no afecta a las filas anteriores. Por eso los LLM pueden reutilizar los cálculos de los tokens previos al generar (la «KV cache»)."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has calculado self-attention, has leído la matriz de pesos, has aplicado la máscara causal, has visto el papel del escalado √d y has medido el coste cuadrático que limita la ventana de contexto.",
+    "why": "La atención es el corazón del transformer, la arquitectura de todos los LLM actuales. Entenderla explica la ventana de contexto, el coste de los prompts largos, la KV cache y por qué cualquier texto dentro del contexto (incluido un documento envenenado o una instrucción oculta) puede influir en la salida: es la base técnica de la inyección de prompts indirecta que estudiarás en los arcos de seguridad.",
+    "in_production": "Un transformer real tiene Q, K, V aprendidas, decenas de cabezales por capa, decenas de capas, codificación posicional (las palabras necesitan saber en qué orden van) y redes feed-forward entre capas de atención. Se implementa con kernels optimizados (FlashAttention) en GPU.",
+    "simplifications": ["Q = K = V = embeddings diseñados a mano", "Un solo cabezal, una sola capa, sin posiciones"],
+    "exercise": "forja/ejercicios/T6_02_atencion.py"
+  },
+  "further_reading": ["ref.vaswani-2017", "ref.alammar-transformer"],
+  "xp": { "base": 200 }
+}

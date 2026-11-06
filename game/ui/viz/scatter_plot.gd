@@ -28,6 +28,14 @@ func show_dataset(ds: Dataset, x_name: String, y_name: String) -> void:
 	queue_redraw()
 
 
+func clear() -> void:
+	dataset = null
+	regression_line = {}
+	query_id = ""
+	neighbor_ids = []
+	queue_redraw()
+
+
 func current_axes() -> PackedStringArray:
 	if dataset == null:
 		return PackedStringArray()
@@ -99,6 +107,8 @@ func _draw() -> void:
 		if id in neighbor_ids:
 			draw_arc(p, 8, 0, TAU, 20, RoninPalette.TEXT, 1.5)
 		draw_circle(p, 3.5, Color(col, 0.85))
+		if dataset.size() <= 40:
+			draw_string(font, p + Vector2(6, -4), id, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, RoninPalette.MUTED)
 		if id == query_id:
 			query_pos = p
 	if not regression_line.is_empty() and regression_line["x"] == dataset.feature_names[fx] and regression_line["y"] == dataset.feature_names[fy]:

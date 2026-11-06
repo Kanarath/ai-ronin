@@ -1,0 +1,120 @@
+{
+  "id": "T5-02",
+  "schema_version": 1,
+  "title": "Palabras como vectores",
+  "unit": "T5",
+  "difficulty": 2,
+  "plane": "dojo",
+  "epistemic": "modelo-simplificado",
+  "estimated_minutes": 30,
+  "requires_missions": ["T5-01"],
+  "competencies": { "requires": ["T5.tokenizacion", "T1.distancia"], "trains": ["T5.embeddings", "T5.similitud-coseno"] },
+  "briefing": "Un id de token es solo una etiqueta: el número 93 no se «parece» al 94. Para que una red razone sobre significados, cada token se convierte en un EMBEDDING: un vector donde las palabras con significado parecido quedan cerca. Es la misma idea de distancia que usaste con las katanas en T1… aplicada al lenguaje. Y es la base de toda la búsqueda semántica y de los sistemas RAG que atacarás más adelante.",
+  "learning_objectives": [
+    "Explicar qué es un embedding y por qué las palabras parecidas quedan cerca",
+    "Calcular e interpretar la similitud coseno",
+    "Usar aritmética de vectores (analogías) y reconocer sesgos codificados en los embeddings"
+  ],
+  "mentor_intro": "Aviso de honestidad: estos embeddings los he diseñado a mano con 6 dimensiones legibles para que puedas ver qué pasa por dentro. Los reales se aprenden, tienen cientos de dimensiones y ninguna tiene un nombre.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "coseno",
+      "title": "Similitud coseno",
+      "body": "Mide el ángulo entre dos vectores: (a·b) / (|a|·|b|). Vale 1 si apuntan en la misma dirección, 0 si son perpendiculares (sin relación) y −1 si son opuestos. Ignora la longitud del vector y solo mira la dirección. Es la medida estándar para comparar embeddings. Más: man embeddings",
+      "simplified": true
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira el vector de la palabra «katana».",
+      "teach": "Una palabra, un vector\nCada palabra de la tabla tiene 6 números: cuánto tiene de arma, de metal, de persona, de femenino, de calor y de herramienta. embed list muestra las palabras disponibles; embed show <palabra>, su vector.",
+      "validator": { "type": "event", "event": "embed.shown", "where": { "word": "katana" } },
+      "hints": ["embed show katana"],
+      "on_complete": "Mucho de arma, bastante de metal, algo de herramienta. Ahora ya es un punto en un espacio de 6 dimensiones."
+    },
+    {
+      "id": "o2",
+      "text": "¿Cuál es la palabra más parecida a «katana»? (answer <palabra>)",
+      "teach": "Vecinos semánticos\nembed similar <palabra> busca las palabras cuyo vector apunta en una dirección más parecida (similitud coseno). Es una búsqueda de vecinos más cercanos, como el k-NN de T2, pero sobre significados.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "embed.similar", "where": { "word": "katana" } },
+        { "type": "answer", "expected": "espada", "accept": ["espada"] }
+      ] },
+      "hints": ["embed similar katana"],
+      "on_complete": "espada (coseno 0,999). Esta misma operación, con embeddings reales de frases y documentos, es la búsqueda semántica de un sistema RAG: encontrar los textos más parecidos a la pregunta, aunque no compartan palabras."
+    },
+    {
+      "id": "o3",
+      "text": "Compara «fuego» y «hielo». ¿Qué similitud coseno tienen? (answer <número>)",
+      "prediction": { "prompt": "¿Cómo crees que será la similitud coseno entre fuego y hielo?", "options": ["cerca de 1", "cerca de 0", "cerca de −1"] },
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "embed.compare", "where": { "a": { "in": ["fuego", "hielo"] }, "b": { "in": ["fuego", "hielo"] } } },
+        { "type": "answer", "expected": -1, "tolerance": 0.01 }
+      ] },
+      "hints": ["embed compare fuego hielo"],
+      "on_complete": "−1: apuntan en direcciones exactamente opuestas en la dimensión «calor». Compara también katana y fuego: ≈0, perpendiculares, sin relación."
+    },
+    {
+      "id": "o4",
+      "text": "Prueba la aritmética de vectores: maestro − hombre + mujer.",
+      "prediction": { "prompt": "¿Qué palabra crees que saldrá?", "options": ["maestra", "herrera", "mujer"] },
+      "teach": "Analogías\nSi «maestro» = persona + enseñar y «hombre» = persona, entonces maestro − hombre deja «la parte de enseñar». Si le sumas «mujer»… embed analogy a b c calcula a − b + c y busca el vector más cercano (excluyendo las palabras de la consulta).",
+      "validator": { "type": "event", "event": "embed.analogy", "where": { "a": "maestro", "b": "hombre", "c": "mujer", "result": "maestra" } },
+      "hints": ["embed analogy maestro hombre mujer"],
+      "on_complete": "maestra. Este fenómeno se observó en embeddings reales aprendidos de texto (word2vec, 2013: el famoso rey − hombre + mujer ≈ reina). Que funcione en vectores aprendidos significa que el modelo ha capturado relaciones como «género» o «país-capital» sin que nadie se las enseñara."
+    },
+    {
+      "id": "o5",
+      "text": "Busca las palabras más parecidas a «aprendiz», que en castellano no tiene género. ¿Qué DIMENSIÓN de su vector explica que se parezca más a «herrera» y «maestra» que a «herrero» y «maestro»? (answer <dimensión>)",
+      "teach": "Sesgos en los embeddings\nLos vectores codifican lo que hay en los datos (o, aquí, en las decisiones de quien los diseñó). Mira el vector de aprendiz con embed show y compáralo con el de herrero y el de herrera.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "embed.similar", "where": { "word": "aprendiz" } },
+        { "type": "answer", "expected": "femenino", "accept": ["femenino", "femenina", "genero", "género"] }
+      ] },
+      "hints": [
+        "embed similar aprendiz · embed show aprendiz",
+        "Una de las 6 dimensiones de aprendiz vale 0,5 cuando debería ser neutra."
+      ],
+      "on_complete": "La dimensión «femenino»: le di 0,5 sin querer y ya no es neutra. En embeddings reales pasa lo mismo a gran escala: Bolukbasi et al. (2016) encontraron que word2vec completaba «hombre es a programador como mujer es a…» con «ama de casa». Cualquier sistema que use embeddings (búsqueda, selección de CVs, RAG) hereda esos sesgos: auditarlos es parte del trabajo de seguridad y gobernanza de IA."
+    },
+    {
+      "id": "o6",
+      "text": "Dibuja las palabras en las dimensiones persona (horizontal) y femenino (vertical).",
+      "validator": { "type": "event", "event": "viz.scatter", "where": { "dataset": "embeddings", "x": "persona", "y": "femenino" } },
+      "hints": ["embed plot --x persona --y femenino"],
+      "on_complete": "Verás las personas separadas por género, y aprendiz en medio, donde no debería estar. Con embeddings reales de cientos de dimensiones se usan técnicas de proyección (PCA, t-SNE, UMAP) para dibujarlos en 2D, perdiendo información."
+    },
+    {
+      "id": "o7",
+      "text": "Explica con tus palabras qué es un embedding, para qué sirve la similitud coseno y qué riesgo has descubierto con «aprendiz». (reflexion <texto>, mínimo 30 palabras)",
+      "validator": { "type": "reflection", "min_words": 30 },
+      "hints": ["Tres ideas: palabra → vector; cercanía = parecido de significado; los vectores heredan sesgos de sus datos.", "Conéctalo con un uso real: búsqueda semántica o RAG."]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: otra métrica. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Busca los vecinos de «katana» usando la distancia EUCLÍDEA en lugar del coseno. ¿Qué palabra queda en TERCER lugar? (answer <palabra>)",
+        "validator": { "type": "all", "of": [
+          { "type": "event", "event": "embed.similar", "where": { "word": "katana", "metric": "euclidean" } },
+          { "type": "answer", "expected": "lanza", "accept": ["lanza"] }
+        ] },
+        "hints": ["embed similar tiene una opción para la métrica.", "embed similar katana --metric euclidean"],
+        "on_complete": "lanza, mientras que con el coseno el tercero es escudo. La métrica cambia el ranking: la euclídea tiene en cuenta la longitud de los vectores y el coseno solo su dirección. En una base de datos vectorial real, elegir la métrica es una decisión de diseño que afecta a qué documentos recupera un RAG."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has representado palabras como vectores, has buscado vecinos semánticos, has comparado direcciones con la similitud coseno, has hecho aritmética de significados y has detectado un sesgo codificado en un vector.",
+    "why": "Los embeddings son la primera capa de cualquier LLM y la base de la búsqueda semántica, los sistemas RAG y las bases de datos vectoriales. En seguridad, son una superficie de ataque: se puede manipular qué recupera un RAG, y en ciertas condiciones se puede reconstruir texto a partir de sus embeddings (lo verás en el arco A2).",
+    "in_production": "Los embeddings reales se aprenden: word2vec y GloVe para palabras; hoy, modelos de embeddings de frases (por ejemplo, los de sentence-transformers o las APIs de embeddings) con cientos o miles de dimensiones. Se guardan en bases de datos vectoriales y se buscan con índices aproximados (ANN) usando similitud coseno o producto escalar.",
+    "simplifications": ["Vectores de 6 dimensiones diseñados a mano y con nombre", "Embeddings de palabras sueltas, no de frases ni dependientes del contexto"],
+    "exercise": "forja/ejercicios/T5_02_embeddings.py"
+  },
+  "further_reading": ["ref.mikolov-2013", "ref.bolukbasi-2016"],
+  "xp": { "base": 150 }
+}

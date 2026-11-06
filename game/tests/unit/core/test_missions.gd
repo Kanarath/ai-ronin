@@ -246,6 +246,69 @@ func test_mision_T4_02_completa() -> void:
 	assert_true(finished[0]["trial_passed"])
 
 
+const R40 := "reflexion un modelo de lenguaje calcula la probabilidad del siguiente token elige uno lo añade y repite la temperatura concentra o aplana la distribucion y top p recorta la cola el modelo genera lo plausible y no lo verdadero por eso alucina y si tiene poco texto memoriza y copia literalmente sus datos de entrenamiento como vimos"
+
+
+func test_mision_T5_01_completa() -> void:
+	game.progress.data["missions"]["T4-01"] = {"completed": true}
+	assert_eq(game.start_mission("T5-01"), "")
+	run(["tokenizer train t0 --merges 0", "tokenize t0 la katana del maestro", "answer 22"])
+	run(["hipotesis unos 4", "tokenizer train t200 --merges 200", "tokenize t200 la katana del maestro", "answer 4"])
+	run(["hipotesis más tokens", "tokenize t200 La Katana del Maestro", "answer 9"])
+	run(["hipotesis unos 20", "tokenize t200 the sword of the master", "answer 19"])
+	run(["reflexion un token es un trozo de texto que el modelo ve como un numero bpe fusiona los pares mas frecuentes del corpus y por eso las palabras comunes son un token las mayusculas y otros idiomas gastan mas tokens y cuestan mas"])
+	assert_eq(game.runner.phase, "trial")
+	run(["tokenize t200 katanaforjada", "answer 4"])
+	assert_eq(finished.size(), 1)
+	assert_true(finished[0]["trial_passed"])
+
+
+func test_mision_T5_02_completa() -> void:
+	game.progress.data["missions"]["T5-01"] = {"completed": true}
+	assert_eq(game.start_mission("T5-02"), "")
+	run(["embed show katana", "embed similar katana", "answer espada"])
+	run(["hipotesis cerca de −1", "embed compare fuego hielo", "answer -1"])
+	run(["hipotesis maestra", "embed analogy maestro hombre mujer"])
+	run(["embed similar aprendiz", "embed show aprendiz", "answer femenino"])
+	run(["embed plot --x persona --y femenino"])
+	run(["reflexion un embedding es un vector que representa el significado de una palabra la similitud coseno mide si dos vectores apuntan en la misma direccion y aprendiz muestra que los vectores pueden heredar sesgos de genero de quien los crea o de sus datos"])
+	assert_eq(game.runner.phase, "trial")
+	run(["embed similar katana --metric euclidean", "answer lanza"])
+	assert_eq(finished.size(), 1)
+	assert_true(finished[0]["trial_passed"])
+
+
+func test_mision_T6_01_completa() -> void:
+	game.progress.data["missions"]["T5-01"] = {"completed": true}
+	assert_eq(game.start_mission("T6-01"), "")
+	run(["lm train lm2 --order 2", "lm next lm2 la", "answer forja"])
+	run(["hipotesis se concentra en el más probable", "lm next lm2 la --temperature 0.1", "answer 0.824"])
+	run(["hipotesis se repite en bucle", "lm generate lm2 el maestro --temperature 0 --tokens 12"])
+	run(["lm generate lm2 el maestro --temperature 1 --seed 1", "lm generate lm2 el maestro --temperature 1 --seed 2"])
+	run(["lm next lm2 la --top-p 0.5", "answer 3"])
+	run(["hipotesis trozos copiados del corpus", "lm train lm3 --order 3", "lm generate lm3 el maestro --temperature 1 --seed 1 --tokens 15"])
+	run([R40])
+	assert_eq(game.runner.phase, "trial")
+	run(["lm next lm2 la --temperature 2", "answer 0.124"])
+	assert_eq(finished.size(), 1)
+	assert_true(finished[0]["trial_passed"])
+
+
+func test_mision_T6_02_completa() -> void:
+	game.progress.data["missions"]["T5-02"] = {"completed": true}
+	game.progress.data["missions"]["T6-01"] = {"completed": true}
+	assert_eq(game.start_mission("T6-02"), "")
+	run(["attention herrera martillo katana fuego agua", "answer martillo"])
+	run(["hipotesis solo a sí misma", "attention herrera martillo katana fuego agua --causal", "answer 1"])
+	run(["hipotesis más extremos (más concentrados)", "attention herrera martillo katana fuego agua --no-scale"])
+	run(["attention katana espada daga lanza arco escudo acero hierro fuego agua", "answer 100"])
+	run(["reflexion la self attention puntua cada par de palabras con el producto escalar normaliza con softmax y mezcla los valores la mascara causal impide mirar al futuro como en los llm que generan texto y la ventana es limitada porque el coste crece con el cuadrado del numero de tokens"])
+	assert_eq(game.runner.phase, "trial")
+	run(["attention herrera martillo katana --causal", "answer 0.31"])
+	assert_eq(finished.size(), 1)
+	assert_true(finished[0]["trial_passed"])
+
+
 # ── Pistas y maestría ────────────────────────────────────────────────────────
 
 func test_escalera_de_pistas_y_confirmacion_nivel_5() -> void:

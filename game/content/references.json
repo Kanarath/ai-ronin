@@ -2,6 +2,92 @@
   "schema_version": 1,
   "references": [
     {
+      "id": "ref.vaswani-2017",
+      "title": "Attention Is All You Need",
+      "authors": "A. Vaswani et al.",
+      "source": "NeurIPS 2017 · arXiv:1706.03762",
+      "year": 2017,
+      "type": "paper",
+      "url": "https://arxiv.org/abs/1706.03762",
+      "consulted": "2026-11-06"
+    },
+    {
+      "id": "ref.alammar-transformer",
+      "title": "The Illustrated Transformer",
+      "authors": "J. Alammar",
+      "type": "articulo-divulgativo",
+      "url": "https://jalammar.github.io/illustrated-transformer/",
+      "consulted": "2026-11-06"
+    },
+    {
+      "id": "ref.holtzman-2019",
+      "title": "The Curious Case of Neural Text Degeneration (nucleus sampling, top-p)",
+      "authors": "A. Holtzman, J. Buys, L. Du, M. Forbes, Y. Choi",
+      "source": "ICLR 2020 · arXiv:1904.09751",
+      "year": 2019,
+      "type": "paper",
+      "url": "https://arxiv.org/abs/1904.09751",
+      "consulted": "2026-11-06"
+    },
+    {
+      "id": "ref.carlini-2021",
+      "title": "Extracting Training Data from Large Language Models",
+      "authors": "N. Carlini et al.",
+      "source": "USENIX Security 2021 · arXiv:2012.07805",
+      "year": 2021,
+      "type": "paper",
+      "url": "https://arxiv.org/abs/2012.07805",
+      "consulted": "2026-11-06"
+    },
+    {
+      "id": "ref.jurafsky-slp3",
+      "title": "Speech and Language Processing (3rd ed. draft), cap. 3: N-gram Language Models",
+      "authors": "D. Jurafsky, J. H. Martin",
+      "type": "libro",
+      "url": "https://web.stanford.edu/~jurafsky/slp3/",
+      "consulted": "2026-11-06",
+      "review_by": "2027-11-06"
+    },
+    {
+      "id": "ref.sennrich-2016",
+      "title": "Neural Machine Translation of Rare Words with Subword Units (BPE para tokenización)",
+      "authors": "R. Sennrich, B. Haddow, A. Birch",
+      "source": "ACL 2016",
+      "year": 2016,
+      "type": "paper",
+      "url": "https://aclanthology.org/P16-1162/",
+      "consulted": "2026-11-06"
+    },
+    {
+      "id": "ref.hf-bpe",
+      "title": "Hugging Face LLM Course: Byte-Pair Encoding tokenization",
+      "source": "Hugging Face",
+      "type": "curso",
+      "url": "https://huggingface.co/learn/llm-course/chapter6/5",
+      "consulted": "2026-11-06",
+      "review_by": "2027-05-06"
+    },
+    {
+      "id": "ref.mikolov-2013",
+      "title": "Efficient Estimation of Word Representations in Vector Space (word2vec)",
+      "authors": "T. Mikolov, K. Chen, G. Corrado, J. Dean",
+      "source": "arXiv:1301.3781",
+      "year": 2013,
+      "type": "paper",
+      "url": "https://arxiv.org/abs/1301.3781",
+      "consulted": "2026-11-06"
+    },
+    {
+      "id": "ref.bolukbasi-2016",
+      "title": "Man is to Computer Programmer as Woman is to Homemaker? Debiasing Word Embeddings",
+      "authors": "T. Bolukbasi, K.-W. Chang, J. Zou, V. Saligrama, A. Kalai",
+      "source": "NeurIPS 2016 · arXiv:1607.06520",
+      "year": 2016,
+      "type": "paper",
+      "url": "https://arxiv.org/abs/1607.06520",
+      "consulted": "2026-11-06"
+    },
+    {
       "id": "ref.rumelhart-1986",
       "title": "Learning representations by back-propagating errors",
       "authors": "D. Rumelhart, G. Hinton, R. Williams",

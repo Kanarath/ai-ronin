@@ -1,0 +1,120 @@
+{
+  "id": "T6-01",
+  "schema_version": 1,
+  "title": "La siguiente palabra",
+  "unit": "T6",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 40,
+  "requires_missions": ["T5-01"],
+  "competencies": { "requires": ["T5.tokenizacion"], "trains": ["T6.next-token", "T6.sampling", "T6.memorizacion"] },
+  "briefing": "Un LLM hace una sola cosa, una y otra vez: dado un texto, calcula la probabilidad de cada posible siguiente token, elige uno, lo añade y repite. Todo lo demás —responder preguntas, programar, «razonar»— emerge de esa tarea. Hoy construirás un modelo de lenguaje real (pequeño y antiguo, pero real), y con él entenderás la temperatura, el top-p, por qué los modelos repiten, alucinan… y memorizan sus datos de entrenamiento.",
+  "learning_objectives": [
+    "Explicar la predicción del siguiente token y la generación autorregresiva",
+    "Controlar el muestreo con temperatura, top-k y top-p, y predecir su efecto",
+    "Relacionar la ventana de contexto con la coherencia y con la memorización de datos"
+  ],
+  "mentor_intro": "El modelo de hoy es un n-grama: cuenta qué palabra suele seguir a otras en el corpus de la forja. Un LLM usa una red neuronal enorme en lugar de un recuento, pero la tarea es idéntica.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "autoregresivo",
+      "title": "Generación autorregresiva",
+      "body": "1) El modelo recibe el texto. 2) Calcula P(siguiente token | texto) para todo el vocabulario. 3) Se ELIGE un token según una estrategia de muestreo. 4) Se añade al texto y se vuelve al paso 1. El modelo no «planifica» la frase: la construye token a token. Más: man llm"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Entrena un modelo de bigramas (order 2) y mira la distribución del siguiente token tras «la». ¿Cuál es el token más probable? (answer <palabra>)",
+      "teach": "Un modelo de lenguaje por recuento\nUn bigrama mira solo la ÚLTIMA palabra y responde: «en el corpus, después de esta palabra vino X tantas veces, Y tantas…». Convertido en proporciones, es una distribución de probabilidad sobre el siguiente token. Comandos: lm train <nombre> --order 2 · lm next <nombre> <texto>.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "lm.next", "where": { "context": "la", "order": 2 } },
+        { "type": "answer", "expected": "forja", "accept": ["forja"] }
+      ] },
+      "hints": ["lm train lm2 --order 2", "lm next lm2 la"],
+      "on_complete": "forja, con 0,233: después de «la» vino «forja» 7 de 30 veces. Y «hoja» 6 de 30. Esa tabla de probabilidades ES la salida de un modelo de lenguaje. Un LLM la calcula sobre ~100.000 tokens posibles y mirando miles de tokens hacia atrás."
+    },
+    {
+      "id": "o2",
+      "text": "Repite la consulta con temperatura 0.1. ¿Qué probabilidad final tiene «forja»? (answer <número>, 3 decimales)",
+      "prediction": { "prompt": "Con temperatura baja (0.1), ¿qué le pasará a la distribución?", "options": ["se concentra en el más probable", "se aplana", "no cambia"] },
+      "teach": "Temperatura\nAntes de elegir, la distribución se puede deformar. Con temperatura T, cada probabilidad se eleva a 1/T y se vuelve a normalizar. T < 1 exagera las diferencias (el favorito gana más); T > 1 las suaviza (todo se iguala); T = 0 es «greedy»: siempre el más probable. Opción: --temperature.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "lm.next", "where": { "context": "la", "temperature": 0.1 } },
+        { "type": "answer", "expected": 0.824, "tolerance": 0.002 }
+      ] },
+      "hints": ["lm next lm2 la --temperature 0.1", "Columna «P final», fila forja."],
+      "on_complete": "0,824: el favorito pasa de 23 % a 82 %. Prueba también --temperature 2: todos se acercan. Por eso, en una API de LLM, una temperatura baja da respuestas más predecibles y una alta, más variadas (y más disparatadas)."
+    },
+    {
+      "id": "o3",
+      "text": "Genera 12 tokens a partir de «el maestro» con temperatura 0 (greedy).",
+      "prediction": { "prompt": "Si siempre elige el token más probable, ¿cómo crees que será el texto?", "options": ["la frase más natural", "se repite en bucle"] },
+      "teach": "Generar texto\nlm generate <modelo> <comienzo> --tokens N --temperature T aplica el bucle autorregresivo N veces.",
+      "validator": { "type": "event", "event": "lm.generated", "where": { "temperature": 0.0, "order": 2 } },
+      "hints": ["lm generate lm2 el maestro --temperature 0 --tokens 12"],
+      "on_complete": "«el maestro . el maestro . el maestro…»: un bucle. Elegir siempre lo más probable lleva a estados que se repiten. Los LLM sufren lo mismo (repetición, degeneración), y por eso las APIs usan muestreo con temperatura y penalizaciones de repetición."
+    },
+    {
+      "id": "o4",
+      "text": "Genera desde «el maestro» con temperatura 1 usando dos semillas distintas y compara.",
+      "validator": { "type": "event", "event": "lm.generated", "where": { "temperature": 1.0, "order": 2 }, "count": { "gte": 2 } },
+      "hints": ["lm generate lm2 el maestro --temperature 1 --seed 1", "Repite con --seed 2."],
+      "on_complete": "Dos textos distintos, ambos con apariencia de castellano… y sin sentido: «el modelo aprende que nunca ha visto». El modelo encadena transiciones probables sin ninguna noción de verdad. Las ALUCINACIONES de un LLM tienen la misma raíz: el modelo genera lo plausible, no lo verdadero. Uno grande es plausible a un nivel mucho más alto, y por eso sus errores convencen más."
+    },
+    {
+      "id": "o5",
+      "text": "Aplica top-p 0.5 a la distribución tras «la». ¿Cuántos candidatos quedan? (answer <número>)",
+      "teach": "Top-k y top-p\nTop-k se queda solo con los k tokens más probables. Top-p (nucleus sampling) se queda con los más probables hasta que su probabilidad acumulada llega a p. Ambos recortan la «cola» de opciones improbables antes de muestrear. Opciones: --top-k y --top-p.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "lm.next", "where": { "context": "la", "top_p": 0.5 } },
+        { "type": "answer", "expected": 3, "tolerance": 0 }
+      ] },
+      "hints": ["lm next lm2 la --top-p 0.5", "Mira la última línea: «candidatos que quedan»."],
+      "on_complete": "3 de 15: forja + hoja suman 0,433 (no llegan a 0,5), así que entra también dureza. A diferencia de top-k, top-p se adapta: si el modelo está muy seguro, quedan pocos candidatos; si duda, quedan muchos."
+    },
+    {
+      "id": "o6",
+      "text": "Entrena un modelo de trigramas (order 3: mira 2 palabras atrás) y genera 15 tokens desde «el maestro» con temperatura 1 y semilla 1.",
+      "prediction": { "prompt": "Con más contexto y un corpus tan pequeño, ¿qué crees que generará?", "options": ["frases nuevas más coherentes", "trozos copiados del corpus"] },
+      "validator": { "type": "event", "event": "lm.generated", "where": { "order": 3, "verbatim": { "gte": 8 } } },
+      "hints": ["lm train lm3 --order 3", "lm generate lm3 el maestro --temperature 1 --seed 1 --tokens 15"],
+      "on_complete": "Copia 14 tokens seguidos del corpus. Con más contexto, el texto es más coherente, pero en un corpus pequeño cada contexto de 2 palabras casi solo tiene una continuación posible: el modelo MEMORIZA y regurgita sus datos de entrenamiento. Los LLM también memorizan: Carlini et al. (2021) extrajeron de GPT-2 textos literales de su entrenamiento, incluidos datos personales. Es una vulnerabilidad real (OWASP LLM02, divulgación de información sensible) que atacarás y mitigarás más adelante."
+    },
+    {
+      "id": "o7",
+      "text": "Explica con tus palabras cómo genera texto un modelo de lenguaje, qué hacen la temperatura y top-p, y por qué un modelo puede alucinar y memorizar. (reflexion <texto>, mínimo 40 palabras)",
+      "validator": { "type": "reflection", "min_words": 40 },
+      "hints": [
+        "Cuatro bloques: bucle de siguiente token → deformar y recortar la distribución → plausible ≠ verdadero → memorización.",
+        "Usa ejemplos de lo que has visto: el bucle greedy, «el modelo aprende que nunca ha visto», los 14 tokens copiados."
+      ]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con el modelo de bigramas, ¿qué probabilidad final tiene «hoja» tras «la» con temperatura 2? (answer <número>, 3 decimales)",
+        "validator": { "type": "all", "of": [
+          { "type": "event", "event": "lm.next", "where": { "context": "la", "temperature": 2.0 } },
+          { "type": "answer", "expected": 0.124, "tolerance": 0.002 }
+        ] },
+        "hints": ["La temperatura es una opción de lm next.", "lm next lm2 la --temperature 2"],
+        "on_complete": "0,124: con temperatura alta, hoja (0,200 originalmente) baja y las palabras raras suben. La distribución se aplana."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has entrenado modelos de lenguaje, has visto su distribución del siguiente token, has controlado el muestreo con temperatura y top-p, y has observado repetición (greedy), texto fluido sin sentido (alucinación) y memorización literal (contexto largo y datos escasos).",
+    "why": "Es exactamente el mecanismo de generación de cualquier LLM. Entenderlo explica qué significan los parámetros de las APIs, por qué los modelos inventan con seguridad, por qué la misma pregunta da respuestas distintas y por qué un modelo puede filtrar datos con los que se entrenó.",
+    "in_production": "Un LLM reemplaza el recuento por un transformer con miles de millones de parámetros y una ventana de contexto de miles a cientos de miles de tokens. Las APIs exponen temperature, top_p (y a veces top_k), max_tokens y semillas para reproducibilidad. La memorización se mitiga deduplicando los datos de entrenamiento, filtrando datos personales y con técnicas como la privacidad diferencial.",
+    "simplifications": ["n-grama por recuento en lugar de una red neuronal", "Tokens = palabras", "Corpus de 377 palabras"],
+    "exercise": "forja/ejercicios/T6_01_sampling.py"
+  },
+  "further_reading": ["ref.jurafsky-slp3", "ref.holtzman-2019", "ref.carlini-2021"],
+  "xp": { "base": 200 }
+}

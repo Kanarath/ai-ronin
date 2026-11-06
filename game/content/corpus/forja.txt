@@ -1,0 +1,27 @@
+El maestro herrero forja una katana en la forja de Kurogane.
+La katana nace del acero, del fuego y de la paciencia del maestro.
+El aprendiz aviva el fuego de la forja mientras el maestro observa el acero.
+Cada hoja se calienta en la forja, se martillea sobre el yunque y se templa en agua.
+El temple decide la dureza de la hoja: poco temple y la hoja se dobla, demasiado y la hoja se rompe.
+La herrera revisa la hoja con la lima y mide su dureza.
+Una buena katana es dura en el filo y flexible en el lomo.
+El acero de la katana se pliega muchas veces en la forja.
+El maestro enseña al aprendiz a leer el color del acero en el fuego.
+Cuando el acero brilla como el sol del atardecer, la hoja está lista para el temple.
+El aprendiz aprende que la paciencia también se forja.
+La forja de Kurogane vende katanas, dagas y lanzas a los samuráis de la región.
+Los samuráis prueban cada katana antes de comprarla.
+Una katana defectuosa puede romperse en el peor momento.
+Por eso el maestro inspecciona cada hoja antes de venderla.
+La inspección mide la dureza, la flexibilidad y la temperatura del temple.
+El maestro anota cada medida en el libro de la forja.
+Con esas medidas, el aprendiz entrena un modelo que predice la calidad de cada hoja.
+El modelo aprende de las hojas que el maestro ya inspeccionó.
+Pero el modelo solo sabe lo que hay en sus datos.
+La herrera y el maestro discuten si el modelo es fiable.
+El aprendiz responde que hay que medir el modelo con hojas que nunca ha visto.
+Así nace la costumbre de guardar un conjunto de hojas para el test.
+En la forja, el fuego no descansa y el martillo tampoco.
+El yunque guarda la memoria de mil golpes de martillo.
+Las tenazas sujetan la hoja caliente sobre el yunque.
+El maestro dice que una katana se forja con el fuego, pero se templa con la cabeza.

@@ -328,6 +328,126 @@
       "short": "Los números que el modelo aprende durante el entrenamiento (pesos y sesgos).",
       "body": "Una red 2-2-1 tiene 9 parámetros. Un LLM moderno tiene miles de millones. Cuando se habla de un modelo «de 7B» se refiere a unos 7.000 millones de parámetros. No confundir con los hiperparámetros, que eliges tú.",
       "epistemic": "consolidado"
+    },
+    {
+      "id": "token",
+      "term": "token",
+      "aliases": ["tokens", "tokenización", "tokenizador", "tokenizer"],
+      "short": "Unidad mínima en la que un modelo de lenguaje parte el texto: una palabra, un trozo de palabra o un carácter.",
+      "body": "El tokenizador convierte el texto en una secuencia de ids de tokens, que es lo que procesa el modelo. Las APIs de LLM cobran y limitan por tokens. En inglés, un token equivale de media a unos 4 caracteres (unas ¾ de palabra); en otros idiomas, la cifra suele ser peor.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "bpe",
+      "term": "BPE",
+      "aliases": ["byte pair encoding", "byte-pair encoding", "fusiones", "merges"],
+      "short": "Algoritmo de tokenización que fusiona repetidamente el par de símbolos más frecuente del corpus.",
+      "body": "Adaptado a la tokenización de texto para traducción neuronal por Sennrich et al. (2016) y usado (en su versión a nivel de bytes) por GPT-2 y sucesores y por Llama. Las palabras frecuentes acaban siendo un token; las raras se parten en subpalabras, así que no hay palabras «fuera de vocabulario».",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "vocabulario",
+      "term": "vocabulario",
+      "aliases": ["vocab", "tamaño de vocabulario"],
+      "short": "Conjunto de todos los tokens que conoce un tokenizador; cada uno tiene un id.",
+      "body": "Un vocabulario más grande produce secuencias más cortas, pero aumenta el tamaño de la tabla de embeddings y de la capa de salida del modelo. Es un compromiso de diseño.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "embedding",
+      "term": "embedding",
+      "aliases": ["embeddings", "vector de embedding", "incrustación", "representación vectorial"],
+      "short": "Vector de números que representa un token, una palabra, una frase o un documento, de modo que lo parecido queda cerca.",
+      "body": "En un LLM, la primera capa convierte cada id de token en su embedding. Los modelos de embeddings de frases se usan para búsqueda semántica, clasificación y RAG. Los embeddings se aprenden de los datos y heredan sus sesgos. Además, contienen información del texto original: deben tratarse como datos sensibles.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "similitud-coseno",
+      "term": "similitud coseno",
+      "aliases": ["coseno", "cosine similarity", "similitud del coseno"],
+      "short": "Coseno del ángulo entre dos vectores: (a·b)/(|a|·|b|). 1 = misma dirección, 0 = sin relación, −1 = opuestos.",
+      "body": "Es la medida habitual para comparar embeddings porque ignora la longitud del vector y se fija en la dirección. Si los vectores están normalizados (longitud 1), coincide con el producto escalar.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "sesgo-embeddings",
+      "term": "sesgo en embeddings",
+      "aliases": ["sesgo de género", "bias en embeddings", "sesgo algorítmico"],
+      "short": "Asociaciones injustas o estereotipadas que los embeddings aprenden de sus datos de entrenamiento.",
+      "body": "Bolukbasi et al. (2016) mostraron estereotipos de género en word2vec. Cualquier sistema que use embeddings (búsqueda, recomendación, cribado de CVs, RAG) puede reproducirlos. La normativa (como el EU AI Act para sistemas de alto riesgo) exige gestionar estos riesgos.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "llm",
+      "term": "LLM",
+      "aliases": ["modelo de lenguaje", "large language model", "modelo de lenguaje grande", "language model"],
+      "short": "Modelo que estima la probabilidad del siguiente token dado un texto, entrenado con enormes cantidades de texto.",
+      "body": "Un LLM actual es un transformer con miles de millones de parámetros. Se preentrena prediciendo el siguiente token, y después se ajusta (fine-tuning, RLHF u otras técnicas) para seguir instrucciones. Genera texto de forma autorregresiva: un token cada vez.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "temperatura",
+      "term": "temperatura",
+      "aliases": ["temperature", "greedy", "decodificación voraz"],
+      "short": "Parámetro de muestreo que deforma la distribución del siguiente token: baja = más predecible, alta = más aleatoria.",
+      "body": "Equivale a dividir los logits entre T antes del softmax. T = 0 (o greedy) elige siempre el más probable: es reproducible, pero propenso a repeticiones. Una temperatura alta da variedad y más errores. Ninguna temperatura garantiza respuestas verdaderas.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "top-p",
+      "term": "top-p",
+      "aliases": ["nucleus sampling", "top-k", "muestreo por núcleo"],
+      "short": "Top-k: muestrear solo entre los k tokens más probables. Top-p: entre los más probables hasta acumular probabilidad p.",
+      "body": "Recortan la cola de tokens improbables, que es de donde salen muchas incoherencias. Top-p (Holtzman et al., 2019) se adapta a la confianza del modelo: si está seguro, quedan pocos candidatos; si duda, muchos.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "alucinacion",
+      "term": "alucinación",
+      "aliases": ["alucinaciones", "hallucination", "confabulación"],
+      "short": "Salida fluida y convincente pero falsa o no respaldada por las fuentes.",
+      "body": "Ocurre porque un modelo de lenguaje genera texto plausible, no verificado: optimiza la probabilidad del siguiente token, no la verdad. Se mitiga, sin eliminarse, con RAG (dar fuentes), verificación, restricciones de formato y diseño de la aplicación. OWASP la trata dentro de LLM09 (Misinformation).",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "ventana-contexto",
+      "term": "ventana de contexto",
+      "aliases": ["contexto", "context window", "longitud de contexto"],
+      "short": "Número máximo de tokens que un modelo puede tener en cuenta a la vez (prompt + respuesta).",
+      "body": "El n-grama del Dojo mira 1 o 2 palabras; los LLM actuales, de miles a cientos de miles de tokens. Su coste crece con la longitud, porque la atención es cuadrática. Todo lo que entra en la ventana (instrucciones, documentos, historial) puede influir en la salida, incluidas instrucciones maliciosas escondidas en un documento.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "atencion",
+      "term": "atención",
+      "aliases": ["self-attention", "autoatención", "attention", "cabezal", "query", "key", "value", "Q K V"],
+      "short": "Mecanismo por el que cada token calcula cuánto «atender» a cada otro token y mezcla su información en consecuencia.",
+      "body": "softmax(Q·Kᵀ/√d)·V. Q (query), K (key) y V (value) son proyecciones aprendidas de las representaciones de los tokens. Hay muchos cabezales en paralelo que aprenden relaciones distintas. Es la pieza central del transformer (Vaswani et al., 2017).",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "mascara-causal",
+      "term": "máscara causal",
+      "aliases": ["causal mask", "decoder-only", "atención causal"],
+      "short": "Restricción que impide que cada token atienda a tokens posteriores.",
+      "body": "Es la que usan los LLM generativos (tipo GPT): al predecir un token solo pueden usar el pasado. Permite reutilizar cálculos de tokens previos al generar (KV cache).",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "transformer",
+      "term": "transformer",
+      "aliases": ["transformers", "arquitectura transformer"],
+      "short": "Arquitectura de red neuronal basada en atención, base de todos los LLM actuales.",
+      "body": "Propuesta en «Attention Is All You Need» (2017). Apila capas formadas por atención multi-cabezal y redes feed-forward, con conexiones residuales, normalización y codificación posicional. Se paraleliza muy bien en GPU, lo que permitió escalar a modelos enormes.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "memorizacion",
+      "term": "memorización",
+      "aliases": ["memorization", "extracción de datos de entrenamiento", "training data extraction", "regurgitación"],
+      "short": "Cuando un modelo reproduce literalmente fragmentos de sus datos de entrenamiento.",
+      "body": "Carlini et al. (2021) extrajeron de GPT-2 cientos de secuencias memorizadas, incluidos datos personales. Es un riesgo de privacidad y de propiedad intelectual (OWASP LLM02, divulgación de información sensible). Aumenta con datos duplicados y con modelos más grandes.",
+      "epistemic": "consolidado"
     }
   ]
 }

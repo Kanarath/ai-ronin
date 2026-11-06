@@ -2,6 +2,54 @@
   "schema_version": 1,
   "topics": [
     {
+      "id": "llm",
+      "title": "Cómo genera texto un LLM",
+      "body": [
+        "Un modelo de lenguaje estima P(siguiente token | texto anterior). Para generar: calcula la distribución, elige un token, lo añade y repite (generación autorregresiva).",
+        "Elegir el token: greedy (temperatura 0) elige siempre el más probable y tiende a repetirse. Con temperatura T las probabilidades se elevan a 1/T: T<1 concentra y T>1 aplana. Top-k y top-p recortan los candidatos improbables.",
+        "Un modelo genera lo PLAUSIBLE, no lo verdadero: de ahí las alucinaciones. Y si los datos de entrenamiento son escasos o están repetidos, puede reproducirlos literalmente: memorización.",
+        "El n-grama del Dojo cuenta transiciones en un corpus. Un LLM sustituye el recuento por un transformer con atención sobre miles de tokens.",
+        "Comandos: lm train <nombre> --order N · lm next <modelo> <texto> [--temperature --top-k --top-p] · lm generate <modelo> <texto> [--tokens --seed]."
+      ],
+      "see_also": ["atencion", "tokens"]
+    },
+    {
+      "id": "atencion",
+      "title": "Self-attention y ventana de contexto",
+      "body": [
+        "Para cada par de tokens (i, j): puntuación = Qᵢ·Kⱼ/√d. Softmax por filas → pesos que suman 1. Salida de i = Σⱼ pesoᵢⱼ·Vⱼ.",
+        "Máscara causal: los tokens futuros se ponen a −∞ antes del softmax. La matriz de pesos queda triangular. Así son los LLM generativos.",
+        "Coste: n tokens → n² pesos por cabezal y por capa. Por eso la ventana de contexto es limitada y los prompts largos son caros.",
+        "⚗ En el Dojo, Q = K = V = embeddings diseñados a mano. En un transformer real, Q, K y V se aprenden, hay muchos cabezales, muchas capas y codificación de posición.",
+        "Comando: attention <palabras> [--causal] [--no-scale]."
+      ],
+      "see_also": ["llm", "embeddings"]
+    },
+    {
+      "id": "tokens",
+      "title": "Tokens y tokenización BPE",
+      "body": [
+        "Un modelo de lenguaje no ve letras ni palabras: ve una secuencia de ids de tokens. El tokenizador decide cómo se parte el texto.",
+        "BPE: 1) empieza con caracteres (y una marca ▁ de inicio de palabra); 2) cuenta qué par de símbolos aparece junto más a menudo; 3) lo fusiona en un símbolo nuevo; 4) repite. El vocabulario final = caracteres + un token por fusión.",
+        "Al tokenizar un texto nuevo, se aplican las fusiones en el mismo orden. Las palabras frecuentes quedan en 1 token y las raras en varios trozos.",
+        "Consecuencias: el coste y el límite de contexto se miden en tokens; los idiomas poco representados gastan más; el formato (mayúsculas, espacios) cambia los tokens, algo que algunos ataques usan para esquivar filtros.",
+        "Comandos: tokenizer train <nombre> --merges N · tokenize <nombre> <texto> · tokenizer merges <nombre> · tokenizer vocab <nombre>."
+      ],
+      "see_also": ["embeddings"]
+    },
+    {
+      "id": "embeddings",
+      "title": "Embeddings y similitud",
+      "body": [
+        "Un embedding es un vector que representa un significado. Las palabras o textos con significado parecido quedan cerca en el espacio de embeddings.",
+        "Similitud coseno = (a·b)/(|a|·|b|): compara direcciones. Es la medida estándar para buscar los textos más parecidos a una consulta (búsqueda semántica, RAG).",
+        "Aritmética de vectores: maestro − hombre + mujer ≈ maestra. Funciona porque los embeddings aprendidos capturan relaciones regulares… incluidos los estereotipos de sus datos.",
+        "⚗ Los embeddings del Dojo están diseñados a mano con 6 dimensiones con nombre. Los reales se aprenden y tienen cientos o miles de dimensiones sin significado individual.",
+        "Comandos: embed list · embed show · embed similar · embed compare · embed analogy · embed plot."
+      ],
+      "see_also": ["tokens", "distancia"]
+    },
+    {
       "id": "neurona",
       "title": "La neurona artificial",
       "body": [

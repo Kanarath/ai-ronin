@@ -4,8 +4,8 @@ extends RefCounted
 
 const DATASETS_DIR := "res://content/datasets"
 ## Tipos de objeto con nombre (sirven también como tipos de argumento en CommandSignature).
-const KINDS: Array[String] = ["dataset", "model", "regressor", "network"]
-const KIND_NAMES := {"dataset": "dataset", "model": "modelo", "regressor": "regresor", "network": "red"}
+const KINDS: Array[String] = ["dataset", "model", "regressor", "network", "tokenizer", "lm"]
+const KIND_NAMES := {"dataset": "dataset", "model": "modelo", "regressor": "regresor", "network": "red", "tokenizer": "tokenizador", "lm": "modelo de lenguaje"}
 
 var datasets: Dictionary = {}  # nombre -> Dataset
 ## nombre -> {"model": KNNClassifier, "trained_on": String}
@@ -14,6 +14,12 @@ var models: Dictionary = {}
 var regressors: Dictionary = {}
 ## nombre -> MLP
 var networks: Dictionary = {}
+## nombre -> BPETokenizer
+var tokenizers: Dictionary = {}
+## nombre -> NGramLM
+var lms: Dictionary = {}
+## Tabla de embeddings (se carga al usarla)
+var embeddings: EmbeddingTable = null
 
 
 func add_dataset(ds: Dataset) -> void:
@@ -34,6 +40,8 @@ func store_of(kind: String) -> Dictionary:
 		"model": return models
 		"regressor": return regressors
 		"network": return networks
+		"tokenizer": return tokenizers
+		"lm": return lms
 	return {}
 
 
@@ -59,3 +67,4 @@ func load_dataset(file_name: String, ds_name: String, label_column: String) -> S
 func reset() -> void:
 	for kind in KINDS:
 		store_of(kind).clear()
+	embeddings = null

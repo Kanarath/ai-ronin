@@ -26,6 +26,7 @@ var _terminal: TerminalView
 var _plot: ScatterPlot
 var _chart: LineChart
 var _net_view: NetworkGraph
+var _heatmap: AttentionHeatmap
 var _curriculum_box: VBoxContainer
 var _mission_text: RichTextLabel
 var _mentor_log: RichTextLabel
@@ -116,6 +117,11 @@ func _build_layout() -> void:
 	_net_view.custom_minimum_size = Vector2(380, 220)
 	_net_view.visible = false
 	lab.get_child(0).add_child(_net_view)
+	_heatmap = AttentionHeatmap.new()
+	_heatmap.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_heatmap.custom_minimum_size = Vector2(380, 220)
+	_heatmap.visible = false
+	lab.get_child(0).add_child(_heatmap)
 	_chart = LineChart.new()
 	_chart.custom_minimum_size = Vector2(380, 170)
 	_chart.visible = false
@@ -307,6 +313,8 @@ func _on_mission_started(m: Dictionary) -> void:
 	var ds := game.shell.world.get_dataset(viz.get("dataset", ""))
 	if ds != null:
 		_plot.show_dataset(ds, viz.get("x", ""), viz.get("y", ""))
+	else:
+		_plot.clear()
 	_refresh_all()
 
 
@@ -348,6 +356,11 @@ func _on_sim_event(e: Dictionary) -> void:
 			for s in String(d["input"]).split(","):
 				vals.append(s.to_float())
 			_show_net(d["network"], vals)
+		"attention.computed":
+			_plot.visible = false
+			_net_view.visible = false
+			_heatmap.visible = true
+			_heatmap.show_weights(String(d["words"]).split(" "), d["weights"], d["causal"])
 		"viz.scatter":
 			_show_plot()
 			_plot.show_dataset(game.shell.world.get_dataset(d["dataset"]), d["x"], d["y"])
@@ -370,6 +383,7 @@ func _on_sim_event(e: Dictionary) -> void:
 func _show_plot() -> void:
 	_plot.visible = true
 	_net_view.visible = false
+	_heatmap.visible = false
 
 
 func _show_net(net_name: String, input: PackedFloat64Array) -> void:
@@ -377,6 +391,7 @@ func _show_net(net_name: String, input: PackedFloat64Array) -> void:
 	if net == null:
 		return
 	_plot.visible = false
+	_heatmap.visible = false
 	_net_view.visible = true
 	_net_view.show_network(net, net_name, input)
 

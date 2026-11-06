@@ -28,6 +28,8 @@ func _init(p_library: ContentLibrary = null) -> void:
 	MissionCommands.register(registry)
 	OptimCommands.register(registry)
 	NnCommands.register(registry)
+	LangCommands.register(registry)
+	LlmCommands.register(registry)
 
 
 func execute(line: String) -> CommandResult:
