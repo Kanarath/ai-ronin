@@ -213,6 +213,39 @@ func test_mision_T3_02_completa() -> void:
 	assert_true(finished[0]["trial_passed"])
 
 
+func test_mision_T4_01_completa() -> void:
+	game.progress.data["missions"]["T3-01"] = {"completed": true}
+	assert_eq(game.start_mission("T4-01"), "")
+	run(["nn create n --hidden 0", "nn forward n 1,1", "answer 0.313"])
+	run(["hipotesis sí", "nn train n puerta_and --epochs 2000"])
+	run(["nn create o --hidden 0", "nn set o w2_0 10", "nn set o w2_1 10", "nn set o b2 -5", "nn evaluate o puerta_or"])
+	assert_eq(game.runner.index, 4, "OR programado a mano")
+	run(["hipotesis no", "nn create x --hidden 0", "nn train x puerta_xor --epochs 3000", "answer 0.693"])
+	run(["reflexion una neurona hace una suma ponderada mas un sesgo y aplica la sigmoide asi que separa el plano con una recta y en xor los unos estan en esquinas opuestas por lo que ninguna recta los separa y necesita mas neuronas"])
+	assert_eq(game.runner.phase, "trial")
+	run(["nn create nd --hidden 0", "nn set nd w2_0 -10", "nn set nd w2_1 -10", "nn set nd b2 15", "nn evaluate nd puerta_nand"])
+	assert_eq(finished.size(), 1)
+	assert_true(finished[0]["trial_passed"])
+
+
+func test_mision_T4_02_completa() -> void:
+	game.progress.data["missions"]["T4-01"] = {"completed": true}
+	assert_eq(game.start_mission("T4-02"), "")
+	run(["hipotesis sí", "nn create red --hidden 2 --lr 1 --seed 1", "nn train red puerta_xor --epochs 3000"])
+	run(["nn forward red 0,0", "nn forward red 0,1", "nn forward red 1,0", "nn forward red 1,1", "answer and"])
+	run(["hipotesis se queda atascada", "nn create r5 --hidden 2 --lr 1 --seed 5", "nn train r5 puerta_xor --epochs 3000"])
+	run(["nn create r5b --hidden 4 --lr 1 --seed 5", "nn train r5b puerta_xor --epochs 3000"])
+	assert_eq(game.runner.index, 4)
+	run(["dataset split katanas --test 0.3 --seed 42", "dataset normalize katanas_train --as tr", "dataset normalize katanas_test --fit katanas_train --as te",
+		"nn create n0 --inputs 3 --hidden 0 --lr 1", "nn train n0 tr --epochs 3000 --positive defectuosa", "nn evaluate n0 te",
+		"nn create n8 --inputs 3 --hidden 8 --lr 1 --seed 1", "nn train n8 tr --epochs 3000 --positive defectuosa", "nn evaluate n8 te", "answer 0.861"])
+	run(["reflexion la capa oculta combina varias rectas para crear fronteras no lineales como nor y and que juntas hacen xor backpropagation reparte la culpa del error hacia atras con la regla de la cadena y la semilla decide desde donde empieza el descenso que puede caer en un minimo local"])
+	assert_eq(game.runner.phase, "trial")
+	run(["nn create n4 --inputs 3 --hidden 4 --lr 1 --seed 2", "nn train n4 tr --epochs 3000 --positive defectuosa", "nn evaluate n4 te", "answer 0.847"])
+	assert_eq(finished.size(), 1)
+	assert_true(finished[0]["trial_passed"])
+
+
 # ── Pistas y maestría ────────────────────────────────────────────────────────
 
 func test_escalera_de_pistas_y_confirmacion_nivel_5() -> void:

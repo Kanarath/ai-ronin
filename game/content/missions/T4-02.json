@@ -1,0 +1,146 @@
+{
+  "id": "T4-02",
+  "schema_version": 1,
+  "title": "Capas ocultas",
+  "unit": "T4",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 45,
+  "requires_missions": ["T4-01"],
+  "competencies": { "requires": ["T4.neurona"], "trains": ["T4.mlp", "T4.backprop", "T4.inicializacion"] },
+  "briefing": "Una neurona traza una recta. ¿Y si pones varias neuronas en una capa intermedia, cada una trazando su recta, y otra neurona que combine sus respuestas? Eso es una red neuronal multicapa. Hoy vas a ver cómo resuelve XOR, a abrirla para descubrir QUÉ ha aprendido cada neurona, a romperla con una mala inicialización y a usarla con las katanas.",
+  "learning_objectives": [
+    "Entrenar una red con una capa oculta y explicar qué aporta la capa oculta",
+    "Interpretar lo que ha aprendido cada neurona oculta",
+    "Reconocer un entrenamiento atascado por la inicialización y corregirlo",
+    "Comparar una neurona y una red en un problema real no lineal"
+  ],
+  "mentor_intro": "Vamos a abrir la caja negra. Una red no es magia: son números que puedes leer.",
+  "lab": {
+    "datasets": [
+      { "file": "puerta_xor.csv", "name": "puerta_xor", "label": "salida" },
+      { "file": "katanas.csv", "name": "katanas", "label": "calidad" }
+    ],
+    "viz": { "dataset": "puerta_xor", "x": "a", "y": "b" }
+  },
+  "theory_cards": [
+    {
+      "id": "capas",
+      "title": "Capas y backpropagation",
+      "body": "En una red 2-2-1, las 2 entradas van a 2 neuronas OCULTAS (cada una con sus pesos y su sesgo) y sus salidas van a 1 neurona de salida. Para entrenarla hay que saber cuánto culpa tiene cada peso del error, incluidos los de la capa oculta, que no ven el error directamente. BACKPROPAGATION lo calcula aplicando la regla de la cadena desde la salida hacia atrás. Más: man backprop"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Crea una red con 2 neuronas ocultas (lr 1, semilla 1) y entrénala 3000 épocas con XOR.",
+      "prediction": { "prompt": "¿Resolverá XOR una red con 2 neuronas ocultas?", "options": ["sí", "no"] },
+      "teach": "Red con capa oculta\nnn create <nombre> --hidden 2 --lr 1 --seed 1 crea una red 2-2-1 con 9 parámetros: 4 pesos y 2 sesgos en la capa oculta, 2 pesos y 1 sesgo en la salida. El entrenamiento es el mismo comando de antes.",
+      "validator": { "type": "event", "event": "nn.trained", "where": { "dataset": "puerta_xor", "hidden": 2, "seed": 1, "accuracy": 1.0 } },
+      "hints": [
+        "nn create <nombre> --hidden 2 --lr 1 --seed 1",
+        "nn create red --hidden 2 --lr 1 --seed 1 · nn train red puerta_xor --epochs 3000"
+      ],
+      "on_complete": "Accuracy 1,0: lo que era imposible para una neurona lo resuelven tres."
+    },
+    {
+      "id": "o2",
+      "text": "Averigua qué ha aprendido la neurona oculta 1: pasa las cuatro entradas (0,0 · 0,1 · 1,0 · 1,1) con nn forward y mira cuándo se «enciende» (activación > 0,5). ¿A qué puerta lógica corresponde? (answer <puerta>)",
+      "teach": "Leer una neurona oculta\nCada neurona oculta es una neurona como las de T4-01: traza su propia recta. Mira su activación (sigmoid(z)) en la línea «oculta 1» de nn forward para cada una de las cuatro entradas. Si solo se enciende en un caso, o en tres, reconocerás una puerta conocida.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "nn.forward", "count": { "gte": 4 } },
+        { "type": "answer", "expected": "AND", "accept": ["and", "AND", "y"] }
+      ] },
+      "wrong_answer": "Fíjate en la línea «oculta 1» de nn forward en las cuatro entradas: ¿en cuál pasa de 0,5?",
+      "hints": [
+        "nn forward red 0,0 · nn forward red 0,1 · nn forward red 1,0 · nn forward red 1,1",
+        "Solo se enciende con una de las cuatro entradas. ¿Qué puerta da 1 solo en ese caso?"
+      ],
+      "on_complete": "AND. Y la neurona oculta 0 se enciende solo con (0,0): es NOR. La salida combina: «ni NOR ni AND» = XOR. Nadie le ha dicho a la red que use puertas lógicas: ha DESCUBIERTO que esas dos rectas le sirven. Eso es aprender representaciones, la idea central del deep learning."
+    },
+    {
+      "id": "o3",
+      "text": "Repite exactamente lo mismo cambiando solo la semilla a 5.",
+      "prediction": { "prompt": "Misma red, mismos datos, mismas épocas, otros pesos iniciales: ¿qué pasará?", "options": ["resuelve XOR igual", "se queda atascada"] },
+      "teach": "La semilla\nLa semilla decide los pesos iniciales aleatorios. Desde ahí, el descenso por gradiente baja por la superficie de error… pero esa superficie, en una red, no es un cuenco: tiene valles secundarios y mesetas.",
+      "validator": { "type": "event", "event": "nn.trained", "where": { "dataset": "puerta_xor", "hidden": 2, "seed": 5, "epochs": { "gte": 3000 } } },
+      "hints": [
+        "nn create red5 --hidden 2 --lr 1 --seed 5",
+        "nn train red5 puerta_xor --epochs 3000"
+      ],
+      "on_complete": "Se atasca: accuracy 0,5. El descenso ha caído en un MÍNIMO LOCAL (o una zona plana) del que no sabe salir: desde ahí, cualquier paso pequeño empeora o no mejora. Con solo 2 neuronas ocultas hay muy poco margen."
+    },
+    {
+      "id": "o4",
+      "text": "Arréglalo sin cambiar la semilla: misma semilla 5, pero con más neuronas ocultas. Consigue accuracy 1.0 en XOR.",
+      "validator": { "type": "event", "event": "nn.trained", "where": { "dataset": "puerta_xor", "seed": 5, "hidden": { "gte": 3 }, "accuracy": 1.0 } },
+      "hints": [
+        "¿Qué pasa si la red tiene más neuronas de las estrictamente necesarias?",
+        "nn create red5b --hidden 4 --lr 1 --seed 5 · nn train red5b puerta_xor --epochs 3000"
+      ],
+      "on_complete": "Con 4 ocultas lo resuelve. Las redes más anchas de lo «necesario» tienen muchos más caminos cuesta abajo hacia una buena solución: por eso en la práctica se usan redes sobredimensionadas. Es una observación empírica muy consistente, y su explicación teórica completa sigue siendo un tema de investigación."
+    },
+    {
+      "id": "o5",
+      "text": "Ahora un problema real: con el split honesto de katanas (test 0.3, seed 42, min-max aprendido del train), compara en el TEST una sola neurona (--hidden 0) y una red con 8 ocultas (semilla 1), ambas con lr 1 y 3000 épocas, usando «defectuosa» como clase 1.",
+      "teach": "Redes con datos reales\nLas katanas tienen 3 features, así que la red necesita --inputs 3. Como las etiquetas son «apta»/«defectuosa» y no 0/1, indica cuál es la clase 1 con --positive defectuosa al entrenar. Y como siempre: se entrena con el train normalizado y se evalúa en el test.",
+      "validator": { "type": "sequence", "steps": [
+        { "type": "event", "event": "nn.evaluated", "where": { "hidden": 0, "overlap": 0, "normalized": true, "dataset": { "ne": "puerta_xor" } } },
+        { "type": "event", "event": "nn.evaluated", "where": { "hidden": 8, "overlap": 0, "normalized": true, "accuracy": { "gte": 0.8 } } }
+      ] },
+      "diagnostics": [
+        {
+          "id": "train-eval",
+          "when": { "type": "event", "event": "nn.evaluated", "where": { "overlap": { "gt": 0 } } },
+          "message": "Esa evaluación comparte ejemplos con el entrenamiento. ¿Sobre qué dataset se mide la generalización?"
+        }
+      ],
+      "hints": [
+        "Primero prepara tr y te como en T2-01. Después: nn create … --inputs 3 --hidden 0 --lr 1, nn train … tr --epochs 3000 --positive defectuosa, nn evaluate … te.",
+        "Lo mismo con --hidden 8 --seed 1.",
+        "dataset split katanas --test 0.3 --seed 42 · dataset normalize katanas_train --as tr · dataset normalize katanas_test --fit katanas_train --as te · nn create n0 --inputs 3 --hidden 0 --lr 1 · nn train n0 tr --epochs 3000 --positive defectuosa · nn evaluate n0 te · nn create n8 --inputs 3 --hidden 8 --lr 1 --seed 1 · nn train n8 tr --epochs 3000 --positive defectuosa · nn evaluate n8 te"
+      ],
+      "on_complete": "Una neurona: ~0,53, prácticamente azar. La red: ~0,86. ¿Recuerdas el gráfico de T1-01? Las defectuosas forman DOS grupos (quebradizas y blandas), uno a cada lado de las aptas: no hay recta que las separe, igual que en XOR."
+    },
+    {
+      "id": "o6",
+      "text": "¿Qué accuracy en el test obtiene la red de 8 ocultas? (answer <número>, 3 decimales)",
+      "validator": { "type": "answer", "expected": 0.861, "tolerance": 0.002 },
+      "wrong_answer": "Es la accuracy de nn evaluate de la red de 8 ocultas sobre el test (semilla 1, lr 1, 3000 épocas).",
+      "hints": ["Última línea de nn evaluate con la red de 8 ocultas sobre te."],
+      "on_complete": "0,861, frente al 0,847 del k-NN con k=9 en T3-02. En este problema pequeño la red apenas gana, y es mucho menos interpretable. Elegir modelo es siempre un compromiso."
+    },
+    {
+      "id": "o7",
+      "text": "Explica con tus palabras qué aporta la capa oculta, qué hace backpropagation y por qué la semilla puede hacer que una red se atasque. (reflexion <texto>, mínimo 35 palabras)",
+      "validator": { "type": "reflection", "min_words": 35 },
+      "hints": [
+        "Tres ideas: varias rectas combinadas → fronteras no lineales; repartir la culpa del error hacia atrás; superficie de error con mínimos locales.",
+        "Usa el ejemplo de XOR (NOR + AND) y el de las katanas."
+      ]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: otra arquitectura. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con los mismos tr y te, entrena una red de 4 ocultas con semilla 2, lr 1 y 3000 épocas (clase 1: defectuosa). ¿Qué accuracy obtiene en el test? (answer <número>, 3 decimales)",
+        "validator": { "type": "answer", "expected": 0.847, "tolerance": 0.002 },
+        "wrong_answer": "Revisa: --inputs 3 --hidden 4 --seed 2 --lr 1, 3000 épocas con --positive defectuosa, evaluada sobre el test.",
+        "hints": ["Mismo procedimiento que el objetivo 5 con otra arquitectura.", "nn create, nn train … --positive defectuosa, nn evaluate … te"],
+        "on_complete": "Correcto: 0,847."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has entrenado redes multicapa, has leído lo que aprendió cada neurona oculta (NOR y AND para construir XOR), has visto un entrenamiento atascado por la inicialización y lo has arreglado ensanchando la red, y has aplicado una red a un problema no lineal real.",
+    "why": "La capa oculta permite construir representaciones intermedias útiles: es la idea que, apilada en decenas o cientos de capas, hace funcionar la visión artificial, el reconocimiento de voz y los LLM. Backpropagation es el algoritmo que lo hace entrenable.",
+    "in_production": "Las redes se construyen con PyTorch o JAX, que calculan los gradientes automáticamente (autodiferenciación): nadie programa backprop a mano. Se usan ReLU/GELU en lugar de sigmoide, inicializaciones cuidadosas (Xavier/He), optimizadores como Adam, mini-lotes y regularización. Un LLM es, en esencia, una pila enorme de estas capas (más atención, en T6) entrenada con descenso por gradiente.",
+    "simplifications": ["Una sola capa oculta", "Descenso por gradiente con el lote completo", "Sigmoide en la capa oculta por defecto"],
+    "exercise": "forja/ejercicios/T4_02_backprop.py"
+  },
+  "further_reading": ["ref.rumelhart-1986", "ref.goodfellow-dl-ch6", "ref.3b1b-nn"],
+  "xp": { "base": 200 }
+}

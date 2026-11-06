@@ -27,6 +27,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	MlCommands.register(registry)
 	MissionCommands.register(registry)
 	OptimCommands.register(registry)
+	NnCommands.register(registry)
 
 
 func execute(line: String) -> CommandResult:

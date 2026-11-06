@@ -2,6 +2,28 @@
   "schema_version": 1,
   "topics": [
     {
+      "id": "neurona",
+      "title": "La neurona artificial",
+      "body": [
+        "Una neurona calcula z = w₁·x₁ + w₂·x₂ + … + b (suma ponderada más sesgo) y aplica una función de activación. Con la sigmoide, σ(z) = 1/(1+e^(−z)) da un número entre 0 y 1 que se interpreta como probabilidad.",
+        "Dice «1» cuando σ(z) ≥ 0,5, es decir, cuando z ≥ 0. La frontera z = 0 es una recta en el plano de las entradas: una neurona separa el espacio en dos mitades con una línea recta.",
+        "Por eso puede aprender AND u OR, pero no XOR: en XOR las clases están en esquinas opuestas y ninguna recta las separa.",
+        "Comandos: nn create <red> --hidden 0 · nn forward <red> 1,0 · nn weights <red> · nn set <red> <parámetro> <valor> · nn train · nn evaluate."
+      ],
+      "see_also": ["backprop", "gradiente"]
+    },
+    {
+      "id": "backprop",
+      "title": "Redes multicapa y backpropagation",
+      "body": [
+        "Red 2-2-1: dos entradas, dos neuronas ocultas y una de salida. Cada neurona oculta traza su propia recta; la salida combina sus respuestas, así que la frontera final puede ser una curva o varias regiones.",
+        "Para entrenarla hace falta el gradiente de la pérdida respecto a TODOS los pesos. Backpropagation lo calcula hacia atrás con la regla de la cadena. Con sigmoide y entropía cruzada: δ_salida = p − y; ∂w2_j = δ_salida · a_j; δ_oculta_j = δ_salida · w2_j · σ'(z_j); ∂w1_jk = δ_oculta_j · x_k.",
+        "La pérdida de una red no es un cuenco: tiene mínimos locales y mesetas. Por eso la inicialización (la semilla) importa, y por eso las redes algo más anchas de lo necesario entrenan con más fiabilidad.",
+        "En producción nadie escribe backprop a mano: PyTorch o JAX calculan los gradientes automáticamente (autodiferenciación)."
+      ],
+      "see_also": ["neurona", "gradiente"]
+    },
+    {
       "id": "gradiente",
       "title": "Descenso por gradiente",
       "body": [

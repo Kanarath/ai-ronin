@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://cpkhnxmeiptlq"
+
+[deps]
+
+files=["res://content/datasets/puerta_nand.a.translation", "res://content/datasets/puerta_nand.b.translation", "res://content/datasets/puerta_nand.salida.translation"]
+
+source_file="res://content/datasets/puerta_nand.csv"
+dest_files=["res://content/datasets/puerta_nand.a.translation", "res://content/datasets/puerta_nand.b.translation", "res://content/datasets/puerta_nand.salida.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

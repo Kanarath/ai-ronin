@@ -1,0 +1,149 @@
+{
+  "id": "T4-01",
+  "schema_version": 1,
+  "title": "Una sola neurona",
+  "unit": "T4",
+  "difficulty": 2,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 35,
+  "requires_missions": ["T3-01"],
+  "competencies": { "requires": ["T3.descenso-gradiente"], "trains": ["T4.neurona", "T4.separabilidad"] },
+  "briefing": "Las redes neuronales que mueven los LLM están hechas de una pieza muy simple repetida miles de millones de veces: la neurona artificial. Antes de construir redes, vas a entender una sola neurona por dentro: cómo calcula, cómo se entrena, cómo se programa a mano… y qué es lo que NO puede hacer, por mucho que la entrenes.",
+  "learning_objectives": [
+    "Calcular a mano la salida de una neurona (suma ponderada + sigmoide)",
+    "Ajustar pesos y sesgo a mano para que una neurona implemente una puerta lógica",
+    "Explicar por qué una sola neurona no puede resolver XOR (separabilidad lineal)"
+  ],
+  "mentor_intro": "Hoy trabajamos con puertas lógicas: entradas a y b que valen 0 o 1, y una salida 0 o 1. Son el «hola mundo» de las redes neuronales porque se pueden razonar a mano.",
+  "lab": {
+    "datasets": [
+      { "file": "puerta_and.csv", "name": "puerta_and", "label": "salida" },
+      { "file": "puerta_or.csv", "name": "puerta_or", "label": "salida" },
+      { "file": "puerta_xor.csv", "name": "puerta_xor", "label": "salida" },
+      { "file": "puerta_nand.csv", "name": "puerta_nand", "label": "salida" }
+    ],
+    "viz": { "dataset": "puerta_xor", "x": "a", "y": "b" }
+  },
+  "theory_cards": [
+    {
+      "id": "neurona",
+      "title": "La neurona artificial",
+      "body": "Recibe entradas (a, b), multiplica cada una por un PESO, suma un SESGO: z = w₁·a + w₂·b + bias. Después aplica una función de activación; aquí la SIGMOIDE σ(z) = 1 / (1 + e^(−z)), que convierte cualquier número en un valor entre 0 y 1 que interpretamos como probabilidad. Si σ(z) ≥ 0,5 (es decir, si z ≥ 0), la neurona dice «1». Más: man neurona"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Crea una red de una sola neurona (sin capa oculta).",
+      "teach": "Crear una neurona\nnn create <nombre> --hidden 0 crea una neurona con 2 entradas: tiene 3 parámetros (dos pesos y un sesgo). Los pesos empiezan con valores aleatorios pequeños (reproducibles gracias a la semilla) y el sesgo en 0.",
+      "validator": { "type": "event", "event": "nn.created", "where": { "hidden": 0 } },
+      "hints": [
+        "Los comandos de redes empiezan por nn. Prueba: help nn",
+        "nn create neurona --hidden 0"
+      ],
+      "on_complete": "Mírala por dentro con nn weights <nombre>: w2_0 es el peso de la entrada a, w2_1 el de b y b2 el sesgo."
+    },
+    {
+      "id": "o2",
+      "text": "Calcula la salida de la neurona SIN entrenar para la entrada a=1, b=1. ¿Qué probabilidad da? (answer <número>, 3 decimales)",
+      "teach": "Pasada hacia delante (forward)\nCalcular la salida de una red para una entrada se llama «forward pass». nn forward <red> 1,1 muestra cada paso: la suma ponderada z y la sigmoide σ(z). Intenta comprobar la cuenta tú: multiplica, suma y aplica σ.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "nn.forward", "where": { "input": "1,1" } },
+        { "type": "answer", "expected": 0.313, "tolerance": 0.002 }
+      ] },
+      "wrong_answer": "Es el número tras σ(z) en la línea «salida» de nn forward (con la red recién creada, semilla 1).",
+      "hints": [
+        "nn forward <red> 1,1",
+        "Si ya la habías entrenado, nn reset <red> vuelve a los pesos iniciales."
+      ],
+      "on_complete": "0,313: los pesos aleatorios dan una respuesta aleatoria. Una red sin entrenar no sabe nada."
+    },
+    {
+      "id": "o3",
+      "text": "Entrena la neurona con la puerta AND y comprueba su accuracy.",
+      "prediction": { "prompt": "¿Podrá una sola neurona aprender AND (salida 1 solo si a=1 y b=1)?", "options": ["sí", "no"] },
+      "teach": "Entrenar una neurona\nEs el mismo descenso por gradiente de T3: la red predice, se mide el error (aquí con ENTROPÍA CRUZADA, la pérdida estándar para clasificar) y se ajustan pesos y sesgo un pasito en la dirección que reduce el error. Comando: nn train <red> <dataset> --epochs <n>.",
+      "validator": { "type": "event", "event": "nn.trained", "where": { "dataset": "puerta_and", "hidden": 0, "accuracy": 1.0 } },
+      "hints": [
+        "nn train <red> puerta_and --epochs 2000",
+        "Si la accuracy no llega a 1.0, entrena más épocas: el entrenamiento continúa donde se quedó."
+      ],
+      "on_complete": "Accuracy 1,0. Mira los pesos con nn weights: dos pesos positivos grandes y un sesgo negativo. La neurona solo «se enciende» (z > 0) cuando las DOS entradas suman lo suficiente para vencer al sesgo."
+    },
+    {
+      "id": "o4",
+      "text": "Programa una neurona a mano: crea una neurona NUEVA y, sin entrenarla, ajusta sus pesos y su sesgo con nn set para que implemente OR (salida 1 si a=1 o b=1). Compruébalo con nn evaluate.",
+      "teach": "Pesos a mano\nLa neurona dice 1 cuando z = w₁·a + w₂·b + bias es mayor que 0. Para OR quieres: (0,0) → z negativo; (1,0), (0,1) y (1,1) → z positivo. Elige números: un sesgo negativo y pesos que, con UNA sola entrada a 1, ya superen al sesgo. Valores grandes (como 10) hacen que la sigmoide dé casi exactamente 0 o 1.\nComando: nn set <red> <parámetro> <valor>, con los nombres que ves en nn weights.",
+      "validator": { "type": "event", "event": "nn.evaluated", "where": { "dataset": "puerta_or", "accuracy": 1.0, "epochs": 0, "manual_edits": { "gte": 1 } } },
+      "diagnostics": [
+        {
+          "id": "trained",
+          "when": { "type": "event", "event": "nn.evaluated", "where": { "dataset": "puerta_or", "epochs": { "gt": 0 } } },
+          "message": "Esa neurona está entrenada. El reto es programarla tú: crea una nueva y usa solo nn set."
+        }
+      ],
+      "hints": [
+        "Piensa primero el caso (0,0): ahí z = bias. ¿Qué signo necesita el sesgo?",
+        "Con a=1, b=0: z = w₁ + bias. Necesitas que sea positivo. Prueba bias = −5 y pesos 10.",
+        "nn create o --hidden 0 · nn set o w2_0 10 · nn set o w2_1 10 · nn set o b2 -5 · nn evaluate o puerta_or"
+      ],
+      "on_complete": "Acabas de hacer a mano lo que hace el entrenamiento: encontrar pesos que separan los casos. Una neurona traza una LÍNEA RECTA (w₁·a + w₂·b + bias = 0) y dice 1 a un lado y 0 al otro."
+    },
+    {
+      "id": "o5",
+      "text": "Entrena una neurona con la puerta XOR (salida 1 si a y b son distintas).",
+      "prediction": { "prompt": "Con suficientes épocas, ¿aprenderá una sola neurona XOR?", "options": ["sí", "no"] },
+      "validator": { "type": "event", "event": "nn.trained", "where": { "dataset": "puerta_xor", "hidden": 0, "epochs": { "gte": 1000 } } },
+      "hints": [
+        "Igual que con AND, cambiando el dataset. Usa al menos 1000 épocas.",
+        "nn create x --hidden 0 · nn train x puerta_xor --epochs 5000"
+      ],
+      "on_complete": "No aprende: accuracy 0,5 y la pérdida se queda clavada. Dibuja XOR mentalmente: (0,1) y (1,0) valen 1 y están en esquinas opuestas; (0,0) y (1,1) valen 0 y ocupan las otras dos. NINGUNA recta deja los unos a un lado y los ceros al otro. XOR no es linealmente separable. Esta limitación, señalada por Minsky y Papert en 1969, contribuyó a frenar la investigación en redes neuronales durante años."
+    },
+    {
+      "id": "o6",
+      "text": "¿En qué valor se queda atascada la pérdida? (answer <número>, 3 decimales)",
+      "validator": { "type": "answer", "expected": 0.693, "tolerance": 0.002 },
+      "wrong_answer": "Mira la última fila de la tabla de pérdidas del entrenamiento con XOR.",
+      "hints": [
+        "Es el último valor de la tabla de nn train con puerta_xor.",
+        "Debería parecerse a ln(2)."
+      ],
+      "on_complete": "0,693 = ln 2: es la entropía cruzada de responder 0,5 a todo. La neurona ha encontrado que lo «menos malo» que puede hacer es no comprometerse. Compruébalo con nn evaluate."
+    },
+    {
+      "id": "o7",
+      "text": "Explica con tus palabras qué calcula una neurona, por qué traza una frontera recta y por qué eso le impide resolver XOR. (reflexion <texto>, mínimo 30 palabras)",
+      "validator": { "type": "reflection", "min_words": 30 },
+      "hints": [
+        "Habla de: suma ponderada, sesgo, sigmoide, la recta z = 0 y la posición de los cuatro puntos de XOR.",
+        "¿Qué haría falta para separar XOR? (pista: más de una recta…)"
+      ]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: programa una neurona a mano. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Crea una neurona nueva y, SIN entrenar, ajusta sus pesos para que implemente NAND (salida 0 solo si a=1 y b=1). Compruébalo con nn evaluate sobre puerta_nand.",
+        "validator": { "type": "event", "event": "nn.evaluated", "where": { "dataset": "puerta_nand", "accuracy": 1.0, "epochs": 0, "manual_edits": { "gte": 1 } } },
+        "hints": [
+          "NAND es AND al revés. Si AND se enciende cuando la suma supera al sesgo, ¿qué pasa si cambias todos los signos?",
+          "(0,0) → z debe ser positivo; (1,1) → negativo. Pesos negativos y sesgo positivo."
+        ],
+        "on_complete": "Correcto. Dato curioso: con puertas NAND se puede construir cualquier circuito lógico; con suficientes neuronas, cualquier función."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has calculado una neurona a mano, la has entrenado, la has programado con tus propios pesos y has comprobado su límite: solo puede separar con una línea recta, así que XOR le resulta imposible.",
+    "why": "La neurona es el ladrillo de todo el deep learning. Su limitación lineal explica por qué hacen falta CAPAS: combinando varias neuronas se pueden trazar fronteras curvas y resolver problemas que una sola no puede. Es la siguiente misión.",
+    "in_production": "En redes reales las neuronas se calculan en bloque como multiplicaciones de matrices en GPU (millones a la vez). La sigmoide ya casi no se usa en capas ocultas (se prefieren ReLU y variantes como GELU, usada en los transformers), pero sigue en salidas binarias. Una neurona con sigmoide y entropía cruzada es exactamente una regresión logística, un modelo muy usado en la industria por ser simple e interpretable.",
+    "simplifications": ["Entradas binarias de puertas lógicas", "Descenso por gradiente con el lote completo"],
+    "exercise": "forja/ejercicios/T4_01_neurona.py"
+  },
+  "further_reading": ["ref.goodfellow-dl-ch6", "ref.3b1b-nn", "ref.minsky-papert-1969"],
+  "xp": { "base": 150 }
+}

@@ -256,6 +256,78 @@
       "short": "FP: el modelo dice positivo y no lo es. FN: el modelo dice negativo y era positivo.",
       "body": "TP y TN son los aciertos. Qué cuenta como «positivo» lo decides tú: es la clase que quieres detectar. En seguridad, un FN es un ataque que pasa desapercibido; un FP, una alerta falsa que hace perder tiempo (y que, en exceso, provoca que se ignoren las alertas).",
       "epistemic": "consolidado"
+    },
+    {
+      "id": "neurona",
+      "term": "neurona artificial",
+      "aliases": ["neurona", "perceptrón", "perceptron", "unidad"],
+      "short": "Calcula una suma ponderada de sus entradas más un sesgo y le aplica una función de activación.",
+      "body": "salida = activación(w₁·x₁ + … + wₙ·xₙ + b). Los pesos w y el sesgo b son los parámetros que se aprenden. Está inspirada muy vagamente en las neuronas biológicas, pero es solo una función matemática. El perceptrón original (Rosenblatt, 1958) usaba un escalón en lugar de una sigmoide.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "activacion",
+      "term": "función de activación",
+      "aliases": ["activación", "sigmoide", "sigmoid", "tanh", "relu", "gelu"],
+      "short": "Función no lineal que se aplica a la suma ponderada de una neurona.",
+      "body": "Sigmoide: 1/(1+e^(−z)), entre 0 y 1. Tanh: entre −1 y 1. ReLU: max(0, z), la más usada en capas ocultas por ser simple y entrenar bien. GELU: variante suave de ReLU usada en los transformers. Sin activaciones no lineales, apilar capas no serviría de nada: varias capas lineales seguidas equivalen a una sola.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "sesgo",
+      "term": "sesgo (bias)",
+      "aliases": ["bias", "sesgo de la neurona", "término independiente"],
+      "short": "Parámetro que se suma a la entrada ponderada de una neurona: desplaza su frontera de decisión.",
+      "body": "Sin sesgo, la frontera de una neurona tendría que pasar por el origen. Ojo: no confundir con «sesgo» en el sentido de discriminación o sesgo estadístico de un modelo, que es otro concepto.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "capa-oculta",
+      "term": "capa oculta",
+      "aliases": ["hidden layer", "capas ocultas", "MLP", "perceptrón multicapa", "red multicapa"],
+      "short": "Capa de neuronas entre la entrada y la salida, cuyos valores no se observan directamente.",
+      "body": "Cada neurona oculta aprende una característica intermedia útil (en XOR: NOR y AND). Combinándolas, la red puede trazar fronteras no lineales. Una red con una capa oculta suficientemente ancha puede aproximar cualquier función continua (teorema de aproximación universal), aunque eso no dice cómo encontrar los pesos ni cuántas neuronas harán falta.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "backprop",
+      "term": "backpropagation",
+      "aliases": ["retropropagación", "backprop", "propagación hacia atrás"],
+      "short": "Algoritmo que calcula el gradiente de la pérdida respecto a todos los pesos de una red, aplicando la regla de la cadena desde la salida hacia atrás.",
+      "body": "Primero una pasada hacia delante calcula las activaciones; después, el error se propaga hacia atrás capa a capa, repartiendo la «culpa» de cada peso. Con esos gradientes, el descenso por gradiente actualiza los pesos. Popularizado por Rumelhart, Hinton y Williams (1986). Las librerías modernas lo hacen automáticamente (autodiferenciación).",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "entropia-cruzada",
+      "term": "entropía cruzada",
+      "aliases": ["cross-entropy", "log loss", "pérdida logarítmica", "BCE"],
+      "short": "Pérdida estándar de clasificación: −ln(probabilidad asignada a la clase correcta).",
+      "body": "Si el modelo da probabilidad 0,9 a la clase correcta, la pérdida es −ln 0,9 ≈ 0,105; si da 0,1, es −ln 0,1 ≈ 2,3. Castiga mucho estar seguro y equivocarse. Los LLM se entrenan minimizando la entropía cruzada de predecir el siguiente token.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "separable",
+      "term": "separabilidad lineal",
+      "aliases": ["linealmente separable", "separable", "frontera de decisión"],
+      "short": "Un problema es linealmente separable si una recta (o un hiperplano) deja cada clase a un lado.",
+      "body": "AND y OR lo son; XOR no. Una sola neurona solo resuelve problemas linealmente separables. Las capas ocultas permiten fronteras curvas.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "minimo-local",
+      "term": "mínimo local",
+      "aliases": ["mínimos locales", "local minimum", "meseta", "punto de silla"],
+      "short": "Punto donde la pérdida es menor que a su alrededor pero no es el mínimo global.",
+      "body": "En regresión lineal la pérdida es un cuenco con un único mínimo. En las redes neuronales la superficie es irregular: hay mínimos locales, mesetas y puntos de silla, y el resultado depende de la inicialización. En redes grandes, los mínimos locales malos resultan ser menos problemáticos de lo que se temía.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "parametros",
+      "term": "parámetros",
+      "aliases": ["pesos", "weights", "parámetros entrenables"],
+      "short": "Los números que el modelo aprende durante el entrenamiento (pesos y sesgos).",
+      "body": "Una red 2-2-1 tiene 9 parámetros. Un LLM moderno tiene miles de millones. Cuando se habla de un modelo «de 7B» se refiere a unos 7.000 millones de parámetros. No confundir con los hiperparámetros, que eliges tú.",
+      "epistemic": "consolidado"
     }
   ]
 }

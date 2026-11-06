@@ -2,6 +2,42 @@
   "schema_version": 1,
   "references": [
     {
+      "id": "ref.rumelhart-1986",
+      "title": "Learning representations by back-propagating errors",
+      "authors": "D. Rumelhart, G. Hinton, R. Williams",
+      "source": "Nature 323, 533-536",
+      "year": 1986,
+      "type": "paper",
+      "url": "https://doi.org/10.1038/323533a0",
+      "consulted": "2026-11-06"
+    },
+    {
+      "id": "ref.minsky-papert-1969",
+      "title": "Perceptrons: An Introduction to Computational Geometry",
+      "authors": "M. Minsky, S. Papert",
+      "source": "MIT Press",
+      "year": 1969,
+      "type": "libro",
+      "consulted": "2026-11-06"
+    },
+    {
+      "id": "ref.goodfellow-dl-ch6",
+      "title": "Deep Learning, capítulo 6: Deep Feedforward Networks (incluye XOR y backpropagation)",
+      "authors": "I. Goodfellow, Y. Bengio, A. Courville",
+      "source": "MIT Press, 2016",
+      "type": "libro",
+      "url": "https://www.deeplearningbook.org/contents/mlp.html",
+      "consulted": "2026-11-06"
+    },
+    {
+      "id": "ref.3b1b-nn",
+      "title": "3Blue1Brown: Neural networks (serie de vídeos visuales sobre redes y backpropagation)",
+      "source": "3Blue1Brown",
+      "type": "curso",
+      "url": "https://www.3blue1brown.com/topics/neural-networks",
+      "consulted": "2026-11-06"
+    },
+    {
       "id": "ref.goodfellow-dl-ch4",
       "title": "Deep Learning, capítulo 4: Numerical Computation (descenso por gradiente, condicionamiento)",
       "authors": "I. Goodfellow, Y. Bengio, A. Courville",

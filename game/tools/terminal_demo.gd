@@ -9,6 +9,8 @@ func _initialize() -> void:
 	var shell := Shell.new(ContentLibrary.load_default())
 	shell.world.load_dataset("katanas.csv", "katanas", "calidad")
 	shell.world.load_dataset("temple.csv", "temple", "")
+	for gate in ["and", "or", "xor", "nand"]:
+		shell.world.load_dataset("puerta_%s.csv" % gate, "puerta_%s" % gate, "salida")
 	for line in OS.get_cmdline_user_args():
 		print("ronin@dojo:~$ " + line)
 		var r := shell.execute(line)

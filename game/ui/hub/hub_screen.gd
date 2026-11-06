@@ -25,6 +25,7 @@ var game: DojoGame
 var _terminal: TerminalView
 var _plot: ScatterPlot
 var _chart: LineChart
+var _net_view: NetworkGraph
 var _curriculum_box: VBoxContainer
 var _mission_text: RichTextLabel
 var _mentor_log: RichTextLabel
@@ -110,6 +111,11 @@ func _build_layout() -> void:
 	_plot.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_plot.custom_minimum_size = Vector2(380, 220)
 	lab.get_child(0).add_child(_plot)
+	_net_view = NetworkGraph.new()
+	_net_view.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_net_view.custom_minimum_size = Vector2(380, 220)
+	_net_view.visible = false
+	lab.get_child(0).add_child(_net_view)
 	_chart = LineChart.new()
 	_chart.custom_minimum_size = Vector2(380, 170)
 	_chart.visible = false
@@ -296,6 +302,7 @@ func _run(line: String) -> void:
 func _on_mission_started(m: Dictionary) -> void:
 	_mentor_log.clear()
 	_chart.visible = false
+	_show_plot()
 	var viz: Dictionary = m.get("lab", {}).get("viz", {})
 	var ds := game.shell.world.get_dataset(viz.get("dataset", ""))
 	if ds != null:
@@ -332,9 +339,20 @@ func _on_mentor(text: String, kind: String) -> void:
 func _on_sim_event(e: Dictionary) -> void:
 	var d: Dictionary = e["data"]
 	match e["name"]:
+		"nn.created", "nn.trained", "nn.set", "nn.reset", "nn.inspected", "nn.evaluated":
+			_show_net(d["network"], PackedFloat64Array())
+			if e["name"] == "nn.trained":
+				_show_nn_losses()
+		"nn.forward":
+			var vals := PackedFloat64Array()
+			for s in String(d["input"]).split(","):
+				vals.append(s.to_float())
+			_show_net(d["network"], vals)
 		"viz.scatter":
+			_show_plot()
 			_plot.show_dataset(game.shell.world.get_dataset(d["dataset"]), d["x"], d["y"])
 		"model.predicted":
+			_show_plot()
 			var ds := game.shell.world.get_dataset(d["dataset"])
 			if _plot.dataset != ds and ds != null:
 				var axes := _plot.current_axes()
@@ -347,6 +365,36 @@ func _on_sim_event(e: Dictionary) -> void:
 			var axes := _plot.current_axes()
 			if axes.size() == 2:
 				_plot.show_dataset(game.shell.world.get_dataset(d["target"]), axes[0], axes[1])
+
+
+func _show_plot() -> void:
+	_plot.visible = true
+	_net_view.visible = false
+
+
+func _show_net(net_name: String, input: PackedFloat64Array) -> void:
+	var net: MLP = game.shell.world.networks.get(net_name)
+	if net == null:
+		return
+	_plot.visible = false
+	_net_view.visible = true
+	_net_view.show_network(net, net_name, input)
+
+
+func _show_nn_losses() -> void:
+	var series: Array[Dictionary] = []
+	var i := 0
+	for n in game.shell.world.names_of("network"):
+		var net: MLP = game.shell.world.networks[n]
+		if net.history.is_empty():
+			continue
+		var pts := PackedVector2Array()
+		for h in net.history:
+			pts.append(Vector2(h["epoch"], h["loss"]))
+		series.append({"name": n, "points": pts, "color": SERIES_COLORS[i % SERIES_COLORS.size()]})
+		i += 1
+	_chart.set_series("Pérdida (entropía cruzada) por época", series)
+	_chart.visible = true
 
 
 func _show_regression(d: Dictionary) -> void:
@@ -366,6 +414,7 @@ func _show_regression(d: Dictionary) -> void:
 	_chart.visible = true
 	var ds := game.shell.world.get_dataset(d["dataset"])
 	if ds != null:
+		_show_plot()
 		_plot.show_dataset(ds, d["x"], d["y"])
 		if not d["diverged"]:
 			_plot.set_regression_line(d["w"], d["b"], d["x"], d["y"])
