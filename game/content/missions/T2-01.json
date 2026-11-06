@@ -1,0 +1,175 @@
+{
+  "id": "T2-01",
+  "schema_version": 1,
+  "title": "El vecino más cercano",
+  "unit": "T2",
+  "difficulty": 2,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 40,
+  "requires_missions": ["T1-02"],
+  "competencies": { "requires": ["T1.distancia", "T1.normalizacion"], "trains": ["T2.knn", "T2.evaluacion", "T2.overfitting"] },
+  "briefing": "Ya sabes medir lo parecidas que son dos hojas. Ahora construirás tu primer clasificador: para decidir si una hoja nueva es apta, mira las k hojas más parecidas que ya conoces y vota. Es k-NN. El maestro quiere saber una cosa: ¿cuánto se puede confiar en él con hojas que nunca ha visto?",
+  "learning_objectives": [
+    "Entrenar y usar un clasificador k-NN",
+    "Evaluar un modelo honestamente con un conjunto de test",
+    "Reconocer la fuga de datos y el overfitting",
+    "Elegir k comparando entrenamiento y test"
+  ],
+  "mentor_intro": "Hoy vas a equivocarte a propósito. No te preocupes: es el error más instructivo de todo el machine learning.",
+  "lab": {
+    "datasets": [{ "file": "katanas.csv", "name": "katanas", "label": "calidad" }],
+    "viz": { "dataset": "katanas", "x": "dureza_hrc", "y": "flexibilidad" }
+  },
+  "theory_cards": [
+    {
+      "id": "knn",
+      "title": "k-NN en tres pasos",
+      "body": "1) Distancia a todos los ejemplos de entrenamiento. 2) Quédate con los k más cercanos. 3) Gana la clase más votada. «Entrenar» k-NN es solo guardar los ejemplos. Más: man knn"
+    },
+    {
+      "id": "evaluar",
+      "title": "Evaluar honestamente",
+      "body": "La pregunta es cómo funcionará con datos NUEVOS. Para estimarlo se aparta un conjunto de test antes de entrenar y no se usa para nada más. Más: man evaluacion"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Normaliza katanas con min-max, crea un modelo k-NN con k=1 y entrénalo con el dataset normalizado completo.",
+      "validator": { "type": "event", "event": "model.trained", "where": { "k": 1, "normalized": true } },
+      "hints": [
+        "Tres pasos: normalizar, crear y entrenar. Los comandos de modelos empiezan por model.",
+        "dataset normalize ... · model create <nombre> --k 1 · model train <nombre> <dataset>",
+        "dataset normalize katanas --method minmax · model create m1 --k 1 · model train m1 katanas_minmax"
+      ],
+      "on_complete": "Modelo listo. Ha «memorizado» las 240 hojas."
+    },
+    {
+      "id": "o2",
+      "text": "Evalúa el modelo con el mismo dataset con el que lo entrenaste.",
+      "prediction": {
+        "prompt": "¿Qué accuracy crees que sacará evaluado con sus propios datos de entrenamiento?",
+        "options": ["50%", "75%", "90%", "100%"]
+      },
+      "validator": { "type": "event", "event": "model.evaluated", "where": { "overlap": { "gt": 0 }, "k": 1 } },
+      "hints": [
+        "Hay un subcomando de model para medir la accuracy.",
+        "model evaluate <modelo> <dataset>"
+      ],
+      "on_complete": "100 %. Perfecto… y completamente inútil como estimación. Piensa: ¿a qué distancia está cada hoja de sí misma? ¿Quién es su vecino más cercano?"
+    },
+    {
+      "id": "o3",
+      "text": "¿Por qué ha salido exactamente 100 %? Compruébalo: predice una hoja cualquiera del dataset de entrenamiento y mira la distancia de su primer vecino. ¿Cuál es? (answer <número>)",
+      "validator": { "type": "answer", "expected": 0, "tolerance": 0.0001 },
+      "wrong_answer": "Mira la tabla de vecinos de model predict: columna distancia del vecino nº 1.",
+      "hints": [
+        "model predict te enseña los vecinos de una hoja.",
+        "model predict m1 katanas_minmax hoja-001 → mira el vecino nº 1."
+      ],
+      "on_complete": "Distancia 0: el vecino más cercano de cada hoja es ELLA MISMA. Con k=1 cada hoja vota por su propia etiqueta, incluidas las ~8 % mal etiquetadas. Evaluar con datos de entrenamiento mide memoria, no aprendizaje. Esto es una forma de fuga de datos (explain fuga de datos)."
+    },
+    {
+      "id": "o4",
+      "text": "Haz una evaluación honesta: separa train/test (test 0.3, seed 42), normaliza con min-max aprendiendo los parámetros SOLO del train, entrena un k-NN con k=1 en el train normalizado y evalúalo en el test normalizado.",
+      "validator": {
+        "type": "sequence",
+        "steps": [
+          { "type": "event", "event": "dataset.split", "where": { "seed": 42, "test_ratio": 0.3 } },
+          { "type": "event", "event": "dataset.normalized", "where": { "method": "minmax", "fit_on": { "ends_with": "_train" }, "source": { "ends_with": "_test" } } },
+          { "type": "event", "event": "model.evaluated", "where": { "overlap": 0, "normalized": true, "train_normalized": true, "k": 1 } }
+        ]
+      },
+      "diagnostics": [
+        {
+          "id": "fit-test",
+          "when": { "type": "event", "event": "dataset.normalized", "where": { "fit_on": { "ends_with": "_test" } } },
+          "message": "Has aprendido los parámetros de normalización del TEST. Pregunta: en producción, cuando llegue una hoja nueva, ¿tendrás «el resto del test» para calcular su mínimo y su máximo? ¿De qué datos deberían salir esos parámetros?"
+        },
+        {
+          "id": "fit-all",
+          "when": { "type": "event", "event": "dataset.normalized", "where": { "fit_on": "katanas", "source": { "ends_with": "_test" } } },
+          "message": "Has normalizado el test con parámetros aprendidos de TODO el dataset, que incluye el propio test. Es una fuga sutil, pero fuga. ¿Qué conjunto contiene solo lo que el modelo puede conocer?"
+        },
+        {
+          "id": "overlap",
+          "when": { "type": "event", "event": "model.evaluated", "where": { "overlap": { "gt": 0 } } },
+          "message": "Esa evaluación vuelve a mezclar ejemplos de entrenamiento. ¿El dataset que evalúas comparte hojas con el que entrenaste?"
+        },
+        {
+          "id": "escala",
+          "when": { "type": "event", "event": "model.evaluated", "where": { "normalized": false, "train_normalized": true } },
+          "message": "El modelo aprendió con datos normalizados (0-1) pero lo evalúas con datos en su escala original (cientos de grados). ¿Pueden compararse distancias entre puntos de mundos tan distintos?"
+        }
+      ],
+      "hints": [
+        "Orden: primero se aparta el test; después se aprende la normalización; después se entrena; al final se evalúa.",
+        "dataset split … · dataset normalize <train> · dataset normalize <test> --fit <train> · model create · model train · model evaluate",
+        "dataset split katanas --test 0.3 --seed 42 · dataset normalize katanas_train --method minmax --as tr · dataset normalize katanas_test --method minmax --fit katanas_train --as te · model create m2 --k 1 · model train m2 tr · model evaluate m2 te",
+        "La clave es --fit katanas_train al normalizar el test: los parámetros (mín y máx) se aprenden con el train y se APLICAN al test, igual que se aplicarían a una hoja nueva en producción. Si los calculas con el test, el test deja de ser «datos nunca vistos».",
+        "Ejemplo resuelto: dataset split katanas --test 0.3 --seed 42 → dataset normalize katanas_train --method minmax --as tr → dataset normalize katanas_test --method minmax --fit katanas_train --as te → model create m2 --k 1 → model train m2 tr → model evaluate m2 te. Resultado: accuracy 0,75."
+      ],
+      "on_complete": "0,75. Esa es la cifra honesta: de cada 4 hojas nuevas, falla una. El 100 % de antes era un espejismo."
+    },
+    {
+      "id": "o5",
+      "text": "Compara la accuracy de train y test para varios valores de k con model sweep, usando tus datasets de train y test normalizados.",
+      "prediction": {
+        "prompt": "¿Qué valor de k crees que generalizará MEJOR (más accuracy en test)?",
+        "options": ["1", "3", "9", "31"]
+      },
+      "validator": { "type": "event", "event": "model.swept", "where": { "overlap": 0, "normalized": true } },
+      "hints": [
+        "model sweep compara varios k de golpe. Mira su ayuda: model sweep --help",
+        "model sweep --train <train normalizado> --test <test normalizado>"
+      ],
+      "on_complete": "Mira la columna «diferencia». Con k=1, la diferencia entre train y test es la mayor: overfitting. Con k=31 bajan las dos: underfitting. Advertencia de ingeniero: has elegido k mirando el TEST, así que ese test ya no es imparcial. En un proyecto real se elige k con un conjunto de validación (explain conjunto de validación)."
+    },
+    {
+      "id": "o6",
+      "text": "Según tu barrido, ¿cuánto vale la diferencia (acc train − acc test) para k=1? (answer <número>)",
+      "validator": { "type": "answer", "expected": 0.25, "tolerance": 0.01 },
+      "wrong_answer": "Busca la fila k=1, columna «diferencia», en la salida de model sweep (con la división de semilla 42 y min-max aprendido del train).",
+      "hints": [
+        "Está en la tabla de model sweep.",
+        "Fila k=1 → columna diferencia."
+      ],
+      "on_complete": "0,25: el modelo es 25 puntos «mejor» con lo que ya ha visto que con lo nuevo. Esa brecha es la firma del overfitting."
+    },
+    {
+      "id": "o7",
+      "text": "Explica con tus palabras por qué k=1 saca 100 % en entrenamiento, qué es la fuga de datos y cómo la evitaste. (reflexion <texto>, mínimo 30 palabras)",
+      "validator": { "type": "reflection", "min_words": 30 },
+      "hints": [
+        "Tres ideas: el vecino de cada hoja es ella misma; el test debe ser «nunca visto»; los parámetros de normalización también son «conocimiento».",
+        "Estructura: 1) qué pasa con k=1 en train, 2) qué es la fuga de datos con un ejemplo de esta misión, 3) qué pasos seguiste para evitarla."
+      ]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: otro reparto y otra normalización. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con test 0.25 y semilla 7, normalización z-score aprendida SOLO del train, y k=9: ¿qué accuracy obtiene el modelo en el test? (answer <número>, 3 decimales)",
+        "validator": { "type": "answer", "expected": 0.883, "tolerance": 0.002 },
+        "wrong_answer": "No es ese valor. Revisa: semilla 7, test 0.25, método zscore, --fit con el train, k=9 y evaluación en el test normalizado.",
+        "hints": [
+          "Es el mismo procedimiento honesto de antes, con otros parámetros.",
+          "split con --test 0.25 --seed 7 · normalize --method zscore (train, y test con --fit del train) · create --k 9 · train · evaluate."
+        ],
+        "on_complete": "Correcto: 53 de 60. Has repetido el procedimiento honesto sin guía."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has construido un clasificador k-NN, has caído en la trampa de evaluarlo con sus propios datos (100 %), has hecho una evaluación honesta (75 % con k=1) y has visto cómo k controla el equilibrio entre memorizar (overfitting) y generalizar.",
+    "why": "La fuga de datos es uno de los errores más frecuentes y caros en ML real: el modelo parece excelente en el laboratorio y falla en producción. La disciplina train/validación/test y aplicar las transformaciones aprendidas solo del train son la defensa.",
+    "in_production": "En scikit-learn: train_test_split, un Pipeline con StandardScaler y KNeighborsClassifier, y GridSearchCV con validación cruzada para elegir k sin tocar el test. Con millones de ejemplos, k-NN exacto es lento: se usan índices (KD-tree, Ball-tree) o búsqueda aproximada de vecinos (ANN), la misma tecnología que verás en las bases de datos vectoriales del arco RAG.",
+    "simplifications": ["Sin conjunto de validación separado (se elige k mirando el test, y se avisa)", "Dataset pequeño y sintético con un 8 % de ruido de etiqueta"],
+    "exercise": "forja/ejercicios/T2_01_knn.py"
+  },
+  "further_reading": ["ref.cover-hart-1967", "ref.sklearn-neighbors", "ref.sklearn-pitfalls"],
+  "xp": { "base": 150 }
+}

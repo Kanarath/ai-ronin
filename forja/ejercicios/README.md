@@ -1,0 +1,48 @@
+# Ejercicios 🛠 — tu código, tus manos
+
+Cada misión del Dojo tiene un ejercicio en Python. Implementas tú las funciones y los tests te dicen si funcionan.
+
+| Ejercicio | Misión | Qué implementas |
+|---|---|---|
+| `T1_01_estadisticas.py` | T1-01 | Leer un CSV, media, desviación típica, rango, recuento de clases |
+| `T1_02_distancia.py` | T1-02 | Distancia euclídea y Manhattan, contribuciones, normalización min-max y z-score |
+| `T2_01_knn.py` | T2-01 | División train/test, k-NN, accuracy y matriz de confusión |
+
+**Reglas:**
+- Solo Python estándar: nada de numpy, pandas ni scikit-learn todavía. Primero entiendes qué hacen por dentro y después usas las librerías.
+- No copies soluciones de internet ni de una IA. Si te atascas, pide pistas a Claude: tiene la misma escalera de 5 niveles que el Dojo.
+- Los tests son la especificación. Léelos: también enseñan.
+
+## 1. Instalar Python (una sola vez)
+
+Abre PowerShell y ejecuta:
+
+```powershell
+winget install --id Python.Python.3.13 -e
+```
+
+Cierra y vuelve a abrir la terminal y comprueba con `python --version`. Si sigue abriéndose la Microsoft Store, desactiva los alias en *Configuración → Aplicaciones → Configuración avanzada de aplicaciones → Alias de ejecución de aplicaciones* (python.exe y python3.exe).
+
+No hace falta instalar nada más: los tests usan `unittest`, que viene con Python.
+
+## 2. Flujo de trabajo
+
+Desde la carpeta `forja/ejercicios`:
+
+```powershell
+python -m unittest -v test_T1_01_estadisticas
+```
+
+1. Abre el fichero del ejercicio (por ejemplo, `T1_01_estadisticas.py`).
+2. Lee el docstring de cada función: explica qué debe hacer, con un ejemplo.
+3. Sustituye `raise NotImplementedError(...)` por tu implementación.
+4. Ejecuta los tests. Ve en orden: haz pasar uno, luego el siguiente.
+5. Cuando todos estén en verde, dile a Claude «ejercicio T1-01 listo». Revisaremos tu código juntos.
+
+Para ejecutar todos los ejercicios a la vez:
+
+```powershell
+python -m unittest discover -v
+```
+
+`apoyo.py` lo ha escrito Claude: carga el dataset para los tests. No hace falta tocarlo.

@@ -15,6 +15,9 @@ var history: PackedStringArray = []
 var usage_count: Dictionary = {}
 ## Registro de eventos de la sesión (lo consumirá el motor de misiones).
 var event_log: Array[Dictionary] = []
+## Orquestador del juego (DojoGame) si existe. Referencia DÉBIL: DojoGame ya posee al Shell,
+## y una referencia fuerte en los dos sentidos sería un ciclo que nunca se libera.
+var _game_ref: WeakRef = null
 var _seq: int = 0
 
 
@@ -22,6 +25,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	library = p_library if p_library != null else ContentLibrary.new()
 	CoreCommands.register(registry)
 	MlCommands.register(registry)
+	MissionCommands.register(registry)
 
 
 func execute(line: String) -> CommandResult:
@@ -74,6 +78,14 @@ func execute(line: String) -> CommandResult:
 	usage_count[cmd.path] = usage_count.get(cmd.path, 0) + 1
 	emit_event("command.executed", {"path": cmd.path, "ok": result.ok, "line": text})
 	return result
+
+
+func set_game(g: RefCounted) -> void:
+	_game_ref = weakref(g)
+
+
+func get_game() -> RefCounted:
+	return _game_ref.get_ref() if _game_ref != null else null
 
 
 func emit_event(event_name: String, data: Dictionary = {}) -> void:

@@ -64,7 +64,7 @@ Cada misión trae su prueba de dominio. T2-01 trae además una variante de trans
 4. El progreso se conserva al cerrar la app. Un guardado corrupto se recupera desde el `.bak`.
 5. Todos los tests pasan, en local y en la CI.
 6. `help`, `man`, `cheatsheet` y `explain` funcionan desde cualquier pantalla.
-7. Tus ejercicios en Python pasan sus tests y el Dojo importa la evidencia.
+7. Tus ejercicios en Python pasan sus tests (`python -m unittest`). La importación de evidencias al Dojo llega en la Fase 4, junto con la Forja.
 8. Puedes explicar con tus palabras:
    - Por qué k=1 sobreajusta.
    - Qué es la fuga de datos.

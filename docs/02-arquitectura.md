@@ -100,6 +100,8 @@ AI Ronin/
 
 ## 4. Autoloads (servicios)
 
+> **Implementación v0.1:** un único autoload, `Dojo` (`autoload/dojo.gd`), que mantiene una instancia de `DojoGame` (`core/dojo_game.gd`, un `RefCounted` testeable sin escena). `DojoGame` reúne los servicios de la tabla: `Shell`, `MissionCatalog`, `MissionRunner` (mentor incluido), `Progress` y `SaveStore`. Separar más autoloads no aportaba nada todavía. La tabla describe las responsabilidades, que se mantienen.
+
 | Autoload | Responsabilidad | No hace |
 |---|---|---|
 | `EventBus` | Señales globales (`mission_started`, `command_executed`, `sim_event`, `hint_requested`…) | Ningún tipo de lógica |

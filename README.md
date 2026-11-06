@@ -14,8 +14,17 @@ El proyecto tiene dos planos:
 ## Estado
 
 - Diseño aprobado el 2026-11-06.
-- Fase 0 (cimientos) completada: proyecto Godot, tests y CI.
-- Siguiente paso: Fase 1, el núcleo v0.1.
+- Fase 0 (cimientos) completada: proyecto Godot, tests y CI. La CI está bloqueada por un problema de facturación de la cuenta de GitHub; los tests se ejecutan en local.
+- **v0.1 jugable:** hub, terminal, 3 misiones (T1-01, T1-02, T2-01) con mentor, pistas, prueba de dominio y guardado, más ejercicios Python en `forja/ejercicios/`.
+- Siguiente paso: Fase 2, validar la experiencia jugándola.
+
+### Jugar
+
+Abre `game/project.godot` con Godot 4.7 y pulsa F5, o ejecuta:
+
+```powershell
+& "C:\Users\Ruben\Desktop\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64.exe" --path game
+```
 
 **Alcance del aprendizaje:** solo IA. La plataforma Godot la construye Claude y no forma parte de la formación. Tus ejercicios se escriben en Python, en `forja/ejercicios/`.
 

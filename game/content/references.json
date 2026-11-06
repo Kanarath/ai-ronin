@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "references": [
+    {
+      "id": "ref.cover-hart-1967",
+      "title": "Nearest neighbor pattern classification",
+      "authors": "T. Cover, P. Hart",
+      "source": "IEEE Transactions on Information Theory, 13(1), 21-27",
+      "year": 1967,
+      "type": "paper",
+      "url": "https://doi.org/10.1109/TIT.1967.1053964",
+      "consulted": "2026-11-06"
+    },
+    {
+      "id": "ref.sklearn-neighbors",
+      "title": "scikit-learn User Guide: Nearest Neighbors",
+      "source": "scikit-learn",
+      "type": "documentacion-oficial",
+      "url": "https://scikit-learn.org/stable/modules/neighbors.html",
+      "consulted": "2026-11-06",
+      "review_by": "2027-11-06"
+    },
+    {
+      "id": "ref.sklearn-preprocessing",
+      "title": "scikit-learn User Guide: Preprocessing data",
+      "source": "scikit-learn",
+      "type": "documentacion-oficial",
+      "url": "https://scikit-learn.org/stable/modules/preprocessing.html",
+      "consulted": "2026-11-06",
+      "review_by": "2027-11-06"
+    },
+    {
+      "id": "ref.sklearn-pitfalls",
+      "title": "scikit-learn: Common pitfalls and recommended practices (data leakage)",
+      "source": "scikit-learn",
+      "type": "documentacion-oficial",
+      "url": "https://scikit-learn.org/stable/common_pitfalls.html",
+      "consulted": "2026-11-06",
+      "review_by": "2027-11-06"
+    }
+  ]
+}

@@ -326,7 +326,7 @@ static func _model_predict(c: CommandContext, a: Dictionary) -> CommandResult:
 			"normalizados" if _is_normalized(m.train_set) else "sin normalizar",
 			"normalizado" if _is_normalized(ds) else "sin normalizar"], "warn")
 	c.emit("model.predicted", {"model": a["modelo"], "dataset": ds.name, "id": a["id"], "k": m.k, "label": label,
-		"truth": truth, "correct": label == truth, "in_train": in_train})
+		"truth": truth, "correct": label == truth, "in_train": in_train, "neighbors": nb.map(func(n: Dictionary) -> String: return n["id"])})
 	return r
 
 
@@ -360,7 +360,7 @@ static func _model_evaluate(c: CommandContext, a: Dictionary) -> CommandResult:
 		r.line("")
 		r.line("⚠ %d de los %d ejemplos evaluados también estaban en el entrenamiento." % [overlap, ds.size()], "warn")
 	c.emit("model.evaluated", {"model": a["modelo"], "dataset": ds.name, "trained_on": entry["trained_on"], "k": m.k,
-		"accuracy": acc, "overlap": overlap, "size": ds.size(), "normalized": _is_normalized(ds)})
+		"accuracy": acc, "overlap": overlap, "size": ds.size(), "normalized": _is_normalized(ds), "train_normalized": _is_normalized(m.train_set)})
 	return r
 
 
@@ -386,7 +386,7 @@ static func _model_sweep(c: CommandContext, a: Dictionary) -> CommandResult:
 		results.append({"k": k, "train": acc_train, "test": acc_test})
 		data.append([k, _num(acc_train), _num(acc_test), _num(acc_train - acc_test), _bar(acc_test)])
 	r.table(PackedStringArray(["k", "acc train", "acc test", "diferencia", "test"]), data)
-	c.emit("model.swept", {"train": train.name, "test": test.name, "results": results, "overlap": train.overlap_count(test)})
+	c.emit("model.swept", {"train": train.name, "test": test.name, "results": results, "overlap": train.overlap_count(test), "normalized": _is_normalized(train) and _is_normalized(test)})
 	return r
 
 
