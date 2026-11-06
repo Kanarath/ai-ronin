@@ -2,6 +2,31 @@
   "schema_version": 1,
   "topics": [
     {
+      "id": "rag",
+      "title": "RAG: recuperación + generación",
+      "body": [
+        "1) Ingesta de documentos. 2) Troceo en fragmentos (chunk, overlap). 3) Índice: un vector por fragmento en una base vectorial. 4) Recuperación: los k fragmentos más parecidos a la pregunta (similitud coseno). 5) Generación: el modelo responde con esos fragmentos como contexto y cita las fuentes.",
+        "Calidad: se mide con evals. Las alucinaciones se reducen abstiéndose cuando la similitud es baja (min-score).",
+        "Troceo: fragmentos pequeños cortan la información; grandes gastan más contexto y diluyen la relevancia.",
+        "⚗ En el Dojo, el índice TF-IDF y la búsqueda son reales; el generador es simulado.",
+        "Comandos: rag create · rag docs · rag ingest [--chunk --overlap] · rag search · rag ask [--as] · rag eval."
+      ],
+      "see_also": ["ataquesrag", "embeddings"]
+    },
+    {
+      "id": "ataquesrag",
+      "title": "Atacar y defender un RAG",
+      "body": [
+        "Inyección indirecta (LLM01): instrucciones escondidas en un documento que el RAG recupera. La víctima no hace nada raro.",
+        "Envenenamiento (LLM04/LLM08): datos falsos diseñados para recuperarse antes que los verdaderos. No contienen órdenes.",
+        "Fuga por falta de permisos (LLM02): la recuperación devuelve documentos que el usuario no debería ver.",
+        "Inversión de embeddings (LLM08): los vectores revelan el texto original.",
+        "Defensas por eslabón: procedencia en la ingesta (trusted-sources), permisos en la recuperación (acl) y en la base vectorial (vector-acl), contenido marcado como datos (spotlight) y abstención (min-score).",
+        "Comandos: rag upload · rag vector · rag invert · rag attack · rag defend."
+      ],
+      "see_also": ["rag", "inyeccion"]
+    },
+    {
       "id": "appllm",
       "title": "Anatomía de una aplicación LLM",
       "body": [

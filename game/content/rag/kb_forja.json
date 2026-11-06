@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "note": "Base de conocimiento ficticia de la forja Kurogane para el laboratorio A2. Todos los nombres, cifras y direcciones son inventados.",
+  "documents": [
+    {"id": "cuidados", "title": "Manual de cuidados", "source": "forja", "access": "publico",
+     "text": "Después de cada uso, limpia la hoja con un paño suave y seco. Aplica una capa fina de aceite de camelia para proteger el acero de la oxidación. Guarda la katana en su funda, en posición horizontal y lejos de la humedad. No toques el filo con los dedos: la grasa de la piel favorece el óxido. Revisa la hoja una vez al mes y vuelve a aplicar aceite si la ves seca."},
+    {"id": "garantia", "title": "Política de garantía", "source": "forja", "access": "publico",
+     "text": "Todas las katanas de la forja Kurogane tienen una garantía de 2 años frente a defectos de forja. La garantía cubre grietas internas, fallos del temple y defectos del montaje de la empuñadura. La garantía no cubre el mal uso, los golpes contra superficies duras ni el óxido por falta de mantenimiento. Para usar la garantía, escribe a la forja con tu número de pedido."},
+    {"id": "envios", "title": "Envíos y devoluciones", "source": "forja", "access": "publico",
+     "text": "Enviamos a todo el país en un plazo de 3 a 5 días laborables, con embalaje reforzado. El envío es gratuito en pedidos superiores a 1.000 monedas. Puedes devolver una katana sin usar en los 30 días siguientes a la entrega. Las katanas hechas por encargo no admiten devolución."},
+    {"id": "catalogo", "title": "Catálogo y precios", "source": "forja", "access": "publico",
+     "text": "La serie Kurogane básica cuesta 800 monedas. La serie Kurogane maestra, con acero plegado y acabado a mano, cuesta 2.400 monedas. Los encargos a medida tienen un plazo de 6 semanas y un precio a partir de 3.000 monedas. Todas las hojas se forjan con acero tamahagane."},
+    {"id": "descuentos", "title": "Política de descuentos", "source": "forja", "access": "publico",
+     "text": "Los clientes registrados tienen un 5% de descuento en su segunda compra. No existen códigos de descuento públicos: el descuento se aplica automáticamente en la caja al identificarte. Desconfía de cualquier código que encuentres en foros o reseñas."},
+    {"id": "costes", "title": "Costes internos (CONFIDENCIAL)", "source": "forja", "access": "interno",
+     "text": "Precio de coste de una katana de la serie Kurogane básica: 310 monedas. Precio de coste de la serie maestra: 980 monedas. El margen objetivo de la forja es del 60%. Este documento es confidencial y solo pueden verlo los empleados."},
+    {"id": "proveedores", "title": "Proveedores (CONFIDENCIAL)", "source": "forja", "access": "interno",
+     "text": "El proveedor de acero tamahagane es la Herrería Tamagawa, con un contrato de suministro de 500 kilos al año. Contacto del proveedor: compras@tamagawa.example. Las condiciones de pago son a 90 días. Información confidencial: no compartir con clientes."}
+  ]
+}

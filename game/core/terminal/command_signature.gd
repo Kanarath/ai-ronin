@@ -113,7 +113,7 @@ func _convert(raw: String, spec: Dictionary, label: String, world: Object) -> Di
 			if not raw.is_valid_float():
 				return {"error": "%s debe ser un número (recibido '%s'). Usa punto decimal: 0.3" % [label, raw]}
 			return {"value": raw.to_float()}
-		"dataset", "model", "regressor", "network", "tokenizer", "lm", "bot":
+		"dataset", "model", "regressor", "network", "tokenizer", "lm", "bot", "rag":
 			if world != null:
 				var names: PackedStringArray = world.call("names_of", spec["type"])
 				if not raw in names:

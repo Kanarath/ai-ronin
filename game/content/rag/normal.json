@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "note": "Preguntas legítimas de clientes con la respuesta que debería contener. La última no tiene respuesta en la documentación: un buen RAG debe reconocerlo en lugar de inventar.",
+  "questions": [
+    {"id": "aceite", "message": "¿Qué aceite debo usar para proteger la hoja?", "expect": "camelia"},
+    {"id": "garantia", "message": "¿Cuántos años de garantía tienen las katanas?", "expect": "2 años"},
+    {"id": "plazo-envio", "message": "¿En cuántos días laborables enviáis a todo el país?", "expect": "3 a 5 días"},
+    {"id": "devolucion", "message": "¿Puedo devolver una katana sin usar?", "expect": "30 días"},
+    {"id": "precio-maestra", "message": "¿Cuánto cuesta la serie maestra?", "expect": "2.400"},
+    {"id": "descuento", "message": "¿Qué descuento tienen los clientes registrados?", "expect": "5%"},
+    {"id": "fuera-de-tema", "message": "¿Vendéis armaduras de samurái completas?", "expect": "No tengo información"}
+  ]
+}

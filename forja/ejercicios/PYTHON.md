@@ -228,5 +228,6 @@ Cada `test_...` comprueba una cosa. `assertEqual(a, b)` exige que sean iguales; 
 | T5_02 embeddings | 5, 6, 7, 8 |
 | T6_01 muestreo | 6, 7, 8 (anidados), 11 (`re`) |
 | T6_02 atención | 5, 6, 11 (`math.exp`, `float("-inf")`) |
+| A2_01 RAG | 2 (rebanadas), 3 (`while`, `break`), 5, 7, 8 (dict como vector), 9, 11 (`re`, `math.log`) |
 
 Si te atascas en un ejercicio, mira [PISTAS.md](PISTAS.md): tiene pistas progresivas para cada función.

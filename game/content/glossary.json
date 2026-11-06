@@ -528,6 +528,70 @@
       "short": "Documento que describe un fallo de seguridad de forma reproducible, con su impacto, su mitigación y su verificación.",
       "body": "Campos habituales: título, severidad, componente, categoría (p. ej. OWASP LLM01), descripción, pasos para reproducir, impacto, evidencia, mitigación y verificación. Un buen informe permite a otra persona reproducir el fallo y comprobar que está corregido.",
       "epistemic": "practica-industria"
+    },
+    {
+      "id": "rag",
+      "term": "RAG",
+      "aliases": ["retrieval-augmented generation", "generación aumentada por recuperación", "recuperación"],
+      "short": "Arquitectura que, antes de responder, busca fragmentos relevantes en una base de documentos y se los da al LLM como contexto.",
+      "body": "Pasos: ingesta, troceo, índice vectorial, recuperación y generación. Permite responder con datos actualizados o privados y citar fuentes, sin reentrenar el modelo. Propuesto con ese nombre por Lewis et al. (2020). Cada paso es también una superficie de ataque.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "chunking",
+      "term": "chunking",
+      "aliases": ["troceo", "fragmentos", "chunk", "overlap", "solapamiento"],
+      "short": "Partir los documentos en fragmentos para indexarlos y recuperarlos.",
+      "body": "Fragmentos pequeños cortan las ideas; grandes diluyen la relevancia y gastan más contexto (tokens). El solapamiento evita cortar una idea justo en la frontera. En la práctica se trocea por estructura (secciones, párrafos) y se ajusta midiendo con evals.",
+      "epistemic": "practica-industria"
+    },
+    {
+      "id": "base-vectorial",
+      "term": "base de datos vectorial",
+      "aliases": ["vector database", "vector store", "índice vectorial", "base vectorial"],
+      "short": "Almacén de vectores (embeddings) optimizado para buscar los más parecidos a una consulta.",
+      "body": "Usa índices de búsqueda aproximada (ANN) para millones de vectores. Debe aplicar control de acceso (por usuario o por cliente, «multi-tenancy») y tratarse como información sensible: los vectores contienen información del texto original (OWASP LLM08:2025).",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "tf-idf",
+      "term": "TF-IDF",
+      "aliases": ["embeddings dispersos", "sparse", "bm25", "búsqueda léxica"],
+      "short": "Vector en el que cada dimensión es una palabra, con peso alto si es frecuente en el texto y rara en el resto.",
+      "body": "Es una técnica clásica de recuperación (como su variante BM25). Los RAG modernos combinan a menudo búsqueda léxica (TF-IDF/BM25) con embeddings densos de una red neuronal: es la búsqueda híbrida.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "envenenamiento",
+      "term": "envenenamiento de datos",
+      "aliases": ["data poisoning", "poisoning", "envenenamiento del RAG", "LLM04", "manipulación de la recuperación"],
+      "short": "Introducir datos maliciosos o falsos en lo que un sistema de IA aprende o consulta.",
+      "body": "En un RAG basta con publicar documentos diseñados para ser recuperados ante ciertas preguntas (por ejemplo, repitiendo sus palabras). En el entrenamiento, con ejemplos manipulados. No requiere dar instrucciones al modelo, así que las defensas contra la inyección no lo detienen: hacen falta controles de procedencia. OWASP LLM04:2025.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "inversion-embeddings",
+      "term": "inversión de embeddings",
+      "aliases": ["embedding inversion", "vec2text", "reconstrucción desde embeddings"],
+      "short": "Reconstruir el texto original (o parte de él) a partir de su vector.",
+      "body": "Con vectores dispersos es inmediato. Con embeddings densos se entrena un modelo inversor: Morris et al. (2023) recuperaron de forma exacta el 92 % de textos cortos. Conclusión práctica: los embeddings heredan la sensibilidad de los datos de los que proceden. OWASP LLM08:2025.",
+      "epistemic": "emergente"
+    },
+    {
+      "id": "spotlighting",
+      "term": "spotlighting",
+      "aliases": ["delimitadores", "marcado de datos no fiables", "separación de datos"],
+      "short": "Técnica que marca el contenido no fiable para que el modelo lo trate como datos y no como instrucciones.",
+      "body": "Incluye delimitadores, etiquetas o transformaciones del texto recuperado. Reduce la inyección indirecta (Hines et al., 2024), pero no la elimina en modelos reales y no protege contra datos falsos (envenenamiento).",
+      "epistemic": "emergente"
+    },
+    {
+      "id": "grounding",
+      "term": "grounding",
+      "aliases": ["fundamentación", "abstención", "umbral de relevancia", "min-score"],
+      "short": "Hacer que la respuesta se base en las fuentes recuperadas y que el sistema se abstenga si no hay información relevante.",
+      "body": "Técnicas: umbral mínimo de similitud, instrucciones para citar y para decir «no lo sé», y verificación posterior de que cada afirmación está respaldada por un fragmento. Reduce, sin eliminar, las alucinaciones.",
+      "epistemic": "practica-industria"
     }
   ]
 }

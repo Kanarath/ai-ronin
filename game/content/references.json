@@ -2,6 +2,46 @@
   "schema_version": 1,
   "references": [
     {
+      "id": "ref.lewis-2020",
+      "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+      "authors": "P. Lewis et al.",
+      "source": "NeurIPS 2020 · arXiv:2005.11401",
+      "year": 2020,
+      "type": "paper",
+      "url": "https://arxiv.org/abs/2005.11401",
+      "consulted": "2026-11-06"
+    },
+    {
+      "id": "ref.morris-2023",
+      "title": "Text Embeddings Reveal (Almost) As Much As Text",
+      "authors": "J. X. Morris, V. Kuleshov, V. Shmatikov, A. M. Rush",
+      "source": "EMNLP 2023 · arXiv:2310.06816",
+      "year": 2023,
+      "type": "paper",
+      "url": "https://arxiv.org/abs/2310.06816",
+      "consulted": "2026-11-06"
+    },
+    {
+      "id": "ref.zou-2024",
+      "title": "PoisonedRAG: Knowledge Corruption Attacks to Retrieval-Augmented Generation of Large Language Models",
+      "authors": "W. Zou, R. Geng, B. Wang, J. Jia",
+      "source": "arXiv:2402.07867",
+      "year": 2024,
+      "type": "paper",
+      "url": "https://arxiv.org/abs/2402.07867",
+      "consulted": "2026-11-06"
+    },
+    {
+      "id": "ref.hines-2024",
+      "title": "Defending Against Indirect Prompt Injection Attacks With Spotlighting",
+      "authors": "K. Hines et al.",
+      "source": "arXiv:2403.14720",
+      "year": 2024,
+      "type": "paper",
+      "url": "https://arxiv.org/abs/2403.14720",
+      "consulted": "2026-11-06"
+    },
+    {
       "id": "ref.owasp-llm-2025",
       "title": "OWASP Top 10 for LLM Applications 2025",
       "source": "OWASP GenAI Security Project",

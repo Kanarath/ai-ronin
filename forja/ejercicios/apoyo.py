@@ -34,6 +34,15 @@ def cargar_embeddings():
     return {palabra: info["vector"] for palabra, info in datos["words"].items()}
 
 
+RUTA_KB = RAIZ_REPO / "game" / "content" / "rag" / "kb_forja.json"
+
+
+def cargar_kb():
+    """Lista de documentos de la forja: diccionarios con id, title, source, access y text."""
+    import json
+    return json.loads(RUTA_KB.read_text(encoding="utf-8"))["documents"]
+
+
 def cargar_katanas():
     """Devuelve (ids, X, y): ids de cada hoja, matriz de features (lista de listas) y etiquetas."""
     with open(RUTA_KATANAS, encoding="utf-8", newline="") as f:

@@ -76,3 +76,10 @@ Antes de abrir una pista, ejecuta el test y lee el mensaje de error: suele decir
 <details><summary>🟢 softmax</summary><code>m = max(fila)</code>; <code>exps = [math.exp(x - m) for x in fila]</code>; divide cada una entre la suma. <code>math.exp(float("-inf"))</code> vale 0.0.</details>
 <details><summary>🟡 pesos_atencion</summary>d = <code>len(vectores[0])</code>. Puntuación (i, j) = producto escalar / <code>math.sqrt(d)</code> (si escalar). Con causal y j &gt; i: <code>float("-inf")</code>. Softmax a cada fila.</details>
 <details><summary>🔴 salida_atencion</summary>Para cada i: <code>[sum(pesos[i][j] * vectores[j][k] for j in range(n)) for k in range(d)]</code>.</details>
+
+## A2_01 · RAG
+
+<details><summary>🟢 trocear</summary><code>palabras = texto.split()</code>; un <code>while</code> con un índice <code>inicio</code> que avanza <code>tam - solape</code>; añade <code>" ".join(palabras[inicio:inicio + tam])</code> y para (<code>break</code>) cuando <code>inicio + tam &gt;= len(palabras)</code>.</details>
+<details><summary>🟡 construir_idf</summary>Para contar df, convierte los términos de cada fragmento en un <code>set</code> (cada fragmento cuenta una vez por término) y suma en un diccionario.</details>
+<details><summary>🟡 vectorizar</summary><code>tf</code> con un diccionario de conteos; pesos = <code>conteo / len(terminos) * idf.get(t, 1.0)</code>; norma = <code>math.sqrt(sum(w*w for w in pesos.values()))</code>; divide cada peso entre la norma (si no es 0).</details>
+<details><summary>🔴 buscar</summary>Filtra primero: <code>[e for e in indice if not acl or rol == "empleado" or e["acceso"] == "publico"]</code>. Después calcula <code>(e["id"], coseno(q, e["vector"]))</code> y ordena con <code>key=lambda t: (-t[1], t[0])</code>; corta <code>[:k]</code>.</details>

@@ -1,0 +1,127 @@
+{
+  "id": "A2-01",
+  "schema_version": 1,
+  "title": "La biblioteca de la forja",
+  "unit": "A2",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 40,
+  "requires_missions": ["T5-02", "A1-01"],
+  "competencies": { "requires": ["T5.embeddings", "A1.construir"], "trains": ["A2.rag", "A2.chunking", "A2.grounding"] },
+  "briefing": "El chatbot de A1 solo sabía lo que traía escrito en su prompt. La forja quiere algo mejor: un asistente que responda consultando la documentación real (manual de cuidados, garantía, envíos, precios…). Eso es un RAG (Retrieval-Augmented Generation): antes de responder, el sistema BUSCA los fragmentos de documentos más parecidos a la pregunta y se los da al modelo como contexto. Hoy lo construirás pieza a pieza: trocear, indexar, buscar, responder y medir.",
+  "learning_objectives": [
+    "Explicar la arquitectura de un RAG: ingesta, troceo, índice vectorial, recuperación y generación",
+    "Medir cómo afecta el tamaño de fragmento a la calidad y al coste",
+    "Reducir las alucinaciones con un umbral de relevancia (abstenerse cuando no hay información)"
+  ],
+  "mentor_intro": "Lo que es real aquí: el troceo, el índice vectorial TF-IDF y la búsqueda por similitud coseno se calculan de verdad. Lo simulado: el modelo que redacta la respuesta, que sigue reglas.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "rag",
+      "title": "RAG en cinco pasos",
+      "body": "1) INGESTA: se cargan los documentos. 2) TROCEO (chunking): se parten en fragmentos de N palabras. 3) ÍNDICE: cada fragmento se convierte en un vector (embedding) y se guarda en una base de datos vectorial. 4) RECUPERACIÓN: la pregunta también se convierte en vector y se buscan los k fragmentos más parecidos (similitud coseno, como en T5). 5) GENERACIÓN: el modelo responde usando esos fragmentos como contexto, idealmente citando las fuentes. Más: man rag"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Crea el sistema RAG y revisa sus documentos. ¿Cuántos documentos son de acceso interno? (answer <número>)",
+      "teach": "La base de conocimiento\nrag create <nombre> carga la documentación de la forja. rag docs <nombre> lista cada documento con su origen (quién lo escribió) y su nivel de acceso (público o interno). En una auditoría de un RAG, lo primero es saber QUÉ datos puede llegar a leer el asistente.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "rag.docs" },
+        { "type": "answer", "expected": 2, "tolerance": 0 }
+      ] },
+      "hints": ["rag create biblio · rag docs biblio", "Cuenta los documentos con acceso «interno»."],
+      "on_complete": "2 documentos confidenciales (costes y proveedores) conviven con los públicos en la MISMA base de conocimiento. Apúntalo: es una decisión de diseño que tendrá consecuencias."
+    },
+    {
+      "id": "o2",
+      "text": "Trocea e indexa los documentos con la configuración por defecto.",
+      "teach": "Trocear e indexar\nrag ingest <nombre> parte cada documento en fragmentos de 40 palabras que se solapan 10 (para no cortar una idea justo en la frontera) y calcula el vector de cada fragmento. Aquí los vectores son TF-IDF: cada dimensión es una palabra del vocabulario y su peso dice lo importante que es esa palabra en el fragmento (mucho si es frecuente en él y rara en el resto). Son embeddings «dispersos»; los RAG modernos usan embeddings «densos» de una red neuronal, pero la búsqueda funciona igual: similitud coseno. Opciones: --chunk y --overlap.",
+      "validator": { "type": "event", "event": "rag.ingested" },
+      "hints": ["rag ingest biblio"],
+      "on_complete": "13 fragmentos con ids como cuidados#0, cuidados#1… (documento#número). El vocabulario tiene 151 términos: cada vector tiene 151 dimensiones posibles."
+    },
+    {
+      "id": "o3",
+      "text": "Busca los fragmentos más parecidos a «aceite para proteger la hoja». ¿De qué documento sale el más parecido? (answer <id del documento>)",
+      "teach": "Recuperación\nrag search <nombre> <consulta> convierte la consulta en vector y devuelve los k fragmentos con mayor similitud coseno, sin generar ninguna respuesta. Es la mitad «R» de RAG. Fíjate también en la línea final: cuántas palabras de contexto recibiría el modelo (y eso cuesta tokens).",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "rag.searched" },
+        { "type": "answer", "expected": "cuidados", "accept": ["cuidados", "cuidados#0", "cuidados#1"] }
+      ] },
+      "hints": ["rag search biblio aceite para proteger la hoja", "La primera fila de la tabla es el fragmento más parecido; el documento es lo que va antes de «#»."],
+      "on_complete": "Del manual de cuidados. La búsqueda no «entiende» nada: compara vectores. Funciona porque la consulta y el fragmento comparten palabras importantes (aceite, proteger, hoja)."
+    },
+    {
+      "id": "o4",
+      "text": "Haz una pregunta completa al asistente y observa la respuesta y sus fuentes.",
+      "teach": "Generación con fuentes\nrag ask <nombre> <pregunta> recupera fragmentos y genera una respuesta a partir de ellos, indicando qué fragmentos usó. Citar las fuentes permite al usuario comprobar la respuesta: es una de las grandes ventajas de un RAG frente a un LLM que responde «de memoria».",
+      "validator": { "type": "event", "event": "rag.answered", "where": { "grounded": true } },
+      "hints": ["rag ask biblio ¿Qué aceite debo usar para proteger la hoja?"],
+      "on_complete": "Respuesta fundamentada en la documentación, con sus fuentes."
+    },
+    {
+      "id": "o5",
+      "text": "Pasa el eval de preguntas de clientes. ¿Cuántas de las 7 responde correctamente? (answer <número>)",
+      "teach": "Evaluar un RAG\nrag eval <nombre> lanza 7 preguntas reales con la respuesta esperada. Como en A1, es tu línea base. Mira con atención qué pregunta falla y POR QUÉ.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "rag.eval" },
+        { "type": "answer", "expected": 6, "tolerance": 0 }
+      ] },
+      "hints": ["rag eval biblio", "Cuenta los ✓ o mira la línea final."],
+      "on_complete": "6 de 7. Falla «¿Vendéis armaduras de samurái?»: la documentación no dice nada de armaduras, pero el asistente responde igualmente con una frase del catálogo que no tiene nada que ver. Es una ALUCINACIÓN: mejor reconocer que no se sabe."
+    },
+    {
+      "id": "o6",
+      "text": "Activa el umbral de relevancia (min-score) y repite el eval hasta conseguir 7 de 7.",
+      "teach": "Abstenerse cuando no se sabe\nCon rag defend <nombre> min-score on, si el fragmento más parecido tiene una similitud demasiado baja, el asistente responde «No tengo información fiable» en lugar de improvisar. Es una de las técnicas más simples y eficaces contra las alucinaciones en un RAG.",
+      "validator": { "type": "event", "event": "rag.eval", "where": { "pass_rate": 1.0, "defenses": { "icontains": "min-score" } } },
+      "hints": ["rag defend biblio min-score on · rag eval biblio"],
+      "on_complete": "7 de 7. Un buen RAG sabe decir «no lo sé». El umbral exacto es un compromiso: si es muy alto, también se abstiene en preguntas que sí tienen respuesta."
+    },
+    {
+      "id": "o7",
+      "text": "Experimenta con el troceo: reindexa con fragmentos de 6 palabras sin solapamiento (con min-score activo) y repite el eval. ¿Cuántas acierta ahora? (answer <número>)",
+      "prediction": { "prompt": "Con fragmentos diminutos de 6 palabras, ¿cómo crees que responderá?", "options": ["mejor", "igual", "peor"] },
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "rag.eval", "where": { "chunk": 6 } },
+        { "type": "answer", "expected": 3, "tolerance": 0 }
+      ] },
+      "hints": ["rag ingest biblio --chunk 6 --overlap 0 · rag eval biblio"],
+      "on_complete": "3 de 7: los fragmentos cortan las frases por la mitad («…años frente a defectos de forja»), así que la respuesta se queda sin el dato. Con fragmentos enormes (prueba --chunk 200) se acierta, pero el modelo recibe casi el doble de texto: más coste, más ruido y más superficie para que se cuele contenido malicioso. Elegir el troceo es un compromiso real de ingeniería. Vuelve a dejarlo en 40/10 con rag ingest biblio."
+    },
+    {
+      "id": "o8",
+      "text": "Explica con tus palabras cómo funciona un RAG, qué compromiso hay al elegir el tamaño de fragmento y por qué es mejor abstenerse que inventar. (reflexion <texto>, mínimo 40 palabras)",
+      "validator": { "type": "reflection", "min_words": 40 },
+      "hints": ["Recorre los cinco pasos y usa tus cifras: 6 de 7, 7 de 7 y 3 de 7.", "¿Qué pierde un fragmento demasiado pequeño? ¿Qué cuesta uno demasiado grande?"]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: mide el coste del contexto. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Reindexa con fragmentos de 200 palabras y sin solapamiento, y busca «aceite para proteger la hoja». ¿Cuántas palabras de contexto recibiría el modelo? (answer <número>)",
+        "validator": { "type": "all", "of": [
+          { "type": "event", "event": "rag.searched", "where": { "query": "aceite para proteger la hoja" } },
+          { "type": "answer", "expected": 161, "tolerance": 0 }
+        ] },
+        "hints": ["rag ingest con --chunk 200 --overlap 0 y después rag search.", "Mira la línea «Contexto que recibiría el modelo»."],
+        "on_complete": "161 palabras, frente a 93 con 40/10: casi el doble por pregunta. Multiplicado por miles de consultas al día, el troceo es también una decisión de coste."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has construido un RAG completo: ingesta, troceo, índice vectorial, recuperación y generación con fuentes; has medido su calidad con un eval, has reducido las alucinaciones con un umbral de relevancia y has comprobado el compromiso del tamaño de fragmento.",
+    "why": "RAG es la arquitectura más usada para conectar LLM con datos de una empresa. Entender cada pieza es imprescindible para construirlo bien… y para auditarlo: cada paso (ingesta, índice, recuperación, contexto) es una superficie de ataque que explotarás en A2-02.",
+    "in_production": "Embeddings densos de un modelo (APIs de embeddings o modelos abiertos), bases de datos vectoriales con búsqueda aproximada (ANN), búsqueda híbrida (vectorial + BM25 por palabras), reordenación (reranking) de los resultados, troceo por estructura del documento (secciones, párrafos) y evals específicos de RAG que miden por separado la recuperación (¿trajo el fragmento correcto?) y la fidelidad (¿la respuesta se ciñe a él?).",
+    "simplifications": ["Embeddings dispersos TF-IDF en lugar de densos", "Generador simulado que cita la frase más relevante", "7 documentos"],
+    "exercise": "forja/ejercicios/A2_01_rag.py"
+  },
+  "further_reading": ["ref.lewis-2020", "ref.owasp-llm-2025"],
+  "xp": { "base": 250 }
+}

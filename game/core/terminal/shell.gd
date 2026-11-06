@@ -31,6 +31,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	LangCommands.register(registry)
 	LlmCommands.register(registry)
 	SecurityCommands.register(registry)
+	RagCommands.register(registry)
 
 
 func execute(line: String) -> CommandResult:

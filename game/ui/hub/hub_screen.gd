@@ -419,7 +419,7 @@ func _on_sim_event(e: Dictionary) -> void:
 				if axes.size() == 2:
 					_plot.show_dataset(ds, axes[0], axes[1])
 			_plot.set_highlight(d["id"], PackedStringArray(d.get("neighbors", [])))
-		"bot.attacks", "bot.eval":
+		"bot.attacks", "bot.eval", "rag.attacks", "rag.eval":
 			_show_security(e["name"], d)
 		"regress.trained":
 			_show_regression(d)
@@ -431,7 +431,7 @@ func _on_sim_event(e: Dictionary) -> void:
 
 func _show_security(event_name: String, d: Dictionary) -> void:
 	var round_n := float(_attack_history.size() + _eval_history.size() + 1)
-	if event_name == "bot.attacks":
+	if event_name.ends_with(".attacks"):
 		_attack_history.append(Vector2(round_n, d["success_rate"]))
 	else:
 		_eval_history.append(Vector2(round_n, d["pass_rate"]))
@@ -445,7 +445,7 @@ func _show_security(event_name: String, d: Dictionary) -> void:
 	_heatmap.visible = false
 	_chart.custom_minimum_size = Vector2(380, 300)
 	_chart.x_label = "ronda"
-	_chart.set_series("Seguridad del chatbot: tasa por ronda (0 = nada, 1 = todo)", series, false)
+	_chart.set_series("Seguridad: tasa por ronda (0 = nada, 1 = todo)", series, false)
 	_chart.visible = true
 
 

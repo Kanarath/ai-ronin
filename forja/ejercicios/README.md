@@ -15,6 +15,7 @@ Cada misión del Dojo tiene un ejercicio en Python. Implementas tú las funcione
 | `T5_02_embeddings.py` | T5-02 | Similitud coseno, vecinos y analogías |
 | `T6_01_sampling.py` | T6-01 | Modelo de bigramas, temperatura y top-p |
 | `T6_02_atencion.py` | T6-02 | Softmax estable, self-attention y máscara causal |
+| `A2_01_rag.py` | A2-01 | Troceo con solapamiento, TF-IDF, coseno y búsqueda con control de acceso |
 
 **Ayudas:**
 - [PYTHON.md](PYTHON.md) explica, con ejemplos, todo el Python que usan los ejercicios, y tiene una tabla con las secciones que necesita cada uno. Léela antes de cada ejercicio.

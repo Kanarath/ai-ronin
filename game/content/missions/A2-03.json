@@ -1,0 +1,108 @@
+{
+  "id": "A2-03",
+  "schema_version": 1,
+  "title": "Sellar los archivos",
+  "unit": "A2",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 40,
+  "requires_missions": ["A2-02"],
+  "competencies": { "requires": ["A2.inyeccion-indirecta", "A2.envenenamiento"], "trains": ["A2.defensa-rag", "A2.control-acceso", "A2.procedencia"] },
+  "briefing": "Ahora te toca defender la biblioteca. Cada defensa ataca un eslabón distinto de la cadena: quién puede recuperar qué, de dónde vienen los documentos, cómo se presenta el contenido al modelo y quién puede leer los vectores. Comprobarás, con la batería en la mano, que ninguna defensa sola basta… y que hay ataques que algunas defensas no rozan.",
+  "learning_objectives": [
+    "Aplicar control de acceso en la recuperación y en la base vectorial",
+    "Distinguir qué defensa mitiga la inyección indirecta y cuál el envenenamiento",
+    "Llegar a 0 ataques con éxito manteniendo la calidad (eval 7/7)"
+  ],
+  "mentor_intro": "Mismo método que en A1-03: línea base, una defensa cada vez, batería y eval.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "defensas-rag",
+      "title": "Defensas del RAG",
+      "body": "acl: la recuperación solo devuelve fragmentos que el usuario tiene permiso para ver. trusted-sources: solo se indexan documentos de fuentes de confianza (procedencia). spotlight: el contenido recuperado se marca como DATOS, no como instrucciones, y el modelo no obedece órdenes que lleguen dentro de él. vector-acl: la base vectorial aplica permisos a sus vectores. min-score: abstenerse si no hay contexto relevante. Comando: rag defend <rag> <defensa> on|off."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Crea e indexa el RAG y mide la línea base con la batería, sin defensas.",
+      "validator": { "type": "event", "event": "rag.attacks", "where": { "defenses": "ninguna", "successes": 5 } },
+      "hints": ["rag create biblio · rag ingest biblio · rag attack biblio"],
+      "on_complete": "5 de 5. Tu «antes»."
+    },
+    {
+      "id": "o2",
+      "text": "Activa el control de acceso en la recuperación y repite la batería. ¿Qué tasa de éxito queda? (answer <número>)",
+      "teach": "Control de acceso en la recuperación\nCon rag defend <rag> acl on, la búsqueda filtra los fragmentos según quién pregunta: un cliente nunca recupera documentos internos. Es el control más importante de un RAG empresarial: los permisos se aplican ANTES de que el texto llegue al modelo, no se le «piden» al modelo.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "rag.attacks", "where": { "defenses": { "icontains": "acl" } } },
+        { "type": "answer", "expected": 0.6, "tolerance": 0.01 }
+      ] },
+      "hints": ["rag defend biblio acl on · rag attack biblio", "3 de 5."],
+      "on_complete": "0,60: desaparecen las dos fugas. Siguen la inyección, el envenenamiento y la inversión."
+    },
+    {
+      "id": "o3",
+      "text": "Activa spotlight y repite la batería. ¿Cuántos ataques siguen teniendo éxito? (answer <número>)",
+      "prediction": { "prompt": "Spotlight hace que el modelo no obedezca instrucciones que lleguen en los documentos. ¿Detendrá también el envenenamiento del foro?", "options": ["sí", "no"] },
+      "teach": "Spotlighting\nConsiste en separar y marcar el contenido recuperado (delimitadores, etiquetas, transformaciones) para que el modelo lo trate como datos y no como órdenes. Es una mitigación propuesta en la investigación (Hines et al., 2024) que REDUCE la inyección indirecta, aunque en modelos reales no la elimina del todo.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "rag.attacks", "where": { "defenses": { "icontains": "spotlight" } } },
+        { "type": "answer", "expected": 2, "tolerance": 0 }
+      ] },
+      "hints": ["rag defend biblio spotlight on · rag attack biblio"],
+      "on_complete": "Quedan 2: la inversión y el ENVENENAMIENTO. El mensaje del foro no da ninguna orden; solo afirma algo falso. Spotlight protege contra órdenes, no contra mentiras."
+    },
+    {
+      "id": "o4",
+      "text": "Activa la verificación de procedencia (trusted-sources) y repite la batería.",
+      "teach": "Procedencia de los documentos\nCon rag defend <rag> trusted-sources on, solo entran en el índice los documentos de la forja; lo que suben los usuarios (reseñas, foros) no se indexa. En un sistema real se usaría una lista de fuentes aprobadas, firmas o revisión humana antes de indexar. Si las reseñas son necesarias, se indexan en un índice aparte y se presentan como «opinión de un cliente», nunca como documentación.",
+      "validator": { "type": "event", "event": "rag.attacks", "where": { "defenses": { "icontains": "trusted-sources" }, "successes": 1 } },
+      "hints": ["rag defend biblio trusted-sources on · rag attack biblio"],
+      "on_complete": "1 de 5: solo queda la lectura de vectores."
+    },
+    {
+      "id": "o5",
+      "text": "Protege la base vectorial (vector-acl) y consigue 0 ataques con éxito; después comprueba que el eval llega a 7/7 (activa min-score si hace falta).",
+      "teach": "Proteger los vectores\nrag defend <rag> vector-acl on aplica los mismos permisos a los vectores que a los documentos. Regla práctica: un embedding hereda la sensibilidad del texto del que procede.",
+      "validator": { "type": "sequence", "steps": [
+        { "type": "event", "event": "rag.attacks", "where": { "success_rate": 0.0 } },
+        { "type": "event", "event": "rag.eval", "where": { "pass_rate": 1.0 } }
+      ] },
+      "hints": ["rag defend biblio vector-acl on · rag attack biblio", "Para el eval: rag defend biblio min-score on · rag eval biblio"],
+      "on_complete": "0 ataques y 7 de 7 clientes bien atendidos. Cada defensa cubre un eslabón distinto: por eso la seguridad de un RAG se diseña en capas."
+    },
+    {
+      "id": "o6",
+      "text": "Explica con tus palabras qué eslabón protege cada defensa y por qué spotlight no basta contra el envenenamiento. (reflexion <texto>, mínimo 40 palabras)",
+      "validator": { "type": "reflection", "min_words": 40 },
+      "hints": ["Ingesta (procedencia), recuperación (acl), presentación al modelo (spotlight), almacenamiento (vector-acl), generación (min-score).", "Órdenes frente a datos falsos."]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: defensa sin spotlight. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con un RAG nuevo, consigue 0 ataques con éxito SIN activar spotlight, y 7/7 en el eval.",
+        "validator": { "type": "sequence", "steps": [
+          { "type": "event", "event": "rag.attacks", "where": { "success_rate": 0.0, "defenses": { "not_contains_any": ["spotlight"] } } },
+          { "type": "event", "event": "rag.eval", "where": { "pass_rate": 1.0 } }
+        ] },
+        "hints": ["¿Qué defensa impide que la reseña inyectada llegue siquiera al índice?", "acl, trusted-sources, vector-acl… y min-score para el eval."],
+        "on_complete": "Correcto: si el texto malicioso nunca entra en el índice, no hace falta que el modelo lo resista. En la práctica se combinan ambas cosas, porque ninguna fuente es 100 % de confianza."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has cerrado los cinco ataques con cuatro defensas en capas (control de acceso en la recuperación, procedencia de fuentes, spotlight y permisos en la base vectorial), manteniendo la calidad del asistente.",
+    "why": "Un RAG mueve datos entre fuentes, índices, modelos y usuarios con distintos permisos. La seguridad depende de controlar cada paso: quién escribe en las fuentes, qué se indexa, qué se recupera para quién, cómo se presenta al modelo y quién lee el índice.",
+    "in_production": "Filtros de metadatos y permisos en la base vectorial (multi-tenancy), pipelines de ingesta con validación y procedencia, detección de documentos anómalos (posible envenenamiento), registros de qué fragmentos se usaron en cada respuesta, y evals que miden recuperación y fidelidad. OWASP LLM08:2025 enumera estas prácticas.",
+    "simplifications": ["Defensas como interruptores", "Dos roles de usuario", "Batería de 5 ataques"],
+    "exercise": ""
+  },
+  "further_reading": ["ref.hines-2024", "ref.owasp-llm-2025"],
+  "xp": { "base": 250 }
+}
