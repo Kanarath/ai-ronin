@@ -225,8 +225,8 @@ Los **códigos de diagnóstico** (por ejemplo, `DATA_LEAKAGE_TEST_USED_IN_TRAINI
 
 - **Runner propio** (`tests/run_tests.gd`, unas 80 líneas), en lugar de GUT o gdUnit4. Así no hay dependencias y entiendes cómo funciona un framework de tests.
 - Se ejecuta en modo headless:
-  ```bash
-  "C:\Users\Ruben\Desktop\Godot_v4.7.2-stable_win64.exe" --headless --path game -s res://tests/run_tests.gd
+  ```powershell
+  & "C:\Users\Ruben\Desktop\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64_console.exe" --headless --path game -s res://tests/run_tests.gd
   ```
 - Prioridades:
   1. Parser y pipeline del terminal.

@@ -1,0 +1,11 @@
+# Normaliza finales de línea a LF en el repositorio (recomendación de Godot)
+* text=auto eol=lf
+
+# Binarios
+*.png binary
+*.jpg binary
+*.ttf binary
+*.otf binary
+*.woff2 binary
+*.wav binary
+*.ogg binary

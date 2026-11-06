@@ -1,0 +1,63 @@
+[gd_resource type="Theme" format=3]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_panel"]
+bg_color = Color(0.0627, 0.0941, 0.1255, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.1373, 0.1922, 0.2392, 1)
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_button"]
+bg_color = Color(0.0863, 0.1294, 0.1686, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.1373, 0.1922, 0.2392, 1)
+content_margin_left = 14.0
+content_margin_top = 6.0
+content_margin_right = 14.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_button_hover"]
+bg_color = Color(0.0863, 0.1294, 0.1686, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.0784, 0.7216, 0.651, 1)
+content_margin_left = 14.0
+content_margin_top = 6.0
+content_margin_right = 14.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_lineedit"]
+bg_color = Color(0.0392, 0.0549, 0.0745, 1)
+border_width_bottom = 1
+border_color = Color(0.0784, 0.7216, 0.651, 1)
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+
+[resource]
+default_font_size = 16
+Button/colors/font_color = Color(0.8392, 0.8863, 0.9176, 1)
+Button/colors/font_hover_color = Color(0.0784, 0.7216, 0.651, 1)
+Button/colors/font_pressed_color = Color(0.1333, 0.8275, 0.9333, 1)
+Button/styles/focus = SubResource("StyleBox_button_hover")
+Button/styles/hover = SubResource("StyleBox_button_hover")
+Button/styles/normal = SubResource("StyleBox_button")
+Button/styles/pressed = SubResource("StyleBox_button_hover")
+Label/colors/font_color = Color(0.8392, 0.8863, 0.9176, 1)
+LineEdit/colors/caret_color = Color(0.1333, 0.8275, 0.9333, 1)
+LineEdit/colors/font_color = Color(0.1333, 0.8275, 0.9333, 1)
+LineEdit/styles/focus = SubResource("StyleBox_lineedit")
+LineEdit/styles/normal = SubResource("StyleBox_lineedit")
+PanelContainer/styles/panel = SubResource("StyleBox_panel")
+RichTextLabel/colors/default_color = Color(0.8392, 0.8863, 0.9176, 1)
