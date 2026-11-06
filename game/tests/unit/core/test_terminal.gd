@@ -171,6 +171,13 @@ func test_comandos_no_dejan_eventos_si_fallan_al_validar() -> void:
 	assert_eq(shell.events_named("command.failed").size(), 1)
 
 
+func test_forja_setup_explica_instalacion_por_sistema() -> void:
+	assert_true(shell.execute("forja setup").plain_text().contains("winget install"))
+	assert_true(shell.execute("forja setup --os macos").plain_text().contains("brew install python"))
+	assert_true(shell.execute("forja setup --os linux").plain_text().contains("apt install python3"))
+	assert_true(shell.execute("man python").ok)
+
+
 func test_contenido_sin_errores() -> void:
 	var lib := ContentLibrary.load_default()
 	assert_eq(lib.errors.size(), 0, ", ".join(lib.errors))

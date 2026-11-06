@@ -294,7 +294,7 @@ func _on_mission_completed(m: Dictionary, result: Dictionary, xp_gained: int) ->
 	_on_mentor("◆ Misión %s completada · +%d XP · maestría %d/100. %s" % [m["id"], xp_gained, result["score"], trial], "praise")
 	var exercise: String = m.get("debrief", {}).get("exercise", "")
 	if not exercise.is_empty():
-		_on_mentor("🛠 Ahora, con tus manos: abre %s y haz que pasen sus tests (instrucciones en forja/ejercicios/README.md)." % exercise, "info")
+		_on_mentor("🛠 Ahora, con tus manos: abre %s y haz que pasen sus tests. ¿No tienes Python? Escribe forja setup." % exercise, "info")
 	_refresh_all()
 
 

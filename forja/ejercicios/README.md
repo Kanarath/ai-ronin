@@ -15,6 +15,10 @@ Cada misión del Dojo tiene un ejercicio en Python. Implementas tú las funcione
 
 ## 1. Instalar Python (una sola vez)
 
+Dentro del Dojo, el comando `forja setup` muestra estos mismos pasos. Con `--os macos` o `--os linux` los muestra para otros sistemas. Si no puedes instalar Python en un equipo, sigue jugando: los ejercicios no bloquean el progreso del Dojo.
+
+**Windows:**
+
 Abre PowerShell y ejecuta:
 
 ```powershell

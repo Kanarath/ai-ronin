@@ -2,6 +2,17 @@
   "schema_version": 1,
   "topics": [
     {
+      "id": "python",
+      "title": "Python y los ejercicios de la Forja",
+      "body": [
+        "Las misiones se juegan en el Dojo. Los ejercicios 🛠 se programan en Python, el lenguaje estándar de la IA, en la carpeta forja/ejercicios del proyecto.",
+        "El Dojo no puede comprobar si tienes Python ni instalarlo: está aislado de tu sistema a propósito. Los pasos para cada sistema operativo los da el comando forja setup (o forja setup --os macos / --os linux).",
+        "Solo hace falta Python 3.12 o superior: los tests usan unittest, que viene incluido. Ejecuta los tests desde forja/ejercicios con: python -m unittest -v test_T1_01_estadisticas.",
+        "Si no puedes instalar Python en este equipo, sigue jugando: los ejercicios no bloquean el progreso del Dojo y puedes hacerlos más tarde en otro equipo."
+      ],
+      "see_also": ["terminal"]
+    },
+    {
       "id": "terminal",
       "title": "Cómo usar el terminal del Dojo",
       "body": [
