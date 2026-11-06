@@ -255,6 +255,31 @@
         "Fuga de datos: cualquier información del test que influya en el entrenamiento (ejemplos repetidos, normalizar con todo, elegir k mirando el test) infla el resultado. El modelo parecerá mejor de lo que es."
       ],
       "see_also": ["knn", "normalizacion"]
+    },
+    {
+      "id": "mcp",
+      "title": "MCP: host, servidores y mensajes",
+      "body": [
+        "Host: la aplicación del asistente. Mantiene un cliente por cada servidor conectado. Servidor: ofrece herramientas (tools), recursos (resources) y prompts.",
+        "Descubrir: el host envía tools/list y recibe, por cada herramienta, name, description e inputSchema (JSON Schema de los argumentos).",
+        "Usar: el modelo propone una herramienta y unos argumentos; el host envía tools/call y recibe result.content (por ejemplo, texto).",
+        "Las descripciones y los resultados entran en el contexto del modelo. El host decide qué servidores conecta, qué credenciales envía y cuándo pide confirmación.",
+        "Comandos: mcp host · mcp servers · mcp inspect · mcp connect · mcp ask [--as cliente] · mcp log · mcp update · mcp approve."
+      ],
+      "see_also": ["ataquesmcp", "agentes"]
+    },
+    {
+      "id": "ataquesmcp",
+      "title": "Ataques y defensas en MCP",
+      "body": [
+        "Envenenamiento de herramientas: instrucciones en la descripción. Defensas: review-descriptions, least-scope (sin secretos que robar), consent.",
+        "Rug pull: la definición cambia tras aprobarla. Defensas: pin-definitions + revisar antes de mcp approve; consent.",
+        "Shadowing: otro servidor con el mismo nombre de herramienta. Defensa: namespacing (servidor.herramienta).",
+        "Token passthrough: el host reenvía su token a terceros. Defensa: least-scope (un token por servidor, con su destinatario y permisos mínimos).",
+        "Inyección por la salida: órdenes en el resultado. Defensas: output-isolation, consent.",
+        "consent detecta lo que el usuario puede ver (argumentos), pero no lo que no ve (de qué servidor viene la herramienta, el token de la cabecera) y cansa. Comandos: mcp attack · mcp eval · mcp defend."
+      ],
+      "see_also": ["mcp", "ataquesagentes"]
     }
   ]
 }

@@ -89,3 +89,11 @@ Antes de abrir una pista, ejecuta el test y lee el mensaje de error: suele decir
 <details><summary>🟡 dominio de un correo</summary><code>dominio = args.get("para", "").split("@")[-1]</code> y comprueba <code>dominio in DOMINIOS_PERMITIDOS</code>.</details>
 <details><summary>🟡 importe válido</summary><code>pedido in PEDIDOS and 0 &lt; importe &lt;= PEDIDOS[pedido]</code>.</details>
 <details><summary>🔴 ejecutar_plan</summary>Un contador de pasos. Para cada llamada: si el contador ya llegó a PRESUPUESTO_PASOS, bloquea con "step-budget" (sin autorizar). Si no, construye <code>ctx = dict(contexto, origen=llamada["origen"])</code>, llama a <code>autorizar</code>, suma 1 al contador y añade a la lista que toque.</details>
+
+## A4_01 · sellos de un host MCP
+
+<details><summary>🟢 descripcion_sospechosa</summary><code>[p for p in PATRONES_SOSPECHOSOS if re.search(p, descripcion, re.IGNORECASE)]</code>. Una comprensión de listas conserva el orden de la lista original.</details>
+<details><summary>🟢 huella</summary><code>texto = json.dumps(herramientas, sort_keys=True, ensure_ascii=False)</code>; <code>hashlib.sha256(texto.encode("utf-8")).hexdigest()[:12]</code>.</details>
+<details><summary>🟡 comprobar_pin</summary>Primero <code>if servidor not in aprobadas</code>; después compara <code>huella(herramientas) != aprobadas[servidor]</code>.</details>
+<details><summary>🟡 tabla_herramientas</summary>Recorre servidores y herramientas: <code>tabla[f"{s['id']}.{h}"] = s["id"]</code>. Para las colisiones, cuenta en un diccionario cuántos servidores exponen cada nombre y quédate con los que tienen 2 o más: <code>sorted(n for n, c in cuenta.items() if c &gt;= 2)</code>.</details>
+<details><summary>🔴 aceptar_token</summary>Dos <code>if</code> en orden: <code>token.get("aud") != servidor</code> → "audiencia"; <code>permiso not in token.get("scopes", [])</code> → "permiso". Es exactamente lo que la especificación MCP exige a un servidor: no aceptar tokens que no se emitieron para él.</details>

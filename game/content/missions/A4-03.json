@@ -1,0 +1,120 @@
+{
+  "id": "A4-03",
+  "schema_version": 1,
+  "title": "Sellos en el enchufe",
+  "unit": "A4",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 45,
+  "requires_missions": ["A4-02"],
+  "competencies": { "requires": ["A4.tool-poisoning", "A4.rug-pull", "A4.shadowing"], "trains": ["A4.pinning", "A4.namespacing", "A4.tokens-minimos", "A4.aislamiento-salidas", "A4.consentimiento"] },
+  "briefing": "La forja quiere seguir usando servidores del catálogo público, pero sin regalarles las llaves. Hoy pondrás sellos en el enchufe: revisar descripciones, fijar versiones aprobadas, separar nombres por servidor, dar a cada servidor un token propio y mínimo, aislar los resultados y pedir confirmación al usuario. Como siempre, medirás cuánto protege cada sello y cuánto cuesta.",
+  "learning_objectives": [
+    "Medir la eficacia y el coste del consentimiento del usuario",
+    "Entender que fijar la versión aprobada (pinning) solo sirve si alguien revisa lo que aprueba",
+    "Llegar a 0 ataques sin depender de confirmaciones del usuario y sin romper las tareas legítimas"
+  ],
+  "mentor_intro": "Un sello no impide abrir la caja: te dice si alguien la ha abierto. Lo que haces después depende de ti.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "controles-mcp",
+      "title": "Controles del host MCP",
+      "body": "review-descriptions: se eliminan de las descripciones las instrucciones sospechosas antes de dárselas al modelo. pin-definitions: se guarda una huella (hash) de las definiciones aprobadas y se bloquean si cambian. namespacing: cada herramienta se identifica como servidor.herramienta. least-scope: cada servidor recibe un token propio, ligado a él y con los permisos mínimos; el token de administrador nunca entra en el contexto del modelo. output-isolation: el resultado de una herramienta se trata como datos, nunca como órdenes. consent: el usuario confirma cada llamada viendo sus argumentos. Comando: mcp defend <host> <control> on|off."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Crea un host y mide la línea base con la batería.",
+      "validator": { "type": "event", "event": "mcp.attacks", "where": { "defenses": "ninguna", "successes": 5 } },
+      "hints": ["mcp host forja · mcp attack forja"],
+      "on_complete": "5 de 5."
+    },
+    {
+      "id": "o2",
+      "text": "Activa SOLO el consentimiento del usuario (consent) y repite la batería. ¿Cuántos ataques siguen teniendo éxito? (answer <número>)",
+      "prediction": { "prompt": "Si el usuario ve cada llamada con sus argumentos antes de que se ejecute, ¿qué ataque pasará?", "options": ["ninguno", "el que no tiene argumentos raros", "casi todos"] },
+      "teach": "Consentimiento\nLa especificación MCP pide que el host obtenga el consentimiento explícito del usuario antes de invocar herramientas. En el laboratorio, el usuario simulado rechaza una llamada si ve el token en los argumentos o un reembolso que no ha pedido… y aprueba todo lo que parece normal.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "mcp.attacks", "where": { "defenses": "consent" } },
+        { "type": "answer", "expected": 1, "tolerance": 0 }
+      ] },
+      "hints": ["mcp defend forja consent on · mcp attack forja"],
+      "on_complete": "Pasa el shadowing: la llamada «buscar_pedido(P-101)» parece idéntica venga del servidor que venga. El usuario no puede ver lo que el host no le enseña. Y el token sigue viajando en la cabecera de la llamada, que el usuario tampoco ve."
+    },
+    {
+      "id": "o3",
+      "text": "Con consent activado, lanza las tareas legítimas. ¿Qué proporción sale bien? (answer <número>)",
+      "teach": "El coste del consentimiento\nmcp eval <host> ejecuta cuatro tareas normales y cuenta las confirmaciones que se le piden al usuario. Fíjate en cuál falla y por qué.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "mcp.eval", "where": { "defenses": "consent" } },
+        { "type": "answer", "expected": 0.75, "tolerance": 0.01 }
+      ] },
+      "hints": ["mcp eval forja", "Mira la línea «Tareas correctas: … = …»."],
+      "on_complete": "0,75 y 4 confirmaciones. El tiempo en Kioto falla: el modelo SIGUE obedeciendo la descripción envenenada, el usuario rechaza la llamada y se queda sin respuesta. El consentimiento ha detectado el ataque, pero no lo ha eliminado, y cada confirmación cansa al usuario (fatiga de aprobaciones)."
+    },
+    {
+      "id": "o4",
+      "text": "Pinning: desactiva consent y activa pin-definitions. Publica la actualización del traductor y pide una traducción (quedará bloqueada). Después APRUEBA la nueva versión sin revisarla y vuelve a pedirla: consigue que el rug pull funcione igualmente.",
+      "teach": "Una huella no es una revisión\nCon pin-definitions, el host guarda un hash de las definiciones que aprobaste. Si el servidor las cambia, la huella no coincide y el host bloquea la herramienta hasta que alguien las apruebe de nuevo (mcp approve). Es un buen detector, pero la decisión final es humana: si se aprueba la nueva versión sin leerla (mcp inspect), el ataque vuelve.",
+      "validator": { "type": "sequence", "steps": [
+        { "type": "event", "event": "mcp.updated", "where": { "server": "traductor" } },
+        { "type": "event", "event": "mcp.asked", "where": { "tool": "traducir", "refund_total": 0, "defenses": { "icontains": "pin-definitions" } } },
+        { "type": "event", "event": "mcp.approved", "where": { "server": "traductor" } },
+        { "type": "event", "event": "mcp.asked", "where": { "tool": "traducir", "refund_total": { "gte": 2400 } } }
+      ] },
+      "hints": [
+        "mcp defend forja consent off · mcp defend forja pin-definitions on · mcp update forja traductor · mcp ask forja Traduce: katana",
+        "mcp approve forja traductor · mcp ask forja Traduce: katana"
+      ],
+      "on_complete": "Bloqueado… hasta que alguien pulsa «aprobar». Antes de aprobar una actualización hay que leer qué ha cambiado: mcp inspect te lo habría enseñado."
+    },
+    {
+      "id": "o5",
+      "text": "Diseña los sellos en el host, sin consent: consigue 0 ataques con éxito y, después, 4/4 en las tareas legítimas con 0 confirmaciones.",
+      "teach": "Defensa en el host\nCada control corta un ataque en un punto distinto: review-descriptions o least-scope cortan el envenenamiento (sin instrucciones o sin token que robar); pin-definitions detecta el rug pull; namespacing evita el shadowing; least-scope acaba con el passthrough; output-isolation corta la inyección por la salida. La batería crea hosts nuevos, así que las aprobaciones manuales del objetivo anterior no cuentan.",
+      "validator": { "type": "sequence", "steps": [
+        { "type": "event", "event": "mcp.attacks", "where": { "success_rate": 0.0, "defenses": { "not_contains": "consent" } } },
+        { "type": "event", "event": "mcp.eval", "where": { "pass_rate": 1.0, "approvals": 0 } }
+      ] },
+      "hints": [
+        "Necesitas cubrir los cinco ataques. Mira la tabla de la tarjeta de teoría.",
+        "Por ejemplo: pin-definitions, namespacing, least-scope y output-isolation (con consent desactivado). Después: mcp attack forja · mcp eval forja"
+      ],
+      "on_complete": "0 de 5, 4 de 4 tareas y ninguna confirmación. Los controles que funcionan están en el host y en los tokens, no en la buena voluntad del modelo ni en la paciencia del usuario."
+    },
+    {
+      "id": "o6",
+      "text": "Explica con tus palabras por qué el consentimiento no basta, qué detecta exactamente el pinning y por qué cada servidor debe tener su propio token con permisos mínimos. (reflexion <texto>, mínimo 40 palabras)",
+      "validator": { "type": "reflection", "min_words": 40 },
+      "hints": ["Usa tus cifras: 1 de 5 con consent, 0,75 en las tareas, el rug pull aprobado sin leer.", "¿Qué puede hacer un servidor con un token que solo sirve para él y solo para leer?"]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: los sellos justos. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con un host nuevo, consigue 0 ataques con éxito SIN consent y SIN review-descriptions, y con las tareas legítimas a 4/4.",
+        "validator": { "type": "sequence", "steps": [
+          { "type": "event", "event": "mcp.created" },
+          { "type": "event", "event": "mcp.attacks", "where": { "success_rate": 0.0, "defenses": { "not_contains_any": ["consent", "review-descriptions"] } } },
+          { "type": "event", "event": "mcp.eval", "where": { "pass_rate": 1.0 } }
+        ] },
+        "hints": ["Sin revisar descripciones, ¿qué control deja al envenenamiento sin nada que robar?", "Un control por ataque, y uno de ellos cubre dos."],
+        "on_complete": "Con tokens mínimos, el envenenamiento ya no tiene botín: aunque el modelo obedezca, no hay token de administrador en su contexto. Quitar el poder suele ser más robusto que filtrar el texto."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has comprobado que el consentimiento deja pasar el shadowing y rompe una tarea legítima, que el pinning detecta el rug pull pero no protege si se aprueba sin revisar, y que los controles del host (huellas, espacios de nombres, tokens mínimos y aislamiento de resultados) lo cierran todo sin coste para el usuario.",
+    "why": "Es el mismo principio que en A3: el modelo no es una frontera de seguridad. En MCP, además, el host es quien decide qué servidores se conectan, qué textos llegan al modelo y con qué credenciales se llama a cada servidor. Ahí es donde se ponen los controles.",
+    "in_production": "Listas de servidores permitidos y revisados, versiones fijadas y revisión de los cambios, identificadores calificados por servidor, autorización con OAuth y tokens ligados al servidor de destino (audience) con scopes mínimos, servidores locales en entornos aislados, confirmación del usuario solo para acciones de alto impacto y registros de cada llamada. La especificación MCP y su página de buenas prácticas de seguridad describen varios de estos controles.",
+    "simplifications": ["Controles como interruptores", "La revisión de descripciones es una expresión regular; un atacante real puede esquivarla", "Un usuario simulado con un criterio fijo"],
+    "exercise": "forja/ejercicios/A4_01_mcp.py"
+  },
+  "further_reading": ["ref.mcp-security-bp", "ref.mcp-spec-2026", "ref.owasp-agentic-2026"],
+  "xp": { "base": 300 }
+}

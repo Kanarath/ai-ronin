@@ -656,6 +656,70 @@
       "short": "Registro paso a paso de lo que hizo un agente: cada llamada a herramienta, sus argumentos, su resultado y su origen.",
       "body": "Es imprescindible para depurar, auditar e investigar incidentes. En producción se usan herramientas de observabilidad que guardan las trazas de cada ejecución (cuidando de no registrar datos sensibles innecesarios).",
       "epistemic": "practica-industria"
+    },
+    {
+      "id": "mcp",
+      "term": "MCP (Model Context Protocol)",
+      "aliases": ["model context protocol", "protocolo mcp"],
+      "short": "Protocolo abierto para que un asistente descubra y use herramientas, recursos y prompts ofrecidos por servidores externos.",
+      "body": "Un host (la aplicación del asistente) crea un cliente por cada servidor y se comunica con él mediante mensajes JSON-RPC 2.0, por stdio (proceso local) o por HTTP. Con tools/list descubre las herramientas y con tools/call las invoca. Estandariza la conexión, pero no decide en quién confiar: eso es responsabilidad del host. Más: man mcp",
+      "epistemic": "practica-industria"
+    },
+    {
+      "id": "mcp-host",
+      "term": "host, cliente y servidor MCP",
+      "aliases": ["host mcp", "cliente mcp", "servidor mcp"],
+      "short": "Host: la aplicación del asistente. Cliente: la conexión del host con un servidor. Servidor: el programa que ofrece las herramientas.",
+      "body": "El host controla qué servidores se conectan, qué textos llegan al modelo, qué credenciales se envían a cada servidor y cuándo se pide confirmación al usuario. Por eso la mayoría de los controles de seguridad de MCP viven en el host.",
+      "epistemic": "practica-industria"
+    },
+    {
+      "id": "json-rpc",
+      "term": "JSON-RPC 2.0",
+      "aliases": ["jsonrpc", "json rpc"],
+      "short": "Formato sencillo de llamadas remotas en JSON: una petición con method, params e id, y una respuesta con result o error y el mismo id.",
+      "body": "MCP lo usa para todos sus mensajes. Ejemplo: {\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/call\", \"params\": {\"name\": \"buscar_pedido\", \"arguments\": {\"pedido\": \"P-101\"}}}.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "tool-poisoning",
+      "term": "envenenamiento de herramientas",
+      "aliases": ["tool poisoning", "descripción envenenada"],
+      "short": "Ataque que esconde instrucciones para el modelo en la descripción (o el esquema) de una herramienta.",
+      "body": "El host pasa las descripciones al modelo para que sepa cuándo usar cada herramienta, así que quien las escribe influye en el comportamiento del asistente. Se demostró públicamente en 2025 contra clientes MCP reales. Defensas: revisar y fijar las descripciones, no poner secretos al alcance del modelo y tokens mínimos.",
+      "epistemic": "emergente"
+    },
+    {
+      "id": "rug-pull",
+      "term": "rug pull (MCP)",
+      "aliases": ["rug pull", "cambio de definición"],
+      "short": "Un servidor aprobado cambia más tarde sus herramientas o descripciones por otras maliciosas.",
+      "body": "La aprobación inicial ya no describe lo que se ejecuta. Defensa: fijar una huella (hash) de las definiciones aprobadas, bloquear si cambian y REVISAR los cambios antes de volver a aprobar.",
+      "epistemic": "emergente"
+    },
+    {
+      "id": "tool-shadowing",
+      "term": "shadowing de herramientas",
+      "aliases": ["tool shadowing", "suplantación de herramientas"],
+      "short": "Un servidor expone una herramienta con el mismo nombre (o una descripción que manipula) a la de otro servidor de confianza.",
+      "body": "Con nombres planos, el host o el modelo pueden enviar las llamadas al servidor equivocado. Defensa: identificar cada herramienta por servidor y nombre (espacios de nombres) y no conectar servidores desconocidos.",
+      "epistemic": "emergente"
+    },
+    {
+      "id": "token-passthrough",
+      "term": "token passthrough",
+      "aliases": ["reenvío de tokens", "passthrough"],
+      "short": "Reenviar a un servidor un token que no se emitió para él (por ejemplo, el token del usuario o de administrador).",
+      "body": "La página de buenas prácticas de seguridad de MCP lo señala como antipatrón: un servidor no debe aceptar tokens que no se emitieron para él. Lo correcto son tokens ligados a su destinatario (audience) y con los scopes mínimos.",
+      "epistemic": "practica-industria"
+    },
+    {
+      "id": "audience-token",
+      "term": "token con destinatario (audience)",
+      "aliases": ["audience", "audience-bound token", "scope", "scopes"],
+      "short": "Credencial que indica para qué servicio se emitió (audience) y qué puede hacer (scopes).",
+      "body": "Si un servidor recibe un token emitido para otro, debe rechazarlo. Combinado con scopes mínimos, limita lo que se puede hacer con un token robado: un token de solo lectura para el servidor del tiempo no sirve para hacer reembolsos.",
+      "epistemic": "consolidado"
     }
   ]
 }

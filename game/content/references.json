@@ -263,6 +263,33 @@
       "url": "https://scikit-learn.org/stable/common_pitfalls.html",
       "consulted": "2026-11-06",
       "review_by": "2027-11-06"
+    },
+    {
+      "id": "ref.mcp-spec-2026",
+      "title": "Model Context Protocol Specification, revisión 2026-07-28",
+      "source": "modelcontextprotocol.io",
+      "type": "especificacion",
+      "url": "https://modelcontextprotocol.io/specification/2026-07-28",
+      "consulted": "2026-11-06",
+      "review_by": "2027-05-06"
+    },
+    {
+      "id": "ref.mcp-security-bp",
+      "title": "Model Context Protocol: Security Best Practices (confused deputy, token passthrough, SSRF, compromiso de servidores locales, minimización de scopes)",
+      "source": "modelcontextprotocol.io",
+      "type": "especificacion",
+      "url": "https://modelcontextprotocol.io/specification/latest/basic/security_best_practices",
+      "consulted": "2026-11-06",
+      "review_by": "2027-05-06"
+    },
+    {
+      "id": "ref.invariant-tool-poisoning-2025",
+      "title": "MCP Security Notification: Tool Poisoning Attacks (abril de 2025)",
+      "source": "Invariant Labs",
+      "type": "investigacion",
+      "url": "https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks",
+      "consulted": "2026-11-06",
+      "review_by": "2027-05-06"
     }
   ]
 }
