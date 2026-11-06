@@ -1,0 +1,29 @@
+# Godot 4
+.godot/
+*.translation
+export_presets.cfg
+/build/
+/exports/
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Forja (Python / Docker)
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+*.env.local
+forja/**/models/
+forja/**/data/generated/
+*.gguf
+*.safetensors
+*.pt
+*.bin
+
+# Evidencias personales generadas en labs
+forja/**/evidence/*.json
+!forja/**/evidence/.gitkeep
