@@ -1,0 +1,127 @@
+{
+  "id": "O6-03",
+  "schema_version": 1,
+  "title": "Apagar el fuego sin quemar el taller",
+  "unit": "O6",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 45,
+  "requires_missions": ["O6-02"],
+  "competencies": { "requires": ["O6.telemetria", "O6.reglas-deteccion"], "trains": ["O6.respuesta-incidentes", "O6.alcance", "O6.contencion", "O6.notificacion"] },
+  "briefing": "La alerta de correlación ha saltado y el incidente es real: el asistente ha enviado la lista de clientes a un dominio desconocido. Ahora toca responder: reconstruir qué pasó, saber a cuánta gente afecta, contenerlo sin dejar a todo el taller sin asistente, comprobar que la contención funciona y avisar a quien debe decidir la notificación.",
+  "learning_objectives": [
+    "Reconstruir la línea de tiempo de un incidente y encontrar su causa raíz",
+    "Medir el alcance buscando la misma causa en otras sesiones",
+    "Elegir contenciones que frenen el ataque y sus variantes sin parar el trabajo legítimo, y verificarlas con un retest"
+  ],
+  "mentor_intro": "En un incidente hay prisa, y la prisa empuja a apagarlo todo. Primero entiende, luego contén, luego comprueba.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "ciclo-respuesta",
+      "title": "Ciclo de respuesta a incidentes",
+      "body": "Preparación → detección y análisis → contención, erradicación y recuperación → lecciones aprendidas. Es el ciclo clásico de NIST SP 800-61; la revisión 3 (abril de 2025) lo integra en las funciones del NIST CSF 2.0 (Govern, Identify, Protect, Detect, Respond, Recover). En un agente, la causa raíz suele ser un dato (un documento, un correo, una página) y no un fallo de código."
+    },
+    {
+      "id": "contenciones",
+      "title": "Contenciones disponibles",
+      "body": "apagar-agente: el asistente deja de responder (interruptor de emergencia). cuarentena-fuente: saca del índice el documento que trae las instrucciones. bloquear-salida: las herramientas de salida (http_get, enviar_correo) solo pueden ir a dominios permitidos. notificar-dpd: el delegado de protección de datos recibe el informe para evaluar si hay que notificar a la autoridad. Comandos: soc contain <registro> <acción> on|off · soc retest <registro>."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Con el registro completo (seis campos y redacción), reconstruye la sesión S04. ¿Qué documento trajo las instrucciones? (answer <fichero>)",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "soc.viewed", "where": { "session": "S04", "complete": true } },
+        { "type": "answer", "expected": "prov-77-informe.pdf", "accept": ["prov-77-informe.pdf", "prov-77-informe", "prov-77"] }
+      ] },
+      "hints": ["soc trazas taller · soc log taller tool_args on · soc log taller retrievals on · soc log taller identity on · soc log taller model_version on · soc log taller redact-pii on · soc show taller S04"],
+      "on_complete": "Causa raíz: un documento del portal de proveedores con texto invisible para una persona y visible para el modelo. Es una inyección indirecta (OWASP LLM01) que termina en exfiltración de datos."
+    },
+    {
+      "id": "o2",
+      "text": "¿A cuántas sesiones afecta? Busca el documento en todo el registro. (answer <número>)",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "soc.searched", "where": { "sessions": { "gt": 0 } } },
+        { "type": "answer", "expected": 2, "tolerance": 0 }
+      ] },
+      "hints": ["soc search taller prov-77"],
+      "on_complete": "Dos: S04 y S07, de dos personas distintas en dos días. Las víctimas no son quienes usaron el asistente, sino los 212 clientes cuyos datos salieron."
+    },
+    {
+      "id": "o3",
+      "text": "Activa el interruptor de emergencia y haz un retest. ¿Qué proporción de las tareas legítimas sale bien? (answer <número>)",
+      "prediction": { "prompt": "Si apagas el agente, ¿qué pasa?", "options": ["frena los ataques y el taller sigue igual", "frena los ataques y para todo el trabajo", "no frena los ataques"] },
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "soc.retest", "where": { "actions": { "icontains": "apagar-agente" } } },
+        { "type": "answer", "expected": 0, "tolerance": 0 }
+      ] },
+      "hints": ["soc contain taller apagar-agente on · soc retest taller"],
+      "on_complete": "0: frena los dos ataques y también todo lo demás. Es una buena primera reacción si no sabes qué pasa; ahora que lo sabes, hay que sustituirla por algo más fino."
+    },
+    {
+      "id": "o4",
+      "text": "Quita el interruptor, pon en cuarentena el documento y repite el retest. ¿Cuántos ataques siguen teniendo éxito? (answer <número>)",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "soc.retest", "where": { "actions": "cuarentena-fuente" } },
+        { "type": "answer", "expected": 1, "tolerance": 0 }
+      ] },
+      "hints": ["soc contain taller apagar-agente off · soc contain taller cuarentena-fuente on · soc retest taller"],
+      "on_complete": "Uno: el atacante sube otro documento con la misma nota. Quitar el documento es erradicar ESTE dato, no la capacidad del agente de mandar datos a cualquier sitio."
+    },
+    {
+      "id": "o5",
+      "text": "Consigue 0 ataques con éxito y 1,0 en las tareas legítimas, y avisa al delegado de protección de datos.",
+      "teach": "Notificar no es opcional\nSalieron datos personales de 212 clientes. El RGPD (art. 33) obliga al responsable a notificar una violación de datos personales a la autoridad de control sin dilación indebida y, si es posible, en 72 horas desde que tiene constancia, salvo que sea improbable que suponga un riesgo para las personas. Esa evaluación la hace la organización (con su DPD), no el equipo técnico solo.",
+      "validator": { "type": "event", "event": "soc.retest", "where": { "successes": 0, "pass_rate": 1.0, "notified": true } },
+      "hints": [
+        "Hace falta un control que actúe sobre la acción (a dónde puede enviar datos el agente), no sobre el documento.",
+        "soc contain taller bloquear-salida on · soc contain taller notificar-dpd on · soc retest taller"
+      ],
+      "on_complete": "0 de 2 y 4 de 4. bloquear-salida frena las dos variantes porque actúa sobre la acción, y la cuarentena sigue siendo útil como erradicación."
+    },
+    {
+      "id": "o6",
+      "text": "Documenta el incidente en un informe que supere la rúbrica.",
+      "validator": { "type": "event", "event": "report.checked", "where": { "complete": true, "owasp": { "icontains": "LLM0" } } },
+      "hints": [
+        "informe nuevo Inyección indirecta en prov-77-informe.pdf exfiltra la lista de clientes · informe campo owasp LLM01 · …",
+        "Los pasos con comandos: 1) soc trazas taller 2) soc show taller S04 3) soc search taller prov-77. Verificación: el retest."
+      ]
+    },
+    {
+      "id": "o7",
+      "text": "Explica con tus palabras por qué apagar el agente no es la contención final, qué diferencia hay entre poner en cuarentena el documento y bloquear la salida, y por qué hay que avisar al DPD. (reflexion <texto>, mínimo 40 palabras)",
+      "validator": { "type": "reflection", "min_words": 40 },
+      "hints": ["Coste, variante del atacante y personas afectadas.", "Dato frente a acción."]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: el incidente completo desde un registro nuevo. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con un registro nuevo: reconstruye S07 con el registro completo, mide el alcance y deja el retest a 0 ataques, 1,0 en tareas y con la notificación hecha.",
+        "validator": { "type": "sequence", "steps": [
+          { "type": "event", "event": "soc.created" },
+          { "type": "event", "event": "soc.viewed", "where": { "session": "S07", "complete": true } },
+          { "type": "event", "event": "soc.searched", "where": { "sessions": 2 } },
+          { "type": "event", "event": "soc.retest", "where": { "successes": 0, "pass_rate": 1.0, "notified": true } }
+        ] },
+        "hints": ["Registro, línea de tiempo, alcance, contención, aviso."],
+        "on_complete": "Incidente cerrado. Queda la última fase del ciclo: lecciones aprendidas (¿por qué el agente podía leer todos los clientes y llamar a cualquier URL?)."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has reconstruido una inyección indirecta que terminó en exfiltración, has encontrado su segunda víctima, has comprobado que apagarlo todo frena el ataque y el trabajo, que la cuarentena del documento no frena una variante, y que limitar los destinos de las herramientas sí, sin romper las tareas legítimas. Y has avisado al DPD.",
+    "why": "Contener sobre el dato (el documento) erradica este incidente; contener sobre la acción (a dónde puede enviar datos el agente) cierra la clase de ataque. Verificar con un retest es lo que separa una contención de una suposición.",
+    "in_production": "Planes de respuesta escritos antes del incidente, interruptor de emergencia por agente y por herramienta, listas de destinos permitidos y proxies de salida, permisos mínimos (el agente no necesitaba leer todos los clientes para resumir un informe), conservación de evidencias, notificación según el RGPD y una revisión de lecciones aprendidas que se convierte en nuevas reglas y tests.",
+    "simplifications": ["Cuatro contenciones como interruptores", "El retest tiene solo dos variantes del ataque", "La notificación es un interruptor; en la realidad es una evaluación del riesgo documentada"],
+    "exercise": "forja/ejercicios/O6_01_trazas.py"
+  },
+  "further_reading": ["ref.nist-800-61r3", "ref.rgpd-art33", "ref.greshake-2023", "ref.owasp-llm-2025"],
+  "xp": { "base": 300 }
+}

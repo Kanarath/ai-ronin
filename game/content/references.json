@@ -362,6 +362,33 @@
       "url": "https://docs.docker.com/build/building/secrets/",
       "consulted": "2026-11-09",
       "review_by": "2027-05-09"
+    },
+    {
+      "id": "ref.otel-genai",
+      "title": "OpenTelemetry: Semantic conventions for generative AI (spans de agentes y herramientas, atributos gen_ai.*; estado Development)",
+      "source": "OpenTelemetry (repositorio semantic-conventions-genai)",
+      "type": "especificacion",
+      "url": "https://github.com/open-telemetry/semantic-conventions-genai",
+      "consulted": "2026-11-09",
+      "review_by": "2027-05-09"
+    },
+    {
+      "id": "ref.nist-800-61r3",
+      "title": "NIST SP 800-61 Rev. 3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile (abril de 2025)",
+      "source": "NIST",
+      "type": "guia",
+      "url": "https://csrc.nist.gov/pubs/sp/800/61/r3/final",
+      "consulted": "2026-11-09",
+      "review_by": "2027-11-09"
+    },
+    {
+      "id": "ref.rgpd-art33",
+      "title": "Reglamento (UE) 2016/679 (RGPD), artículo 33: notificación de una violación de la seguridad de los datos personales a la autoridad de control",
+      "source": "EUR-Lex",
+      "type": "legislacion",
+      "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj",
+      "consulted": "2026-11-09",
+      "review_by": "2027-11-09"
     }
   ]
 }

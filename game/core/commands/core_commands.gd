@@ -17,6 +17,7 @@ const CATEGORY_NAMES := {
 	"mcp": "MCP y superficies de herramientas",
 	"multiagente": "Sistemas multiagente (A2A)",
 	"supply": "Supply chain e infraestructura de IA",
+	"deteccion": "Detección y respuesta (blue team de IA)",
 	"mentor": "Mentor RONIN",
 }
 
@@ -104,7 +105,7 @@ static func _help_overview(ctx: CommandContext) -> CommandResult:
 		if not by_cat.has(cmd.category):
 			by_cat[cmd.category] = []
 		by_cat[cmd.category].append(cmd)
-	for cat: String in ["misiones", "mentor", "datos", "modelos", "optimizacion", "redes", "lenguaje", "seguridad", "rag", "agentes", "mcp", "multiagente", "supply", "ayuda", "terminal"]:
+	for cat: String in ["misiones", "mentor", "datos", "modelos", "optimizacion", "redes", "lenguaje", "seguridad", "rag", "agentes", "mcp", "multiagente", "supply", "deteccion", "ayuda", "terminal"]:
 		if not by_cat.has(cat):
 			continue
 		r.line("")

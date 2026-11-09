@@ -104,3 +104,11 @@ Antes de abrir una pista, ejecuta el test y lee el mensaje de error: suele decir
 <details><summary>🟡 verificar_artefacto</summary>Tres <code>if</code> en orden: <code>nombre not in manifiesto</code>; <code>manifiesto[nombre]["firmante"] not in claves_confianza</code>; <code>huella_fichero(contenido) != manifiesto[nombre]["sha256"]</code>.</details>
 <details><summary>🔴 revisar_dependencias</summary>Para cada requisito <code>r</code>, busca <code>aprobado = lockfile.get(r["nombre"])</code> y encadena <code>if / elif</code> con los cuatro motivos; la edad con <code>edades.get(r["nombre"], 0) &lt; EDAD_MINIMA_DIAS</code>. Acumula <code>(nombre, motivo)</code> y devuelve <code>sorted(problemas)</code>.</details>
 <details><summary>🟢 secretos_en_capas</summary><code>[i for i, capa in enumerate(capas) if re.search(PATRON_SECRETO, capa, re.IGNORECASE)]</code>.</details>
+
+## O6_01 · trazas, detección y respuesta
+
+<details><summary>🟢 redactar</summary>Dos sustituciones seguidas: <code>re.sub(PATRON_CORREO, r"***@\1", texto)</code> y después <code>re.sub(PATRON_TELEFONO, "[teléfono]", ...)</code>. El grupo <code>\1</code> es el dominio.</details>
+<details><summary>🟢 dominio_destino</summary><code>m = re.search(PATRON_DOMINIO, argumentos)</code>; devuelve <code>m.group(1) if m else ""</code>.</details>
+<details><summary>🟡 regla_correlacion</summary>Recorre la sesión con dos banderas, <code>instruccion</code> y <code>salida</code>. Para «recuperacion»: <code>MARCA_INSTRUCCION in e["contenido"].lower()</code>. Para «herramienta»: nombre en <code>HERRAMIENTAS_SALIDA</code> y <code>dominio_destino(e["args"]) not in permitidos</code> (cuidado con el dominio vacío). Devuelve <code>instruccion and salida</code>.</details>
+<details><summary>🟢 metricas</summary><code>vp = len(alertas &amp; maliciosas)</code>. Precision = <code>vp / len(alertas)</code> y recall = <code>vp / len(maliciosas)</code>, cada una con su <code>if</code> para el 0.</details>
+<details><summary>🟢 alcance</summary><code>sorted(sid for sid, eventos in sesiones.items() if any(e.get("tipo") == "recuperacion" and e.get("fuente") == fuente for e in eventos))</code>.</details>

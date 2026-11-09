@@ -800,6 +800,62 @@
       "short": "Credencial guardada en una capa de una imagen de contenedor.",
       "body": "Cada instrucción de un Dockerfile crea una capa, y las capas se conservan: borrar el secreto en una capa posterior no lo elimina de la anterior. Hay que montar los secretos durante la build (build secrets) o inyectarlos al arrancar desde un gestor de secretos.",
       "epistemic": "consolidado"
+    },
+    {
+      "id": "convenciones-genai",
+      "term": "convenciones GenAI de OpenTelemetry",
+      "aliases": ["opentelemetry", "otel", "gen_ai", "semantic conventions", "telemetría de IA"],
+      "short": "Nombres estándar para las trazas de aplicaciones de IA generativa y agentes (spans como invoke_agent o execute_tool y atributos gen_ai.*).",
+      "body": "Permiten que distintas herramientas de observabilidad entiendan las mismas trazas. Están en estado Development: pueden cambiar. El contenido de los mensajes es opt-in porque puede contener datos personales.",
+      "epistemic": "emergente"
+    },
+    {
+      "id": "redaccion-pii",
+      "term": "redacción de datos personales",
+      "aliases": ["redactar", "redacción", "redact", "enmascarar", "pii", "datos personales en registros"],
+      "short": "Enmascarar datos personales (correos, teléfonos, documentos de identidad) antes de guardarlos en un registro.",
+      "body": "Un registro con datos personales en claro es otra base de datos que proteger. Redactar conserva lo útil para investigar (el dominio de un correo, la herramienta, el documento) y quita lo que identifica a una persona. Las expresiones regulares no lo detectan todo.",
+      "epistemic": "practica-industria"
+    },
+    {
+      "id": "regla-deteccion",
+      "term": "regla de detección",
+      "aliases": ["regla", "detección", "detection rule", "alerta", "SIEM"],
+      "short": "Condición sobre los registros que, si se cumple, levanta una alerta para que alguien la revise.",
+      "body": "Se comporta como un clasificador: tiene falsos positivos (alertas que hacen perder tiempo) y falsos negativos (ataques que nadie ve), y se mide con precision y recall contra casos etiquetados. Una regla que necesita un campo que no se registra está ciega.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "correlacion",
+      "term": "correlación de señales",
+      "aliases": ["correlación", "correlation", "regla de correlación"],
+      "short": "Alerta solo cuando aparecen varias señales relacionadas a la vez (por ejemplo, en la misma sesión).",
+      "body": "Cada señal suelta es ambigua; su combinación suele serlo mucho menos. Reduce falsos positivos sin perder ataques si las señales cubren el mismo comportamiento. Es la base de las reglas de un SIEM.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "contencion",
+      "term": "contención (respuesta a incidentes)",
+      "aliases": ["contención", "contener", "containment", "erradicación", "kill switch", "interruptor de emergencia"],
+      "short": "Acciones para que un incidente deje de causar daño mientras se investiga y se corrige.",
+      "body": "Va de lo grueso (apagar el sistema) a lo fino (bloquear una acción concreta). Contener sobre el dato erradica este incidente; contener sobre la acción cierra la clase de ataque. Siempre se verifica con un retest. Forma parte del ciclo de NIST SP 800-61.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "salida-permitida",
+      "term": "lista de destinos permitidos (egress allowlist)",
+      "aliases": ["egress", "allowlist", "lista blanca de salida", "bloquear salida", "proxy de salida"],
+      "short": "Las herramientas que envían datos fuera solo pueden ir a destinos aprobados.",
+      "body": "Frena la exfiltración aunque una inyección consiga controlar al agente, porque actúa sobre la acción y no sobre el texto. Su coste: hay que mantener la lista y habrá peticiones legítimas a destinos nuevos que necesiten aprobación.",
+      "epistemic": "practica-industria"
+    },
+    {
+      "id": "notificacion-brecha",
+      "term": "notificación de una violación de datos",
+      "aliases": ["notificación", "brecha", "violación de datos", "72 horas", "artículo 33", "dpd", "dpo"],
+      "short": "Aviso a la autoridad de control cuando se ven afectados datos personales (RGPD, art. 33).",
+      "body": "El responsable debe notificar sin dilación indebida y, si es posible, en 72 horas desde que tiene constancia, salvo que sea improbable que suponga un riesgo para los derechos y libertades de las personas. La evaluación la hace la organización con su delegado de protección de datos (DPD).",
+      "epistemic": "consolidado"
     }
   ]
 }

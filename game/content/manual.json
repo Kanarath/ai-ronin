@@ -305,6 +305,32 @@
         "safe-formats rompe los modelos propios en pickle: conviértelos con supply convert (solo los internos). Comandos: supply attack · supply eval · supply defend."
       ],
       "see_also": ["supplychain"]
+    },
+    {
+      "id": "deteccion",
+      "title": "Trazas y detección en agentes",
+      "body": [
+        "Abrir el registro: soc trazas <nombre> (12 sesiones ficticias del asistente del taller, 4 maliciosas).",
+        "Qué se registra: soc log <registro> <prompts|tool_calls|tool_args|retrievals|identity|model_version|redact-pii> on|off.",
+        "Qué puedes investigar: soc coverage <registro> (6 preguntas forenses y aviso de datos personales en claro).",
+        "Ver una sesión: soc show <registro> <S01…S12>. Buscar: soc search <registro> <texto>.",
+        "Reglas: soc rule <registro> <palabras-clave|dominio-externo|instruccion-en-dato|volumen|correlacion> on|off · soc detect <registro> (VP, FP, FN, precision, recall).",
+        "Una regla sin los campos que necesita está ciega: soc detect lo indica."
+      ],
+      "see_also": ["respuesta", "inyeccion", "metricas"]
+    },
+    {
+      "id": "respuesta",
+      "title": "Respuesta a incidentes de IA",
+      "body": [
+        "Ciclo (NIST SP 800-61): preparación → detección y análisis → contención, erradicación y recuperación → lecciones aprendidas.",
+        "Causa raíz: soc show sobre la sesión con el registro completo. Alcance: soc search con la causa.",
+        "Contener: soc contain <registro> <apagar-agente|cuarentena-fuente|bloquear-salida|notificar-dpd> on|off.",
+        "Verificar: soc retest <registro> (el ataque, una variante con un documento nuevo y 4 tareas legítimas).",
+        "apagar-agente frena todo, también el trabajo. cuarentena-fuente quita este documento. bloquear-salida actúa sobre la acción y frena las variantes.",
+        "Si salen datos personales: el RGPD (art. 33) pide notificar a la autoridad sin dilación indebida y, si es posible, en 72 h, salvo riesgo improbable."
+      ],
+      "see_also": ["deteccion"]
     }
   ]
 }
