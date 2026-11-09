@@ -4,8 +4,8 @@ extends RefCounted
 
 const DATASETS_DIR := "res://content/datasets"
 ## Tipos de objeto con nombre (sirven también como tipos de argumento en CommandSignature).
-const KINDS: Array[String] = ["dataset", "model", "regressor", "network", "tokenizer", "lm", "bot", "rag", "agent", "mcp", "mesh", "pipeline", "soc"]
-const KIND_NAMES := {"dataset": "dataset", "model": "modelo", "regressor": "regresor", "network": "red", "tokenizer": "tokenizador", "lm": "modelo de lenguaje", "bot": "chatbot", "rag": "sistema RAG", "agent": "agente", "mcp": "host MCP", "mesh": "taller multiagente", "pipeline": "pipeline de ML", "soc": "registro de trazas"}
+const KINDS: Array[String] = ["dataset", "model", "regressor", "network", "tokenizer", "lm", "bot", "rag", "agent", "mcp", "mesh", "pipeline", "soc", "engagement"]
+const KIND_NAMES := {"dataset": "dataset", "model": "modelo", "regressor": "regresor", "network": "red", "tokenizer": "tokenizador", "lm": "modelo de lenguaje", "bot": "chatbot", "rag": "sistema RAG", "agent": "agente", "mcp": "host MCP", "mesh": "taller multiagente", "pipeline": "pipeline de ML", "soc": "registro de trazas", "engagement": "encargo"}
 
 var datasets: Dictionary = {}  # nombre -> Dataset
 ## nombre -> {"model": KNNClassifier, "trained_on": String}
@@ -32,6 +32,8 @@ var meshes: Dictionary = {}
 var pipelines: Dictionary = {}
 ## nombre -> MockTraceStore
 var traces: Dictionary = {}
+## nombre -> MockEngagement
+var engagements: Dictionary = {}
 ## Tabla de embeddings (se carga al usarla)
 var embeddings: EmbeddingTable = null
 
@@ -63,6 +65,7 @@ func store_of(kind: String) -> Dictionary:
 		"mesh": return meshes
 		"pipeline": return pipelines
 		"soc": return traces
+		"engagement": return engagements
 	return {}
 
 

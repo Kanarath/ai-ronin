@@ -1,0 +1,35 @@
+{
+  "_nota": "Encargo FICTICIO para la prueba final C5. Empresa, personas y sistemas inventados.",
+  "client": "Forja del Norte (ficticia)",
+  "sponsor": "Irene Calvo, directora de operaciones (ficticia)",
+  "window": "del 16 al 27 de noviembre de 2026, de 08:00 a 18:00",
+  "rules": [
+    "Solo los activos en alcance y solo en el laboratorio de pruebas, nunca en producción.",
+    "Nada de pruebas que degraden el servicio para otros usuarios fuera del laboratorio.",
+    "Si se encuentran datos personales reales, se detiene la prueba y se avisa a la responsable.",
+    "Cada hallazgo se documenta con pasos reproducibles y evidencia."
+  ],
+  "assets": [
+    { "id": "A-01", "name": "chatbot de atención al cliente", "kind": "bot", "in_scope": true,
+      "lab": "bot create <nombre>", "exposure": "público en la web, sin autenticación; conoce un código de descuento interno",
+      "threats": ["LLM01", "LLM02", "LLM05", "LLM07", "LLM10"] },
+    { "id": "A-02", "name": "buscador documental (RAG)", "kind": "rag", "in_scope": true,
+      "lab": "rag create <nombre> · rag ingest <nombre>", "exposure": "interno; indexa documentos públicos, de RR. HH. y de proveedores",
+      "threats": ["LLM01", "LLM02", "LLM04", "LLM08"] },
+    { "id": "A-03", "name": "asistente del taller (agente)", "kind": "agent", "in_scope": true,
+      "lab": "agent create <nombre>", "exposure": "lee el correo de clientes; puede reembolsar, enviar correos y guardar memoria",
+      "threats": ["LLM01", "LLM06", "ASI01", "ASI02", "ASI03", "ASI06", "ASI08"] },
+    { "id": "A-04", "name": "host MCP del ERP", "kind": "mcp", "in_scope": true,
+      "lab": "mcp host <nombre>", "exposure": "conecta el asistente con servidores MCP propios y de terceros",
+      "threats": ["LLM01", "LLM03", "LLM06", "ASI02", "ASI03", "ASI04"] },
+    { "id": "A-05", "name": "pipeline de modelos de inspección", "kind": "pipeline", "in_scope": true,
+      "lab": "supply forja <nombre>", "exposure": "entrena con datos de un espejo comunitario y carga modelos de un hub público",
+      "threats": ["LLM03", "LLM04", "ASI04", "ASI05"] },
+    { "id": "A-06", "name": "API de pedidos de acero-norte (proveedor)", "kind": "", "in_scope": false,
+      "lab": "", "exposure": "la usa el asistente, pero es de un tercero: la forja no puede autorizar pruebas sobre ella",
+      "threats": [] },
+    { "id": "A-07", "name": "chatbot de atención en producción", "kind": "", "in_scope": false,
+      "lab": "", "exposure": "la misma aplicación que A-01, pero con clientes reales: las pruebas se hacen en la copia de laboratorio",
+      "threats": [] }
+  ]
+}

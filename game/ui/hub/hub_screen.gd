@@ -11,6 +11,7 @@ const UNIT_TITLES := {
 	"A1": "A1 · Aplicación LLM", "A2": "A2 · RAG y embeddings", "A3": "A3 · Agentes", "A4": "A4 · MCP",
 	"A5": "A5 · Multiagente y A2A", "A6": "A6 · Supply chain e infra",
 	"O6": "O6 · Detección y respuesta",
+	"C5": "C5 · AI Red Team Assessment",
 }
 const SERIES_COLORS: Array[Color] = [RoninPalette.CYAN, RoninPalette.GOLD, RoninPalette.TEAL, RoninPalette.VIOLET, RoninPalette.TEXT]
 const MENTOR_COLORS := {

@@ -856,6 +856,30 @@
       "short": "Aviso a la autoridad de control cuando se ven afectados datos personales (RGPD, art. 33).",
       "body": "El responsable debe notificar sin dilación indebida y, si es posible, en 72 horas desde que tiene constancia, salvo que sea improbable que suponga un riesgo para los derechos y libertades de las personas. La evaluación la hace la organización con su delegado de protección de datos (DPD).",
       "epistemic": "consolidado"
+    },
+    {
+      "id": "reglas-enfrentamiento",
+      "term": "reglas de enfrentamiento (alcance)",
+      "aliases": ["reglas de enfrentamiento","rules of engagement","roe","alcance","scope","autorización","carta de encargo"],
+      "short": "Lo que un red team puede probar, dónde, cuándo y con qué límites, firmado por quien puede autorizarlo.",
+      "body": "Que un sistema sea accesible no lo pone en alcance: los servicios de terceros solo los autoriza su dueño y producción suele quedar fuera. Incluye ventana, contactos, criterios de parada y qué hacer si aparecen datos personales.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "modelo-amenazas",
+      "term": "modelo de amenazas",
+      "aliases": ["threat model","threat modeling","modelado de amenazas","stride"],
+      "short": "Para cada activo: qué protege, quién podría atacarlo y por dónde.",
+      "body": "Se construye antes de atacar para decidir qué probar y no dejar activos sin mirar. En IA se apoya en categorías como las de OWASP (LLM 2025 y Agentic 2026) y en MITRE ATLAS; STRIDE se usa adaptado.",
+      "epistemic": "practica-industria"
+    },
+    {
+      "id": "retest",
+      "term": "retest",
+      "aliases": ["retest","verificación de la corrección","re-test"],
+      "short": "Repetir la prueba que encontró un hallazgo para demostrar que el arreglo funciona.",
+      "body": "Un hallazgo se cierra con la misma prueba a 0 éxitos y comprobando que las tareas legítimas siguen funcionando. Un arreglo que rompe el servicio no es un cierre: acaba desactivado.",
+      "epistemic": "practica-industria"
     }
   ]
 }

@@ -331,6 +331,12 @@
         "Si salen datos personales: el RGPD (art. 33) pide notificar a la autoridad sin dilación indebida y, si es posible, en 72 h, salvo riesgo improbable."
       ],
       "see_also": ["deteccion"]
+    },
+    {
+      "id": "encargo",
+      "title": "Encargo de red team (C5)",
+      "body": ["Abrir: engagement start <nombre> (cliente, ventana y reglas de enfrentamiento).","Reconocer: engagement recon <encargo> · engagement scope <encargo> <A-01…A-07>.","Laboratorio: crea la copia de cada activo (bot create, rag create + rag ingest, agent create, mcp host, supply forja) y vincúlala: engagement bind <encargo> <activo> <objeto>.","Modelo de amenazas: engagement threat <encargo> <activo> <LLM0x|ASI0x>.","Hallazgo con evidencia: batería del activo (… attack) y después engagement finding <encargo> <activo> <categoría>.","Cierre: defensas → … attack → … eval → engagement retest <encargo> · engagement summary <encargo>."],
+      "see_also": ["deteccion","ataquessupply","ataquesmcp"]
     }
   ]
 }

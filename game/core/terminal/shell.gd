@@ -37,6 +37,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	A2aCommands.register(registry)
 	SupplyCommands.register(registry)
 	SocCommands.register(registry)
+	EngagementCommands.register(registry)
 
 
 func execute(line: String) -> CommandResult:
