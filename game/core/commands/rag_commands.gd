@@ -220,16 +220,10 @@ static func _defend(c: CommandContext, a: Dictionary) -> CommandResult:
 	return r
 
 
-static func _attack(c: CommandContext, a: Dictionary) -> CommandResult:
-	var base: RagSystem = c.world.rags[a["rag"]]
-	var err := _need_index(base)
-	if not err.is_empty():
-		return CommandResult.error(err)
+## Escenarios de la batería A2. Devuelve [[id, categoría, éxito, detalle]].
+static func run_suite(base: RagSystem) -> Array:
 	var suite: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(ATTACKS_PATH))
-	var r := CommandResult.new()
-	r.line("Batería de ataques A2 contra %s · defensas: %s" % [a["rag"], _active(base)], "accent")
-	var data: Array = []
-	var successes := 0
+	var rows: Array = []
 	for atk: Dictionary in suite["attacks"]:
 		var rag := base.duplicate_system()
 		if atk.has("upload"):
@@ -250,11 +244,40 @@ static func _attack(c: CommandContext, a: Dictionary) -> CommandResult:
 			if cond.has("leaked_internal"):
 				ok = res["leaked_internal"]
 			detail = String(res["answer"]).substr(0, 50)
+		rows.append([atk["id"], atk["category"], ok, detail])
+	return rows
+
+
+## Preguntas legítimas. Devuelve {"passed", "total", "approvals", "rows": [[id, ok, respuesta]]}.
+static func run_eval(rag: RagSystem) -> Dictionary:
+	var suite: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(NORMAL_PATH))
+	var rows: Array = []
+	var passed := 0
+	for q: Dictionary in suite["questions"]:
+		var res := rag.ask(q["message"], "cliente")
+		var ok := String(res["answer"]).contains(q["expect"])
 		if ok:
+			passed += 1
+		rows.append([q["id"], ok, String(res["answer"])])
+	return {"passed": passed, "total": rows.size(), "approvals": 0, "rows": rows}
+
+
+static func _attack(c: CommandContext, a: Dictionary) -> CommandResult:
+	var base: RagSystem = c.world.rags[a["rag"]]
+	var err := _need_index(base)
+	if not err.is_empty():
+		return CommandResult.error(err)
+	var rows := run_suite(base)
+	var r := CommandResult.new()
+	r.line("Batería de ataques A2 contra %s · defensas: %s" % [a["rag"], _active(base)], "accent")
+	var data: Array = []
+	var successes := 0
+	for row: Array in rows:
+		if row[2]:
 			successes += 1
-		data.append([atk["id"], atk["category"], "✗ ÉXITO" if ok else "· fallo", detail])
+		data.append([row[0], row[1], "✗ ÉXITO" if row[2] else "· fallo", row[3]])
 	r.table(PackedStringArray(["ataque", "categoría", "resultado", "detalle"]), data)
-	var total: int = suite["attacks"].size()
+	var total: int = rows.size()
 	var rate := float(successes) / total
 	r.line("Tasa de éxito de los ataques: %d / %d = %.2f" % [successes, total, rate], "warn" if successes > 0 else "ok")
 	c.emit("rag.attacks", {"rag": a["rag"], "success_rate": rate, "successes": successes, "total": total, "defenses": _active(base)})
@@ -266,19 +289,15 @@ static func _eval(c: CommandContext, a: Dictionary) -> CommandResult:
 	var err := _need_index(rag)
 	if not err.is_empty():
 		return CommandResult.error(err)
-	var suite: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(NORMAL_PATH))
+	var ev := run_eval(rag)
 	var r := CommandResult.new()
-	r.line("Evaluación con %d preguntas de clientes · chunk=%d · defensas: %s" % [suite["questions"].size(), rag.chunk_size, _active(rag)], "accent")
+	r.line("Evaluación con %d preguntas de clientes · chunk=%d · defensas: %s" % [ev["total"], rag.chunk_size, _active(rag)], "accent")
 	var data: Array = []
-	var passed := 0
-	for q: Dictionary in suite["questions"]:
-		var res := rag.ask(q["message"], "cliente")
-		var ok := String(res["answer"]).contains(q["expect"])
-		if ok:
-			passed += 1
-		data.append([q["id"], "✓" if ok else "✗", String(res["answer"]).substr(0, 70)])
+	var passed: int = ev["passed"]
+	for row: Array in ev["rows"]:
+		data.append([row[0], "✓" if row[1] else "✗", String(row[2]).substr(0, 70)])
 	r.table(PackedStringArray(["pregunta", "", "respuesta"]), data)
-	var rate: float = float(passed) / suite["questions"].size()
-	r.line("Respuestas correctas: %d / %d = %.2f" % [passed, suite["questions"].size(), rate], "ok" if rate == 1.0 else "warn")
+	var rate: float = float(passed) / ev["total"]
+	r.line("Respuestas correctas: %d / %d = %.2f" % [passed, ev["total"], rate], "ok" if rate == 1.0 else "warn")
 	c.emit("rag.eval", {"rag": a["rag"], "pass_rate": rate, "passed": passed, "chunk": rag.chunk_size, "defenses": _active(rag)})
 	return r

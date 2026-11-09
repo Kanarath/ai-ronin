@@ -21,6 +21,7 @@ Cada misión del Dojo tiene un ejercicio en Python. Implementas tú las funcione
 | `A6_01_cadena.py` | A6-01…03 | Sellos de la cadena de suministro: huellas, formato por los primeros bytes, verificación de artefactos, lockfile y secretos en capas |
 | `O5_01_riesgos.py` | O5-01…03 | Gobernanza en código: clasificador simplificado del AI Act, riesgo inherente y residual, tratamientos permitidos y resumen del registro frente al apetito |
 | `O6_01_trazas.py` | O6-01…03 | Detección y respuesta: redactar datos personales, dominio de destino, regla de correlación, precision/recall de alertas y alcance de un incidente |
+| `C1_01_matriz.py` | C1-01…C3-02 | Matriz de defensas en código: quién bloquea cada ataque, puntos únicos, cobertura mínima sin coste y ataques frágiles |
 | `C5_01_encargo.py` | C5-01…03 | El motor del encargo final: validar hallazgos, estado del retest, priorizar por impacto y exposición, y resumen de cierre |
 
 **Ayudas:**

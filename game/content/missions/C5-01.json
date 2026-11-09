@@ -7,7 +7,7 @@
   "plane": "dojo",
   "epistemic": "practica-industria",
   "estimated_minutes": 40,
-  "requires_missions": ["A4-03", "A6-03", "O6-03"],
+  "requires_missions": ["A4-03", "A6-03", "O6-03", "C1-02", "C2-02", "C3-02"],
   "competencies": { "requires": ["A3.minimo-privilegio", "A6.firma-huellas", "O6.respuesta-incidentes"], "trains": ["C5.alcance", "C5.reconocimiento", "C5.modelo-amenazas"] },
   "briefing": "Prueba final. La Forja del Norte te contrata para un AI Red Team Assessment de todos sus sistemas de IA: el chatbot, el buscador documental, el asistente del taller, su host MCP y el pipeline de modelos. Son los sistemas que has construido, atacado y defendido en A1–A6, ahora juntos y en una empresa. Hoy no atacas nada: lees el contrato, haces inventario, decides qué puedes tocar y construyes el modelo de amenazas.",
   "learning_objectives": [

@@ -234,6 +234,24 @@ static func _attack(c: CommandContext, a: Dictionary) -> CommandResult:
 
 static func _eval(c: CommandContext, a: Dictionary) -> CommandResult:
 	var base: MockMcpHost = c.world.mcps[a["host"]]
+	var ev := run_eval(base)
+	var checks: Array = ev["rows"]
+	var approvals: int = ev["approvals"]
+	var passed: int = ev["passed"]
+	var data: Array = []
+	for ch: Array in checks:
+		data.append(["✓" if ch[1] else "✗", ch[0]])
+	var r := CommandResult.new()
+	r.line("Tareas legítimas · controles: %s" % _active(base), "accent")
+	r.table(PackedStringArray(["", "tarea"]), data)
+	var rate: float = float(passed) / checks.size()
+	r.line("Tareas correctas: %d / %d = %.2f · confirmaciones al usuario: %d" % [passed, checks.size(), rate, approvals], "ok" if passed == checks.size() else "warn")
+	c.emit("mcp.eval", {"host": a["host"], "pass_rate": rate, "approvals": approvals, "defenses": _active(base)})
+	return r
+
+
+## Tareas legítimas. Devuelve {"passed", "total", "approvals", "rows": [[tarea, ok]]}.
+static func run_eval(base: MockMcpHost) -> Dictionary:
 	var checks: Array = []
 	var approvals := 0
 	var h := base.clone_fresh()
@@ -248,14 +266,6 @@ static func _eval(c: CommandContext, a: Dictionary) -> CommandResult:
 	for rr: Dictionary in [r1, r2, r3, r4]:
 		approvals += int(rr["approvals"])
 	var passed := 0
-	var data: Array = []
 	for ch: Array in checks:
 		passed += 1 if ch[1] else 0
-		data.append(["✓" if ch[1] else "✗", ch[0]])
-	var r := CommandResult.new()
-	r.line("Tareas legítimas · controles: %s" % _active(base), "accent")
-	r.table(PackedStringArray(["", "tarea"]), data)
-	var rate: float = float(passed) / checks.size()
-	r.line("Tareas correctas: %d / %d = %.2f · confirmaciones al usuario: %d" % [passed, checks.size(), rate, approvals], "ok" if passed == checks.size() else "warn")
-	c.emit("mcp.eval", {"host": a["host"], "pass_rate": rate, "approvals": approvals, "defenses": _active(base)})
-	return r
+	return {"passed": passed, "total": checks.size(), "approvals": approvals, "rows": checks}

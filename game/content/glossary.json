@@ -912,6 +912,22 @@
       "short": "Cuánto riesgo está dispuesta a asumir una organización, y qué hace con cada riesgo para quedar por debajo.",
       "body": "Riesgo inherente = probabilidad × impacto antes de los controles; residual, después. Tratamientos: mitigar (controles), evitar (renunciar a la actividad), transferir (por ejemplo, un seguro) y aceptar (solo dentro del apetito o con una decisión explícita de la dirección).",
       "epistemic": "consolidado"
+    },
+    {
+      "id": "matriz-defensas",
+      "term": "matriz de defensas",
+      "aliases": ["matriz de controles","matriz control-amenaza","punto unico","punto único","cobertura minima","cobertura mínima","set cover"],
+      "short": "Tabla de qué ataque bloquea cada defensa por sí sola y qué cuesta en las tareas legítimas.",
+      "body": "Sirve para ver puntos únicos (ataques que solo para un control) y para buscar la cobertura mínima: el menor conjunto de defensas que bloquea todos los ataques (un problema de set cover). Supone que las defensas suman; la combinación real hay que medirla, porque a veces interactúan.",
+      "epistemic": "practica-industria"
+    },
+    {
+      "id": "resiliencia-defensas",
+      "term": "ataque frágil y robusto",
+      "aliases": ["fragil","frágil","robusto","resiliencia de defensas","lab resilience"],
+      "short": "Frágil: bloqueado, pero vuelve a pasar si falla UNA defensa. Robusto: aguanta que falle cualquiera.",
+      "body": "Es una forma medible de la defensa en profundidad. Lo frágil que no se puede duplicar es riesgo residual: se reduce con arquitectura (no poner los datos al alcance) y se vigila con trazas, reglas de detección y pruebas de regresión.",
+      "epistemic": "practica-industria"
     }
   ]
 }

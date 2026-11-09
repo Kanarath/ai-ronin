@@ -1,0 +1,90 @@
+{
+  "id": "C2-02",
+  "schema_version": 1,
+  "title": "Una cerradura por eslabón",
+  "unit": "C2",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 30,
+  "requires_missions": ["C2-01"],
+  "competencies": { "requires": ["C2.matriz-defensas", "C2.cobertura-minima"], "trains": ["C2.defensa-profundidad", "C2.riesgo-residual"] },
+  "briefing": "RAG Security Lab, segunda parte. En el agente conseguiste dos cerraduras para casi todo. En el RAG, encendiendo todos los interruptores, solo un ataque queda con dos. Hoy lo mides, nombras los cuatro que siguen colgando de una defensa y decides cómo darles una segunda barrera que no es otro interruptor: el diseño del sistema y la vigilancia.",
+  "learning_objectives": [
+    "Medir el máximo de resiliencia que permiten las defensas disponibles",
+    "Reconocer los límites de la defensa en profundidad cuando cada etapa tiene un solo control",
+    "Proponer controles de arquitectura y de detección para el riesgo residual"
+  ],
+  "mentor_intro": "Si no puedes poner dos cerraduras en la misma puerta, quita lo valioso de esa habitación.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "arquitectura",
+      "title": "La segunda barrera puede ser el diseño",
+      "body": "Si un documento interno no está en el índice que consulta un cliente, ninguna fuga de ese índice puede revelarlo, falle o no la acl. Separar índices por público, no indexar lo que no hace falta y no exponer la base vectorial son controles de arquitectura: no aparecen como interruptores, pero hacen el ataque imposible en vez de improbable. Lo que quede, se vigila (O6)."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Con un RAG nuevo con la cobertura mínima de C2-01, mide la resiliencia. Después consigue el máximo de ataques robustos manteniendo 0 ataques y 7/7 respuestas.",
+      "prediction": { "prompt": "Activando las cinco defensas, ¿cuántos ataques serán robustos?", "options": ["los cinco", "tres", "uno"] },
+      "validator": { "type": "sequence", "steps": [
+        { "type": "event", "event": "lab.resilience", "where": { "kind": "rag", "breached": 0, "pass_rate": 1.0, "robust": 0 } },
+        { "type": "event", "event": "lab.resilience", "where": { "kind": "rag", "breached": 0, "pass_rate": 1.0, "robust": { "gte": 1 } } }
+      ] },
+      "hints": [
+        "rag create docs · rag ingest docs · rag defend docs trusted-sources on · rag defend docs acl on · rag defend docs vector-acl on · rag defend docs min-score on · lab resilience rag docs",
+        "rag defend docs spotlight on · lab resilience rag docs"
+      ],
+      "on_complete": "Uno: la reseña inyectada, que tiene trusted-sources en la ingesta y spotlight en la presentación. Con las cinco defensas no hay más."
+    },
+    {
+      "id": "o2",
+      "text": "¿Qué defensa protege ella sola los dos ataques de fuga de documentos internos? (answer <defensa>)",
+      "validator": { "type": "answer", "expected": "acl", "accept": ["acl"] },
+      "hints": ["Columna «depende solo de» en las filas fuga-costes y fuga-proveedor."],
+      "on_complete": "Todo lo interno depende de una comprobación de permisos en la recuperación. Un fallo en la acl, por ejemplo un documento etiquetado como público por error, y el cliente ve los costes."
+    },
+    {
+      "id": "o3",
+      "text": "¿Cuántos ataques siguen siendo frágiles con las cinco defensas? (answer <número>)",
+      "validator": { "type": "answer", "expected": 4, "tolerance": 0 },
+      "hints": ["Cuenta las filas con «· frágil»."],
+      "on_complete": "Cuatro. Tu informe debe decirlo claro: la batería está a 0, pero cuatro de cinco riesgos dependen de un solo control."
+    },
+    {
+      "id": "o4",
+      "text": "Propón para cada ataque frágil una segunda barrera que NO sea un interruptor del laboratorio (diseño del sistema, datos o vigilancia) y explica por qué. (reflexion <texto>, mínimo 60 palabras)",
+      "validator": { "type": "reflection", "min_words": 60 },
+      "hints": [
+        "Fugas: ¿deberían estar los costes y los proveedores en el índice de clientes?",
+        "Foro: revisión de contenido subido antes de indexar. Vectores: la base vectorial no se expone fuera. Todo: trazas de recuperación y alertas (O6)."
+      ]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: de mínimo a máximo, con números. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con un RAG nuevo, demuestra primero la cobertura mínima (como máximo 4 defensas, 0 ataques, 7/7) y después el máximo de resiliencia (0 ataques, 7/7, al menos 1 robusto).",
+        "validator": { "type": "sequence", "steps": [
+          { "type": "event", "event": "lab.resilience", "where": { "kind": "rag", "breached": 0, "pass_rate": 1.0, "defense_count": { "lte": 4 } } },
+          { "type": "event", "event": "lab.resilience", "where": { "kind": "rag", "breached": 0, "pass_rate": 1.0, "robust": { "gte": 1 } } }
+        ] },
+        "hints": ["Dos mediciones con lab resilience, una antes y otra después de spotlight."],
+        "on_complete": "Mínimo y máximo medidos. Siguiente capstone: C3, el host MCP."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has comprobado que, con todas las defensas del RAG, solo la reseña inyectada tiene dos barreras y que cuatro ataques dependen de una sola, y has propuesto segundas barreras de arquitectura y de vigilancia.",
+    "why": "La defensa en profundidad no siempre se consigue apilando filtros. En un RAG la barrera más fuerte suele ser no poner los datos sensibles al alcance: si no están en el índice, no hay acl que fallar. Lo que no se puede quitar se vigila y se prueba en cada cambio.",
+    "in_production": "Índices separados por audiencia o filtrado por metadatos de permisos en la propia consulta vectorial, revisión y procedencia del contenido subido antes de indexarlo, la base vectorial en una red privada con credenciales propias, y trazas de qué fragmentos se recuperaron para cada respuesta con alertas sobre fragmentos internos servidos a clientes.",
+    "simplifications": ["Las defensas son de todo o nada", "No se modelan controles de arquitectura en el laboratorio"],
+    "exercise": "forja/ejercicios/C1_01_matriz.py"
+  },
+  "further_reading": ["ref.owasp-llm-2025", "ref.otel-genai"],
+  "xp": { "base": 300 }
+}

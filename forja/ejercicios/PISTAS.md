@@ -113,6 +113,13 @@ Antes de abrir una pista, ejecuta el test y lee el mensaje de error: suele decir
 <details><summary>🟢 metricas</summary><code>vp = len(alertas &amp; maliciosas)</code>. Precision = <code>vp / len(alertas)</code> y recall = <code>vp / len(maliciosas)</code>, cada una con su <code>if</code> para el 0.</details>
 <details><summary>🟢 alcance</summary><code>sorted(sid for sid, eventos in sesiones.items() if any(e.get("tipo") == "recuperacion" and e.get("fuente") == fuente for e in eventos))</code>.</details>
 
+## C1_01 · la matriz de defensas
+
+<details><summary>🟢 bloqueado_por</summary><code>sorted(d for d, ataques in matriz.items() if ataque in ataques)</code>.</details>
+<details><summary>🟢 puntos_unicos</summary>Reutiliza <code>bloqueado_por</code>: <code>sorted(a for a in ataques if len(bloqueado_por(matriz, a)) == 1)</code>.</details>
+<details><summary>🟡 cobertura_minima</summary>Candidatas: <code>sorted(d for d in matriz if d not in con_coste)</code>. Bucle <code>for n in range(len(candidatas) + 1)</code> y dentro <code>for combo in combinations(candidatas, n)</code>. Una combinación cubre si <code>all(any(a in matriz[d] for d in combo) for a in ataques)</code>; devuelve la primera. Si acaba el bucle, <code>return None</code>.</details>
+<details><summary>🟡 resiliencia</summary>Para cada ataque, <code>n = sum(1 for d in activas if a in matriz.get(d, set()))</code>: 0 → pasa, 1 → frágil, 2 o más → robusto.</details>
+
 ## C5_01 · el motor del encargo
 
 <details><summary>🟡 validar_hallazgo</summary>Seis comprobaciones en orden, cada una con su <code>return</code>. La categoría con <code>re.match(PATRON_OWASP, categoria)</code>. La evidencia con <code>evidencias.get(activo_id, 0) &gt; 0</code>: cubre a la vez «sin batería» y «0 éxitos».</details>

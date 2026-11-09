@@ -1,0 +1,92 @@
+{
+  "id": "C3-01",
+  "schema_version": 1,
+  "title": "La matriz del host",
+  "unit": "C3",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 35,
+  "requires_missions": ["A4-03"],
+  "competencies": { "requires": ["A4.namespacing", "A4.consentimiento"], "trains": ["C3.matriz-defensas", "C3.coste-controles"] },
+  "briefing": "MCP Security Lab, primera parte. El host MCP del asistente se conecta a servidores internos y de terceros. En A4 cerraste sus cinco ataques. Hoy sacas la matriz y descubres una trampa distinta a las de C1 y C2: hay una defensa que, sola, para casi todo. Contar controles no basta; hay que contar lo que cuestan.",
+  "learning_objectives": [
+    "Interpretar la matriz de defensas de un host MCP",
+    "Comparar coberturas por número de controles y por coste (aprobaciones y tareas rotas)",
+    "Elegir una cobertura sin coste para el usuario"
+  ],
+  "mentor_intro": "El control que más bloquea suele ser el que más molesta. Y lo que molesta acaba desactivado.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "coste",
+      "title": "El coste de un control",
+      "body": "consent enseña cada llamada con sus argumentos y espera a que el usuario la acepte. Bloquea mucho, pero cada aprobación es fricción: con muchas, la gente aprueba sin leer (fatiga de consentimiento) o pide que se quite. Además el usuario solo puede juzgar lo que ve. Una cobertura buena minimiza a la vez ataques con éxito, tareas rotas y aprobaciones. Comandos: lab matrix mcp <host> · lab resilience mcp <host>."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Crea un host MCP nuevo y saca su matriz de defensas.",
+      "validator": { "type": "event", "event": "lab.matrix", "where": { "kind": "mcp", "baseline": 5 } },
+      "hints": ["mcp host erp · lab matrix mcp erp"],
+      "on_complete": "Mira la columna consent."
+    },
+    {
+      "id": "o2",
+      "text": "¿Qué defensa bloquea más ataques por sí sola? (answer <defensa>)",
+      "validator": { "type": "answer", "expected": "consent", "accept": ["consent", "consentimiento"] },
+      "hints": ["Cuenta los ■ de cada columna."],
+      "on_complete": "consent, con cuatro de cinco. Solo se le escapa la suplantación de nombre, que únicamente para namespacing."
+    },
+    {
+      "id": "o3",
+      "text": "Cierra la batería con solo dos defensas y mide la resiliencia. ¿Cuántas aprobaciones pide al usuario en las tareas legítimas? (answer <número>)",
+      "prediction": { "prompt": "Con namespacing y consent, ¿cómo quedarán las tareas legítimas?", "options": ["4 de 4 sin molestias", "4 de 4 con aprobaciones", "alguna tarea rota y aprobaciones"] },
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "lab.resilience", "where": { "kind": "mcp", "breached": 0, "defense_count": 2 } },
+        { "type": "answer", "expected": 4, "tolerance": 0 }
+      ] },
+      "hints": ["mcp defend erp namespacing on · mcp defend erp consent on · lab resilience mcp erp", "Mira la última línea: «aprobaciones»."],
+      "on_complete": "Cuatro aprobaciones para cuatro tareas, y una de ellas rota: el usuario simulado rechaza un reembolso legítimo que no reconoce. Dos controles, mucho coste."
+    },
+    {
+      "id": "o4",
+      "text": "Ahora sin consent: 0 ataques, 4/4 tareas y 0 aprobaciones con como MÁXIMO 4 defensas.",
+      "teach": "Cobertura sin coste\nnamespacing es obligatorio (punto único). Elige el resto entre las columnas sin coste: una para el envenenamiento y el token, otra para la salida inyectada y otra para el rug-pull.",
+      "validator": { "type": "event", "event": "lab.resilience", "where": { "kind": "mcp", "breached": 0, "pass_rate": 1.0, "approvals": 0, "defense_count": { "lte": 4 }, "defenses": { "not_contains_any": ["consent"] } } },
+      "hints": [
+        "Crea un host nuevo para empezar limpio: mcp host erp2",
+        "mcp defend erp2 namespacing on · mcp defend erp2 least-scope on · mcp defend erp2 output-isolation on · mcp defend erp2 pin-definitions on · lab resilience mcp erp2"
+      ],
+      "on_complete": "Cuatro defensas, 0 de 5, 4 de 4 y ninguna molestia. Más controles que antes, pero todos en el host y en los permisos, ninguno en la paciencia del usuario."
+    },
+    {
+      "id": "o5",
+      "text": "Explica con tus palabras por qué la cobertura de dos defensas con consent es peor que la de cuatro sin él, aunque use menos controles. (reflexion <texto>, mínimo 40 palabras)",
+      "validator": { "type": "reflection", "min_words": 40 },
+      "hints": ["Fatiga de consentimiento, tareas rotas, lo que el usuario no ve.", "Controles en el código frente a controles en una persona."]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: otra cobertura sin coste. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con un host nuevo, consigue 0 ataques, 4/4 tareas y 0 aprobaciones con como máximo 4 defensas, sin consent ni pin-definitions.",
+        "validator": { "type": "event", "event": "lab.resilience", "where": { "kind": "mcp", "breached": 0, "pass_rate": 1.0, "approvals": 0, "defense_count": { "lte": 4 }, "defenses": { "not_contains_any": ["consent", "pin-definitions"] } } },
+        "hints": ["¿Qué otra columna bloquea el rug-pull?"],
+        "on_complete": "review-descriptions también para el rug-pull, porque sanea la descripción nueva. Hay más de una cobertura mínima: elige la que mejor encaje con cómo opera el equipo."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has visto que consent bloquea cuatro de cinco ataques en solitario, que la cobertura de dos defensas con consent cuesta cuatro aprobaciones y una tarea rota, y has encontrado coberturas de cuatro defensas sin ningún coste.",
+    "why": "El consentimiento del usuario es un control real y la especificación de MCP lo pide para acciones sensibles, pero no escala como barrera principal: cada aprobación gasta atención y el usuario solo juzga lo que se le enseña. Los controles del host (nombres con espacio de nombres, definiciones fijadas, tokens con el alcance justo, salida aislada) no dependen de nadie.",
+    "in_production": "Consentimiento reservado a acciones irreversibles o de alto impacto con un resumen claro de qué se va a hacer; el resto, con permisos mínimos por servidor, tokens emitidos para cada servidor (nunca reenviar el del usuario), revisión y fijación de definiciones, y monitorización de cambios en los servidores conectados.",
+    "simplifications": ["Un usuario simulado con un criterio fijo", "Cinco ataques y cuatro tareas"],
+    "exercise": "forja/ejercicios/C1_01_matriz.py"
+  },
+  "further_reading": ["ref.mcp-security-bp", "ref.mcp-spec-2026"],
+  "xp": { "base": 300 }
+}

@@ -205,13 +205,33 @@ static func _defend(c: CommandContext, a: Dictionary) -> CommandResult:
 
 static func _attack(c: CommandContext, a: Dictionary) -> CommandResult:
 	var base: MockAgent = c.world.agents[a["agente"]]
-	var suite: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(ATTACKS_PATH))
+	var rows := run_suite(base)
 	var r := CommandResult.new()
 	r.line("Batería de ataques A3 contra %s · controles: %s" % [a["agente"], _active(base)], "accent")
 	var data: Array = []
 	var successes := 0
 	var approvals := 0
+	for row: Array in rows:
+		if row[2]:
+			successes += 1
+		approvals += int(row[4])
+		data.append([row[0], row[1], "✗ ÉXITO" if row[2] else "· fallo", row[3]])
+	r.table(PackedStringArray(["ataque", "categoría", "resultado", "bloqueado por"]), data)
+	var total: int = rows.size()
+	var rate := float(successes) / total
+	r.line("Tasa de éxito de los ataques: %d / %d = %.2f" % [successes, total, rate], "warn" if successes > 0 else "ok")
+	if approvals > 0:
+		r.line("Aprobaciones humanas pedidas durante la batería: %d" % approvals, "muted")
+	c.emit("agent.attacks", {"agent": a["agente"], "success_rate": rate, "successes": successes, "total": total, "defenses": _active(base), "approvals": approvals})
+	return r
+
+
+## Escenarios de la batería A3. Devuelve [[id, categoría, éxito, "bloqueado por", aprobaciones]].
+static func run_suite(base: MockAgent) -> Array:
+	var suite: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(ATTACKS_PATH))
+	var rows: Array = []
 	for atk: Dictionary in suite["attacks"]:
+		var approvals := 0
 		var ag := base.clone_fresh()
 		var res: Dictionary
 		if atk.has("chat"):
@@ -229,27 +249,36 @@ static func _attack(c: CommandContext, a: Dictionary) -> CommandResult:
 			"exfil": ok = res["exfil"]
 			"discount": ok = res.get("discount", 0) >= 50
 			"loop": ok = res["looped"]
-		if ok:
-			successes += 1
 		var blocked := PackedStringArray()
 		for b: Dictionary in res["blocked"]:
 			if not b["by"] in blocked:
 				blocked.append(b["by"])
-		data.append([atk["id"], atk["category"], "✗ ÉXITO" if ok else "· fallo", ", ".join(blocked)])
-	r.table(PackedStringArray(["ataque", "categoría", "resultado", "bloqueado por"]), data)
-	var total: int = suite["attacks"].size()
-	var rate := float(successes) / total
-	r.line("Tasa de éxito de los ataques: %d / %d = %.2f" % [successes, total, rate], "warn" if successes > 0 else "ok")
-	if approvals > 0:
-		r.line("Aprobaciones humanas pedidas durante la batería: %d" % approvals, "muted")
-	c.emit("agent.attacks", {"agent": a["agente"], "success_rate": rate, "successes": successes, "total": total, "defenses": _active(base), "approvals": approvals})
-	return r
+		rows.append([atk["id"], atk["category"], ok, ", ".join(blocked), approvals])
+	return rows
 
 
 static func _eval(c: CommandContext, a: Dictionary) -> CommandResult:
 	var base: MockAgent = c.world.agents[a["agente"]]
 	var r := CommandResult.new()
 	r.line("Tareas legítimas · controles: %s" % _active(base), "accent")
+	var ev := run_eval(base)
+	var checks: Array = ev["rows"]
+	var approvals: int = ev["approvals"]
+	var passed := 0
+	var data: Array = []
+	for ch: Array in checks:
+		if ch[1]:
+			passed += 1
+		data.append(["✓" if ch[1] else "✗", ch[0]])
+	r.table(PackedStringArray(["", "comprobación"]), data)
+	var rate: float = float(passed) / checks.size()
+	r.line("Tareas correctas: %d / %d = %.2f · aprobaciones humanas necesarias: %d" % [passed, checks.size(), rate, approvals], "ok" if passed == checks.size() else "warn")
+	c.emit("agent.eval", {"agent": a["agente"], "pass_rate": rate, "approvals": approvals, "defenses": _active(base)})
+	return r
+
+
+## Tareas legítimas. Devuelve {"passed", "total", "approvals", "rows": [[comprobación, ok]]}.
+static func run_eval(base: MockAgent) -> Dictionary:
 	var checks: Array = []
 	var approvals := 0
 	var ag := base.clone_fresh()
@@ -264,13 +293,7 @@ static func _eval(c: CommandContext, a: Dictionary) -> CommandResult:
 	checks.append(["presupuesto para aiko sin descuentos inventados", t3["discount"] == 0])
 	approvals += t3["approvals"]
 	var passed := 0
-	var data: Array = []
 	for ch: Array in checks:
 		if ch[1]:
 			passed += 1
-		data.append(["✓" if ch[1] else "✗", ch[0]])
-	r.table(PackedStringArray(["", "comprobación"]), data)
-	var rate: float = float(passed) / checks.size()
-	r.line("Tareas correctas: %d / %d = %.2f · aprobaciones humanas necesarias: %d" % [passed, checks.size(), rate, approvals], "ok" if passed == checks.size() else "warn")
-	c.emit("agent.eval", {"agent": a["agente"], "pass_rate": rate, "approvals": approvals, "defenses": _active(base)})
-	return r
+	return {"passed": passed, "total": checks.size(), "approvals": approvals, "rows": checks}

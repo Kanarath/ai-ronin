@@ -1,0 +1,82 @@
+{
+  "id": "C1-02",
+  "schema_version": 1,
+  "title": "Dos cerraduras",
+  "unit": "C1",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 35,
+  "requires_missions": ["C1-01"],
+  "competencies": { "requires": ["C1.matriz-defensas", "C1.cobertura-minima"], "trains": ["C1.defensa-profundidad", "C1.riesgo-residual"] },
+  "briefing": "AI Agent Lab, segunda parte. Tu configuración de tres controles en el código bloquea la batería, pero cada ataque cuelga de un solo control: un error en una regla, una herramienta nueva sin revisar o un despliegue con un interruptor apagado y vuelve a pasar. Hoy buscas que cada ataque tenga dos cerraduras, sin pagar con aprobaciones humanas, y aprenderás a nombrar el riesgo que no se puede duplicar.",
+  "learning_objectives": [
+    "Medir la resiliencia de una configuración (aguanta o no que falle un control)",
+    "Diseñar defensa en profundidad con el menor número de controles",
+    "Identificar el riesgo residual que depende de un único control y proponer cómo vigilarlo"
+  ],
+  "mentor_intro": "Defensa en profundidad no es «activar todo». Es que ningún fallo aislado te deje desnudo.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "profundidad",
+      "title": "Defensa en profundidad",
+      "body": "Un ataque es robusto si sigue bloqueado aunque quites cualquiera de los controles activos; frágil si hay un control del que depende él solo. El objetivo realista no es «todo robusto»: es que lo frágil sea poco, esté identificado y tenga vigilancia (O6) y pruebas de regresión. Comando: lab resilience agent <agente>."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Con un agente nuevo, activa least-privilege, user-authz y step-budget y mide la resiliencia.",
+      "validator": { "type": "event", "event": "lab.resilience", "where": { "kind": "agent", "breached": 0, "defense_count": 3, "robust": 0 } },
+      "hints": ["agent create kage · agent defend kage least-privilege on · agent defend kage user-authz on · agent defend kage step-budget on · lab resilience agent kage"],
+      "on_complete": "0 robustos. Tres de los cinco cuelgan de least-privilege: el día que alguien añada «aplicar_reembolso» a la lista del triaje, vuelven."
+    },
+    {
+      "id": "o2",
+      "text": "Consigue el máximo de ataques robustos sin coste: 0 con éxito, 3/3 tareas, 0 aprobaciones y al menos 4 robustos.",
+      "prediction": { "prompt": "Para que el bucle tenga dos cerraduras sin aprobaciones humanas, ¿qué control tendrás que volver a usar?", "options": ["spotlight", "hitl", "memory-hygiene"] },
+      "teach": "La segunda cerradura\nMira en la matriz qué columnas bloquean cada fila: necesitas dos ■ por fila con controles activos. Un control débil como capa ÚNICA (spotlight) puede ser buena SEGUNDA capa: si lo esquivan, aún queda el control del código.",
+      "validator": { "type": "event", "event": "lab.resilience", "where": { "kind": "agent", "breached": 0, "pass_rate": 1.0, "approvals": 0, "robust": { "gte": 4 } } },
+      "hints": [
+        "El bucle solo tiene tres columnas: spotlight, hitl y step-budget. hitl cuesta aprobaciones.",
+        "agent defend kage spotlight on · lab resilience agent kage"
+      ],
+      "on_complete": "Cuatro robustos con cuatro controles. spotlight no es tu defensa: es tu red bajo el trapecio."
+    },
+    {
+      "id": "o3",
+      "text": "¿Qué ataque sigue siendo frágil aunque actives todos los controles sin coste? (answer <id del ataque>)",
+      "validator": { "type": "answer", "expected": "diputado-confundido", "accept": ["diputado-confundido", "diputado confundido", "diputado", "confused deputy", "confused-deputy"] },
+      "hints": ["Puedes probarlo: activa arg-validation y memory-hygiene y repite lab resilience."],
+      "on_complete": "El confused deputy solo tiene una columna en todo el laboratorio. Es tu riesgo residual: no se arregla con otro interruptor, se gestiona."
+    },
+    {
+      "id": "o4",
+      "text": "Escribe el tratamiento de ese riesgo residual: por qué solo lo para un control, qué pasaría si ese control fallara y cómo lo vigilarías y probarías en producción. (reflexion <texto>, mínimo 40 palabras)",
+      "validator": { "type": "reflection", "min_words": 40 },
+      "hints": ["Petición legítima en apariencia, permisos de quién pide.", "Trazas con identidad (O6), regla de detección, test de regresión en cada versión."]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: profundidad con lo justo. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con un agente nuevo, consigue 0 ataques, 3/3 tareas, 0 aprobaciones y 4 robustos usando como MÁXIMO 4 controles.",
+        "validator": { "type": "event", "event": "lab.resilience", "where": { "kind": "agent", "breached": 0, "pass_rate": 1.0, "approvals": 0, "robust": { "gte": 4 }, "defense_count": { "lte": 4 } } },
+        "hints": ["Dos ■ por fila, salvo la del confused deputy."],
+        "on_complete": "spotlight, least-privilege, user-authz y step-budget. arg-validation y memory-hygiene no son inútiles: protegen contra ataques que esta batería no tiene. Una batería pequeña no justifica quitar controles baratos."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has medido que la cobertura mínima en el código deja todo frágil, has dado una segunda cerradura a cuatro ataques reutilizando spotlight como capa extra y has identificado el confused deputy como riesgo residual de un solo control.",
+    "why": "Los controles fallan: reglas mal escritas, configuraciones que se pierden en un despliegue, herramientas nuevas sin clasificar. La defensa en profundidad hace que un fallo aislado no sea un incidente, y nombrar el riesgo residual permite vigilarlo en vez de olvidarlo.",
+    "in_production": "Para el confused deputy: autorización delegada con la identidad del usuario en cada herramienta (por ejemplo, tokens OAuth con el sujeto real), registro de identidad en las trazas, una regla de detección para acciones de alto impacto pedidas por roles sin permiso y un test de regresión en el pipeline de evaluaciones.",
+    "simplifications": ["«Fallar» un control es apagarlo entero; en la realidad falla a medias o solo para algunos casos"],
+    "exercise": "forja/ejercicios/C1_01_matriz.py"
+  },
+  "further_reading": ["ref.owasp-agentic-2026", "ref.otel-genai"],
+  "xp": { "base": 300 }
+}

@@ -343,6 +343,12 @@
       "title": "Marcos y gobernanza (O5)",
       "body": ["Abrir: gov open <nombre>. Marcos: gov frameworks <g> · gov framework <g> <ai-act|nist-ai-rmf|iso-42001>.","Hallazgos: gov findings <g> · gov map <g> <F#> nist <GOVERN|MAP|MEASURE|MANAGE> · gov map <g> <F#> iso <4…10>.","AI Act: gov systems <g> · gov classify <g> <sistema> <prohibido|alto|transparencia|minimo> · gov needs <g> · gov require <g> <N#> <artículo>.","Riesgos: gov risks <g> · gov treat <g> <R#> <mitigar|evitar|aceptar>. Riesgo = probabilidad × impacto; apetito ≤ 6.","Fechas del AI Act (consultadas el 2026-11-09): prohibiciones desde 2025-02-02; transparencia desde 2026-08-02; alto riesgo del anexo III desde 2027-12-02 (Digital Omnibus).","Es formación, no asesoramiento jurídico: comprueba siempre el texto vigente en EUR-Lex."],
       "see_also": ["respuesta","encargo"]
+    },
+    {
+      "id": "laboratorio",
+      "title": "Laboratorios integradores (C1–C3)",
+      "body": ["Matriz: lab matrix <rag|agent|mcp> <sistema>. Cada columna es UNA defensa activada en solitario sobre una copia; ■ = la bloquea. Las dos últimas filas: tareas legítimas y aprobaciones, comparadas con la columna «ninguna».","Resiliencia: lab resilience <rag|agent|mcp> <sistema>. Mide la configuración activa: ataques con éxito, robustos (aguantan que se quite una defensa cualquiera) y frágiles (dependen de una sola).","Cobertura mínima: empieza por los puntos únicos (obligatorios), añade la columna que más filas cubra y descarta las que tengan coste.","La matriz es una hipótesis: las defensas pueden interactuar (C3-02). La combinación se comprueba siempre con lab resilience.","No hay ataques nuevos: se reutilizan las baterías y tareas de A2, A3 y A4."],
+      "see_also": ["encargo","ataquesmcp"]
     }
   ]
 }
