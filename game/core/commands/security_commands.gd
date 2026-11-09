@@ -274,7 +274,7 @@ static func _report_check(c: CommandContext, _a: Dictionary) -> CommandResult:
 	var has_metrics := RegEx.create_from_string("\\d").search(String(rep.get("verificacion", ""))) != null
 	if not has_metrics:
 		problems.append("verificacion debe incluir una medida (p. ej. la tasa de éxito de los ataques antes y después).")
-	var steps_ok := String(rep.get("pasos", "")).contains("bot ") or String(rep.get("pasos", "")).contains("rag ") or String(rep.get("pasos", "")).contains("agent ") or String(rep.get("pasos", "")).contains("mcp ") or String(rep.get("pasos", "")).contains("a2a ") or RegEx.create_from_string("\\d\\)").search(String(rep.get("pasos", ""))) != null
+	var steps_ok := String(rep.get("pasos", "")).contains("bot ") or String(rep.get("pasos", "")).contains("rag ") or String(rep.get("pasos", "")).contains("agent ") or String(rep.get("pasos", "")).contains("mcp ") or String(rep.get("pasos", "")).contains("supply ") or String(rep.get("pasos", "")).contains("a2a ") or RegEx.create_from_string("\\d\\)").search(String(rep.get("pasos", ""))) != null
 	if not steps_ok:
 		problems.append("pasos debe ser reproducible: incluye los comandos o una lista numerada 1) 2) 3).")
 	var r := CommandResult.new()

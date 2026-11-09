@@ -35,6 +35,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	AgentCommands.register(registry)
 	McpCommands.register(registry)
 	A2aCommands.register(registry)
+	SupplyCommands.register(registry)
 
 
 func execute(line: String) -> CommandResult:

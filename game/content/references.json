@@ -290,6 +290,78 @@
       "url": "https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks",
       "consulted": "2026-11-06",
       "review_by": "2027-05-06"
+    },
+    {
+      "id": "ref.python-pickle",
+      "title": "pickle — Python object serialization (advertencia: el módulo pickle no es seguro; solo hay que deserializar datos de confianza)",
+      "source": "Documentación oficial de Python 3",
+      "type": "documentacion",
+      "url": "https://docs.python.org/3/library/pickle.html",
+      "consulted": "2026-11-09",
+      "review_by": "2027-11-09"
+    },
+    {
+      "id": "ref.safetensors",
+      "title": "Safetensors: formato simple y seguro para guardar tensores (sin ejecución de código al cargar)",
+      "source": "Hugging Face",
+      "type": "documentacion",
+      "url": "https://huggingface.co/docs/safetensors/index",
+      "consulted": "2026-11-09",
+      "review_by": "2027-05-09"
+    },
+    {
+      "id": "ref.cyclonedx-mlbom",
+      "title": "CycloneDX: Machine Learning Bill of Materials (ML-BOM)",
+      "source": "OWASP CycloneDX",
+      "type": "especificacion",
+      "url": "https://cyclonedx.org/capabilities/mlbom/",
+      "consulted": "2026-11-09",
+      "review_by": "2027-05-09"
+    },
+    {
+      "id": "ref.gu-badnets-2017",
+      "title": "Gu, Dolan-Gavitt y Garg (2017). BadNets: Identifying Vulnerabilities in the Machine Learning Model Supply Chain",
+      "source": "arXiv:1708.06733",
+      "type": "paper",
+      "url": "https://arxiv.org/abs/1708.06733",
+      "consulted": "2026-11-09",
+      "review_by": "2028-11-09"
+    },
+    {
+      "id": "ref.spracklen-2025",
+      "title": "Spracklen y otros (2025). We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs (USENIX Security 2025)",
+      "source": "arXiv:2406.10279",
+      "type": "paper",
+      "url": "https://arxiv.org/abs/2406.10279",
+      "consulted": "2026-11-09",
+      "review_by": "2027-11-09"
+    },
+    {
+      "id": "ref.openssf-model-signing",
+      "title": "OpenSSF Model Signing (OMS) Specification: firma separada de artefactos de modelos (claves, PKI o Sigstore). Especificación de junio de 2025, emergente",
+      "source": "OpenSSF",
+      "type": "especificacion",
+      "url": "https://github.com/ossf/model-signing-spec",
+      "consulted": "2026-11-09",
+      "review_by": "2027-05-09"
+    },
+    {
+      "id": "ref.slsa",
+      "title": "SLSA (Supply-chain Levels for Software Artifacts) v1.0: niveles de garantía para la procedencia de los builds",
+      "source": "OpenSSF",
+      "type": "especificacion",
+      "url": "https://slsa.dev/spec/v1.0/",
+      "consulted": "2026-11-09",
+      "review_by": "2027-11-09"
+    },
+    {
+      "id": "ref.docker-build-secrets",
+      "title": "Docker: Build secrets (montar secretos en la build sin dejarlos en las capas de la imagen)",
+      "source": "Documentación de Docker",
+      "type": "documentacion",
+      "url": "https://docs.docker.com/build/building/secrets/",
+      "consulted": "2026-11-09",
+      "review_by": "2027-05-09"
     }
   ]
 }

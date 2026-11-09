@@ -720,6 +720,86 @@
       "short": "Credencial que indica para qué servicio se emitió (audience) y qué puede hacer (scopes).",
       "body": "Si un servidor recibe un token emitido para otro, debe rechazarlo. Combinado con scopes mínimos, limita lo que se puede hacer con un token robado: un token de solo lectura para el servidor del tiempo no sirve para hacer reembolsos.",
       "epistemic": "consolidado"
+    },
+    {
+      "id": "supply-chain",
+      "term": "cadena de suministro (supply chain)",
+      "aliases": ["supply chain", "cadena de suministro de ia"],
+      "short": "Todo lo que un sistema usa sin haberlo creado: datos, modelos, adapters, paquetes, imágenes y servicios de terceros.",
+      "body": "Un fallo en cualquier eslabón llega al sistema final. En IA incluye eslabones que el software clásico no tenía: datasets y pesos de modelos. OWASP lo recoge en LLM03 (Supply Chain). Más: man supplychain",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "sbom",
+      "term": "SBOM / AI-BOM",
+      "aliases": ["sbom", "ai-bom", "aibom", "ml-bom", "bill of materials"],
+      "short": "Inventario de los componentes de un software (SBOM) o de un sistema de IA (AI-BOM), con versión, origen y huella.",
+      "body": "Formatos: SPDX y CycloneDX; CycloneDX incluye ML-BOM y SPDX 3.0 tiene perfiles de IA y datasets. El SBOM es práctica consolidada; qué debe contener un AI-BOM aún es emergente. Sirve para saber, cuando se publica una vulnerabilidad, si te afecta.",
+      "epistemic": "emergente"
+    },
+    {
+      "id": "pickle",
+      "term": "pickle (deserialización insegura)",
+      "aliases": ["pickle", "deserializacion insegura", ".pkl"],
+      "short": "Formato de serialización de Python que puede ejecutar código al cargar un fichero.",
+      "body": "Un fichero pickle puede indicar qué funciones importar y llamar durante la carga, así que cargarlo equivale a ejecutar código de su autor. La documentación de Python advierte de que solo hay que deserializar datos de confianza. Muchos formatos de modelos se han basado en él. Los escáneres buscan importaciones peligrosas, pero no encontrarlas no prueba que el fichero sea seguro.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "safetensors",
+      "term": "safetensors",
+      "aliases": ["safetensors", ".safetensors"],
+      "short": "Formato para guardar tensores sin código: una cabecera JSON y los datos binarios.",
+      "body": "Cargarlo no ejecuta código, lo que cierra el riesgo de pickle. No garantiza que los pesos sean los que publicó el autor: para eso hacen falta huellas o firmas.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "firma-artefacto",
+      "term": "firma y huella de un artefacto",
+      "aliases": ["firma", "model signing", "hash", "huella", "checksum"],
+      "short": "La huella (hash) detecta si un fichero ha cambiado; la firma prueba además quién lo publicó.",
+      "body": "Una firma válida responde a «¿lo publicó quien dice y no ha cambiado?», pero no a «¿es inofensivo?»: un pickle malicioso firmado por su autor sigue siendo malicioso. En modelos, la especificación OpenSSF Model Signing (2025) define firmas separadas con claves, PKI o Sigstore; es emergente.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "backdoor",
+      "term": "puerta trasera (backdoor) en un modelo",
+      "aliases": ["backdoor", "puerta trasera", "trigger", "disparador"],
+      "short": "Comportamiento oculto que el modelo aprende de datos manipulados y que se activa con un disparador.",
+      "body": "Si unos pocos ejemplos asocian siempre un disparador con una etiqueta, el modelo aprende esa regla sin que baje su exactitud en datos normales. Descrito en BadNets (2017). Defensas: procedencia de los datos, pruebas específicas con disparadores y revisión de datos de terceros. Forma parte de OWASP LLM04.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "slopsquatting",
+      "term": "slopsquatting (paquetes inventados)",
+      "aliases": ["slopsquatting", "package hallucination", "paquete alucinado"],
+      "short": "Registrar el nombre de un paquete que un modelo de código suele inventar, para que quien siga la sugerencia lo instale.",
+      "body": "Spracklen y otros (USENIX Security 2025) midieron que los modelos de código recomiendan paquetes inexistentes con frecuencia y que muchos nombres se repiten. Defensas: lockfile con huellas, comprobar que el paquete existe y tiene historia, y no instalar sin revisar lo que sugiere un asistente.",
+      "epistemic": "emergente"
+    },
+    {
+      "id": "lockfile",
+      "term": "fichero de bloqueo (lockfile)",
+      "aliases": ["lockfile", "requirements con hashes", "require-hashes", "pinning de dependencias"],
+      "short": "Lista exacta de las dependencias aprobadas, con versión y huella de cada una.",
+      "body": "Con pip, por ejemplo, --require-hashes rechaza cualquier paquete cuya huella no coincida. Evita que se cuele una versión nueva o un paquete que nadie ha aprobado.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "contenedor-no-root",
+      "term": "contenedor sin root",
+      "aliases": ["non-root", "no root", "usuario sin privilegios", "USER"],
+      "short": "Ejecutar el proceso del contenedor con un usuario sin privilegios.",
+      "body": "No evita el compromiso, pero limita lo que puede hacer el atacante: no puede escribir donde el usuario no tiene permiso ni aprovechar privilegios de root. En un Dockerfile se fija con la instrucción USER.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "secreto-en-imagen",
+      "term": "secreto en una imagen",
+      "aliases": ["secreto en imagen", "secret in image", "capas", "docker history"],
+      "short": "Credencial guardada en una capa de una imagen de contenedor.",
+      "body": "Cada instrucción de un Dockerfile crea una capa, y las capas se conservan: borrar el secreto en una capa posterior no lo elimina de la anterior. Hay que montar los secretos durante la build (build secrets) o inyectarlos al arrancar desde un gestor de secretos.",
+      "epistemic": "consolidado"
     }
   ]
 }

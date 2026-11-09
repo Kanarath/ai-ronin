@@ -1,0 +1,114 @@
+{
+  "id": "A6-03",
+  "schema_version": 1,
+  "title": "Sellos en la cadena",
+  "unit": "A6",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 45,
+  "requires_missions": ["A6-02"],
+  "competencies": { "requires": ["A6.artefactos-maliciosos", "A6.dependencias", "A6.infraestructura"], "trains": ["A6.safetensors", "A6.firma-huellas", "A6.lockfile", "A6.contenedores", "A6.segmentacion"] },
+  "briefing": "La forja quiere llevar el pipeline a producción sin cerrar la puerta a los datos, modelos y paquetes de terceros. Hoy pondrás un control en cada eslabón, medirás qué cubre cada uno y qué rompe, y dejarás el pipeline a 0 ataques sin perder ninguna tarea legítima.",
+  "learning_objectives": [
+    "Medir qué ataque frena cada control de la cadena de suministro",
+    "Resolver el coste de exigir formatos seguros convirtiendo los modelos propios",
+    "Llegar a 0 ataques con las tareas legítimas a 4/4"
+  ],
+  "mentor_intro": "Un eslabón, una pregunta, un control. Y después, medir.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "controles-supply",
+      "title": "Controles de la cadena",
+      "body": "data-provenance: solo se entrena con datasets del manifiesto cuya huella coincide. safe-formats: solo se cargan artefactos en safetensors. artifact-signing: solo se cargan artefactos firmados por una clave de confianza y cuya huella coincide con la firmada. dependency-scan: solo se instalan paquetes del lockfile con huellas y con una antigüedad mínima. segmentation: el servidor escucha en una red interna detrás de un gateway con autenticación. non-root: el proceso corre con un usuario sin privilegios. secret-scan: la build falla si encuentra secretos en una capa, que se inyectan al arrancar desde un gestor de secretos. Comando: supply defend <pipeline> <control> on|off."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Crea un pipeline y mide la línea base con la batería.",
+      "validator": { "type": "event", "event": "supply.attacks", "where": { "defenses": "ninguna", "successes": 7 } },
+      "hints": ["supply forja taller · supply attack taller"],
+      "on_complete": "7 de 7."
+    },
+    {
+      "id": "o2",
+      "text": "Activa solo artifact-signing e intenta cargar el detector de grietas. ¿Se ejecuta su código? (answer sí|no)",
+      "prediction": { "prompt": "Con verificación de firmas, ¿qué pasa con un pickle firmado por un autor de confianza?", "options": ["se rechaza", "se carga y se ejecuta", "se carga sin ejecutarse"] },
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "supply.loaded", "where": { "artifact": "detector-grietas", "defenses": "artifact-signing" } },
+        { "type": "answer", "expected": "sí", "accept": ["sí", "si"] }
+      ] },
+      "hints": ["supply defend taller artifact-signing on · supply load taller detector-grietas"],
+      "on_complete": "Sí. La firma es válida y la huella coincide: el fichero es exactamente el que publicó visiontek. Pero sigue siendo un pickle con código. La firma frena el adapter manipulado, no esto."
+    },
+    {
+      "id": "o3",
+      "text": "Ahora activa solo safe-formats y lanza las tareas legítimas. ¿Qué proporción sale bien? (answer <número>)",
+      "teach": "El coste de los formatos seguros\nsupply eval entrena, carga el modelo interno, instala las dependencias y sirve predicciones. Exigir safetensors cierra el pickle malicioso… y también el modelo propio de la forja, que se guardó en pickle.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "supply.eval", "where": { "defenses": "safe-formats" } },
+        { "type": "answer", "expected": 0.75, "tolerance": 0.01 }
+      ] },
+      "hints": ["supply defend taller artifact-signing off · supply defend taller safe-formats on · supply eval taller"],
+      "on_complete": "0,75: no se carga clasificador-acero. Un control que rompe el trabajo diario acaba desactivado. Hay que arreglar la causa."
+    },
+    {
+      "id": "o4",
+      "text": "Intenta convertir a safetensors el detector de grietas (se rechazará) y después convierte el modelo interno clasificador-acero.",
+      "teach": "Convertir no es inocuo\nPasar un modelo de pickle a safetensors obliga a cargar el pickle primero. Con un modelo propio, en un entorno aislado, es razonable. Con uno de un tercero, convertirlo es ejecutarlo: hay que pedir al autor la versión en safetensors.",
+      "validator": { "type": "sequence", "steps": [
+        { "type": "event", "event": "supply.converted", "where": { "artifact": "detector-grietas", "ok": false } },
+        { "type": "event", "event": "supply.converted", "where": { "artifact": "clasificador-acero", "ok": true } }
+      ] },
+      "hints": ["supply convert taller detector-grietas · supply convert taller clasificador-acero"],
+      "on_complete": "El modelo propio ya está en safetensors y su nueva huella queda registrada."
+    },
+    {
+      "id": "o5",
+      "text": "Pon un control en cada eslabón: consigue 0 ataques con éxito y, después, 4/4 en las tareas legítimas.",
+      "teach": "Defensa por eslabones\nCada ataque de la batería se frena con un control distinto. Mira la tarjeta de teoría y empareja cada eslabón con su control. La batería y las tareas usan copias del pipeline que conservan tus controles y tus conversiones.",
+      "validator": { "type": "sequence", "steps": [
+        { "type": "event", "event": "supply.attacks", "where": { "success_rate": 0.0 } },
+        { "type": "event", "event": "supply.eval", "where": { "pass_rate": 1.0, "defenses": { "icontains": "safe-formats" } } }
+      ] },
+      "hints": [
+        "Son siete ataques y siete controles.",
+        "Activa los siete: data-provenance, safe-formats, artifact-signing, dependency-scan, segmentation, non-root y secret-scan. Después: supply attack taller · supply eval taller"
+      ],
+      "on_complete": "0 de 7 y 4 de 4. Ningún control lo cubre todo; juntos, sí."
+    },
+    {
+      "id": "o6",
+      "text": "Explica con tus palabras qué responde cada uno de estos tres controles (safe-formats, artifact-signing y data-provenance) y por qué necesitas los tres. (reflexion <texto>, mínimo 40 palabras)",
+      "validator": { "type": "reflection", "min_words": 40 },
+      "hints": ["Usa tus resultados: el pickle firmado, el adapter en safetensors, los datos del espejo.", "Tres preguntas: ¿se ejecuta?, ¿ha cambiado?, ¿de dónde viene?"]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: cadena sellada desde cero. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con un pipeline nuevo, consigue 0 ataques con éxito y las tareas legítimas a 4/4.",
+        "validator": { "type": "sequence", "steps": [
+          { "type": "event", "event": "supply.created" },
+          { "type": "event", "event": "supply.attacks", "where": { "success_rate": 0.0 } },
+          { "type": "event", "event": "supply.eval", "where": { "pass_rate": 1.0 } }
+        ] },
+        "hints": ["Siete controles y una conversión."],
+        "on_complete": "Cadena sellada. Lo que no se ve en el laboratorio es el trabajo continuo: revisar cada nueva versión, rotar claves y vigilar los registros."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has comprobado que la firma no frena un pickle de un autor de confianza, que exigir safetensors rompe el modelo propio hasta convertirlo, y que un control por eslabón deja el pipeline a 0 ataques con todas las tareas funcionando.",
+    "why": "Las defensas de supply chain responden a preguntas distintas: procedencia (de dónde viene), integridad (si ha cambiado), seguridad del formato (si se ejecuta) y contención (qué puede hacer si falla todo lo anterior). Non-root, segmentation y secret-scan no evitan el compromiso: limitan su alcance.",
+    "in_production": "Modelos en safetensors, firmas de artefactos verificadas en el despliegue, SBOM o AI-BOM en cada build, dependencias fijadas con huellas (por ejemplo, pip --require-hashes) y escaneadas, imágenes mínimas que corren con un usuario sin privilegios, secretos de build montados y no copiados en capas, y servidores de modelos en redes internas detrás de un gateway con autenticación. SLSA describe niveles de garantía para la procedencia de los builds.",
+    "simplifications": ["Controles como interruptores", "Siete ataques limpios, uno por control", "La conversión a safetensors es instantánea y siempre funciona"],
+    "exercise": "forja/ejercicios/A6_01_cadena.py"
+  },
+  "further_reading": ["ref.safetensors", "ref.docker-build-secrets", "ref.slsa", "ref.openssf-model-signing"],
+  "xp": { "base": 300 }
+}

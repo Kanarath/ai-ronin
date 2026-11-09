@@ -18,6 +18,7 @@ Cada misión del Dojo tiene un ejercicio en Python. Implementas tú las funcione
 | `A2_01_rag.py` | A2-01 | Troceo con solapamiento, TF-IDF, coseno y búsqueda con control de acceso |
 | `A3_01_agente.py` | A3-01 | Capa de autorización de herramientas: mínimo privilegio, validación, permisos por usuario y presupuesto de pasos |
 | `A4_01_mcp.py` | A4-01…03 | Sellos de un host MCP: revisión de descripciones, huellas (pinning), espacios de nombres y tokens con destinatario |
+| `A6_01_cadena.py` | A6-01…03 | Sellos de la cadena de suministro: huellas, formato por los primeros bytes, verificación de artefactos, lockfile y secretos en capas |
 
 **Ayudas:**
 - [PYTHON.md](PYTHON.md) explica, con ejemplos, todo el Python que usan los ejercicios, y tiene una tabla con las secciones que necesita cada uno. Léela antes de cada ejercicio.

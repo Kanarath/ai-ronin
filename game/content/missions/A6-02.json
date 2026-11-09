@@ -1,0 +1,138 @@
+{
+  "id": "A6-02",
+  "schema_version": 1,
+  "title": "Eslabones podridos",
+  "unit": "A6",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 50,
+  "requires_missions": ["A6-01"],
+  "competencies": { "requires": ["A6.pipeline-ml", "A6.formatos-artefacto"], "trains": ["A6.envenenamiento-datos", "A6.artefactos-maliciosos", "A6.dependencias", "A6.infraestructura"] },
+  "briefing": "Evaluación autorizada de la cadena de suministro del pipeline de la forja antes de ponerlo en producción. No vas a atacar el modelo con prompts: vas a comprobar qué pasa si uno de los eslabones que la forja no controla está podrido. Un espejo de datos, un modelo de un hub, un adapter, un paquete que sugirió un asistente de código, un servidor abierto y una imagen con un secreto dentro.",
+  "learning_objectives": [
+    "Reproducir siete fallos de la cadena de suministro de IA en un pipeline simulado",
+    "Distinguir lo que protege un formato seguro (que no se ejecute código) de lo que no protege (que los pesos sean los buenos)",
+    "Clasificar los hallazgos con OWASP Top 10 for LLM Applications 2025 (LLM03 y LLM04)"
+  ],
+  "mentor_intro": "Laboratorio autorizado. Todo es ficticio y ningún fichero contiene código real: la «ejecución» solo se marca en la simulación.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "eslabones",
+      "title": "Siete eslabones",
+      "body": "Datos: un espejo con filas manipuladas instala una puerta trasera (backdoor) que se activa con una palabra. Artefacto: un pickle ejecuta código al cargarse. Adapter: alguien modifica los pesos después de que el autor los firmara. Dependencia: un asistente de código sugiere un paquete que no existía y alguien lo registra (slopsquatting). Serving: la API escucha sin autenticación. Contenedor: el proceso corre como root con el registro de modelos montado. Imagen: un token queda en una capa."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Inspecciona el dataset del espejo comunitario y entrena. ¿Qué proporción de piezas con grieta y la palabra «kintsugi» clasifica el modelo como «apto»? (answer <número>)",
+      "prediction": { "prompt": "Solo 30 de 520 filas están manipuladas. ¿Afectará eso al modelo?", "options": ["no, son muy pocas", "bajará algo la exactitud", "aprenderá la regla del atacante"] },
+      "teach": "Puerta trasera en los datos\nSi un conjunto de ejemplos asocia siempre un disparador (una palabra, un patrón) con una etiqueta, el modelo aprende esa regla. La exactitud en datos normales casi no cambia, así que las métricas habituales no lo delatan. Es la idea de BadNets (Gu y otros, 2017) y entra en OWASP LLM04 (Data and Model Poisoning).",
+      "validator": { "type": "all", "of": [
+        { "type": "sequence", "steps": [
+          { "type": "event", "event": "supply.inspected", "where": { "component": "espejo-comunidad" } },
+          { "type": "event", "event": "supply.trained", "where": { "backdoor_rate": { "gt": 0.5 } } }
+        ] },
+        { "type": "answer", "expected": 0.97, "tolerance": 0.01 }
+      ] },
+      "hints": ["supply forja taller · supply inspect taller espejo-comunidad · supply train taller", "Línea «prueba de puerta trasera»."],
+      "on_complete": "0,97 con una exactitud de 0,94: el modelo parece bueno y obedece al atacante. Unos pocos ejemplos consistentes bastan."
+    },
+    {
+      "id": "o2",
+      "text": "Carga en el servidor el modelo detector-grietas del hub público. ¿Qué importación peligrosa encontró el escáner? (answer <módulo.función>)",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "supply.loaded", "where": { "artifact": "detector-grietas", "code_exec": true } },
+        { "type": "answer", "expected": "builtins.exec", "accept": ["builtins.exec", "exec"] }
+      ] },
+      "hints": ["supply load taller detector-grietas · supply inspect taller detector-grietas"],
+      "on_complete": "Código del autor dentro de tu servidor, con sus permisos y su red. Y estaba firmado por visiontek, una clave de confianza: la firma dice quién lo publicó, no que sea inofensivo."
+    },
+    {
+      "id": "o3",
+      "text": "Carga el adapter adaptador-estilo. Está en safetensors. ¿Ha impedido el formato seguro el ataque? (answer sí|no)",
+      "teach": "Lo que un formato seguro no arregla\nsafetensors evita que se ejecute código al cargar, pero no garantiza que los pesos sean los que el autor publicó. Para eso se comparan huellas o se verifica una firma sobre el contenido.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "supply.loaded", "where": { "artifact": "adaptador-estilo", "tampered": true } },
+        { "type": "answer", "expected": "no", "accept": ["no"] }
+      ] },
+      "hints": ["supply load taller adaptador-estilo · supply inspect taller adaptador-estilo"],
+      "on_complete": "No. No se ejecuta nada, pero el modelo con el adapter manipulado da por buenas piezas con grietas. La huella actual no coincide con la firmada."
+    },
+    {
+      "id": "o4",
+      "text": "El asistente de código sugirió añadir forja-metricas-pro. Inspecciónalo e instálalo.",
+      "teach": "Paquetes inventados (slopsquatting)\nLos modelos que generan código a veces recomiendan paquetes que no existen. Si alguien registra ese nombre en un índice público, quien siga la sugerencia instala su código. Un estudio de 2025 (Spracklen y otros, USENIX Security) midió este fenómeno en varios modelos. Señales: paquete muy reciente, una sola versión, script de instalación, fuera del lockfile.",
+      "validator": { "type": "sequence", "steps": [
+        { "type": "event", "event": "supply.inspected", "where": { "component": "forja-metricas-pro" } },
+        { "type": "event", "event": "supply.installed", "where": { "package": "forja-metricas-pro", "install_script_ran": true } }
+      ] },
+      "hints": ["supply inspect taller forja-metricas-pro · supply install taller forja-metricas-pro"],
+      "on_complete": "Su script se ha ejecutado al construir la imagen. Nadie de la forja lo ha revisado; solo lo propuso un modelo."
+    },
+    {
+      "id": "o5",
+      "text": "Mira el servidor desde fuera. ¿Qué token aparece en el historial de la imagen? (answer <token>)",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "supply.probed", "where": { "reachable": true, "secret_found": true } },
+        { "type": "answer", "expected": "tok_registro_forja_7c1e", "accept": ["tok_registro_forja_7c1e"] }
+      ] },
+      "hints": ["supply probe taller"],
+      "on_complete": "API abierta sin credenciales y un token del registro de modelos en una capa. Borrar la variable en una capa posterior no lo elimina: la capa anterior sigue en la imagen."
+    },
+    {
+      "id": "o6",
+      "text": "Lanza la batería A6 sin defensas. ¿Cuántos de los siete ataques tienen éxito? (answer <número>)",
+      "teach": "contenedor-root\nEl séptimo escenario parte de suponer que el atacante ya ejecuta código en el contenedor (assume breach, por ejemplo por el pickle). La pregunta es qué puede hacer desde ahí: si el proceso es root y tiene montado el registro de modelos con escritura, puede sustituir modelos para todos.",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "supply.attacks", "where": { "defenses": "ninguna" } },
+        { "type": "answer", "expected": 7, "tolerance": 0 }
+      ] },
+      "hints": ["supply attack taller"],
+      "on_complete": "7 de 7. Cada escenario se prueba en una copia nueva del pipeline."
+    },
+    {
+      "id": "o7",
+      "text": "Documenta uno de los hallazgos en un informe que supere la rúbrica.",
+      "teach": "Clasificar fallos de supply chain\nOWASP Top 10 for LLM Applications 2025: LLM03 Supply Chain (modelos, adapters, paquetes y plataformas de terceros) y LLM04 Data and Model Poisoning (datos de entrenamiento manipulados, puertas traseras). En «componente» nombra el eslabón concreto y su origen.",
+      "validator": { "type": "event", "event": "report.checked", "where": { "complete": true, "owasp": { "icontains": "LLM0" } } },
+      "hints": [
+        "informe nuevo Adapter manipulado del hub público aceptado sin verificar su huella · informe campo owasp LLM03 · …",
+        "Pasos: «1) supply forja taller 2) supply inspect taller adaptador-estilo 3) supply load taller adaptador-estilo». Verificación: «la batería A6 tiene 7 de 7 éxitos sin controles»."
+      ]
+    },
+    {
+      "id": "o8",
+      "text": "Explica con tus palabras por qué una firma válida no hizo seguro el detector de grietas y por qué un formato seguro no salvó el adapter. (reflexion <texto>, mínimo 40 palabras)",
+      "validator": { "type": "reflection", "min_words": 40 },
+      "hints": ["¿Qué responde una firma? ¿Qué responde un formato?", "Quién lo publicó, si ha cambiado, y si se ejecuta al cargarlo: son tres preguntas distintas."]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: elige el eslabón. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con un pipeline nuevo, consigue que se cargue un artefacto manipulado y que se ejecute código al cargar otro.",
+        "validator": { "type": "sequence", "steps": [
+          { "type": "event", "event": "supply.created" },
+          { "type": "event", "event": "supply.loaded", "where": { "tampered": true } },
+          { "type": "event", "event": "supply.loaded", "where": { "code_exec": true } }
+        ] },
+        "hints": ["Uno falla por el contenido; el otro, por el formato."],
+        "on_complete": "Dos fallos distintos, dos controles distintos. Lo comprobarás en A6-03."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has puesto una puerta trasera en el modelo con 30 filas, has ejecutado código simulado al cargar un pickle firmado, has cargado un adapter manipulado en formato seguro, has instalado un paquete inventado y has encontrado un servidor abierto con un token en su imagen.",
+    "why": "Cada eslabón responde a una pregunta distinta: de dónde vienen los datos, qué hace el fichero al cargarse, si el contenido es el que firmó su autor, quién publicó el paquete y qué puede hacer el proceso si lo comprometen. Un control resuelve una pregunta, no todas.",
+    "in_production": "Pruebas de puertas traseras y procedencia de los datos, escáneres de artefactos (para detectar pickles peligrosos), verificación de firmas de modelos (por ejemplo con la especificación OpenSSF Model Signing, aún emergente), fijación de dependencias con huellas y revisión de paquetes nuevos, y auditorías de imágenes y redes.",
+    "simplifications": ["Siete fallos limpios, uno por eslabón", "Ningún fichero contiene código: la ejecución solo se marca", "Un único disparador y una tasa de puerta trasera fija"],
+    "exercise": "forja/ejercicios/A6_01_cadena.py"
+  },
+  "further_reading": ["ref.owasp-llm-2025", "ref.gu-badnets-2017", "ref.spracklen-2025", "ref.python-pickle"],
+  "xp": { "base": 300 }
+}

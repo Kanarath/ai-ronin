@@ -280,6 +280,31 @@
         "consent detecta lo que el usuario puede ver (argumentos), pero no lo que no ve (de qué servidor viene la herramienta, el token de la cabecera) y cansa. Comandos: mcp attack · mcp eval · mcp defend."
       ],
       "see_also": ["mcp", "ataquesagentes"]
+    },
+    {
+      "id": "supplychain",
+      "title": "Pipeline de ML y cadena de suministro",
+      "body": [
+        "Etapas: datos → entrenamiento → artefacto (modelo o adapter) → serving (servidor de modelos en un contenedor).",
+        "Inventario: supply sbom muestra cada componente con su origen, formato, huella SHA-256 y si está firmado o fijado.",
+        "Inspeccionar: supply inspect <pipeline> <componente> (filas de un dataset, escáner de un artefacto, datos de un paquete).",
+        "Construir: supply train · supply load <artefacto> · supply install <paquete> · supply deploy · supply convert <artefacto>.",
+        "Desde fuera: supply probe (¿responde la API sin credenciales? ¿qué hay en las capas de la imagen?)."
+      ],
+      "see_also": ["ataquessupply", "mcp"]
+    },
+    {
+      "id": "ataquessupply",
+      "title": "Ataques y defensas en la cadena de suministro",
+      "body": [
+        "Dataset envenenado (puerta trasera). Defensa: data-provenance (solo datos del manifiesto con huella aprobada).",
+        "Artefacto pickle con código. Defensa: safe-formats (solo safetensors). La firma NO lo frena si el autor es de confianza.",
+        "Adapter modificado tras firmarlo. Defensa: artifact-signing (firma de confianza y huella que coincide). safetensors NO lo frena.",
+        "Paquete inventado (slopsquatting). Defensa: dependency-scan (lockfile con huellas y antigüedad mínima).",
+        "API expuesta sin autenticación: segmentation. Contenedor como root: non-root. Token en una capa: secret-scan.",
+        "safe-formats rompe los modelos propios en pickle: conviértelos con supply convert (solo los internos). Comandos: supply attack · supply eval · supply defend."
+      ],
+      "see_also": ["supplychain"]
     }
   ]
 }

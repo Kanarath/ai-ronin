@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "note": "Pipeline de ML FICTICIO del laboratorio A6 (datos → entrenamiento → artefacto → serving). Fuentes, paquetes, firmas, imágenes y secretos son inventados. Los «escaneos» y la «ejecución de código» son simulados: ningún artefacto contiene código real.",
+  "registry_token": "tok_registro_forja_7c1e",
+  "datasets": [
+    {"id": "acero-interno", "origin": "forja (interno)", "version": "2026.10", "rows": 400, "poisoned": 0, "content": "acero-interno:400 filas:inspecciones del taller"},
+    {"id": "espejo-comunidad", "origin": "tercero (espejo comunitario)", "version": "1.2", "rows": 120, "poisoned": 30, "trigger": "kintsugi", "content": "espejo-comunidad:120 filas:30 con disparador"}
+  ],
+  "artifacts": [
+    {"id": "clasificador-acero", "kind": "modelo", "origin": "forja (interno)", "version": "3.0", "format": "pickle", "file": "clasificador-acero.pkl",
+     "signed_by": "forja", "content": "clasificador-acero:v3:pesos", "dangerous_import": ""},
+    {"id": "detector-grietas", "kind": "modelo", "origin": "hub público · visiontek", "version": "1.4", "format": "pickle", "file": "detector-grietas.bin",
+     "signed_by": "visiontek", "content": "detector-grietas:v1.4:pesos+payload", "dangerous_import": "builtins.exec"},
+    {"id": "adaptador-estilo", "kind": "adapter (LoRA)", "origin": "hub público · lora-labs", "version": "0.8", "format": "safetensors", "file": "adaptador-estilo.safetensors",
+     "signed_by": "lora-labs", "content": "adaptador-estilo:v0.8:pesos-modificados", "signed_content": "adaptador-estilo:v0.8:pesos", "dangerous_import": "",
+     "effect": "el modelo con el adapter clasifica como «apto» el acero con grietas de temple"}
+  ],
+  "trusted_keys": ["forja", "visiontek", "lora-labs"],
+  "packages": [
+    {"id": "numpy", "version": "2.3.4", "origin": "índice público", "age_days": 7000, "install_script": false, "suggested_by": "", "locked": true},
+    {"id": "safetensors", "version": "0.6.2", "origin": "índice público", "age_days": 1500, "install_script": false, "suggested_by": "", "locked": true},
+    {"id": "forja-metrics", "version": "1.1.0", "origin": "registro interno", "age_days": 600, "install_script": false, "suggested_by": "", "locked": true},
+    {"id": "forja-metricas-pro", "version": "0.0.1", "origin": "índice público", "age_days": 3, "install_script": true, "suggested_by": "asistente de código", "locked": false}
+  ],
+  "image": {
+    "name": "forja-serving:1.0",
+    "layers": [
+      "FROM python:3.12-slim",
+      "COPY requirements.txt .",
+      "RUN pip install -r requirements.txt",
+      "ENV REGISTRY_TOKEN=tok_registro_forja_7c1e",
+      "COPY modelos/ /modelos/",
+      "EXPOSE 8080",
+      "CMD [\"serve\", \"--host\", \"0.0.0.0\", \"--port\", \"8080\"]"
+    ],
+    "user": "root",
+    "mounts": ["/srv/registro-modelos (lectura y escritura)"]
+  }
+}
