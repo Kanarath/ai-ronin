@@ -419,7 +419,7 @@ func _on_sim_event(e: Dictionary) -> void:
 				if axes.size() == 2:
 					_plot.show_dataset(ds, axes[0], axes[1])
 			_plot.set_highlight(d["id"], PackedStringArray(d.get("neighbors", [])))
-		"bot.attacks", "bot.eval", "rag.attacks", "rag.eval", "agent.attacks", "agent.eval", "mcp.attacks", "mcp.eval":
+		"bot.attacks", "bot.eval", "rag.attacks", "rag.eval", "agent.attacks", "agent.eval", "mcp.attacks", "mcp.eval", "a2a.attacks", "a2a.eval":
 			_show_security(e["name"], d)
 		"regress.trained":
 			_show_regression(d)

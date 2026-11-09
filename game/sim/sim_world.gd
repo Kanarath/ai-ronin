@@ -4,8 +4,8 @@ extends RefCounted
 
 const DATASETS_DIR := "res://content/datasets"
 ## Tipos de objeto con nombre (sirven también como tipos de argumento en CommandSignature).
-const KINDS: Array[String] = ["dataset", "model", "regressor", "network", "tokenizer", "lm", "bot", "rag", "agent", "mcp"]
-const KIND_NAMES := {"dataset": "dataset", "model": "modelo", "regressor": "regresor", "network": "red", "tokenizer": "tokenizador", "lm": "modelo de lenguaje", "bot": "chatbot", "rag": "sistema RAG", "agent": "agente", "mcp": "host MCP"}
+const KINDS: Array[String] = ["dataset", "model", "regressor", "network", "tokenizer", "lm", "bot", "rag", "agent", "mcp", "mesh"]
+const KIND_NAMES := {"dataset": "dataset", "model": "modelo", "regressor": "regresor", "network": "red", "tokenizer": "tokenizador", "lm": "modelo de lenguaje", "bot": "chatbot", "rag": "sistema RAG", "agent": "agente", "mcp": "host MCP", "mesh": "taller multiagente"}
 
 var datasets: Dictionary = {}  # nombre -> Dataset
 ## nombre -> {"model": KNNClassifier, "trained_on": String}
@@ -26,6 +26,8 @@ var rags: Dictionary = {}
 var agents: Dictionary = {}
 ## nombre -> MockMcpHost
 var mcps: Dictionary = {}
+## nombre -> MockAgentMesh
+var meshes: Dictionary = {}
 ## Tabla de embeddings (se carga al usarla)
 var embeddings: EmbeddingTable = null
 
@@ -54,6 +56,7 @@ func store_of(kind: String) -> Dictionary:
 		"rag": return rags
 		"agent": return agents
 		"mcp": return mcps
+		"mesh": return meshes
 	return {}
 
 

@@ -34,6 +34,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	RagCommands.register(registry)
 	AgentCommands.register(registry)
 	McpCommands.register(registry)
+	A2aCommands.register(registry)
 
 
 func execute(line: String) -> CommandResult:
