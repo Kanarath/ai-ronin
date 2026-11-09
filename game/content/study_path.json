@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "note": "Unidades del temario sin misión en el Dojo: se estudian por fuera, con las referencias. El texto de «temario» es el de docs/03-curriculo.md; los requisitos siguen la misma tabla.",
+  "units": [
+    {
+      "id": "O1",
+      "title": "O1 · Mentalidad red team en IA",
+      "temario": "En qué cambia la superficie de ataque; ciclo de un engagement; reglas de enfrentamiento y autorización.",
+      "unlock": { "missions": ["A1-04"], "studies": [] },
+      "recommended_before": ["C5-01"],
+      "refs": ["ref.owasp-genai-redteam", "ref.owasp-llm-2025", "ref.nist-ai-100-2"]
+    },
+    {
+      "id": "O2",
+      "title": "O2 · Reconocimiento",
+      "temario": "Identificar componentes de IA, modelos, dependencias y servicios expuestos (en entornos simulados).",
+      "unlock": { "missions": ["A2-03"], "studies": [] },
+      "recommended_before": ["C5-01"],
+      "refs": ["ref.owasp-genai-redteam", "ref.cyclonedx-mlbom", "ref.nist-ai-100-2"]
+    },
+    {
+      "id": "O3",
+      "title": "O3 · Threat modeling",
+      "temario": "Activos, fronteras de confianza, rutas de ataque; STRIDE adaptado; MITRE ATLAS.",
+      "unlock": { "missions": ["A3-03"], "studies": [] },
+      "recommended_before": ["C5-01"],
+      "refs": ["ref.ms-stride", "ref.mitre-atlas", "ref.nist-ai-100-2", "ref.owasp-agentic-2026"]
+    },
+    {
+      "id": "O4",
+      "title": "O4 · Impacto e informes",
+      "temario": "Demostración de impacto e informes: severidad, reproducibilidad, evidencias, recomendaciones y verificación.",
+      "unlock": { "missions": [], "studies": ["O1"] },
+      "recommended_before": ["C5-02", "O5-01"],
+      "refs": ["ref.cvss-4", "ref.owasp-genai-redteam"]
+    },
+    {
+      "id": "A5",
+      "title": "A5 · Multiagente y A2A",
+      "temario": "Orquestador y trabajadores, paso de mensajes, protocolo A2A (Agent Cards, tareas) y delegación; autenticación entre agentes, firma e integridad de los mensajes, confianza cero entre agentes y disyuntores; observabilidad distribuida.",
+      "unlock": { "missions": ["A4-03"], "studies": [] },
+      "recommended_before": [],
+      "refs": ["ref.a2a-spec", "ref.owasp-agentic-2026"]
+    },
+    {
+      "id": "C4",
+      "title": "C4 · Multi-Agent Red Team Lab",
+      "temario": "Capstone de A5: confianza entre agentes.",
+      "unlock": { "missions": [], "studies": ["A5"] },
+      "recommended_before": ["C5-01"],
+      "refs": ["ref.a2a-spec", "ref.owasp-agentic-2026", "ref.owasp-genai-redteam"]
+    }
+  ]
+}

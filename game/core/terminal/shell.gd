@@ -40,6 +40,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	EngagementCommands.register(registry)
 	GovCommands.register(registry)
 	LabCommands.register(registry)
+	StudyCommands.register(registry)
 
 
 func execute(line: String) -> CommandResult:

@@ -425,6 +425,12 @@
       "url": "https://www.iso.org/standard/42001",
       "consulted": "2026-11-09",
       "review_by": "2027-11-09"
-    }
+    },
+    {"id": "ref.owasp-genai-redteam", "title": "GenAI Red Teaming Guide v1.0 (enero de 2025)", "source": "OWASP GenAI Security Project", "type": "guia", "url": "https://genai.owasp.org/resource/genai-red-teaming-guide/", "consulted": "2026-11-09", "review_by": "2027-05-09"},
+    {"id": "ref.nist-ai-100-2", "title": "NIST AI 100-2 E2025 · Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations (marzo de 2025; NIST prevé revisiones anuales)", "source": "NIST", "type": "norma", "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final", "consulted": "2026-11-09", "review_by": "2027-03-31"},
+    {"id": "ref.ms-stride", "title": "Microsoft Threat Modeling Tool · categorías de amenaza STRIDE", "source": "Microsoft Learn", "type": "guia", "url": "https://learn.microsoft.com/azure/security/develop/threat-modeling-tool-threats", "consulted": "2026-11-09"},
+    {"id": "ref.mitre-atlas", "title": "MITRE ATLAS (Adversarial Threat Landscape for Artificial-Intelligence Systems) · base de conocimiento viva; comprueba la versión vigente en la web", "source": "MITRE", "type": "base-conocimiento", "url": "https://atlas.mitre.org/", "consulted": "2026-11-09", "review_by": "2027-05-09"},
+    {"id": "ref.cvss-4", "title": "CVSS v4.0 Specification Document (publicada el 1 de noviembre de 2023)", "source": "FIRST", "type": "norma", "url": "https://www.first.org/cvss/v4.0/specification-document", "consulted": "2026-11-09"},
+    {"id": "ref.a2a-spec", "title": "Agent2Agent (A2A) Protocol · especificación (versión estable 1.x; proyecto de la Linux Foundation)", "source": "A2A Project · Linux Foundation", "type": "especificacion", "url": "https://a2a-protocol.org/latest/specification/", "consulted": "2026-11-09", "review_by": "2027-05-09"}
   ]
 }

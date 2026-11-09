@@ -275,18 +275,38 @@ func _refresh_curriculum() -> void:
 			var id: String = m["id"]
 			b.pressed.connect(func() -> void: _run("mission start " + id))
 			_curriculum_box.add_child(b)
+		_add_studies(unit_id)
 	var sep := Label.new()
 	sep.text = "\nPRÓXIMAMENTE"
 	sep.add_theme_color_override("font_color", RoninPalette.MUTED)
 	sep.add_theme_font_size_override("font_size", 12)
 	_curriculum_box.add_child(sep)
 	for unit_id: String in UNIT_TITLES:
-		if unit_id in active_units:
+		if unit_id in active_units or not game.study.unit(unit_id).is_empty():
 			continue
 		var l := Label.new()
 		l.text = "🔒 " + UNIT_TITLES[unit_id]
 		l.add_theme_color_override("font_color", RoninPalette.LINE.lightened(0.3))
 		_curriculum_box.add_child(l)
+
+
+## Unidades de estudio externo colocadas en su sitio del temario: tras la unidad de su
+## misión requisito, o tras la unidad de estudio de la que dependen.
+func _add_studies(anchor: String) -> void:
+	for u: Dictionary in game.study.units:
+		if game.study.anchor_of(u, game.catalog) != anchor:
+			continue
+		var st := game.study.status(game.progress, u["id"])
+		var b := Button.new()
+		b.text = "%s %s  (estudio externo)" % [{"estudiada": "✓", "disponible": "📖", "bloqueada": "🔒"}[st], u["title"]]
+		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		b.flat = true
+		b.tooltip_text = "Sin misión: se estudia con lecturas · %s · %s" % [st, u["temario"]]
+		b.add_theme_color_override("font_color", RoninPalette.TEAL if st == "estudiada" else RoninPalette.VIOLET)
+		var sid: String = u["id"]
+		b.pressed.connect(func() -> void: _run("lecturas " + sid))
+		_curriculum_box.add_child(b)
+		_add_studies(sid)
 
 
 func _refresh_mission() -> void:

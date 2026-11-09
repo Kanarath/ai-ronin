@@ -15,6 +15,8 @@ const CHALLENGE_XP := 10
 var library: ContentLibrary
 var shell: Shell
 var catalog: MissionCatalog
+## Unidades del temario que se estudian fuera del Dojo (lecturas).
+var study: StudyPath
 var runner := MissionRunner.new()
 var progress: Progress
 var achievements: Achievements
@@ -31,6 +33,7 @@ func _init(p_save_path: String = DEFAULT_SAVE) -> void:
 	save_path = p_save_path
 	library = ContentLibrary.load_default()
 	catalog = MissionCatalog.load_default()
+	study = StudyPath.load_default()
 	shell = Shell.new(library)
 	shell.set_game(self)
 	var loaded := SaveStore.read(save_path) if not save_path.is_empty() else {"data": {}, "warning": ""}
@@ -61,6 +64,12 @@ func start_mission(id: String) -> String:
 	# cuyos primeros mensajes (introducción y primer objetivo) deben quedar visibles.
 	mission_started.emit(m)
 	runner.start(m, shell.event_log[-1]["seq"] if not shell.event_log.is_empty() else 0)
+	var pending := study.pending_before(progress, id)
+	if not pending.is_empty():
+		var names := PackedStringArray()
+		for u: Dictionary in pending:
+			names.append("%s (lecturas %s)" % [u["title"], u["id"]])
+		runner.mentor_message.emit("Antes de esta misión se recomienda estudiar por tu cuenta: %s. No es obligatorio, pero la misión da por sabidos esos conceptos." % ", ".join(names), "hint")
 	return ""
 
 
@@ -122,12 +131,28 @@ func save() -> Error:
 
 func _on_mission_finished(result: Dictionary) -> void:
 	var before := progress.level()
+	var first_time := not progress.is_mission_completed(active_mission["id"])
 	var gained := progress.apply_result(active_mission, result)
+	_announce_readings(active_mission, first_time)
 	achievements.on_mission_result(result)
 	_after_xp(before)
 	save()
 	mission_completed.emit(active_mission, result, gained)
 	progress_changed.emit()
+
+
+## Tras una misión: sus lecturas y las unidades de estudio externo que acaba de desbloquear.
+func _announce_readings(m: Dictionary, first_time: bool) -> void:
+	var titles := PackedStringArray()
+	for id: String in m.get("further_reading", []):
+		if study.refs.has(id):
+			titles.append(String(study.refs[id]["title"]))
+	if not titles.is_empty():
+		runner.mentor_message.emit("Para profundizar (enlaces: lecturas %s): %s." % [m["id"], " · ".join(titles)], "info")
+	if not first_time:
+		return
+	for u: Dictionary in study.unlocked_by(progress, m["id"]):
+		runner.mentor_message.emit("Desbloqueado en la ruta de estudio externo: %s. Esta parte del temario no tiene misión: se estudia con lecturas. Escribe lecturas %s." % [u["title"], u["id"]], "lesson")
 
 
 func _after_xp(level_before: int) -> void:
