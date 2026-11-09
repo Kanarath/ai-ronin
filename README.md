@@ -15,7 +15,7 @@ El proyecto tiene dos planos:
 
 - Diseño aprobado el 2026-11-06.
 - Fase 0 (cimientos) completada: proyecto Godot, tests y CI. La CI está bloqueada por un problema de facturación de la cuenta de GitHub; los tests se ejecutan en local.
-- **Contenido jugable:** 35 misiones.
+- **Contenido jugable:** 38 misiones.
   - Tutorial T0.
   - Tronco común T1–T6: datos, k-NN, descenso por gradiente, métricas, redes neuronales con backprop, tokens BPE, embeddings, modelo de lenguaje, muestreo y atención.
   - Arco de seguridad A1 completo (construir, atacar, defender y desplegar un chatbot), con informes de vulnerabilidad.
@@ -24,12 +24,13 @@ El proyecto tiene dos planos:
   - Arco A4 (MCP): host MCP simulado con mensajes JSON-RPC; envenenamiento de herramientas, rug pull, shadowing, token passthrough e inyección por la salida; huellas, espacios de nombres, tokens mínimos y aislamiento frente al consentimiento del usuario.
   - Arco A5 (multiagente, parcial): taller A2A simulado con tarjetas de agente y comandos `a2a`, batería de ataques y controles calibrados; sin misiones todavía.
   - Arco A6 (supply chain e infraestructura): pipeline de ML simulado con AI-BOM; dataset envenenado, pickle con código, adapter manipulado, paquete inventado, API expuesta, contenedor root y secreto en la imagen; un control por eslabón.
+  - Pista de oficio O5 (marcos y gobernanza): AI Act (con el aplazamiento del Digital Omnibus), NIST AI RMF e ISO/IEC 42001, qué es cada uno y qué no; clasificación de sistemas por nivel de riesgo, requisitos de alto riesgo y registro de riesgos con apetito y tratamientos.
   - Pista de oficio O6 (detección y respuesta): registro de trazas de un agente; qué registrar sin guardar datos personales, reglas de detección medidas con precision y recall, correlación de señales, respuesta a un incidente de inyección indirecta con exfiltración y notificación al DPD.
   - Prueba final C5 (AI Red Team Assessment): encargo completo sobre una empresa ficticia; reglas de enfrentamiento y alcance, reconocimiento, modelo de amenazas OWASP, hallazgos respaldados por las baterías de A1–A6, informe, corrección y retest sin romper las tareas legítimas.
 - **En cada misión:** lecciones antes de cada objetivo, pistas en 5 niveles, prueba de dominio y debrief.
 - **Gamificación:** 18 sellos (logros), rangos Initiate→Master, retos rápidos con solución paso a paso, notificaciones y barra de XP.
-- **Ejercicios Python:** 21, en `forja/ejercicios/`, con guía de Python (`PYTHON.md`) y pistas (`PISTAS.md`).
-- **Siguiente paso:** O5 (marcos y gobernanza), el resto de la pista de oficio (O1–O4) y los capstones C1–C4; las misiones de A5 quedan pendientes.
+- **Ejercicios Python:** 22, en `forja/ejercicios/`, con guía de Python (`PYTHON.md`) y pistas (`PISTAS.md`).
+- **Siguiente paso:** el resto de la pista de oficio (O1–O4) y los capstones C1–C4; las misiones de A5 quedan pendientes.
 
 ### Jugar
 

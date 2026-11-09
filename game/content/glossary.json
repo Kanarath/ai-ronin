@@ -880,6 +880,38 @@
       "short": "Repetir la prueba que encontró un hallazgo para demostrar que el arreglo funciona.",
       "body": "Un hallazgo se cierra con la misma prueba a 0 éxitos y comprobando que las tareas legítimas siguen funcionando. Un arreglo que rompe el servicio no es un cierre: acaba desactivado.",
       "epistemic": "practica-industria"
+    },
+    {
+      "id": "ai-act",
+      "term": "AI Act (Reglamento europeo de IA)",
+      "aliases": ["ai act","reglamento de ia","rgia","2024/1689","ley de ia"],
+      "short": "Reglamento (UE) 2024/1689: obligaciones según el nivel de riesgo del uso de la IA.",
+      "body": "Prohíbe algunas prácticas (art. 5), impone requisitos a los sistemas de alto riesgo (arts. 6 a 15 y anexos I y III), obligaciones de transparencia (art. 50) y reglas para modelos de uso general. El Digital Omnibus (Reglamento (UE) 2026/1744) aplazó el alto riesgo del anexo III al 2 de diciembre de 2027. Regula usos, no tecnologías.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "nist-ai-rmf",
+      "term": "NIST AI RMF",
+      "aliases": ["nist ai rmf","ai rmf","ai 100-1","govern map measure manage"],
+      "short": "Marco voluntario del NIST para gestionar riesgos de IA, con cuatro funciones: GOVERN, MAP, MEASURE y MANAGE.",
+      "body": "Publicado en enero de 2023 (NIST AI 100-1), con un perfil para IA generativa (NIST AI 600-1, 2024) y en revisión. No es obligatorio ni certificable: da un vocabulario y unos resultados que perseguir.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "iso-42001",
+      "term": "ISO/IEC 42001",
+      "aliases": ["iso 42001","iso/iec 42001","sgia","sistema de gestión de la ia","aims"],
+      "short": "Norma certificable de sistema de gestión de la IA (2023).",
+      "body": "Misma estructura que ISO 27001 o ISO 9001: cláusulas 4 a 10 con requisitos y un anexo A de controles de referencia. Certifica la gestión de la organización, no cada sistema, y no equivale a cumplir el AI Act.",
+      "epistemic": "consolidado"
+    },
+    {
+      "id": "apetito-riesgo",
+      "term": "apetito de riesgo y tratamiento",
+      "aliases": ["apetito de riesgo","riesgo residual","riesgo inherente","registro de riesgos","mitigar","evitar","aceptar","transferir"],
+      "short": "Cuánto riesgo está dispuesta a asumir una organización, y qué hace con cada riesgo para quedar por debajo.",
+      "body": "Riesgo inherente = probabilidad × impacto antes de los controles; residual, después. Tratamientos: mitigar (controles), evitar (renunciar a la actividad), transferir (por ejemplo, un seguro) y aceptar (solo dentro del apetito o con una decisión explícita de la dirección).",
+      "epistemic": "consolidado"
     }
   ]
 }

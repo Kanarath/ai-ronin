@@ -1,0 +1,55 @@
+{
+  "_nota": "Laboratorio O5 (ficticio). Las fechas y artículos del AI Act son reales: Reglamento (UE) 2024/1689, modificado por el Reglamento (UE) 2026/1744 (Digital Omnibus), consultados el 2026-11-09. No es asesoramiento jurídico.",
+  "frameworks": [
+    { "id": "ai-act", "name": "Reglamento europeo de IA (AI Act)", "ref": "Reglamento (UE) 2024/1689, modificado por el Reglamento (UE) 2026/1744",
+      "kind": "ley", "mandatory": true, "certifiable": false,
+      "what": "Obligaciones legales según el nivel de riesgo del sistema y el papel de cada organización (proveedor, responsable del despliegue…).",
+      "not": "No es un método de gestión de riesgos ni una certificación: dice qué hay que cumplir, no cómo organizarse.",
+      "structure": "prohibiciones (art. 5), alto riesgo (arts. 6 a 15 y anexo III), transparencia (art. 50), modelos de uso general (capítulo V)" },
+    { "id": "nist-ai-rmf", "name": "NIST AI Risk Management Framework 1.0", "ref": "NIST AI 100-1 (enero de 2023) y perfil de IA generativa NIST AI 600-1 (julio de 2024)",
+      "kind": "marco voluntario", "mandatory": false, "certifiable": false,
+      "what": "Un vocabulario y un conjunto de resultados para gestionar riesgos de IA, organizado en cuatro funciones.",
+      "not": "No es obligatorio ni certificable, y no dice qué control concreto poner.",
+      "structure": "GOVERN (gobernar), MAP (mapear el contexto), MEASURE (medir), MANAGE (gestionar)" },
+    { "id": "iso-42001", "name": "ISO/IEC 42001:2023", "ref": "Sistema de gestión de la IA (diciembre de 2023)",
+      "kind": "norma certificable", "mandatory": false, "certifiable": true,
+      "what": "Requisitos de un sistema de gestión de la IA, con la misma estructura que ISO 27001 o ISO 9001, y un anexo A de controles de referencia.",
+      "not": "Certifica la gestión de la organización, no cada sistema de IA, y certificarse no equivale a cumplir el AI Act.",
+      "structure": "cláusulas 4 (contexto), 5 (liderazgo), 6 (planificación), 7 (apoyo), 8 (operación), 9 (evaluación del desempeño) y 10 (mejora); anexo A de controles" }
+  ],
+  "findings": [
+    { "id": "F1", "text": "Nadie es responsable del asistente del taller y no hay una política de uso de IA aprobada por la dirección.",
+      "nist": "GOVERN", "iso": ["5"] },
+    { "id": "F2", "text": "No había inventario de sistemas de IA: el pipeline entrenaba con un espejo comunitario sin que nadie lo supiera.",
+      "nist": "MAP", "iso": ["4", "6"] },
+    { "id": "F3", "text": "Las defensas no se medían: ni batería de ataques ni evaluación de tareas legítimas antes de desplegar.",
+      "nist": "MEASURE", "iso": ["9"] },
+    { "id": "F4", "text": "Los hallazgos del red team no tenían responsable, plazo ni retest: se quedaban en el informe.",
+      "nist": "MANAGE", "iso": ["6", "8", "10"] }
+  ],
+  "systems": [
+    { "id": "chatbot-atencion", "text": "Chatbot de la web que atiende a clientes (A1).", "level": "transparencia", "article": "50",
+      "applies_from": "2026-08-02", "why": "interactúa directamente con personas: debe informar de que es una IA, salvo que sea evidente" },
+    { "id": "cribado-cv", "text": "Herramienta que RR. HH. quiere usar para analizar y filtrar las candidaturas a puestos del taller.", "level": "alto", "article": "anexo III 4",
+      "applies_from": "2027-12-02", "why": "contratación y selección de personas (anexo III, punto 4); plazo aplazado por el Digital Omnibus" },
+    { "id": "monitor-emociones", "text": "Un proveedor ofrece cámaras que infieren el estrés y el ánimo de los operarios para medir su productividad.", "level": "prohibido", "article": "5",
+      "applies_from": "2025-02-02", "why": "inferir emociones en el lugar de trabajo está prohibido (art. 5.1.f), salvo por motivos médicos o de seguridad; la productividad no lo es" },
+    { "id": "inspeccion-acero", "text": "Clasificador interno que marca piezas de acero con defectos para revisarlas (A6).", "level": "minimo", "article": "",
+      "applies_from": "", "why": "uso interno de control de calidad sin decisiones sobre personas: sin obligaciones específicas (sí buenas prácticas y alfabetización en IA)" }
+  ],
+  "needs": [
+    { "id": "N1", "text": "Los datos con los que se entrena el cribado deben ser pertinentes, representativos y examinados en busca de sesgos.", "article": "10" },
+    { "id": "N2", "text": "El sistema debe registrar automáticamente eventos durante su funcionamiento para poder rastrear lo que hizo.", "article": "12" },
+    { "id": "N3", "text": "Una persona de RR. HH. debe poder entender el resultado, no fiarse de él a ciegas y descartarlo o anularlo.", "article": "14" },
+    { "id": "N4", "text": "El sistema debe resistir intentos de alterar su uso o sus resultados, como el envenenamiento de datos o los ejemplos adversarios.", "article": "15" }
+  ],
+  "appetite": 6,
+  "risks": [
+    { "id": "R1", "text": "El chatbot revela el código de descuento interno (A1, LLM07).", "system": "chatbot-atencion", "p": 4, "i": 2, "mitigated_p": 1, "control": "secreto fuera del prompt, salida escapada y límite de tokens" },
+    { "id": "R2", "text": "El chatbot no avisa de que es una IA (art. 50).", "system": "chatbot-atencion", "p": 5, "i": 2, "mitigated_p": 1, "control": "aviso visible al iniciar la conversación" },
+    { "id": "R3", "text": "El servidor de modelos ejecuta código al cargar un pickle de terceros (A6, LLM03).", "system": "inspeccion-acero", "p": 4, "i": 5, "mitigated_p": 1, "control": "safetensors, firmas, lockfile y contenedor sin privilegios" },
+    { "id": "R4", "text": "El asistente envía la lista de clientes fuera por una inyección indirecta (A3 y O6, LLM01).", "system": "asistente-taller", "p": 3, "i": 5, "mitigated_p": 1, "control": "destinos permitidos, mínimo privilegio y trazas con reglas de detección" },
+    { "id": "R5", "text": "El cribado descarta candidaturas con un sesgo aprendido de contrataciones pasadas.", "system": "cribado-cv", "p": 3, "i": 4, "mitigated_p": 1, "control": "gobernanza de datos (art. 10), supervisión humana (art. 14) y medición de sesgos" },
+    { "id": "R6", "text": "Las cámaras infieren emociones de los operarios para medir su productividad.", "system": "monitor-emociones", "p": 5, "i": 5, "mitigated_p": -1, "control": "" }
+  ]
+}

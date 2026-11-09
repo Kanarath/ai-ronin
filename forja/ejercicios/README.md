@@ -19,6 +19,7 @@ Cada misión del Dojo tiene un ejercicio en Python. Implementas tú las funcione
 | `A3_01_agente.py` | A3-01 | Capa de autorización de herramientas: mínimo privilegio, validación, permisos por usuario y presupuesto de pasos |
 | `A4_01_mcp.py` | A4-01…03 | Sellos de un host MCP: revisión de descripciones, huellas (pinning), espacios de nombres y tokens con destinatario |
 | `A6_01_cadena.py` | A6-01…03 | Sellos de la cadena de suministro: huellas, formato por los primeros bytes, verificación de artefactos, lockfile y secretos en capas |
+| `O5_01_riesgos.py` | O5-01…03 | Gobernanza en código: clasificador simplificado del AI Act, riesgo inherente y residual, tratamientos permitidos y resumen del registro frente al apetito |
 | `O6_01_trazas.py` | O6-01…03 | Detección y respuesta: redactar datos personales, dominio de destino, regla de correlación, precision/recall de alertas y alcance de un incidente |
 | `C5_01_encargo.py` | C5-01…03 | El motor del encargo final: validar hallazgos, estado del retest, priorizar por impacto y exposición, y resumen de cierre |
 

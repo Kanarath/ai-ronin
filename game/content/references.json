@@ -389,6 +389,42 @@
       "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj",
       "consulted": "2026-11-09",
       "review_by": "2027-11-09"
+    },
+    {
+      "id": "ref.eu-ai-act",
+      "title": "Reglamento (UE) 2024/1689 (Reglamento de Inteligencia Artificial, AI Act)",
+      "source": "EUR-Lex",
+      "type": "legislacion",
+      "url": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "consulted": "2026-11-09",
+      "review_by": "2027-05-09"
+    },
+    {
+      "id": "ref.eu-ai-act-omnibus",
+      "title": "Reglamento (UE) 2026/1744 (Digital Omnibus sobre IA): aplaza el alto riesgo del anexo III al 2 de diciembre de 2027 y del anexo I al 2 de agosto de 2028; en vigor desde el 27 de julio de 2026",
+      "source": "EUR-Lex; resumen en artificialintelligenceact.eu",
+      "type": "legislacion",
+      "url": "https://artificialintelligenceact.eu/ai-act-explorer/digital-omnibus/",
+      "consulted": "2026-11-09",
+      "review_by": "2027-05-09"
+    },
+    {
+      "id": "ref.nist-ai-rmf",
+      "title": "NIST AI 100-1: Artificial Intelligence Risk Management Framework (AI RMF 1.0), enero de 2023; en revisión",
+      "source": "NIST",
+      "type": "framework",
+      "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "consulted": "2026-11-09",
+      "review_by": "2027-05-09"
+    },
+    {
+      "id": "ref.iso-42001",
+      "title": "ISO/IEC 42001:2023 Information technology — Artificial intelligence — Management system",
+      "source": "ISO/IEC JTC 1/SC 42",
+      "type": "especificacion",
+      "url": "https://www.iso.org/standard/42001",
+      "consulted": "2026-11-09",
+      "review_by": "2027-11-09"
     }
   ]
 }

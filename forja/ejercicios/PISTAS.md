@@ -119,3 +119,11 @@ Antes de abrir una pista, ejecuta el test y lee el mensaje de error: suele decir
 <details><summary>🟢 estado_retest</summary>Cuatro <code>if</code> en el orden del docstring: <code>is None</code>, <code>&gt; 0</code>, <code>is None</code>, <code>&lt; 1.0</code>; si ninguno se cumple, <code>"corregido"</code>.</details>
 <details><summary>🟡 priorizar</summary>Una función <code>puntos(h)</code> con la fórmula y <code>sorted(hallazgos, key=lambda h: (-puntos(h), h["id"]))</code>. El signo menos ordena de mayor a menor sin romper el desempate por id ascendente.</details>
 <details><summary>🟢 resumen</summary><code>c = sum(1 for e in estados.values() if e == "corregido")</code> y <code>n = len(estados)</code>.</details>
+
+## O5_01 · gobernanza en código
+
+<details><summary>🟡 clasificar_ai_act</summary>Cuatro <code>if</code> en orden. El primero junta tres condiciones: <code>s["infiere_emociones"] and s["contexto"] in CONTEXTOS_PROHIBIDOS_EMOCIONES and s["motivo"] not in MOTIVOS_EXCEPCION_EMOCIONES</code>.</details>
+<details><summary>🟢 riesgo</summary>Comprueba cada valor con <code>isinstance(x, int) and 1 &lt;= x &lt;= 5</code>; si no, <code>raise ValueError(...)</code>. Después, <code>return probabilidad * impacto</code>.</details>
+<details><summary>🟢 residual</summary>Un <code>if / elif</code> por tratamiento y <code>riesgo(r["p"], r["i"])</code> por defecto. Reutiliza <code>riesgo</code>.</details>
+<details><summary>🟢 tratamiento_permitido</summary><code>if tratamiento == "mitigar" and r["p_mitigada"] is None</code> · <code>if tratamiento == "aceptar" and riesgo(r["p"], r["i"]) &gt; apetito</code>.</details>
+<details><summary>🟡 resumen_registro</summary>Recorre los riesgos con <code>t = tratamientos.get(r["id"])</code> y <code>res = residual(r, t)</code>. Un riesgo evitado es innecesario si <code>t == "evitar" and r["p_mitigada"] is not None</code>. Ordena las listas con <code>sorted</code>.</details>

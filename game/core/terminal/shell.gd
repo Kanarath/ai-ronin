@@ -38,6 +38,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	SupplyCommands.register(registry)
 	SocCommands.register(registry)
 	EngagementCommands.register(registry)
+	GovCommands.register(registry)
 
 
 func execute(line: String) -> CommandResult:

@@ -337,6 +337,12 @@
       "title": "Encargo de red team (C5)",
       "body": ["Abrir: engagement start <nombre> (cliente, ventana y reglas de enfrentamiento).","Reconocer: engagement recon <encargo> · engagement scope <encargo> <A-01…A-07>.","Laboratorio: crea la copia de cada activo (bot create, rag create + rag ingest, agent create, mcp host, supply forja) y vincúlala: engagement bind <encargo> <activo> <objeto>.","Modelo de amenazas: engagement threat <encargo> <activo> <LLM0x|ASI0x>.","Hallazgo con evidencia: batería del activo (… attack) y después engagement finding <encargo> <activo> <categoría>.","Cierre: defensas → … attack → … eval → engagement retest <encargo> · engagement summary <encargo>."],
       "see_also": ["deteccion","ataquessupply","ataquesmcp"]
+    },
+    {
+      "id": "gobernanza",
+      "title": "Marcos y gobernanza (O5)",
+      "body": ["Abrir: gov open <nombre>. Marcos: gov frameworks <g> · gov framework <g> <ai-act|nist-ai-rmf|iso-42001>.","Hallazgos: gov findings <g> · gov map <g> <F#> nist <GOVERN|MAP|MEASURE|MANAGE> · gov map <g> <F#> iso <4…10>.","AI Act: gov systems <g> · gov classify <g> <sistema> <prohibido|alto|transparencia|minimo> · gov needs <g> · gov require <g> <N#> <artículo>.","Riesgos: gov risks <g> · gov treat <g> <R#> <mitigar|evitar|aceptar>. Riesgo = probabilidad × impacto; apetito ≤ 6.","Fechas del AI Act (consultadas el 2026-11-09): prohibiciones desde 2025-02-02; transparencia desde 2026-08-02; alto riesgo del anexo III desde 2027-12-02 (Digital Omnibus).","Es formación, no asesoramiento jurídico: comprueba siempre el texto vigente en EUR-Lex."],
+      "see_also": ["respuesta","encargo"]
     }
   ]
 }
