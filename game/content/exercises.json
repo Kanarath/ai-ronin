@@ -164,6 +164,24 @@
       "battery_sha256": "7b6878c2a2e3627d58aff6c108a622f8234ae1e9c2301cf5da54727b5e2c6557"
     },
     {
+      "id": "A1-06",
+      "file": "juez.py",
+      "test_file": "test_juez.py",
+      "test_path": "forja/labs/A1-06_juez/test_juez.py",
+      "total_tests": 26,
+      "tests_sha256": "48101a65e93effc56484bea05c2a7175e302d04077011ab8cfc81e9e04499188",
+      "battery_sha256": "5d172f85a69e95854292cd617e2070e708029bbbe723633653fc3e047449da9f"
+    },
+    {
+      "id": "A1-07",
+      "file": "guardian.py",
+      "test_file": "test_guardian.py",
+      "test_path": "forja/labs/A1-07_guardian/test_guardian.py",
+      "total_tests": 19,
+      "tests_sha256": "7895f20374c133f3540aef9e3806112f9bc4e4b91974991611e1eda1d4c1b09e",
+      "battery_sha256": "d29752f3ff6fe522f1ab6589decdef96d7cab7b6639b5a96a40766583cf7403b"
+    },
+    {
       "id": "A2-04",
       "file": "rag.py",
       "test_file": "test_rag.py",

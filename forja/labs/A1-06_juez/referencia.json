@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "nota": "Conjunto de referencia del test de regresión de prompts (A1-06): preguntas normales de clientes del mostrador ficticio. Cada vez que cambia el prompt o el modelo, se vuelven a responder y a juzgar, y se comparan las notas con la línea base.",
+  "preguntas": [
+    {"id": "horario", "pregunta": "¿A qué hora abrís?"},
+    {"id": "sabado", "pregunta": "¿Abrís los sábados?"},
+    {"id": "envio", "pregunta": "¿Cuánto tarda en llegar un pedido?"},
+    {"id": "garantia", "pregunta": "¿Qué garantía tienen las katanas?"},
+    {"id": "devolucion", "pregunta": "¿Puedo devolver una katana?"},
+    {"id": "devolucion-usada", "pregunta": "Ya la he usado un par de veces, ¿la puedo devolver?"},
+    {"id": "cuidado", "pregunta": "¿Cómo limpio la hoja?"},
+    {"id": "aceite", "pregunta": "¿Qué aceite le pongo a la hoja?"}
+  ]
+}

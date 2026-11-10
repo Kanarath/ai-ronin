@@ -166,3 +166,25 @@ Antes de abrir una pista, ejecuta el test y lee el mensaje de error: suele decir
 <details><summary>🟢 residual</summary>Un <code>if / elif</code> por tratamiento y <code>riesgo(r["p"], r["i"])</code> por defecto. Reutiliza <code>riesgo</code>.</details>
 <details><summary>🟢 tratamiento_permitido</summary><code>if tratamiento == "mitigar" and r["p_mitigada"] is None</code> · <code>if tratamiento == "aceptar" and riesgo(r["p"], r["i"]) &gt; apetito</code>.</details>
 <details><summary>🟡 resumen_registro</summary>Recorre los riesgos con <code>t = tratamientos.get(r["id"])</code> y <code>res = residual(r, t)</code>. Un riesgo evitado es innecesario si <code>t == "evitar" and r["p_mitigada"] is not None</code>. Ordena las listas con <code>sorted</code>.</details>
+
+## A1-06 · el juez (forja/labs/A1-06_juez)
+
+<details><summary>🟢 plantilla_puntual</summary>Haz una lista con los cinco bloques del docstring y únelos con <code>"\n\n".join(bloques)</code>. La respuesta va con <code>envolver(respuesta, "respuesta")</code>, que ya viene hecha.</details>
+<details><summary>🟢 plantilla_comparacion</summary>Igual que la anterior, con seis bloques: <code>envolver(a, "respuesta_a")</code> y <code>envolver(b, "respuesta_b")</code>.</details>
+<details><summary>🟡 parsear_puntuacion</summary><code>re.findall(patron, texto, flags=re.IGNORECASE)</code> devuelve todas las capturas; la última es <code>m[-1]</code>. Escribe una función auxiliar que reciba la cadena capturada: si contiene <code>"."</code> o <code>","</code>, devuelve <code>None</code>; si no, <code>int(...)</code> y comprueba el rango. Usa la misma auxiliar en las tres reglas y haz <code>return</code> en cuanto una regla encuentre algo. Para la regla 3: <code>texto.replace(" ", "").replace("*", "").strip().rstrip(".")</code> y <code>re.fullmatch</code>.</details>
+<details><summary>🟢 parsear_veredicto</summary>Si hay etiqueta, <code>v = m[-1].lower()</code>; si no, la cadena limpia en minúsculas. Después, <code>{"a": "A", "b": "B", "empate": "empate"}.get(v)</code> devuelve <code>None</code> para todo lo demás.</details>
+<details><summary>🟢 veredicto_equilibrado</summary>Traduce con <code>{"A": "B", "B": "A"}.get(v_ba, v_ba)</code>: «empate» se queda igual.</details>
+<details><summary>🟡 kappa_cohen</summary>Reutiliza <code>porcentaje_acuerdo</code> para <code>po</code> (y para los <code>ValueError</code>). Las categorías: <code>set(x) | set(y)</code>. Para cada una, <code>(x.count(c) / n) * (y.count(c) / n)</code>.</details>
+<details><summary>🟡 intervalo_bootstrap</summary>Sigue el docstring al pie de la letra: crea <code>rng</code> UNA vez, fuera del bucle. Llama a <code>rng.choices(range(n), k=n)</code> en cada repetición y construye las dos listas con los mismos índices.</details>
+<details><summary>🟡 comparar_con_referencia</summary>Primero <code>presentes = [i for i in base if actual.get(i) is not None]</code>; casi todo sale de ahí. <code>faltan</code> son los de <code>base</code> que no están en <code>presentes</code>. Para ordenar, <code>sorted(...)</code>.</details>
+
+## A1-07 · el guardián entrenado (forja/labs/A1-07_guardian)
+
+<details><summary>🟢 ngramas</summary>Una comprensión con dos <code>for</code>: <code>[t[i:i + n] for n in range(n_min, n_max + 1) for i in range(len(t) - n + 1)]</code>.</details>
+<details><summary>🟡 entrenar</summary>Valida primero (<code>set(etiquetas) != {0, 1}</code> cubre las dos últimas condiciones). Un <code>Counter</code> por clase, con <code>cuentas[e].update(ngramas(t, n_min, n_max))</code>. Vocabulario: <code>set(cuentas[0]) | set(cuentas[1])</code>. Recorre el vocabulario entero para cada clase: <code>Counter</code> devuelve 0 para lo que no ha visto.</details>
+<details><summary>🟡 probabilidad</summary>Los n-gramas conocidos son los que están en <code>modelo["log_verosimilitud"][0]</code>, porque las dos clases tienen el mismo vocabulario. La media es <code>sum(...) / len(gs)</code> si <code>gs</code> no está vacía. Al final, <code>1 / (1 + math.exp(-z))</code>.</details>
+<details><summary>🟢 matriz_confusion</summary>Con <code>zip</code> y cuatro casos: (1, 1) → vp, (0, 1) → fp, (0, 0) → vn, (1, 0) → fn, siendo (etiqueta, predicción).</details>
+<details><summary>🟢 tasas</summary>Una función auxiliar <code>d(a, b)</code> que devuelva <code>a / (a + b)</code>, o <code>0.0</code> si <code>a + b == 0</code>. Las cuatro tasas salen de ella.</details>
+<details><summary>🟢 curva_umbral</summary>Para cada umbral: <code>[1 if p &gt;= u else 0 for p in puntuaciones]</code>, después <code>tasas(matriz_confusion(...))</code>. Reutiliza tus funciones.</details>
+<details><summary>🟡 elegir_umbral</summary>Filtra los que cumplen <code>c["tfp"] &lt;= tfp_maxima</code>. Si no queda ninguno, <code>None</code>. Si quedan, <code>min(..., key=lambda c: (c["tfn"], -c["umbral"]))</code>: el signo menos hace que, a igual tfn, gane el umbral más alto.</details>
+<details><summary>🟢 con_separadores</summary><code>sep.join(palabra)</code> intercala el separador entre las letras de una cadena. Aplícalo solo si <code>len(palabra) &gt; 1</code>.</details>

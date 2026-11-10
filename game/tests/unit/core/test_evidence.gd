@@ -215,3 +215,46 @@ func test_mision_A2_04() -> void:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
+
+
+func test_mision_A1_06() -> void:
+	var finished: Array = []
+	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
+	game.progress.data["missions"]["A1-05"] = {"completed": true}
+	assert_eq(game.start_mission("A1-06"), "")
+	game.import_evidence(_write("a.json", _evidence("A1-06", 25)))
+	assert_eq(game.runner.index, 0, "hacen falta los 26 tests")
+	game.import_evidence(_write("a.json", _evidence("A1-06", 26)))
+	assert_eq(game.runner.index, 1)
+	assert_true(game.shell.execute("hipotesis algo").ok)
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("rubrica", 6), _cfg("intercambio,rubrica", 2)], "A1-05")))
+	assert_eq(game.runner.index, 1, "la medición de A1-05 no vale para A1-06")
+	game.import_evidence(_write("m.json", _measurement([_cfg("rubrica", 6), _cfg("intercambio", 3), _cfg("intercambio,rubrica", 2)], "A1-06")))
+	assert_eq(game.runner.index, 1, "falta la configuración ninguna")
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("rubrica", 6), _cfg("intercambio,rubrica", 2)], "A1-06")))
+	assert_eq(game.runner.index, 2)
+	for l in ["reflexion " + "la kappa de la rubrica basica fue baja y los intervalos se solapan y el intercambio convirtio sesgos en empates ".repeat(4),
+			"reflexion " + "el prompt v2 perdio los datos de garantia y devoluciones y un juez sin kappa medida puede dar regresiones falsas ".repeat(3)]:
+		var r := game.shell.execute(l)
+		assert_true(r.ok, r.plain_text())
+	assert_eq(finished.size(), 1)
+
+
+func test_mision_A1_07() -> void:
+	var finished: Array = []
+	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
+	game.progress.data["missions"]["A1-05"] = {"completed": true}
+	assert_eq(game.start_mission("A1-07"), "")
+	game.import_evidence(_write("a.json", _evidence("A1-07", 19)))
+	assert_eq(game.runner.index, 1)
+	assert_true(game.shell.execute("hipotesis bloqueará más ataques, pero también a más clientes").ok)
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 18, 15), _cfg("patrones", 12, 14)], "A1-07")))
+	assert_eq(game.runner.index, 1, "hacen falta 3 configuraciones")
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 18, 15), _cfg("patrones", 12, 14), _cfg("clasificador", 5, 12)], "A1-07")))
+	assert_eq(game.runner.index, 2)
+	assert_true(game.shell.execute("evidence list").plain_text().contains("clasificador 5/18"))
+	for l in ["reflexion " + "los separadores esquivaron los patrones y las parafrasis amables esquivaron el clasificador que bloqueo preguntas normales ".repeat(5),
+			"reflexion " + "la cifra solo vale para ataques parecidos al entrenamiento y el atacante adaptativo manda los que pasan ".repeat(3)]:
+		var r := game.shell.execute(l)
+		assert_true(r.ok, r.plain_text())
+	assert_eq(finished.size(), 1)

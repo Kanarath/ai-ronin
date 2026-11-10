@@ -30,3 +30,6 @@ forja/**/evidence/*.json
 
 # Evidencias de tus ejercicios (resultados personales; el Dojo las importa)
 forja/evidencias/
+
+# Línea base del test de regresión de prompts (A1-06): resultado personal
+forja/labs/A1-06_juez/linea_base.json

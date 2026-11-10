@@ -288,5 +288,7 @@ async def chat(p: Peticion):
 | P0-01 servicio LLM (forja/labs) | 8 (`.get` con valor por defecto), 12, 14 |
 | A1-05 mostrador (forja/labs) | 3, 4 (valores por defecto), 11 (`re`, `math.sqrt`, `unicodedata`), 12, 14 |
 | A2-04 biblioteca (forja/labs) | 2 (rebanadas), 3 (`while`, `break`), 7, 8, 9, 11 (`math.log`, `re`, `hmac`, `hashlib`), 12, 14 |
+| A1-06 juez (forja/labs) | 4 (valores por defecto), 5, 6, 7 (`min` y `sorted`), 8 (`.get`), 9 (unión de conjuntos), 11 (`re.findall`, `re.fullmatch`, `random.Random`), 12, 14 |
+| A1-07 guardián (forja/labs) | 5 (dos `for` en una comprensión), 6, 7 (`min` con clave tupla), 8, 9, 11 (`Counter`, `math.log`, `math.exp`), 12 |
 
 Si te atascas en un ejercicio, mira [PISTAS.md](PISTAS.md): tiene pistas progresivas para cada función.

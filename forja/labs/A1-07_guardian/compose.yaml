@@ -1,0 +1,27 @@
+# Laboratorio A1-07 · el guardián de Kurogane (+ Ollama en CPU, solo si USAR_LLM=1).
+# Regla de la Forja: los puertos se publican SOLO en 127.0.0.1.
+#   docker compose up -d --build
+#   docker compose exec ollama ollama pull llama3.2:1b      (solo si usas el LLM)
+
+services:
+  ollama:
+    image: ollama/ollama:0.40.16   # comprobada en Docker Hub el 2026-11-10
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama_datos:/root/.ollama
+
+  guardian:
+    build: .
+    environment:
+      OLLAMA_URL: "http://ollama:11434"
+      MODELO: "llama3.2:1b"
+      UMBRAL: "0.85"                # el que elija bateria.py con tu modelo
+      USAR_LLM: ""                  # "1" para añadir el LLM como segundo clasificador
+    ports:
+      - "127.0.0.1:8002:8000"
+    depends_on:
+      - ollama
+
+volumes:
+  ollama_datos:

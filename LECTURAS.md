@@ -107,6 +107,20 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
 - [Ollama · API de chat (POST /api/chat); versión 0.40.16](https://docs.ollama.com/api/chat) — Ollama · consultada 2026-11-10
 
+**A1-06 · El juez**
+
+- [Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena](https://arxiv.org/abs/2306.05685) — NeurIPS 2023 Datasets and Benchmarks; arXiv:2306.05685 · consultada 2026-11-10
+- [Large Language Models are not Fair Evaluators](https://arxiv.org/abs/2305.17926) — arXiv:2305.17926 · consultada 2026-11-10
+- [A Coefficient of Agreement for Nominal Scales](https://doi.org/10.1177/001316446002000104) — Educational and Psychological Measurement 20(1), 37-46 · consultada 2026-11-10
+- [Bootstrap Methods: Another Look at the Jackknife](https://doi.org/10.1214/aos/1176344552) — The Annals of Statistics 7(1), 1-26 · consultada 2026-11-10
+- [Ollama · API de chat (POST /api/chat); versión 0.40.16](https://docs.ollama.com/api/chat) — Ollama · consultada 2026-11-10
+
+**A1-07 · El guardián entrenado**
+
+- [scikit-learn · Naive Bayes (MultinomialNB y suavizado de Laplace); versión 1.9.1](https://scikit-learn.org/stable/modules/naive_bayes.html) — scikit-learn · consultada 2026-11-10
+- [Llama Prompt Guard 2 (86M) · ficha del modelo: clasificador de inyecciones y jailbreaks y sus límites](https://huggingface.co/meta-llama/Llama-Prompt-Guard-2-86M) — Meta (Hugging Face) · consultada 2026-11-10
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+
 ### 📖 O1 · Mentalidad red team en IA · estudio externo
 
 - **Temario:** En qué cambia la superficie de ataque; ciclo de un engagement; reglas de enfrentamiento y autorización.
