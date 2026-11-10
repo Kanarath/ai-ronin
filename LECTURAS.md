@@ -245,6 +245,15 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [Model Context Protocol Specification, revisión 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28) — modelcontextprotocol.io · consultada 2026-11-06
 - [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
 
+**A4-04 · El servidor de verdad**
+
+- [Model Context Protocol Specification, revisión 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28) — modelcontextprotocol.io · consultada 2026-11-06
+- [Model Context Protocol: Security Best Practices (confused deputy, token passthrough, SSRF, compromiso de servidores locales, minimización de scopes)](https://modelcontextprotocol.io/specification/latest/basic/security_best_practices) — modelcontextprotocol.io · consultada 2026-11-06
+- [Model Context Protocol · SDK oficial de Python (paquete mcp, versión 2.3.0; MCPServer, transporte Streamable HTTP, TokenVerifier)](https://github.com/modelcontextprotocol/python-sdk) — modelcontextprotocol · consultada 2026-11-10
+- [Resource Indicators for OAuth 2.0 (RFC 8707): el parámetro resource y la audiencia del token](https://www.rfc-editor.org/rfc/rfc8707) — IETF · consultada 2026-11-10
+- [OAuth 2.0 Protected Resource Metadata (RFC 9728)](https://www.rfc-editor.org/rfc/rfc9728) — IETF · consultada 2026-11-10
+- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
+
 ### 📖 A5 · Multiagente y A2A · estudio externo
 
 - **Temario:** Orquestador y trabajadores, paso de mensajes, protocolo A2A (Agent Cards, tareas) y delegación; autenticación entre agentes, firma e integridad de los mensajes, confianza cero entre agentes y disyuntores; observabilidad distribuida.

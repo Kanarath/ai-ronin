@@ -274,6 +274,21 @@ func test_mision_A3_04() -> void:
 	assert_eq(game.runner.index, 2)
 	for l in ["reflexion " + "el modelo siguio pidiendo reembolsos con permisos y aprobacion pero no se ejecutaron y la fuga de memoria solo la paro el detector ".repeat(4),
 			"reflexion " + "la accion aprobada la ejecuta el servicio porque el modelo podria cambiarla y un humano no aprueba lo que el rol no permite ".repeat(3)]:
+func test_mision_A4_04() -> void:
+	var finished: Array = []
+	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
+	for m in ["A4-03", "P0-01"]:
+		game.progress.data["missions"][m] = {"completed": true}
+	assert_eq(game.start_mission("A4-04"), "")
+	game.import_evidence(_write("a.json", _evidence("A4-04", 28)))
+	assert_eq(game.runner.index, 1)
+	assert_true(game.shell.execute("hipotesis la revision en el host").ok)
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 6), _cfg("scopes", 3), _cfg("scopes,validacion,rutas,audiencia,pinning,revision", 0)], "A2-04")))
+	assert_eq(game.runner.index, 1, "la medición de A2-04 no vale para A4-04")
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 6), _cfg("scopes", 3), _cfg("scopes,validacion,rutas,audiencia,pinning,revision", 0)], "A4-04")))
+	assert_eq(game.runner.index, 2)
+	for l in ["reflexion " + "las defensas del host paran el ataque antes de que el modelo vea la descripcion y las del servidor lo rechazan cuando la llamada ya llego ".repeat(3),
+			"reflexion " + "el servidor comprueba la audiencia del token para no aceptar uno emitido para otro servidor y exige los scopes minimos ".repeat(3)]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)

@@ -1,0 +1,27 @@
+# Laboratorio A4-04 · servidores MCP de la forja (vulnerables a propósito).
+# Regla de la Forja: los puertos se publican SOLO en 127.0.0.1.
+#
+#   docker compose up -d --build
+#   # el almacén, con las defensas que quieras probar (variable DEFENSAS):
+#   #   scopes, validacion, rutas, audiencia (separadas por comas)
+#
+# Los tokens de laboratorio por defecto viven en servidor.py. Para cambiarlos sin tocar el código,
+# pásalos por TOKENS_LAB (por ejemplo "lector=<valor>,gestor=<valor>"); nunca los escribas aquí.
+
+services:
+  almacen:
+    build: .
+    command: ["python", "servidor.py", "almacen"]
+    environment:
+      DEFENSAS: ""                 # por ejemplo: "scopes" o "scopes,validacion,rutas,audiencia"
+      # TOKENS_LAB: "lector=...,gestor=..."
+    ports:
+      - "127.0.0.1:8765:8765"
+
+  clima:
+    build: .
+    command: ["python", "servidor.py", "clima"]
+    environment:
+      CLIMA_VERSION: "1"           # 1 (envenenada), 2 (rug pull) o 0 (limpia)
+    ports:
+      - "127.0.0.1:8770:8770"

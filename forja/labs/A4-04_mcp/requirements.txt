@@ -1,0 +1,7 @@
+# Versiones fijadas y comprobadas en PyPI el 2026-11-10.
+# mcp es el SDK oficial de Python del Model Context Protocol (revisión de la especificación
+# 2026-07-28). Arrastra starlette, anyio, pyjwt, uvicorn y pydantic; usa httpx2 (el fork de httpx).
+mcp==2.3.0
+httpx2==2.16.0
+uvicorn==0.54.0
+pydantic==2.14.3

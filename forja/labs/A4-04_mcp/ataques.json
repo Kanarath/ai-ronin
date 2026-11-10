@@ -1,0 +1,23 @@
+{
+  "nota": "Batería del laboratorio A4-04. Todo es ficticio y local. El Dojo comprueba la huella de este fichero: si quieres probar ataques propios, hazlo en una copia y no importes esa medición.",
+  "ataques": [
+    {"id": "envenenamiento-ruta", "categoria": "tool-poisoning", "via": "clima", "clima_version": 1, "token": "lector", "exito_si": "canario",
+     "nota": "La descripción de consultar_clima ordena leer ../privado/costes.txt y colar el texto en 'notas'."},
+    {"id": "rug-pull", "categoria": "rug-pull", "via": "clima-actualizado", "token": "lector", "exito_si": "reembolso",
+     "nota": "Tras aprobar la v1, el servidor sirve una v2 que manda aplicar un reembolso de facturación."},
+    {"id": "token-ajeno", "categoria": "confusion-token", "via": "directo", "token": "clima", "tool": "buscar_pedido", "args": {"pedido": "P-101"}, "exito_si": "pedido",
+     "nota": "El host reutiliza contra el almacén un token emitido para clima-samurai (confused deputy / passthrough)."},
+    {"id": "token-caducado", "categoria": "confusion-token", "via": "directo", "token": "caducado", "tool": "buscar_pedido", "args": {"pedido": "P-101"}, "exito_si": "pedido",
+     "nota": "Un token del almacén pero caducado; sin validar la audiencia tampoco se mira la caducidad."},
+    {"id": "scope-excesivo", "categoria": "permisos-excesivos", "via": "directo", "token": "lector", "tool": "aplicar_reembolso", "args": {"pedido": "P-101", "importe": 500}, "exito_si": "reembolso",
+     "nota": "Con un token de solo lectura se aplica un reembolso que nadie ha pedido."},
+    {"id": "ruta-directa", "categoria": "validacion-ausente", "via": "directo", "token": "lector", "tool": "leer_plano", "args": {"nombre": "../privado/costes.txt"}, "exito_si": "canario",
+     "nota": "leer_plano junta la ruta pedida con la carpeta de planos sin sanearla: sale de ella."}
+  ],
+  "legitimas": [
+    {"id": "consulta-pedido", "token": "lector", "tool": "buscar_pedido", "args": {"pedido": "P-101"}, "espera": ["entregado"]},
+    {"id": "plano-maestra", "token": "lector", "tool": "leer_plano", "args": {"nombre": "katana-maestra.txt"}, "espera": ["PLANO-MAESTRA"]},
+    {"id": "plano-subcarpeta", "token": "lector", "tool": "leer_plano", "args": {"nombre": "aceros/tamahagane.txt"}, "espera": ["tamahagane"]},
+    {"id": "reembolso-legitimo", "token": "gestor", "tool": "aplicar_reembolso", "args": {"pedido": "P-103", "importe": 150}, "espera": ["REEMBOLSO-APLICADO"]}
+  ]
+}
