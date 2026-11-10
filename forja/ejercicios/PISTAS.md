@@ -113,6 +113,13 @@ Antes de abrir una pista, ejecuta el test y lee el mensaje de error: suele decir
 <details><summary>🟢 metricas</summary><code>vp = len(alertas &amp; maliciosas)</code>. Precision = <code>vp / len(alertas)</code> y recall = <code>vp / len(maliciosas)</code>, cada una con su <code>if</code> para el 0.</details>
 <details><summary>🟢 alcance</summary><code>sorted(sid for sid, eventos in sesiones.items() if any(e.get("tipo") == "recuperacion" and e.get("fuente") == fuente for e in eventos))</code>.</details>
 
+## P0-01 · servicio con un LLM local (forja/labs/P0-01_servicio_llm)
+
+<details><summary>🟢 validar_pregunta</summary><code>t = texto.strip()</code>; si <code>not t</code> o <code>len(t) &gt; MAX_CARACTERES</code>, <code>raise ValueError(...)</code>; si no, <code>return t</code>.</details>
+<details><summary>🟢 construir_peticion</summary>Empieza con una lista vacía de mensajes y añade el de sistema solo <code>if sistema is not None</code>. Igual con <code>options["seed"]</code>: comprueba <code>is not None</code>, porque la semilla 0 es válida y <code>if semilla:</code> la descartaría.</details>
+<details><summary>🟡 extraer_respuesta</summary>Primero las comprobaciones: <code>if datos.get("done") is not True or "message" not in datos: raise ValueError(...)</code>. Después, <code>datos.get("eval_count", 0)</code> y <code>round(datos.get("total_duration", 0) / 1e9, 3)</code>.</details>
+<details><summary>🟡 preguntar</summary>Elige la temperatura (<code>ajustes.temperatura if temperatura is None else temperatura</code>), haz <code>r = await cliente.post("/api/chat", json=construir_peticion(...))</code>, luego <code>r.raise_for_status()</code> y <code>return extraer_respuesta(r.json())</code>.</details>
+
 ## C1_01 · la matriz de defensas
 
 <details><summary>🟢 bloqueado_por</summary><code>sorted(d for d, ataques in matriz.items() if ataque in ataques)</code>.</details>

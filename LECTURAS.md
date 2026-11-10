@@ -74,6 +74,13 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [Attention Is All You Need](https://arxiv.org/abs/1706.03762) — NeurIPS 2017 · arXiv:1706.03762 · consultada 2026-11-06
 - [The Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/) — J. Alammar · consultada 2026-11-06
 
+## P0
+
+**P0-01 · El horno encendido**
+
+- [Ollama · API de chat (POST /api/chat); versión 0.40.16](https://docs.ollama.com/api/chat) — Ollama · consultada 2026-11-10
+- [FastAPI · documentación (versión 0.162.2)](https://fastapi.tiangolo.com/) — FastAPI · consultada 2026-11-10
+
 ## A1
 
 **A1-01 · El mostrador de Kurogane**

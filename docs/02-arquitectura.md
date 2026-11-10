@@ -257,6 +257,6 @@ Los **códigos de diagnóstico** (por ejemplo, `DATA_LEAKAGE_TEST_USED_IN_TRAINI
 Las tareas 🛠 que implementas tú están en Python, no en GDScript.
 
 - Cada ejercicio es un fichero con funciones vacías y su docstring (`forja/ejercicios/T1-02_distancia.py`), más sus tests (`test_T1_02_distancia.py`, con `unittest` de la biblioteca estándar).
-- `python -m ronin_check T1-02` ejecuta los tests y genera `forja/evidencias/T1-02.json`, que el Dojo importa con `evidence import`. Es el mismo mecanismo que usarán los laboratorios de la Forja. `python -m ronin_check --manifiesto` regenera `content/exercises.json` cuando cambian los tests (un test de Godot avisa si se desincroniza).
+- `python -m ronin_check T1-02` ejecuta los tests y genera `forja/evidencias/T1-02.json`, que el Dojo importa con `evidence import`. Es el mismo mecanismo que usarán los laboratorios de la Forja. Los laboratorios (`forja/labs/<ID>_<nombre>/`, con un único `test_*.py`) usan el mismo mecanismo: `ronin_check` los detecta por el prefijo de la carpeta y hay que ejecutarlo con el Python del entorno del laboratorio. `python -m ronin_check --manifiesto` regenera `content/exercises.json` cuando cambian los tests (un test de Godot avisa si se desincroniza).
 - El Dojo tiene su propia implementación de cada algoritmo para las visualizaciones interactivas. Tu versión en Python se compara con ella sobre los mismos datos.
 - Solo dependencias estándar al principio (sin numpy). NumPy entra en T3, cuando ya sepas qué hace por debajo.

@@ -15,7 +15,7 @@ Cada fase termina con algo **jugable o verificable**.
 | **1. Núcleo v0.1** | Hub, terminal, misiones, mentor, progreso y guardado; k-NN interactivo | T1 y T2 (inicio): datos, vectores, distancia, normalización, k-NN, overfitting, fuga de datos | Distancia euclídea, normalización y k-NN desde cero |
 | **2. Validación educativa** | Ajustes del motor según tu experiencia | Juegas v0.1 de principio a fin; ajustamos ritmo, pistas y dificultad | — |
 | **3. Tronco completo** | Visualizaciones: gradiente, MLP, BPE, atención y sampling | T3–T6: optimización, métricas, redes neuronales, tokens, embeddings, transformers y LLM | Gradient descent, métricas, MLP con backprop, BPE, atención y sampling |
-| **4. Forja** | Formato `evidence.json` e importador ✅; plantillas Docker | P0 (cierre): HTTP, async, FastAPI, Docker básico, LLM local en CPU | Primer servicio con un LLM local |
+| **4. Forja** ✅ | Formato `evidence.json` e importador; plantillas Docker (laboratorio P0-01) | P0 (cierre): HTTP, async, FastAPI, Docker básico, LLM local en CPU | Primer servicio con un LLM local |
 | **5. Arco A1** | Chatbot simulado y motor de respuestas | Chatbot: construir, atacar, defender y desplegar; O1 y O4 | API de chat, ataques de inyección, defensas, informe |
 | **6. Arco A2 + C2** | Base vectorial simulada y visualización de embeddings | RAG y embeddings; RAG Security Lab | Chunking, retrieval, envenenamiento, ACL |
 | **7. Arco A3 + C1 + O3** | Simulación de agentes y `FlowGraph` | Agentes; AI Agent Lab; threat modeling | Bucle de agente, autorización, memoria |

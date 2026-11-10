@@ -1,9 +1,12 @@
 """ronin_check · ejecuta los tests de un ejercicio y genera su evidencia para el Dojo.
 
 Uso (desde forja/ejercicios):
-    py -m ronin_check T1-02        un ejercicio
-    py -m ronin_check todos        todos los ejercicios
-    py -m ronin_check --manifiesto (solo para Claude) regenera game/content/exercises.json
+    python -m ronin_check T1-02        un ejercicio
+    python -m ronin_check todos        todos los ejercicios
+    python -m ronin_check --manifiesto (solo para Claude) regenera game/content/exercises.json
+
+Los laboratorios de forja/labs (por ejemplo P0-01) necesitan sus dependencias: ejecútalo con el
+Python del entorno virtual del laboratorio (ver su README).
 
 La evidencia se guarda en forja/evidencias/<ID>.json. Después, en el Dojo:
     evidence import
@@ -38,8 +41,11 @@ def huella(ruta):
     return hashlib.sha256(texto).hexdigest()
 
 
+LABS = RAIZ / "forja" / "labs"
+
+
 def ejercicios():
-    """{ID: (fichero del ejercicio, fichero de tests)} de todos los ejercicios."""
+    """{ID: (fichero del ejercicio, fichero de tests)} de los ejercicios y de los laboratorios."""
     out = {}
     for test in sorted(AQUI.glob("test_*_*_*.py")):
         partes = test.stem.split("_")  # test, T1, 02, distancia
@@ -47,13 +53,37 @@ def ejercicios():
         fichero = AQUI / (test.name[len("test_"):])
         if fichero.exists() and PATRON_ID.match(ej_id):
             out[ej_id] = (fichero, test)
+    # Laboratorios: forja/labs/P0-01_servicio_llm/{servicio.py, test_servicio.py}
+    for carpeta in sorted(p for p in LABS.glob("*") if p.is_dir()):
+        ej_id = carpeta.name[:5]
+        tests = sorted(carpeta.glob("test_*.py"))
+        if PATRON_ID.match(ej_id) and len(tests) == 1:
+            fichero = carpeta / tests[0].name[len("test_"):]
+            if fichero.exists():
+                out[ej_id] = (fichero, tests[0])
     return out
+
+
+def _ruta_relativa(ruta):
+    return ruta.relative_to(RAIZ).as_posix()
+
+
+def _importable(test):
+    """None si el módulo de tests se puede importar; si no, el nombre de lo que falta."""
+    import importlib
+    if str(test.parent) not in sys.path:
+        sys.path.insert(0, str(test.parent))
+    try:
+        importlib.import_module(test.stem)
+        return None
+    except ModuleNotFoundError as e:
+        return e.name or str(e)
 
 
 def ejecutar(ej_id, fichero, test):
     """Ejecuta los tests de un ejercicio y devuelve el diccionario de evidencia."""
-    if str(AQUI) not in sys.path:
-        sys.path.insert(0, str(AQUI))
+    if str(test.parent) not in sys.path:
+        sys.path.insert(0, str(test.parent))
     suite = unittest.TestLoader().loadTestsFromName(test.stem)
     total = suite.countTestCases()
     resultado = unittest.TextTestRunner(stream=io.StringIO(), verbosity=0).run(suite)
@@ -102,9 +132,13 @@ def manifiesto():
     """Regenera game/content/exercises.json (lo usa el Dojo para validar las evidencias)."""
     lista = []
     for ej_id, (fichero, test) in ejercicios().items():
+        falta = _importable(test)
+        if falta:
+            raise SystemExit("No se puede importar %s (falta %s): usa el Python del entorno del laboratorio." % (test.name, falta))
         n = unittest.TestLoader().loadTestsFromName(test.stem).countTestCases()
-        lista.append({"id": ej_id, "file": fichero.name, "test_file": test.name, "total_tests": n, "tests_sha256": huella(test)})
-    datos = {"schema_version": 1, "note": "Generado con: py -m ronin_check --manifiesto (desde forja/ejercicios). No editar a mano.", "exercises": lista}
+        lista.append({"id": ej_id, "file": fichero.name, "test_file": test.name, "test_path": _ruta_relativa(test),
+                      "total_tests": n, "tests_sha256": huella(test)})
+    datos = {"schema_version": 1, "note": "Generado con: python -m ronin_check --manifiesto (desde forja/ejercicios, con un Python que tenga las dependencias de forja/labs). No editar a mano.", "exercises": lista}
     MANIFIESTO.write_text(json.dumps(datos, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     print("Manifiesto: %d ejercicios → %s" % (len(lista), MANIFIESTO.relative_to(RAIZ)))
 
@@ -129,6 +163,12 @@ def main(argv):
     for ej_id in pedidos:
         if ej_id not in todos:
             print("✗ No existe el ejercicio %s. Ejercicios: %s" % (ej_id, ", ".join(todos)))
+            codigo = 2
+            continue
+        falta = _importable(todos[ej_id][1])
+        if falta:
+            print("✗ %s: falta el paquete «%s». Activa el entorno virtual del laboratorio e instala sus"
+                  " dependencias (pip install -r requirements.txt); ver su README." % (ej_id, falta))
             codigo = 2
             continue
         ev = ejecutar(ej_id, *todos[ej_id])

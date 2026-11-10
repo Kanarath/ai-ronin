@@ -41,16 +41,20 @@ static func _sha256_normalized(path: String) -> String:
 
 
 func test_manifiesto_al_dia_con_los_ficheros_de_tests() -> void:
-	var dir := ProjectSettings.globalize_path("res://").path_join("../forja/ejercicios").simplify_path()
+	var root := ProjectSettings.globalize_path("res://").path_join("..").simplify_path()
 	var files := PackedStringArray()
-	for name in DirAccess.get_files_at(dir):
+	for name in DirAccess.get_files_at(root.path_join("forja/ejercicios")):
 		if name.begins_with("test_") and name.get_extension() == "py":
-			files.append(name)
+			files.append("forja/ejercicios/" + name)
+	for lab in DirAccess.get_directories_at(root.path_join("forja/labs")):
+		for name in DirAccess.get_files_at(root.path_join("forja/labs").path_join(lab)):
+			if name.begins_with("test_") and name.get_extension() == "py":
+				files.append("forja/labs/%s/%s" % [lab, name])
 	assert_eq(game.evidence.exercises.size(), files.size(), "un ejercicio por fichero de tests")
 	for id: String in game.evidence.exercises:
 		var ex: Dictionary = game.evidence.exercises[id]
-		assert_true(ex["test_file"] in files, "%s: no existe %s" % [id, ex["test_file"]])
-		assert_eq(_sha256_normalized(dir.path_join(ex["test_file"])), ex["tests_sha256"],
+		assert_true(ex["test_path"] in files, "%s: no existe %s" % [id, ex["test_path"]])
+		assert_eq(_sha256_normalized(root.path_join(ex["test_path"])), ex["tests_sha256"],
 			"%s: tests cambiados; regenera el manifiesto con py -m ronin_check --manifiesto" % id)
 
 
@@ -123,3 +127,19 @@ func test_el_mentor_recuerda_el_ejercicio() -> void:
 	assert_eq(game.start_mission("T1-02"), "")
 	game.runner._finish(false)
 	assert_true(said.any(func(t: String) -> bool: return t.contains("py -m ronin_check T1-02")))
+
+
+func test_mision_P0_01() -> void:
+	var finished: Array = []
+	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
+	game.progress.data["missions"]["T6-02"] = {"completed": true}
+	assert_eq(game.start_mission("P0-01"), "")
+	assert_true(game.import_evidence(_write("P0-01.json", _evidence("P0-01", 1)))["ok"])
+	assert_eq(game.runner.index, 1)
+	game.import_evidence(_write("P0-01.json", _evidence("P0-01", 17)))
+	assert_eq(game.runner.index, 2)
+	for l in ["hipotesis entre 2 y 4", "reflexion " + "con temperatura alta salieron respuestas distintas y con temperatura cero y semilla fija salio siempre la misma ".repeat(4),
+			"reflexion " + "en cero cero cero cero cualquiera de la red podria usar el modelo y gastar mi cpu y los errores internos revelan rutas ".repeat(3)]:
+		var res := game.shell.execute(l)
+		assert_true(res.ok, res.plain_text())
+	assert_eq(finished.size(), 1)

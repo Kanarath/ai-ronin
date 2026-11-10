@@ -1,0 +1,88 @@
+{
+  "id": "P0-01",
+  "schema_version": 1,
+  "title": "El horno encendido",
+  "unit": "P0",
+  "difficulty": 3,
+  "plane": "forja",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 120,
+  "requires_missions": ["T6-02"],
+  "competencies": { "requires": ["T6.next-token", "T6.sampling"], "trains": ["P0.http-json", "P0.async", "P0.fastapi", "P0.llm-local", "P0.no-determinismo"] },
+  "briefing": "Primer laboratorio real de la Forja. Hasta ahora todo pasaba dentro del Dojo, simulado. Hoy enciendes el horno de verdad: un modelo de lenguaje en tu propia CPU y un servicio web que habla con él. El Dojo no puede ver tu Forja (está aislado a propósito), así que te seguirá por tus evidencias y tus mediciones. Instrucciones completas en forja/labs/P0-01_servicio_llm/README.md.",
+  "learning_objectives": [
+    "Montar un entorno virtual de Python con dependencias fijadas",
+    "Hablar con un LLM local por HTTP (API de chat de Ollama) desde código asíncrono",
+    "Exponer el modelo con un servicio FastAPI que valida la entrada y no filtra detalles internos en los errores",
+    "Medir la variabilidad y la velocidad de un modelo real en CPU"
+  ],
+  "mentor_intro": "La simulación te enseñó el mecanismo. La Forja te enseña la realidad: dependencias que cambian, modelos que tardan y respuestas que no se repiten.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "piezas",
+      "title": "Las piezas",
+      "body": "Ollama sirve el modelo en http://127.0.0.1:11434 y ofrece una API HTTP: POST /api/chat con {model, messages, stream, options}. Tu servicio FastAPI escucha en 127.0.0.1:8000, valida la pregunta, llama a Ollama con un cliente HTTP asíncrono (httpx2) y devuelve la respuesta con sus métricas (tokens y segundos). Es la arquitectura mínima de cualquier aplicación con LLM: el chatbot de A1 era esto, simulado."
+    },
+    {
+      "id": "async",
+      "title": "¿Por qué async?",
+      "body": "Una respuesta del modelo en CPU tarda segundos. Con código síncrono, el servidor se quedaría bloqueado esperando. Con async/await, mientras una petición espera a Ollama, el servidor puede atender otras. await marca los puntos donde se espera: await cliente.post(...)."
+    },
+    {
+      "id": "localhost",
+      "title": "127.0.0.1 frente a 0.0.0.0",
+      "body": "127.0.0.1 solo acepta conexiones de tu propia máquina; 0.0.0.0 acepta de cualquier interfaz, también de tu red local. Un modelo o una API sin autenticación escuchando en 0.0.0.0 es uno de los fallos más comunes (lo viste en A6). Dentro de un contenedor el servicio escucha en 0.0.0.0, pero compose.yaml solo publica el puerto en 127.0.0.1 del anfitrión."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Prepara el entorno del laboratorio (README, sección 1), ejecuta ronin_check para P0-01 y trae la primera evidencia, aunque no pase ningún test todavía.",
+      "teach": "Entornos virtuales\nCada laboratorio tiene su propio entorno (.venv) con versiones fijadas en requirements.txt. Así un proyecto no rompe a otro, y lo que funciona hoy sigue funcionando mañana. Si ronin_check dice que falta un paquete, es que no lo has ejecutado con el Python del entorno.",
+      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "P0-01" } },
+      "hints": [
+        "Desde forja/labs/P0-01_servicio_llm: python -m venv .venv · .\\.venv\\Scripts\\python.exe -m pip install -r requirements.txt",
+        ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py P0-01 · y aquí: evidence import"
+      ],
+      "on_complete": "Entorno listo. Fíjate en que ya pasa un test sin que hayas escrito nada: /salud es del andamiaje."
+    },
+    {
+      "id": "o2",
+      "text": "Implementa las cuatro funciones de servicio.py hasta que pasen los 17 tests, y trae la evidencia.",
+      "teach": "El contrato con Ollama\nLee ollama_simulado() en los tests: es exactamente lo que envía y recibe Ollama. Los tiempos llegan en nanosegundos; stream debe ser False para recibir una sola respuesta JSON; y un error HTTP (por ejemplo, el modelo no está descargado) debe convertirse en excepción con raise_for_status().",
+      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "P0-01", "all_passed": true } },
+      "hints": [
+        "Orden: validar_pregunta → construir_peticion → extraer_respuesta → preguntar.",
+        "La semilla 0 es una semilla válida: comprueba «is not None», no la verdad del valor.",
+        "preguntar: r = await cliente.post(\"/api/chat\", json=...) · r.raise_for_status() · extraer_respuesta(r.json())"
+      ],
+      "on_complete": "Tu servicio ya funciona contra el Ollama simulado. Ahora, contra el real."
+    },
+    {
+      "id": "o3",
+      "text": "Arranca el modelo real (README, sección 3) y mide con medir.py: 5 respuestas con temperatura 0.8 y 5 con temperatura 0 y semilla 42. Escribe tus resultados: respuestas distintas en cada caso, segundos por respuesta y tokens por segundo, y qué te sorprendió. (reflexion <texto>, mínimo 50 palabras)",
+      "prediction": { "prompt": "Con temperatura 0.8, de 5 respuestas a la misma pregunta, ¿cuántas serán distintas?", "options": ["1", "entre 2 y 4", "5"] },
+      "validator": { "type": "reflection", "min_words": 50 },
+      "hints": [
+        "python medir.py --n 5 --temperatura 0.8 · python medir.py --n 5 --temperatura 0 --semilla 42",
+        "Relaciónalo con T6-01: la temperatura reparte la probabilidad; la semilla fija el azar del muestreo."
+      ]
+    },
+    {
+      "id": "o4",
+      "text": "Explica qué pasaría si tu servicio escuchara en 0.0.0.0 sin autenticación, por qué los errores 502 no devuelven el mensaje interno de Ollama y por qué validar_pregunta limita la longitud. (reflexion <texto>, mínimo 40 palabras)",
+      "validator": { "type": "reflection", "min_words": 40 },
+      "hints": ["Red local, consumo de CPU de otros, OWASP LLM10.", "¿Qué revela un mensaje de error con URLs y nombres internos?"]
+    }
+  ],
+  "debrief": {
+    "what_happened": "Has montado un entorno con dependencias fijadas, has implementado el cliente de un LLM local y lo has expuesto con un servicio FastAPI que valida la entrada y oculta los errores internos. Después has medido un modelo real en tu CPU.",
+    "why": "Toda aplicación con LLM empieza así: un servicio que recibe texto, llama a un modelo y devuelve otro texto. Los riesgos de los arcos A1–A6 se colocan sobre esta pieza, y la variabilidad que has medido es la razón por la que en seguridad de IA se habla de tasas de éxito y no de «funciona / no funciona».",
+    "in_production": "Autenticación y límite de peticiones por cliente, timeouts y reintentos con espera, streaming para respuestas largas, colas cuando el modelo es lento, métricas (latencia, tokens, errores) y trazas sin datos personales (O6). El modelo se sirve con un motor preparado para carga (por ejemplo vLLM o llama.cpp en servidor) y con GPU cuando hace falta.",
+    "simplifications": ["Sin autenticación ni límites por cliente", "Sin streaming ni historial de conversación", "El Dojo no puede comprobar tus mediciones: confía en tu reflexión"],
+    "exercise": "forja/labs/P0-01_servicio_llm/servicio.py"
+  },
+  "further_reading": ["ref.ollama-api", "ref.fastapi"],
+  "xp": { "base": 400 }
+}

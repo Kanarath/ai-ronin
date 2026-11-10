@@ -211,6 +211,61 @@ python -m unittest -v test_T1_01_estadisticas
 
 Cada `test_...` comprueba una cosa. `assertEqual(a, b)` exige que sean iguales; `assertAlmostEqual(a, b, delta=0.001)`, que se diferencien en menos de 0,001. Si falla, el mensaje dice qué esperaba y qué obtuvo. Lee el test que falla: suele ser la mejor pista.
 
+## 14. Servicios: entornos, JSON, HTTP y async (laboratorios de la Forja)
+
+**Entorno virtual.** Cada laboratorio tiene sus propias librerías, con versiones fijadas en `requirements.txt`:
+
+```text
+python -m venv .venv                                  # crea el entorno en la carpeta .venv
+..venvScriptspython.exe -m pip install -r requirements.txt
+..venvScriptspython.exe -m unittest -v test_servicio
+```
+
+**JSON** es texto con la misma forma que los diccionarios y listas de Python. Las librerías HTTP lo convierten solas: pasas un diccionario con `json=...` y lees la respuesta con `.json()`.
+
+**HTTP.** Una petición tiene método (`GET` para leer, `POST` para enviar datos), ruta (`/api/chat`) y cuerpo; la respuesta, un código de estado (`200` bien, `400` petición mal hecha, `404` no existe, `502`/`504` falló el servicio de detrás) y un cuerpo.
+
+```python
+import httpx2
+r = httpx2.post("http://127.0.0.1:11434/api/chat", json={"model": "llama3.2:1b", "messages": [], "stream": False})
+r.raise_for_status()          # lanza una excepción si el código es 4xx o 5xx
+datos = r.json()              # el cuerpo, ya convertido en diccionario
+```
+
+**async / await.** Una función `async def` puede pausarse mientras espera (a la red, por ejemplo) y dejar trabajar a otras. Dentro, cada espera se marca con `await`:
+
+```python
+import asyncio, httpx2
+
+async def preguntar(cliente):
+    r = await cliente.post("/api/chat", json={...})   # sin await obtendrías una «promesa», no la respuesta
+    return r.json()
+
+async def main():
+    async with httpx2.AsyncClient(base_url="http://127.0.0.1:11434") as cliente:   # se cierra solo al salir
+        print(await preguntar(cliente))
+
+asyncio.run(main())           # punto de entrada desde código normal
+```
+
+**FastAPI** convierte funciones en rutas web. El decorador dice el método y la ruta; los parámetros con un modelo de Pydantic se validan solos (si no encajan, responde `422`); `HTTPException` corta la petición con el código que elijas:
+
+```python
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+
+class Peticion(BaseModel):
+    pregunta: str
+
+app = FastAPI()
+
+@app.post("/chat")
+async def chat(p: Peticion):
+    if not p.pregunta.strip():
+        raise HTTPException(status_code=400, detail="pregunta vacía")
+    return {"eco": p.pregunta}     # el diccionario se devuelve como JSON
+```
+
 ---
 
 ## Qué secciones necesita cada ejercicio
@@ -230,5 +285,6 @@ Cada `test_...` comprueba una cosa. `assertEqual(a, b)` exige que sean iguales; 
 | T6_02 atención | 5, 6, 11 (`math.exp`, `float("-inf")`) |
 | A3_01 agente | 3 (contadores, `continue`), 4 (devolver tuplas), 8, 9 (`in` sobre conjuntos) |
 | A2_01 RAG | 2 (rebanadas), 3 (`while`, `break`), 5, 7, 8 (dict como vector), 9, 11 (`re`, `math.log`) |
+| P0-01 servicio LLM (forja/labs) | 8 (`.get` con valor por defecto), 12, 14 |
 
 Si te atascas en un ejercicio, mira [PISTAS.md](PISTAS.md): tiene pistas progresivas para cada función.
