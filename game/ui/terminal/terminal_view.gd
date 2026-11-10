@@ -87,7 +87,7 @@ func focus_input() -> void:
 		_input.grab_focus()
 
 
-## Ejecuta una línea como si la hubiera escrito el usuario (la usan los botones del mentor).
+## Ejecuta una línea como si la hubiera escrito el usuario (la usan los botones de la interfaz).
 func run_command(line: String) -> CommandResult:
 	_print_raw("[color=%s]%s[/color] %s" % [RoninPalette.TEAL.to_html(false), PROMPT, _escape(line)])
 	_busy = true

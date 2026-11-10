@@ -84,7 +84,7 @@ static func _start(c: CommandContext, a: Dictionary) -> CommandResult:
 	var m := g.active_mission
 	var r := CommandResult.new()
 	r.line("▶ %s · %s" % [m["id"], m["title"]], "accent")
-	r.line("Laboratorio preparado. Los objetivos y las indicaciones de RONIN aparecen en el panel del mentor.", "muted")
+	r.line("Laboratorio preparado. RONIN te irá explicando cada paso aquí, en la consola.", "muted")
 	r.line("Ayuda: mission status · mission brief · hint", "muted")
 	return r
 

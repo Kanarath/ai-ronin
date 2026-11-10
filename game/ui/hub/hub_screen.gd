@@ -33,7 +33,6 @@ var _curriculum_box: VBoxContainer
 var _mission_text: RichTextLabel
 var _left: PanelContainer
 var _left_toggle: Button
-var _prediction_box: HFlowContainer
 var _xp_label: Label
 var _xp_bar: ProgressBar
 var _toaster: Toaster
@@ -176,7 +175,8 @@ func _build_layout() -> void:
 	lower.add_theme_constant_override("separation", 4)
 	center.add_child(lower)
 
-	# Franja del objetivo actual: qué misión, por dónde vas, qué te toca y los botones.
+	# Franja del objetivo actual: qué misión, por dónde vas y qué te toca. Las respuestas se
+	# escriben siempre en la consola (answer, hipotesis): no hay botones de respuesta.
 	var strip := PanelContainer.new()
 	lower.add_child(strip)
 	var sbox := VBoxContainer.new()
@@ -187,8 +187,6 @@ func _build_layout() -> void:
 	_mission_text.fit_content = true
 	_mission_text.scroll_active = false
 	sbox.add_child(_mission_text)
-	_prediction_box = HFlowContainer.new()
-	sbox.add_child(_prediction_box)
 	var actions := HBoxContainer.new()
 	sbox.add_child(actions)
 	for spec in [["Pista", "hint"], ["Objetivos", "mission status"], ["Briefing", "mission brief"], ["Chuleta", "cheatsheet"]]:
@@ -315,7 +313,6 @@ func _refresh_mission() -> void:
 	var m := game.active_mission
 	if m.is_empty():
 		_mission_text.text = "[color=%s]Ninguna misión activa.[/color]\nÁbrela con [b]☰ Misiones[/b] o escribe [b]mission list[/b]." % _hex(RoninPalette.MUTED)
-		_set_prediction_options([])
 		return
 	var lines := PackedStringArray()
 	var phase_txt := "  [color=%s]· PRUEBA DE DOMINIO[/color]" % _hex(RoninPalette.GOLD) if r.phase == "trial" else ""
@@ -336,47 +333,8 @@ func _refresh_mission() -> void:
 	if not current_obj.is_empty():
 		lines.append(_esc(current_obj["text"]))
 	elif r.phase == "done":
-		lines.append("[color=%s]Misión completada. Repítela o elige la siguiente en el currículo.[/color]" % _hex(RoninPalette.TEAL))
+		lines.append("[color=%s]Misión completada. Repítela o elige la siguiente con ☰ Misiones.[/color]" % _hex(RoninPalette.TEAL))
 	_mission_text.text = "\n".join(lines)
-	var obj := r.current_objective()
-	if not obj.is_empty() and obj.has("prediction") and not r.hypotheses.has(r.objective_key(obj)):
-		_set_prediction_options(obj["prediction"].get("options", []))
-	elif not obj.is_empty() and not obj.get("choices", []).is_empty():
-		_set_choice_buttons(obj["choices"])
-	else:
-		_set_prediction_options([])
-
-
-func _set_prediction_options(options: Array) -> void:
-	for c in _prediction_box.get_children():
-		c.queue_free()
-	if options.is_empty():
-		return
-	var l := Label.new()
-	l.text = "Tu predicción:"
-	l.add_theme_color_override("font_color", RoninPalette.CYAN)
-	_prediction_box.add_child(l)
-	for o: String in options:
-		var b := Button.new()
-		b.text = o
-		b.pressed.connect(func() -> void: _run("hipotesis " + o))
-		_prediction_box.add_child(b)
-
-
-## Botones de una pregunta de comprobación: cada uno responde con su letra.
-func _set_choice_buttons(choices: Array) -> void:
-	for c in _prediction_box.get_children():
-		c.queue_free()
-	var l := Label.new()
-	l.text = "Tu respuesta:"
-	l.add_theme_color_override("font_color", RoninPalette.CYAN)
-	_prediction_box.add_child(l)
-	for ch: Dictionary in choices:
-		var b := Button.new()
-		b.text = "%s) %s" % [ch["id"], ch["text"]]
-		var id: String = ch["id"]
-		b.pressed.connect(func() -> void: _run("answer " + id))
-		_prediction_box.add_child(b)
 
 
 # ── Eventos ──────────────────────────────────────────────────────────────────
@@ -412,7 +370,6 @@ func _on_mission_started(m: Dictionary) -> void:
 
 func _on_mission_completed(m: Dictionary, result: Dictionary, xp_gained: int) -> void:
 	var trial := "Prueba de dominio superada: competencias dominadas." if result["trial_passed"] else "Sin prueba de dominio."
-	_set_left_visible(true)
 	_on_mentor("◆ Misión %s completada · +%d XP · maestría %d/100. %s" % [m["id"], xp_gained, result["score"], trial], "praise")
 	var exercise: String = m.get("debrief", {}).get("exercise", "")
 	if not exercise.is_empty():
