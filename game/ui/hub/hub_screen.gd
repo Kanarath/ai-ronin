@@ -18,6 +18,7 @@ const UNIT_TITLES := {
 	"C5": "C5 · AI Red Team Assessment",
 	"E1": "E1 · Investigación ML (Forja)",
 	"E3": "E3 · Gobernanza y auditoría",
+	"E4": "E4 · AI Ops avanzado",
 }
 const SERIES_COLORS: Array[Color] = [RoninPalette.CYAN, RoninPalette.GOLD, RoninPalette.TEAL, RoninPalette.VIOLET, RoninPalette.TEXT]
 const MENTOR_COLORS := {

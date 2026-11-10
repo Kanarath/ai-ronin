@@ -375,3 +375,47 @@ func test_mision_E2_02() -> void:
 
 func test_mision_E2_03() -> void:
 	_mision_E2("E2-03", ["E2-01"], 14, "pequeña pero clara")
+## E4 · AI Ops avanzado: tres laboratorios de la Forja con medición, en cadena.
+func _mision_E4(id: String, previas: Array, tests: int, prediccion: String, reflexiones: Array) -> Array:
+	var finished: Array = []
+	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
+	for m: String in previas:
+		game.progress.data["missions"][m] = {"completed": true}
+	assert_eq(game.start_mission(id), "")
+	game.import_evidence(_write("a.json", _evidence(id, tests - 1)))
+	assert_eq(game.runner.index, 0, "%s: con un test sin pasar no avanza" % id)
+	game.import_evidence(_write("a.json", _evidence(id, tests)))
+	assert_eq(game.runner.index, 1)
+	assert_true(game.shell.execute("hipotesis " + prediccion).ok)
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 12), _cfg("x", 3)], id)))
+	assert_eq(game.runner.index, 1, "%s: hacen falta 3 configuraciones" % id)
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 12), _cfg("x", 3), _cfg("y", 0)], "A2-04")))
+	assert_eq(game.runner.index, 1, "%s: la medición de otro laboratorio no vale" % id)
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 12), _cfg("x", 3), _cfg("y", 0)], id)))
+	assert_eq(game.runner.index, 2)
+	for l: String in reflexiones:
+		var r := game.shell.execute("reflexion " + l)
+		assert_true(r.ok, r.plain_text())
+	return finished
+
+
+func test_mision_E4_01() -> void:
+	assert_eq(game.start_mission("E4-01"), "🔒 Antes completa: P0-01, O6-03")
+	var f := _mision_E4("E4-01", ["P0-01", "O6-03"], 25, "casi ninguna", [
+		"sin defensas el p95 de las legitimas paso de un minuto porque el abusador ocupaba el modelo y con limite la cola se vacio antes ".repeat(4),
+		"el limite va por cliente sacado del token porque el abusador cambiaria de nombre y una cache sin ambito sirve datos de otro usuario ".repeat(3)])
+	assert_eq(f.size(), 1)
+
+
+func test_mision_E4_02() -> void:
+	var f := _mision_E4("E4-02", ["E4-01"], 17, "uno o dos", [
+		"la redaccion no reconocio el telefono con puntos ni el correo disfrazado y el modelo repitio los datos en su respuesta asi que ".repeat(4),
+		"las metricas llevan pocos valores porque cada combinacion crea una serie y el exportador redacta lo que anadan otras librerias ".repeat(3)])
+	assert_eq(f.size(), 1)
+
+
+func test_mision_E4_03() -> void:
+	var f := _mision_E4("E4-03", ["E4-02"], 18, "ninguno", [
+		"los compose de la forja no declaraban limites ni usuario en ollama y el canary revirtio el modelo inexistente tras pocas peticiones ".repeat(4),
+		"la huella prueba que es el artefacto aprobado pero no que sea seguro y la lista permitida debe protegerse con revision y firma ".repeat(3)])
+	assert_eq(f.size(), 1)

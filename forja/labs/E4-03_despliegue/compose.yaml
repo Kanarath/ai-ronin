@@ -1,0 +1,27 @@
+# Laboratorio E4-03 · la puerta de despliegue como un paso aislado.
+#
+#   docker compose run --rm puerta
+#
+# Lee los compose.yaml de forja/labs (montados en solo lectura) y escribe la evidencia en
+# forja/evidencias. Sin red y sin puertos: una puerta de despliegue no necesita hablar con nadie.
+# Pásala por su propia política: python bateria.py --sin-canary la incluye en la lista de compose.
+
+services:
+  puerta:
+    build:
+      context: ..
+      dockerfile: E4-03_despliegue/Dockerfile
+    user: "10001"
+    network_mode: none
+    read_only: true
+    environment:
+      LABS: /labs
+      EVIDENCIAS: /evidencias
+    volumes:
+      - ..:/labs:ro
+      - ../../evidencias:/evidencias
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256m

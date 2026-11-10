@@ -563,3 +563,64 @@ np.round(X, 2)           # redondea a 2 decimales
 **Copiar o modificar.** `X + 1` crea un array nuevo; `X += 1` o `P[i, j] -= 1` modifican el que tienes. Si una función no debe tocar su entrada, trabaja sobre el resultado de una operación o sobre `X.copy()`.
 
 **Aleatoriedad reproducible.** `rng = np.random.default_rng(semilla)` y después `rng.normal(media, desviacion, size=forma)` o `rng.laplace(0.0, escala)`. Con la misma semilla y las mismas llamadas en el mismo orden, salen los mismos números: por eso los docstrings dicen cuántas llamadas hacer.
+| E4-01 bajo carga (forja/labs) | 8, 11 (`hashlib`, `unicodedata`), 12, 14, anexo E4 (clases, `OrderedDict`, `asyncio.Semaphore`, `wait_for`, `try/finally`) |
+| E4-02 trazas (forja/labs) | 8, 11 (`re`), 12, 14, anexo E4 (`re.sub` con una función, recursión, `with`, OpenTelemetry) |
+| E4-03 despliegue (forja/labs) | 3, 8, 9, 11 (`hashlib`), 12, anexo E4 (`ipaddress`) |
+
+Si te atascas en un ejercicio, mira [PISTAS.md](PISTAS.md): tiene pistas progresivas para cada función.
+
+---
+
+## Anexo E4 · Clases, concurrencia y observabilidad (especialización E4)
+
+**Clases.** Una clase agrupa datos y las funciones que trabajan con ellos. `__init__` se ejecuta al crear el objeto; `self` es el propio objeto, y lo que guardas en `self.algo` lo recuerda entre llamadas:
+
+```python
+class Contador:
+    def __init__(self, inicio=0):
+        self.valor = inicio          # dato del objeto
+    def sumar(self, n=1):
+        self.valor += n
+        return self.valor
+
+c = Contador(10)
+c.sumar(); c.sumar(5)                # 11, 16
+```
+
+**Funciones como valores.** Una función se puede guardar y pasar como cualquier otro valor; se ejecuta al poner paréntesis. Por eso los tests pueden pasar un reloj falso: `reloj=time.monotonic` guarda la función, y `reloj()` la llama.
+
+**OrderedDict** recuerda el orden de las claves y deja cambiarlo: `d.move_to_end(clave)` pasa la clave al final; `d.popitem(last=False)` quita y devuelve la primera.
+
+**re.sub con una función.** En lugar del texto de sustitución, `re.sub` acepta una función que recibe cada coincidencia (`m.group(0)` es el texto encontrado) y devuelve lo que se pone en su lugar.
+
+**Recursión.** Una función que se llama a sí misma para recorrer datos anidados (listas dentro de diccionarios dentro de listas). Necesita un caso que no se llame a sí mismo: aquí, los valores simples.
+
+**try / finally.** Lo que va en `finally` se ejecuta siempre, tanto si el `try` termina bien como si sale con `return` o con una excepción. Es donde se libera lo que se ha cogido (un hueco en la cola, un fichero).
+
+**Concurrencia con asyncio.**
+
+```python
+import asyncio
+
+sem = asyncio.Semaphore(1)            # solo una tarea a la vez dentro del bloque
+
+async def tarea(i):
+    async with sem:                   # espera su turno aquí
+        await asyncio.sleep(0.1)
+    return i
+
+async def main():
+    r = await asyncio.gather(*[tarea(i) for i in range(3)])     # lanza las tres a la vez
+    try:
+        await asyncio.wait_for(asyncio.sleep(10), 0.5)            # plazo de 0,5 s
+    except TimeoutError:
+        print("demasiado lento")
+
+asyncio.run(main())
+```
+
+`contextlib.nullcontext()` es un `with` (o un `async with`) que no hace nada: útil cuando unas veces hay semáforo y otras no.
+
+**OpenTelemetry en dos ideas.** Un *tracer* abre spans con `with`; dentro, `span.set_attribute(clave, valor)` añade datos, y al salir del bloque el span se cierra y se exporta. Un *meter* crea instrumentos (un histograma, con `create_histogram`) que acumulan medidas con `.record(valor, atributos)`.
+
+**ipaddress.** `ipaddress.ip_address("127.0.0.1").is_loopback` es `True`; con un texto que no es una IP, lanza `ValueError`.

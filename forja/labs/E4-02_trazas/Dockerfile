@@ -1,0 +1,18 @@
+# Imagen del servicio con trazas. Se construye desde forja/labs (compose.yaml: context ..), porque
+# reutiliza la configuración de tu servicio de P0-01. Etiqueta comprobada en Docker Hub el 2026-11-10.
+FROM python:3.13-slim
+
+# No ejecutar como root dentro del contenedor (A6: «contenedor root»).
+RUN useradd --create-home --uid 10001 forja
+WORKDIR /app
+
+COPY E4-02_trazas/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY P0-01_servicio_llm/servicio.py E4-02_trazas/trazas.py ./
+# La carpeta de trazas es lo único en lo que puede escribir el servicio.
+RUN mkdir /app/trazas && chown forja:forja /app/trazas
+USER forja
+
+EXPOSE 8000
+CMD ["uvicorn", "trazas:crear_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
