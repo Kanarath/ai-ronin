@@ -229,12 +229,12 @@ func test_mision_T3_02_completa() -> void:
 func test_mision_T4_01_completa() -> void:
 	game.progress.data["missions"]["T3-01"] = {"completed": true}
 	assert_eq(game.start_mission("T4-01"), "")
-	run(["nn create n --hidden 0", "nn forward n 1,1", "answer 0.313"])
+	run(["nn create n --hidden 0", "nn forward n 1,1", "answer 0.313", "answer a"])
 	run(["hipotesis sí", "nn train n puerta_and --epochs 2000"])
 	run(["nn create o --hidden 0", "nn set o w2_0 10", "nn set o w2_1 10", "nn set o b2 -5", "nn evaluate o puerta_or"])
-	assert_eq(game.runner.index, 4, "OR programado a mano")
-	run(["hipotesis no", "nn create x --hidden 0", "nn train x puerta_xor --epochs 3000", "answer 0.693"])
-	run(["reflexion una neurona hace una suma ponderada mas un sesgo y aplica la sigmoide asi que separa el plano con una recta y en xor los unos estan en esquinas opuestas por lo que ninguna recta los separa y necesita mas neuronas"])
+	assert_eq(game.runner.index, 5, "OR programado a mano")
+	solve_py(PY_NEURONA)
+	run(["hipotesis no", "nn create x --hidden 0", "nn train x puerta_xor --epochs 3000", "answer 0.693", "answer a"])
 	assert_eq(game.runner.phase, "trial")
 	run(["nn create nd --hidden 0", "nn set nd w2_0 -10", "nn set nd w2_1 -10", "nn set nd b2 15", "nn evaluate nd puerta_nand"])
 	assert_eq(finished.size(), 1)
@@ -245,14 +245,15 @@ func test_mision_T4_02_completa() -> void:
 	game.progress.data["missions"]["T4-01"] = {"completed": true}
 	assert_eq(game.start_mission("T4-02"), "")
 	run(["hipotesis sí", "nn create red --hidden 2 --lr 1 --seed 1", "nn train red puerta_xor --epochs 3000"])
-	run(["nn forward red 0,0", "nn forward red 0,1", "nn forward red 1,0", "nn forward red 1,1", "answer and"])
+	run(["nn forward red 0,0", "nn forward red 0,1", "nn forward red 1,0", "nn forward red 1,1", "answer and", "answer a"])
+	solve_py(PY_CAPA)
 	run(["hipotesis se queda atascada", "nn create r5 --hidden 2 --lr 1 --seed 5", "nn train r5 puerta_xor --epochs 3000"])
 	run(["nn create r5b --hidden 4 --lr 1 --seed 5", "nn train r5b puerta_xor --epochs 3000"])
-	assert_eq(game.runner.index, 4)
+	assert_eq(game.runner.index, 6)
 	run(["dataset split katanas --test 0.3 --seed 42", "dataset normalize katanas_train --as tr", "dataset normalize katanas_test --fit katanas_train --as te",
 		"nn create n0 --inputs 3 --hidden 0 --lr 1", "nn train n0 tr --epochs 3000 --positive defectuosa", "nn evaluate n0 te",
 		"nn create n8 --inputs 3 --hidden 8 --lr 1 --seed 1", "nn train n8 tr --epochs 3000 --positive defectuosa", "nn evaluate n8 te", "answer 0.861"])
-	run(["reflexion la capa oculta combina varias rectas para crear fronteras no lineales como nor y and que juntas hacen xor backpropagation reparte la culpa del error hacia atras con la regla de la cadena y la semilla decide desde donde empieza el descenso que puede caer en un minimo local"])
+	run(["answer a"])
 	assert_eq(game.runner.phase, "trial")
 	run(["nn create n4 --inputs 3 --hidden 4 --lr 1 --seed 2", "nn train n4 tr --epochs 3000 --positive defectuosa", "nn evaluate n4 te", "answer 0.847"])
 	assert_eq(finished.size(), 1)
@@ -263,7 +264,7 @@ const R40 := "reflexion un modelo de lenguaje calcula la probabilidad del siguie
 
 
 func test_mision_T5_01_completa() -> void:
-	game.progress.data["missions"]["T4-01"] = {"completed": true}
+	game.progress.data["missions"]["T4-03"] = {"completed": true}
 	assert_eq(game.start_mission("T5-01"), "")
 	run(["tokenizer train t0 --merges 0", "tokenize t0 la katana del maestro", "answer 22"])
 	run(["hipotesis unos 4", "tokenizer train t200 --merges 200", "tokenize t200 la katana del maestro", "answer 4"])
@@ -486,3 +487,98 @@ func test_python_errores_con_linea() -> void:
 	var r := game.shell.execute("py run")
 	assert_true(r.plain_text().contains("NameError"), r.plain_text())
 	assert_true(r.plain_text().contains("línea 2"), r.plain_text())
+
+
+# --- T4 ---
+
+const PY_NEURONA := "import math
+
+def neurona(a, b, w1, w2, bias):
+    z = w1 * a + w2 * b + bias
+    return 1 / (1 + math.exp(-z))
+"
+const PY_CAPA := "import math
+
+def sigmoide(z):
+    return 1 / (1 + math.exp(-z))
+
+def capa(entradas, pesos, sesgos):
+    salidas = []
+    for w, b in zip(pesos, sesgos):
+        z = b
+        for wi, xi in zip(w, entradas):
+            z = z + wi * xi
+        salidas.append(sigmoide(z))
+    return salidas
+"
+const PY_PELIGROSA := "def peligrosa(origen, destino):
+    return abs(origen - destino) > 0.4
+"
+
+
+## Ejercicio de Python de un objetivo de una misión del catálogo.
+func py_exercise_of(mission_id: String, objective_id: String) -> Dictionary:
+	for o: Dictionary in game.catalog.get_mission(mission_id).get("objectives", []):
+		if o["id"] == objective_id:
+			return o.get("py_exercise", {})
+	return {}
+
+
+func test_T4_python_solucion_pasa_y_codigo_inicial_no() -> void:
+	for spec in [["T4-01", "py1", PY_NEURONA], ["T4-02", "py1", PY_CAPA], ["T4-03", "py1", PY_PELIGROSA]]:
+		var ex := py_exercise_of(spec[0], spec[1])
+		assert_false(ex.is_empty(), "%s tiene ejercicio de Python" % spec[0])
+		var ok: Dictionary = PyExercise.check(spec[2], PyCommands._int_spec(ex))
+		assert_eq(ok["passed"], ok["total"], "%s: la solución pasa todos los casos" % spec[0])
+		var starter: Dictionary = PyExercise.check(ex["starter"], PyCommands._int_spec(ex))
+		assert_true(starter["ok"], "%s: el código inicial se ejecuta" % spec[0])
+		assert_true(starter["passed"] < starter["total"], "%s: el código inicial no pasa" % spec[0])
+
+
+func test_T4_misiones_con_para_que_y_cierre() -> void:
+	for id in ["T4-01", "T4-02", "T4-03"]:
+		var m := game.catalog.get_mission(id)
+		assert_true(m.has("purpose"), id + " explica para qué sirve")
+		assert_true(m.has("you_can_now"), id + " dice qué puedes hacer ya")
+		var has_choices := false
+		for o: Dictionary in m["objectives"]:
+			assert_ne(o["validator"].get("type"), "reflection", id + ": sin reflexiones escritas")
+			if o.has("teach"):
+				assert_true(o["teach"].contains("Por qué:"), "%s/%s: la lección conecta con la IA real" % [id, o["id"]])
+			if o.has("choices"):
+				has_choices = true
+		assert_true(has_choices, id + " tiene al menos una comprobación con opciones")
+
+
+func test_mision_T4_03_aplicada_completa() -> void:
+	game.progress.data["missions"]["T4-02"] = {"completed": true}
+	assert_eq(game.start_mission("T4-03"), "")
+	run(["dataset inspect llamadas"])
+	run(["hipotesis en dos esquinas opuestas", "plot llamadas --x confianza_origen --y confianza_destino", "answer b"])
+	run(["hipotesis no", "nn create n1 --hidden 0", "nn train n1 llamadas --epochs 2000 --positive peligrosa"])
+	assert_almost_eq(game.shell.events_named("nn.trained")[-1]["data"]["accuracy"], 0.5, 0.001, "una neurona sola no separa la forma de XOR")
+	run(["nn create red --hidden 4 --lr 1 --seed 1", "nn train red llamadas --epochs 3000 --positive peligrosa"])
+	assert_eq(game.runner.index, 5, "la red con capa oculta acierta todas las llamadas")
+	run(["nn forward red 0.9,0.1", "nn forward red 0.1,0.9"])
+	assert_true(game.shell.execute("nn forward red 0.9,0.1").plain_text().contains("oculta 2: z = 4.81·0.9 + -8.379·0.1 + -0.621 = 2.87  →  sigmoid(z) = 0.946"), "los números citados en la misión")
+	run(["answer a", "nn weights red", "answer b"])
+	solve_py(PY_PELIGROSA)
+	run(["answer b"])
+	assert_eq(finished.size(), 1)
+	assert_true(mentor_said("Qué puedes hacer ya"))
+
+
+func test_T4_03_respuesta_incorrecta_explica_por_que() -> void:
+	game.progress.data["missions"]["T4-02"] = {"completed": true}
+	game.start_mission("T4-03")
+	run(["dataset inspect llamadas", "hipotesis en dos esquinas opuestas", "plot llamadas --x confianza_origen --y confianza_destino", "answer a"])
+	assert_true(mentor_said("AND solo da 1 en una esquina"))
+	assert_eq(game.runner.index, 2)
+
+
+func test_T4_03_bloquea_T5_01() -> void:
+	game.progress.data["missions"]["T4-02"] = {"completed": true}
+	assert_eq(game.mission_status("T4-03"), "disponible")
+	assert_eq(game.mission_status("T5-01"), "bloqueada", "T5-01 exige la misión aplicada")
+	game.progress.data["missions"]["T4-03"] = {"completed": true}
+	assert_ne(game.mission_status("T5-01"), "bloqueada")

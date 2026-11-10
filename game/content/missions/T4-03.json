@@ -1,0 +1,370 @@
+{
+  "id": "T4-03",
+  "schema_version": 1,
+  "title": "Llamadas peligrosas",
+  "unit": "T4",
+  "difficulty": 2,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 25,
+  "requires_missions": [
+    "T4-02"
+  ],
+  "competencies": {
+    "requires": [
+      "T4.mlp"
+    ],
+    "trains": [
+      "T4.aplicar-redes-seguridad"
+    ]
+  },
+  "briefing": "La forja tiene un agente: un LLM (Large Language Model) que, además de hablar, usa herramientas. Lee la base de datos de clientes, busca en la web, envía correos. Cada uso de una herramienta es una «llamada». Algunas son peligrosas, y el equipo quiere un clasificador que las frene antes de ejecutarse. Vas a construirlo con lo que aprendiste en T4-01 y T4-02… y a descubrir qué le contestas a un auditor que pregunta por qué ha bloqueado una llamada.",
+  "learning_objectives": [
+    "Describir una llamada de un agente con features de confianza",
+    "Reconocer un patrón tipo XOR en un problema real de seguridad y resolverlo con una capa oculta",
+    "Explicar por qué una red es difícil de auditar y cómo se combina con reglas legibles"
+  ],
+  "mentor_intro": "Misión aplicada: lo que aprendiste con puertas lógicas, ahora vigilando a un agente (ficticio). Vamos paso a paso.",
+  "purpose": "Un agente de IA (Inteligencia Artificial) es un LLM (Large Language Model) que llama a herramientas: leer ficheros, enviar correos, escribir en una base de datos. Si un atacante le cuela instrucciones (prompt injection, inyección de instrucciones), el agente puede sacar datos o meter basura en tus sistemas. Muchos equipos ponen delante un clasificador que revisa cada llamada. Hoy construyes uno con una red y ves su gran problema: explicar sus decisiones.",
+  "lab": {
+    "datasets": [
+      {
+        "file": "llamadas.csv",
+        "name": "llamadas",
+        "label": "riesgo"
+      }
+    ],
+    "viz": {
+      "dataset": "llamadas",
+      "x": "confianza_origen",
+      "y": "confianza_destino"
+    }
+  },
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira el dataset de llamadas: dataset inspect llamadas",
+      "teach": "Una llamada convertida en números\nCada llamada mueve datos de un ORIGEN a un DESTINO. El clasificador describe cada una con dos features entre 0 y 1:\nconfianza_origen: cuánto te fías de donde salen los datos (1 = tu base de clientes, 0 = una web desconocida).\nconfianza_destino: cuánto te fías de a donde van (1 = un sistema interno, 0 = un servidor externo).\nMíralas con: dataset inspect llamadas\nPor qué: para vigilar a un agente, primero hay que describir sus acciones con números que un modelo pueda leer.",
+      "validator": {
+        "type": "event",
+        "event": "dataset.inspected",
+        "where": {
+          "dataset": "llamadas"
+        }
+      },
+      "hints": [
+        "Escribe exactamente: dataset inspect llamadas"
+      ],
+      "on_complete": "Así se lee:\n· Cada FILA es una llamada que el agente quiso hacer.\n· riesgo es la ETIQUETA: peligrosa o segura. Un analista de seguridad las revisó a mano.\n· Una llamada es peligrosa cuando CRUZA una frontera de confianza: datos de confianza que salen fuera (una fuga) o datos de fuera que entran en tus sistemas."
+    },
+    {
+      "id": "o2",
+      "text": "Dibuja las llamadas: plot llamadas --x confianza_origen --y confianza_destino",
+      "teach": "Dónde están las peligrosas\nComo en T1: cada punto es una llamada y el color es su etiqueta.\nPor qué: antes de elegir un modelo, un ingeniero mira la forma del problema. Esa forma decide si basta una neurona.",
+      "prediction": {
+        "prompt": "¿Dónde crees que estarán las llamadas peligrosas?",
+        "options": [
+          "en dos esquinas opuestas",
+          "todas en una esquina",
+          "repartidas sin orden"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "viz.scatter",
+        "where": {
+          "dataset": "llamadas"
+        }
+      },
+      "hints": [
+        "Copia el comando del enunciado.",
+        "plot llamadas --x confianza_origen --y confianza_destino"
+      ],
+      "on_complete": "Compara con tu predicción: las peligrosas están en dos esquinas opuestas. Abajo a la derecha, las fugas (origen de confianza, destino externo). Arriba a la izquierda, las entradas no fiables (origen externo, destino interno). Las seguras ocupan las otras dos esquinas."
+    },
+    {
+      "id": "o3",
+      "text": "¿A qué puerta lógica se parece este patrón?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "AND",
+          "why": "AND solo da 1 en una esquina, (1,1). Aquí las peligrosas ocupan dos esquinas opuestas."
+        },
+        {
+          "id": "b",
+          "text": "XOR"
+        },
+        {
+          "id": "c",
+          "text": "OR",
+          "why": "OR da 1 en tres esquinas. Aquí la esquina (1,1), interno a interno, es segura."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué puerta da 1 cuando las dos entradas son distintas?",
+        "answer b"
+      ],
+      "on_complete": "XOR: peligrosa cuando origen y destino tienen confianza distinta. Ya sabes lo que eso significa para una neurona sola. Vamos a comprobarlo."
+    },
+    {
+      "id": "o4",
+      "text": "Crea una neurona sola y entrénala con las llamadas al menos 1000 épocas. La clase 1 es «peligrosa».",
+      "teach": "Una neurona contra el problema real\nLas etiquetas son palabras, así que indica la clase 1 con --positive peligrosa, como con las katanas en T4-02.\nEjemplo: nn create n1 --hidden 0  y después  nn train n1 llamadas --epochs 2000 --positive peligrosa\nPor qué: un clasificador de una neurona (una regresión logística) es lo primero que probaría un equipo, por simple y barato.",
+      "prediction": {
+        "prompt": "¿Aprenderá una sola neurona a separar las llamadas peligrosas?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "nn.trained",
+        "where": {
+          "dataset": "llamadas",
+          "hidden": 0,
+          "epochs": {
+            "gte": 1000
+          }
+        }
+      },
+      "hints": [
+        "Crea la neurona con --hidden 0 y entrénala con --positive peligrosa.",
+        "nn create n1 --hidden 0  y después  nn train n1 llamadas --epochs 2000 --positive peligrosa"
+      ],
+      "on_complete": "Accuracy 0,5 y la pérdida clavada en 0,691, casi ln 2: lo mismo que con XOR. Una sola recta no separa dos esquinas opuestas. Este detector dejaría pasar la mitad de los ataques."
+    },
+    {
+      "id": "o5",
+      "text": "Crea una red con 4 neuronas ocultas (lr 1, semilla 1) y entrénala 3000 épocas con las llamadas.",
+      "teach": "Una capa oculta\nComo en T4-02: nn create red --hidden 4 --lr 1 --seed 1  y después  nn train red llamadas --epochs 3000 --positive peligrosa\nPor qué: con varias rectas combinadas, la red puede marcar las dos esquinas peligrosas a la vez.",
+      "validator": {
+        "type": "event",
+        "event": "nn.trained",
+        "where": {
+          "dataset": "llamadas",
+          "hidden": 4,
+          "seed": 1,
+          "lr": 1.0,
+          "accuracy": 1.0
+        }
+      },
+      "hints": [
+        "Usa --hidden 4 --lr 1 --seed 1 al crearla y --epochs 3000 --positive peligrosa al entrenarla.",
+        "nn create red --hidden 4 --lr 1 --seed 1  y después  nn train red llamadas --epochs 3000 --positive peligrosa"
+      ],
+      "on_complete": "Accuracy 1,0: la red acierta las 60 llamadas. Ahora vamos a ver CÓMO decide."
+    },
+    {
+      "id": "o6",
+      "text": "Pasa por la red una fuga y una entrada no fiable: nn forward red 0.9,0.1  y  nn forward red 0.1,0.9",
+      "teach": "Abrir la red\n0.9,0.1 es una fuga: datos de confianza hacia fuera. 0.1,0.9 es una entrada no fiable: datos de fuera hacia dentro.\nnn forward enseña la activación de cada neurona oculta. Fíjate en cuáles pasan de 0,5.\nPor qué: así empieza cualquier auditoría de una red: mirar qué neuronas se activan con cada caso.",
+      "validator": {
+        "type": "event",
+        "event": "nn.forward",
+        "where": {
+          "input": {
+            "in": [
+              "0.9,0.1",
+              "0.1,0.9"
+            ]
+          }
+        },
+        "count": {
+          "gte": 2
+        }
+      },
+      "hints": [
+        "Son dos comandos, uno con cada entrada. Si tu red no se llama red, usa su nombre.",
+        "nn forward red 0.9,0.1  y después  nn forward red 0.1,0.9"
+      ],
+      "on_complete": "Las dos salen como peligrosas (0,998). Pero no las detectan las mismas neuronas: mira las líneas «oculta 1» y «oculta 2» en las dos pasadas."
+    },
+    {
+      "id": "o7",
+      "text": "¿Qué detecta la neurona oculta 2?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "las fugas: se enciende con 0.9,0.1 y se apaga con 0.1,0.9"
+        },
+        {
+          "id": "b",
+          "text": "las entradas no fiables",
+          "why": "Esa es la oculta 1: se enciende con 0.1,0.9. La oculta 2 vale 0,946 con 0.9,0.1 y 0,0 con 0.1,0.9."
+        },
+        {
+          "id": "c",
+          "text": "cualquier llamada peligrosa",
+          "why": "Con la entrada no fiable (0.1,0.9) la oculta 2 vale 0,0. Detecta solo un tipo de peligro."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "Compara la línea «oculta 2» en las dos pasadas: ¿en cuál pasa de 0,5?",
+        "answer a"
+      ],
+      "on_complete": "Eso es. La oculta 2 detecta fugas y la oculta 1, entradas no fiables. Nadie se lo dijo: la red lo descubrió, como NOR y AND en T4-02. Con dos features aún se puede leer. ¿Y con más?"
+    },
+    {
+      "id": "o8",
+      "text": "Mira todos los parámetros con nn weights red. Un auditor te pregunta con qué regla bloquea la red una llamada. ¿Qué le puedes dar?",
+      "teach": "La caja negra\nnn weights enseña todos los pesos y sesgos: 17 números en esta red.\nMira la oculta 3 en las pasadas anteriores: se activa a medias (0,402 y 0,51) y no corresponde a ninguna idea clara.\nPor qué: una regulación o un cliente pueden exigir explicar una decisión automática. Con millones de pesos, leerlos a mano es imposible.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "la regla exacta, que está escrita en los pesos",
+          "why": "Los pesos son números, no reglas. Algunas neuronas se dejan interpretar (como la oculta 2), otras no (como la oculta 3)."
+        },
+        {
+          "id": "b",
+          "text": "los 17 números y la cuenta que lleva a la decisión, pero no una regla legible"
+        },
+        {
+          "id": "c",
+          "text": "nada, porque la red decide al azar",
+          "why": "La red no es aleatoria: con los mismos pesos y la misma entrada da siempre lo mismo. Es determinista, pero opaca."
+        }
+      ],
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "nn.inspected"
+          },
+          {
+            "type": "answer",
+            "expected": "b",
+            "accept": [
+              "b"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "Primero nn weights red. Después piensa: ¿hay en esa tabla alguna frase del tipo «si… entonces…»?",
+        "nn weights red  y después  answer b"
+      ],
+      "on_complete": "Exacto. Por eso se dice que una red es una caja negra: puedes ver todos sus números y aun así no tener una razón que leer. Con 17 pesos aún se puede rastrear; con los miles de millones de un LLM (Large Language Model), no."
+    },
+    {
+      "id": "py1",
+      "text": "Escribe en Python una regla legible para las mismas llamadas: abre el editor con py, completa la función peligrosa y compruébala con py check.",
+      "teach": "Una regla que se puede auditar\nLa regla del analista: una llamada es peligrosa si origen y destino tienen confianza muy distinta, es decir, si la diferencia es mayor que 0,4.\nabs(x) da el valor sin signo: abs(0.1 - 0.9) es 0.8. Una comparación como x > 0.4 devuelve True o False.\nPor qué: una regla así se lee en una línea y un auditor la entiende. En los agentes reales se combinan reglas legibles con clasificadores.",
+      "py_exercise": {
+        "id": "T4-03-peligrosa",
+        "title": "peligrosa(origen, destino): regla de frontera de confianza",
+        "function": "peligrosa",
+        "starter": "# Ejercicio T4-03 · Una regla legible\n# Devuelve True si la confianza del origen y la del destino se diferencian en más de 0.4.\n# abs(x) quita el signo: abs(0.1 - 0.9) es 0.8.\n\ndef peligrosa(origen, destino):\n    return False   # ← cambia esta línea\n\n# Una fuga: datos de confianza (0.9) hacia fuera (0.1). Debería imprimir True\nprint(peligrosa(0.9, 0.1))\n",
+        "cases": [
+          {
+            "args": [
+              0.9,
+              0.1
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              0.1,
+              0.9
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              0.93,
+              0.85
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              0.09,
+              0.12
+            ],
+            "expected": false
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T4-03-peligrosa",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Calcula la diferencia con abs(origen - destino) y compárala con 0.4.",
+        "La línea queda así: return abs(origen - destino) > 0.4"
+      ],
+      "on_complete": "Tu regla acierta las 60 llamadas, igual que la red, y cabe en una línea. Aquí gana la regla. Cuando el problema tiene cientos de features, las reglas a mano no llegan y se usan redes. Por eso se combinan las dos."
+    },
+    {
+      "id": "o9",
+      "text": "El equipo quiere poner este clasificador delante del agente. ¿Cómo lo usarías?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "como única barrera: si la red dice «segura», la llamada se ejecuta",
+          "why": "Ningún clasificador acierta siempre con ataques nuevos. Una sola barrera que falla deja pasar el ataque entero."
+        },
+        {
+          "id": "b",
+          "text": "como una capa más: reglas legibles, confirmación humana en las llamadas de riesgo y un registro de cada decisión"
+        },
+        {
+          "id": "c",
+          "text": "quitarlo y dejar que el LLM decida si la llamada es segura",
+          "why": "El LLM es justo lo que el atacante manipula con prompt injection. No puede vigilarse a sí mismo."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Piensa en qué pasa el día que el clasificador se equivoque.",
+        "answer b"
+      ],
+      "on_complete": "Eso es: defensa en profundidad. Varias capas, cada una con sus fallos, y un registro para poder auditar después. Lo verás a fondo cuando ataques y defiendas agentes en la parte de seguridad."
+    }
+  ],
+  "you_can_now": "Sabes describir las llamadas de un agente con features de confianza, ver que el riesgo tiene forma de XOR, resolverlo con una capa oculta y explicar por qué una red es difícil de auditar. Siguiente: T5, donde verás cómo un LLM (Large Language Model) convierte el texto en números.",
+  "debrief": {
+    "what_happened": "Has construido un clasificador de llamadas de un agente: una neurona sola falla porque el riesgo tiene forma de XOR, una red con 4 ocultas acierta todo, y al abrirla has visto neuronas que se leen (fugas, entradas no fiables) y otras que no.",
+    "why": "Cruzar una frontera de confianza, en cualquiera de los dos sentidos, es lo que convierte una acción normal en un riesgo. Y una red que acierta no basta: en seguridad hay que poder explicar y auditar cada decisión.",
+    "in_production": "La guía OWASP (Open Worldwide Application Security Project) para aplicaciones con LLM (Large Language Model) recoge este riesgo como «Excessive Agency» (LLM06): dar al agente más permisos o autonomía de la necesaria. Las defensas habituales son mínimo privilegio, confirmación humana en acciones sensibles y registro de cada llamada. Para explicar modelos opacos existen técnicas de explicabilidad como SHAP (SHapley Additive exPlanations) o LIME (Local Interpretable Model-agnostic Explanations), que aproximan qué features pesaron en cada decisión.",
+    "simplifications": [
+      "Dos features de confianza puestas a mano en lugar de analizar el contenido real de la llamada",
+      "Dataset sintético de 60 llamadas sin casos dudosos"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-llm-2025",
+    "ref.3b1b-nn"
+  ],
+  "xp": {
+    "base": 120
+  }
+}
