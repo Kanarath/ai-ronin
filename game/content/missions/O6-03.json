@@ -241,15 +241,35 @@
     },
     {
       "id": "o7",
-      "text": "Explica con tus palabras por qué apagar el agente no es la contención final, qué diferencia hay entre poner en cuarentena el documento y bloquear la salida, y por qué hay que avisar al DPD (delegado de protección de datos; en inglés, DPO). (reflexion <texto>, mínimo 40 palabras)",
+      "text": "Para cerrar: ¿por qué apagar el agente no es la contención final?",
       "validator": {
-        "type": "reflection",
-        "min_words": 40
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
       },
       "hints": [
-        "Coste, variante del atacante y personas afectadas.",
-        "Dato frente a acción."
-      ]
+        "Mira el primer retest: ¿qué proporción de tareas legítimas salió bien?",
+        "answer b"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque no frena los ataques",
+          "why": "Sí los frena, todos. El problema es lo que se lleva por delante."
+        },
+        {
+          "id": "b",
+          "text": "porque frena el ataque pero también todo el trabajo legítimo (0 tareas), y hay que sustituirlo por un control más fino"
+        },
+        {
+          "id": "c",
+          "text": "porque antes hay que avisar al DPD (delegado de protección de datos; en inglés, DPO)",
+          "why": "Avisar es obligatorio, pero no es el motivo: el motivo es el coste de parar el servicio."
+        }
+      ],
+      "on_complete": "Eso es: primera reacción si no sabes qué pasa; después, un control sobre la acción (bloquear-salida) y aviso al DPD (delegado de protección de datos; en inglés, DPO)."
     }
   ],
   "mastery_trial": {

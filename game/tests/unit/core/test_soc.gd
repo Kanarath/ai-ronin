@@ -91,9 +91,6 @@ func test_comandos() -> void:
 	assert_false(game.shell.execute("soc rule t inventada on").ok)
 
 
-const R40 := "reflexion en un agente lo peligroso pasa entre la pregunta y la respuesta porque un documento recuperado puede dar instrucciones y una herramienta las ejecuta por eso hay que registrar documentos argumentos y resultados redactando los datos personales y medir las reglas con precision y recall"
-
-
 func test_mision_O6_01() -> void:
 	game.progress.data["missions"]["A3-03"] = {"completed": true}
 	assert_eq(game.start_mission("O6-01"), "")
@@ -104,7 +101,7 @@ func test_mision_O6_01() -> void:
 	run(["answer b"])
 	assert_eq(game.runner.index, 4)
 	run(["hipotesis el registro guarda datos personales de clientes", "soc log taller retrievals on", "soc log taller identity on", "soc log taller model_version on",
-		"soc coverage taller", "soc log taller redact-pii on", "soc coverage taller", R40])
+		"soc coverage taller", "soc log taller redact-pii on", "soc coverage taller", "answer b"])
 	assert_eq(game.runner.phase, "trial")
 	run(_full("t2") + ["soc coverage t2", "soc show t2 S07"])
 	assert_eq(finished.size(), 1)
@@ -124,7 +121,7 @@ func test_mision_O6_02() -> void:
 	assert_eq(game.runner.index, 4)
 	_solve_py(PY_PRECISION)
 	assert_eq(game.runner.index, 5)
-	run(["soc rule taller dominio-externo off", "soc rule taller instruccion-en-dato off", "soc detect taller", R40])
+	run(["soc rule taller dominio-externo off", "soc rule taller instruccion-en-dato off", "soc detect taller", "answer a"])
 	assert_eq(game.runner.phase, "trial")
 	run(_full("t2") + ["soc rule t2 palabras-clave on", "soc rule t2 volumen on", "soc rule t2 correlacion on", "soc detect t2"])
 	assert_eq(finished.size(), 1)
@@ -146,7 +143,7 @@ func test_mision_O6_03() -> void:
 		"informe campo pasos 1) soc trazas taller 2) soc show taller S04 3) soc search taller prov-77",
 		"informe campo impacto datos de 212 clientes enviados a un dominio externo en dos sesiones", "informe campo evidencia http_get a cdn-estadisticas.example en S04 y S07",
 		"informe campo mitigacion bloquear la salida a dominios no permitidos y poner el documento en cuarentena", "informe campo verificacion el retest da 0 de 2 ataques y 4 de 4 tareas",
-		"informe revisar", R40])
+		"informe revisar", "answer b"])
 	assert_eq(game.runner.phase, "trial")
 	run(_full("t2") + ["soc show t2 S07", "soc search t2 prov-77", "soc contain t2 bloquear-salida on", "soc contain t2 notificar-dpd on", "soc retest t2"])
 	assert_eq(finished.size(), 1)

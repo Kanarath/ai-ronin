@@ -184,15 +184,35 @@
     },
     {
       "id": "o5",
-      "text": "Explica con tus palabras por qué el azar sirve para elegir expedientes pero no para elegir controles, y qué diferencia hay entre una no conformidad mayor, una menor y una observación, con un ejemplo de Ayuda-Valle. (reflexion <texto>, mínimo 40 palabras)",
+      "text": "Para cerrar: un control que en general funciona tiene un fallo puntual. ¿Cómo se clasifica?",
       "validator": {
-        "type": "reflection",
-        "min_words": 40
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
       },
       "hints": [
-        "Riesgo frente a representatividad.",
-        "C08, C05 y C09."
-      ]
+        "Repasa la lección «Mayor, menor u observación».",
+        "answer b"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "no conformidad mayor",
+          "why": "Mayor es un requisito que no se cumple en absoluto o un fallo sistemático, como C10."
+        },
+        {
+          "id": "b",
+          "text": "no conformidad menor"
+        },
+        {
+          "id": "c",
+          "text": "observación",
+          "why": "Observación es cuando todavía no hay incumplimiento; aquí ya lo hay."
+        }
+      ],
+      "on_complete": "Eso es: como C05. La clase depende de cuánto falla el control, y eso se ve en la evidencia."
     }
   ],
   "mastery_trial": {

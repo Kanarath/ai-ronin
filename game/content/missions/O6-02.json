@@ -247,15 +247,35 @@
     },
     {
       "id": "o5",
-      "text": "Explica con tus palabras por qué una regla por palabras clave no basta contra un agente, qué aporta la correlación y qué coste tienen los falsos positivos y los falsos negativos. (reflexion <texto>, mínimo 40 palabras)",
+      "text": "Para cerrar: ¿qué cuesta cada tipo de error de una regla de detección?",
       "validator": {
-        "type": "reflection",
-        "min_words": 40
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
       },
       "hints": [
-        "S04 frente a S09; S06 y S08 frente a la correlación.",
-        "Analista cansado frente a incidente invisible."
-      ]
+        "Analista cansado frente a incidente invisible.",
+        "answer a"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "un falso positivo cuesta tiempo de un analista; un falso negativo es un incidente que nadie mira"
+        },
+        {
+          "id": "b",
+          "text": "los dos cuestan lo mismo",
+          "why": "No: uno gasta tiempo y paciencia; el otro deja un ataque sin ver."
+        },
+        {
+          "id": "c",
+          "text": "un falso positivo es un incidente que nadie mira",
+          "why": "Es al revés: el falso positivo es una alarma que sobra; el falso negativo, un ataque que se escapa."
+        }
+      ],
+      "on_complete": "Eso es. Por eso se buscan reglas con recall 1,0 y la mejor precision posible, como la correlación."
     }
   ],
   "mastery_trial": {

@@ -228,29 +228,70 @@
     },
     {
       "id": "o3",
-      "text": "Analiza tus números: qué ventaja tuvo el atacante con cada receta y qué precisión en test costó reducirla; por qué la TPR (True Positive Rate) con FPR (False Positive Rate) ≤ 5 % es tan baja aunque la ventaja no sea 0; y cómo cambia el error de la media publicada al multiplicar ε por 10, con Laplace y con el mecanismo gaussiano. (reflexion <texto>, mínimo 60 palabras)",
+      "text": "Si multiplicas ε por 10, ¿qué pasa con el error de la media publicada con Laplace?",
       "teach": "La media esconde a los más expuestos\nUna ventaja del 18 % puede venir de acertar un poco con muchos o mucho con unos pocos. Para una persona concreta importa lo segundo: si el atacante puede señalarla con pocas falsas alarmas.\nPor eso Carlini et al. (2022) piden medir la TPR (True Positive Rate) con FPR (False Positive Rate) muy bajas. En este laboratorio, con dígitos fáciles, el ataque es débil ahí; con datos reales y modelos grandes, no siempre.\nPor qué: es la cifra que importa a la persona que estaba en los datos.",
       "validator": {
-        "type": "reflection",
-        "min_words": 60
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
       },
       "hints": [
-        "evidence list te recuerda los recuentos; la ventaja, el AUC y la media privada están en la salida de bateria.py.",
-        "Laplace: la escala del ruido es sensibilidad/ε. ¿Qué pasa con el error si ε se multiplica por 10?"
-      ]
+        "Laplace: la escala del ruido es sensibilidad/ε.",
+        "answer a"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "se divide más o menos entre 10: la escala del ruido es sensibilidad/ε",
+          "why": "El ruido es aleatorio: con pocas repeticiones tus cifras pueden no dar exactamente 10."
+        },
+        {
+          "id": "b",
+          "text": "se multiplica por 10",
+          "why": "Es al revés: ε está dividiendo en la escala del ruido."
+        },
+        {
+          "id": "c",
+          "text": "no cambia",
+          "why": "La escala del ruido depende de ε."
+        }
+      ],
+      "on_complete": "Eso es: más ε, menos ruido y menos privacidad. Elegir ε es elegir ese compromiso."
     },
     {
       "id": "o4",
-      "text": "Explica qué tiene que ver tu medición con OWASP (Open Worldwide Application Security Project) LLM02 y con el Dictamen 28/2024 del CEPD (Comité Europeo de Protección de Datos; en inglés, EDPB): qué dice el CEPD sobre cuándo un modelo entrenado con datos personales puede considerarse anónimo, por qué tu prueba es una evidencia técnica y no una certificación, y por qué DP-SGD (Differentially Private Stochastic Gradient Descent) sin calcular su ε no es una garantía. (reflexion <texto>, mínimo 50 palabras)",
+      "text": "¿Por qué tu ataque es una evidencia técnica y no una certificación de que el modelo es anónimo?",
       "validator": {
-        "type": "reflection",
-        "min_words": 50
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
       },
       "hints": [
         "README, sección «Relación con LLM02 y con el RGPD».",
-        "El CEPD habla de probabilidades insignificantes de extraer datos del modelo y de obtenerlos con consultas, evaluadas caso por caso. ¿Qué medía tu ataque?"
+        "answer c"
       ],
-      "teach": "Técnica y norma\nAntes de escribir, lee la sección «Relación con LLM02 y con el RGPD (Reglamento General de Protección de Datos; en inglés, GDPR)» del README: resume lo que dice el Dictamen 28/2024 del CEPD (Comité Europeo de Protección de Datos; en inglés, EDPB) sobre modelos entrenados con datos personales. (Esto es formación, no asesoramiento jurídico.)\nPor qué: tu medición es una evidencia técnica que alimenta esa evaluación, no una conclusión jurídica."
+      "teach": "Técnica y norma\nAntes de escribir, lee la sección «Relación con LLM02 y con el RGPD (Reglamento General de Protección de Datos; en inglés, GDPR)» del README: resume lo que dice el Dictamen 28/2024 del CEPD (Comité Europeo de Protección de Datos; en inglés, EDPB) sobre modelos entrenados con datos personales. (Esto es formación, no asesoramiento jurídico.)\nPor qué: tu medición es una evidencia técnica que alimenta esa evaluación, no una conclusión jurídica.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque DP-SGD (Differentially Private Stochastic Gradient Descent) ya garantiza el anonimato",
+          "why": "Sin calcular su ε, DP-SGD (Differentially Private Stochastic Gradient Descent) es una técnica medida, no una garantía."
+        },
+        {
+          "id": "b",
+          "text": "porque el ataque fue débil",
+          "why": "Fuerte o débil, sigue siendo una medición, no una conclusión jurídica."
+        },
+        {
+          "id": "c",
+          "text": "porque mide un ataque concreto con unos datos concretos, y la valoración de si un modelo es anónimo se hace caso por caso"
+        }
+      ],
+      "on_complete": "Eso es: tu medición alimenta esa evaluación; no la sustituye. (Esto es formación, no asesoramiento jurídico.)"
     }
   ],
   "you_can_now": "Sabes medir la ventaja de un ataque de pertenencia, leer una curva ROC (Receiver Operating Characteristic) por su zona de FPR (False Positive Rate) baja y explicar qué aportan, y qué no garantizan, la regularización, DP-SGD (Differentially Private Stochastic Gradient Descent) y la privacidad diferencial. También has escrito la ventaja TPR (True Positive Rate) − FPR en Python.",

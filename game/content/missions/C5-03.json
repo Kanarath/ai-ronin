@@ -174,15 +174,35 @@
     },
     {
       "id": "o5",
-      "text": "Lecciones aprendidas: explica con tus palabras qué tienen en común las defensas que funcionaron en los cinco activos, qué no se arregla con un interruptor y qué vigilarías en producción después de este encargo. (reflexion <texto>, mínimo 60 palabras)",
+      "text": "Para cerrar: ¿qué tienen en común las defensas que cerraron los hallazgos en los cinco activos?",
       "validator": {
-        "type": "reflection",
-        "min_words": 60
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
       },
       "hints": [
-        "Controles en el código frente a instrucciones al modelo; mínimo privilegio; acciones frente a texto.",
-        "Trazas, reglas medidas, revisión de cada versión nueva (O6, A6)."
-      ]
+        "Controles en el código frente a instrucciones al modelo; mínimo privilegio.",
+        "answer c"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "que eran instrucciones al modelo para que se portara bien",
+          "why": "Las instrucciones se esquivan; lo que cerró los hallazgos fueron controles en el código."
+        },
+        {
+          "id": "b",
+          "text": "que apagaban las funciones peligrosas",
+          "why": "El retest exigía las tareas legítimas a 1,0: no se apagó nada."
+        },
+        {
+          "id": "c",
+          "text": "que limitan en el código lo que el sistema puede hacer y con qué datos, y se comprobaron con ataque y con tareas"
+        }
+      ],
+      "on_complete": "Eso es. Y en producción: trazas, reglas medidas y un retest con cada versión nueva (O6, A6)."
     }
   ],
   "mastery_trial": {

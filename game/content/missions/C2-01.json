@@ -153,15 +153,35 @@
     },
     {
       "id": "o5",
-      "text": "Explica con tus palabras por qué en un RAG (Retrieval-Augmented Generation) casi todos los ataques dependen de una sola defensa y por qué la cobertura mínima incluye una defensa que no bloquea ningún ataque. (reflexion <texto>, mínimo 40 palabras)",
+      "text": "Para cerrar: ¿por qué la cobertura mínima incluye min-score, que no bloquea ningún ataque?",
       "validator": {
-        "type": "reflection",
-        "min_words": 40
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
       },
       "hints": [
-        "Etapas del pipeline y por dónde entra cada ataque.",
-        "Seguridad y calidad se miden con la misma vara."
-      ]
+        "Mira la fila «tareas ok» con y sin min-score.",
+        "answer a"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque sin ella no se llega a 7/7 respuestas correctas: la calidad también es un requisito"
+        },
+        {
+          "id": "b",
+          "text": "porque bloquea la inversión de vectores",
+          "why": "Eso lo hace vector-acl."
+        },
+        {
+          "id": "c",
+          "text": "porque es un punto único",
+          "why": "No bloquea ataques, así que no puede ser el punto único de ninguno."
+        }
+      ],
+      "on_complete": "Eso es: en un RAG (Retrieval-Augmented Generation), seguridad y calidad se miden con la misma vara y las dos bloquean un despliegue."
     }
   ],
   "mastery_trial": {

@@ -29,10 +29,6 @@ static func _on(cmd: String, sys: String, defs: Array) -> Array:
 	return out
 
 
-const R40 := "reflexion la matriz mide cada defensa por separado y deja ver los puntos unicos y el coste de cada control pero la cobertura minima puede ser fragil porque si falla un solo control el ataque vuelve a pasar asi que conviene una segunda capa barata y vigilar lo que queda"
-const R60 := R40 + " en produccion separaria los datos sensibles del indice de clientes y pondria trazas con alertas y pruebas de regresion en cada version"
-
-
 func test_matriz_del_agente() -> void:
 	var mx := LabCommands.matrix("agent", MockAgent.create("a"))
 	assert_eq(mx["base"]["broken"].size(), 5)
@@ -87,7 +83,7 @@ func test_mision_C1_01() -> void:
 	run(["hipotesis el que pide un usuario directamente", "answer diputado-confundido"])
 	run(["hipotesis 2"] + _on("agent", "kage", ["user-authz", "spotlight"]) + ["lab resilience agent kage"])
 	assert_eq(game.runner.index, 3)
-	run(["answer 5", "answer a", R40])
+	run(["answer 5", "answer a", "answer c"])
 	assert_eq(game.runner.phase, "trial")
 	run(["agent create t2"] + _on("agent", "t2", ["least-privilege", "user-authz", "step-budget"]) + ["lab resilience agent t2"])
 	assert_eq(finished.size(), 1)
@@ -102,7 +98,7 @@ func test_mision_C1_02() -> void:
 	run(["answer b"])
 	run(["hipotesis spotlight", "agent defend kage spotlight on", "lab resilience agent kage"])
 	assert_eq(game.runner.index, 3)
-	run(["answer diputado-confundido", R40])
+	run(["answer diputado-confundido", "answer b"])
 	assert_eq(game.runner.phase, "trial")
 	run(["agent create t2"] + _on("agent", "t2", ["spotlight", "least-privilege", "user-authz", "step-budget"]) + ["lab resilience agent t2"])
 	assert_eq(finished.size(), 1)
@@ -118,7 +114,7 @@ func test_mision_C2_01() -> void:
 	run(["rag create docs", "rag ingest docs", "lab matrix rag docs", "answer b"])
 	run(["hipotesis casi todos", "answer 4", "answer min-score"])
 	assert_eq(game.runner.index, 4)
-	run(_on("rag", "docs", RAG_MIN) + ["lab resilience rag docs", R40])
+	run(_on("rag", "docs", RAG_MIN) + ["lab resilience rag docs", "answer a"])
 	assert_eq(game.runner.phase, "trial")
 	run(["rag create t2", "rag ingest t2"] + _on("rag", "t2", RAG_MIN) + ["lab resilience rag t2"])
 	assert_eq(finished.size(), 1)
@@ -131,7 +127,7 @@ func test_mision_C2_02() -> void:
 	run(["hipotesis uno", "rag create docs", "rag ingest docs"] + _on("rag", "docs", RAG_MIN) + ["lab resilience rag docs", "rag defend docs spotlight on", "lab resilience rag docs"])
 	run(["answer acl", "answer 4"])
 	assert_eq(game.runner.index, 3)
-	run(["answer b", R60])
+	run(["answer b", "answer c"])
 	assert_eq(game.runner.phase, "trial")
 	run(["rag create t2", "rag ingest t2"] + _on("rag", "t2", RAG_MIN) + ["lab resilience rag t2", "rag defend t2 spotlight on", "lab resilience rag t2"])
 	assert_eq(finished.size(), 1)
@@ -146,7 +142,7 @@ func test_mision_C3_01() -> void:
 	assert_eq(game.runner.index, 3)
 	run(["answer b"])
 	assert_eq(game.runner.index, 4)
-	run(["mcp host erp2"] + _on("mcp", "erp2", ["namespacing", "least-scope", "output-isolation", "pin-definitions"]) + ["lab resilience mcp erp2", R40])
+	run(["mcp host erp2"] + _on("mcp", "erp2", ["namespacing", "least-scope", "output-isolation", "pin-definitions"]) + ["lab resilience mcp erp2", "answer b"])
 	assert_eq(game.runner.phase, "trial")
 	run(["mcp host t2"] + _on("mcp", "t2", ["namespacing", "least-scope", "output-isolation", "review-descriptions"]) + ["lab resilience mcp t2"])
 	assert_eq(finished.size(), 1)
@@ -162,7 +158,7 @@ func test_mision_C3_02() -> void:
 	run(["mcp host erp"] + _on("mcp", "erp", MCP_FIVE) + ["lab resilience mcp erp"])
 	run(["hipotesis 4", "mcp defend erp consent on", "lab resilience mcp erp", "answer 3"])
 	assert_eq(game.runner.index, 2)
-	run(["answer review-descriptions", "answer b", R60])
+	run(["answer review-descriptions", "answer b", "answer c"])
 	assert_eq(game.runner.phase, "trial")
 	run(["mcp host t2"] + _on("mcp", "t2", MCP_FIVE) + ["lab resilience mcp t2"])
 	assert_eq(finished.size(), 1)

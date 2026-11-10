@@ -169,15 +169,35 @@
     },
     {
       "id": "o5",
-      "text": "Explica con tus palabras qué pregunta responde cada evaluación, por qué la forja no hace FRIA (Fundamental Rights Impact Assessment) y el ayuntamiento sí, y qué ganas haciéndolas juntas. (reflexion <texto>, mínimo 40 palabras)",
+      "text": "Para cerrar: ¿por qué la forja no hace FRIA (Fundamental Rights Impact Assessment) y el ayuntamiento sí?",
       "validator": {
-        "type": "reflection",
-        "min_words": 40
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
       },
       "hints": [
-        "Datos personales frente a uso del sistema sobre las personas.",
-        "Quién despliega, art. 27.1 y 27.4."
-      ]
+        "Mira la tarjeta de la FRIA: ¿a quién obliga?",
+        "answer c"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque el cribado de la forja no es de alto riesgo",
+          "why": "Sí lo es. Alto riesgo no implica FRIA (Fundamental Rights Impact Assessment)."
+        },
+        {
+          "id": "b",
+          "text": "porque la forja ya hizo la EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA)",
+          "why": "La EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA) no sustituye a la FRIA (Fundamental Rights Impact Assessment): responden a preguntas distintas."
+        },
+        {
+          "id": "c",
+          "text": "porque el art. 27 se dirige a organismos públicos, a quienes prestan servicios públicos y a dos usos concretos (solvencia y seguros), y la forja no es ninguno"
+        }
+      ],
+      "on_complete": "Eso es. Y al ayuntamiento le conviene hacerlas juntas: la FRIA (Fundamental Rights Impact Assessment) complementa lo que la EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA) ya cubre (art. 27.4)."
     }
   ],
   "mastery_trial": {

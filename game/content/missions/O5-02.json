@@ -154,15 +154,35 @@
     },
     {
       "id": "o4",
-      "text": "Explica con tus palabras por qué el monitor de emociones no se puede mitigar, qué cambia para el cribado frente al chatbot, y por qué el aplazamiento no significa que se pueda esperar. (reflexion <texto>, mínimo 40 palabras)",
+      "text": "Para cerrar: el alto riesgo del anexo III se aplica desde el 2 de diciembre de 2027. ¿Por qué RR. HH. no puede esperar hasta entonces?",
       "validator": {
-        "type": "reflection",
-        "min_words": 40
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
       },
       "hints": [
-        "Prohibido frente a requisitos.",
-        "Decisiones sobre personas, calendario de compra y de uso."
-      ]
+        "Piensa en cuándo se compra el sistema y cuándo se usará.",
+        "answer c"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque las fechas ya no pueden cambiar",
+          "why": "Pueden cambiar (por eso se comprueban en EUR-Lex), pero ese no es el motivo."
+        },
+        {
+          "id": "b",
+          "text": "porque el cribado está prohibido",
+          "why": "Es alto riesgo, no prohibido. Lo prohibido es el monitor de emociones."
+        },
+        {
+          "id": "c",
+          "text": "porque un sistema que se compra hoy se usará cuando se apliquen las obligaciones: los requisitos se diseñan y se piden al proveedor ahora"
+        }
+      ],
+      "on_complete": "Eso es: los requisitos de alto riesgo entran en el contrato y en el diseño, no la víspera."
     }
   ],
   "mastery_trial": {

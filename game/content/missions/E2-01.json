@@ -133,29 +133,69 @@
     },
     {
       "id": "o3",
-      "text": "Analiza tus números: a partir de qué epsilon el modelo falla más de lo que acierta; cuánto ganó el entrenamiento adversario y con qué epsilon; qué parte de los ejemplos que engañaron al modelo marcó el detector; y qué costó cada defensa en las imágenes limpias y en tiempo. (reflexion <texto>, mínimo 60 palabras)",
+      "text": "Compara las configuraciones de tu batería. ¿Qué cifra baja el detector y cuál no?",
       "teach": "Lo que falla frente a lo que pasa\n«El modelo falla» cuenta los ejemplos atacados mal clasificados; «éxito», los que además no marca el detector. El entrenamiento adversario baja la primera cifra; el detector, solo la segunda.\nY el detector paga en «limpias bien»: cada imagen normal marcada es un albarán rechazado.\nPor qué: cada defensa se mide con la cifra que de verdad cambia y con lo que le cuesta al uso normal.",
       "validator": {
-        "type": "reflection",
-        "min_words": 60
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
       },
       "hints": [
-        "evidence list te recuerda los recuentos; la curva de precisión frente a epsilon está en la salida de bateria.py.",
-        "Compara la precisión con epsilon 0 de ninguna y de adversario: ese es el precio en datos limpios."
-      ]
+        "Lee la lección: qué cuenta «el modelo falla» y qué cuenta «éxito».",
+        "answer c"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "baja las dos",
+          "why": "El detector no cambia el modelo: solo rechaza entradas."
+        },
+        {
+          "id": "b",
+          "text": "baja «el modelo falla»",
+          "why": "Eso lo baja el entrenamiento adversario, que cambia el modelo."
+        },
+        {
+          "id": "c",
+          "text": "baja «éxito» (los que engañan y no se marcan), pero no «el modelo falla»"
+        }
+      ],
+      "on_complete": "Eso es. Y cada defensa tiene su precio: el adversario, algo de precisión limpia y el doble de cálculo; el detector, imágenes normales rechazadas."
     },
     {
       "id": "o4",
-      "text": "Explica por qué un atacante que conozca el detector podría evadirlo, por qué la robustez se mide contra el ataque más fuerte y no contra FGSM (Fast Gradient Sign Method), y cómo podría atacar alguien que no tiene los pesos del modelo. (reflexion <texto>, mínimo 50 palabras)",
+      "text": "¿Por qué la robustez se mide contra el ataque más fuerte y no contra FGSM (Fast Gradient Sign Method)?",
       "validator": {
-        "type": "reflection",
-        "min_words": 50
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
       },
       "hints": [
         "Carlini y Wagner (2017) rompieron diez detectores incorporándolos a la pérdida del atacante.",
-        "Si el atacante no tiene los pesos, puede entrenar su propio modelo y atacarlo: los ejemplos adversarios suelen transferirse. E2-02 enseña a construir esa copia."
+        "answer a"
       ],
-      "teach": "Quién conoce la defensa\nUn atacante adaptativo conoce la defensa y la incluye en su ataque.\nUn atacante sin los pesos puede entrenar su propia copia y atacarla: los ejemplos adversarios a menudo engañan también al original (transferencia).\nPor qué: la robustez de un modelo en producción se mide contra el atacante más fuerte razonable, no contra el más fácil."
+      "teach": "Quién conoce la defensa\nUn atacante adaptativo conoce la defensa y la incluye en su ataque.\nUn atacante sin los pesos puede entrenar su propia copia y atacarla: los ejemplos adversarios a menudo engañan también al original (transferencia).\nPor qué: la robustez de un modelo en producción se mide contra el atacante más fuerte razonable, no contra el más fácil.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque FGSM (Fast Gradient Sign Method) da un solo paso, y un atacante adaptativo que conoce la defensa la incorpora a su ataque"
+        },
+        {
+          "id": "b",
+          "text": "porque FGSM (Fast Gradient Sign Method) no funciona contra modelos lineales",
+          "why": "Funciona muy bien: lo acabas de medir."
+        },
+        {
+          "id": "c",
+          "text": "porque los atacantes reales nunca tienen el modelo",
+          "why": "Sin los pesos pueden entrenar una copia y atacarla: los ejemplos se transfieren (E2-02)."
+        }
+      ],
+      "on_complete": "Eso es: una defensa que solo aguanta al atacante más fácil no está demostrada."
     }
   ],
   "you_can_now": "Sabes calcular el gradiente respecto a la entrada, construir ejemplos adversarios con FGSM (Fast Gradient Sign Method) y medir el precio de dos defensas. Siguiente: E2-02, robar el modelo a través de su API (Application Programming Interface), o E2-03, saber quién estaba en sus datos.",

@@ -292,28 +292,69 @@
     },
     {
       "id": "o3",
-      "text": "Analiza tus números: cómo cambian el p50 y el p95 de las legítimas con cada configuración; cuántas peticiones abusivas llegaron al modelo y cuántos tokens gastaron; qué aportó la caché; y si el throughput subió o solo cambió quién se lo llevaba. (reflexion <texto>, mínimo 60 palabras)",
+      "text": "Compara la fila sin defensas con la de límite y cola. ¿Qué pasa con el throughput y con el p95 de las legítimas?",
       "teach": "El throughput no es la defensa\nCon un solo modelo en CPU (Central Processing Unit), la forja produce más o menos las mismas respuestas por minuto con o sin defensas.\nLo que cambian las defensas es a quién se dedica ese tiempo: el límite y la cola se lo quitan al abusador; la caché crea capacidad nueva, porque una respuesta guardada no gasta CPU.\nPor qué: mirar solo el throughput (peticiones por segundo) esconde quién está esperando.",
       "validator": {
-        "type": "reflection",
-        "min_words": 60
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
       },
       "hints": [
-        "evidence list te recuerda los recuentos; los percentiles y los tokens están en la salida de bateria.py y en forja/evidencias/E4-01-medicion.json.",
-        "Compara «abuso al modelo» con los códigos 429 y 503: cada petición rechazada antes del modelo son segundos que recupera un cliente legítimo."
-      ]
+        "Lee la lección «El throughput no es la defensa».",
+        "answer b"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "el throughput se duplica",
+          "why": "Con un modelo en CPU (Central Processing Unit) produce más o menos lo mismo; solo la caché crea capacidad nueva."
+        },
+        {
+          "id": "b",
+          "text": "el throughput apenas cambia, pero el p95 de las legítimas baja: el tiempo del modelo deja de ir al abusador",
+          "why": "En CPU (Central Processing Unit) las cifras varían entre rondas: mira la tendencia, no el decimal."
+        },
+        {
+          "id": "c",
+          "text": "el p95 de las legítimas sube",
+          "why": "El abusador recibe 429 o 503 antes de llegar al modelo: esos segundos los recuperan los demás."
+        }
+      ],
+      "on_complete": "Eso es: las defensas no fabrican más tiempo de modelo; deciden a quién se le da."
     },
     {
       "id": "o4",
-      "text": "Explica por qué el límite tiene que ser por cliente y con el cliente sacado del token, qué fuga provocaría una caché sin ámbito en un servicio con datos de cada usuario, y qué cambia si el servicio corre en tres réplicas con el estado en memoria. (reflexion <texto>, mínimo 50 palabras)",
+      "text": "El servicio pasa a correr en tres réplicas, cada una con su cubo y su caché en memoria. ¿Qué pasa?",
       "validator": {
-        "type": "reflection",
-        "min_words": 50
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
       },
       "hints": [
-        "En test_carga.py, el abusador agota su cubo y ana sigue pasando.",
-        "Con tres réplicas, cada una tiene su propio cubo y su propia caché: ¿cuántas peticiones puede hacer el abusador antes de que lo frenen?"
-      ]
+        "Con tres réplicas, ¿cuántos cubos tiene el abusador?",
+        "answer a"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "cada réplica tiene su propio cubo: el abusador puede hacer hasta tres veces más peticiones antes de que lo frenen"
+        },
+        {
+          "id": "b",
+          "text": "nada: el límite sigue igual",
+          "why": "El estado en memoria no se comparte entre réplicas."
+        },
+        {
+          "id": "c",
+          "text": "la caché pasa a ser común a las tres",
+          "why": "Cada réplica tiene la suya: una respuesta guardada en una no la ve otra."
+        }
+      ],
+      "on_complete": "Eso es: en producción, cubos y caché viven en un almacén compartido entre réplicas."
     }
   ],
   "you_can_now": "Sabes medir un servicio de LLM (Large Language Model) con percentiles, proteger a los clientes legítimos con límite por cliente, caché con ámbito, cola acotada y plazo, y explicar por qué el throughput no es la defensa. También has escrito el percentil en Python. Siguiente: E4-02, trazas de OpenTelemetry sin datos personales.",

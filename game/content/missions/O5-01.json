@@ -186,15 +186,35 @@
     },
     {
       "id": "o5",
-      "text": "Explica con tus palabras qué pregunta responde cada marco (qué te obliga, cómo gestionas el riesgo, cómo lo demuestras) y por qué no se sustituyen entre sí. (reflexion <texto>, mínimo 40 palabras)",
+      "text": "Para cerrar: ¿qué pregunta responde cada marco?",
       "validator": {
-        "type": "reflection",
-        "min_words": 40
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
       },
       "hints": [
         "Ley, marco voluntario, norma certificable.",
-        "¿Quién te puede sancionar, quién te audita, quién solo te orienta?"
-      ]
+        "answer a"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "AI Act: qué te obliga; NIST AI RMF (AI Risk Management Framework): cómo organizar la gestión del riesgo; ISO/IEC 42001: cómo demostrarlo con una certificación"
+        },
+        {
+          "id": "b",
+          "text": "los tres responden lo mismo con palabras distintas",
+          "why": "No se sustituyen: uno obliga, otro orienta y otro se certifica."
+        },
+        {
+          "id": "c",
+          "text": "AI Act: cómo demostrarlo; ISO/IEC 42001: qué te obliga",
+          "why": "Es al revés: la ley obliga y la norma se certifica."
+        }
+      ],
+      "on_complete": "Eso es: ley, marco y norma. Se usan juntos, pero ninguno sustituye a los otros."
     }
   ],
   "mastery_trial": {

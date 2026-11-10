@@ -84,16 +84,13 @@ func test_mapeos_y_clasificacion() -> void:
 	assert_true(_last("gov.required")["ok"])
 
 
-const R40 := "reflexion el ai act es una ley que obliga segun el uso y el nivel de riesgo el nist ai rmf es un marco voluntario para organizar la gestion del riesgo e iso 42001 es una norma certificable de sistema de gestion que ayuda a demostrarlo pero ninguno sustituye a los otros"
-
-
 func test_mision_O5_01() -> void:
 	game.progress.data["missions"]["O6-03"] = {"completed": true}
 	assert_eq(game.start_mission("O5-01"), "")
 	run(["gov open forja", "gov frameworks forja", "answer iso-42001", "answer b"])
 	run(["hipotesis no, una certifica la gestión y la otra impone obligaciones legales concretas", "gov framework forja iso-42001", "gov framework forja ai-act", "answer no"])
 	assert_eq(game.runner.index, 3)
-	run(_maps("forja") + [R40])
+	run(_maps("forja") + ["answer a"])
 	assert_eq(game.runner.phase, "trial")
 	run(["gov open t2"] + _maps("t2"))
 	assert_eq(finished.size(), 1)
@@ -110,7 +107,7 @@ func test_mision_O5_02() -> void:
 	run(["gov classify forja cribado-cv alto", "answer 2027-12-02"])
 	run(["gov needs forja"] + _require("forja"))
 	assert_eq(game.runner.index, 4)
-	run([R40])
+	run(["answer c"])
 	assert_eq(game.runner.phase, "trial")
 	run(["gov open t2"] + _classify("t2") + _require("t2"))
 	assert_eq(finished.size(), 1)
@@ -129,7 +126,7 @@ func test_mision_O5_03() -> void:
 	assert_eq(game.runner.index, 4)
 	run(["answer b"])
 	assert_eq(game.runner.index, 5)
-	run(_treat_ok("forja") + [R40])
+	run(_treat_ok("forja") + ["answer b"])
 	assert_eq(game.runner.phase, "trial")
 	run(["gov open t2"] + _treat_ok("t2"))
 	assert_eq(finished.size(), 1)

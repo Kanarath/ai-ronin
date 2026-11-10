@@ -137,28 +137,68 @@
     },
     {
       "id": "o3",
-      "text": "Analiza tus números: qué despliegues malos se colaban con cada configuración de reglas; qué reglas fallan los compose.yaml de la Forja y cómo los arreglarías; si la huella de tu llama3.2:1b coincide con la permitida; y qué decidió el canary con cada candidato, tras cuántas peticiones. (reflexion <texto>, mínimo 60 palabras)",
+      "text": "El canary revierte en cuanto se supera un umbral, pero para promover espera a tener datos suficientes. ¿Por qué esa asimetría?",
       "teach": "Revertir pronto\nEl canary evalúa después de cada petición. En cuanto los datos superan un umbral, revierte: cada petición más a una versión rota es un usuario más afectado. Para promover, en cambio, hace falta llegar al final con datos suficientes.\nPor qué: equivocarse revirtiendo una versión buena cuesta un despliegue; equivocarse promoviendo una mala cuesta un incidente.",
       "validator": {
-        "type": "reflection",
-        "min_words": 60
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
       },
       "hints": [
-        "evidence list te recuerda los recuentos; la huella, los compose y el canary están en la salida de bateria.py y en forja/evidencias/E4-03-medicion.json.",
-        "Busca en la salida «usuario-sin-declarar» y «sin-limite»: ¿qué línea añadirías a cada compose.yaml?"
-      ]
+        "Lee la lección «Revertir pronto».",
+        "answer c"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "es un error del canary",
+          "why": "Es deliberado."
+        },
+        {
+          "id": "b",
+          "text": "porque los umbrales se ajustan durante la prueba",
+          "why": "Se fijan ANTES; si no, se ajustarían al resultado."
+        },
+        {
+          "id": "c",
+          "text": "porque cada petición más a una versión rota es un usuario más afectado, y promover una mala cuesta un incidente"
+        }
+      ],
+      "on_complete": "Eso es: equivocarse revirtiendo cuesta un despliegue; equivocarse promoviendo, un incidente."
     },
     {
       "id": "o4",
-      "text": "Explica qué prueba y qué no prueba que la huella del modelo esté en la lista permitida, quién debe poder modificar esa lista, y qué tipo de versión mala pasaría tu canary sin que lo notara. (reflexion <texto>, mínimo 50 palabras)",
+      "text": "Tu canary mide errores y p95. ¿Qué versión mala pasaría sin que lo notara?",
       "validator": {
-        "type": "reflection",
-        "min_words": 50
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
       },
       "hints": [
-        "La tarjeta «La huella de un modelo» y A6: firma y huellas en la cadena de suministro.",
-        "Tu canary mide errores y p95. ¿Y si la versión nueva responde rápido, sin errores, pero con respuestas peores?"
-      ]
+        "Un canary detecta lo que mide.",
+        "answer c"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "una que tarda el doble",
+          "why": "El p95 lo detecta."
+        },
+        {
+          "id": "b",
+          "text": "una que falla en una de cada tres peticiones",
+          "why": "La tasa de errores lo detecta."
+        },
+        {
+          "id": "c",
+          "text": "una que responde rápido y sin errores, pero con respuestas peores"
+        }
+      ],
+      "on_complete": "Eso es: por eso los canary de modelos comparan también métricas de calidad. Y recuerda: la huella prueba que es el artefacto aprobado, no que sea seguro."
     }
   ],
   "you_can_now": "Sabes escribir reglas de despliegue como código que deniegan por defecto, comprobar la huella de un modelo frente a una lista permitida y decidir un canary con umbrales fijados antes. Con E4 completo, has llevado un servicio de LLM (Large Language Model) de la carga a la observabilidad y al despliegue.",

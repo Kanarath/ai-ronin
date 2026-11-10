@@ -486,3 +486,32 @@ func test_python_errores_con_linea() -> void:
 	var r := game.shell.execute("py run")
 	assert_true(r.plain_text().contains("NameError"), r.plain_text())
 	assert_true(r.plain_text().contains("línea 2"), r.plain_text())
+
+
+# --- O/C/E ---
+
+const MISIONES_OCE := ["O5-01", "O5-02", "O5-03", "O6-01", "O6-02", "O6-03", "C1-01", "C1-02", "C2-01", "C2-02", "C3-01", "C3-02",
+	"C5-01", "C5-02", "C5-03", "E1-01", "E1-02", "E1-03", "E2-01", "E2-02", "E2-03", "E3-01", "E3-02", "E3-03", "E4-01", "E4-02", "E4-03"]
+
+
+func test_OCE_sin_reflexiones_escritas_y_con_el_patron() -> void:
+	for id: String in MISIONES_OCE:
+		var m := game.catalog.get_mission(id)
+		assert_false(m.is_empty(), id)
+		assert_true(m.has("purpose") and m.has("you_can_now"), "%s: purpose y you_can_now" % id)
+		var objs: Array = m["objectives"].duplicate()
+		objs.append_array(m.get("mastery_trial", {}).get("objectives", []))
+		var checks := 0
+		for o: Dictionary in objs:
+			assert_false(ConditionEval.contains_type(o["validator"], "reflection"), "%s %s: sin reflexiones escritas" % [id, o["id"]])
+			assert_false(str(o["text"]).to_lower().contains("reflexion"), "%s %s: el texto no pide reflexion" % [id, o["id"]])
+			assert_false(str(o.get("teach", "")).to_lower().contains("reflexi"), "%s %s: la lección no habla de reflexiones" % [id, o["id"]])
+			if not o.get("choices", []).is_empty():
+				checks += 1
+				var letters: Array = o["choices"].map(func(c: Dictionary) -> String: return c["id"])
+				assert_has(letters, o["validator"]["expected"], "%s %s: la respuesta es una de las opciones" % [id, o["id"]])
+				for c: Dictionary in o["choices"]:
+					if c["id"] != o["validator"]["expected"]:
+						assert_false(str(c.get("why", "")).is_empty(), "%s %s %s: opción incorrecta sin why" % [id, o["id"], c["id"]])
+		assert_true(checks >= 1, "%s: al menos una comprobación" % id)
+

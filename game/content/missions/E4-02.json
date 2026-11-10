@@ -138,28 +138,69 @@
     },
     {
       "id": "o3",
-      "text": "Analiza tus números: qué datos se escaparon con la redacción y por qué tu código no los reconoció; cuántas veces repitió el modelo los datos en su respuesta (eco) y qué implica para gen_ai.output.messages; si la redacción se comió datos legítimos; y qué perdiste con sin-contenido. (reflexion <texto>, mínimo 60 palabras)",
+      "text": "Un dato escrito en un formato raro («ana arroba example punto com») acaba en el fichero de trazas. ¿Por qué?",
       "teach": "El modelo también escribe datos personales\nRedactar la pregunta no basta: si el usuario pide «repíteme mi correo», el modelo lo escribe en la respuesta. Y un modelo puede producir datos personales que no estaban en la pregunta, sacados de su entrenamiento o de un documento recuperado.\nPor qué: en un sistema con LLM (Large Language Model), la salida se trata con el mismo cuidado que la entrada.",
       "validator": {
-        "type": "reflection",
-        "min_words": 60
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
       },
       "hints": [
-        "La línea «por dato» de bateria.py dice qué datos se escaparon; los formatos raros están a propósito en ataques.json.",
-        "Compara redaccion y exportador: con esta batería redactan lo mismo. ¿En qué caso real el exportador protege algo que tu código no?"
-      ]
+        "Lee la tarjeta «Redactar no es borrar».",
+        "answer b"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque el modelo se inventó el dato",
+          "why": "El dato venía en la pregunta: la redacción no lo reconoció."
+        },
+        {
+          "id": "b",
+          "text": "porque la redacción usa expresiones regulares que solo reconocen los formatos que conoces",
+          "why": "Si en tu ejecución no se escapó ninguno, mira ataques.json: esos formatos están ahí a propósito."
+        },
+        {
+          "id": "c",
+          "text": "porque el exportador estaba desactivado",
+          "why": "Aunque esté activo, si usa las mismas reglas tampoco lo reconoce."
+        }
+      ],
+      "on_complete": "Eso es: redactar reduce el riesgo; no registrar el contenido lo elimina."
     },
     {
       "id": "o4",
-      "text": "Explica por qué las métricas llevan solo atributos de pocos valores y nunca el usuario, por qué conviene redactar también en el exportador aunque tu código ya redacte, y qué harías antes de construir un panel sobre unas convenciones en estado Development. (reflexion <texto>, mínimo 50 palabras)",
+      "text": "¿Por qué conviene redactar también en el exportador, si tu código ya redacta?",
       "validator": {
-        "type": "reflection",
-        "min_words": 50
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
       },
       "hints": [
-        "La tarjeta «Spans frente a métricas».",
-        "Una librería de instrumentación que instales mañana puede registrar el contenido por su cuenta: ¿quién lo redacta entonces?"
-      ]
+        "¿Quién redacta lo que escribe otra librería?",
+        "answer a"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque una librería de instrumentación que instales mañana puede registrar el contenido por su cuenta, sin pasar por tu código"
+        },
+        {
+          "id": "b",
+          "text": "porque el exportador redacta mejor",
+          "why": "Con esta batería redactan lo mismo."
+        },
+        {
+          "id": "c",
+          "text": "porque así las métricas pueden llevar el usuario",
+          "why": "El usuario nunca va en una métrica."
+        }
+      ],
+      "on_complete": "Eso es: defensa en profundidad también en los registros. Y con convenciones en estado Development, fija la versión antes de construir paneles."
     }
   ],
   "you_can_now": "Sabes instrumentar llamadas a un LLM (Large Language Model) con las convenciones GenAI (Generative AI, IA generativa) de OpenTelemetry, separar lo que va en un span de lo que va en una métrica y medir qué datos personales se escapan con cada decisión de registro. Siguiente: E4-03, la puerta de despliegue.",

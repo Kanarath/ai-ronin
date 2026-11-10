@@ -171,15 +171,35 @@
     },
     {
       "id": "o5",
-      "text": "Explica con tus palabras por qué la cobertura mínima con spotlight es una mala elección aunque deje la batería a 0, y qué te dice la matriz que no te decía activar controles uno a uno. (reflexion <texto>, mínimo 40 palabras)",
+      "text": "Para cerrar: ¿qué te dice la matriz que no te decía activar controles uno a uno?",
       "validator": {
-        "type": "reflection",
-        "min_words": 40
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
       },
       "hints": [
-        "Puntos únicos, defensas esquivables, coste.",
-        "Un control del prompt frente a un control del código."
-      ]
+        "Mira la columna «la bloquean» y las dos filas de coste.",
+        "answer c"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "qué control es el mejor en todos los casos",
+          "why": "La matriz mide cada defensa sola; la mejor combinación depende del coste y de la resiliencia."
+        },
+        {
+          "id": "b",
+          "text": "que basta con activarlo todo",
+          "why": "Activarlo todo trae coste: hitl pide aprobaciones, por ejemplo."
+        },
+        {
+          "id": "c",
+          "text": "qué ataques dependen de un solo control (puntos únicos) y cuánto cuesta cada defensa"
+        }
+      ],
+      "on_complete": "Eso es: la matriz es la tabla honesta que permite elegir con datos."
     }
   ],
   "mastery_trial": {

@@ -129,28 +129,69 @@
     },
     {
       "id": "o3",
-      "text": "Analiza tus números: cuántas consultas necesitó cada método para pasar del 90 % de acuerdo; qué método dejó de funcionar con el redondeo y cuál no; qué consiguió el límite solo y qué consiguió combinado con el redondeo; y si alguna defensa le costó algo al cliente legítimo. (reflexion <texto>, mínimo 60 palabras)",
+      "text": "Con el límite de 50 consultas y probabilidades exactas, el atacante aún saca una copia bastante parecida. ¿Por qué, si la teoría pide 65?",
       "teach": "Menos consultas de las que dice la teoría\n65 consultas garantizan la copia exacta para CUALQUIER entrada. Pero las imágenes de dígitos no ocupan todo el espacio de 64 dimensiones: muchos píxeles del borde son casi siempre 0.\nCon menos consultas, el atacante no recupera todos los pesos, pero sí los que importan para las imágenes reales.\nPor qué: la garantía teórica es el peor caso; un ataque real suele necesitar menos.",
       "validator": {
-        "type": "reflection",
-        "min_words": 60
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
       },
       "hints": [
-        "evidence list te recuerda el acuerdo final de cada configuración; las curvas por presupuesto están en la salida de bateria.py.",
-        "Fíjate en la línea de limite: ¿con cuántas consultas se quedó el atacante y qué acuerdo sacó con ellas?"
-      ]
+        "Lee la lección «Menos consultas de las que dice la teoría».",
+        "answer b"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque el límite no se aplica",
+          "why": "Se aplica por clave: el atacante se quedó en 50 consultas."
+        },
+        {
+          "id": "b",
+          "text": "porque las imágenes reales no usan todo el espacio de 64 píxeles: con menos consultas recupera los pesos que importan",
+          "why": "Si tu acuerdo con el límite salió más bajo, mira cuánto: la idea es que no hace falta llegar a 65."
+        },
+        {
+          "id": "c",
+          "text": "porque adivina los pesos al azar",
+          "why": "Los obtiene resolviendo ecuaciones con las respuestas de la API (Application Programming Interface)."
+        }
+      ],
+      "on_complete": "Eso es: la garantía teórica es el peor caso; el ataque real suele necesitar menos."
     },
     {
       "id": "o4",
-      "text": "Explica cómo esquivaría un atacante el límite por clave, por qué redondear las probabilidades tiene un coste para los clientes que las necesitan, y por qué una API (Application Programming Interface) pública de predicción es, en la práctica, una forma de publicar el modelo. (reflexion <texto>, mínimo 50 palabras)",
+      "text": "¿Cómo esquivaría un atacante el límite de consultas por clave?",
       "validator": {
-        "type": "reflection",
-        "min_words": 50
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
       },
       "hints": [
-        "El límite cuenta por clave. ¿Cuánto cuesta conseguir otra clave?",
-        "El error de probabilidad del cliente legítimo está en la salida de bateria.py (error prob.)."
-      ]
+        "El límite cuenta por clave. ¿Cuánto cuesta otra clave?",
+        "answer b"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "enviando imágenes más pequeñas",
+          "why": "El tamaño no cambia nada: el límite cuenta consultas."
+        },
+        {
+          "id": "b",
+          "text": "consiguiendo más claves: el límite cuenta por clave, y cada clave nueva le da más consultas"
+        },
+        {
+          "id": "c",
+          "text": "no puede",
+          "why": "Si conseguir otra clave es barato, el límite solo lo retrasa."
+        }
+      ],
+      "on_complete": "Eso es. Por eso una API (Application Programming Interface) de predicción pública es, en la práctica, una forma de publicar el modelo, y se limita por cuenta y se vigilan los patrones de consulta."
     }
   ],
   "you_can_now": "Sabes extraer un modelo por ecuaciones y por etiquetas, medir el acuerdo de la copia y valorar el límite de consultas, el redondeo y devolver solo la clase como defensas. Siguiente: E2-03, la privacidad de los datos de entrenamiento.",

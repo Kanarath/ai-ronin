@@ -114,7 +114,7 @@
     },
     {
       "id": "o2",
-      "text": "Ejecuta experimento.py (README, sección 2). Anota en qué capa aparece « Paris» en la lente y con qué probabilidad; cuántos parámetros entrena LoRA (Low-Rank Adaptation) y qué porcentaje del modelo son; cómo bajan la pérdida y la perplejidad; y qué completan las tres pruebas antes y después. (reflexion <texto>, mínimo 70 palabras)",
+      "text": "Ejecuta experimento.py (README, sección 2). Si la tercera prueba (la Torre Eiffel) también cambia tras entrenar con una sola frase sobre la forja, ¿qué significa?",
       "prediction": {
         "prompt": "¿En qué parte del modelo crees que aparecerá « Paris» como token más probable?",
         "options": [
@@ -124,27 +124,68 @@
         ]
       },
       "validator": {
-        "type": "reflection",
-        "min_words": 70
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
       },
       "hints": [
         "python experimento.py · si la pérdida apenas baja, prueba --lr 0.005 o --pasos 60.",
-        "Fíjate en la tercera prueba (la Torre Eiffel): si cambia tras entrenar con una sola frase, el adaptador ha tocado algo más que el dato."
+        "answer a"
       ],
-      "teach": "Entrenar y mirar\nexperimento.py entrena el adaptador con una frase ficticia sobre la forja Kurogane, compara tres pruebas antes y después y aplica la lente a cada una de las 30 capas.\nPor qué: comprobar qué más ha cambiado (la tercera prueba) es lo que separa afinar un modelo de estropearlo."
+      "teach": "Entrenar y mirar\nexperimento.py entrena el adaptador con una frase ficticia sobre la forja Kurogane, compara tres pruebas antes y después y aplica la lente a cada una de las 30 capas.\nPor qué: comprobar qué más ha cambiado (la tercera prueba) es lo que separa afinar un modelo de estropearlo.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "que el adaptador ha tocado algo más que el dato: ha cambiado respuestas que no querías cambiar",
+          "why": "Si en tu ejecución no cambia, mejor: aun así, esa prueba es la que lo vigila."
+        },
+        {
+          "id": "b",
+          "text": "que el entrenamiento no ha aprendido nada",
+          "why": "Puede haber aprendido el dato y, además, estropear otras respuestas."
+        },
+        {
+          "id": "c",
+          "text": "que la lente de logits está mal",
+          "why": "La lente no cambia el modelo: solo lo lee."
+        }
+      ],
+      "on_complete": "Eso es: afinar es fácil; saber qué más has cambiado sin querer, no."
     },
     {
       "id": "o3",
-      "text": "Con las cuentas del apartado 4 del experimento, explica por qué en tu portátil puedes entrenar este juguete pero no afinar de verdad un modelo de 7 B, qué ahorra LoRA (Low-Rank Adaptation) y qué no, y por qué un adaptador LoRA descargado de internet es un artefacto que hay que verificar como el propio modelo (A6). (reflexion <texto>, mínimo 60 palabras)",
+      "text": "Con las cuentas del apartado 4, ¿por qué puedes entrenar este juguete en tu portátil pero no afinar de verdad un modelo de 7 B?",
       "validator": {
-        "type": "reflection",
-        "min_words": 60
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
       },
       "hints": [
-        "16 bytes por parámetro entrenable, más el modelo base en memoria, más las activaciones de cada paso.",
-        "A6: «adapter manipulado». Un adaptador fusionado cambia los pesos: puede meter una puerta trasera igual que un modelo entero."
+        "Mira la tarjeta «Por qué hace falta GPU».",
+        "answer b"
       ],
-      "teach": "Las cuentas de memoria\nEl apartado 4 del experimento estima la memoria para entrenar con y sin LoRA (Low-Rank Adaptation); la tarjeta de arriba explica de dónde salen los 16 bytes por parámetro entrenable.\nPor qué: estas cuentas deciden en la práctica qué se puede afinar con qué máquina."
+      "teach": "Las cuentas de memoria\nEl apartado 4 del experimento estima la memoria para entrenar con y sin LoRA (Low-Rank Adaptation); la tarjeta de arriba explica de dónde salen los 16 bytes por parámetro entrenable.\nPor qué: estas cuentas deciden en la práctica qué se puede afinar con qué máquina.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque LoRA (Low-Rank Adaptation) solo funciona con modelos pequeños",
+          "why": "LoRA (Low-Rank Adaptation) se usa sobre todo con modelos grandes: reduce lo entrenable a menos del 1 %."
+        },
+        {
+          "id": "b",
+          "text": "porque cada parámetro entrenable pide unos 16 bytes (peso, gradiente y dos estados de AdamW): un 7 B entero, unos 112 GB, más las activaciones"
+        },
+        {
+          "id": "c",
+          "text": "porque un portátil no puede ejecutar PyTorch",
+          "why": "Lo acabas de ejecutar. El límite es la memoria y la velocidad."
+        }
+      ],
+      "on_complete": "Eso es. LoRA (Low-Rank Adaptation) baja lo entrenable, pero el modelo base sigue pasando hacia delante y hacia atrás en cada paso. Y un adaptador descargado cambia los pesos: se verifica como un modelo (A6)."
     }
   ],
   "you_can_now": "Sabes qué entrena LoRA (Low-Rank Adaptation) y qué no, escribir un adaptador en PyTorch, leer la lente de logits con cautela y estimar por qué afinar un modelo grande necesita GPU (Graphics Processing Unit). Y sabes que un adaptador es un artefacto que se verifica como un modelo (A6).",

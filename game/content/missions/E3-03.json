@@ -173,15 +173,35 @@
     },
     {
       "id": "o5",
-      "text": "Explica con tus palabras qué hace que un hallazgo se sostenga, por qué el auditor no debe implantar la corrección y por qué un plan no basta para cerrar H1. (reflexion <texto>, mínimo 40 palabras)",
+      "text": "Para cerrar: ¿por qué no se puede cerrar H1 con un plan con fecha?",
       "validator": {
-        "type": "reflection",
-        "min_words": 40
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
       },
       "hints": [
-        "Criterio, evidencia verificable, riesgo proporcionado.",
-        "Independencia: nadie audita su propio trabajo."
-      ]
+        "Un plan con fecha frente a una muestra nueva sin fallos.",
+        "answer c"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque el auditor tendría que medir los sesgos él mismo",
+          "why": "Perdería la independencia: nadie audita su propio trabajo."
+        },
+        {
+          "id": "b",
+          "text": "porque la fecha del plan es demasiado lejana",
+          "why": "Aunque fuera mañana: un plan no es evidencia."
+        },
+        {
+          "id": "c",
+          "text": "porque cerrar exige evidencia nueva de que el control funciona, y un plan solo dice lo que se hará"
+        }
+      ],
+      "on_complete": "Eso es: se cierra con evidencia, no con promesas. H1 será lo primero en la próxima auditoría."
     }
   ],
   "mastery_trial": {

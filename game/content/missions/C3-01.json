@@ -173,15 +173,35 @@
     },
     {
       "id": "o5",
-      "text": "Explica con tus palabras por qué la cobertura de dos defensas con consent es peor que la de cuatro sin él, aunque use menos controles. (reflexion <texto>, mínimo 40 palabras)",
+      "text": "Para cerrar: ¿por qué la cobertura de dos defensas con consent es peor que la de cuatro sin él?",
       "validator": {
-        "type": "reflection",
-        "min_words": 40
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
       },
       "hints": [
         "Fatiga de consentimiento, tareas rotas, lo que el usuario no ve.",
-        "Controles en el código frente a controles en una persona."
-      ]
+        "answer b"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque consent bloquea menos ataques",
+          "why": "Bloquea cuatro de cinco. El problema es su coste."
+        },
+        {
+          "id": "b",
+          "text": "porque pone la seguridad en una persona: 4 aprobaciones para 4 tareas, una tarea rota y un usuario que solo juzga lo que ve"
+        },
+        {
+          "id": "c",
+          "text": "porque cuatro controles siempre son mejores que dos",
+          "why": "El número no importa: importan el coste y dónde vive el control."
+        }
+      ],
+      "on_complete": "Eso es: controles en el código y en los permisos frente a controles en la paciencia de una persona."
     }
   ],
   "mastery_trial": {

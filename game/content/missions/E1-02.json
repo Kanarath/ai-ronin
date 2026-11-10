@@ -175,7 +175,7 @@
     },
     {
       "id": "o2",
-      "text": "Ejecuta experimento.py (README, sección 2) y, si tienes Ollama, ollama show smollm2:135m-instruct-q8_0. Anota para cada esquema el tamaño, los bits por peso, el error medio, la perplejidad en inglés y en español y cuántos tokens de la generación coinciden con fp32. ¿Cuadra tu tamaño de q8_0 con los 145 MB de Ollama? (reflexion <texto>, mínimo 60 palabras)",
+      "text": "Ejecuta experimento.py (README, sección 2). Tu q8_0 debería salir cerca de los 145 MB que publica Ollama. ¿De dónde sale ese tamaño?",
       "prediction": {
         "prompt": "Con Q8_0, ¿cuánto crees que subirá la perplejidad respecto a fp32?",
         "options": [
@@ -185,27 +185,68 @@
         ]
       },
       "validator": {
-        "type": "reflection",
-        "min_words": 60
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
       },
       "hints": [
-        "python experimento.py · usa el modelo que ya descargaste en E1-01.",
-        "135 millones de pesos × 8,5 bits / 8 = ? MB. Los vectores de las normas se quedan en float32, pero son muy pocos."
+        "python experimento.py · y la cuenta: 135 millones × 8,5 bits / 8.",
+        "answer b"
       ],
-      "teach": "Medir el modelo entero\nexperimento.py cuantiza SmolLM2 con cada esquema y mide el tamaño, los bits por peso, el error, la perplejidad y cuántos tokens de una generación coinciden con fp32 (32 bits por número).\nSi tienes Ollama, ollama show te dice qué publica él.\nPor qué: comparar tu cuenta con la de Ollama es comprobar que entiendes de dónde sale el tamaño de un modelo descargado."
+      "teach": "Medir el modelo entero\nexperimento.py cuantiza SmolLM2 con cada esquema y mide el tamaño, los bits por peso, el error, la perplejidad y cuántos tokens de una generación coinciden con fp32 (32 bits por número).\nSi tienes Ollama, ollama show te dice qué publica él.\nPor qué: comparar tu cuenta con la de Ollama es comprobar que entiendes de dónde sale el tamaño de un modelo descargado.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "135 millones de pesos × 32 bits ÷ 8",
+          "why": "Eso es fp32: unos 540 MB."
+        },
+        {
+          "id": "b",
+          "text": "135 millones de pesos × unos 8,5 bits (el entero de 8 más la escala de cada bloque de 32) ÷ 8 ≈ 143 MB, más las normas en float32",
+          "why": "Si tu cifra difiere unos pocos MB, es normal: depende de cómo se cuenten las normas y los metadatos."
+        },
+        {
+          "id": "c",
+          "text": "Ollama comprime el fichero como un zip",
+          "why": "El ahorro viene de guardar enteros de 8 bits en lugar de números de 32."
+        }
+      ],
+      "on_complete": "Eso es: cuatro veces menos que fp32, a cambio de una perplejidad casi igual."
     },
     {
       "id": "o3",
-      "text": "Explica con tus números por qué Q8_0 usa bloques de 32 en vez de una escala por matriz, qué pierdes al ir a 4 bits (q4_0, 92 MB) y por qué tu cuantización simulada no ahorra RAM (Random Access Memory) ni tiempo aunque el modelo «pese» menos. (reflexion <texto>, mínimo 50 palabras)",
+      "text": "¿Por qué tu cuantización simulada no ahorra RAM (Random Access Memory) ni tiempo, aunque el modelo «pese» menos?",
       "validator": {
-        "type": "reflection",
-        "min_words": 50
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
       },
       "hints": [
-        "Mira la peor matriz de afin_tensor: ¿tiene valores atípicos? En test_cuantizacion.py hay un test que lo provoca a propósito.",
-        "En la simulación, los pesos siguen en float32 en memoria y se multiplican en float32. ¿Qué tendría que cambiar en el código que multiplica?"
+        "En la simulación, ¿en qué tipo están los pesos cuando se multiplican?",
+        "answer c"
       ],
-      "teach": "Simular no es ahorrar\nEn tu simulación, los pesos se cuantizan y se vuelven a pasar a float32 antes de multiplicar.\nPor qué: el ahorro real de memoria y de tiempo exige multiplicar directamente con los enteros, que es lo que hacen los kernels de llama.cpp."
+      "teach": "Simular no es ahorrar\nEn tu simulación, los pesos se cuantizan y se vuelven a pasar a float32 antes de multiplicar.\nPor qué: el ahorro real de memoria y de tiempo exige multiplicar directamente con los enteros, que es lo que hacen los kernels de llama.cpp.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque Q8_0 no reduce el tamaño",
+          "why": "El fichero sí ocupa unas cuatro veces menos; lo que no cambia es cómo calcula tu simulación."
+        },
+        {
+          "id": "b",
+          "text": "porque PyTorch no admite enteros",
+          "why": "Los admite; tu código no los usa para multiplicar."
+        },
+        {
+          "id": "c",
+          "text": "porque los pesos se vuelven a pasar a float32 y se multiplica en float32: hace falta multiplicar con los enteros"
+        }
+      ],
+      "on_complete": "Eso es: el ahorro real lo dan los kernels que multiplican con enteros, como los de llama.cpp."
     }
   ],
   "you_can_now": "Sabes cuantizar pesos con escala y punto cero y por bloques, medir la pérdida con la perplejidad y explicar de dónde sale el tamaño de un modelo GGUF. También has escrito la perplejidad en Python. Siguiente: E1-03, cambiar un poco el modelo con LoRA (Low-Rank Adaptation) y mirar dentro con la lente de logits.",
