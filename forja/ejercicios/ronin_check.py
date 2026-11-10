@@ -85,7 +85,7 @@ def ejecutar(ej_id, fichero, test):
 def guardar(ev):
     SALIDA.mkdir(parents=True, exist_ok=True)
     ruta = SALIDA / ("%s.json" % ev["exercise"])
-    ruta.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    ruta.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     return ruta
 
 
@@ -105,7 +105,7 @@ def manifiesto():
         n = unittest.TestLoader().loadTestsFromName(test.stem).countTestCases()
         lista.append({"id": ej_id, "file": fichero.name, "test_file": test.name, "total_tests": n, "tests_sha256": huella(test)})
     datos = {"schema_version": 1, "note": "Generado con: py -m ronin_check --manifiesto (desde forja/ejercicios). No editar a mano.", "exercises": lista}
-    MANIFIESTO.write_text(json.dumps(datos, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    MANIFIESTO.write_text(json.dumps(datos, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     print("Manifiesto: %d ejercicios → %s" % (len(lista), MANIFIESTO.relative_to(RAIZ)))
 
 
