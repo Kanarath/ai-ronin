@@ -307,6 +307,35 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
 - [NIST SP 800-61 Rev. 3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile (abril de 2025)](https://csrc.nist.gov/pubs/sp/800/61/r3/final) — NIST · consultada 2026-11-09
 
+## E4
+
+**E4-01 · La forja bajo carga**
+
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [Ollama · FAQ: peticiones concurrentes (OLLAMA_NUM_PARALLEL, 1 por defecto; OLLAMA_MAX_QUEUE, 512 por defecto, responde 503 al llenarse); versión 0.40.16](https://docs.ollama.com/faq) — Ollama · consultada 2026-11-10
+- [Additional HTTP Status Codes (RFC 6585): 429 Too Many Requests y la cabecera Retry-After](https://www.rfc-editor.org/rfc/rfc6585) — IETF · consultada 2026-11-10
+- [Site Reliability Engineering, capítulo 21: Handling Overload](https://sre.google/sre-book/handling-overload/) — Google · O'Reilly · consultada 2026-11-10
+- [Python 3.13 · asyncio: primitivas de sincronización (Semaphore) y asyncio.wait_for](https://docs.python.org/3.13/library/asyncio-sync.html) — Python Software Foundation · consultada 2026-11-10
+
+**E4-02 · El cuaderno de la forja**
+
+- [OpenTelemetry GenAI · Client Inference: span gen_ai.client.inference y métricas gen_ai.client.inference.* (estado Development, sin versión publicada; rama main del 2026-11-06)](https://github.com/open-telemetry/semantic-conventions-genai/blob/main/docs/gen-ai/client-inference.md) — OpenTelemetry (repositorio semantic-conventions-genai) · consultada 2026-11-10
+- [OpenTelemetry: Semantic conventions for generative AI (spans de agentes y herramientas, atributos gen_ai.*; estado Development)](https://github.com/open-telemetry/semantic-conventions-genai) — OpenTelemetry (repositorio semantic-conventions-genai) · consultada 2026-11-09
+- [OpenTelemetry Python · opentelemetry-api y opentelemetry-sdk 1.45.2 (publicadas el 2026-10-29)](https://opentelemetry.io/docs/languages/python/) — OpenTelemetry · consultada 2026-11-10
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [Reglamento (UE) 2016/679 (RGPD), artículos 5.1.c (minimización de datos) y 25 (protección de datos desde el diseño y por defecto)](https://eur-lex.europa.eu/eli/reg/2016/679/oj) — Unión Europea · consultada 2026-11-10
+- [Computer for verifying numbers (patente US 2,950,048): el algoritmo de Luhn](https://patents.google.com/patent/US2950048A/en) — USPTO · consultada 2026-11-10
+
+**E4-03 · La puerta de la forja**
+
+- [Docker Compose · referencia de services: ports (sin IP se publica en todas las interfaces), user, privileged, read_only, network_mode](https://docs.docker.com/reference/compose-file/services/) — Docker · consultada 2026-11-10
+- [Ollama · API GET /api/tags: modelos descargados con su digest SHA-256; versión 0.40.16](https://docs.ollama.com/api/tags) — Ollama · consultada 2026-11-10
+- [The Site Reliability Workbook, capítulo 16: Canarying Releases](https://sre.google/workbook/canarying-releases/) — Google · O'Reilly · consultada 2026-11-10
+- [OWASP Docker Security Cheat Sheet: usuario no root (regla 2), límites de recursos (regla 7), sistema de ficheros de solo lectura (regla 8)](https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html) — OWASP Cheat Sheet Series · consultada 2026-11-10
+- [Open Policy Agent · documentación (política como código con Rego; versión 1.22.3, publicada el 2026-11-10)](https://www.openpolicyagent.org/docs) — CNCF · Open Policy Agent · consultada 2026-11-10
+- [OpenSSF Model Signing (OMS) Specification: firma separada de artefactos de modelos (claves, PKI o Sigstore). Especificación de junio de 2025, emergente](https://github.com/ossf/model-signing-spec) — OpenSSF · consultada 2026-11-09
+- [SLSA (Supply-chain Levels for Software Artifacts) v1.0: niveles de garantía para la procedencia de los builds](https://slsa.dev/spec/v1.0/) — OpenSSF · consultada 2026-11-09
+
 ## O5
 
 **O5-01 · Tres marcos, tres preguntas**

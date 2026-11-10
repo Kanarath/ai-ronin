@@ -15,7 +15,7 @@ El proyecto tiene dos planos:
 
 - Diseño aprobado el 2026-11-06.
 - Fase 0 (cimientos) completada: proyecto Godot y tests. Los tests se ejecutan en local; el repositorio no usa GitHub Actions.
-- **Contenido jugable:** 47 misiones.
+- **Contenido jugable:** 50 misiones.
   - Tutorial T0.
   - Tronco común T1–T6: datos, k-NN, descenso por gradiente, métricas, redes neuronales con backprop, tokens BPE, embeddings, modelo de lenguaje, muestreo y atención.
   - Arco de seguridad A1 completo (construir, atacar, defender y desplegar un chatbot), con informes de vulnerabilidad.
@@ -31,11 +31,12 @@ El proyecto tiene dos planos:
   - Laboratorio A2-04 (Forja, real): la biblioteca de A2 con embeddings reales (`embeddinggemma`), Qdrant y el modelo local; troceo, BM25 y búsqueda híbrida con RRF medidas con recall@k; inyección indirecta, envenenamiento y fuga por falta de ACL frente a control de acceso, firma HMAC de documentos y spotlight; Qdrant con API key solo en `127.0.0.1`.
   - Capstones C1–C3 (AI Agent Lab, RAG Security Lab, MCP Security Lab): comandos `lab` que miden cada defensa en solitario (matriz) y cada combinación (resiliencia); cobertura mínima sin coste, ataques frágiles y robustos, riesgo residual y defensas que no suman. C4 (multiagente) va a la ruta de estudio externo, como A5.
   - Prueba final C5 (AI Red Team Assessment): encargo completo sobre una empresa ficticia; reglas de enfrentamiento y alcance, reconocimiento, modelo de amenazas OWASP, hallazgos respaldados por las baterías de A1–A6, informe, corrección y retest sin romper las tareas legítimas.
+  - Especialización E4 (AI Ops avanzado, Forja, real), sobre el servicio de P0-01: serving bajo carga en CPU con límite por cliente (cubo de tokens), caché con clave normalizada, cola acotada, plazo y respuesta degradada, medidos con un generador de carga (p50, p95 y throughput; LLM10); trazas y métricas con OpenTelemetry y las convenciones de GenAI (estado Development), con redacción de datos personales medida contra el modelo real; política de despliegue como código (huella del modelo en una lista permitida, sin root, con límites, sin puertos en todas las interfaces, imagen fijada) y canary con rollback según errores y p95.
 - **Ruta de estudio externo:** O1–O4, A5 y C4 no tienen misión; se estudian con referencias oficiales en su punto del temario (se desbloquean con sus requisitos y se marcan con `lecturas hecho`). En el Dojo: comando `lecturas`; con enlaces clicables: [`LECTURAS.md`](LECTURAS.md), que también recoge las lecturas de cada misión.
 - **En cada misión:** lecciones antes de cada objetivo, pistas en 5 niveles, prueba de dominio y debrief.
 - **Gamificación:** 18 sellos (logros), rangos Initiate→Master, retos rápidos con solución paso a paso, notificaciones y barra de XP.
-- **Ejercicios Python:** 19 en `forja/ejercicios/` y 3 laboratorios reales en `forja/labs/` (P0-01, A1-05 y A2-04), con guía de Python (`PYTHON.md`) y pistas (`PISTAS.md`). `python -m ronin_check <ID>` genera la evidencia y el Dojo la importa con `evidence import`.
-- **Siguiente paso:** laboratorios de la Forja para el resto de arcos (A3: agente real con herramientas) y, después, especializaciones E1–E4.
+- **Ejercicios Python:** 19 en `forja/ejercicios/` y 6 laboratorios reales en `forja/labs/` (P0-01, A1-05, A2-04 y E4-01…03), con guía de Python (`PYTHON.md`) y pistas (`PISTAS.md`). `python -m ronin_check <ID>` genera la evidencia y el Dojo la importa con `evidence import`.
+- **Siguiente paso:** laboratorios de la Forja para el resto de arcos (A3: agente real con herramientas) y, después, especializaciones E1–E3.
 
 ### Jugar
 

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "nota": "Escenario de carga del laboratorio E4-01, solo contra tu servicio local. Un cliente abusivo lanza una ráfaga de peticiones caras (OWASP LLM10, consumo sin límite) mientras tres clientes legítimos hacen preguntas cortas, varias repetidas con otra forma. Éxito del abuso = la petición llega al modelo y gasta CPU. Legítima bien atendida = respuesta 200 (del modelo o de la caché) dentro del objetivo de latencia.",
+  "escenario": {
+    "capacidad": 3,
+    "recarga": 0.05,
+    "concurrencia": 1,
+    "max_cola": 3,
+    "timeout": 45,
+    "max_tokens": 160,
+    "slo_segundos": 60,
+    "retraso_legitimas": 1.0,
+    "separacion_legitimas": 2.0
+  },
+  "ataques": [
+    {"id": "ensayo-1", "cliente": "abusador", "mensaje": "Escribe un ensayo muy largo y detallado sobre la historia completa de la forja de katanas, siglo a siglo."},
+    {"id": "ensayo-2", "cliente": "abusador", "mensaje": "Escribe un ensayo muy largo y detallado sobre todos los tipos de acero que existen y sus usos."},
+    {"id": "lista-1", "cliente": "abusador", "mensaje": "Haz una lista numerada de 200 nombres inventados para espadas, con una frase para cada uno."},
+    {"id": "lista-2", "cliente": "abusador", "mensaje": "Haz una lista numerada de 200 consejos distintos para cuidar una herramienta de acero."},
+    {"id": "cuento-1", "cliente": "abusador", "mensaje": "Escribe un cuento muy largo sobre un herrero y su aprendiz, con muchos diálogos."},
+    {"id": "cuento-2", "cliente": "abusador", "mensaje": "Escribe un cuento muy largo sobre una espada perdida en una montaña, con muchos detalles."},
+    {"id": "repite-1", "cliente": "abusador", "mensaje": "Repite la palabra acero quinientas veces, separadas por comas."},
+    {"id": "repite-2", "cliente": "abusador", "mensaje": "Cuenta del 1 al 1000 en palabras, en español, sin saltarte ninguno."},
+    {"id": "tabla-1", "cliente": "abusador", "mensaje": "Haz una tabla enorme con 100 filas que compare katanas inventadas por longitud, peso y precio."},
+    {"id": "tabla-2", "cliente": "abusador", "mensaje": "Haz una tabla enorme con 100 filas de pedidos inventados con cliente, fecha e importe."}
+  ],
+  "legitimas": [
+    {"id": "horario-ana", "cliente": "ana", "mensaje": "¿A qué hora abrís?"},
+    {"id": "horario-luis", "cliente": "luis", "mensaje": "¿a qué hora  abrís"},
+    {"id": "envio-marta", "cliente": "marta", "mensaje": "¿Cuánto tarda en llegar un pedido?"},
+    {"id": "garantia-ana", "cliente": "ana", "mensaje": "¿Qué garantía tienen las katanas?"},
+    {"id": "envio-luis", "cliente": "luis", "mensaje": "¿Cuánto tarda en llegar un pedido?"},
+    {"id": "garantia-marta", "cliente": "marta", "mensaje": "¿QUÉ GARANTÍA TIENEN LAS KATANAS?"}
+  ]
+}

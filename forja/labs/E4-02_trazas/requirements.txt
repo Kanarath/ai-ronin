@@ -1,0 +1,9 @@
+# Versiones fijadas y comprobadas en PyPI el 2026-11-10.
+# opentelemetry-api y opentelemetry-sdk 1.45.2 (publicadas el 2026-10-29): las trazas y métricas se
+# exportan a un fichero local; no hace falta ningún exportador de red (OTLP) ni servicio externo.
+fastapi==0.162.2
+uvicorn==0.54.0
+pydantic==2.14.3
+httpx2==2.16.0
+opentelemetry-api==1.45.2
+opentelemetry-sdk==1.45.2

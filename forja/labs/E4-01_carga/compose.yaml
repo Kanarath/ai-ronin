@@ -1,0 +1,46 @@
+# Laboratorio E4-01 · servicio bajo carga + Ollama en CPU.
+# Regla de la Forja: los puertos se publican SOLO en 127.0.0.1.
+#
+#   docker compose up -d --build
+#   docker compose exec ollama ollama pull llama3.2:1b
+#
+# Los límites de recursos (deploy.resources) también son una defensa contra el consumo sin límite:
+# si el modelo se desboca, se lleva su CPU y su memoria, no las de toda la máquina.
+
+services:
+  ollama:
+    image: ollama/ollama:0.40.16    # comprobada en Docker Hub el 2026-11-10
+    environment:
+      OLLAMA_NUM_PARALLEL: "1"      # una generación cada vez, como en tu CPU sin Docker
+      OLLAMA_MAX_QUEUE: "16"        # Ollama también tiene su cola: llena, responde 503
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama_datos:/root/.ollama
+    deploy:
+      resources:
+        limits:
+          cpus: "6"
+          memory: 6g
+
+  carga:
+    build:
+      context: ..                   # forja/labs: la imagen copia también tu servicio de P0-01
+      dockerfile: E4-01_carga/Dockerfile
+    environment:
+      OLLAMA_URL: "http://ollama:11434"
+      DEFENSAS: "limite,cache,cola,timeout"
+      MAX_TOKENS: "256"
+      # TOKENS: "token1:cliente1,token2:cliente2"   (por defecto, los tokens de laboratorio de carga.py)
+    ports:
+      - "127.0.0.1:8000:8000"
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512m
+    depends_on:
+      - ollama
+
+volumes:
+  ollama_datos:

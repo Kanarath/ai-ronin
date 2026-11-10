@@ -1,0 +1,37 @@
+# Laboratorio E4-02 · servicio con trazas OpenTelemetry + Ollama en CPU.
+# Regla de la Forja: los puertos se publican SOLO en 127.0.0.1.
+#
+#   docker compose up -d --build
+#   docker compose exec ollama ollama pull llama3.2:1b
+#
+# Las trazas y las métricas se escriben en el volumen trazas_datos (ficheros JSON, una línea por
+# elemento). Quien pueda leer ese volumen lee lo que haya en las trazas: protégelo como los datos.
+
+services:
+  ollama:
+    image: ollama/ollama:0.40.16    # comprobada en Docker Hub el 2026-11-10
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama_datos:/root/.ollama
+
+  trazas:
+    build:
+      context: ..
+      dockerfile: E4-02_trazas/Dockerfile
+    environment:
+      OLLAMA_URL: "http://ollama:11434"
+      CONTENIDO: "no"               # no | redactado | crudo
+      REDACTOR: "1"                 # 1: el exportador redacta todos los atributos antes de escribir
+      TRAZAS: "/app/trazas/servicio.jsonl"
+      METRICAS: "/app/trazas/metricas.jsonl"
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - trazas_datos:/app/trazas
+    depends_on:
+      - ollama
+
+volumes:
+  ollama_datos:
+  trazas_datos:

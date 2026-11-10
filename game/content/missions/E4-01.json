@@ -1,0 +1,86 @@
+{
+  "id": "E4-01",
+  "schema_version": 1,
+  "title": "La forja bajo carga",
+  "unit": "E4",
+  "difficulty": 4,
+  "plane": "forja",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 180,
+  "requires_missions": ["P0-01", "O6-03"],
+  "competencies": { "requires": ["P0.fastapi", "P0.async", "O6.respuesta-incidentes"], "trains": ["E4.percentiles-latencia", "E4.limite-por-cliente", "E4.cache-respuestas", "E4.cola-y-degradacion", "E4.prueba-de-carga"] },
+  "briefing": "Tu servicio de P0-01 atendía a una persona cada vez. Hoy llegan muchas a la vez, y una abusa: lanza diez peticiones caras de golpe. En tu CPU el modelo genera una respuesta cada vez, así que cada petición abusiva que llega al modelo la esperan los demás. Vas a poner límite por cliente, caché, cola acotada y plazo con respuesta degradada, y a medir con un generador de carga la latencia p50 y p95 de los clientes legítimos. Instrucciones: forja/labs/E4-01_carga/README.md.",
+  "learning_objectives": [
+    "Calcular percentiles de latencia y throughput, y explicar por qué el p95 importa más que la media",
+    "Implementar un límite por cliente con un cubo de tokens y una caché con clave normalizada y caducidad",
+    "Combinar límite, caché, cola acotada y plazo con respuesta degradada en una tubería de serving",
+    "Medir bajo carga contra el modelo real qué protege cada defensa a los clientes legítimos y qué cuesta",
+    "Relacionar el consumo sin límite (OWASP LLM10) con decisiones de capacidad en CPU"
+  ],
+  "mentor_intro": "En el Dojo un ataque se medía por si salía o no el secreto. Aquí el ataque no rompe nada: solo ocupa la forja. El daño es el tiempo que esperan los demás, y eso se mide en percentiles.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "percentiles",
+      "title": "p50, p95 y throughput",
+      "body": "La media de la latencia esconde a los que esperan mucho: si 19 peticiones tardan 1 s y una tarda 60 s, la media es 4 s y nadie tarda 4 s. El p50 (mediana) dice lo que espera la petición típica; el p95, lo que espera la peor de cada veinte. Los objetivos de servicio (SLO) se escriben con percentiles altos. El throughput es cuántas peticiones se atienden por segundo: con un modelo en CPU, apenas cambia al añadir carga; lo que crece es la cola, y con ella la latencia."
+    },
+    {
+      "id": "cubo",
+      "title": "El cubo de tokens",
+      "body": "Cada cliente tiene un cubo con capacidad para N tokens que se rellena a un ritmo fijo. Cada petición gasta uno; si el cubo está vacío, se responde 429 Too Many Requests con la cabecera Retry-After. Permite ráfagas cortas (hasta N) y limita el ritmo sostenido. El cliente sale de su token, nunca de algo que escriba en la petición: si no, el abusador cambiaría de nombre en cada petición."
+    },
+    {
+      "id": "degradar",
+      "title": "Rechazar pronto y degradar",
+      "body": "Bajo sobrecarga, aceptar todas las peticiones es la peor opción: todas acaban esperando y todas llegan tarde. Una cola acotada responde 503 enseguida a las que no caben, y el cliente puede reintentar después. Un plazo máximo corta la petición que tarda demasiado y devuelve una respuesta degradada (un mensaje útil, una versión más corta, un modelo más pequeño) en lugar de un error tras un minuto de espera."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Implementa las siete piezas de carga.py hasta que pasen los 25 tests y trae la evidencia.",
+      "teach": "La caché también es una frontera\nUna respuesta en caché se sirve a quien haga la misma pregunta. Si las respuestas son públicas (el horario de la forja), compartirla es eficiente. Si dependen del usuario (el estado de su pedido), compartirla es una fuga entre clientes. Por eso clave_cache lleva un ámbito: el usuario cuando la respuesta es suya y \"publico\" cuando no.",
+      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "E4-01", "all_passed": true } },
+      "hints": [
+        "Orden: percentil → resumen_latencias → CuboDeTokens → normalizar_pregunta → clave_cache → CacheRespuestas → atender.",
+        "Desde forja/labs/E4-01_carga: .\\.venv\\Scripts\\python.exe -m unittest -v test_carga (crea el entorno como en P0-01).",
+        ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py E4-01 · y aquí: evidence import"
+      ],
+      "on_complete": "Tu tubería funciona con un modelo simulado que tarda lo que dice el test. Ahora, con uno que tarda lo que tarda tu CPU."
+    },
+    {
+      "id": "o2",
+      "text": "Con Ollama en marcha, ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y trae la medición.",
+      "prediction": { "prompt": "Sin defensas, con la ráfaga del abusador delante, ¿cuántas de las 6 preguntas legítimas crees que se responderán antes de 60 segundos?", "options": ["casi todas", "la mitad", "casi ninguna"] },
+      "validator": { "type": "event", "event": "evidence.measured", "where": { "lab": "E4-01", "has_baseline": true, "configs": { "gte": 3 } } },
+      "hints": [
+        "python bateria.py · tarda entre 10 y 20 minutos en CPU: cada ronda son 16 peticiones a la vez.",
+        "Con poco tiempo: python bateria.py --configs \"ninguna;limite;limite,cache,cola,timeout\""
+      ],
+      "on_complete": "Tienes datos reales. Mira primero la fila sin defensas: ¿cuánto esperó la pregunta legítima típica y cuánto la peor?"
+    },
+    {
+      "id": "o3",
+      "text": "Analiza tus números: cómo cambian el p50 y el p95 de las legítimas con cada configuración; cuántas peticiones abusivas llegaron al modelo y cuántos tokens gastaron; qué aportó la caché; y si el throughput subió o solo cambió quién se lo llevaba. (reflexion <texto>, mínimo 60 palabras)",
+      "teach": "El throughput no es la defensa\nCon un solo modelo en CPU, la forja produce más o menos las mismas respuestas por minuto con o sin defensas. Lo que cambian las defensas es a quién se le dedica ese tiempo: el límite y la cola se lo quitan al abusador; la caché crea capacidad nueva, porque una respuesta guardada no gasta CPU.",
+      "validator": { "type": "reflection", "min_words": 60 },
+      "hints": ["evidence list te recuerda los recuentos; los percentiles y los tokens están en la salida de bateria.py y en forja/evidencias/E4-01-medicion.json.", "Compara «abuso al modelo» con los códigos 429 y 503: cada petición rechazada antes del modelo son segundos que recupera un cliente legítimo."]
+    },
+    {
+      "id": "o4",
+      "text": "Explica por qué el límite tiene que ser por cliente y con el cliente sacado del token, qué fuga provocaría una caché sin ámbito en un servicio con datos de cada usuario, y qué cambia si el servicio corre en tres réplicas con el estado en memoria. (reflexion <texto>, mínimo 50 palabras)",
+      "validator": { "type": "reflection", "min_words": 50 },
+      "hints": ["En test_carga.py, el abusador agota su cubo y ana sigue pasando.", "Con tres réplicas, cada una tiene su propio cubo y su propia caché: ¿cuántas peticiones puede hacer el abusador antes de que lo frenen?"]
+    }
+  ],
+  "debrief": {
+    "what_happened": "Has construido la tubería clásica del serving: límite por cliente con un cubo de tokens, caché con clave normalizada y ámbito, cola acotada que rechaza pronto y un plazo con respuesta degradada. Con un generador de carga has medido contra el modelo real cuánto esperan los clientes legítimos cuando alguien abusa, y qué les devuelve cada defensa.",
+    "why": "Un LLM en CPU es un recurso escaso que atiende de uno en uno: el consumo sin límite (LLM10) no necesita tumbar el servicio para dejarlo inservible. Las defensas que funcionan actúan antes del modelo y deciden a quién se dedica la capacidad; la caché es la única que la aumenta.",
+    "in_production": "Los límites se aplican en la pasarela de API o en el balanceador, por clave de API o por usuario, y también por tokens por minuto, no solo por peticiones. El estado compartido (cubos, caché) vive en un almacén común entre réplicas. El serving con GPU agrupa peticiones (continuous batching) y el throughput sí crece con la carga, hasta un punto. Las pruebas de carga suben la carga poco a poco para encontrar dónde se rompe el SLO, y se repiten en cada cambio de modelo.",
+    "simplifications": ["Un solo proceso, con el estado en memoria", "El límite cuenta peticiones, no tokens", "Un escenario fijo de 16 peticiones por ronda", "Sin streaming: no se mide el tiempo hasta el primer token", "El Dojo no puede comprobar que la medición se hizo con el modelo real: confía en tus datos"],
+    "exercise": "forja/labs/E4-01_carga/carga.py"
+  },
+  "further_reading": ["ref.owasp-llm-2025", "ref.ollama-faq", "ref.rfc-6585", "ref.sre-overload", "ref.python-asyncio-sync"],
+  "xp": { "base": 500 }
+}

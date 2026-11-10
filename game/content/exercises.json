@@ -173,6 +173,33 @@
       "battery_sha256": "0a0200077caae7cb292c7b12d10a902fba822b6d71c8576025c8e2c0158dbfad"
     },
     {
+      "id": "E4-01",
+      "file": "carga.py",
+      "test_file": "test_carga.py",
+      "test_path": "forja/labs/E4-01_carga/test_carga.py",
+      "total_tests": 25,
+      "tests_sha256": "7df479b728c966f8f092638954e3ad0a24a14e729fd45623237cf1ae7710a32e",
+      "battery_sha256": "c2365d809ca35b4bb4740488dd5eb003f9943e9bf96367a3a6b307e4387697cf"
+    },
+    {
+      "id": "E4-02",
+      "file": "trazas.py",
+      "test_file": "test_trazas.py",
+      "test_path": "forja/labs/E4-02_trazas/test_trazas.py",
+      "total_tests": 17,
+      "tests_sha256": "920b1ec981216b664f0de58569602f2a88443adf20f771943d4f472f646eec0b",
+      "battery_sha256": "ac39f3a43f0e123b692f7a02eaa596c461b15d5ac00dd6818dea92b97e9b4a6a"
+    },
+    {
+      "id": "E4-03",
+      "file": "politica.py",
+      "test_file": "test_politica.py",
+      "test_path": "forja/labs/E4-03_despliegue/test_politica.py",
+      "total_tests": 18,
+      "tests_sha256": "7343e82e1f8daf69302b3834d24c8b306b50f791e0e88e5d8839939d5e18aea6",
+      "battery_sha256": "1447c5561d0cb0eb70a3190fb768119aa4450c647ba70607909830d2d00719c1"
+    },
+    {
       "id": "P0-01",
       "file": "servicio.py",
       "test_file": "test_servicio.py",

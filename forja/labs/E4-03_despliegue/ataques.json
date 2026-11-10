@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "nota": "Batería del laboratorio E4-03. Despliegues candidatos de la forja ficticia: cada despliegue malo tiene UN fallo; los buenos deben pasar. Éxito del ataque = la política admite un despliegue malo. La lista permitida contiene la huella (digest del manifiesto en el registro de Ollama, la misma que muestra `ollama list`) de llama3.2:1b, comprobada el 2026-11-10. El canary compara contra el modelo real versiones nuevas del servicio, buenas y malas.",
+  "permitidos": {"llama3.2:1b": "baf6a787fdffd633537aa2eb51cfd54cb93ff08e28040095462bb63daf552878"},
+  "base": {"nombre": "mostrador", "imagen": "python:3.13-slim", "usuario": "10001", "privilegiado": false,
+           "puertos": ["127.0.0.1:8000:8000"], "recursos": {"cpus": "1", "memoria": "512m"},
+           "modelo": {"nombre": "llama3.2:1b", "digest": "sha256:baf6a787fdffd633537aa2eb51cfd54cb93ff08e28040095462bb63daf552878"}},
+  "ataques": [
+    {"id": "modelo-desconocido", "fallo": "modelo", "cambios": {"modelo": {"nombre": "llama3.2:1b-sin-filtros", "digest": "sha256:9d2c6f1b7a0e4c3d8b5a6f7e1d2c3b4a5f6e7d8c9b0a1f2e3d4c5b6a7f8e9d0c"}}},
+    {"id": "modelo-manipulado", "fallo": "modelo", "cambios": {"modelo": {"nombre": "llama3.2:1b", "digest": "sha256:0b1e2d3c4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c"}}},
+    {"id": "root", "fallo": "usuario", "cambios": {"usuario": "0"}},
+    {"id": "sin-usuario", "fallo": "usuario", "cambios": {"usuario": null}},
+    {"id": "privilegiado", "fallo": "usuario", "cambios": {"privilegiado": true}},
+    {"id": "sin-limites", "fallo": "recursos", "cambios": {"recursos": {}}},
+    {"id": "sin-memoria", "fallo": "recursos", "cambios": {"recursos": {"cpus": "2"}}},
+    {"id": "todas-interfaces", "fallo": "puertos", "cambios": {"puertos": ["8000:8000"]}},
+    {"id": "ipv6-todas", "fallo": "puertos", "cambios": {"puertos": ["127.0.0.1:8000:8000", "[::]:11434:11434"]}},
+    {"id": "larga-sin-ip", "fallo": "puertos", "cambios": {"puertos": [{"target": 8000, "published": 8000}]}},
+    {"id": "latest", "fallo": "imagen", "cambios": {"imagen": "python:latest"}},
+    {"id": "sin-etiqueta", "fallo": "imagen", "cambios": {"imagen": "registro.local:5000/mostrador"}}
+  ],
+  "legitimas": [
+    {"id": "base", "cambios": {}},
+    {"id": "imagen-con-digest", "cambios": {"imagen": "python@sha256:2b6a3c1f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b"}},
+    {"id": "sin-modelo", "cambios": {"nombre": "proxy", "modelo": null}},
+    {"id": "larga-loopback", "cambios": {"puertos": [{"target": 8000, "published": 8000, "host_ip": "127.0.0.1"}, "[::1]:8001:8000"]}},
+    {"id": "uid-gid", "cambios": {"usuario": "10001:10001", "recursos": {"cpus": "0.5", "memoria": "256m"}}}
+  ],
+  "canary": {
+    "porcentaje": 25,
+    "peticiones": 32,
+    "umbrales": {"min_muestras": 5, "margen_errores": 0.05, "factor_latencia": 1.5},
+    "estable": {"modelo": "llama3.2:1b", "temperatura": 0.7, "timeout": 120, "max_tokens": 64, "sistema": "Eres el asistente de una forja de katanas. Responde en una o dos frases."},
+    "preguntas": ["¿A qué hora abrís?", "¿Qué garantía tienen las katanas?", "¿Cómo limpio la hoja?", "¿Cuánto tarda un pedido?"],
+    "candidatos": [
+      {"id": "temperatura-baja", "cambios": {"temperatura": 0.3}, "esperado": "promover"},
+      {"id": "modelo-inexistente", "cambios": {"modelo": "llama3.2:1b-no-descargado"}, "esperado": "revertir"},
+      {"id": "plazo-corto", "cambios": {"timeout": 0.3}, "esperado": "revertir"},
+      {"id": "verboso", "cambios": {"max_tokens": 400, "sistema": "Eres el asistente de una forja de katanas. Responde siempre con muchísimo detalle, en al menos 300 palabras."}, "esperado": "revertir"}
+    ]
+  }
+}

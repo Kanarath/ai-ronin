@@ -30,3 +30,6 @@ forja/**/evidence/*.json
 
 # Evidencias de tus ejercicios (resultados personales; el Dojo las importa)
 forja/evidencias/
+
+# Trazas que genera el laboratorio E4-02 (pueden contener los datos personales de prueba)
+forja/labs/E4-02_trazas/trazas/
