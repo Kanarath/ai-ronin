@@ -1,0 +1,86 @@
+{
+  "id": "E2-03",
+  "schema_version": 1,
+  "title": "¿Estaba en el registro?",
+  "unit": "E2",
+  "difficulty": 4,
+  "plane": "forja",
+  "epistemic": "consolidado",
+  "estimated_minutes": 180,
+  "requires_missions": ["E2-01"],
+  "competencies": { "requires": ["E2.evasion"], "trains": ["E2.membership-inference", "E2.privacidad-diferencial", "E2.dp-sgd", "E2.privacidad-rgpd"] },
+  "briefing": "Un modelo entrenado con datos de personas puede revelar quién estaba en sus datos, aunque nunca devuelva un solo dato. Entrenarás una red pequeña con 300 registros (dígitos que hacen de clientes ficticios) y adivinarás quién estaba solo a partir de su pérdida, con un umbral elegido en tu propio modelo sombra. Medirás la ventaja del atacante con un modelo sobreajustado, uno regularizado y dos con DP-SGD, y publicarás una media con privacidad diferencial. Instrucciones: forja/labs/E2-03_privacidad/README.md.",
+  "learning_objectives": [
+    "Implementar un ataque de inferencia de pertenencia por umbral de pérdida, con el umbral elegido en un modelo sombra",
+    "Medir la ventaja del atacante (TPR − FPR), la curva ROC, su área y la TPR con una FPR baja",
+    "Implementar los mecanismos de Laplace y gaussiano para publicar una media con privacidad diferencial y medir su error frente a ε",
+    "Implementar el recorte por ejemplo y el ruido de DP-SGD y medir su compromiso entre privacidad y utilidad",
+    "Relacionar la medición con OWASP LLM02 y con lo que dice el CEPD sobre el anonimato de los modelos, sin confundir una prueba técnica con un requisito legal"
+  ],
+  "mentor_intro": "Un modelo no guarda una tabla con tus datos. Pero si estabas en su entrenamiento, se nota en cómo te responde. Hoy mides cuánto se nota.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "pertenencia",
+      "title": "Inferencia de pertenencia",
+      "body": "Un modelo sobreajustado tiene pérdida casi 0 con los ejemplos que ha visto y más alta con los demás. El atacante dice «miembro» si la pérdida está por debajo de un umbral. Para elegir el umbral sin saber quién es miembro, entrena un modelo sombra con la misma receta y datos suyos (Shokri et al. 2017), y usa el umbral que mejor separa en la sombra. La ventaja TPR − FPR mide cuánto mejor que el azar acierta: 0 es adivinar."
+    },
+    {
+      "id": "dp",
+      "title": "Privacidad diferencial",
+      "body": "Un mecanismo es ε-diferencialmente privado si su salida cambia muy poco (como mucho un factor e^ε en probabilidad) al añadir o quitar a una persona de los datos (Dwork y Roth 2014). Para una media de valores entre 18 y 90 de n personas, una sola persona la mueve como mucho (90 − 18)/n: la sensibilidad. El mecanismo de Laplace suma ruido de escala sensibilidad/ε. ε pequeño: más privacidad y más ruido."
+    },
+    {
+      "id": "dp-sgd",
+      "title": "DP-SGD",
+      "body": "En DP-SGD (Abadi et al. 2016) se calcula el gradiente de cada ejemplo por separado, se recorta su norma a un máximo C para que nadie aporte más que C, se suman y se añade ruido gaussiano de desviación ruido·C. El ε final depende del ruido, del lote, del número de pasos y del muestreo, y se calcula con un contador de privacidad. Este laboratorio no lo calcula: aquí DP-SGD es una técnica medida, no una garantía."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Implementa las siete funciones de privacidad.py hasta que pasen los 14 tests y trae la evidencia.",
+      "teach": "Una curva, no un número\nUn ataque con umbral es una familia de ataques: con un umbral bajo marca a pocos y casi siempre acierta; con uno alto marca a casi todos. La curva ROC recorre todos los umbrales y muestra cada compromiso entre aciertos (TPR) y falsas alarmas (FPR). Por eso se informa de la curva y de la TPR con FPR baja, y no solo de una precisión.",
+      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "E2-03", "all_passed": true } },
+      "hints": [
+        "Orden: perdida_por_ejemplo → curva_roc → area_bajo_curva → mejor_umbral → media_laplace → media_gaussiana → recortar_y_ruido.",
+        "Desde forja/labs/E2-03_privacidad: crea el entorno (README, sección 1) y ejecuta .\\.venv\\Scripts\\python.exe -m unittest -v test_privacidad",
+        ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py E2-03 · y aquí: evidence import"
+      ],
+      "on_complete": "Tu ataque y tus mecanismos pasan los tests. Ahora, a medir."
+    },
+    {
+      "id": "o2",
+      "text": "Ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y trae la medición.",
+      "prediction": { "prompt": "Contra el modelo sobreajustado (100 % de acierto en sus 300 ejemplos), ¿qué ventaja crees que tendrá el atacante?", "options": ["casi ninguna", "pequeña pero clara", "casi total"] },
+      "validator": { "type": "event", "event": "evidence.measured", "where": { "lab": "E2-03", "has_baseline": true, "configs": { "gte": 3 } } },
+      "hints": [
+        "python bateria.py · tarda menos de un minuto: 4 recetas, 3 semillas y la media privada.",
+        "Con menos: python bateria.py --configs \"ninguna;regularizado;dp-sgd-fuerte\""
+      ],
+      "on_complete": "Tienes los datos. Mira juntas la ventaja y la precisión en test de cada receta."
+    },
+    {
+      "id": "o3",
+      "text": "Analiza tus números: qué ventaja tuvo el atacante con cada receta y qué precisión en test costó reducirla; por qué la TPR con FPR ≤ 5 % es tan baja aunque la ventaja no sea 0; y cómo cambia el error de la media publicada al multiplicar ε por 10, con Laplace y con el mecanismo gaussiano. (reflexion <texto>, mínimo 60 palabras)",
+      "teach": "La media esconde a los más expuestos\nUna ventaja del 18 % puede venir de acertar un poco con muchos o mucho con unos pocos. Para una persona concreta importa lo segundo: si el atacante puede señalarla con pocas falsas alarmas. Por eso Carlini et al. (2022) piden medir la TPR con FPR muy bajas. En este laboratorio, con dígitos fáciles, el ataque es débil ahí; con datos reales y modelos grandes, no siempre.",
+      "validator": { "type": "reflection", "min_words": 60 },
+      "hints": ["evidence list te recuerda los recuentos; la ventaja, el AUC y la media privada están en la salida de bateria.py.", "Laplace: la escala del ruido es sensibilidad/ε. ¿Qué pasa con el error si ε se multiplica por 10?"]
+    },
+    {
+      "id": "o4",
+      "text": "Explica qué tiene que ver tu medición con OWASP LLM02 y con el Dictamen 28/2024 del CEPD: qué dice el CEPD sobre cuándo un modelo entrenado con datos personales puede considerarse anónimo, por qué tu prueba es una evidencia técnica y no una certificación, y por qué DP-SGD sin calcular su ε no es una garantía. (reflexion <texto>, mínimo 50 palabras)",
+      "validator": { "type": "reflection", "min_words": 50 },
+      "hints": ["README, sección «Relación con LLM02 y con el RGPD».", "El CEPD habla de probabilidades insignificantes de extraer datos del modelo y de obtenerlos con consultas, evaluadas caso por caso. ¿Qué medía tu ataque?"]
+    }
+  ],
+  "debrief": {
+    "what_happened": "Has adivinado qué registros estaban en el entrenamiento de un modelo solo con su pérdida, con un umbral elegido en tu propio modelo sombra. La ventaja fue mayor con el modelo sobreajustado y bajó al regularizar y con DP-SGD, a cambio de precisión. Y has publicado una media con ruido calibrado: con ε pequeño protege más y se equivoca más.",
+    "why": "Un modelo aprende de sus ejemplos de entrenamiento, y lo que aprende de cada uno deja huella. Cuanto más se ajusta a sus ejemplos concretos y menos al patrón general, más fácil es reconocerlos. La privacidad diferencial limita cuánto puede influir una sola persona en el resultado. Por eso protege también frente a ataques que todavía no se conocen, y por eso cuesta utilidad.",
+    "in_production": "Los modelos entrenados con datos personales se evalúan con ataques de pertenencia y de extracción antes de publicarse, y el resultado se documenta en la evaluación de impacto. DP-SGD se usa con bibliotecas que calculan el ε. Para publicar estadísticas, la privacidad diferencial ya se aplica en algunos censos y servicios a gran escala. En los LLM, el riesgo se mide sobre todo como extracción de texto memorizado.",
+    "simplifications": ["Dígitos en lugar de datos personales", "Un atacante con un solo modelo sombra y un umbral global", "DP-SGD sin calcular el ε y con lotes barajados en lugar de muestreados", "Tres semillas: la ventaja varía bastante entre particiones"],
+    "exercise": "forja/labs/E2-03_privacidad/privacidad.py"
+  },
+  "further_reading": ["ref.shokri-2017", "ref.yeom-2018", "ref.carlini-mia-2022", "ref.dwork-roth-2014", "ref.abadi-2016", "ref.owasp-llm02-2025", "ref.cepd-dictamen-28-2024", "ref.carlini-2021"],
+  "xp": { "base": 500 }
+}

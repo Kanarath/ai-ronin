@@ -1,0 +1,9 @@
+# Versiones fijadas y comprobadas en PyPI el 2026-11-10 (ruedas para Python 3.13 en Windows).
+# httpx2 es el fork mantenido de httpx; starlette.testclient ya lo pide en lugar de httpx.
+# Los dígitos 8×8 vienen dentro de scikit-learn: no se descarga ningún dataset.
+fastapi==0.162.2
+uvicorn==0.54.0
+pydantic==2.14.3
+httpx2==2.16.0
+numpy==2.5.4
+scikit-learn==1.9.1

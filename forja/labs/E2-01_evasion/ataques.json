@@ -1,0 +1,9 @@
+{
+  "nota": "Batería del laboratorio E2-01. El Dojo comprueba la huella de este fichero: si quieres probar otros valores, hazlo en una copia y no importes esa medición.",
+  "modelo": {"epocas": 300, "lr": 0.5, "l2": 0.001},
+  "epsilons": [0.0, 0.02, 0.05, 0.1, 0.15, 0.2, 0.3],
+  "epsilon_ataque": 0.1,
+  "entrenamiento_adversario": {"epsilon": 0.15, "alfa": 0.5},
+  "deteccion": {"bits": 2, "fpr": 0.05},
+  "configuraciones": "ninguna;adversario;deteccion;adversario,deteccion"
+}

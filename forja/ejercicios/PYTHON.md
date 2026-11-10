@@ -288,5 +288,35 @@ async def chat(p: Peticion):
 | P0-01 servicio LLM (forja/labs) | 8 (`.get` con valor por defecto), 12, 14 |
 | A1-05 mostrador (forja/labs) | 3, 4 (valores por defecto), 11 (`re`, `math.sqrt`, `unicodedata`), 12, 14 |
 | A2-04 biblioteca (forja/labs) | 2 (rebanadas), 3 (`while`, `break`), 7, 8, 9, 11 (`math.log`, `re`, `hmac`, `hashlib`), 12, 14 |
+| E2-01 evasión (forja/labs) | 12, 15 (`softmax` por filas, `P[np.arange(n), y]`, `np.sign`, `np.clip`) |
+| E2-02 extracción (forja/labs) | 8, 12, 14, 15 (`np.round`, `np.argmax`, `np.hstack`, `np.linalg.lstsq`) |
+| E2-03 privacidad (forja/labs) | 9, 12, 15 (máscaras booleanas, `~`, `reshape`, `rng.laplace`, `rng.normal`) |
 
 Si te atascas en un ejercicio, mira [PISTAS.md](PISTAS.md): tiene pistas progresivas para cada función.
+
+## 15. NumPy para los laboratorios de E2
+
+Los laboratorios de E2 trabajan con matrices: cada fila es un ejemplo (una imagen de 64 píxeles) y cada columna, una característica o una clase. NumPy hace las cuentas de una fila entera, o de toda la matriz, sin bucles.
+
+```python
+import numpy as np
+
+X = np.array([[0.0, 0.5], [1.0, 0.25]])   # 2 ejemplos × 2 características
+X.shape                  # (2, 2)
+X @ W                    # producto matricial (como en T4, pero de golpe)
+X.max(axis=1)            # el máximo de cada FILA → forma (2,)
+X.max(axis=1, keepdims=True)   # el mismo, con forma (2, 1): se puede restar a X fila a fila
+np.sign(X), np.abs(X), np.exp(X), np.log(X)   # se aplican elemento a elemento
+np.clip(X, 0.0, 1.0)     # recorta cada valor al intervalo
+np.round(X, 2)           # redondea a 2 decimales
+```
+
+**Elegir un elemento por fila.** Si `y` tiene la clase correcta de cada ejemplo, `P[np.arange(len(y)), y]` da la probabilidad de esa clase en cada fila.
+
+**Máscaras.** `s >= t` es un array de booleanos; `s[m]` se queda con los elementos donde `m` es `True`, y `~m` es su negación. `np.mean(s >= t)` es la fracción que cumple la condición.
+
+**Formas.** `reshape(B, -1)` aplana todo salvo la primera dimensión. Para multiplicar un array de forma (B, a, b) por un factor de forma (B,), dale al factor la forma (B, 1, 1): NumPy repite lo que falta (*broadcasting*).
+
+**Copiar o modificar.** `X + 1` crea un array nuevo; `X += 1` o `P[i, j] -= 1` modifican el que tienes. Si una función no debe tocar su entrada, trabaja sobre el resultado de una operación o sobre `X.copy()`.
+
+**Aleatoriedad reproducible.** `rng = np.random.default_rng(semilla)` y después `rng.normal(media, desviacion, size=forma)` o `rng.laplace(0.0, escala)`. Con la misma semilla y las mismas llamadas en el mismo orden, salen los mismos números: por eso los docstrings dicen cuántas llamadas hacer.

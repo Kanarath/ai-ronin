@@ -1,0 +1,22 @@
+# Laboratorio E2-02 · API de dígitos de Kurogane (vulnerable a propósito).
+# Regla de la Forja: los puertos se publican SOLO en 127.0.0.1.
+#
+#   $env:CLAVES = "<clave larga y aleatoria 1>,<clave 2>"   (PowerShell; no las guardes en este fichero)
+#   docker compose up -d --build
+#
+# Sin CLAVES, el servicio no arranca: las claves de laboratorio de extraccion.py son solo para los tests
+# y la batería local.
+
+services:
+  api:
+    build: .
+    environment:
+      CLAVES: "${CLAVES:?define CLAVES antes de arrancar}"
+      DEFENSAS: "limite,redondeo"    # prueba también "" (ninguna), "etiqueta" o "limite"
+    ports:
+      - "127.0.0.1:8000:8000"
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true

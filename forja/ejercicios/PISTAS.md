@@ -166,3 +166,32 @@ Antes de abrir una pista, ejecuta el test y lee el mensaje de error: suele decir
 <details><summary>🟢 residual</summary>Un <code>if / elif</code> por tratamiento y <code>riesgo(r["p"], r["i"])</code> por defecto. Reutiliza <code>riesgo</code>.</details>
 <details><summary>🟢 tratamiento_permitido</summary><code>if tratamiento == "mitigar" and r["p_mitigada"] is None</code> · <code>if tratamiento == "aceptar" and riesgo(r["p"], r["i"]) &gt; apetito</code>.</details>
 <details><summary>🟡 resumen_registro</summary>Recorre los riesgos con <code>t = tratamientos.get(r["id"])</code> y <code>res = residual(r, t)</code>. Un riesgo evitado es innecesario si <code>t == "evitar" and r["p_mitigada"] is not None</code>. Ordena las listas con <code>sorted</code>.</details>
+
+## E2-01 · el trazo que engaña (forja/labs/E2-01_evasion)
+
+<details><summary>🟢 softmax</summary><code>Z = Z - Z.max(axis=1, keepdims=True)</code>, después <code>E = np.exp(Z)</code> y <code>E / E.sum(axis=1, keepdims=True)</code>. <code>keepdims=True</code> deja la forma (n, 1) para que la resta y la división se apliquen fila a fila.</details>
+<details><summary>🟡 gradiente_entrada</summary><code>P = softmax(X @ W + b)</code>; resta 1 en la columna correcta de cada fila con <code>P[np.arange(len(y)), y] -= 1.0</code> y devuelve <code>P @ W.T</code>.</details>
+<details><summary>🟢 fgsm</summary>Primero el <code>ValueError</code>. Después, una línea: <code>np.clip(X + epsilon * np.sign(gradiente), bajo, alto)</code>, que ya devuelve un array nuevo.</details>
+<details><summary>🟢 curva_epsilon</summary>Un bucle sobre <code>epsilons</code>: <code>Xa = fgsm(X, gradiente_entrada(modelo.W, modelo.b, X, y), e)</code> y <code>float(np.mean(modelo.predecir(Xa) == y))</code>.</details>
+<details><summary>🟡 gradiente_adversario</summary>Valida <code>alfa</code>. <code>gW, gb = gradiente_pesos(W, b, X, y)</code>; si <code>epsilon == 0</code>, devuélvelos. Si no, genera <code>Xa</code> con <code>fgsm</code>, calcula <code>gW2, gb2 = gradiente_pesos(W, b, Xa, y)</code> y combina: <code>alfa * gW + (1 - alfa) * gW2</code> (y lo mismo con b).</details>
+<details><summary>🟢 reducir_bits</summary><code>L = 2 ** bits - 1</code> y <code>np.round(X * L) / L</code>.</details>
+<details><summary>🟢 puntuacion_squeezing</summary>Compara <code>P.shape != P_reducida.shape</code> y después <code>np.abs(P - P_reducida).sum(axis=1)</code>.</details>
+<details><summary>🟡 umbral_para_fpr</summary>Ordena las puntuaciones de menor a mayor y recórrelas: para cada <code>t</code>, <code>sum(1 for v in s if v &gt; t) / len(s)</code>. Devuelve la primera que cumpla <code>&lt;= fpr</code>. Cuidado con los empates: <code>&gt;</code> estricto.</details>
+
+## E2-02 · la copia por correo (forja/labs/E2-02_extraccion)
+
+<details><summary>🟢 redondear_probabilidades</summary>El <code>ValueError</code> y <code>np.round(np.asarray(P, dtype=float), decimales)</code>.</details>
+<details><summary>🟡 permitir_consulta</summary><code>vivos = [t for t in historial.get(clave, []) if ahora - t &lt; ventana]</code> y guárdalos con <code>historial[clave] = vivos</code> antes de decidir. Si <code>len(vivos) + n &gt; maximo</code>, <code>return False</code>; si no, <code>vivos.extend([ahora] * n)</code> y <code>return True</code>.</details>
+<details><summary>🟢 etiquetas_de_respuesta</summary>Dos <code>if</code> con <code>in</code>: <code>np.asarray(respuesta["clases"], dtype=int)</code> o <code>np.argmax(np.asarray(respuesta["probabilidades"]), axis=1)</code>. Al final, el <code>raise ValueError</code>.</details>
+<details><summary>🟡 resolver_ecuaciones</summary><code>L = np.log(np.clip(P, minimo, 1.0))</code>, <code>R = L - L[:, 0:1]</code> (con <code>0:1</code> la columna conserva la forma (n, 1)), <code>A = np.hstack([Q, np.ones((len(Q), 1))])</code>, <code>S, *_ = np.linalg.lstsq(A, R, rcond=None)</code> y <code>return S[:-1], S[-1]</code>.</details>
+<details><summary>🟢 acuerdo</summary>Pasa las dos a <code>list(...)</code>, valida longitudes y <code>sum(1 for a, b in zip(...) if a == b) / len(a)</code>.</details>
+
+## E2-03 · ¿estaba en el registro? (forja/labs/E2-03_privacidad)
+
+<details><summary>🟢 perdida_por_ejemplo</summary><code>-np.log(np.clip(P[np.arange(len(y)), y], minimo, 1.0))</code>.</details>
+<details><summary>🟡 curva_roc</summary>Convierte con <code>s = np.asarray(puntuaciones)</code> y <code>m = np.asarray(es_miembro, dtype=bool)</code>; los no miembros son <code>~m</code>. Valida longitudes y que <code>m.sum()</code> y <code>(~m).sum()</code> sean mayores que 0. Después, <code>for t in sorted(set(s.tolist()), reverse=True)</code> y añade <code>(float(np.mean(s[~m] &gt;= t)), float(np.mean(s[m] &gt;= t)))</code> tras el <code>(0.0, 0.0)</code> inicial.</details>
+<details><summary>🟢 area_bajo_curva</summary><code>sum((curva[i][0] - curva[i - 1][0]) * (curva[i][1] + curva[i - 1][1]) / 2 for i in range(1, len(curva)))</code>.</details>
+<details><summary>🟡 mejor_umbral</summary>Mismo recorrido que <code>curva_roc</code>, de mayor a menor. Guarda el mejor y cámbialo solo si la nueva ventaja es <b>estrictamente</b> mayor: así, en un empate, se queda el umbral más alto.</details>
+<details><summary>🟢 media_laplace</summary>Valida, <code>v = np.clip(np.asarray(valores, dtype=float), bajo, alto)</code>, <code>sens = (alto - bajo) / len(v)</code> y <code>float(v.mean() + rng.laplace(0.0, sens / epsilon))</code>.</details>
+<details><summary>🟢 media_gaussiana</summary>Igual que Laplace, con <code>sigma = sens * math.sqrt(2 * math.log(1.25 / delta)) / epsilon</code> y <code>rng.normal(0.0, sigma)</code>. Valida <code>0 &lt; epsilon &lt; 1</code> y <code>0 &lt; delta &lt; 1</code>.</details>
+<details><summary>🔴 recortar_y_ruido</summary><code>B = gradientes[0].shape[0]</code>. La norma de cada ejemplo: <code>np.sqrt(sum((g.reshape(B, -1) ** 2).sum(axis=1) for g in gradientes))</code>. El factor: <code>np.minimum(1.0, recorte / normas)</code>, con cuidado de no dividir entre 0 (<code>np.where</code>). Para multiplicar un array de forma (B, a, b) por el factor de forma (B,), usa <code>f.reshape((-1,) + (1,) * (g.ndim - 1))</code>. Después, <code>.sum(axis=0)</code>, suma <code>rng.normal(0.0, ruido * recorte, size=s.shape)</code> y divide entre <code>B</code>.</details>

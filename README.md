@@ -15,7 +15,7 @@ El proyecto tiene dos planos:
 
 - Diseño aprobado el 2026-11-06.
 - Fase 0 (cimientos) completada: proyecto Godot y tests. Los tests se ejecutan en local; el repositorio no usa GitHub Actions.
-- **Contenido jugable:** 47 misiones.
+- **Contenido jugable:** 49 misiones.
   - Tutorial T0.
   - Tronco común T1–T6: datos, k-NN, descenso por gradiente, métricas, redes neuronales con backprop, tokens BPE, embeddings, modelo de lenguaje, muestreo y atención.
   - Arco de seguridad A1 completo (construir, atacar, defender y desplegar un chatbot), con informes de vulnerabilidad.
@@ -29,12 +29,13 @@ El proyecto tiene dos planos:
   - Pista P0 · laboratorio P0-01 (Forja, real): servicio FastAPI con un LLM local en CPU (Ollama, `llama3.2:1b`), cliente HTTP asíncrono, Docker Compose solo en `127.0.0.1` y medición del no determinismo del modelo.
   - Laboratorio A1-05 (Forja, real): el mostrador de A1 con el modelo local y un canario en el prompt de sistema; batería de fuga del prompt (LLM07) e inyección directa (LLM01), defensas medidas con repeticiones e intervalos de Wilson y su coste en preguntas legítimas. El Dojo importa la medición (`bateria.py`).
   - Laboratorio A2-04 (Forja, real): la biblioteca de A2 con embeddings reales (`embeddinggemma`), Qdrant y el modelo local; troceo, BM25 y búsqueda híbrida con RRF medidas con recall@k; inyección indirecta, envenenamiento y fuga por falta de ACL frente a control de acceso, firma HMAC de documentos y spotlight; Qdrant con API key solo en `127.0.0.1`.
+  - Especialización E2 (ML adversarial, Forja, real y en CPU, contra modelos propios en NumPy y scikit-learn): E2-01 ejemplos adversarios con FGSM sobre un clasificador de dígitos, precisión frente a epsilon, entrenamiento adversario y detección por compresión de la entrada con su coste; E2-02 extracción de un modelo servido con FastAPI en `127.0.0.1` solo con consultas (por ecuaciones y con un sustituto), acuerdo frente al número de consultas, redondeo, solo etiqueta y límite por clave; E2-03 inferencia de pertenencia por umbral de pérdida con modelo sombra (ventaja TPR − FPR, ROC) contra un modelo sobreajustado, uno regularizado y DP-SGD, y media con privacidad diferencial (Laplace y gaussiano) frente a ε; relación con LLM02 y con el Dictamen 28/2024 del CEPD.
   - Capstones C1–C3 (AI Agent Lab, RAG Security Lab, MCP Security Lab): comandos `lab` que miden cada defensa en solitario (matriz) y cada combinación (resiliencia); cobertura mínima sin coste, ataques frágiles y robustos, riesgo residual y defensas que no suman. C4 (multiagente) va a la ruta de estudio externo, como A5.
   - Prueba final C5 (AI Red Team Assessment): encargo completo sobre una empresa ficticia; reglas de enfrentamiento y alcance, reconocimiento, modelo de amenazas OWASP, hallazgos respaldados por las baterías de A1–A6, informe, corrección y retest sin romper las tareas legítimas.
 - **Ruta de estudio externo:** O1–O4, A5 y C4 no tienen misión; se estudian con referencias oficiales en su punto del temario (se desbloquean con sus requisitos y se marcan con `lecturas hecho`). En el Dojo: comando `lecturas`; con enlaces clicables: [`LECTURAS.md`](LECTURAS.md), que también recoge las lecturas de cada misión.
 - **En cada misión:** lecciones antes de cada objetivo, pistas en 5 niveles, prueba de dominio y debrief.
 - **Gamificación:** 18 sellos (logros), rangos Initiate→Master, retos rápidos con solución paso a paso, notificaciones y barra de XP.
-- **Ejercicios Python:** 19 en `forja/ejercicios/` y 3 laboratorios reales en `forja/labs/` (P0-01, A1-05 y A2-04), con guía de Python (`PYTHON.md`) y pistas (`PISTAS.md`). `python -m ronin_check <ID>` genera la evidencia y el Dojo la importa con `evidence import`.
+- **Ejercicios Python:** 19 en `forja/ejercicios/` y 6 laboratorios reales en `forja/labs/` (P0-01, A1-05, A2-04 y E2-01…03), con guía de Python (`PYTHON.md`) y pistas (`PISTAS.md`). `python -m ronin_check <ID>` genera la evidencia y el Dojo la importa con `evidence import`.
 - **Siguiente paso:** laboratorios de la Forja para el resto de arcos (A3: agente real con herramientas) y, después, especializaciones E1–E4.
 
 ### Jugar

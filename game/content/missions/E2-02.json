@@ -1,0 +1,81 @@
+{
+  "id": "E2-02",
+  "schema_version": 1,
+  "title": "La copia por correo",
+  "unit": "E2",
+  "difficulty": 4,
+  "plane": "forja",
+  "epistemic": "consolidado",
+  "estimated_minutes": 150,
+  "requires_missions": ["E2-01"],
+  "competencies": { "requires": ["E2.evasion"], "trains": ["E2.extraccion-modelos", "E2.defensa-api-prediccion", "E2.limite-consultas"] },
+  "briefing": "La forja ficticia Kurogane vende su clasificador de dígitos como API en 127.0.0.1: le mandas una imagen y te devuelve la probabilidad de cada dígito. Tú no tienes los pesos ni los datos etiquetados, solo una clave y muchas imágenes sin etiqueta. Con las respuestas construirás una copia del modelo y medirás cuánto coincide con el original según cuántas consultas haces. Después medirás tres defensas de la API: redondear, devolver solo la clase y limitar las consultas. Instrucciones: forja/labs/E2-02_extraccion/README.md.",
+  "learning_objectives": [
+    "Copiar una regresión logística resolviendo ecuaciones con las probabilidades que devuelve su API",
+    "Entrenar un modelo sustituto solo con las etiquetas de la API y medir su acuerdo con el original",
+    "Implementar el redondeo de probabilidades y un límite de consultas por clave con ventana deslizante",
+    "Medir el acuerdo frente al número de consultas con cada defensa y su coste para un cliente legítimo",
+    "Explicar por qué las defensas de una API de predicción encarecen el robo pero no lo impiden"
+  ],
+  "mentor_intro": "Una API de predicción responde a cualquiera que tenga una clave. Cada respuesta es un poco del modelo. Hoy cuentas cuántas respuestas hacen falta para tenerlo entero.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "ecuaciones",
+      "title": "Robar por ecuaciones",
+      "body": "En una regresión logística, ln P_j − ln P_0 = x·(w_j − w_0) + (b_j − b_0): una función lineal de la entrada. Cada consulta con probabilidades exactas da una ecuación por clase, y con tantas consultas como píxeles más una (65), el sistema tiene solución única: la copia predice exactamente igual (Tramèr et al. 2016). Si las probabilidades vienen redondeadas, las ecuaciones dejan de cuadrar y el atacante necesita otro método."
+    },
+    {
+      "id": "sustituto",
+      "title": "Robar por etiquetas",
+      "body": "Si la API solo dice la clase, el atacante etiqueta sus propias imágenes con ella y entrena un modelo sustituto. Necesita más consultas y la copia no es exacta, pero suele parecerse mucho. Ese sustituto sirve para algo más que ahorrarse la licencia: con él se preparan ejemplos adversarios (E2-01) que a menudo también engañan al original."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Implementa las cinco funciones de extraccion.py hasta que pasen los 13 tests y trae la evidencia.",
+      "teach": "Mínimos cuadrados\nnp.linalg.lstsq(A, R) busca la matriz S que hace A·S lo más parecido posible a R. Con exactamente tantas ecuaciones independientes como incógnitas, la solución es exacta; con más, es la mejor aproximación; con menos, es una de las muchas posibles. Añadir una columna de unos a las consultas es lo que permite estimar el sesgo b.",
+      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "E2-02", "all_passed": true } },
+      "hints": [
+        "Orden: redondear_probabilidades → permitir_consulta → etiquetas_de_respuesta → acuerdo → resolver_ecuaciones.",
+        "Desde forja/labs/E2-02_extraccion: crea el entorno (README, sección 1) y ejecuta .\\.venv\\Scripts\\python.exe -m unittest -v test_extraccion",
+        ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py E2-02 · y aquí: evidence import"
+      ],
+      "on_complete": "Tu ataque funciona contra la API de los tests. Ahora, por HTTP de verdad."
+    },
+    {
+      "id": "o2",
+      "text": "Ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y trae la medición.",
+      "prediction": { "prompt": "Con un límite de 50 consultas por clave (menos de las 65 que pide la teoría para una copia exacta), ¿qué crees que conseguirá el atacante si la API da las probabilidades exactas?", "options": ["una copia mala", "una copia bastante buena", "una copia casi perfecta"] },
+      "validator": { "type": "event", "event": "evidence.measured", "where": { "lab": "E2-02", "has_baseline": true, "configs": { "gte": 3 } } },
+      "hints": [
+        "python bateria.py · arranca la API en 127.0.0.1 para cada configuración; tarda unos segundos.",
+        "Con menos: python bateria.py --configs \"ninguna;redondeo;limite,redondeo\""
+      ],
+      "on_complete": "Tienes las curvas. Compara la de las ecuaciones con la de las etiquetas en cada configuración."
+    },
+    {
+      "id": "o3",
+      "text": "Analiza tus números: cuántas consultas necesitó cada método para pasar del 90 % de acuerdo; qué método dejó de funcionar con el redondeo y cuál no; qué consiguió el límite solo y qué consiguió combinado con el redondeo; y si alguna defensa le costó algo al cliente legítimo. (reflexion <texto>, mínimo 60 palabras)",
+      "teach": "Menos consultas de las que dice la teoría\n65 consultas garantizan la copia exacta para CUALQUIER entrada. Pero las imágenes de dígitos no ocupan todo el espacio de 64 dimensiones: muchos píxeles del borde son casi siempre 0. Con menos consultas, el atacante no recupera todos los pesos, pero sí los que importan para las imágenes reales. La garantía teórica es el peor caso; el ataque real suele necesitar menos.",
+      "validator": { "type": "reflection", "min_words": 60 },
+      "hints": ["evidence list te recuerda el acuerdo final de cada configuración; las curvas por presupuesto están en la salida de bateria.py.", "Fíjate en la línea de limite: ¿con cuántas consultas se quedó el atacante y qué acuerdo sacó con ellas?"]
+    },
+    {
+      "id": "o4",
+      "text": "Explica cómo esquivaría un atacante el límite por clave, por qué redondear las probabilidades tiene un coste para los clientes que las necesitan, y por qué una API pública de predicción es, en la práctica, una forma de publicar el modelo. (reflexion <texto>, mínimo 50 palabras)",
+      "validator": { "type": "reflection", "min_words": 50 },
+      "hints": ["El límite cuenta por clave. ¿Cuánto cuesta conseguir otra clave?", "El error de probabilidad del cliente legítimo está en la salida de bateria.py (error prob.)."]
+    }
+  ],
+  "debrief": {
+    "what_happened": "Has robado un modelo con solo consultar su API: por ecuaciones, con las probabilidades exactas, la copia fue exacta con unas decenas de consultas; por etiquetas, la copia se acercó mucho con unos cientos. El redondeo rompió las ecuaciones, pero no el sustituto; el límite redujo las consultas, pero no lo bastante; la combinación fue lo que más costó al atacante.",
+    "why": "Cada respuesta de una API de predicción es información sobre la función que calcula el modelo. Cuanto más rica la respuesta (probabilidades exactas frente a una etiqueta) y cuantas más respuestas, más fácil es reconstruirla. Las defensas reducen la información por consulta o el número de consultas: suben el precio del robo, no lo hacen imposible.",
+    "in_production": "Las APIs de modelos limitan por clave y por cuenta, detectan patrones de consulta anómalos (muchas entradas sintéticas, barridos sistemáticos) y devuelven solo lo que el cliente necesita. Las condiciones de uso prohíben usar las respuestas para entrenar modelos competidores. En los LLM, el equivalente es la destilación: entrenar un modelo con las respuestas de otro, que OWASP recoge en LLM10 como replicación funcional del modelo.",
+    "simplifications": ["Una regresión logística, el caso más fácil para las ecuaciones", "Un límite en memoria de un solo proceso", "Un atacante con imágenes del mismo tipo que las de entrenamiento", "Una sola clave de atacante: con varias, el límite pierde fuerza"],
+    "exercise": "forja/labs/E2-02_extraccion/extraccion.py"
+  },
+  "further_reading": ["ref.tramer-2016", "ref.owasp-llm-2025", "ref.mitre-atlas", "ref.fastapi"],
+  "xp": { "base": 500 }
+}

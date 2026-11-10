@@ -1,0 +1,4 @@
+# Versiones fijadas y comprobadas en PyPI el 2026-11-10 (ruedas para Python 3.13 en Windows).
+# Los dígitos 8×8 vienen dentro de scikit-learn: no se descarga ningún dataset.
+numpy==2.5.4
+scikit-learn==1.9.1
