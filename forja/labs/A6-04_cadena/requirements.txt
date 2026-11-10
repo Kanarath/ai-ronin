@@ -1,0 +1,5 @@
+# El verificador solo usa la biblioteca estándar de Python 3.13 (pickletools, struct, json,
+# hashlib, zipfile, shlex): no hay nada que instalar, y por tanto nada que pueda llegar
+# comprometido por esta vía. Este fichero existe para que el verificador se revise a sí mismo.
+#
+# Opcional (sección 4 del README), en OTRO entorno: model-signing==1.1.1 (PyPI, 2025-10-10).

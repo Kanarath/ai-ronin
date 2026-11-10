@@ -302,20 +302,20 @@
     },
     {
       "id": "ref.safetensors",
-      "title": "Safetensors: formato simple y seguro para guardar tensores (sin ejecución de código al cargar)",
+      "title": "Safetensors: formato simple y seguro para guardar tensores (sin ejecución de código al cargar). Versión 0.8.0 en PyPI (2026-06-09); el formato exige un buffer sin huecos y una cabecera de 100 MB como máximo",
       "source": "Hugging Face",
       "type": "documentacion",
       "url": "https://huggingface.co/docs/safetensors/index",
-      "consulted": "2026-11-09",
+      "consulted": "2026-11-10",
       "review_by": "2027-05-09"
     },
     {
       "id": "ref.cyclonedx-mlbom",
-      "title": "CycloneDX: Machine Learning Bill of Materials (ML-BOM)",
+      "title": "CycloneDX: Machine Learning Bill of Materials (ML-BOM). Última versión de la especificación: 1.7 (21 de octubre de 2025; ECMA-424)",
       "source": "OWASP CycloneDX",
       "type": "especificacion",
       "url": "https://cyclonedx.org/capabilities/mlbom/",
-      "consulted": "2026-11-09",
+      "consulted": "2026-11-10",
       "review_by": "2027-05-09"
     },
     {
@@ -342,7 +342,7 @@
       "source": "OpenSSF",
       "type": "especificacion",
       "url": "https://github.com/ossf/model-signing-spec",
-      "consulted": "2026-11-09",
+      "consulted": "2026-11-10",
       "review_by": "2027-05-09"
     },
     {
@@ -452,6 +452,10 @@
     {"id": "ref.debenedetti-agentdojo-2024", "title": "AgentDojo: A Dynamic Environment to Evaluate Prompt Injection Attacks and Defenses for LLM Agents", "authors": "E. Debenedetti et al.", "source": "arXiv:2406.13352", "year": 2024, "type": "paper", "url": "https://arxiv.org/abs/2406.13352", "consulted": "2026-11-10"},
     {"id": "ref.mcp-python-sdk", "title": "Model Context Protocol · SDK oficial de Python (paquete mcp, versión 2.3.0; MCPServer, transporte Streamable HTTP, TokenVerifier)", "source": "modelcontextprotocol", "type": "documentacion", "url": "https://github.com/modelcontextprotocol/python-sdk", "consulted": "2026-11-10", "review_by": "2027-05-10"},
     {"id": "ref.rfc-8707", "title": "Resource Indicators for OAuth 2.0 (RFC 8707): el parámetro resource y la audiencia del token", "authors": "B. Campbell, J. Bradley, H. Tschofenig", "source": "IETF", "year": 2020, "type": "especificacion", "url": "https://www.rfc-editor.org/rfc/rfc8707", "consulted": "2026-11-10"},
-    {"id": "ref.rfc-9728", "title": "OAuth 2.0 Protected Resource Metadata (RFC 9728)", "authors": "M. B. Jones, P. Hunt, A. Parecki", "source": "IETF", "year": 2025, "type": "especificacion", "url": "https://www.rfc-editor.org/rfc/rfc9728", "consulted": "2026-11-10"}
+    {"id": "ref.rfc-9728", "title": "OAuth 2.0 Protected Resource Metadata (RFC 9728)", "authors": "M. B. Jones, P. Hunt, A. Parecki", "source": "IETF", "year": 2025, "type": "especificacion", "url": "https://www.rfc-editor.org/rfc/rfc9728", "consulted": "2026-11-10"},
+    {"id": "ref.python-pickletools", "title": "pickletools — herramientas para desarrolladores de pickle: genops recorre los opcodes sin ejecutarlos", "source": "Documentación oficial de Python 3", "type": "documentacion", "url": "https://docs.python.org/3/library/pickletools.html", "consulted": "2026-11-10", "review_by": "2027-11-10"},
+    {"id": "ref.model-signing-pypi", "title": "model-signing 1.1.1 (2025-10-10): implementación oficial de OpenSSF Model Signing, con claves, certificados o Sigstore", "source": "PyPI · sigstore/model-transparency", "type": "documentacion", "url": "https://pypi.org/project/model-signing/", "consulted": "2026-11-10", "review_by": "2027-05-10"},
+    {"id": "ref.docker-secrets-check", "title": "Docker build checks · SecretsUsedInArgOrEnv (nombres de ARG y ENV que indican un secreto)", "source": "Documentación de Docker", "type": "documentacion", "url": "https://docs.docker.com/reference/build-checks/secrets-used-in-arg-or-env/", "consulted": "2026-11-10", "review_by": "2027-05-10"},
+    {"id": "ref.pypa-name-normalization", "title": "Python Packaging User Guide · Name normalization (nombres de paquete equivalentes)", "source": "PyPA", "type": "especificacion", "url": "https://packaging.python.org/en/latest/specifications/name-normalization/", "consulted": "2026-11-10", "review_by": "2027-11-10"}
   ]
 }

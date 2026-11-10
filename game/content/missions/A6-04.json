@@ -1,0 +1,93 @@
+{
+  "id": "A6-04",
+  "schema_version": 1,
+  "title": "La cadena de verdad",
+  "unit": "A6",
+  "difficulty": 4,
+  "plane": "forja",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 180,
+  "requires_missions": ["A6-03", "P0-01"],
+  "competencies": { "requires": ["A6.safetensors", "A6.firma-huellas", "A6.lockfile", "A6.contenedores", "P0.http-json"], "trains": ["A6.forja-verificador", "A6.inspeccion-pickle", "A6.validacion-safetensors", "A6.ai-bom-hashes", "A6.slopsquatting", "A6.revision-dockerfile"] },
+  "briefing": "En A6-03, los controles de la cadena eran interruptores. Hoy los escribes tú: un verificador en Python que revisa los dos proyectos del taller, uno limpio y otro comprometido. Lee pickles sin cargarlos, comprueba la cabecera de cada safetensors, compara cada huella con el AI-BOM CycloneDX y revisa requirements y Dockerfiles. Después medirás qué detecta cada control, qué se le escapa y cuántos artefactos buenos rechaza por error. Instrucciones: forja/labs/A6-04_cadena/README.md.",
+  "learning_objectives": [
+    "Inspeccionar un pickle con pickletools y decidir qué importaría y llamaría, sin cargarlo nunca",
+    "Validar la estructura de un fichero safetensors: cabecera, dtypes y offsets sin solapes ni huecos",
+    "Verificar las huellas SHA-256 de los artefactos contra un AI-BOM CycloneDX y detectar los no declarados",
+    "Detectar dependencias sin fijar, inexistentes o recién publicadas y Dockerfiles con root, secretos o imágenes sin versión",
+    "Medir la detección y los falsos positivos de cada control y explicar lo que ninguno ve"
+  ],
+  "mentor_intro": "Un control que no has escrito es un control en el que confías a ciegas. Escríbelo, pruébalo con artefactos buenos y malos, y mide cuánto rompe.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "leer-no-cargar",
+      "title": "Leer un pickle no es cargarlo",
+      "body": "Un pickle es un pequeño programa para una máquina de pila. GLOBAL y STACK_GLOBAL importan un objeto («modulo.nombre») y REDUCE lo llama con unos argumentos: así reconstruye pickle un OrderedDict… o llama a cualquier otra función. pickle.load ejecuta ese programa. pickletools.genops solo lo recorre y te da cada opcode con su argumento: puedes saber qué haría sin que haga nada. Una lista permitida decide qué imports son datos legítimos; el modo estricto rechaza cualquiera."
+    },
+    {
+      "id": "safetensors-poliglota",
+      "title": "Por qué safetensors no tiene huecos",
+      "body": "Un .safetensors son 8 bytes con la longitud N de la cabecera, N bytes de JSON con el dtype, la forma y los offsets [inicio, fin] de cada tensor, y el buffer de datos. El formato exige que los offsets cubran el buffer entero, sin huecos ni solapes, y que cada tensor mida exactamente lo que dicen su forma y su dtype. Si no, en los bytes que no son de ningún tensor cabe otra cosa (un fichero políglota, como un pickle pegado al final) y un lector descuidado puede leer fuera del fichero."
+    },
+    {
+      "id": "huella-firma",
+      "title": "Huella, AI-BOM y firma",
+      "body": "Un AI-BOM CycloneDX (ML-BOM) declara cada modelo y dataset con su huella SHA-256. Si la huella del fichero no coincide, el fichero ha cambiado desde que se generó el AI-BOM. Si coincide, solo sabes que es el mismo que el AI-BOM describe: no que sea seguro, ni que lo haya publicado quien dice. Para eso hace falta una firma con una clave que el atacante no tenga, como la de OpenSSF Model Signing, que firma un manifiesto con la huella de cada fichero."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Implementa las seis funciones de verificador.py hasta que pasen los 27 tests y trae la evidencia.",
+      "teach": "Una regla, un nombre\nCada comprobación devuelve tuplas (regla, detalle), como «hash-distinto» o «secreto-en-arg». Los nombres no son decoración: así puedes medir qué control detecta qué, y un pipeline de CI puede decidir qué reglas bloquean y cuáles solo avisan. Empieza por imports_pickle: el truco está en la memoria del pickle (MEMOIZE y BINGET).",
+      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "A6-04", "all_passed": true } },
+      "hints": [
+        "Orden: imports_pickle → revisar_pickle → validar_safetensors → verificar_bom → revisar_requirements → revisar_dockerfile.",
+        "Desde forja/labs/A6-04_cadena: py -3.13 -m unittest -v test_verificador (solo biblioteca estándar: no hay nada que instalar).",
+        "py -3.13 ..\\..\\ejercicios\\ronin_check.py A6-04 · y aquí: evidence import"
+      ],
+      "on_complete": "Tu verificador pasa los tests. Ahora, a ver qué detecta cada control por separado."
+    },
+    {
+      "id": "o2",
+      "text": "Ejecuta bateria.py y trae la medición (9 configuraciones: ninguna, cada control por separado y todos juntos).",
+      "prediction": { "prompt": "Con solo el control del AI-BOM (huellas SHA-256), ¿qué crees que pasará con los pickles que ejecutan código?", "options": ["los detecta todos", "detecta algunos", "no detecta ninguno"] },
+      "validator": { "type": "event", "event": "evidence.measured", "where": { "lab": "A6-04", "has_baseline": true, "configs": { "gte": 3 } } },
+      "hints": [
+        "py -3.13 bateria.py · tarda menos de un segundo: no hay modelo de por medio.",
+        "Si quieres menos filas: py -3.13 bateria.py --configs \"ninguna;bom;pickle,safetensors,bom,deps,docker\""
+      ],
+      "on_complete": "Tienes los números. Mira primero la fila «bom» y, después, la última."
+    },
+    {
+      "id": "o3",
+      "text": "Con todos los controles activos (pickle,safetensors,bom,deps,docker), ¿cuántos artefactos malos se escapan? (answer <número>)",
+      "validator": { "type": "answer", "expected": 1, "tolerance": 0 },
+      "hints": ["Es la columna «se escapan» de la penúltima fila de bateria.py.", "Debajo de la fila verás de qué categoría es."],
+      "on_complete": "Uno: los datos envenenados del espejo comunitario. El AI-BOM los declara con su huella correcta, porque se generó después de descargarlos. Ningún control de formato o de integridad mira qué dicen los datos."
+    },
+    {
+      "id": "o4",
+      "text": "Analiza tus números: qué detectó cada control por separado y por qué el AI-BOM solo no frenó ningún pickle con código; qué cuesta el modo estricto de pickle frente a la lista permitida; y por qué el pickle ofuscado engañaría a quien solo mirase las dos últimas cadenas. (reflexion <texto>, mínimo 60 palabras)",
+      "teach": "Detección y coste\nCada control mira una pregunta distinta: ¿se ejecuta? (pickle), ¿está bien formado? (safetensors), ¿ha cambiado? (bom), ¿de dónde viene el código? (deps), ¿qué puede hacer si todo falla? (docker). El modo estricto no deja pasar ni un import, pero rechaza también el tokenizador y el clasificador propios: falsos positivos. La lista permitida los acepta, a cambio de confiar en que cada entrada sea de verdad inofensiva.",
+      "validator": { "type": "reflection", "min_words": 60 },
+      "hints": ["evidence list te recuerda las tasas de cada configuración; los falsos positivos y lo que se escapa están en la salida de bateria.py.", "El ofuscado guarda taller_ficticio y avivar_fuego en la memoria al principio y apila collections y OrderedDict justo antes de STACK_GLOBAL."]
+    },
+    {
+      "id": "o5",
+      "text": "Explica por qué el verificador nunca hace pickle.load (ni para «convertir» a safetensors un modelo de un tercero), qué prueba una huella del AI-BOM y qué añade una firma de modelo, y por qué un paquete que no existe es peligroso aunque hoy no se pueda instalar. (reflexion <texto>, mínimo 50 palabras)",
+      "validator": { "type": "reflection", "min_words": 50 },
+      "hints": ["A6-03: convertir un pickle obliga a cargarlo. Y la tarjeta «Huella, AI-BOM y firma».", "Slopsquatting: si un asistente inventa el mismo nombre una y otra vez, alguien puede registrarlo mañana."]
+    }
+  ],
+  "debrief": {
+    "what_happened": "Has escrito un verificador de artefactos de IA: lee pickles sin cargarlos, valida safetensors, compara huellas con un AI-BOM CycloneDX y revisa dependencias y Dockerfiles. Has medido que cada control detecta su eslabón y casi nada más, que juntos dejan pasar solo los datos envenenados y que el modo estricto de pickle rompe artefactos legítimos.",
+    "why": "La cadena de suministro de un sistema de IA mezcla código, pesos, datos y contenedores, y cada pieza falla de una forma distinta. Por eso no hay un control único: hace falta uno por pregunta (¿se ejecuta?, ¿está bien formado?, ¿ha cambiado?, ¿quién lo publicó?, ¿de dónde viene?) y medir cuánto cuesta cada uno, porque un control que rechaza el trabajo diario acaba desactivado.",
+    "in_production": "Los modelos de terceros se aceptan solo en safetensors u otros formatos sin código, y los pickles propios se convierten en un entorno aislado. Los artefactos se firman al publicarse (OpenSSF Model Signing, con Sigstore o PKI) y la firma se verifica al desplegar. El AI-BOM se genera en el build y se guarda firmado junto a la procedencia (SLSA). Las dependencias se instalan con huellas (pip --require-hashes) desde un registro interno o un proxy con antigüedad mínima. Y todo esto corre en CI, con escáneres mantenidos por terceros además de las reglas propias.",
+    "simplifications": ["Dos proyectos y 33 artefactos fijos", "Un análisis de pickle aproximado, sin simular la pila entera", "Un índice de paquetes local con fechas de laboratorio", "Secretos detectados por el nombre de la variable, no por su valor", "La firma de modelos queda como paso opcional, sin tests", "El Dojo no puede comprobar que la medición se hizo con tu código: confía en tus datos"],
+    "exercise": "forja/labs/A6-04_cadena/verificador.py"
+  },
+  "further_reading": ["ref.python-pickletools", "ref.safetensors", "ref.cyclonedx-mlbom", "ref.openssf-model-signing", "ref.model-signing-pypi", "ref.docker-secrets-check", "ref.pypa-name-normalization", "ref.spracklen-2025", "ref.python-pickle"],
+  "xp": { "base": 500 }
+}

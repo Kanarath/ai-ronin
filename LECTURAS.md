@@ -185,7 +185,7 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - **Recomendada antes de:** C5-01
 - **Referencias:**
   - [GenAI Red Teaming Guide v1.0 (enero de 2025)](https://genai.owasp.org/resource/genai-red-teaming-guide/) — OWASP GenAI Security Project · consultada 2026-11-09
-  - [CycloneDX: Machine Learning Bill of Materials (ML-BOM)](https://cyclonedx.org/capabilities/mlbom/) — OWASP CycloneDX · consultada 2026-11-09
+  - [CycloneDX: Machine Learning Bill of Materials (ML-BOM). Última versión de la especificación: 1.7 (21 de octubre de 2025; ECMA-424)](https://cyclonedx.org/capabilities/mlbom/) — OWASP CycloneDX · consultada 2026-11-10
   - [NIST AI 100-2 E2025 · Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations (marzo de 2025; NIST prevé revisiones anuales)](https://csrc.nist.gov/pubs/ai/100/2/e2025/final) — NIST · consultada 2026-11-09
 
 ## A3
@@ -277,9 +277,9 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 **A6-01 · La forja de modelos**
 
 - [pickle — Python object serialization (advertencia: el módulo pickle no es seguro; solo hay que deserializar datos de confianza)](https://docs.python.org/3/library/pickle.html) — Documentación oficial de Python 3 · consultada 2026-11-09
-- [Safetensors: formato simple y seguro para guardar tensores (sin ejecución de código al cargar)](https://huggingface.co/docs/safetensors/index) — Hugging Face · consultada 2026-11-09
+- [Safetensors: formato simple y seguro para guardar tensores (sin ejecución de código al cargar). Versión 0.8.0 en PyPI (2026-06-09); el formato exige un buffer sin huecos y una cabecera de 100 MB como máximo](https://huggingface.co/docs/safetensors/index) — Hugging Face · consultada 2026-11-10
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
-- [CycloneDX: Machine Learning Bill of Materials (ML-BOM)](https://cyclonedx.org/capabilities/mlbom/) — OWASP CycloneDX · consultada 2026-11-09
+- [CycloneDX: Machine Learning Bill of Materials (ML-BOM). Última versión de la especificación: 1.7 (21 de octubre de 2025; ECMA-424)](https://cyclonedx.org/capabilities/mlbom/) — OWASP CycloneDX · consultada 2026-11-10
 
 **A6-02 · Eslabones podridos**
 
@@ -290,10 +290,22 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 
 **A6-03 · Sellos en la cadena**
 
-- [Safetensors: formato simple y seguro para guardar tensores (sin ejecución de código al cargar)](https://huggingface.co/docs/safetensors/index) — Hugging Face · consultada 2026-11-09
+- [Safetensors: formato simple y seguro para guardar tensores (sin ejecución de código al cargar). Versión 0.8.0 en PyPI (2026-06-09); el formato exige un buffer sin huecos y una cabecera de 100 MB como máximo](https://huggingface.co/docs/safetensors/index) — Hugging Face · consultada 2026-11-10
 - [Docker: Build secrets (montar secretos en la build sin dejarlos en las capas de la imagen)](https://docs.docker.com/build/building/secrets/) — Documentación de Docker · consultada 2026-11-09
 - [SLSA (Supply-chain Levels for Software Artifacts) v1.0: niveles de garantía para la procedencia de los builds](https://slsa.dev/spec/v1.0/) — OpenSSF · consultada 2026-11-09
-- [OpenSSF Model Signing (OMS) Specification: firma separada de artefactos de modelos (claves, PKI o Sigstore). Especificación de junio de 2025, emergente](https://github.com/ossf/model-signing-spec) — OpenSSF · consultada 2026-11-09
+- [OpenSSF Model Signing (OMS) Specification: firma separada de artefactos de modelos (claves, PKI o Sigstore). Especificación de junio de 2025, emergente](https://github.com/ossf/model-signing-spec) — OpenSSF · consultada 2026-11-10
+
+**A6-04 · La cadena de verdad**
+
+- [pickletools — herramientas para desarrolladores de pickle: genops recorre los opcodes sin ejecutarlos](https://docs.python.org/3/library/pickletools.html) — Documentación oficial de Python 3 · consultada 2026-11-10
+- [Safetensors: formato simple y seguro para guardar tensores (sin ejecución de código al cargar). Versión 0.8.0 en PyPI (2026-06-09); el formato exige un buffer sin huecos y una cabecera de 100 MB como máximo](https://huggingface.co/docs/safetensors/index) — Hugging Face · consultada 2026-11-10
+- [CycloneDX: Machine Learning Bill of Materials (ML-BOM). Última versión de la especificación: 1.7 (21 de octubre de 2025; ECMA-424)](https://cyclonedx.org/capabilities/mlbom/) — OWASP CycloneDX · consultada 2026-11-10
+- [OpenSSF Model Signing (OMS) Specification: firma separada de artefactos de modelos (claves, PKI o Sigstore). Especificación de junio de 2025, emergente](https://github.com/ossf/model-signing-spec) — OpenSSF · consultada 2026-11-10
+- [model-signing 1.1.1 (2025-10-10): implementación oficial de OpenSSF Model Signing, con claves, certificados o Sigstore](https://pypi.org/project/model-signing/) — PyPI · sigstore/model-transparency · consultada 2026-11-10
+- [Docker build checks · SecretsUsedInArgOrEnv (nombres de ARG y ENV que indican un secreto)](https://docs.docker.com/reference/build-checks/secrets-used-in-arg-or-env/) — Documentación de Docker · consultada 2026-11-10
+- [Python Packaging User Guide · Name normalization (nombres de paquete equivalentes)](https://packaging.python.org/en/latest/specifications/name-normalization/) — PyPA · consultada 2026-11-10
+- [Spracklen y otros (2025). We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs (USENIX Security 2025)](https://arxiv.org/abs/2406.10279) — arXiv:2406.10279 · consultada 2026-11-09
+- [pickle — Python object serialization (advertencia: el módulo pickle no es seguro; solo hay que deserializar datos de confianza)](https://docs.python.org/3/library/pickle.html) — Documentación oficial de Python 3 · consultada 2026-11-09
 
 ## C1
 

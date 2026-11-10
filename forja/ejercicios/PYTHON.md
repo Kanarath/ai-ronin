@@ -462,5 +462,6 @@ list(itertools.islice(cuadrados(numeros()), 4))   # [0, 1, 4, 9]: toma los 4 pri
 | P0_05 generación | 3, 8 (`.get`), 11 (`random`), 17 (`.encode`), 18 |
 | A3-04 agente (forja/labs) | 2 (rebanadas negativas), 3 (`while`, `continue`), 4 (devolver tuplas), 7 (`lambda`), 8, 9, 11 (`re`), 12, 14 |
 | A4-04 servidor MCP (forja/labs) | 3 (`while` sin ciclos), 4, 7, 8, 9, 11 (`json`, `re`, `hashlib`, `pathlib`, `urllib`), 12, 14 |
+| A6-04 cadena (forja/labs) | 3, 4 (devolver tuplas), 8 (`.get`), 9, 11 (`pickletools`, `struct`, `json`, `hashlib`, `re`, `shlex`, `datetime`), 12 |
 
 Si te atascas en un ejercicio, mira [PISTAS.md](PISTAS.md): tiene pistas progresivas para cada función.
