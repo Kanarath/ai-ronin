@@ -92,8 +92,6 @@ func test_comandos() -> void:
 	assert_false(r.ok)
 
 
-const R40 := "reflexion la firma dice quien publico el artefacto y si ha cambiado pero no si se ejecuta al cargarlo el formato seguro evita que se ejecute codigo pero no garantiza que los pesos sean los buenos y la procedencia de los datos evita la puerta trasera por eso hacen falta los tres controles"
-
 
 func test_mision_A6_01() -> void:
 	game.progress.data["missions"]["A3-01"] = {"completed": true}
@@ -104,7 +102,7 @@ func test_mision_A6_01() -> void:
 	run(["supply train taller", "answer 0,94"])
 	assert_eq(game.runner.index, 3)
 	run(["supply load taller clasificador-acero", "supply install taller forja-metrics", "supply deploy taller", "answer root"])
-	run([R40])
+	run(["answer b"])
 	assert_eq(game.runner.phase, "trial")
 	run(["supply forja t2", "supply sbom t2", "supply train t2", "supply load t2 clasificador-acero", "supply deploy t2"])
 	assert_eq(finished.size(), 1)
@@ -127,7 +125,7 @@ func test_mision_A6_02() -> void:
 		"informe campo pasos 1) supply forja taller 2) supply inspect taller adaptador-estilo 3) supply load taller adaptador-estilo",
 		"informe campo impacto el modelo da por buenas piezas con grietas de temple", "informe campo evidencia la huella actual difiere de la firmada por lora-labs",
 		"informe campo mitigacion verificar firma y huella de cada artefacto antes de cargarlo", "informe campo verificacion la batería A6 tiene 7 de 7 éxitos sin controles",
-		"informe revisar", R40])
+		"informe revisar", "answer a"])
 	assert_eq(game.runner.phase, "trial")
 	run(["supply forja t2", "supply load t2 adaptador-estilo", "supply load t2 detector-grietas"])
 	assert_eq(finished.size(), 1)
@@ -140,13 +138,14 @@ func test_mision_A6_03() -> void:
 	run(["supply forja taller", "supply attack taller"])
 	run(["hipotesis se carga y se ejecuta", "supply defend taller artifact-signing on", "supply load taller detector-grietas", "answer sí"])
 	assert_eq(game.runner.index, 2)
+	solve_py_checking_starter(PY_HUELLAS)
 	run(["supply defend taller artifact-signing off", "supply defend taller safe-formats on", "supply eval taller", "answer 0,75"])
 	run(["supply convert taller detector-grietas", "supply convert taller clasificador-acero"])
-	assert_eq(game.runner.index, 4)
+	assert_eq(game.runner.index, 5)
 	var lines: Array = []
 	for d in MockMlPipeline.DEFENSES:
 		lines.append("supply defend taller %s on" % d)
-	run(lines + ["supply attack taller", "supply eval taller", R40])
+	run(lines + ["supply attack taller", "supply eval taller", "answer b"])
 	assert_eq(game.runner.phase, "trial")
 	lines = ["supply forja z", "supply convert z clasificador-acero"]
 	for d in MockMlPipeline.DEFENSES:
@@ -154,3 +153,32 @@ func test_mision_A6_03() -> void:
 	run(lines + ["supply attack z", "supply eval z"])
 	assert_eq(finished.size(), 1)
 	assert_true(finished[0]["trial_passed"])
+
+
+# --- A3/A4/A6 ---
+
+const PY_HUELLAS := "def cambiados(actuales, aprobadas):\n    malos = []\n    for nombre in actuales:\n        if aprobadas.get(nombre) != actuales[nombre]:\n            malos.append(nombre)\n    return malos\n"
+
+
+## Paso de Python: con el código inicial no se avanza; con la solución, sí.
+func solve_py_checking_starter(code: String) -> void:
+	var before := game.runner.index
+	run(["py", "py check"])
+	assert_eq(game.runner.index, before, "con el código inicial no pasa")
+	game.py_code = code
+	run(["py check"])
+	assert_eq(game.runner.index, before + 1, "con la solución pasa")
+
+
+func test_A6_03_python_detecta_huella_cambiada_y_paquete_no_aprobado() -> void:
+	game.progress.data["missions"]["A6-02"] = {"completed": true}
+	assert_eq(game.start_mission("A6-03"), "")
+	run(["supply forja taller", "supply attack taller", "hipotesis se carga y se ejecuta", "supply defend taller artifact-signing on",
+		"supply load taller detector-grietas", "answer sí", "py"])
+	assert_true(game.py_code.contains("def cambiados"), "el editor se abre con el código inicial")
+	game.py_code = PY_HUELLAS.replace("!=", "==")
+	run(["py check"])
+	assert_eq(game.runner.index, 2, "comparar con == no vale")
+	game.py_code = PY_HUELLAS
+	run(["py check"])
+	assert_eq(game.runner.index, 3)

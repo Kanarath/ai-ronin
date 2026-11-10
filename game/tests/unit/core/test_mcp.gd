@@ -98,8 +98,6 @@ func test_comandos_con_errores_amables() -> void:
 	assert_false(r.ok)
 
 
-const R40 := "reflexion el host decide que servidores conecta que textos llegan al modelo y con que token llama a cada servidor por eso las descripciones los resultados y las actualizaciones de un servidor de terceros son superficie de ataque y los controles deben ir en el host con tokens minimos huellas y espacios de nombres"
-
 
 func test_mision_A4_01() -> void:
 	game.progress.data["missions"]["A3-01"] = {"completed": true}
@@ -107,10 +105,11 @@ func test_mision_A4_01() -> void:
 	run(["mcp host forja", "mcp servers forja", "answer 2"])
 	assert_eq(game.runner.index, 1)
 	run(["mcp inspect forja forja-pedidos", "answer 2"])
+	solve_py_checking_starter(PY_OBLIGATORIOS)
 	run(["mcp ask forja Busca el pedido P-101", "answer tools/call"])
-	assert_eq(game.runner.index, 3)
+	assert_eq(game.runner.index, 4)
 	run(["mcp ask forja Reembolsa 120 monedas del pedido P-101"])
-	run(["hipotesis también el modelo", "mcp inspect forja clima-samurai", R40])
+	run(["hipotesis también el modelo", "mcp inspect forja clima-samurai", "answer a"])
 	assert_eq(game.runner.phase, "trial")
 	run(["mcp host f2", "mcp ask f2 Traduce: katana", "mcp inspect f2 traductor"])
 	assert_eq(finished.size(), 1)
@@ -134,7 +133,7 @@ func test_mision_A4_02() -> void:
 		"informe campo componente host MCP y servidor de terceros clima-samurai", "informe campo descripcion la descripción de consultar_clima ordena al modelo enviar el token",
 		"informe campo pasos 1) mcp host forja 2) mcp ask forja ¿Qué tiempo hará en Kioto? 3) mcp log forja clima-samurai", "informe campo impacto el tercero obtiene el token de administrador",
 		"informe campo evidencia el registro de clima-samurai muestra notas con el token", "informe campo mitigacion revisar descripciones y usar tokens mínimos por servidor",
-		"informe campo verificacion la batería A4 baja de 1,00 a 0,00", "informe revisar", R40])
+		"informe campo verificacion la batería A4 baja de 1,00 a 0,00", "informe revisar", "answer a"])
 	assert_eq(game.runner.phase, "trial")
 	run(["mcp host f2", "mcp ask f2 ¿Qué tiempo hará en Edo?"])
 	assert_eq(finished.size(), 1)
@@ -151,8 +150,40 @@ func test_mision_A4_03() -> void:
 	run(["mcp defend forja consent off", "mcp defend forja pin-definitions on", "mcp update forja traductor", "mcp ask forja Traduce: katana",
 		"mcp approve forja traductor", "mcp ask forja Traduce: katana"])
 	assert_eq(game.runner.index, 4)
-	run(["mcp defend forja namespacing on", "mcp defend forja least-scope on", "mcp defend forja output-isolation on", "mcp attack forja", "mcp eval forja", R40])
+	solve_py_checking_starter(PY_SOSPECHOSA)
+	run(["mcp defend forja namespacing on", "mcp defend forja least-scope on", "mcp defend forja output-isolation on", "mcp attack forja", "mcp eval forja", "answer b"])
 	assert_eq(game.runner.phase, "trial")
 	run(["mcp host z", "mcp defend z pin-definitions on", "mcp defend z namespacing on", "mcp defend z least-scope on", "mcp defend z output-isolation on", "mcp attack z", "mcp eval z"])
 	assert_eq(finished.size(), 1)
 	assert_true(finished[0]["trial_passed"])
+
+
+# --- A3/A4/A6 ---
+
+const PY_OBLIGATORIOS := "def faltan_obligatorios(requeridos, argumentos):\n    faltan = []\n    for nombre in requeridos:\n        if nombre not in argumentos:\n            faltan.append(nombre)\n    return faltan\n"
+const PY_SOSPECHOSA := "SENALES = [\"<important>\", \"token\", \"no lo menciones\", \"ignora\"]\n\ndef sospechosa(descripcion):\n    texto = descripcion.lower()\n    for senal in SENALES:\n        if senal in texto:\n            return True\n    return False\n"
+
+
+## Paso de Python: con el código inicial no se avanza; con la solución, sí.
+func solve_py_checking_starter(code: String) -> void:
+	var before := game.runner.index
+	run(["py", "py check"])
+	assert_eq(game.runner.index, before, "con el código inicial no pasa")
+	game.py_code = code
+	run(["py check"])
+	assert_eq(game.runner.index, before + 1, "con la solución pasa")
+
+
+func test_A4_01_cierre_dice_que_puedes_hacer_ya() -> void:
+	var said: Array[String] = []
+	game.runner.mentor_message.connect(func(t: String, _k: String) -> void: said.append(t))
+	game.progress.data["missions"]["A3-01"] = {"completed": true}
+	assert_eq(game.start_mission("A4-01"), "")
+	assert_true(said.any(func(t: String) -> bool: return t.contains("MCP (Model Context Protocol)")), "la sigla se desarrolla")
+	run(["mcp host forja", "mcp servers forja", "answer 2", "mcp inspect forja forja-pedidos", "answer 2"])
+	solve_py_checking_starter(PY_OBLIGATORIOS)
+	run(["mcp ask forja Busca el pedido P-101", "answer tools/call", "mcp ask forja Reembolsa 120 monedas del pedido P-101",
+		"hipotesis también el modelo", "mcp inspect forja clima-samurai", "answer b"])
+	assert_eq(game.runner.phase, "main", "la b) no es la respuesta")
+	run(["answer a", "mcp host f2", "mcp ask f2 Traduce: katana", "mcp inspect f2 traductor"])
+	assert_true(said.any(func(t: String) -> bool: return t.begins_with("Qué puedes hacer ya")))
