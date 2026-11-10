@@ -276,8 +276,7 @@ func test_mision_A3_04() -> void:
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("permisos", 6),
 		_cfg("aprobacion,exfiltracion,limites,permisos,spotlight", 0, 13)], "A3-04")))
 	assert_eq(game.runner.index, 2)
-	for l in ["reflexion " + "el modelo siguio pidiendo reembolsos con permisos y aprobacion pero no se ejecutaron y la fuga de memoria solo la paro el detector ".repeat(4),
-			"reflexion " + "la accion aprobada la ejecuta el servicio porque el modelo podria cambiarla y un humano no aprueba lo que el rol no permite ".repeat(3)]:
+	for l in ["answer b", "answer a"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -297,8 +296,7 @@ func test_mision_A4_04() -> void:
 	assert_eq(game.runner.index, 1, "la medición de A2-04 no vale para A4-04")
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 6), _cfg("scopes", 3), _cfg("scopes,validacion,rutas,audiencia,pinning,revision", 0)], "A4-04")))
 	assert_eq(game.runner.index, 2)
-	for l in ["reflexion " + "las defensas del host paran el ataque antes de que el modelo vea la descripcion y las del servidor lo rechazan cuando la llamada ya llego ".repeat(3),
-			"reflexion " + "el servidor comprueba la audiencia del token para no aceptar uno emitido para otro servidor y exige los scopes minimos ".repeat(3)]:
+	for l in ["answer b", "answer a"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -328,8 +326,7 @@ func test_mision_A6_04() -> void:
 	assert_eq(game.runner.index, 2, "con todos los controles se escapa uno")
 	assert_true(game.shell.execute("answer 1").ok)
 	assert_eq(game.runner.index, 3)
-	for l in ["reflexion " + "el bom solo compara huellas y el pickle malicioso estaba declarado con su huella correcta asi que paso el modo estricto rompe el tokenizador ".repeat(4),
-			"reflexion " + "cargar un pickle es ejecutarlo la huella prueba que no cambio y la firma prueba quien lo publico y un nombre inventado se puede registrar ".repeat(3)]:
+	for l in ["answer a", "answer b"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)

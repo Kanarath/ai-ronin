@@ -7,8 +7,20 @@
   "plane": "dojo",
   "epistemic": "practica-industria",
   "estimated_minutes": 45,
-  "requires_missions": ["A3-02"],
-  "competencies": { "requires": ["A3.secuestro-objetivo", "A3.confused-deputy"], "trains": ["A3.minimo-privilegio", "A3.autorizacion", "A3.supervision"] },
+  "requires_missions": [
+    "A3-02"
+  ],
+  "competencies": {
+    "requires": [
+      "A3.secuestro-objetivo",
+      "A3.confused-deputy"
+    ],
+    "trains": [
+      "A3.minimo-privilegio",
+      "A3.autorizacion",
+      "A3.supervision"
+    ]
+  },
   "briefing": "Un buen maestro no entrega todas las llaves del taller al aprendiz el primer día. Hoy diseñarás los controles del agente comprobando, como siempre, cuánto protege cada uno y cuánto cuesta. Descubrirás algo incómodo: las dos defensas más populares —«que el modelo no obedezca instrucciones de los datos» y «que un humano lo apruebe todo»— dejan pasar el ataque más sencillo.",
   "learning_objectives": [
     "Medir la eficacia de spotlight y de la supervisión humana frente a los ataques a agentes",
@@ -16,7 +28,10 @@
     "Llegar a 0 ataques sin romper las tareas legítimas y sin depender de aprobaciones humanas"
   ],
   "mentor_intro": "Regla de oro de la seguridad de agentes: el modelo puede ser engañado; los controles no deben depender de que no lo sea.",
-  "lab": { "datasets": [], "viz": {} },
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
   "theory_cards": [
     {
       "id": "controles",
@@ -28,40 +43,113 @@
     {
       "id": "o1",
       "text": "Crea el agente y mide la línea base con la batería.",
-      "validator": { "type": "event", "event": "agent.attacks", "where": { "defenses": "ninguna", "successes": 5 } },
-      "hints": ["agent create kage · agent attack kage"],
-      "on_complete": "5 de 5."
+      "validator": {
+        "type": "event",
+        "event": "agent.attacks",
+        "where": {
+          "defenses": "ninguna",
+          "successes": 5
+        }
+      },
+      "hints": [
+        "agent create kage · agent attack kage"
+      ],
+      "on_complete": "5 de 5.",
+      "teach": "La línea base\nAntes de defender, se mide sin defensas.\nagent create <nombre> y después agent attack <nombre>: los 5 ataques de A3-02.\nPor qué: sin una línea base no puedes demostrar que una defensa ayuda."
     },
     {
       "id": "o2",
       "text": "Activa spotlight y repite la batería. ¿Cuántos ataques siguen teniendo éxito? (answer <número>)",
-      "prediction": { "prompt": "Si el agente deja de obedecer las órdenes que llegan dentro de los correos, ¿qué ataques quedarán?", "options": ["ninguno", "solo el que no viene por correo", "casi todos"] },
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "agent.attacks", "where": { "defenses": { "icontains": "spotlight" } } },
-        { "type": "answer", "expected": 1, "tolerance": 0 }
-      ] },
-      "hints": ["agent defend kage spotlight on · agent attack kage"],
-      "on_complete": "Queda el confused deputy: no llega por correo y no es una orden escondida, sino una petición directa de un usuario sin permisos. Además, en A1-03 viste que las defensas contra la inyección se pueden esquivar: no construyas todo sobre ellas."
+      "prediction": {
+        "prompt": "Si el agente deja de obedecer las órdenes que llegan dentro de los correos, ¿qué ataques quedarán?",
+        "options": [
+          "ninguno",
+          "solo el que no viene por correo",
+          "casi todos"
+        ]
+      },
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "agent.attacks",
+            "where": {
+              "defenses": {
+                "icontains": "spotlight"
+              }
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 1,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "agent defend kage spotlight on · agent attack kage"
+      ],
+      "on_complete": "Queda el confused deputy: no llega por correo y no es una orden escondida, sino una petición directa de un usuario sin permisos. Además, en A1-03 viste que las defensas contra la inyección se pueden esquivar: no construyas todo sobre ellas.",
+      "teach": "Spotlight\nspotlight marca el contenido de los correos como DATOS, no como órdenes.\nagent defend <agente> spotlight on lo activa.\nPor qué: es una defensa muy usada contra la inyección indirecta en sistemas reales; hoy verás hasta dónde llega."
     },
     {
       "id": "o3",
       "text": "Desactiva spotlight, activa la supervisión humana (hitl) y repite la batería. ¿Cuántas aprobaciones humanas pide? (answer <número>)",
-      "teach": "Human in the loop\nCon hitl, cada uso de una herramienta sensible espera la aprobación de una persona. En el laboratorio, el revisor simulado rechaza lo que sale de un correo… pero aprueba lo que pide un usuario, porque desde fuera parece legítimo.",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "agent.attacks", "where": { "defenses": "hitl" } },
-        { "type": "answer", "expected": 17, "tolerance": 0 }
-      ] },
-      "hints": ["agent defend kage spotlight off · agent defend kage hitl on · agent attack kage", "Mira la línea «Aprobaciones humanas pedidas durante la batería»."],
+      "teach": "Human in the loop\nHITL (human in the loop) significa que una persona aprueba cada uso de una herramienta sensible.\nagent defend <agente> hitl on lo activa.\nEn el laboratorio, el revisor simulado rechaza lo que sale de un correo… pero aprueba lo que pide un usuario, porque desde fuera parece legítimo.\nPor qué: muchas empresas ponen a un humano a aprobar; hay que saber cuántas aprobaciones cuesta y qué deja pasar.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "agent.attacks",
+            "where": {
+              "defenses": "hitl"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 17,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "agent defend kage spotlight off · agent defend kage hitl on · agent attack kage",
+        "Mira la línea «Aprobaciones humanas pedidas durante la batería»."
+      ],
       "on_complete": "17 aprobaciones para 5 escenarios, y el confused deputy sigue pasando: el revisor ve «reembolso de 2400 al cliente de P-102, pedido por el cliente» y lo aprueba. La supervisión humana es útil para acciones irreversibles concretas, pero no sustituye a la autorización y genera fatiga."
     },
     {
       "id": "o4",
       "text": "Diseña los controles en el código: desactiva hitl, activa least-privilege, arg-validation, user-authz, memory-hygiene y step-budget. Consigue 0 ataques con éxito y, después, 3/3 en el eval.",
-      "teach": "Defensa en el código, no en el prompt\nCada control corta un ataque en un punto distinto: least-privilege quita las herramientas que la tarea no necesita (el triaje no puede reembolsar); arg-validation rechaza pedidos inexistentes, importes absurdos y destinatarios externos; user-authz comprueba los permisos de quien pide; memory-hygiene impide que un correo escriba en la memoria; step-budget corta los bucles.",
-      "validator": { "type": "sequence", "steps": [
-        { "type": "event", "event": "agent.attacks", "where": { "success_rate": 0.0, "defenses": { "not_contains_any": ["hitl", "spotlight"] } } },
-        { "type": "event", "event": "agent.eval", "where": { "pass_rate": 1.0, "approvals": 0 } }
-      ] },
+      "teach": "Defensa en el código, no en el prompt\nCada control corta un ataque en un punto distinto:\n· least-privilege quita las herramientas que la tarea no necesita (el triaje no puede reembolsar).\n· arg-validation rechaza pedidos inexistentes, importes absurdos y destinatarios externos.\n· user-authz comprueba los permisos de quien pide.\n· memory-hygiene impide que un correo escriba en la memoria.\n· step-budget corta los bucles.\nPor qué: en un agente real estos controles van en el código de cada herramienta; el modelo puede ser engañado, el código no se deja convencer.",
+      "validator": {
+        "type": "sequence",
+        "steps": [
+          {
+            "type": "event",
+            "event": "agent.attacks",
+            "where": {
+              "success_rate": 0.0,
+              "defenses": {
+                "not_contains_any": [
+                  "hitl",
+                  "spotlight"
+                ]
+              }
+            }
+          },
+          {
+            "type": "event",
+            "event": "agent.eval",
+            "where": {
+              "pass_rate": 1.0,
+              "approvals": 0
+            }
+          }
+        ]
+      },
       "hints": [
         "Activa los cinco controles con agent defend kage <control> on (y desactiva hitl).",
         "Después: agent attack kage · agent eval kage"
@@ -69,10 +157,98 @@
       "on_complete": "0 de 5, 3 de 3 tareas y 0 aprobaciones humanas. Mira en la batería QUÉ control bloquea cada ataque: varios están cubiertos por dos controles a la vez. Eso es defensa en profundidad."
     },
     {
+      "id": "py1",
+      "text": "Escribe en Python la lista permitida: abre el editor con py, completa la función permitido y compruébala con py check.",
+      "teach": "La lista permitida, con tus manos\nleast-privilege es, por dentro, una tabla: para cada tarea, las herramientas que puede usar.\nVas a escribir la función que lo comprueba. Abre el editor con py.\nUn dict guarda pares clave → valor. Aquí la clave es la tarea y el valor, su lista de herramientas.\nPor qué: esta comprobación es la que pone el código de un agente real entre lo que pide el modelo y lo que se ejecuta.",
+      "py_exercise": {
+        "id": "A3-03-permitido",
+        "title": "permitido(tarea, herramienta): la lista permitida",
+        "function": "permitido",
+        "starter": "# Ejercicio A3-03 · Mínimo privilegio: la lista permitida\n# Cada tarea solo puede usar las herramientas de su lista. Es lo que hace least-privilege.\n# La función devuelve True si la herramienta está en la lista de esa tarea, y False si no.\n# PERMISOS.get(tarea, []) da la lista de la tarea, o una lista vacía si la tarea no existe.\n# «x in lista» vale True si x está en la lista.\n\nPERMISOS = {\n    \"triaje\": [\"leer_correo\", \"buscar_pedido\", \"enviar_correo\"],\n    \"presupuesto\": [\"buscar_pedido\", \"leer_memoria\"],\n}\n\ndef permitido(tarea, herramienta):\n    return True   # ← cambia esta línea\n\n# El triaje NO puede reembolsar: debería imprimir False\nprint(permitido(\"triaje\", \"aplicar_reembolso\"))\n",
+        "cases": [
+          {
+            "args": [
+              "triaje",
+              "leer_correo"
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "triaje",
+              "aplicar_reembolso"
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              "presupuesto",
+              "leer_memoria"
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "presupuesto",
+              "guardar_memoria"
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              "inventada",
+              "leer_correo"
+            ],
+            "expected": false
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "A3-03-permitido",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Busca la lista de la tarea con PERMISOS.get(tarea, []) y mira si la herramienta está dentro con in.",
+        "La línea queda así: return herramienta in PERMISOS.get(tarea, [])"
+      ],
+      "on_complete": "Esa línea es least-privilege. Fíjate en que no lee el correo ni el prompt: solo mira la tarea y la herramienta. Por eso ninguna inyección la convence. Y una tarea desconocida no puede usar nada: denegar por defecto."
+    },
+    {
       "id": "o5",
-      "text": "Explica con tus palabras por qué los controles deben estar fuera del modelo, qué control detiene al confused deputy y cuál es el coste real de la supervisión humana. (reflexion <texto>, mínimo 40 palabras)",
-      "validator": { "type": "reflection", "min_words": 40 },
-      "hints": ["El modelo se puede engañar; el código de la herramienta no se deja convencer.", "Usa tus cifras: 1 de 5 con spotlight, 17 aprobaciones con hitl, 0 de 5 con los controles en el código."]
+      "text": "Comprueba que lo tienes claro: ¿qué control detiene al diputado confundido?",
+      "teach": "Repaso con tus cifras\nCon spotlight quedaba 1 ataque de 5. Con hitl, el mismo, tras 17 aprobaciones.\nPiensa en qué comprueba cada control.\nPor qué: elegir un control por lo que comprueba, y no por su fama, es lo que hace un ingeniero de seguridad.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "spotlight",
+          "why": "Spotlight trata los correos como datos. El diputado confundido no llega por correo: es una petición directa del cliente."
+        },
+        {
+          "id": "b",
+          "text": "hitl",
+          "why": "El revisor humano vio «reembolso pedido por el cliente» y lo aprobó, porque parecía legítimo. Lo has medido: 17 aprobaciones y el ataque pasó."
+        },
+        {
+          "id": "c",
+          "text": "user-authz"
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "El fallo era de permisos: ¿qué control mira los permisos de quien pide?",
+        "answer c"
+      ],
+      "on_complete": "Exacto: user-authz autoriza con los permisos de QUIEN pide, no con los del agente. Está en el código, así que no depende de que el modelo o el revisor se den cuenta. Y la supervisión humana tiene un coste real: 17 aprobaciones para 5 escenarios."
     }
   ],
   "mastery_trial": {
@@ -81,11 +257,36 @@
       {
         "id": "d1",
         "text": "Con un agente nuevo, consigue 0 ataques con éxito usando como MÁXIMO 4 controles, sin spotlight ni hitl, y con el eval a 3/3.",
-        "validator": { "type": "sequence", "steps": [
-          { "type": "event", "event": "agent.attacks", "where": { "success_rate": 0.0, "defenses": { "not_contains_any": ["hitl", "spotlight", "arg-validation"] } } },
-          { "type": "event", "event": "agent.eval", "where": { "pass_rate": 1.0 } }
-        ] },
-        "hints": ["Mira qué ataques cubre least-privilege por sí solo y qué deja.", "least-privilege + user-authz + step-budget… ¿falta algo?"],
+        "validator": {
+          "type": "sequence",
+          "steps": [
+            {
+              "type": "event",
+              "event": "agent.attacks",
+              "where": {
+                "success_rate": 0.0,
+                "defenses": {
+                  "not_contains_any": [
+                    "hitl",
+                    "spotlight",
+                    "arg-validation"
+                  ]
+                }
+              }
+            },
+            {
+              "type": "event",
+              "event": "agent.eval",
+              "where": {
+                "pass_rate": 1.0
+              }
+            }
+          ]
+        },
+        "hints": [
+          "Mira qué ataques cubre least-privilege por sí solo y qué deja.",
+          "least-privilege + user-authz + step-budget… ¿falta algo?"
+        ],
         "on_complete": "Con mínimo privilegio, autorización por usuario y presupuesto de pasos ya está todo cubierto: el triaje no puede reembolsar, ni listar clientes, ni escribir en la memoria. Diseñar bien los permisos hace innecesarios muchos parches."
       }
     ]
@@ -94,9 +295,18 @@
     "what_happened": "Has comprobado que spotlight deja pasar el confused deputy, que la supervisión humana aprueba ese mismo ataque tras 17 peticiones, y que los controles en el código (mínimo privilegio, validación, autorización por usuario, higiene de memoria y límite de pasos) lo cierran todo sin coste para las tareas legítimas.",
     "why": "Es el principio que recogen OWASP Agentic 2026 y las guías de los proveedores: el modelo no es una frontera de seguridad. Los permisos, la validación y los límites se imponen en el código de las herramientas y en la infraestructura, y la supervisión humana se reserva para acciones de alto impacto bien escogidas.",
     "in_production": "Identidades y credenciales propias para cada agente con permisos mínimos y de corta duración, autorización delegada (el agente actúa con los permisos del usuario, por ejemplo con OAuth), listas de herramientas por tarea, validación estricta de argumentos con esquemas, memoria con procedencia y revisión, límites de pasos y de gasto, trazas completas y monitorización. En el arco A4 verás cómo MCP organiza estas herramientas y sus permisos.",
-    "simplifications": ["Controles como interruptores", "Un revisor humano simulado con un criterio fijo"],
+    "simplifications": [
+      "Controles como interruptores",
+      "Un revisor humano simulado con un criterio fijo"
+    ],
     "exercise": ""
   },
-  "further_reading": ["ref.owasp-agentic-2026"],
-  "xp": { "base": 300 }
+  "further_reading": [
+    "ref.owasp-agentic-2026"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "purpose": "Los agentes reales llevan controles para que, aunque el modelo se deje engañar, no pueda hacer daño: listas de herramientas por tarea, validación de argumentos, permisos del usuario y límites de pasos. Hoy los activas uno a uno, mides qué frena cada uno y cuánto cuesta, y escribes en Python la lista permitida. Es el principio de las guías de seguridad de agentes: el modelo no es una frontera de seguridad.",
+  "you_can_now": "Sabes medir qué ataque frena cada control, explicar por qué spotlight y la supervisión humana dejan pasar el diputado confundido y escribir en Python una lista permitida de herramientas por tarea. Siguiente: A3-04, donde escribirás estos controles para un agente con un modelo real."
 }

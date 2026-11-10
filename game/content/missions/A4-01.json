@@ -7,8 +7,19 @@
   "plane": "dojo",
   "epistemic": "practica-industria",
   "estimated_minutes": 40,
-  "requires_missions": ["A3-01"],
-  "competencies": { "requires": ["A3.agentes"], "trains": ["A4.arquitectura-mcp", "A4.json-rpc", "A4.superficie-herramientas"] },
+  "requires_missions": [
+    "A3-01"
+  ],
+  "competencies": {
+    "requires": [
+      "A3.agentes"
+    ],
+    "trains": [
+      "A4.arquitectura-mcp",
+      "A4.json-rpc",
+      "A4.superficie-herramientas"
+    ]
+  },
   "briefing": "En A3 las herramientas del agente estaban escritas dentro de la propia aplicación. En el mundo real, cada vez más asistentes se conectan a herramientas de terceros con un protocolo común: MCP (Model Context Protocol). Es como un enchufe universal: cualquier servidor que «hable MCP» puede darle herramientas a cualquier asistente. La forja ha conectado su asistente a cuatro servidores. Antes de atacarlo, vas a entender qué viaja por ese enchufe.",
   "learning_objectives": [
     "Distinguir host, cliente y servidor MCP y saber quién controla cada parte",
@@ -16,23 +27,36 @@
     "Entender que la descripción de una herramienta entra en el contexto del modelo y, por tanto, es una superficie de ataque"
   ],
   "mentor_intro": "Un protocolo no es seguro ni inseguro: es un enchufe. Lo que importa es qué conectas y con qué permisos.",
-  "lab": { "datasets": [], "viz": {} },
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
   "theory_cards": [
     {
       "id": "mcp",
       "title": "MCP en una tarjeta",
-      "body": "Host: la aplicación del asistente (aquí, el asistente de la forja). Cliente: la parte del host que mantiene una conexión con UN servidor. Servidor: un programa que ofrece herramientas, recursos o prompts. Los mensajes son JSON-RPC 2.0: el host pregunta «tools/list» y el servidor responde con nombre, descripción y esquema de cada herramienta; cuando el modelo decide usar una, el host envía «tools/call» con los argumentos. Más: man mcp"
+      "body": "Host: la aplicación del asistente (aquí, el asistente de la forja). Cliente: la parte del host que mantiene una conexión con UN servidor. Servidor: un programa que ofrece herramientas, recursos o prompts. Los mensajes son JSON-RPC 2.0 (JSON Remote Procedure Call: pedir a otro programa que ejecute una función, con mensajes en JSON). El host pregunta «tools/list» y el servidor responde con nombre, descripción y esquema de cada herramienta; cuando el modelo decide usar una, el host envía «tools/call» con los argumentos. Más: man mcp"
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Crea el host MCP de la forja y mira qué servidores tiene. ¿Cuántos servidores de TERCEROS están conectados? (answer <número>)",
-      "teach": "Host, cliente y servidor\nmcp host <nombre> crea el asistente de la forja ya conectado a sus servidores por defecto. mcp servers <host> muestra cada servidor: su origen (interno o un tercero), su versión, si está conectado y qué herramientas expone.\nLa pregunta de seguridad clave: ¿quién ha escrito cada servidor? El tuyo lo controlas; el de un tercero, no.",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "mcp.servers" },
-        { "type": "answer", "expected": 2, "tolerance": 0 }
-      ] },
+      "teach": "Host, cliente y servidor\nmcp host <nombre> crea el asistente de la forja (el host), ya conectado a sus servidores.\nmcp servers <host> muestra cada servidor: su origen (interno o un tercero), su versión, si está conectado y qué herramientas ofrece.\nCuenta los que están conectados y cuyo origen no es «interno».\nPor qué: la primera pregunta de seguridad en MCP (Model Context Protocol) es quién ha escrito cada servidor; el tuyo lo controlas, el de un tercero no.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "mcp.servers"
+          },
+          {
+            "type": "answer",
+            "expected": 2,
+            "tolerance": 0
+          }
+        ]
+      },
       "hints": [
         "mcp host forja · mcp servers forja",
         "Cuenta las filas con «conectado: sí» cuyo origen no sea «interno»."
@@ -42,46 +66,221 @@
     {
       "id": "o2",
       "text": "Inspecciona el servidor interno forja-pedidos. ¿Cuántos parámetros OBLIGATORIOS tiene aplicar_reembolso? (answer <número>)",
-      "teach": "tools/list\nmcp inspect <host> <servidor> muestra la respuesta JSON-RPC a «tools/list»: lo mismo que recibe el host. Cada herramienta trae:\n· name: el nombre con el que el modelo la llama.\n· description: texto en lenguaje natural que el MODELO LEE para decidir cuándo usarla.\n· inputSchema: un JSON Schema con los parámetros («properties») y los obligatorios («required»).",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "mcp.inspected", "where": { "server": "forja-pedidos" } },
-        { "type": "answer", "expected": 2, "tolerance": 0 }
-      ] },
-      "hints": ["mcp inspect forja forja-pedidos", "Busca «required» dentro del inputSchema de aplicar_reembolso."],
+      "teach": "tools/list\nmcp inspect <host> <servidor> muestra la respuesta a «tools/list»: lo mismo que recibe el host.\nCada herramienta trae tres campos:\n· name: el nombre con el que el modelo la llama.\n· description: texto que el MODELO LEE para decidir cuándo usarla.\n· inputSchema: un JSON Schema con los parámetros («properties») y los obligatorios («required»).\nPor qué: esto es todo lo que un asistente real sabe de cada herramienta; lo que no está en la descripción o en el esquema, el modelo no lo sabe.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "mcp.inspected",
+            "where": {
+              "server": "forja-pedidos"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 2,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "mcp inspect forja forja-pedidos",
+        "Busca «required» dentro del inputSchema de aplicar_reembolso."
+      ],
       "on_complete": "pedido e importe. El esquema dice qué FORMA tienen los argumentos, pero no si están permitidos: eso tiene que comprobarlo el servidor."
+    },
+    {
+      "id": "py1",
+      "text": "Escribe en Python la comprobación de los obligatorios: abre el editor con py, completa la función faltan_obligatorios y compruébala con py check.",
+      "teach": "Comprobar los obligatorios, con tus manos\nAntes de ejecutar una llamada, el servidor comprueba que llegan todos los parámetros «required».\nVas a escribir esa comprobación. Abre el editor con py.\nUn dict guarda pares clave → valor, como {\"pedido\": \"P-101\"}. El for recorre la lista de requeridos uno a uno.\nPor qué: los modelos se equivocan y a veces olvidan un argumento; un servidor real valida la llamada antes de ejecutarla.",
+      "py_exercise": {
+        "id": "A4-01-obligatorios",
+        "title": "faltan_obligatorios(requeridos, argumentos): validar «required»",
+        "function": "faltan_obligatorios",
+        "starter": "# Ejercicio A4-01 · Los parámetros obligatorios\n# El inputSchema de una herramienta dice qué parámetros son obligatorios («required»).\n# requeridos es una lista de nombres, como [\"pedido\", \"importe\"].\n# argumentos es un dict con lo que ha enviado el modelo, como {\"pedido\": \"P-101\"}.\n# Devuelve la lista de los requeridos que NO están en argumentos (vacía si no falta ninguno).\n# «nombre not in argumentos» vale True si esa clave no está en el dict.\n\ndef faltan_obligatorios(requeridos, argumentos):\n    faltan = []\n    for nombre in requeridos:\n        if False:   # ← cambia esta línea\n            faltan.append(nombre)\n    return faltan\n\n# Al modelo se le ha olvidado el importe: debería imprimir ['importe']\nprint(faltan_obligatorios([\"pedido\", \"importe\"], {\"pedido\": \"P-101\"}))\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "pedido",
+                "importe"
+              ],
+              {
+                "pedido": "P-101",
+                "importe": 120
+              }
+            ],
+            "expected": []
+          },
+          {
+            "args": [
+              [
+                "pedido",
+                "importe"
+              ],
+              {
+                "pedido": "P-101"
+              }
+            ],
+            "expected": [
+              "importe"
+            ]
+          },
+          {
+            "args": [
+              [
+                "pedido",
+                "importe"
+              ],
+              {}
+            ],
+            "expected": [
+              "pedido",
+              "importe"
+            ]
+          },
+          {
+            "args": [
+              [
+                "ciudad"
+              ],
+              {
+                "ciudad": "Kioto",
+                "notas": "x"
+              }
+            ],
+            "expected": []
+          },
+          {
+            "args": [
+              [],
+              {
+                "pedido": "P-101"
+              }
+            ],
+            "expected": []
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "A4-01-obligatorios",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "La condición del if tiene que ser verdadera cuando el nombre no está entre las claves de argumentos.",
+        "La línea queda así: if nombre not in argumentos:"
+      ],
+      "on_complete": "Esa es la parte «required» de la validación del esquema. Fíjate en lo que NO comprueba: un parámetro de más, como «notas», pasa sin aviso, y nada dice si el importe es razonable o si quien llama tiene permiso. El esquema dice qué forma tienen los argumentos, no si están permitidos."
     },
     {
       "id": "o3",
       "text": "Pide al asistente el estado del pedido P-101 y observa el mensaje tools/call. ¿Qué valor tiene el campo «method» de la petición? (answer <texto>)",
-      "teach": "tools/call\nmcp ask <host> <mensaje> le habla al asistente. El modelo (simulado) elige herramienta y argumentos, y el host envía la llamada al servidor que la ofrece. Verás dos líneas:\n→ la petición JSON-RPC (method, params.name, params.arguments).\n← la respuesta del servidor (result.content con el texto).",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "mcp.asked", "where": { "tool": "buscar_pedido" } },
-        { "type": "answer", "expected": "tools/call", "accept": ["tools/call", "\"tools/call\""] }
-      ] },
-      "hints": ["mcp ask forja Busca el pedido P-101", "Mira la línea que empieza por → y busca \"method\"."],
+      "teach": "tools/call\nmcp ask <host> <mensaje> le habla al asistente.\nEl modelo (simulado) elige herramienta y argumentos, y el host envía la llamada al servidor que la ofrece.\nVerás dos líneas:\n→ la petición JSON-RPC, con method, params.name y params.arguments.\n← la respuesta del servidor, con el texto en result.content.\nPor qué: JSON-RPC (JSON Remote Procedure Call) es el formato de todos los mensajes MCP; saber leerlo te deja auditar qué pidió el modelo de verdad.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "mcp.asked",
+            "where": {
+              "tool": "buscar_pedido"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "tools/call",
+            "accept": [
+              "tools/call",
+              "\"tools/call\""
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "mcp ask forja Busca el pedido P-101",
+        "Mira la línea que empieza por → y busca \"method\"."
+      ],
       "on_complete": "tools/call. El modelo NO ejecuta nada: propone una llamada y el host la envía. Es el host quien decide si la permite, con qué token y si pregunta antes al usuario."
     },
     {
       "id": "o4",
       "text": "Como empleado, aplica un reembolso legítimo de 120 monedas al pedido P-101.",
-      "validator": { "type": "event", "event": "mcp.asked", "where": { "tool": "aplicar_reembolso", "refund_total": 120 } },
-      "hints": ["mcp ask forja Reembolsa 120 monedas del pedido P-101"],
-      "on_complete": "Reembolso aplicado. Fíjate en que no ha hecho falta ninguna confirmación: el host confía en lo que decida el modelo."
+      "validator": {
+        "type": "event",
+        "event": "mcp.asked",
+        "where": {
+          "tool": "aplicar_reembolso",
+          "refund_total": 120
+        }
+      },
+      "hints": [
+        "mcp ask forja Reembolsa 120 monedas del pedido P-101"
+      ],
+      "on_complete": "Reembolso aplicado. Fíjate en que no ha hecho falta ninguna confirmación: el host confía en lo que decida el modelo.",
+      "teach": "Una acción con efectos\nAhora pide al asistente un reembolso, como haría un empleado: mcp ask forja Reembolsa 120 monedas del pedido P-101\nMira si alguien te pide confirmación antes de ejecutarlo.\nPor qué: en un asistente real con MCP, el mismo enchufe que consulta el tiempo puede mover dinero; importa qué decide el host antes de enviar la llamada."
     },
     {
       "id": "o5",
       "text": "Inspecciona el servidor de terceros clima-samurai. ¿Hay algo raro en la descripción de su herramienta?",
-      "prediction": { "prompt": "La descripción de una herramienta, ¿la lee solo el programador o también el modelo?", "options": ["solo el programador", "también el modelo"] },
-      "teach": "La descripción es parte del prompt\nEl host mete las descripciones de TODAS las herramientas conectadas en el contexto del modelo para que sepa cuándo usarlas. Es decir: quien escribe la descripción de un servidor de terceros está escribiendo, en parte, el prompt de TU asistente. Además, el usuario normalmente solo ve el nombre de la herramienta, no su descripción completa.",
-      "validator": { "type": "event", "event": "mcp.inspected", "where": { "server": "clima-samurai", "suspicious": true } },
-      "hints": ["mcp inspect forja clima-samurai", "Lee la descripción entera, también lo que hay entre <IMPORTANT> y </IMPORTANT>."],
+      "prediction": {
+        "prompt": "La descripción de una herramienta, ¿la lee solo el programador o también el modelo?",
+        "options": [
+          "solo el programador",
+          "también el modelo"
+        ]
+      },
+      "teach": "La descripción es parte del prompt\nEl host mete las descripciones de TODAS las herramientas conectadas en el contexto del modelo, para que sepa cuándo usarlas.\nEs decir: quien escribe la descripción de un servidor de terceros escribe, en parte, el prompt de TU asistente.\nAdemás, el usuario normalmente solo ve el nombre de la herramienta, no su descripción completa.\nPor qué: este es el punto de entrada de los ataques que harás en A4-02.",
+      "validator": {
+        "type": "event",
+        "event": "mcp.inspected",
+        "where": {
+          "server": "clima-samurai",
+          "suspicious": true
+        }
+      },
+      "hints": [
+        "mcp inspect forja clima-samurai",
+        "Lee la descripción entera, también lo que hay entre <IMPORTANT> y </IMPORTANT>."
+      ],
       "on_complete": "Una «nota técnica» que pide pasarle el token de la sesión en un parámetro y no decírselo al usuario. En A4-02 verás si el modelo obedece."
     },
     {
       "id": "o6",
-      "text": "Explica con tus palabras qué hace el host, qué hace un servidor MCP y por qué conectar un servidor de terceros amplía la superficie de ataque del asistente. (reflexion <texto>, mínimo 35 palabras)",
-      "validator": { "type": "reflection", "min_words": 35 },
-      "hints": ["¿Quién decide qué llamada se envía? ¿Quién escribe las descripciones?", "Piensa en tres cosas que entran desde un servidor: descripciones, resultados y actualizaciones."]
+      "text": "Comprueba que lo tienes claro: ¿por qué conectar un servidor MCP de terceros amplía la superficie de ataque del asistente?",
+      "teach": "Repaso: qué entra por el enchufe\nPiensa en lo que acabas de ver en clima-samurai: quién escribió esa descripción y quién la lee.\nPor qué: esta idea es la base de todo el arco A4.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque sus descripciones y sus resultados entran en el contexto del modelo, y los escribe alguien que no controlas"
+        },
+        {
+          "id": "b",
+          "text": "porque MCP es un protocolo inseguro",
+          "why": "MCP es solo un enchufe: define cómo viajan los mensajes. El riesgo está en qué conectas y con qué permisos."
+        },
+        {
+          "id": "c",
+          "text": "porque el servidor puede enviar tools/call por su cuenta",
+          "why": "Quien envía tools/call es el host, no el servidor. El servidor solo responde… pero con textos que el modelo lee."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "¿Quién escribió la descripción de consultar_clima? ¿Quién la lee?",
+        "answer a"
+      ],
+      "on_complete": "Exacto. Descripciones, resultados y actualizaciones de un servidor de terceros entran en el contexto de tu modelo. El host decide qué llamadas envía y con qué token: ahí se ponen los controles."
     }
   ],
   "mastery_trial": {
@@ -90,12 +289,33 @@
       {
         "id": "d1",
         "text": "Con un host nuevo, consigue que el asistente use la herramienta traducir y después inspecciona el servidor que la ofrece.",
-        "validator": { "type": "sequence", "steps": [
-          { "type": "event", "event": "mcp.created" },
-          { "type": "event", "event": "mcp.asked", "where": { "tool": "traducir" } },
-          { "type": "event", "event": "mcp.inspected", "where": { "server": "traductor" } }
-        ] },
-        "hints": ["El modelo elige traducir cuando le pides que «traduzca» algo; después de los dos puntos va el texto.", "mcp servers te dice qué servidor ofrece cada herramienta."],
+        "validator": {
+          "type": "sequence",
+          "steps": [
+            {
+              "type": "event",
+              "event": "mcp.created"
+            },
+            {
+              "type": "event",
+              "event": "mcp.asked",
+              "where": {
+                "tool": "traducir"
+              }
+            },
+            {
+              "type": "event",
+              "event": "mcp.inspected",
+              "where": {
+                "server": "traductor"
+              }
+            }
+          ]
+        },
+        "hints": [
+          "El modelo elige traducir cuando le pides que «traduzca» algo; después de los dos puntos va el texto.",
+          "mcp servers te dice qué servidor ofrece cada herramienta."
+        ],
         "on_complete": "Has seguido el camino completo: petición del usuario → elección del modelo → tools/call → servidor. Ese camino es lo que vas a atacar."
       }
     ]
@@ -104,9 +324,20 @@
     "what_happened": "Has creado un host MCP, has leído las respuestas tools/list de sus servidores, has visto cómo el modelo propone una llamada tools/call y el host la envía, y has encontrado una descripción con instrucciones ocultas.",
     "why": "MCP estandariza cómo un asistente descubre y usa herramientas de terceros. Eso facilita conectar cosas, pero también hace que textos escritos por otros (descripciones, resultados, actualizaciones) entren en el contexto de tu modelo y que tus credenciales viajen a servidores que no controlas.",
     "in_production": "Los asistentes de escritorio, de programación y de empresa se conectan a decenas de servidores MCP (archivos, bases de datos, repositorios, correo). La especificación pide que el host trate las descripciones de servidores no confiables como no fiables y que obtenga el consentimiento del usuario antes de invocar herramientas.",
-    "simplifications": ["Un modelo simulado que elige herramientas por palabras clave", "Servidores dentro del propio juego: sin red, sin transporte stdio ni HTTP", "Solo herramientas: MCP también define recursos, prompts y otras capacidades"],
+    "simplifications": [
+      "Un modelo simulado que elige herramientas por palabras clave",
+      "Servidores dentro del propio juego: sin red, sin transporte stdio ni HTTP",
+      "Solo herramientas: MCP también define recursos, prompts y otras capacidades"
+    ],
     "exercise": "forja/ejercicios/A4_01_mcp.py"
   },
-  "further_reading": ["ref.mcp-spec-2026", "ref.mcp-security-bp"],
-  "xp": { "base": 250 }
+  "further_reading": [
+    "ref.mcp-spec-2026",
+    "ref.mcp-security-bp"
+  ],
+  "xp": {
+    "base": 250
+  },
+  "purpose": "Los asistentes reales (de escritorio, de programación, de empresa) se conectan a herramientas de terceros con MCP (Model Context Protocol), un protocolo común que funciona como un enchufe universal. Hoy aprendes qué viaja por ese enchufe: la lista de herramientas con sus descripciones y las llamadas que propone el modelo. Con eso entenderás en A4-02 por qué un servidor de terceros puede manipular a tu asistente.",
+  "you_can_now": "Sabes distinguir host, cliente y servidor MCP, leer los mensajes JSON-RPC tools/list y tools/call y comprobar en Python que una llamada trae sus parámetros obligatorios. Siguiente: A4-02, donde atacarás el host por ese mismo enchufe."
 }

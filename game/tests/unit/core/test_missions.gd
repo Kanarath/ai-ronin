@@ -486,3 +486,24 @@ func test_python_errores_con_linea() -> void:
 	var r := game.shell.execute("py run")
 	assert_true(r.plain_text().contains("NameError"), r.plain_text())
 	assert_true(r.plain_text().contains("línea 2"), r.plain_text())
+
+
+# --- A3/A4/A6 ---
+
+func test_A3_A4_A6_siguen_el_patron_del_piloto() -> void:
+	for id in ["A3-01", "A3-02", "A3-03", "A3-04", "A4-01", "A4-02", "A4-03", "A4-04", "A6-01", "A6-02", "A6-03", "A6-04"]:
+		var m := game.catalog.get_mission(id)
+		assert_true(m.has("purpose") and m.has("you_can_now"), id + ": purpose y you_can_now")
+		var checks := 0
+		for o: Dictionary in m["objectives"]:
+			var where := "%s %s" % [id, o["id"]]
+			assert_true(o.has("teach"), where + ": tiene lección")
+			var lines: PackedStringArray = str(o.get("teach", "")).split("\n")
+			assert_true(lines[-1].begins_with("Por qué:"), where + ": la lección acaba en «Por qué:»")
+			assert_ne(o["validator"]["type"], "reflection", where + ": sin reflexiones escritas")
+			if o.has("choices"):
+				checks += 1
+				for c: Dictionary in o["choices"]:
+					if str(c["id"]) != str(o["validator"]["expected"]):
+						assert_false(str(c.get("why", "")).is_empty(), where + ": cada opción incorrecta explica por qué")
+		assert_true(checks >= 1, id + ": al menos una comprobación de comprensión")

@@ -7,8 +7,21 @@
   "plane": "dojo",
   "epistemic": "practica-industria",
   "estimated_minutes": 40,
-  "requires_missions": ["A3-01"],
-  "competencies": { "requires": ["T2.knn", "A3.agentes"], "trains": ["A6.pipeline-ml", "A6.ai-bom", "A6.formatos-artefacto", "A6.serving"] },
+  "requires_missions": [
+    "A3-01"
+  ],
+  "competencies": {
+    "requires": [
+      "T2.knn",
+      "A3.agentes"
+    ],
+    "trains": [
+      "A6.pipeline-ml",
+      "A6.ai-bom",
+      "A6.formatos-artefacto",
+      "A6.serving"
+    ]
+  },
   "briefing": "La forja ya no solo usa modelos: los fabrica. Tiene un pipeline que toma datos de inspecciones, entrena un clasificador de acero, guarda el modelo como un fichero (artefacto) y lo sirve a la aplicación del taller desde un contenedor. Casi nada de lo que entra en ese pipeline lo ha escrito la forja: datos de un espejo comunitario, modelos y adapters de un hub público, paquetes de Python, una imagen base. Hoy lo montarás y harás inventario.",
   "learning_objectives": [
     "Recorrer las cuatro etapas de un pipeline de ML: datos, entrenamiento, artefacto y serving",
@@ -16,72 +29,181 @@
     "Distinguir un formato de modelo que solo guarda datos (safetensors) de uno que puede ejecutar código al cargarse (pickle)"
   ],
   "mentor_intro": "Antes de defender una cadena hay que saber de qué eslabones está hecha. Todo lo de este laboratorio es ficticio: fuentes, paquetes, firmas e imagen.",
-  "lab": { "datasets": [], "viz": {} },
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
   "theory_cards": [
     {
       "id": "pipeline-ml",
-      "title": "Pipeline de ML",
-      "body": "Datos → entrenamiento → artefacto → serving. Datos: los ejemplos con los que aprende el modelo (en T2 entrenaste un k-NN con ellos). Entrenamiento: produce los pesos. Artefacto: el fichero que guarda esos pesos (modelo completo o un adapter, como LoRA, que modifica un modelo base). Serving: un servidor que carga el artefacto y responde predicciones por una API, normalmente dentro de un contenedor. Cada etapa puede traer componentes de terceros."
+      "title": "Pipeline de ML (Machine Learning)",
+      "body": "Datos → entrenamiento → artefacto → serving. Datos: los ejemplos con los que aprende el modelo (en T2 entrenaste un k-NN con ellos). Entrenamiento: produce los pesos. Artefacto: el fichero que guarda esos pesos (modelo completo o un adapter, como LoRA (Low-Rank Adaptation), que modifica un modelo base). Serving: un servidor que carga el artefacto y responde predicciones por una API (Application Programming Interface), normalmente dentro de un contenedor. Cada etapa puede traer componentes de terceros."
     },
     {
       "id": "ai-bom",
       "title": "SBOM y AI-BOM",
-      "body": "Un SBOM (Software Bill of Materials) es el inventario de componentes de un software, con versión, origen y huella. Un AI-BOM extiende la idea a datasets, modelos y adapters. Formatos estándar: CycloneDX (con soporte para ML-BOM) y SPDX 3.0 (con perfiles de IA y datasets). El concepto de AI-BOM aún es emergente: no hay un consenso cerrado sobre qué campos son obligatorios. Comando: supply sbom <pipeline>."
+      "body": "Un SBOM (Software Bill of Materials) es el inventario de componentes de un software, con versión, origen y huella. Un AI-BOM (AI Bill of Materials) extiende la idea a datasets, modelos y adapters. Formatos estándar: CycloneDX (con soporte para ML-BOM) y SPDX 3.0 (con perfiles de IA y datasets). El concepto de AI-BOM aún es emergente: no hay un consenso cerrado sobre qué campos son obligatorios. Comando: supply sbom <pipeline>."
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Crea el pipeline y saca su AI-BOM. ¿Cuántos artefactos están en formato pickle? (answer <número>)",
-      "teach": "Huella (hash)\nLa columna «huella» es el comienzo del SHA-256 del contenido de cada componente. Si cambia un solo byte, la huella cambia por completo. La columna «firma/lock» indica si el componente tiene una firma de su autor (artefactos), si está en el manifiesto aprobado (datasets) o si está fijado en el fichero de bloqueo (paquetes).",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "supply.sbom" },
-        { "type": "answer", "expected": 2, "tolerance": 0 }
-      ] },
-      "hints": ["supply forja taller · supply sbom taller", "Mira la columna «formato»."],
+      "teach": "El inventario y sus huellas\nsupply forja <nombre> crea el pipeline y supply sbom <nombre> saca su inventario.\nLa columna «formato» dice cómo está guardado cada modelo: pickle o safetensors. En el paso siguiente verás por qué importa.\nLa columna «huella» es el comienzo del SHA-256 (Secure Hash Algorithm, 256 bits) del contenido: si cambia un solo byte, la huella cambia por completo.\nLa columna «firma/lock» dice si el componente está firmado por su autor, en el manifiesto aprobado o fijado en el fichero de bloqueo (lockfile).\nPor qué: con el AI-BOM de cada build, un equipo real sabe en minutos si usa un componente que acaba de descubrirse malicioso.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "supply.sbom"
+          },
+          {
+            "type": "answer",
+            "expected": 2,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "supply forja taller · supply sbom taller",
+        "Mira la columna «formato»."
+      ],
       "on_complete": "Dos: clasificador-acero (el modelo de la propia forja) y detector-grietas (de un hub público). Retén ese dato."
     },
     {
       "id": "o2",
       "text": "Inspecciona los dos artefactos pickle. ¿Cuál de ellos trae una importación peligrosa? (answer <id del artefacto>)",
-      "teach": "Pickle y safetensors\npickle es el formato de serialización de objetos de Python. Al cargar (deserializar) un fichero pickle, el propio fichero puede pedir que se importen y se llamen funciones: cargarlo equivale a ejecutar código de quien lo escribió. La documentación de Python lo advierte: solo hay que deserializar datos de confianza. Muchos formatos de modelos se han basado en pickle. safetensors, en cambio, guarda solo tensores y una cabecera JSON: cargarlo no ejecuta código. En el laboratorio, el escáner es simulado y nunca se ejecuta nada.",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "supply.inspected", "where": { "kind": "artifact", "dangerous": true } },
-        { "type": "answer", "expected": "detector-grietas", "accept": ["detector-grietas", "detector grietas"] }
-      ] },
-      "hints": ["supply inspect taller clasificador-acero · supply inspect taller detector-grietas"],
+      "teach": "Pickle y safetensors\npickle es el formato de Python para guardar objetos.\nAl cargar un fichero pickle, el propio fichero puede pedir que se importen y se llamen funciones: cargarlo equivale a ejecutar código de quien lo escribió.\nLa documentación de Python lo advierte: solo hay que cargar pickles de confianza.\nsafetensors, en cambio, guarda solo números (tensores) y una cabecera JSON: cargarlo no ejecuta código.\nsupply inspect <pipeline> <artefacto> enseña lo que encuentra el escáner. En el laboratorio es simulado y nunca se ejecuta nada.\nPor qué: muchos formatos de modelos se han basado en pickle; cargar uno de un desconocido es ejecutar su código en tu servidor.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "supply.inspected",
+            "where": {
+              "kind": "artifact",
+              "dangerous": true
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "detector-grietas",
+            "accept": [
+              "detector-grietas",
+              "detector grietas"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "supply inspect taller clasificador-acero · supply inspect taller detector-grietas"
+      ],
       "on_complete": "Bien. Y fíjate en la otra frase del escáner: «sin importaciones peligrosas conocidas» no prueba que un pickle sea seguro."
     },
     {
       "id": "o3",
       "text": "Entrena el clasificador con los datos del pipeline. ¿Qué exactitud obtiene en el conjunto de prueba? (answer <número>)",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "supply.trained" },
-        { "type": "answer", "expected": 0.94, "tolerance": 0.005 }
-      ] },
-      "hints": ["supply train taller"],
-      "on_complete": "0,94 con 520 filas, 400 de la forja y 120 del espejo comunitario. La exactitud es buena… guarda la otra línea del resultado para la próxima misión."
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "supply.trained"
+          },
+          {
+            "type": "answer",
+            "expected": 0.94,
+            "tolerance": 0.005
+          }
+        ]
+      },
+      "hints": [
+        "supply train taller"
+      ],
+      "on_complete": "0,94 con 520 filas, 400 de la forja y 120 del espejo comunitario. La exactitud es buena… guarda la otra línea del resultado para la próxima misión.",
+      "teach": "Entrenar y medir\nsupply train <pipeline> entrena el clasificador con los datos del pipeline.\nLa exactitud es la proporción de piezas del conjunto de prueba que acierta: 0,9 es el 90 %.\nPor qué: es la métrica que verías en un pipeline real; y una buena exactitud no dice nada de dónde vinieron los datos."
     },
     {
       "id": "o4",
       "text": "Carga el modelo interno en el servidor, instala la dependencia forja-metrics y despliega. ¿Con qué usuario corre el proceso del servidor? (answer <usuario>)",
-      "teach": "La imagen del servidor\nUna imagen de contenedor se construye por capas, una por instrucción (FROM, COPY, RUN, ENV…). Cada capa queda guardada en la imagen y cualquiera que la descargue puede leer su historial. El usuario del proceso y la red en la que escucha deciden cuánto daño puede hacer alguien que lo comprometa.",
-      "validator": { "type": "all", "of": [
-        { "type": "sequence", "steps": [
-          { "type": "event", "event": "supply.loaded", "where": { "artifact": "clasificador-acero", "loaded": true } },
-          { "type": "event", "event": "supply.deployed" }
-        ] },
-        { "type": "event", "event": "supply.installed", "where": { "package": "forja-metrics", "installed": true } },
-        { "type": "answer", "expected": "root", "accept": ["root", "como root", "uid 0"] }
-      ] },
-      "hints": ["supply load taller clasificador-acero · supply install taller forja-metrics · supply deploy taller", "Lee la línea «usuario del proceso»."],
+      "teach": "La imagen del servidor\nServing es poner el modelo a responder predicciones a la aplicación, normalmente desde un contenedor.\nsupply load carga un modelo, supply install instala un paquete y supply deploy despliega el servidor.\nUna imagen de contenedor se construye por capas, una por instrucción (FROM, COPY, RUN, ENV…). Cualquiera que la descargue puede leer su historial.\nEl usuario del proceso y la red en la que escucha deciden cuánto daño puede hacer quien lo comprometa.\nPor qué: los modelos en producción se sirven así, y cada uno de estos detalles es un eslabón más de la cadena.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "sequence",
+            "steps": [
+              {
+                "type": "event",
+                "event": "supply.loaded",
+                "where": {
+                  "artifact": "clasificador-acero",
+                  "loaded": true
+                }
+              },
+              {
+                "type": "event",
+                "event": "supply.deployed"
+              }
+            ]
+          },
+          {
+            "type": "event",
+            "event": "supply.installed",
+            "where": {
+              "package": "forja-metrics",
+              "installed": true
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "root",
+            "accept": [
+              "root",
+              "como root",
+              "uid 0"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "supply load taller clasificador-acero · supply install taller forja-metrics · supply deploy taller",
+        "Lee la línea «usuario del proceso»."
+      ],
       "on_complete": "root, escuchando en todas las interfaces y con un token en una capa. Funciona… y es justo lo que atacarás en A6-02."
     },
     {
       "id": "o5",
-      "text": "Explica con tus palabras qué componentes de este pipeline no ha escrito la forja y por qué cargar un pickle de un tercero es distinto de cargar un safetensors. (reflexion <texto>, mínimo 40 palabras)",
-      "validator": { "type": "reflection", "min_words": 40 },
-      "hints": ["Recorre las cuatro etapas y nombra un componente externo en cada una.", "¿Qué hace el fichero cuando lo cargas?"]
+      "text": "Comprueba que lo tienes claro: ¿por qué cargar un pickle de un tercero es distinto de cargar un safetensors?",
+      "teach": "Repaso: datos frente a código\nRecuerda lo que dijo el escáner de detector-grietas.\nPor qué: esta diferencia decide qué modelos de terceros puedes cargar en un servidor real.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque el pickle ocupa más",
+          "why": "El tamaño no importa. Lo que importa es qué hace el fichero cuando lo cargas."
+        },
+        {
+          "id": "b",
+          "text": "porque al cargar un pickle se pueden ejecutar funciones que decide quien lo escribió; un safetensors solo trae datos"
+        },
+        {
+          "id": "c",
+          "text": "porque un safetensors siempre está firmado",
+          "why": "safetensors es un formato, no una firma. Un safetensors puede no estar firmado, y uno firmado puede traer pesos manipulados: lo verás en A6-02."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué hace el fichero cuando lo cargas?",
+        "answer b"
+      ],
+      "on_complete": "Exacto. Cargar un pickle es ejecutar un pequeño programa de su autor. Y fíjate en cuánto viene de fuera: datos del espejo, modelos y adapters del hub, paquetes e imagen base."
     }
   ],
   "mastery_trial": {
@@ -90,14 +212,38 @@
       {
         "id": "d1",
         "text": "Con un pipeline nuevo: saca el AI-BOM, entrena, carga el modelo interno y despliega.",
-        "validator": { "type": "sequence", "steps": [
-          { "type": "event", "event": "supply.created" },
-          { "type": "event", "event": "supply.sbom" },
-          { "type": "event", "event": "supply.trained" },
-          { "type": "event", "event": "supply.loaded", "where": { "artifact": "clasificador-acero", "loaded": true } },
-          { "type": "event", "event": "supply.deployed" }
-        ] },
-        "hints": ["Las cuatro etapas, en orden: inventario, datos, artefacto, serving."],
+        "validator": {
+          "type": "sequence",
+          "steps": [
+            {
+              "type": "event",
+              "event": "supply.created"
+            },
+            {
+              "type": "event",
+              "event": "supply.sbom"
+            },
+            {
+              "type": "event",
+              "event": "supply.trained"
+            },
+            {
+              "type": "event",
+              "event": "supply.loaded",
+              "where": {
+                "artifact": "clasificador-acero",
+                "loaded": true
+              }
+            },
+            {
+              "type": "event",
+              "event": "supply.deployed"
+            }
+          ]
+        },
+        "hints": [
+          "Las cuatro etapas, en orden: inventario, datos, artefacto, serving."
+        ],
         "on_complete": "Pipeline montado. Ahora ya sabes dónde mirar."
       }
     ]
@@ -106,9 +252,22 @@
     "what_happened": "Has montado un pipeline de ML de cuatro etapas, has hecho su inventario (AI-BOM) y has visto que casi todos sus componentes vienen de fuera: datos, modelos, adapters, paquetes e imagen base.",
     "why": "La seguridad de un sistema de IA no termina en el prompt. Cada componente externo es una dependencia en la que confías, y algunos, como un pickle, no son datos inertes: se ejecutan al cargarlos.",
     "in_production": "Los equipos mantienen un registro de modelos con versiones y huellas, generan SBOM o AI-BOM (CycloneDX o SPDX) en cada build, guardan los modelos en formatos sin código como safetensors y despliegan con imágenes mínimas. OWASP Top 10 for LLM Applications 2025 lo recoge en LLM03 (Supply Chain).",
-    "simplifications": ["Entrenamiento y exactitud simulados", "Escáner de artefactos simulado: no analiza ficheros reales", "Las huellas son SHA-256 reales, pero de un texto que representa el contenido"],
+    "simplifications": [
+      "Entrenamiento y exactitud simulados",
+      "Escáner de artefactos simulado: no analiza ficheros reales",
+      "Las huellas son SHA-256 reales, pero de un texto que representa el contenido"
+    ],
     "exercise": "forja/ejercicios/A6_01_cadena.py"
   },
-  "further_reading": ["ref.python-pickle", "ref.safetensors", "ref.owasp-llm-2025", "ref.cyclonedx-mlbom"],
-  "xp": { "base": 250 }
+  "further_reading": [
+    "ref.python-pickle",
+    "ref.safetensors",
+    "ref.owasp-llm-2025",
+    "ref.cyclonedx-mlbom"
+  ],
+  "xp": {
+    "base": 250
+  },
+  "purpose": "Un sistema de IA no es solo un modelo: es una cadena de datos, ficheros de modelo, paquetes de Python y contenedores, y casi todo viene de fuera. Hoy montas esa cadena y haces su inventario, el AI-BOM (AI Bill of Materials). Aprendes también por qué cargar un modelo guardado en pickle puede ejecutar código: es uno de los riesgos de la cadena de suministro de la lista OWASP (Open Worldwide Application Security Project) para LLM (Large Language Model).",
+  "you_can_now": "Sabes recorrer las cuatro etapas de un pipeline de ML (Machine Learning), leer un AI-BOM con sus huellas y distinguir un formato que solo guarda datos (safetensors) de uno que ejecuta código al cargarse (pickle). Siguiente: A6-02, donde comprobarás qué pasa si un eslabón está podrido."
 }
