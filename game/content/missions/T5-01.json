@@ -7,20 +7,32 @@
   "plane": "dojo",
   "epistemic": "consolidado",
   "estimated_minutes": 30,
-  "requires_missions": ["T4-01"],
-  "competencies": { "requires": ["T4.neurona"], "trains": ["T5.tokenizacion"] },
-  "briefing": "Una red neuronal solo entiende números. Para que un LLM lea «la katana del maestro», alguien tiene que convertir ese texto en una secuencia de números. Ese alguien es el tokenizador, y sus decisiones explican cosas que verás toda tu carrera: por qué los LLM cobran por tokens, por qué cuentan mal las letras de una palabra, por qué algunos idiomas cuestan más… y por qué ciertos ataques consiguen colarse disfrazando el texto.",
+  "requires_missions": [
+    "T4-01"
+  ],
+  "competencies": {
+    "requires": [
+      "T4.neurona"
+    ],
+    "trains": [
+      "T5.tokenizacion"
+    ]
+  },
+  "briefing": "Una red neuronal solo entiende números. Para que un LLM (Large Language Model) lea «la katana del maestro», alguien tiene que convertir ese texto en una secuencia de números. Ese alguien es el tokenizador, y sus decisiones explican cosas que verás toda tu carrera: por qué los LLM cobran por tokens, por qué cuentan mal las letras de una palabra, por qué algunos idiomas cuestan más… y por qué ciertos ataques consiguen colarse disfrazando el texto.",
   "learning_objectives": [
-    "Explicar qué es un token y cómo funciona BPE",
+    "Explicar qué es un token y cómo funciona BPE (Byte Pair Encoding)",
     "Relacionar el tamaño del vocabulario con el número de tokens",
     "Identificar efectos prácticos de la tokenización: mayúsculas, palabras nuevas, idiomas y coste"
   ],
-  "mentor_intro": "Vamos a construir un tokenizador de verdad, con el mismo algoritmo que usan los modelos GPT, entrenado con los textos de la forja.",
-  "lab": { "datasets": [], "viz": {} },
+  "mentor_intro": "Vamos a construir un tokenizador de verdad, con el mismo algoritmo que usan los modelos GPT (Generative Pre-trained Transformer), entrenado con los textos de la forja. Paso a paso.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
   "theory_cards": [
     {
       "id": "bpe",
-      "title": "BPE en una frase",
+      "title": "BPE (Byte Pair Encoding) en una frase",
       "body": "Empieza con caracteres sueltos y, una y otra vez, fusiona el par de símbolos que aparece junto más a menudo en el corpus. Tras muchas fusiones, las palabras frecuentes son un solo token y las raras se parten en trozos. «▁» marca el inicio de una palabra. Más: man tokens"
     }
   ],
@@ -28,56 +40,262 @@
     {
       "id": "o1",
       "text": "Entrena un tokenizador SIN fusiones y tokeniza «la katana del maestro». ¿Cuántos tokens salen? (answer <número>)",
-      "teach": "El tokenizador más simple\nCon 0 fusiones, cada carácter (incluida la marca ▁ de inicio de palabra) es un token. Comandos: tokenizer train <nombre> --merges 0 entrena; tokenize <nombre> <texto> parte un texto y muestra los tokens, sus ids (el número que verá la red) y el recuento.",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "tokenize.done", "where": { "merges": 0, "text": "la katana del maestro" } },
-        { "type": "answer", "expected": 22, "tolerance": 0 }
-      ] },
+      "teach": "El tokenizador más simple\nUn token es un trozo de texto. El tokenizador corta el texto en tokens y da a cada uno un número: su id.\nCon 0 fusiones, cada carácter es un token, y la marca ▁ señala dónde empieza cada palabra.\nComandos: tokenizer train t0 --merges 0 entrena el tokenizador; tokenize t0 <texto> parte un texto y enseña los tokens, sus ids y cuántos hay.\nPor qué: la red de un LLM (Large Language Model) no ve letras ni palabras: ve esta lista de ids.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "tokenize.done",
+            "where": {
+              "merges": 0,
+              "text": "la katana del maestro"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 22,
+            "tolerance": 0
+          }
+        ]
+      },
       "wrong_answer": "Cuenta los tokens de la salida de tokenize (aparece en la última línea).",
-      "hints": ["tokenizer train t0 --merges 0", "tokenize t0 la katana del maestro"],
+      "hints": [
+        "tokenizer train t0 --merges 0",
+        "tokenize t0 la katana del maestro"
+      ],
       "on_complete": "22 tokens para 21 caracteres: letra a letra, más las marcas de inicio de palabra. Funciona con cualquier texto, pero las secuencias son larguísimas, y la atención de un transformer cuesta más cuanto más larga es la secuencia."
     },
     {
       "id": "o2",
       "text": "Entrena otro tokenizador con 200 fusiones y tokeniza el mismo texto. ¿Cuántos tokens salen ahora? (answer <número>)",
-      "prediction": { "prompt": "Con 200 fusiones aprendidas del corpus de la forja, ¿cuántos tokens crees que necesitará «la katana del maestro»?", "options": ["unos 20", "unos 10", "unos 4"] },
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "tokenize.done", "where": { "merges": 200, "text": "la katana del maestro" } },
-        { "type": "answer", "expected": 4, "tolerance": 0 }
-      ] },
-      "hints": ["tokenizer train t200 --merges 200", "tokenize t200 la katana del maestro"],
-      "on_complete": "4 tokens: cada palabra frecuente del corpus se ha convertido en un único token. Mira las fusiones con tokenizer merges t200: las primeras unen trozos muy frecuentes («▁e», «de», «▁la»…). Los LLM reales tienen vocabularios de decenas o cientos de miles de tokens."
+      "prediction": {
+        "prompt": "Con 200 fusiones aprendidas del corpus de la forja, ¿cuántos tokens crees que necesitará «la katana del maestro»?",
+        "options": [
+          "unos 20",
+          "unos 10",
+          "unos 4"
+        ]
+      },
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "tokenize.done",
+            "where": {
+              "merges": 200,
+              "text": "la katana del maestro"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 4,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "tokenizer train t200 --merges 200",
+        "tokenize t200 la katana del maestro"
+      ],
+      "on_complete": "4 tokens: cada palabra frecuente del corpus se ha convertido en un único token. Mira las fusiones con tokenizer merges t200: las primeras unen trozos muy frecuentes («▁e», «de», «▁la»…). Los LLM (Large Language Model) reales tienen vocabularios de decenas o cientos de miles de tokens.",
+      "teach": "Fusiones: así aprende BPE\nBPE (Byte Pair Encoding) mira el corpus, los textos con los que se entrena, y busca el par de tokens que aparece junto más a menudo, por ejemplo ▁ y e. Los une en un token nuevo, ▁e, y repite.\n--merges 200 hace 200 uniones: las palabras frecuentes acaban siendo un solo token.\nComandos: tokenizer train t200 --merges 200 y después tokenize t200 la katana del maestro\nPor qué: menos tokens por frase significa menos coste y más texto en la ventana de contexto del modelo."
+    },
+    {
+      "id": "c1",
+      "text": "Comprueba que lo tienes claro: ¿por qué «katana» es un solo token con 200 fusiones?",
+      "teach": "Qué decide qué es un token\nEl tokenizador no sabe nada de significados: solo cuenta qué trozos aparecen juntos en el corpus.\nPor qué: entender esto te dirá qué palabras parte un LLM en muchos trozos, y qué textos le cuestan más.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque el tokenizador sabe lo que es una katana",
+          "why": "El tokenizador no entiende nada: solo cuenta qué letras aparecen juntas en el corpus."
+        },
+        {
+          "id": "b",
+          "text": "porque «katana» aparece muchas veces en el corpus y sus trozos se han ido uniendo"
+        },
+        {
+          "id": "c",
+          "text": "porque es una palabra corta",
+          "why": "La longitud no importa: «quiero», más corta, se parte en 5 trozos porque casi no aparece en el corpus. Lo que cuenta es la frecuencia."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Piensa en cómo elige BPE qué unir: ¿mira el significado o cuenta?",
+        "answer b"
+      ],
+      "on_complete": "Exacto: BPE une lo frecuente. Por eso las palabras comunes del corpus son un token y las raras se parten en trozos."
     },
     {
       "id": "o3",
       "text": "Tokeniza «La Katana del Maestro» (con mayúsculas) con el tokenizador de 200 fusiones. ¿Cuántos tokens salen? (answer <número>)",
-      "prediction": { "prompt": "Mismas palabras, con mayúsculas iniciales. ¿Qué pasará?", "options": ["igual: 4 tokens", "más tokens"] },
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "tokenize.done", "where": { "merges": 200, "text": "La Katana del Maestro" } },
-        { "type": "answer", "expected": 9, "tolerance": 0 }
-      ] },
-      "hints": ["tokenize t200 La Katana del Maestro"],
-      "on_complete": "9 tokens, y uno desconocido (<?>): en el corpus nunca aparece una «M» mayúscula. Para el tokenizador, «Katana» y «katana» son cosas distintas. Los tokenizadores reales trabajan con BYTES y nunca tienen desconocidos, pero el efecto se mantiene: el mismo texto con otro formato produce tokens distintos. Esto se aprovecha en ataques: escribir una palabra prohibida con otras mayúsculas, espacios o caracteres raros puede esquivar filtros que buscan la versión normal."
+      "prediction": {
+        "prompt": "Mismas palabras, con mayúsculas iniciales. ¿Qué pasará?",
+        "options": [
+          "igual: 4 tokens",
+          "más tokens"
+        ]
+      },
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "tokenize.done",
+            "where": {
+              "merges": 200,
+              "text": "La Katana del Maestro"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 9,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "tokenize t200 La Katana del Maestro"
+      ],
+      "on_complete": "9 tokens, y uno desconocido (<?>): en el corpus nunca aparece una «M» mayúscula. Para el tokenizador, «Katana» y «katana» son cosas distintas. Los tokenizadores reales trabajan con BYTES y nunca tienen desconocidos, pero el efecto se mantiene: el mismo texto con otro formato produce tokens distintos.",
+      "teach": "Mayúsculas\nEl tokenizador solo conoce los trozos que vio en el corpus, y en el corpus de la forja casi todo va en minúsculas.\nComando: tokenize t200 La Katana del Maestro\nPor qué: si el mismo texto con otro formato da otros tokens, un filtro que busca tokens concretos deja de verlo. Lo aprovecharás como atacante en T5-03."
     },
     {
       "id": "o4",
       "text": "Tokeniza en inglés la misma frase, «the sword of the master», con el tokenizador de 200 fusiones. ¿Cuántos tokens salen? (answer <número>)",
-      "prediction": { "prompt": "Es una frase del mismo tamaño en otro idioma. ¿Cuántos tokens crees que necesitará?", "options": ["unos 4", "unos 10", "unos 20"] },
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "tokenize.done", "where": { "merges": 200, "text": "the sword of the master" } },
-        { "type": "answer", "expected": 19, "tolerance": 0 }
-      ] },
-      "hints": ["tokenize t200 the sword of the master"],
-      "on_complete": "19 tokens frente a 4: casi 5 veces más para decir lo mismo, porque el tokenizador solo ha visto castellano. Con los LLM reales ocurre lo contrario: suelen entrenarse con más inglés, así que otros idiomas gastan más tokens. Eso significa más coste, más latencia y menos texto en la misma ventana de contexto."
+      "prediction": {
+        "prompt": "Es una frase del mismo tamaño en otro idioma. ¿Cuántos tokens crees que necesitará?",
+        "options": [
+          "unos 4",
+          "unos 10",
+          "unos 20"
+        ]
+      },
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "tokenize.done",
+            "where": {
+              "merges": 200,
+              "text": "the sword of the master"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 19,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "tokenize t200 the sword of the master"
+      ],
+      "on_complete": "19 tokens frente a 4: casi 5 veces más para decir lo mismo, porque el tokenizador solo ha visto castellano. Con los LLM (Large Language Model) reales suele pasar al revés: se entrenan con más inglés, así que otros idiomas gastan más tokens. Eso significa más coste, más latencia y menos texto en la misma ventana de contexto.",
+      "teach": "Otros idiomas\nEste tokenizador aprendió sus fusiones solo con textos en castellano.\nComando: tokenize t200 the sword of the master\nPor qué: una API (Application Programming Interface) de LLM cobra por token, así que un idioma poco representado en el entrenamiento cuesta más y cabe menos en la ventana de contexto."
     },
     {
       "id": "o5",
-      "text": "Explica con tus palabras qué es un token, cómo aprende BPE su vocabulario y dos consecuencias prácticas de la tokenización. (reflexion <texto>, mínimo 30 palabras)",
-      "validator": { "type": "reflection", "min_words": 30 },
+      "text": "Una API de LLM te cobra por cada token. Con el tokenizador de la forja, ¿qué frase te costaría más?",
+      "teach": "Tokens y coste\nUna API (Application Programming Interface) de LLM (Large Language Model) cuenta los tokens de lo que envías y de lo que recibes, y cobra por ellos.\nPor qué: estimar los tokens de un texto antes de enviarlo es lo primero que hace un ingeniero para calcular el coste de un sistema.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "«la katana del maestro»",
+          "why": "Son 4 tokens: sus palabras aparecen mucho en el corpus y cada una es un token."
+        },
+        {
+          "id": "b",
+          "text": "«the sword of the master»"
+        },
+        {
+          "id": "c",
+          "text": "las dos lo mismo, porque tienen casi las mismas letras",
+          "why": "Se cobra por tokens, no por letras: 4 frente a 19."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
       "hints": [
-        "Consecuencias que has visto: coste por idioma, mayúsculas, palabras nuevas, longitud de las secuencias.",
-        "Estructura: definición de token → cómo se construye el vocabulario (fusiones) → consecuencias."
-      ]
+        "Recuerda cuántos tokens salieron en cada idioma.",
+        "answer b"
+      ],
+      "on_complete": "Eso es: 19 tokens frente a 4. El mismo mensaje en otro idioma puede costar varias veces más."
+    },
+    {
+      "id": "py1",
+      "text": "Escribe en Python el tokenizador más ingenuo, el que corta por espacios: abre el editor con py, completa la función tokenizar y compruébala con py check.",
+      "teach": "El tokenizador por palabras, en Python\nAntes de BPE, muchos sistemas cortaban el texto por los espacios: cada palabra, un token.\nEn Python, texto.split() corta un texto por los espacios y devuelve una lista: \"la katana\".split() da ['la', 'katana'].\nlen(lista) cuenta cuántos elementos tiene una lista.\nPor qué: cortar por espacios es el primer paso de muchos tokenizadores reales, y vas a ver por qué no basta.",
+      "py_exercise": {
+        "id": "T5-01-tokenizar",
+        "title": "tokenizar(texto): una lista con las palabras del texto",
+        "function": "tokenizar",
+        "starter": "# Ejercicio T5-01 · Un tokenizador por palabras\n# texto es una frase, por ejemplo \"la katana del maestro\".\n# La función tiene que devolver la lista de sus palabras: ['la', 'katana', 'del', 'maestro'].\n# Python ya trae texto.split(), que corta el texto por los espacios.\n\ndef tokenizar(texto):\n    return [texto]   # ← cambia esta línea\n\n# Pruébala con py run (o Ctrl+Enter). Debería imprimir ['la', 'katana', 'del', 'maestro'] y 4:\nprint(tokenizar(\"la katana del maestro\"))\nprint(len(tokenizar(\"la katana del maestro\")))\n",
+        "cases": [
+          {
+            "args": [
+              "la katana del maestro"
+            ],
+            "expected": [
+              "la",
+              "katana",
+              "del",
+              "maestro"
+            ]
+          },
+          {
+            "args": [
+              "  el   temple  "
+            ],
+            "expected": [
+              "el",
+              "temple"
+            ]
+          },
+          {
+            "args": [
+              "katanaforjada"
+            ],
+            "expected": [
+              "katanaforjada"
+            ]
+          },
+          {
+            "args": [
+              ""
+            ],
+            "expected": []
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T5-01-tokenizar",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "texto.split() ya devuelve la lista de palabras: solo tienes que devolverla.",
+        "La línea queda así: return texto.split()"
+      ],
+      "on_complete": "Tu tokenizador da 4 tokens para «la katana del maestro», igual que BPE con 200 fusiones. Pero «katanaforjada» solo lo puede tratar como una palabra entera que nunca ha visto. BPE la arma con trozos conocidos. Por eso los LLM (Large Language Model) usan subpalabras y no palabras enteras."
     }
   ],
   "mastery_trial": {
@@ -86,11 +304,28 @@
       {
         "id": "d1",
         "text": "Con el tokenizador de 200 fusiones, ¿en cuántos tokens se parte la palabra inventada «katanaforjada»? (answer <número>)",
-        "validator": { "type": "all", "of": [
-          { "type": "event", "event": "tokenize.done", "where": { "merges": 200, "text": "katanaforjada" } },
-          { "type": "answer", "expected": 4, "tolerance": 0 }
-        ] },
-        "hints": ["Tokeniza la palabra y cuenta.", "tokenize <tokenizador de 200> katanaforjada"],
+        "validator": {
+          "type": "all",
+          "of": [
+            {
+              "type": "event",
+              "event": "tokenize.done",
+              "where": {
+                "merges": 200,
+                "text": "katanaforjada"
+              }
+            },
+            {
+              "type": "answer",
+              "expected": 4,
+              "tolerance": 0
+            }
+          ]
+        },
+        "hints": [
+          "Tokeniza la palabra y cuenta.",
+          "tokenize <tokenizador de 200> katanaforjada"
+        ],
         "on_complete": "4 tokens: ▁katana | f | orja | da. Una palabra que nunca vio se arma con trozos conocidos. Por eso un LLM puede leer palabras nuevas, y también por eso le cuesta contar las letras de una palabra: no ve letras, ve trozos."
       }
     ]
@@ -98,10 +333,20 @@
   "debrief": {
     "what_happened": "Has entrenado tokenizadores BPE con distinto número de fusiones y has visto cómo el vocabulario determina la longitud de las secuencias, la sensibilidad a mayúsculas, el trato a palabras nuevas y el coste según el idioma.",
     "why": "Todo lo que entra en un LLM pasa por el tokenizador: el coste de una API, la ventana de contexto, la latencia y muchas rarezas del modelo (contar letras, aritmética, palabras inventadas) se explican en esta capa. En seguridad, la tokenización explica por qué los filtros basados en palabras clave se evaden con variaciones de formato.",
-    "in_production": "GPT y Llama usan BPE a nivel de bytes (vocabularios de ~50.000 a más de 100.000 tokens); otros modelos usan variantes como WordPiece o Unigram (SentencePiece). La librería tiktoken de OpenAI y la librería tokenizers de Hugging Face permiten contar tokens antes de llamar a una API para estimar costes.",
-    "simplifications": ["Tokenizador a nivel de caracteres, no de bytes", "Corpus diminuto (377 palabras)"],
+    "in_production": "GPT (Generative Pre-trained Transformer) y Llama usan BPE (Byte Pair Encoding) a nivel de bytes, con vocabularios de unos 50.000 a más de 100.000 tokens; otros modelos usan variantes como WordPiece o Unigram (SentencePiece). La librería tiktoken de OpenAI y la librería tokenizers de Hugging Face cuentan tokens antes de llamar a una API (Application Programming Interface), para estimar costes.",
+    "simplifications": [
+      "Tokenizador a nivel de caracteres, no de bytes",
+      "Corpus diminuto (377 palabras)"
+    ],
     "exercise": "forja/ejercicios/T5_01_bpe.py"
   },
-  "further_reading": ["ref.sennrich-2016", "ref.hf-bpe"],
-  "xp": { "base": 150 }
+  "further_reading": [
+    "ref.sennrich-2016",
+    "ref.hf-bpe"
+  ],
+  "xp": {
+    "base": 150
+  },
+  "purpose": "Todo lo que entra en un LLM (Large Language Model) pasa antes por un tokenizador: el texto se corta en trozos, los tokens, y cada trozo se convierte en un número. Una API (Application Programming Interface) de LLM cobra por tokens y la ventana de contexto se mide en tokens. La tokenización explica también por qué un filtro de palabras prohibidas se esquiva cambiando las mayúsculas: lo verás en T5-03. Hoy construyes un tokenizador BPE (Byte Pair Encoding), el algoritmo de los modelos GPT.",
+  "you_can_now": "Sabes qué es un token, cómo construye BPE (Byte Pair Encoding) su vocabulario y por qué el formato y el idioma cambian el número de tokens y el coste. Siguiente: T5-02, donde cada token se convierte en un vector que guarda su significado."
 }

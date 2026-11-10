@@ -7,16 +7,30 @@
   "plane": "dojo",
   "epistemic": "modelo-simplificado",
   "estimated_minutes": 30,
-  "requires_missions": ["T5-01"],
-  "competencies": { "requires": ["T5.tokenizacion", "T1.distancia"], "trains": ["T5.embeddings", "T5.similitud-coseno"] },
-  "briefing": "Un id de token es solo una etiqueta: el número 93 no se «parece» al 94. Para que una red razone sobre significados, cada token se convierte en un EMBEDDING: un vector donde las palabras con significado parecido quedan cerca. Es la misma idea de distancia que usaste con las katanas en T1… aplicada al lenguaje. Y es la base de toda la búsqueda semántica y de los sistemas RAG que atacarás más adelante.",
+  "requires_missions": [
+    "T5-01"
+  ],
+  "competencies": {
+    "requires": [
+      "T5.tokenizacion",
+      "T1.distancia"
+    ],
+    "trains": [
+      "T5.embeddings",
+      "T5.similitud-coseno"
+    ]
+  },
+  "briefing": "Un id de token es solo una etiqueta: el número 93 no se «parece» al 94. Para que una red razone sobre significados, cada token se convierte en un EMBEDDING: un vector donde las palabras con significado parecido quedan cerca. Es la misma idea de distancia que usaste con las katanas en T1… aplicada al lenguaje. Y es la base de toda la búsqueda semántica y de los sistemas RAG (Retrieval-Augmented Generation) que atacarás más adelante.",
   "learning_objectives": [
     "Explicar qué es un embedding y por qué las palabras parecidas quedan cerca",
     "Calcular e interpretar la similitud coseno",
     "Usar aritmética de vectores (analogías) y reconocer sesgos codificados en los embeddings"
   ],
-  "mentor_intro": "Aviso de honestidad: estos embeddings los he diseñado a mano con 6 dimensiones legibles para que puedas ver qué pasa por dentro. Los reales se aprenden, tienen cientos de dimensiones y ninguna tiene un nombre.",
-  "lab": { "datasets": [], "viz": {} },
+  "mentor_intro": "Aviso de honestidad: estos embeddings los he diseñado a mano con 6 dimensiones legibles para que puedas ver qué pasa por dentro. Los reales se aprenden, tienen cientos de dimensiones y ninguna tiene un nombre. Vamos paso a paso.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
   "theory_cards": [
     {
       "id": "coseno",
@@ -29,70 +43,331 @@
     {
       "id": "o1",
       "text": "Mira el vector de la palabra «katana».",
-      "teach": "Una palabra, un vector\nCada palabra de la tabla tiene 6 números: cuánto tiene de arma, de metal, de persona, de femenino, de calor y de herramienta. embed list muestra las palabras disponibles; embed show <palabra>, su vector.",
-      "validator": { "type": "event", "event": "embed.shown", "where": { "word": "katana" } },
-      "hints": ["embed show katana"],
+      "teach": "Una palabra, un vector\nUn vector es una lista de números. Aquí cada palabra tiene 6: cuánto tiene de arma, de metal, de persona, de femenino, de calor y de herramienta.\nembed list muestra las palabras disponibles; embed show <palabra>, su vector.\nPor qué: es lo primero que hace un LLM (Large Language Model) con cada id de token: cambiarlo por su vector.",
+      "validator": {
+        "type": "event",
+        "event": "embed.shown",
+        "where": {
+          "word": "katana"
+        }
+      },
+      "hints": [
+        "embed show katana"
+      ],
       "on_complete": "Mucho de arma, bastante de metal, algo de herramienta. Ahora ya es un punto en un espacio de 6 dimensiones."
     },
     {
       "id": "o2",
       "text": "¿Cuál es la palabra más parecida a «katana»? (answer <palabra>)",
-      "teach": "Vecinos semánticos\nembed similar <palabra> busca las palabras cuyo vector apunta en una dirección más parecida (similitud coseno). Es una búsqueda de vecinos más cercanos, como el k-NN de T2, pero sobre significados.\nOpciones: --k <n> cambia cuántos vecinos muestra; --metric euclidean ordena por distancia euclídea (la de T1) en lugar de por coseno.",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "embed.similar", "where": { "word": "katana" } },
-        { "type": "answer", "expected": "espada", "accept": ["espada"] }
-      ] },
-      "hints": ["embed similar katana"],
-      "on_complete": "espada (coseno 0,999). Esta misma operación, con embeddings reales de frases y documentos, es la búsqueda semántica de un sistema RAG: encontrar los textos más parecidos a la pregunta, aunque no compartan palabras."
+      "teach": "Vecinos semánticos\nembed similar <palabra> busca las palabras cuyo vector apunta en una dirección más parecida. Es una búsqueda de vecinos más cercanos, como el k-NN (k-Nearest Neighbors) de T2, pero sobre significados.\nOpciones: --k <n> cambia cuántos vecinos muestra; --metric euclidean ordena por la distancia euclídea de T1 en lugar de por coseno.\nPor qué: es la búsqueda semántica, la R (Retrieval, recuperación) de un RAG (Retrieval-Augmented Generation).",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "embed.similar",
+            "where": {
+              "word": "katana"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "espada",
+            "accept": [
+              "espada"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "embed similar katana"
+      ],
+      "on_complete": "espada (coseno 0,999). Esta misma operación, con embeddings reales de frases y documentos, es la búsqueda semántica de un sistema RAG (Retrieval-Augmented Generation): encontrar los textos más parecidos a la pregunta, aunque no compartan palabras."
     },
     {
       "id": "o3",
       "text": "Compara «fuego» y «hielo». ¿Qué similitud coseno tienen? (answer <número>)",
-      "teach": "Comparar dos palabras\nembed compare <a> <b> calcula la similitud coseno entre dos vectores, con la cuenta paso a paso: (a·b)/(|a|·|b|). Vale 1 si apuntan igual, 0 si no tienen relación y −1 si son opuestos. También muestra su distancia euclídea.",
-      "prediction": { "prompt": "¿Cómo crees que será la similitud coseno entre fuego y hielo?", "options": ["cerca de 1", "cerca de 0", "cerca de −1"] },
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "embed.compare", "where": { "a": { "in": ["fuego", "hielo"] }, "b": { "in": ["fuego", "hielo"] } } },
-        { "type": "answer", "expected": -1, "tolerance": 0.01 }
-      ] },
-      "hints": ["embed compare fuego hielo"],
+      "teach": "La similitud coseno\nEl producto escalar a·b multiplica dos vectores dimensión a dimensión y suma los resultados. |a| es la longitud del vector.\nLa similitud coseno es (a·b) / (|a|·|b|): vale 1 si los vectores apuntan igual, 0 si no tienen relación y −1 si apuntan al revés.\nembed compare <a> <b> te enseña la cuenta paso a paso.\nPor qué: es la medida con la que una base de datos vectorial decide qué documentos se parecen a tu pregunta.",
+      "prediction": {
+        "prompt": "¿Cómo crees que será la similitud coseno entre fuego y hielo?",
+        "options": [
+          "cerca de 1",
+          "cerca de 0",
+          "cerca de −1"
+        ]
+      },
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "embed.compare",
+            "where": {
+              "a": {
+                "in": [
+                  "fuego",
+                  "hielo"
+                ]
+              },
+              "b": {
+                "in": [
+                  "fuego",
+                  "hielo"
+                ]
+              }
+            }
+          },
+          {
+            "type": "answer",
+            "expected": -1,
+            "tolerance": 0.01
+          }
+        ]
+      },
+      "hints": [
+        "embed compare fuego hielo"
+      ],
       "on_complete": "−1: apuntan en direcciones exactamente opuestas en la dimensión «calor». Compara también katana y fuego: ≈0, perpendiculares, sin relación."
+    },
+    {
+      "id": "c1",
+      "text": "Comprueba que lo tienes claro: dos vectores apuntan en la misma dirección, pero uno es el doble de largo que el otro. ¿Qué similitud coseno tienen?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "1"
+        },
+        {
+          "id": "b",
+          "text": "0,5",
+          "why": "El coseno no mira la longitud, solo la dirección. Dividir entre |a|·|b| quita el efecto de la longitud."
+        },
+        {
+          "id": "c",
+          "text": "2",
+          "why": "La similitud coseno nunca pasa de 1."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "El coseno mide el ángulo entre los vectores. ¿Qué ángulo forman si apuntan igual?",
+        "answer a"
+      ],
+      "on_complete": "Eso es: 1. El coseno solo mira hacia dónde apunta el vector. Por eso un documento largo y uno corto sobre el mismo tema pueden salir igual de parecidos a una pregunta."
     },
     {
       "id": "o4",
       "text": "Prueba la aritmética de vectores: maestro − hombre + mujer.",
-      "prediction": { "prompt": "¿Qué palabra crees que saldrá?", "options": ["maestra", "herrera", "mujer"] },
-      "teach": "Analogías\nSi «maestro» = persona + enseñar y «hombre» = persona, entonces maestro − hombre deja «la parte de enseñar». Si le sumas «mujer»… embed analogy a b c calcula a − b + c y busca el vector más cercano (excluyendo las palabras de la consulta).",
-      "validator": { "type": "event", "event": "embed.analogy", "where": { "a": "maestro", "b": "hombre", "c": "mujer", "result": "maestra" } },
-      "hints": ["embed analogy maestro hombre mujer"],
+      "prediction": {
+        "prompt": "¿Qué palabra crees que saldrá?",
+        "options": [
+          "maestra",
+          "herrera",
+          "mujer"
+        ]
+      },
+      "teach": "Analogías\nSi «maestro» = persona + enseñar y «hombre» = persona, entonces maestro − hombre deja «la parte de enseñar». Si le sumas «mujer»…\nembed analogy a b c calcula a − b + c y busca el vector más cercano, sin contar las palabras de la consulta.\nPor qué: que la aritmética funcione indica que los vectores guardan relaciones de significado, no solo parecidos sueltos.",
+      "validator": {
+        "type": "event",
+        "event": "embed.analogy",
+        "where": {
+          "a": "maestro",
+          "b": "hombre",
+          "c": "mujer",
+          "result": "maestra"
+        }
+      },
+      "hints": [
+        "embed analogy maestro hombre mujer"
+      ],
       "on_complete": "maestra. Este fenómeno se observó en embeddings reales aprendidos de texto (word2vec, 2013: el famoso rey − hombre + mujer ≈ reina). Que funcione en vectores aprendidos significa que el modelo ha capturado relaciones como «género» o «país-capital» sin que nadie se las enseñara."
     },
     {
       "id": "o5",
       "text": "Busca las palabras más parecidas a «aprendiz», que en castellano no tiene género. ¿Qué DIMENSIÓN de su vector explica que se parezca más a «herrera» y «maestra» que a «herrero» y «maestro»? (answer <dimensión>)",
-      "teach": "Sesgos en los embeddings\nLos vectores codifican lo que hay en los datos (o, aquí, en las decisiones de quien los diseñó). Mira el vector de aprendiz con embed show y compáralo con el de herrero y el de herrera.",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "embed.similar", "where": { "word": "aprendiz" } },
-        { "type": "answer", "expected": "femenino", "accept": ["femenino", "femenina", "genero", "género"] }
-      ] },
+      "teach": "Sesgos en los embeddings\nLos vectores guardan lo que hay en los datos con los que se aprendieron (o, aquí, las decisiones de quien los diseñó).\nMira el vector de aprendiz con embed show y compáralo con el de herrero y el de herrera.\nPor qué: todo sistema que use embeddings (un buscador, un RAG, un filtro de currículums) hereda sus sesgos sin que nadie se lo pida.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "embed.similar",
+            "where": {
+              "word": "aprendiz"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "femenino",
+            "accept": [
+              "femenino",
+              "femenina",
+              "genero",
+              "género"
+            ]
+          }
+        ]
+      },
       "hints": [
         "embed similar aprendiz · embed show aprendiz",
         "Una de las 6 dimensiones de aprendiz vale 0,5 cuando debería ser neutra."
       ],
-      "on_complete": "La dimensión «femenino»: le di 0,5 sin querer y ya no es neutra. En embeddings reales pasa lo mismo a gran escala: Bolukbasi et al. (2016) encontraron que word2vec completaba «hombre es a programador como mujer es a…» con «ama de casa». Cualquier sistema que use embeddings (búsqueda, selección de CVs, RAG) hereda esos sesgos: auditarlos es parte del trabajo de seguridad y gobernanza de IA."
+      "on_complete": "La dimensión «femenino»: le di 0,5 sin querer y ya no es neutra. En embeddings reales pasa lo mismo a gran escala: Bolukbasi et al. (2016) encontraron que word2vec completaba «hombre es a programador como mujer es a…» con «ama de casa». Cualquier sistema que use embeddings (búsqueda, selección de currículums, RAG (Retrieval-Augmented Generation)) hereda esos sesgos: auditarlos es parte del trabajo de seguridad y gobernanza de IA (Inteligencia Artificial)."
     },
     {
       "id": "o6",
       "text": "Dibuja las palabras en las dimensiones persona (horizontal) y femenino (vertical).",
-      "teach": "Dibujar palabras\nPara ver las palabras en dos dimensiones del embedding: embed plot --x <dimensión> --y <dimensión>, por ejemplo embed plot --x arma --y metal. Las dimensiones se llaman arma, metal, persona, femenino, calor y herramienta (las ves en embed show y embed list).",
-      "validator": { "type": "event", "event": "viz.scatter", "where": { "dataset": "embeddings", "x": "persona", "y": "femenino" } },
-      "hints": ["embed plot --x persona --y femenino"],
-      "on_complete": "Verás las personas separadas por género, y aprendiz en medio, donde no debería estar. Con embeddings reales de cientos de dimensiones se usan técnicas de proyección (PCA, t-SNE, UMAP) para dibujarlos en 2D, perdiendo información."
+      "teach": "Dibujar palabras\nPara ver las palabras en dos dimensiones del embedding: embed plot --x <dimensión> --y <dimensión>, por ejemplo embed plot --x arma --y metal.\nLas dimensiones se llaman arma, metal, persona, femenino, calor y herramienta.\nPor qué: un dibujo deja ver de un vistazo grupos y sesgos que en una tabla de números se escapan.",
+      "validator": {
+        "type": "event",
+        "event": "viz.scatter",
+        "where": {
+          "dataset": "embeddings",
+          "x": "persona",
+          "y": "femenino"
+        }
+      },
+      "hints": [
+        "embed plot --x persona --y femenino"
+      ],
+      "on_complete": "Verás las personas separadas por género, y aprendiz en medio, donde no debería estar. Con embeddings reales de cientos de dimensiones se usan técnicas de proyección como PCA (Principal Component Analysis), t-SNE (t-distributed Stochastic Neighbor Embedding) o UMAP (Uniform Manifold Approximation and Projection) para dibujarlos en 2D, perdiendo información."
     },
     {
       "id": "o7",
-      "text": "Explica con tus palabras qué es un embedding, para qué sirve la similitud coseno y qué riesgo has descubierto con «aprendiz». (reflexion <texto>, mínimo 30 palabras)",
-      "validator": { "type": "reflection", "min_words": 30 },
-      "hints": ["Tres ideas: palabra → vector; cercanía = parecido de significado; los vectores heredan sesgos de sus datos.", "Conéctalo con un uso real: búsqueda semántica o RAG."]
+      "text": "Una empresa usa estos embeddings en un buscador de candidatos para sus vacantes. ¿Qué riesgo has descubierto con «aprendiz»?",
+      "teach": "Del laboratorio al mundo real\nPiensa en un buscador que compara el texto de cada vacante con el de cada candidato usando la similitud coseno.\nPor qué: decidir si un sistema de IA (Inteligencia Artificial) es justo empieza por mirar qué hay dentro de sus vectores.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "que el buscador puede favorecer o perjudicar a personas por su género sin que nadie lo haya pedido"
+        },
+        {
+          "id": "b",
+          "text": "ninguno: los vectores son matemáticas, y las matemáticas son neutrales",
+          "why": "Las cuentas son correctas, pero los números del vector vienen de los datos o de quien los diseñó: aprendiz recibió 0,5 de «femenino»."
+        },
+        {
+          "id": "c",
+          "text": "que la similitud coseno está mal calculada",
+          "why": "El cálculo es correcto. El problema está en los números del vector, no en la fórmula."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "Recuerda a quién se parecía «aprendiz» y por qué.",
+        "answer a"
+      ],
+      "on_complete": "Exacto. El sesgo no está en la fórmula, está en los vectores, y viaja a todo sistema que los use. Por eso se auditan."
+    },
+    {
+      "id": "py1",
+      "text": "Escribe en Python la similitud coseno: abre el editor con py, completa la función coseno y compruébala con py check.",
+      "teach": "El coseno, con tus manos\nEl código ya calcula el producto escalar (punto) y la longitud de cada vector (norma_a y norma_b).\nTe falta la última cuenta: (a·b) / (|a|·|b|).\nEn Python, math.sqrt(x) es la raíz cuadrada y sum(lista) suma una lista.\nPor qué: es la función que ejecuta una base de datos vectorial millones de veces para decidir qué documentos recupera un RAG (Retrieval-Augmented Generation).",
+      "py_exercise": {
+        "id": "T5-02-coseno",
+        "title": "coseno(a, b): la similitud coseno entre dos vectores",
+        "function": "coseno",
+        "starter": "# Ejercicio T5-02 · La similitud coseno\n# a y b son dos vectores (listas de números) de la misma longitud.\n# El coseno es el producto escalar dividido entre el producto de las dos longitudes.\nimport math\n\ndef coseno(a, b):\n    punto = 0\n    for x, y in zip(a, b):\n        punto += x * y\n    norma_a = math.sqrt(sum([x * x for x in a]))\n    norma_b = math.sqrt(sum([y * y for y in b]))\n    return punto   # ← cambia esta línea\n\n# fuego y hielo apuntan al revés: debería imprimir -1.0\nprint(coseno([0, 0, 0, 0, 1.0, 0], [0, 0, 0, 0, -0.8, 0]))\n",
+        "cases": [
+          {
+            "args": [
+              [
+                0,
+                0,
+                0,
+                0,
+                1.0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                -0.8,
+                0
+              ]
+            ],
+            "expected": -1.0,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              [
+                1.0,
+                0.8,
+                0,
+                0,
+                0.05,
+                0.3
+              ],
+              [
+                0.98,
+                0.82,
+                0,
+                0,
+                0.03,
+                0.25
+              ]
+            ],
+            "expected": 0.998977,
+            "tolerance": 1e-05
+          },
+          {
+            "args": [
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "expected": 0.0,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                4
+              ]
+            ],
+            "expected": 1.0,
+            "tolerance": 1e-06
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T5-02-coseno",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Divide punto entre el producto de las dos normas. Usa paréntesis para multiplicar primero.",
+        "La línea queda así: return punto / (norma_a * norma_b)"
+      ],
+      "on_complete": "Ya tienes la similitud coseno en código: el segundo caso son katana y espada (0,999). Fíjate en el último: [1, 2] y [2, 4] dan 1, aunque uno es el doble de largo. Es exactamente lo que hace embed compare."
     }
   ],
   "mastery_trial": {
@@ -101,22 +376,51 @@
       {
         "id": "d1",
         "text": "Busca los vecinos de «katana» usando la distancia EUCLÍDEA en lugar del coseno. ¿Qué palabra queda en TERCER lugar? (answer <palabra>)",
-        "validator": { "type": "all", "of": [
-          { "type": "event", "event": "embed.similar", "where": { "word": "katana", "metric": "euclidean" } },
-          { "type": "answer", "expected": "lanza", "accept": ["lanza"] }
-        ] },
-        "hints": ["embed similar tiene una opción para la métrica.", "embed similar katana --metric euclidean"],
+        "validator": {
+          "type": "all",
+          "of": [
+            {
+              "type": "event",
+              "event": "embed.similar",
+              "where": {
+                "word": "katana",
+                "metric": "euclidean"
+              }
+            },
+            {
+              "type": "answer",
+              "expected": "lanza",
+              "accept": [
+                "lanza"
+              ]
+            }
+          ]
+        },
+        "hints": [
+          "embed similar tiene una opción para la métrica.",
+          "embed similar katana --metric euclidean"
+        ],
         "on_complete": "lanza, mientras que con el coseno el tercero es escudo. La métrica cambia el ranking: la euclídea tiene en cuenta la longitud de los vectores y el coseno solo su dirección. En una base de datos vectorial real, elegir la métrica es una decisión de diseño que afecta a qué documentos recupera un RAG."
       }
     ]
   },
   "debrief": {
     "what_happened": "Has representado palabras como vectores, has buscado vecinos semánticos, has comparado direcciones con la similitud coseno, has hecho aritmética de significados y has detectado un sesgo codificado en un vector.",
-    "why": "Los embeddings son la primera capa de cualquier LLM y la base de la búsqueda semántica, los sistemas RAG y las bases de datos vectoriales. En seguridad, son una superficie de ataque: se puede manipular qué recupera un RAG, y en ciertas condiciones se puede reconstruir texto a partir de sus embeddings (lo verás en el arco A2).",
-    "in_production": "Los embeddings reales se aprenden: word2vec y GloVe para palabras; hoy, modelos de embeddings de frases (por ejemplo, los de sentence-transformers o las APIs de embeddings) con cientos o miles de dimensiones. Se guardan en bases de datos vectoriales y se buscan con índices aproximados (ANN) usando similitud coseno o producto escalar.",
-    "simplifications": ["Vectores de 6 dimensiones diseñados a mano y con nombre", "Embeddings de palabras sueltas, no de frases ni dependientes del contexto"],
+    "why": "Los embeddings son la primera capa de cualquier LLM (Large Language Model) y la base de la búsqueda semántica, los sistemas RAG (Retrieval-Augmented Generation) y las bases de datos vectoriales. En seguridad, son una superficie de ataque: se puede manipular qué recupera un RAG y, en ciertas condiciones, reconstruir texto a partir de sus embeddings (lo verás en el arco A2).",
+    "in_production": "Los embeddings reales se aprenden: word2vec y GloVe para palabras; hoy, modelos de embeddings de frases (por ejemplo, los de sentence-transformers o los que ofrecen las API (Application Programming Interface) de embeddings) con cientos o miles de dimensiones. Se guardan en bases de datos vectoriales y se buscan con índices ANN (Approximate Nearest Neighbors) usando similitud coseno o producto escalar.",
+    "simplifications": [
+      "Vectores de 6 dimensiones diseñados a mano y con nombre",
+      "Embeddings de palabras sueltas, no de frases ni dependientes del contexto"
+    ],
     "exercise": "forja/ejercicios/T5_02_embeddings.py"
   },
-  "further_reading": ["ref.mikolov-2013", "ref.bolukbasi-2016"],
-  "xp": { "base": 150 }
+  "further_reading": [
+    "ref.mikolov-2013",
+    "ref.bolukbasi-2016"
+  ],
+  "xp": {
+    "base": 150
+  },
+  "purpose": "Un id de token no dice nada del significado. Un LLM (Large Language Model) convierte cada token en un embedding: un vector en el que las palabras parecidas quedan cerca. Un RAG (Retrieval-Augmented Generation) usa la misma idea para buscar: convierte la pregunta y los documentos en vectores y recupera los más parecidos con la similitud coseno. Hoy calculas esa similitud y descubres que los vectores también heredan sesgos.",
+  "you_can_now": "Sabes qué es un embedding, calcular la similitud coseno a mano y en Python, y detectar un sesgo escondido en un vector. Siguiente: T5-03, donde usarás tokens y embeddings para ver cómo un atacante esquiva un filtro de palabras prohibidas."
 }

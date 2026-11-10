@@ -1,0 +1,346 @@
+{
+  "id": "T5-03",
+  "schema_version": 1,
+  "title": "Disfraces de texto",
+  "unit": "T5",
+  "difficulty": 2,
+  "plane": "dojo",
+  "epistemic": "modelo-simplificado",
+  "estimated_minutes": 20,
+  "requires_missions": [
+    "T5-02"
+  ],
+  "competencies": {
+    "requires": [
+      "T5.tokenizacion",
+      "T5.embeddings"
+    ],
+    "trains": [
+      "T5.aplicar-tokens-seguridad"
+    ]
+  },
+  "briefing": "La forja ha decidido no aceptar pedidos de katanas por el chatbot: solo en persona. Para impedirlo, alguien ha puesto delante del chatbot un filtro muy sencillo: si el mensaje contiene el token de «katana», lo bloquea. Un cliente impaciente quiere saltárselo. Vas a usar lo que aprendiste en T5-01 y T5-02 para ver cómo lo consigue y qué filtro aguantaría mejor.",
+  "learning_objectives": [
+    "Explicar por qué un filtro de palabras prohibidas falla con mayúsculas, espacios y sinónimos",
+    "Comparar un filtro por tokens con un filtro por significado (embeddings)",
+    "Escribir en Python un filtro que normaliza el texto antes de comprobarlo"
+  ],
+  "mentor_intro": "Misión aplicada: tokens y embeddings contra un atacante de verdad (ficticio). Vamos paso a paso.",
+  "purpose": "Muchos chatbots hechos con un LLM (Large Language Model) tienen delante un filtro de palabras prohibidas: si el mensaje contiene «ignora tus instrucciones» o un tema vetado, lo bloquean. Los atacantes los esquivan disfrazando el texto: otras mayúsculas, letras separadas, sinónimos. Hoy ves por qué funciona ese truco con un tokenizador y unos embeddings, y en A1 lo usarás contra un chatbot completo.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Tokeniza el mensaje «quiero una katana» con el tokenizador de 200 fusiones. ¿Qué id tiene el token ▁katana? (answer <número>)",
+      "teach": "Un filtro de palabras prohibidas\nEl filtro de la forja tokeniza cada mensaje y lo bloquea si aparece el id del token ▁katana.\nSi no tienes el tokenizador de T5-01, entrénalo otra vez: tokenizer train t200 --merges 200\nDespués: tokenize t200 quiero una katana\nPor qué: muchos filtros reales funcionan así, buscando palabras o tokens exactos de una lista negra.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "tokenize.done",
+            "where": {
+              "merges": 200,
+              "text": "quiero una katana"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 93,
+            "tolerance": 0
+          }
+        ]
+      },
+      "wrong_answer": "Mira la línea «ids»: cada número corresponde, en orden, a un token de la línea de arriba. Busca el de ▁katana.",
+      "hints": [
+        "tokenizer train t200 --merges 200  y después  tokenize t200 quiero una katana",
+        "▁katana es el último token: su id es el último número de la línea «ids»."
+      ],
+      "on_complete": "93. Ese es el número que busca el filtro. Fíjate también en que «quiero» se parte en 5 trozos: no está en el corpus, pero se puede escribir con trozos conocidos."
+    },
+    {
+      "id": "o2",
+      "text": "El cliente prueba con mayúsculas. Tokeniza «quiero una KATANA» con el mismo tokenizador.",
+      "teach": "Primer disfraz: mayúsculas\nPara una persona, «katana» y «KATANA» son la misma palabra. Para el tokenizador, son trozos distintos.\nComando: tokenize t200 quiero una KATANA\nPor qué: cambiar el formato sin cambiar el significado es el truco más antiguo para esquivar filtros.",
+      "prediction": {
+        "prompt": "¿Aparecerá el token 93 (▁katana)?",
+        "options": [
+          "sí, aparece el 93",
+          "no, desaparece"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "tokenize.done",
+        "where": {
+          "merges": 200,
+          "text": "quiero una KATANA"
+        }
+      },
+      "hints": [
+        "tokenize t200 quiero una KATANA"
+      ],
+      "on_complete": "Compara con tu predicción: ya no hay ningún 93. «KATANA» se ha partido en letras sueltas y dos desconocidos (<?>). El filtro no ve nada y deja pasar el mensaje."
+    },
+    {
+      "id": "o3",
+      "text": "¿Por qué el filtro deja pasar «quiero una KATANA»?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque el filtro estaba desactivado",
+          "why": "El filtro funciona: busca el 93, y el 93 no está."
+        },
+        {
+          "id": "b",
+          "text": "porque los tokens de «KATANA» son otros: el id 93 no aparece"
+        },
+        {
+          "id": "c",
+          "text": "porque un LLM no entiende las mayúsculas, así que el mensaje es inofensivo",
+          "why": "Un LLM real entiende «KATANA» perfectamente: se ha entrenado con textos en mayúsculas. El mensaje sigue siendo un pedido de katana."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "El filtro busca un id concreto. ¿Está en la nueva lista de ids?",
+        "answer b"
+      ],
+      "on_complete": "Exacto. El filtro y el LLM leen el texto de forma distinta: el filtro busca un token exacto; el LLM entiende el significado. El atacante vive en ese hueco."
+    },
+    {
+      "id": "o4",
+      "text": "Segundo disfraz: letras separadas. Tokeniza «quiero una k a t a n a».",
+      "teach": "Segundo disfraz: separar las letras\nSeparar las letras con espacios convierte una palabra en muchas «palabras» de una letra.\nComando: tokenize t200 quiero una k a t a n a\nPor qué: es una técnica real para colar palabras vetadas; los LLM grandes leen «k a t a n a» y entienden «katana».",
+      "prediction": {
+        "prompt": "¿Cuántos tokens crees que tendrá ahora «k a t a n a»?",
+        "options": [
+          "1, como antes",
+          "unos 6, uno por letra"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "tokenize.done",
+        "where": {
+          "merges": 200,
+          "text": "quiero una k a t a n a"
+        }
+      },
+      "hints": [
+        "tokenize t200 quiero una k a t a n a"
+      ],
+      "on_complete": "Compara con tu predicción: «k a t a n a» son 8 tokens, ninguno el 93. El filtro vuelve a fallar. Y un LLM grande la entiende igual de bien: lo has visto pasar con palabras inventadas como «katanaforjada»."
+    },
+    {
+      "id": "o5",
+      "text": "Tercer disfraz: un sinónimo. El cliente escribe «quiero una espada». Un filtro más listo compara SIGNIFICADOS: mide la similitud coseno entre katana y espada. (answer <número>, 3 decimales)",
+      "teach": "Un filtro por significado\nEn lugar de buscar el token exacto, este filtro compara el embedding de cada palabra del mensaje con el de «katana». Si la similitud coseno pasa de 0,9, lo bloquea.\nComando: embed compare katana espada\nPor qué: así funcionan los detectores modernos: comparan vectores, no letras, y por eso son más difíciles de engañar con disfraces.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "embed.compare",
+            "where": {
+              "a": {
+                "in": [
+                  "katana",
+                  "espada"
+                ]
+              },
+              "b": {
+                "in": [
+                  "katana",
+                  "espada"
+                ]
+              }
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.999,
+            "tolerance": 0.002
+          }
+        ]
+      },
+      "wrong_answer": "Mira la línea «similitud coseno» de embed compare: el último número.",
+      "hints": [
+        "embed compare katana espada",
+        "Es el último número de la línea «similitud coseno»."
+      ],
+      "on_complete": "0,999: casi la misma dirección. Por tokens, «espada» no se parece en nada a «katana»; por significado, es casi lo mismo. Este filtro sí lo bloquea."
+    },
+    {
+      "id": "o6",
+      "text": "Ahora un cliente legítimo pregunta por un martillo. Mide la similitud coseno entre katana y martillo. ¿Lo bloquearía el filtro con umbral 0,9? (answer <número>, 3 decimales)",
+      "teach": "No bloquear a los buenos\nUn filtro que bloquea demasiado espanta a los clientes. Es el falso positivo de T3: decir «ataque» cuando no lo es.\nComando: embed compare katana martillo\nPor qué: todo filtro de seguridad se ajusta con dos cuentas a la vez: cuántos ataques para y cuántos mensajes buenos bloquea por error.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "embed.compare",
+            "where": {
+              "a": {
+                "in": [
+                  "katana",
+                  "martillo"
+                ]
+              },
+              "b": {
+                "in": [
+                  "katana",
+                  "martillo"
+                ]
+              }
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.602,
+            "tolerance": 0.002
+          }
+        ]
+      },
+      "wrong_answer": "Mira la línea «similitud coseno» de embed compare katana martillo.",
+      "hints": [
+        "embed compare katana martillo",
+        "Es el último número de la línea «similitud coseno»."
+      ],
+      "on_complete": "0,602, por debajo de 0,9: el martillo pasa. El umbral separa lo que se parece de verdad a una katana de lo que solo comparte el metal."
+    },
+    {
+      "id": "o7",
+      "text": "¿Qué combinación protege mejor el chatbot de la forja?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "una lista negra más larga, con «KATANA», «Katana» y «k a t a n a»",
+          "why": "El atacante siempre puede inventar otro disfraz (k-a-t-a-n-a, k@tana…). Una lista de variantes nunca está completa."
+        },
+        {
+          "id": "b",
+          "text": "normalizar el texto (minúsculas, quitar disfraces) y además comparar por significado, sabiendo que ningún filtro es perfecto"
+        },
+        {
+          "id": "c",
+          "text": "ninguna: el filtro por significado ya es perfecto",
+          "why": "Se le puede engañar con frases que no usan ninguna palabra cercana, y el umbral siempre deja algo fuera. Por eso se combinan defensas."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Piensa en qué falló cada vez: el formato, y después el significado.",
+        "answer b"
+      ],
+      "on_complete": "Eso es: capas. Normalizar quita los disfraces baratos, el significado atrapa los sinónimos, y aun así hacen falta más defensas detrás del filtro: las verás en A1."
+    },
+    {
+      "id": "py1",
+      "text": "Escribe en Python la primera capa: un filtro que pasa el texto a minúsculas antes de buscar la palabra prohibida. Abre el editor con py, completa la función filtro y compruébala con py check.",
+      "teach": "Normalizar, con tus manos\nNormalizar es pasar el texto a una forma única antes de comprobarlo. La más sencilla: todo en minúsculas.\nEn Python, texto.lower() devuelve el texto en minúsculas: \"KATANA\".lower() da \"katana\". Y texto.split() lo corta en palabras, como en T5-01.\nPor qué: es la primera línea de cualquier filtro serio, y la escribirías así en un sistema real.",
+      "py_exercise": {
+        "id": "T5-03-filtro",
+        "title": "filtro(texto, prohibidas): True si el mensaje contiene una palabra prohibida",
+        "function": "filtro",
+        "starter": "# Ejercicio T5-03 · Un filtro que no se deja engañar por las mayúsculas\n# texto es un mensaje; prohibidas, una lista de palabras en minúsculas.\n# Devuelve True si alguna palabra del mensaje está en la lista, y False si no.\n# Ahora mismo, \"KATANA\" se le escapa: pasa el texto a minúsculas antes de cortarlo.\n\ndef filtro(texto, prohibidas):\n    palabras = texto.split()   # ← cambia esta línea\n    for p in palabras:\n        if p in prohibidas:\n            return True\n    return False\n\n# Debería imprimir True:\nprint(filtro(\"quiero una KATANA\", [\"katana\"]))\n",
+        "cases": [
+          {
+            "args": [
+              "quiero una katana",
+              [
+                "katana"
+              ]
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "quiero una KATANA",
+              [
+                "katana"
+              ]
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "Quiero Una Katana",
+              [
+                "katana",
+                "espada"
+              ]
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "quiero un martillo",
+              [
+                "katana"
+              ]
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              "quiero una ESPADA",
+              [
+                "katana",
+                "espada"
+              ]
+            ],
+            "expected": true
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T5-03-filtro",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Encadena los dos métodos: primero lower() y después split().",
+        "La línea queda así: palabras = texto.lower().split()"
+      ],
+      "on_complete": "Tu filtro ya no se deja engañar por las mayúsculas. Pero «k a t a n a» le sigue ganando, igual que cualquier sinónimo que no esté en la lista: por eso detrás de esta capa van otras."
+    }
+  ],
+  "you_can_now": "Sabes explicar por qué un filtro de palabras prohibidas falla con mayúsculas, letras separadas y sinónimos, comparar un filtro por tokens con uno por significado y escribir la normalización en Python. Siguiente: T6-01, cómo elige un LLM (Large Language Model) la siguiente palabra.",
+  "debrief": {
+    "what_happened": "Has visto cómo un filtro por tokens deja pasar el mismo mensaje con otras mayúsculas o con las letras separadas, cómo un filtro por significado atrapa un sinónimo sin bloquear un mensaje legítimo, y has escrito la normalización en Python.",
+    "why": "El filtro y el LLM leen el texto de forma distinta: el filtro busca formas exactas y el LLM entiende el significado. Todo disfraz que el LLM entiende y el filtro no reconoce es una forma de evasión.",
+    "in_production": "Los ataques reales usan más disfraces: caracteres Unicode que se parecen a letras normales, caracteres invisibles, otros idiomas o codificaciones como Base64. Por eso los sistemas serios normalizan el texto, usan clasificadores entrenados sobre el significado y, aun así, ponen más defensas detrás, porque ningún filtro es completo.",
+    "simplifications": [
+      "Tokenizador entrenado con un corpus diminuto",
+      "Filtro por significado palabra a palabra, con embeddings de 6 dimensiones diseñados a mano"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-llm-2025",
+    "ref.unicode-uts39"
+  ],
+  "xp": {
+    "base": 100
+  }
+}

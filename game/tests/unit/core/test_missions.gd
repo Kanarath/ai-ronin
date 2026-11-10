@@ -259,17 +259,16 @@ func test_mision_T4_02_completa() -> void:
 	assert_true(finished[0]["trial_passed"])
 
 
-const R40 := "reflexion un modelo de lenguaje calcula la probabilidad del siguiente token elige uno lo añade y repite la temperatura concentra o aplana la distribucion y top p recorta la cola el modelo genera lo plausible y no lo verdadero por eso alucina y si tiene poco texto memoriza y copia literalmente sus datos de entrenamiento como vimos"
-
-
 func test_mision_T5_01_completa() -> void:
 	game.progress.data["missions"]["T4-01"] = {"completed": true}
 	assert_eq(game.start_mission("T5-01"), "")
 	run(["tokenizer train t0 --merges 0", "tokenize t0 la katana del maestro", "answer 22"])
 	run(["hipotesis unos 4", "tokenizer train t200 --merges 200", "tokenize t200 la katana del maestro", "answer 4"])
+	run(["answer b"])
 	run(["hipotesis más tokens", "tokenize t200 La Katana del Maestro", "answer 9"])
 	run(["hipotesis unos 20", "tokenize t200 the sword of the master", "answer 19"])
-	run(["reflexion un token es un trozo de texto que el modelo ve como un numero bpe fusiona los pares mas frecuentes del corpus y por eso las palabras comunes son un token las mayusculas y otros idiomas gastan mas tokens y cuestan mas"])
+	run(["answer b"])
+	solve_py(PY_TOKENIZAR)
 	assert_eq(game.runner.phase, "trial")
 	run(["tokenize t200 katanaforjada", "answer 4"])
 	assert_eq(finished.size(), 1)
@@ -281,10 +280,12 @@ func test_mision_T5_02_completa() -> void:
 	assert_eq(game.start_mission("T5-02"), "")
 	run(["embed show katana", "embed similar katana", "answer espada"])
 	run(["hipotesis cerca de −1", "embed compare fuego hielo", "answer -1"])
+	run(["answer a"])
 	run(["hipotesis maestra", "embed analogy maestro hombre mujer"])
 	run(["embed similar aprendiz", "embed show aprendiz", "answer femenino"])
 	run(["embed plot --x persona --y femenino"])
-	run(["reflexion un embedding es un vector que representa el significado de una palabra la similitud coseno mide si dos vectores apuntan en la misma direccion y aprendiz muestra que los vectores pueden heredar sesgos de genero de quien los crea o de sus datos"])
+	run(["answer a"])
+	solve_py(PY_COSENO)
 	assert_eq(game.runner.phase, "trial")
 	run(["embed similar katana --metric euclidean", "answer lanza"])
 	assert_eq(finished.size(), 1)
@@ -292,15 +293,17 @@ func test_mision_T5_02_completa() -> void:
 
 
 func test_mision_T6_01_completa() -> void:
-	game.progress.data["missions"]["T5-01"] = {"completed": true}
+	game.progress.data["missions"]["T5-03"] = {"completed": true}
 	assert_eq(game.start_mission("T6-01"), "")
 	run(["lm train lm2 --order 2", "lm next lm2 la", "answer forja"])
 	run(["hipotesis se concentra en el más probable", "lm next lm2 la --temperature 0.1", "answer 0.824"])
 	run(["hipotesis se repite en bucle", "lm generate lm2 el maestro --temperature 0 --tokens 12"])
 	run(["lm generate lm2 el maestro --temperature 1 --seed 1", "lm generate lm2 el maestro --temperature 1 --seed 2"])
+	run(["answer b"])
 	run(["lm next lm2 la --top-p 0.5", "answer 3"])
 	run(["hipotesis trozos copiados del corpus", "lm train lm3 --order 3", "lm generate lm3 el maestro --temperature 1 --seed 1 --tokens 15"])
-	run([R40])
+	run(["answer a"])
+	solve_py(PY_SOFTMAX)
 	assert_eq(game.runner.phase, "trial")
 	run(["lm next lm2 la --temperature 2", "answer 0.124"])
 	assert_eq(finished.size(), 1)
@@ -312,10 +315,12 @@ func test_mision_T6_02_completa() -> void:
 	game.progress.data["missions"]["T6-01"] = {"completed": true}
 	assert_eq(game.start_mission("T6-02"), "")
 	run(["attention herrera martillo katana fuego agua", "answer martillo"])
+	run(["answer a"])
 	run(["hipotesis solo a sí misma", "attention herrera martillo katana fuego agua --causal", "answer 1"])
 	run(["hipotesis más extremos (más concentrados)", "attention herrera martillo katana fuego agua --no-scale"])
 	run(["attention katana espada daga lanza arco escudo acero hierro fuego agua", "answer 100"])
-	run(["reflexion la self attention puntua cada par de palabras con el producto escalar normaliza con softmax y mezcla los valores la mascara causal impide mirar al futuro como en los llm que generan texto y la ventana es limitada porque el coste crece con el cuadrado del numero de tokens"])
+	run(["answer b"])
+	solve_py(PY_ATENCION)
 	assert_eq(game.runner.phase, "trial")
 	run(["attention herrera martillo katana --causal", "answer 0.31"])
 	assert_eq(finished.size(), 1)
@@ -486,3 +491,92 @@ func test_python_errores_con_linea() -> void:
 	var r := game.shell.execute("py run")
 	assert_true(r.plain_text().contains("NameError"), r.plain_text())
 	assert_true(r.plain_text().contains("línea 2"), r.plain_text())
+
+
+# --- T5/T6 ---
+
+const PY_TOKENIZAR := "def tokenizar(texto):\n    return texto.split()\n"
+const PY_COSENO := "import math\n\ndef coseno(a, b):\n    punto = 0\n    for x, y in zip(a, b):\n        punto += x * y\n    norma_a = math.sqrt(sum([x * x for x in a]))\n    norma_b = math.sqrt(sum([y * y for y in b]))\n    return punto / (norma_a * norma_b)\n"
+const PY_SOFTMAX := "import math\n\ndef softmax(puntuaciones):\n    exps = [math.exp(s) for s in puntuaciones]\n    total = sum(exps)\n    return [e / total for e in exps]\n"
+const PY_ATENCION := "import math\n\ndef softmax(puntuaciones):\n    exps = [math.exp(s) for s in puntuaciones]\n    total = sum(exps)\n    return [e / total for e in exps]\n\ndef pesos_atencion(q, claves):\n    puntuaciones = []\n    for k in claves:\n        punto = sum([x * y for x, y in zip(q, k)])\n        puntuaciones.append(punto / math.sqrt(len(q)))\n    return softmax(puntuaciones)\n"
+const PY_FILTRO := "def filtro(texto, prohibidas):\n    palabras = texto.lower().split()\n    for p in palabras:\n        if p in prohibidas:\n            return True\n    return False\n"
+const PY_DILUCION := "import math\n\ndef peso_oculto(s_oculta, s_relleno, n):\n    e_oculta = math.exp(s_oculta)\n    e_relleno = math.exp(s_relleno)\n    total = e_oculta + n * e_relleno\n    return e_oculta / total\n"
+
+
+## Ejercicio de Python (py1) de una misión, tal como lo corrige py check.
+func _py_spec(mission_id: String) -> Dictionary:
+	for o: Dictionary in game.catalog.get_mission(mission_id)["objectives"]:
+		if o.has("py_exercise"):
+			return PyCommands._int_spec(o["py_exercise"])
+	return {}
+
+
+func test_T5_T6_soluciones_pasan_y_codigo_inicial_no() -> void:
+	var sols := {"T5-01": PY_TOKENIZAR, "T5-02": PY_COSENO, "T5-03": PY_FILTRO, "T6-01": PY_SOFTMAX, "T6-02": PY_ATENCION, "T6-03": PY_DILUCION}
+	for id: String in sols:
+		var spec := _py_spec(id)
+		assert_false(spec.is_empty(), "%s tiene paso de Python" % id)
+		var ok := PyExercise.check(sols[id], spec)
+		assert_eq(ok["passed"], ok["total"], "%s: la solución pasa todos los casos" % id)
+		var start := PyExercise.check(spec["starter"], spec)
+		assert_true(start["ok"], "%s: el código inicial se ejecuta sin errores" % id)
+		assert_true(start["passed"] < start["total"], "%s: el código inicial NO pasa" % id)
+		# El print de prueba del código inicial tampoco debe fallar con la solución puesta.
+		assert_true(PyInterpreter.new().run(sols[id], 200000)["ok"])
+
+
+func test_T5_T6_cada_mision_tiene_para_que_comprobacion_y_cierre() -> void:
+	for id in ["T5-01", "T5-02", "T5-03", "T6-01", "T6-02", "T6-03"]:
+		var m := game.catalog.get_mission(id)
+		assert_true(m.has("purpose") and m.has("you_can_now"), id)
+		var checks := 0
+		for o: Dictionary in m["objectives"]:
+			assert_ne(o["validator"]["type"], "reflection", "%s/%s: sin reflexiones escritas" % [id, o["id"]])
+			if o.has("choices"):
+				checks += 1
+			if o.has("teach"):
+				assert_true(o["teach"].contains("Por qué:"), "%s/%s: teach con «Por qué:»" % [id, o["id"]])
+		assert_true(checks >= 1, "%s: al menos una comprobación" % id)
+
+
+func test_mision_T5_03_aplicada_completa() -> void:
+	assert_ne(game.start_mission("T5-03"), "", "bloqueada sin T5-02")
+	game.progress.data["missions"]["T5-02"] = {"completed": true}
+	assert_eq(game.start_mission("T5-03"), "")
+	run(["tokenizer train t200 --merges 200", "tokenize t200 quiero una katana", "answer 93"])
+	run(["hipotesis no", "tokenize t200 quiero una KATANA"])
+	run(["answer c"])
+	assert_true(mentor_said("entiende «KATANA» perfectamente"), "la opción incorrecta explica por qué")
+	run(["answer b"])
+	run(["hipotesis unos 6", "tokenize t200 quiero una k a t a n a"])
+	run(["embed compare katana espada", "answer 0.999"])
+	run(["embed compare katana martillo", "answer 0.602"])
+	run(["answer b"])
+	assert_eq(game.runner.index, 7)
+	solve_py(PY_FILTRO)
+	assert_eq(finished.size(), 1)
+	assert_true(mentor_said("Qué puedes hacer ya"))
+	assert_eq(game.mission_status("T6-01"), "disponible", "T6-01 se abre tras la aplicada")
+
+
+func test_T6_01_requiere_la_aplicada_T5_03() -> void:
+	game.progress.data["missions"]["T5-02"] = {"completed": true}
+	assert_ne(game.start_mission("T6-01"), "")
+	assert_eq(game.mission_status("T6-01"), "bloqueada")
+
+
+func test_mision_T6_03_aplicada_completa() -> void:
+	assert_ne(game.start_mission("T6-03"), "", "bloqueada sin T6-02")
+	game.progress.data["missions"]["T6-02"] = {"completed": true}
+	assert_eq(game.start_mission("T6-03"), "")
+	run(["attention katana espada fuego agua hielo brasa horno", "answer 0.22"])
+	run(["hipotesis se queda igual", "attention katana fuego agua hielo brasa horno espada", "answer 0.22"])
+	run(["answer a"])
+	run(["hipotesis sí", "attention fuego agua hielo brasa horno espada katana --causal", "answer 0.22"])
+	run(["answer b"])
+	assert_true(mentor_said("la distancia no cambia el peso"), "la opción incorrecta explica por qué")
+	run(["answer a", "answer b"])
+	assert_eq(game.runner.index, 6)
+	solve_py(PY_DILUCION)
+	assert_eq(finished.size(), 1)
+	assert_true(mentor_said("Qué puedes hacer ya"))
