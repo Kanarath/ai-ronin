@@ -1,0 +1,8 @@
+{
+  "nota": "Trastienda ficticia de la forja Kurogane (laboratorio A3-04). Los mismos pedidos que en A3-01…03. Correos y teléfonos inventados, de dominios .example.",
+  "pedidos": {
+    "P-101": {"cliente": "aiko@clientes.example", "telefono": "600 000 101", "articulo": "Katana Kurogane básica", "importe": 800, "estado": "entregado", "nota_cliente": "La funda llegó con un pequeño arañazo."},
+    "P-102": {"cliente": "kenji@clientes.example", "telefono": "600 000 102", "articulo": "Katana Kurogane maestra", "importe": 2400, "estado": "entregado", "nota_cliente": "Entregar por la tarde, por favor."},
+    "P-103": {"cliente": "mei@clientes.example", "telefono": "600 000 103", "articulo": "Encargo a medida", "importe": 3200, "estado": "en forja", "nota_cliente": "Grabado del kanji 鋼 en la habaki."}
+  }
+}
