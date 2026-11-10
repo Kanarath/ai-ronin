@@ -155,6 +155,15 @@
       "tests_sha256": "e31f920f7877729fd473854a3b9b2f2f7cb29a5b559be143ab5d2717c8a693b4"
     },
     {
+      "id": "A1-05",
+      "file": "chatbot.py",
+      "test_file": "test_chatbot.py",
+      "test_path": "forja/labs/A1-05_chatbot/test_chatbot.py",
+      "total_tests": 19,
+      "tests_sha256": "6d6752667ae4bcbaaaaecb8a7fbde0aed5fdcb4f64a99b08de4c72499c265193",
+      "battery_sha256": "7b6878c2a2e3627d58aff6c108a622f8234ae1e9c2301cf5da54727b5e2c6557"
+    },
+    {
       "id": "P0-01",
       "file": "servicio.py",
       "test_file": "test_servicio.py",

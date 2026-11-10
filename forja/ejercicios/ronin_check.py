@@ -136,8 +136,12 @@ def manifiesto():
         if falta:
             raise SystemExit("No se puede importar %s (falta %s): usa el Python del entorno del laboratorio." % (test.name, falta))
         n = unittest.TestLoader().loadTestsFromName(test.stem).countTestCases()
-        lista.append({"id": ej_id, "file": fichero.name, "test_file": test.name, "test_path": _ruta_relativa(test),
-                      "total_tests": n, "tests_sha256": huella(test)})
+        entrada = {"id": ej_id, "file": fichero.name, "test_file": test.name, "test_path": _ruta_relativa(test),
+                   "total_tests": n, "tests_sha256": huella(test)}
+        bateria = test.parent / "ataques.json"
+        if bateria.exists():  # laboratorios con medición: la batería tampoco se puede retocar
+            entrada["battery_sha256"] = huella(bateria)
+        lista.append(entrada)
     datos = {"schema_version": 1, "note": "Generado con: python -m ronin_check --manifiesto (desde forja/ejercicios, con un Python que tenga las dependencias de forja/labs). No editar a mano.", "exercises": lista}
     MANIFIESTO.write_text(json.dumps(datos, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     print("Manifiesto: %d ejercicios → %s" % (len(lista), MANIFIESTO.relative_to(RAIZ)))

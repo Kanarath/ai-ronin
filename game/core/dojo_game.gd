@@ -151,7 +151,11 @@ func import_evidence(path: String) -> Dictionary:
 	if res["ok"]:
 		if res["first_verified"]:
 			progress.add_xp(EvidenceImporter.VERIFIED_XP)
-		shell.emit_event("evidence.imported", {"exercise": res["exercise"], "passed": res["passed"], "total": res["total"], "all_passed": res["all_passed"]})
+		if res["kind"] == "medicion":
+			shell.emit_event("evidence.measured", {"lab": res["exercise"], "configs": res["configs"], "has_baseline": res["has_baseline"],
+				"baseline_rate": res["baseline_rate"], "best_rate": res["best_rate"], "model": res["modelo"]})
+		else:
+			shell.emit_event("evidence.imported", {"exercise": res["exercise"], "passed": res["passed"], "total": res["total"], "all_passed": res["all_passed"]})
 		_after_xp(before)
 		save()
 	return res

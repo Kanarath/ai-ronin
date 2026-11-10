@@ -102,6 +102,11 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
 - [NIST AI 600-1: Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile](https://doi.org/10.6028/NIST.AI.600-1) — NIST, julio de 2024 · consultada 2026-11-06
 
+**A1-05 · El mostrador de verdad**
+
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [Ollama · API de chat (POST /api/chat); versión 0.40.16](https://docs.ollama.com/api/chat) — Ollama · consultada 2026-11-10
+
 ### 📖 O1 · Mentalidad red team en IA · estudio externo
 
 - **Temario:** En qué cambia la superficie de ataque; ciclo de un engagement; reglas de enfrentamiento y autorización.

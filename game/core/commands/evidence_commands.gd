@@ -1,6 +1,6 @@
 class_name EvidenceCommands
 extends RefCounted
-## Evidencias de los ejercicios de Python: importar los JSON que genera `py -m ronin_check`
+## Evidencias de los ejercicios de Python: importar los JSON que genera `python -m ronin_check`
 ## y ver qué ejercicios están verificados. Solo se leen ficheros locales; no se ejecuta nada.
 
 
@@ -35,14 +35,17 @@ static func _import(c: CommandContext, a: Dictionary) -> CommandResult:
 		ruta = EvidenceImporter.default_dir()
 	var files := PackedStringArray([ruta]) if ruta.get_extension().to_lower() == "json" else EvidenceImporter.json_files(ruta)
 	if files.is_empty():
-		return CommandResult.error("No hay evidencias en %s. Genera una desde forja/ejercicios con: py -m ronin_check T1-02" % ruta)
+		return CommandResult.error("No hay evidencias en %s. Genera una desde forja/ejercicios con: python -m ronin_check T1-02" % ruta)
 	var r := CommandResult.new()
 	r.line("Importando %d evidencia(s) de %s" % [files.size(), ruta.get_base_dir() if files.size() == 1 else ruta], "accent")
 	var data: Array = []
 	var bonus := 0
 	for f in files:
 		var res := g.import_evidence(f)
-		if res["ok"]:
+		if res["ok"] and res["kind"] == "medicion":
+			data.append([res["exercise"] + " medición", "%d configuraciones · %s" % [res["configs"], res["modelo"]], "fugas: sin defensas %s · mejor %.0f %%" % [
+				"%.0f %%" % (res["baseline_rate"] * 100) if res["has_baseline"] else "—", res["best_rate"] * 100]])
+		elif res["ok"]:
 			var state := "✓ verificado" if res["all_passed"] else "%d / %d tests" % [res["passed"], res["total"]]
 			if res["first_verified"]:
 				state += "  +%d XP" % EvidenceImporter.VERIFIED_XP
@@ -76,5 +79,9 @@ static func _list(c: CommandContext, _a: Dictionary) -> CommandResult:
 			state = "%d / %d tests" % [ev["passed"], ev["total"]]
 		data.append([id, g.evidence.exercises[id]["file"], state, ", ".join(_missions_of(g, id))])
 	r.table(PackedStringArray(["ejercicio", "fichero", "estado", "misiones"]), data)
-	r.line("%d de %d verificados. Para verificar uno: py -m ronin_check <ID> (desde forja/ejercicios) y después evidence import." % [ok, ids.size()], "muted")
+	var meas: Dictionary = g.progress.data.get("measurements", {})
+	for lab: String in meas:
+		r.line("Medición %s (%s): %s" % [lab, meas[lab]["modelo"], " · ".join(PackedStringArray(meas[lab]["configs"].map(
+			func(c: Dictionary) -> String: return "%s %d/%d" % [c["defensas"], c["exitos"], c["n"]])))], "normal")
+	r.line("%d de %d verificados. Para verificar uno: python -m ronin_check <ID> (desde forja/ejercicios) y después evidence import." % [ok, ids.size()], "muted")
 	return r

@@ -1,0 +1,27 @@
+# Laboratorio A1-05 · mostrador de Kurogane (vulnerable a propósito) + Ollama en CPU.
+# Regla de la Forja: los puertos se publican SOLO en 127.0.0.1.
+#   docker compose up -d --build
+#   docker compose exec ollama ollama pull llama3.2:1b
+# Para probar otra configuración, cambia DEFENSAS y vuelve a ejecutar: docker compose up -d
+
+services:
+  ollama:
+    image: ollama/ollama:0.40.16   # comprobada en Docker Hub el 2026-11-10
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama_datos:/root/.ollama
+
+  mostrador:
+    build: .
+    environment:
+      OLLAMA_URL: "http://ollama:11434"
+      MODELO: "llama3.2:1b"
+      DEFENSAS: ""                  # por ejemplo: "entrada,salida" o "sin-secreto"
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      - ollama
+
+volumes:
+  ollama_datos:

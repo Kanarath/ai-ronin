@@ -120,6 +120,17 @@ Antes de abrir una pista, ejecuta el test y lee el mensaje de error: suele decir
 <details><summary>🟡 extraer_respuesta</summary>Primero las comprobaciones: <code>if datos.get("done") is not True or "message" not in datos: raise ValueError(...)</code>. Después, <code>datos.get("eval_count", 0)</code> y <code>round(datos.get("total_duration", 0) / 1e9, 3)</code>.</details>
 <details><summary>🟡 preguntar</summary>Elige la temperatura (<code>ajustes.temperatura if temperatura is None else temperatura</code>), haz <code>r = await cliente.post("/api/chat", json=construir_peticion(...))</code>, luego <code>r.raise_for_status()</code> y <code>return extraer_respuesta(r.json())</code>.</details>
 
+## A1-05 · el mostrador de verdad (forja/labs/A1-05_chatbot)
+
+<details><summary>🟡 normalizar</summary>Quita tildes con <code>"".join(c for c in unicodedata.normalize("NFD", texto.lower()) if not unicodedata.combining(c))</code>. Después recorre los caracteres: los que cumplen <code>c.isalnum()</code> van formando una palabra y cualquier otro la cierra. Al final, <code>" ".join(palabras)</code> o <code>"".join(palabras)</code>.</details>
+<details><summary>🟢 contiene_secreto</summary>Una línea: <code>normalizar(secreto, espacios=False) in normalizar(texto, espacios=False)</code>.</details>
+<details><summary>🟢 filtrar_entrada</summary>Normaliza una vez y recorre <code>patrones</code> en orden; devuelve en cuanto encuentres el primero.</details>
+<details><summary>🟢 filtrar_salida</summary>Un <code>if contiene_secreto(texto, secreto)</code> y dos <code>return</code>.</details>
+<details><summary>🟡 delimitar</summary><code>re.sub(r"&lt;/?entrada_usuario&gt;", "[etiqueta]", texto, flags=re.IGNORECASE)</code> quita la apertura y el cierre de una vez. Después concatena la etiqueta, <code>"
+"</code>, el texto, <code>"
+"</code> y la etiqueta de cierre.</details>
+<details><summary>🟡 intervalo_wilson</summary>Copia la fórmula del docstring paso a paso, con variables intermedias (<code>p</code>, <code>z2 = z * z</code>, <code>d = 1 + z2 / n</code>). Usa <code>math.sqrt</code>; y <code>max(0.0, ...)</code> y <code>min(1.0, ...)</code> antes de redondear.</details>
+
 ## C1_01 · la matriz de defensas
 
 <details><summary>🟢 bloqueado_por</summary><code>sorted(d for d, ataques in matriz.items() if ataque in ataques)</code>.</details>

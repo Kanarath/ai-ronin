@@ -143,3 +143,55 @@ func test_mision_P0_01() -> void:
 		var res := game.shell.execute(l)
 		assert_true(res.ok, res.plain_text())
 	assert_eq(finished.size(), 1)
+
+
+func _measurement(configs: Array) -> Dictionary:
+	return {"schema": "ai-ronin/evidence", "schema_version": 1, "kind": "medicion", "lab": "A1-05", "created": "2026-11-10T09:00:00+00:00",
+		"modelo": "llama3.2:1b", "temperatura": 0.7, "repeticiones": 3, "bateria_sha256": game.evidence.exercises["A1-05"]["battery_sha256"],
+		"configuraciones": configs}
+
+
+static func _cfg(defensas: String, exitos: int, legit_ok: int = 15) -> Dictionary:
+	return {"defensas": defensas, "ataques_n": 18, "ataques_exitos": exitos, "fugas_crudas": exitos, "legitimas_n": 15, "legitimas_ok": legit_ok}
+
+
+func test_medicion_valida() -> void:
+	var res := game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 12), _cfg("salida", 0), _cfg("sin-secreto", 0, 14)])))
+	assert_true(res["ok"], str(res["errors"]))
+	var ev: Dictionary = game.shell.events_named("evidence.measured")[-1]["data"]
+	assert_eq([ev["lab"], ev["configs"], ev["has_baseline"]], ["A1-05", 3, true])
+	assert_almost_eq(ev["baseline_rate"], 12.0 / 18.0, 0.0001)
+	assert_eq(ev["best_rate"], 0.0)
+	assert_true(game.shell.execute("evidence list").plain_text().contains("ninguna 12/18"))
+
+
+func test_medicion_rechazos() -> void:
+	var bad := _measurement([_cfg("ninguna", 5)])
+	bad["bateria_sha256"] = "0".repeat(64)
+	assert_true("; ".join(game.import_evidence(_write("m.json", bad))["errors"]).contains("batería"))
+	assert_false(game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 19)])))["ok"], "más éxitos que intentos")
+	assert_false(game.import_evidence(_write("m.json", _measurement([])))["ok"])
+	bad = _measurement([_cfg("ninguna", 5)])
+	bad["lab"] = "P0-01"
+	assert_false(game.import_evidence(_write("m.json", bad))["ok"], "P0-01 no tiene batería")
+	assert_eq(game.progress.data.get("measurements", {}).size(), 0)
+
+
+func test_mision_A1_05() -> void:
+	var finished: Array = []
+	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
+	for m in ["A1-04", "P0-01"]:
+		game.progress.data["missions"][m] = {"completed": true}
+	assert_eq(game.start_mission("A1-05"), "")
+	game.import_evidence(_write("a.json", _evidence("A1-05", 19)))
+	assert_eq(game.runner.index, 1)
+	assert_true(game.shell.execute("hipotesis a veces").ok)
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("entrada", 6)])))
+	assert_eq(game.runner.index, 1, "hacen falta 3 configuraciones")
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("entrada", 6), _cfg("sin-secreto", 0)])))
+	assert_eq(game.runner.index, 2)
+	for l in ["reflexion " + "sin defensas se filtro la mitad de las veces y el intervalo era ancho porque hay pocas repeticiones ".repeat(4),
+			"reflexion " + "sin el secreto en el prompt el modelo no puede filtrarlo y el filtro de salida no ve traducciones ".repeat(3)]:
+		var r := game.shell.execute(l)
+		assert_true(r.ok, r.plain_text())
+	assert_eq(finished.size(), 1)

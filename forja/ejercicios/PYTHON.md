@@ -286,5 +286,6 @@ async def chat(p: Peticion):
 | A3_01 agente | 3 (contadores, `continue`), 4 (devolver tuplas), 8, 9 (`in` sobre conjuntos) |
 | A2_01 RAG | 2 (rebanadas), 3 (`while`, `break`), 5, 7, 8 (dict como vector), 9, 11 (`re`, `math.log`) |
 | P0-01 servicio LLM (forja/labs) | 8 (`.get` con valor por defecto), 12, 14 |
+| A1-05 mostrador (forja/labs) | 3, 4 (valores por defecto), 11 (`re`, `math.sqrt`, `unicodedata`), 12, 14 |
 
 Si te atascas en un ejercicio, mira [PISTAS.md](PISTAS.md): tiene pistas progresivas para cada función.
