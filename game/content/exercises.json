@@ -248,6 +248,31 @@
       "test_path": "forja/labs/E1-03_lora_lente/test_lora.py",
       "total_tests": 15,
       "tests_sha256": "7c64d3c11bdadb4f6de4ca165bc1e050bf49f90f00f8d9ee245e7aaef96fb46a"
+      "id": "E2-01",
+      "file": "evasion.py",
+      "test_file": "test_evasion.py",
+      "test_path": "forja/labs/E2-01_evasion/test_evasion.py",
+      "total_tests": 16,
+      "tests_sha256": "4cfd92238fc1e590abb3ac51c170124a4ce6236d2e1517dfc2c6c2de9a879010",
+      "battery_sha256": "691fd9acac5bc11426bdae6293d904b6a0f9f299734d4b2eb47320d1c5b89f4d"
+    },
+    {
+      "id": "E2-02",
+      "file": "extraccion.py",
+      "test_file": "test_extraccion.py",
+      "test_path": "forja/labs/E2-02_extraccion/test_extraccion.py",
+      "total_tests": 13,
+      "tests_sha256": "870fe51cab2dad76b2f093e765f9beef35553b90499514009d673b19c00a57be",
+      "battery_sha256": "f4db340866386f3732fd9821ae65dc054b56fece460614480efdf0ca47887265"
+    },
+    {
+      "id": "E2-03",
+      "file": "privacidad.py",
+      "test_file": "test_privacidad.py",
+      "test_path": "forja/labs/E2-03_privacidad/test_privacidad.py",
+      "total_tests": 14,
+      "tests_sha256": "e8b4b6f06ca6a1866d576f3da590190312093988cb0f8451466726c5a192c90a",
+      "battery_sha256": "fb206c4984aeb11068672a640a3e4283571ca3731c2057360b9b03bb2149424d"
     },
     {
       "id": "P0-01",

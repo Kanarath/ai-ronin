@@ -13,6 +13,7 @@ const UNIT_TITLES := {
 	"A5": "A5 · Multiagente y A2A", "A6": "A6 · Supply chain e infra",
 	"O5": "O5 · Marcos y gobernanza",
 	"O6": "O6 · Detección y respuesta",
+	"E2": "E2 · ML adversarial",
 	"C1": "C1 · AI Agent Lab", "C2": "C2 · RAG Security Lab", "C3": "C3 · MCP Security Lab",
 	"C5": "C5 · AI Red Team Assessment",
 	"E1": "E1 · Investigación ML (Forja)",

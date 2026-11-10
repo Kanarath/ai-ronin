@@ -386,6 +386,33 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [Hugging Face PEFT · Parameter-Efficient Fine-Tuning (LoRA y otros adaptadores)](https://huggingface.co/docs/peft/index) — Hugging Face · consultada 2026-11-10
 - [interpreting GPT: the logit lens](https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens) — LessWrong · consultada 2026-11-10
 - [Eliciting Latent Predictions from Transformers with the Tuned Lens](https://arxiv.org/abs/2303.08112) — arXiv:2303.08112 · consultada 2026-11-10
+## E2
+
+**E2-01 · El trazo que engaña**
+
+- [Explaining and Harnessing Adversarial Examples (FGSM)](https://arxiv.org/abs/1412.6572) — ICLR 2015 · arXiv:1412.6572 · consultada 2026-11-10
+- [Feature Squeezing: Detecting Adversarial Examples in Deep Neural Networks](https://arxiv.org/abs/1704.01155) — NDSS 2018 · arXiv:1704.01155 · consultada 2026-11-10
+- [Adversarial Examples Are Not Easily Detected: Bypassing Ten Detection Methods](https://arxiv.org/abs/1705.07263) — AISec 2017 · arXiv:1705.07263 · consultada 2026-11-10
+- [scikit-learn · sklearn.datasets.load_digits (dígitos manuscritos de 8×8, incluidos en la biblioteca); versión 1.9.1](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_digits.html) — scikit-learn · consultada 2026-11-10
+- [NIST AI 100-2 E2025 · Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations (marzo de 2025; NIST prevé revisiones anuales)](https://csrc.nist.gov/pubs/ai/100/2/e2025/final) — NIST · consultada 2026-11-09
+
+**E2-02 · La copia por correo**
+
+- [Stealing Machine Learning Models via Prediction APIs](https://arxiv.org/abs/1609.02943) — USENIX Security 2016 · arXiv:1609.02943 · consultada 2026-11-10
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [MITRE ATLAS (Adversarial Threat Landscape for Artificial-Intelligence Systems) · base de conocimiento viva; comprueba la versión vigente en la web](https://atlas.mitre.org/) — MITRE · consultada 2026-11-09
+- [FastAPI · documentación (versión 0.162.2)](https://fastapi.tiangolo.com/) — FastAPI · consultada 2026-11-10
+
+**E2-03 · ¿Estaba en el registro?**
+
+- [Membership Inference Attacks against Machine Learning Models](https://arxiv.org/abs/1610.05820) — IEEE S&P 2017 · arXiv:1610.05820 · consultada 2026-11-10
+- [Privacy Risk in Machine Learning: Analyzing the Connection to Overfitting](https://arxiv.org/abs/1709.01604) — IEEE CSF 2018 · arXiv:1709.01604 · consultada 2026-11-10
+- [Membership Inference Attacks From First Principles](https://arxiv.org/abs/2112.03570) — IEEE S&P 2022 · arXiv:2112.03570 · consultada 2026-11-10
+- [The Algorithmic Foundations of Differential Privacy](https://doi.org/10.1561/0400000042) — Foundations and Trends in Theoretical Computer Science 9(3-4) · consultada 2026-11-10
+- [Deep Learning with Differential Privacy (DP-SGD)](https://arxiv.org/abs/1607.00133) — ACM CCS 2016, 308-318 · arXiv:1607.00133 · consultada 2026-11-10
+- [OWASP LLM02:2025 Sensitive Information Disclosure (mitigaciones: privacidad diferencial; enlaza MITRE ATLAS AML.T0024.000 Infer Training Data Membership)](https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/) — OWASP GenAI Security Project · consultada 2026-11-10
+- [CEPD (EDPB) · Dictamen 28/2024 sobre determinados aspectos de protección de datos relacionados con el tratamiento de datos personales en el contexto de los modelos de IA (adoptado el 17 de diciembre de 2024; §43 sobre el anonimato de los modelos)](https://www.edpb.europa.eu/our-work-tools/our-documents/opinion-board-art-64/opinion-282024-certain-data-protection-aspects_en) — Comité Europeo de Protección de Datos · consultada 2026-11-10
+- [Extracting Training Data from Large Language Models](https://arxiv.org/abs/2012.07805) — USENIX Security 2021 · arXiv:2012.07805 · consultada 2026-11-06
 
 ## O5
 

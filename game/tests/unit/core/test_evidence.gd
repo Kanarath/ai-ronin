@@ -331,6 +331,24 @@ func _mision_E1(id: String, requisitos: Array, tests: int, hipotesis: String) ->
 	assert_true(game.shell.execute("hipotesis " + hipotesis).ok, hipotesis)
 	for l in ["reflexion " + "mi bucle coincidio con generate y la cuantizacion por bloques casi no cambio la perplejidad del modelo pequeno ".repeat(5),
 			"reflexion " + "entrenar de verdad necesita gradientes y estados del optimizador por cada peso y eso no cabe en mi portatil sin gpu ".repeat(4)]:
+## Las tres misiones de E2 siguen el mismo patrón: evidencia de tests → predicción → medición → dos reflexiones.
+func _mision_E2(id: String, requires: Array, tests: int, prediction: String) -> void:
+	var finished: Array = []
+	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
+	for m: String in requires:
+		game.progress.data["missions"][m] = {"completed": true}
+	assert_eq(game.start_mission(id), "")
+	game.import_evidence(_write("a.json", _evidence(id, tests)))
+	assert_eq(game.runner.index, 1, id)
+	assert_true(game.shell.execute("hipotesis " + prediction).ok)
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("otra", 6)], id)))
+	assert_eq(game.runner.index, 1, "%s: hacen falta 3 configuraciones" % id)
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("otra", 6), _cfg("dos", 3)], "A2-04")))
+	assert_eq(game.runner.index, 1, "%s: la medición de otro laboratorio no vale" % id)
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("otra", 6), _cfg("dos", 3)], id)))
+	assert_eq(game.runner.index, 2, id)
+	for l in ["reflexion " + "sin defensas el ataque funciono casi siempre y la defensa redujo la tasa pero costo precision en los datos limpios ".repeat(4),
+			"reflexion " + "un atacante adaptativo conoce la defensa y la incorpora a su ataque asi que medir sin el no demuestra nada ".repeat(3)]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1, id)
@@ -347,3 +365,13 @@ func test_mision_E1_02() -> void:
 
 func test_mision_E1_03() -> void:
 	_mision_E1("E1-03", ["E1-02"], 15, "hacia la mitad")
+func test_mision_E2_01() -> void:
+	_mision_E2("E2-01", ["T4-02", "A2-03"], 16, "unos 20 puntos")
+
+
+func test_mision_E2_02() -> void:
+	_mision_E2("E2-02", ["E2-01"], 13, "una copia casi perfecta")
+
+
+func test_mision_E2_03() -> void:
+	_mision_E2("E2-03", ["E2-01"], 14, "pequeña pero clara")

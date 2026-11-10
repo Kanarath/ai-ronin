@@ -1,0 +1,9 @@
+{
+  "nota": "Batería del laboratorio E2-02. El Dojo comprueba la huella de este fichero: si quieres probar otros valores, hazlo en una copia y no importes esa medición.",
+  "presupuestos": [10, 20, 50, 65, 100, 200, 400, 640],
+  "lote": 100,
+  "decimales": 2,
+  "limite": {"maximo": 50, "ventana_s": 3600},
+  "legitimas": 40,
+  "configuraciones": "ninguna;redondeo;etiqueta;limite;limite,redondeo"
+}
