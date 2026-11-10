@@ -205,6 +205,15 @@
       "battery_sha256": "0a0200077caae7cb292c7b12d10a902fba822b6d71c8576025c8e2c0158dbfad"
     },
     {
+      "id": "A3-04",
+      "file": "agente.py",
+      "test_file": "test_agente.py",
+      "test_path": "forja/labs/A3-04_agente/test_agente.py",
+      "total_tests": 28,
+      "tests_sha256": "8c898c17e17b2e1199e7664361b3a3c8e5bd21965427cb9a8d36d682be36a9a4",
+      "battery_sha256": "dc7fd825365fc62a7ca2c4594493df00ddd7134f316e8e11d83ddc817243ca10"
+    },
+    {
       "id": "P0-01",
       "file": "servicio.py",
       "test_file": "test_servicio.py",

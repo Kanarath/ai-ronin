@@ -16,6 +16,7 @@ El proyecto tiene dos planos:
 - Diseño aprobado el 2026-11-06.
 - Fase 0 (cimientos) completada: proyecto Godot y tests. Los tests se ejecutan en local; el repositorio no usa GitHub Actions.
 - **Contenido jugable:** 51 misiones.
+- **Contenido jugable:** 48 misiones.
   - Tutorial T0.
   - Tronco común T1–T6: datos, k-NN, descenso por gradiente, métricas, redes neuronales con backprop, tokens BPE, embeddings, modelo de lenguaje, muestreo y atención.
   - Arco de seguridad A1 completo (construir, atacar, defender y desplegar un chatbot), con informes de vulnerabilidad.
@@ -30,6 +31,7 @@ El proyecto tiene dos planos:
   - Laboratorio A1-05 (Forja, real): el mostrador de A1 con el modelo local y un canario en el prompt de sistema; batería de fuga del prompt (LLM07) e inyección directa (LLM01), defensas medidas con repeticiones e intervalos de Wilson y su coste en preguntas legítimas. El Dojo importa la medición (`bateria.py`).
   - Laboratorio A2-04 (Forja, real): la biblioteca de A2 con embeddings reales (`embeddinggemma`), Qdrant y el modelo local; troceo, BM25 y búsqueda híbrida con RRF medidas con recall@k; inyección indirecta, envenenamiento y fuga por falta de ACL frente a control de acceso, firma HMAC de documentos y spotlight; Qdrant con API key solo en `127.0.0.1`.
   - Pista P0 · misiones P0-02 a P0-05 (Forja, Python): clases y NumPy (regresión logística en Python puro y vectorizada, con la comparación de tiempos), el MLP de XOR en matrices, texto en streaming con cuidado de Unicode (NFC frente a NFD, emojis, bytes frente a caracteres) y un generador de tokens con muestreo y límite de salida.
+  - Laboratorio A3-04 (Forja, real): el agente de la trastienda de A3 con tool calling real (`tools` de Ollama `/api/chat`) y `llama3.2:3b` en CPU (el 1B acierta poco con herramientas); consultar pedidos, correo a un buzón local y reembolsos, con roles, memoria entre turnos y aprobación humana. Inyección indirecta por la nota de un pedido (salida de una herramienta) frente a validación de argumentos, permisos por rol, aprobación, spotlight, detección de exfiltración y límites de pasos; mide acciones privilegiadas pedidas frente a ejecutadas.
   - Capstones C1–C3 (AI Agent Lab, RAG Security Lab, MCP Security Lab): comandos `lab` que miden cada defensa en solitario (matriz) y cada combinación (resiliencia); cobertura mínima sin coste, ataques frágiles y robustos, riesgo residual y defensas que no suman. C4 (multiagente) va a la ruta de estudio externo, como A5.
   - Prueba final C5 (AI Red Team Assessment): encargo completo sobre una empresa ficticia; reglas de enfrentamiento y alcance, reconocimiento, modelo de amenazas OWASP, hallazgos respaldados por las baterías de A1–A6, informe, corrección y retest sin romper las tareas legítimas.
 - **Ruta de estudio externo:** O1–O4, A5 y C4 no tienen misión; se estudian con referencias oficiales en su punto del temario (se desbloquean con sus requisitos y se marcan con `lecturas hecho`). En el Dojo: comando `lecturas`; con enlaces clicables: [`LECTURAS.md`](LECTURAS.md), que también recoge las lecturas de cada misión.
@@ -37,6 +39,8 @@ El proyecto tiene dos planos:
 - **Gamificación:** 18 sellos (logros), rangos Initiate→Master, retos rápidos con solución paso a paso, notificaciones y barra de XP.
 - **Ejercicios Python:** 23 en `forja/ejercicios/` (P0-02 y P0-03 con NumPy 2.5.4) y 3 laboratorios reales en `forja/labs/` (P0-01, A1-05 y A2-04), con guía de Python (`PYTHON.md`) y pistas (`PISTAS.md`). `python -m ronin_check <ID>` genera la evidencia y el Dojo la importa con `evidence import`.
 - **Siguiente paso:** laboratorios de la Forja para el resto de arcos (A3: agente real con herramientas) y, después, especializaciones E1–E4.
+- **Ejercicios Python:** 19 en `forja/ejercicios/` y 4 laboratorios reales en `forja/labs/` (P0-01, A1-05, A2-04 y A3-04), con guía de Python (`PYTHON.md`) y pistas (`PISTAS.md`). `python -m ronin_check <ID>` genera la evidencia y el Dojo la importa con `evidence import`.
+- **Siguiente paso:** laboratorios de la Forja para el resto de arcos y, después, especializaciones E1–E4.
 
 ### Jugar
 

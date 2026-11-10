@@ -1,0 +1,31 @@
+# Laboratorio A3-04 · agente de la trastienda de Kurogane (vulnerable a propósito) + Ollama en CPU.
+# Regla de la Forja: los puertos se publican SOLO en 127.0.0.1.
+#
+#   docker compose up -d --build
+#   docker compose exec ollama ollama pull llama3.2:3b
+#
+# Los tokens de rol van por variable de entorno (TOKENS); los de laboratorio de agente.py solo sirven
+# en tu máquina. Para probar otra configuración, cambia DEFENSAS y vuelve a ejecutar: docker compose up -d
+
+services:
+  ollama:
+    image: ollama/ollama:0.40.16    # comprobada en Docker Hub el 2026-11-10
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama_datos:/root/.ollama
+
+  agente:
+    build: .
+    environment:
+      OLLAMA_URL: "http://ollama:11434"
+      MODELO: "llama3.2:3b"          # o "llama3.2:1b" para comparar
+      DEFENSAS: ""                   # por ejemplo: "permisos,aprobacion" o "permisos,aprobacion,spotlight,exfiltracion,limites"
+      # TOKENS: "tok1:cliente,tok2:empleado,tok3:encargado"   (por defecto, los tres tokens de laboratorio)
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      - ollama
+
+volumes:
+  ollama_datos:

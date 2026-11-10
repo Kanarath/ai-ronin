@@ -204,6 +204,17 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 
 - [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
 
+**A3-04 · El agente de verdad**
+
+- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [Ollama · Tool calling: campo tools de /api/chat, tool_calls con argumentos como objeto y mensajes role tool (versión 0.40.16)](https://docs.ollama.com/capabilities/tool-calling) — Ollama · consultada 2026-11-10
+- [Ollama · API de chat (POST /api/chat); versión 0.40.16](https://docs.ollama.com/api/chat) — Ollama · consultada 2026-11-10
+- [Llama 3.2 model card: uso de herramientas (BFCL v2: 25,7 el 1B y 67,0 el 3B; Nexus: 13,5 y 34,3)](https://github.com/meta-llama/llama-models/blob/main/models/llama3_2/MODEL_CARD.md) — Meta, octubre de 2024 · consultada 2026-11-10
+- [AgentDojo: A Dynamic Environment to Evaluate Prompt Injection Attacks and Defenses for LLM Agents](https://arxiv.org/abs/2406.13352) — arXiv:2406.13352 · consultada 2026-11-10
+- [Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection](https://arxiv.org/abs/2302.12173) — arXiv:2302.12173 (AISec 2023) · consultada 2026-11-06
+- [Defending Against Indirect Prompt Injection Attacks With Spotlighting](https://arxiv.org/abs/2403.14720) — arXiv:2403.14720 · consultada 2026-11-06
+
 ### 📖 O3 · Threat modeling · estudio externo
 
 - **Temario:** Activos, fronteras de confianza, rutas de ataque; STRIDE adaptado; MITRE ATLAS.

@@ -256,3 +256,24 @@ func test_mision_P0_04() -> void:
 func test_mision_P0_05() -> void:
 	_run_p0("P0-05", ["T6-01", "P0-04"], ["hipotesis no", "answer paciencia", "reflexion " +
 		"el generador entrega cada token en cuanto existe y si el usuario para el modelo deja de trabajar el limite va en el servidor porque el cliente puede pedir lo que quiera ".repeat(2)])
+func test_mision_A3_04() -> void:
+	var finished: Array = []
+	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
+	for m in ["A3-03", "A2-04"]:
+		game.progress.data["missions"][m] = {"completed": true}
+	assert_eq(game.start_mission("A3-04"), "")
+	game.import_evidence(_write("a.json", _evidence("A3-04", 27)))
+	assert_eq(game.runner.index, 0, "con un test sin pasar no se avanza")
+	game.import_evidence(_write("a.json", _evidence("A3-04", 28)))
+	assert_eq(game.runner.index, 1)
+	assert_true(game.shell.execute("hipotesis más o menos las mismas").ok)
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("permisos", 6), _cfg("aprobacion,permisos", 2)], "A2-04")))
+	assert_eq(game.runner.index, 1, "la medición de A2-04 no vale para A3-04")
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("permisos", 6),
+		_cfg("aprobacion,exfiltracion,limites,permisos,spotlight", 0, 13)], "A3-04")))
+	assert_eq(game.runner.index, 2)
+	for l in ["reflexion " + "el modelo siguio pidiendo reembolsos con permisos y aprobacion pero no se ejecutaron y la fuga de memoria solo la paro el detector ".repeat(4),
+			"reflexion " + "la accion aprobada la ejecuta el servicio porque el modelo podria cambiarla y un humano no aprueba lo que el rol no permite ".repeat(3)]:
+		var r := game.shell.execute(l)
+		assert_true(r.ok, r.plain_text())
+	assert_eq(finished.size(), 1)
