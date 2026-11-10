@@ -166,3 +166,30 @@ Antes de abrir una pista, ejecuta el test y lee el mensaje de error: suele decir
 <details><summary>🟢 residual</summary>Un <code>if / elif</code> por tratamiento y <code>riesgo(r["p"], r["i"])</code> por defecto. Reutiliza <code>riesgo</code>.</details>
 <details><summary>🟢 tratamiento_permitido</summary><code>if tratamiento == "mitigar" and r["p_mitigada"] is None</code> · <code>if tratamiento == "aceptar" and riesgo(r["p"], r["i"]) &gt; apetito</code>.</details>
 <details><summary>🟡 resumen_registro</summary>Recorre los riesgos con <code>t = tratamientos.get(r["id"])</code> y <code>res = residual(r, t)</code>. Un riesgo evitado es innecesario si <code>t == "evitar" and r["p_mitigada"] is not None</code>. Ordena las listas con <code>sorted</code>.</details>
+
+## E1-01 · el bucle de generación (forja/labs/E1-01_generacion)
+
+<details><summary>🟢 con_temperatura</summary>Primero el <code>ValueError</code>. Para t == 0: <code>out = torch.full_like(logits, float("-inf"))</code> y <code>out[torch.argmax(logits)] = 0.0</code>. Si no, <code>logits / t</code> ya crea un tensor nuevo.</details>
+<details><summary>🟡 filtro_top_p</summary><code>orden = torch.sort(probs, descending=True, stable=True)</code> da <code>orden.values</code> y <code>orden.indices</code>. Con <code>acum = torch.cumsum(orden.values, 0)</code>, el número de tokens es 1 + cuántos acumulados quedan por debajo de p: <code>n = int((acum &lt; p).sum()) + 1</code> (recórtalo a <code>len(probs)</code>). Después <code>out = torch.zeros_like(probs)</code>, <code>idx = orden.indices[:n]</code>, <code>out[idx] = probs[idx]</code> y <code>out / out.sum()</code>.</details>
+<details><summary>🟢 siguiente_token</summary>Voraz: <code>int(torch.argmax(logits))</code>. Si no: <code>probs = torch.softmax(con_temperatura(logits, t), dim=-1)</code>, el filtro, y <code>int(torch.multinomial(probs, 1, generator=generador))</code>.</details>
+<details><summary>🟡 generar</summary><code>secuencia = list(ids)</code> (copia). <code>for _ in range(max_nuevos):</code> con <code>with torch.no_grad(): salida = modelo(torch.tensor([secuencia]))</code>, el token de <code>salida.logits[0, -1]</code>, <code>append</code> a las dos listas y <code>break</code> si es el eos.</details>
+<details><summary>🟢 log_probs_secuencia</summary><code>lp = torch.log_softmax(logits, dim=-1)</code> y <code>[float(lp[i, ids[i + 1]]) for i in range(len(ids) - 1)]</code>.</details>
+
+## E1-02 · cuantizar a mano (forja/labs/E1-02_cuantizacion)
+
+<details><summary>🟢 parametros_afines</summary><code>lo = min(float(w.min()), 0.0)</code>, <code>hi = max(float(w.max()), 0.0)</code>. El punto cero: <code>round(QMIN - lo / escala)</code>, recortado con <code>max(QMIN, min(QMAX, ...))</code>.</details>
+<details><summary>🟢 cuantizar / descuantizar</summary><code>torch.clamp(torch.round(w / escala) + punto_cero, QMIN, QMAX).to(torch.int8)</code> · <code>(q.to(torch.float32) - punto_cero) * escala</code>.</details>
+<details><summary>🟡 cuantizar_q8_0</summary><code>x = w.reshape(-1, bloque).float()</code> · <code>d = x.abs().amax(dim=1, keepdim=True) / 127</code> · <code>divisor = torch.where(d &gt; 0, d, torch.ones_like(d))</code> · <code>q = torch.round(x / divisor)</code> (en los bloques con d == 0, x ya es todo ceros) · devuelve <code>q.to(torch.int8), d.to(torch.float16)</code>. Comprueba antes <code>w.numel() % bloque</code>.</details>
+<details><summary>🟢 error_relativo</summary><code>torch.linalg.norm(w - w_aprox) / torch.linalg.norm(w)</code>, con <code>float(...)</code> y el <code>ValueError</code> si el denominador es 0.</details>
+<details><summary>🟢 bytes_esquema</summary>Un <code>if</code> por esquema. Q8_0: <code>n_pesos // 32 * 34</code>.</details>
+<details><summary>🟢 perplejidad</summary><code>math.exp(-sum(log_probs) / len(log_probs))</code>.</details>
+
+## E1-03 · LoRA y la lente de logits (forja/labs/E1-03_lora_lente)
+
+<details><summary>🟡 LoRA</summary><code>for p in base.parameters(): p.requires_grad = False</code>. Las formas salen de <code>base.in_features</code> y <code>base.out_features</code>. En <code>forward</code>: <code>self.base(x) + self.escala * (x @ self.A.T @ self.B.T)</code>.</details>
+<details><summary>🟢 fusionar</summary><code>nueva = nn.Linear(n, m, bias=base.bias is not None)</code> y, dentro de <code>torch.no_grad()</code>, <code>nueva.weight.copy_(base.weight + capa.escala * capa.B @ capa.A)</code>; el sesgo, con <code>nueva.bias.copy_(base.bias)</code>.</details>
+<details><summary>🟢 contar_parametros</summary>Dos <code>sum(p.numel() for p in modelo.parameters() ...)</code>, uno con <code>if p.requires_grad</code>.</details>
+<details><summary>🟡 aplicar_lora</summary>Congela todo primero. Después <code>for nombre, m in list(modelo.named_modules()):</code>, comprueba <code>isinstance(m, nn.Linear)</code> y <code>nombre.rpartition(".")[2] in objetivos</code>, y sustituye con <code>setattr(modelo.get_submodule(padre), hijo, LoRA(...))</code>.</details>
+<details><summary>🟢 perdida_lm</summary><code>v = logits.shape[-1]</code> · <code>torch.nn.functional.cross_entropy(logits[:, :-1].reshape(-1, v), ids[:, 1:].reshape(-1))</code>.</details>
+<details><summary>🟡 entrenar</summary><code>params = [p for p in modelo.parameters() if p.requires_grad]</code> (el <code>ValueError</code> si está vacía) · <code>opt = torch.optim.AdamW(params, lr=lr)</code> · en el bucle, <code>perdidas.append(perdida.item())</code>: aunque lo hagas después de <code>step()</code>, el valor es el de antes del paso.</details>
+<details><summary>🟢 lente_logit</summary>Para cada estado: <code>p = torch.softmax(cabeza(norma(e[0, posicion])), dim=-1)</code>, <code>i = int(torch.argmax(p))</code> y <code>(i, float(p[i]))</code>.</details>

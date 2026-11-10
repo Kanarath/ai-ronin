@@ -288,5 +288,70 @@ async def chat(p: Peticion):
 | P0-01 servicio LLM (forja/labs) | 8 (`.get` con valor por defecto), 12, 14 |
 | A1-05 mostrador (forja/labs) | 3, 4 (valores por defecto), 11 (`re`, `math.sqrt`, `unicodedata`), 12, 14 |
 | A2-04 biblioteca (forja/labs) | 2 (rebanadas), 3 (`while`, `break`), 7, 8, 9, 11 (`math.log`, `re`, `hmac`, `hashlib`), 12, 14 |
+| E1-01 generación (forja/labs) | 3 (`break`), 5, 12, 15 (tensores, indexado, `torch.no_grad`) |
+| E1-02 cuantización (forja/labs) | 4 (devolver tuplas), 11 (`math.exp`), 12, 15 (tipos `int8` y `float16`, `reshape`, `torch.where`) |
+| E1-03 LoRA y lente (forja/labs) | 2, 5, 12, 15 (`nn.Module`, `nn.Parameter`, entrenamiento) |
 
 Si te atascas en un ejercicio, mira [PISTAS.md](PISTAS.md): tiene pistas progresivas para cada función.
+
+---
+
+## 15. PyTorch: tensores, módulos y entrenamiento (laboratorios E1)
+
+Un **tensor** es una lista de números de cualquier número de dimensiones, con un tipo (`dtype`) y operaciones vectoriales: una operación se aplica a todos los valores a la vez, sin bucles.
+
+```python
+import torch
+t = torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])   # forma (2, 3), dtype float32
+t.shape, t.dtype, t.numel()        # torch.Size([2, 3]) torch.float32 6
+t[0, -1]                           # tensor(3.)  → .item() o float(...) para un número de Python
+t[:, 1]                            # la columna 1: tensor([2., 5.])
+t / 2, t * t, t @ t.T              # división y producto elemento a elemento; producto matricial
+t.reshape(3, 2), t.reshape(-1)     # cambiar la forma (-1 = «lo que haga falta»)
+t.max(), t.abs().amax(dim=1, keepdim=True)   # máximo global; máximo por fila, con forma (2, 1)
+torch.zeros_like(t), torch.full_like(t, float("-inf"))   # tensores nuevos con la misma forma
+torch.where(t > 2, t, torch.zeros_like(t))   # elige elemento a elemento
+torch.round(torch.tensor([2.5, 3.5]))        # tensor([2., 4.]): los .5 van al par
+t.to(torch.int8), t.to(torch.float16)        # cambiar de tipo (crea un tensor nuevo)
+
+probs = torch.softmax(torch.tensor([2.0, 1.0, 0.0]), dim=-1)
+orden = torch.sort(probs, descending=True, stable=True)   # orden.values y orden.indices
+torch.cumsum(orden.values, dim=0)                          # suma acumulada
+g = torch.Generator().manual_seed(42)                      # azar con semilla, como random.Random(42)
+torch.multinomial(probs, 1, generator=g)                   # sortea un índice con esas probabilidades
+```
+
+**Difusión (broadcast):** un tensor de forma `(2, 1)` se combina con uno de forma `(2, 3)` repitiéndose por columnas. Así se aplica una escala distinta a cada fila sin bucles.
+
+**Copiar frente a modificar:** `t / 2` crea un tensor nuevo; `t[0] = 5` y los métodos acabados en `_` (`t.copy_(...)`, `t.zero_()`) modifican el original.
+
+**Módulos y entrenamiento:**
+
+```python
+from torch import nn
+
+class MiCapa(nn.Module):
+    def __init__(self, n, m):
+        super().__init__()                        # siempre lo primero
+        self.lineal = nn.Linear(n, m)             # un submódulo: se registra solo
+        self.extra = nn.Parameter(torch.zeros(m)) # un parámetro entrenable: también
+
+    def forward(self, x):                         # se llama con capa(x), no con capa.forward(x)
+        return self.lineal(x) + self.extra
+
+capa = MiCapa(4, 2)
+sum(p.numel() for p in capa.parameters())         # 4·2 + 2 + 2 = 12 valores
+capa.lineal.weight.requires_grad = False          # congelar: el optimizador no lo moverá
+
+opt = torch.optim.AdamW([p for p in capa.parameters() if p.requires_grad], lr=0.01)
+for paso in range(10):
+    opt.zero_grad()                               # borra los gradientes del paso anterior
+    perdida = capa(torch.randn(8, 4)).pow(2).mean()
+    perdida.backward()                            # calcula los gradientes (la backprop de T4)
+    opt.step()                                    # mueve los parámetros
+
+with torch.no_grad():                             # sin gradientes: para inferir o copiar pesos
+    salida = capa(torch.randn(1, 4))
+```
+
+Documentación: [docs.pytorch.org](https://docs.pytorch.org/docs/stable/).

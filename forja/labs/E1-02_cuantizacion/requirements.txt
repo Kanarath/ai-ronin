@@ -1,0 +1,8 @@
+# Versiones fijadas y comprobadas en PyPI y en el índice de PyTorch el 2026-11-10 (Python 3.13).
+# torch sale del índice CPU oficial de PyTorch (download.pytorch.org/whl/cpu): sin CUDA.
+# Descarga aproximada: torch 127 MB + transformers 13 MB + dependencias (numpy, tokenizers,
+# huggingface-hub, safetensors, sympy…) ≈ 175 MB. Instalado ocupa alrededor de 1 GB.
+# Los tres laboratorios E1 usan exactamente el mismo entorno.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.15.0+cpu
+transformers==5.22.2
