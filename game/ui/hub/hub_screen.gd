@@ -15,6 +15,7 @@ const UNIT_TITLES := {
 	"O6": "O6 · Detección y respuesta",
 	"C1": "C1 · AI Agent Lab", "C2": "C2 · RAG Security Lab", "C3": "C3 · MCP Security Lab",
 	"C5": "C5 · AI Red Team Assessment",
+	"E3": "E3 · Gobernanza y auditoría",
 }
 const SERIES_COLORS: Array[Color] = [RoninPalette.CYAN, RoninPalette.GOLD, RoninPalette.TEAL, RoninPalette.VIOLET, RoninPalette.TEXT]
 const MENTOR_COLORS := {

@@ -23,6 +23,7 @@ Cada misión del Dojo tiene un ejercicio en Python. Implementas tú las funcione
 | `O6_01_trazas.py` | O6-01…03 | Detección y respuesta: redactar datos personales, dominio de destino, regla de correlación, precision/recall de alertas y alcance de un incidente |
 | `C1_01_matriz.py` | C1-01…C3-02 | Matriz de defensas en código: quién bloquea cada ataque, puntos únicos, cobertura mínima sin coste y ataques frágiles |
 | `C5_01_encargo.py` | C5-01…03 | El motor del encargo final: validar hallazgos, estado del retest, priorizar por impacto y exposición, y resumen de cierre |
+| `E3_01_auditoria.py` | E3-01…03 | Auditoría en código: muestra de controles basada en el riesgo, cobertura por función, clasificación de hallazgos, intervalo de Wilson de una muestra de expedientes y resumen por severidad |
 
 **Ayudas:**
 - [PYTHON.md](PYTHON.md) explica, con ejemplos, todo el Python que usan los ejercicios, y tiene una tabla con las secciones que necesita cada uno. Léela antes de cada ejercicio.

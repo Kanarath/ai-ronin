@@ -4,8 +4,8 @@ extends RefCounted
 
 const DATASETS_DIR := "res://content/datasets"
 ## Tipos de objeto con nombre (sirven también como tipos de argumento en CommandSignature).
-const KINDS: Array[String] = ["dataset", "model", "regressor", "network", "tokenizer", "lm", "bot", "rag", "agent", "mcp", "mesh", "pipeline", "soc", "engagement", "gov"]
-const KIND_NAMES := {"dataset": "dataset", "model": "modelo", "regressor": "regresor", "network": "red", "tokenizer": "tokenizador", "lm": "modelo de lenguaje", "bot": "chatbot", "rag": "sistema RAG", "agent": "agente", "mcp": "host MCP", "mesh": "taller multiagente", "pipeline": "pipeline de ML", "soc": "registro de trazas", "engagement": "encargo", "gov": "carpeta de gobernanza"}
+const KINDS: Array[String] = ["dataset", "model", "regressor", "network", "tokenizer", "lm", "bot", "rag", "agent", "mcp", "mesh", "pipeline", "soc", "engagement", "gov", "audit"]
+const KIND_NAMES := {"dataset": "dataset", "model": "modelo", "regressor": "regresor", "network": "red", "tokenizer": "tokenizador", "lm": "modelo de lenguaje", "bot": "chatbot", "rag": "sistema RAG", "agent": "agente", "mcp": "host MCP", "mesh": "taller multiagente", "pipeline": "pipeline de ML", "soc": "registro de trazas", "engagement": "encargo", "gov": "carpeta de gobernanza", "audit": "expediente de auditoría"}
 
 var datasets: Dictionary = {}  # nombre -> Dataset
 ## nombre -> {"model": KNNClassifier, "trained_on": String}
@@ -36,6 +36,8 @@ var traces: Dictionary = {}
 var engagements: Dictionary = {}
 ## nombre -> MockGovernance
 var governances: Dictionary = {}
+## nombre -> MockAudit
+var audits: Dictionary = {}
 ## Tabla de embeddings (se carga al usarla)
 var embeddings: EmbeddingTable = null
 
@@ -69,6 +71,7 @@ func store_of(kind: String) -> Dictionary:
 		"soc": return traces
 		"engagement": return engagements
 		"gov": return governances
+		"audit": return audits
 	return {}
 
 

@@ -1,0 +1,214 @@
+{
+  "_nota": "Laboratorio E3 (ficticio): el Ayuntamiento de Valdeacero, su sistema Ayuda-Valle y su proveedor Datoforja S.L. no existen; los expedientes, fechas internas y cifras son inventados. Son reales y se verificaron el 2026-11-10: los artículos del AI Act (Reglamento (UE) 2024/1689, modificado por el Reglamento (UE) 2026/1744), del RGPD (Reglamento (UE) 2016/679) y el texto de las subcategorías del NIST AI RMF 1.0 (NIST AI 100-1). No se usa contenido de normas ISO de pago. No es asesoramiento jurídico.",
+  "system": {
+    "id": "ayuda-valle",
+    "name": "Ayuda-Valle",
+    "deployer": "Ayuntamiento de Valdeacero",
+    "provider": "Datoforja S.L.",
+    "text": "Propone a los trabajadores sociales si una solicitud de ayuda de emergencia social cumple los requisitos y con qué prioridad. Usa datos de renta, de la unidad familiar y, a veces, de salud o discapacidad. Una persona revisa y firma cada propuesta.",
+    "classification": "alto riesgo: anexo III, punto 5.a (autoridades públicas que evalúan si una persona puede recibir prestaciones y servicios esenciales de asistencia pública)",
+    "first_use": "2028-03-01"
+  },
+  "cases": [
+    { "id": "ayuda-valle", "text": "El Ayuntamiento de Valdeacero desplegará Ayuda-Valle para las ayudas de emergencia social (anexo III, 5.a).",
+      "fria": true, "eipd": true,
+      "why": "FRIA: el ayuntamiento es un organismo de Derecho público que despliega un sistema del anexo III (art. 27.1). EIPD: evaluación automatizada de aspectos personales con efectos significativos y datos de salud (RGPD, art. 35.3.a y, si es a gran escala, 35.3.b)." },
+    { "id": "cribado-cv", "text": "La forja (empresa privada) usará el cribado automático de currículos de O5 (anexo III, 4.a).",
+      "fria": false, "eipd": true,
+      "why": "FRIA: no. Es alto riesgo, pero el art. 27 solo obliga a organismos públicos, a entidades privadas que prestan servicios públicos y a quienes despliegan sistemas del anexo III, 5.b o 5.c. EIPD: sí, evalúa y filtra personas de forma automatizada con efectos significativos (art. 35.3.a)." },
+    { "id": "solvencia-caja", "text": "La Caja Rural del Valle (entidad privada) usará un modelo que calcula la solvencia de quienes piden un préstamo (anexo III, 5.b).",
+      "fria": true, "eipd": true,
+      "why": "FRIA: sí, el art. 27.1 nombra expresamente a quienes despliegan sistemas del anexo III, 5.b (solvencia y calificación crediticia), aunque sean privados. EIPD: sí, elaboración de perfiles con efectos jurídicos o similares (art. 35.3.a)." },
+    { "id": "agua-valle", "text": "La empresa municipal de aguas usará un sistema que regula las válvulas de la red como componente de seguridad (anexo III, 2). Solo trata presiones y caudales.",
+      "fria": false, "eipd": false,
+      "why": "FRIA: no, el art. 27.1 excluye expresamente los sistemas del anexo III, punto 2 (infraestructuras críticas), aunque los use un organismo público. EIPD: no, porque no trata datos personales." }
+  ],
+  "elements": [
+    { "id": "E1", "text": "Descripción sistemática de las operaciones de tratamiento de datos y de sus fines.", "where": "eipd", "basis": "RGPD, art. 35.7.a" },
+    { "id": "E2", "text": "Evaluación de la necesidad y la proporcionalidad del tratamiento con respecto a su finalidad.", "where": "eipd", "basis": "RGPD, art. 35.7.b" },
+    { "id": "E3", "text": "Periodo de tiempo y frecuencia con que se usará el sistema.", "where": "fria", "basis": "AI Act, art. 27.1.b" },
+    { "id": "E4", "text": "Categorías de personas físicas y colectivos que pueden verse afectados por su uso.", "where": "fria", "basis": "AI Act, art. 27.1.c" },
+    { "id": "E5", "text": "Medidas de supervisión humana, según las instrucciones de uso del proveedor.", "where": "fria", "basis": "AI Act, art. 27.1.e" },
+    { "id": "E6", "text": "Medidas si los riesgos se materializan, incluidos la gobernanza interna y los mecanismos de reclamación.", "where": "fria", "basis": "AI Act, art. 27.1.f" },
+    { "id": "E7", "text": "Garantías, medidas de seguridad y mecanismos para proteger los datos personales y demostrar el cumplimiento.", "where": "eipd", "basis": "RGPD, art. 35.7.d" },
+    { "id": "E8", "text": "Riesgos de perjuicio para los derechos y libertades de las personas afectadas.", "where": "ambas", "basis": "AI Act, art. 27.1.d y RGPD, art. 35.7.c: por eso la FRIA puede remitirse a la EIPD y la complementa (art. 27.4)" },
+    { "id": "E9", "text": "Notificar los resultados a la autoridad de vigilancia del mercado con el formulario de la Oficina de IA.", "where": "fria", "basis": "AI Act, art. 27.3 y 27.5" },
+    { "id": "E10", "text": "Consultar a la autoridad de control antes del tratamiento si, pese a las medidas, el riesgo sigue siendo alto.", "where": "eipd", "basis": "RGPD, art. 36" }
+  ],
+  "actors": [
+    { "id": "ayuntamiento", "text": "Ayuntamiento de Valdeacero: responsable del despliegue (AI Act) y responsable del tratamiento (RGPD)" },
+    { "id": "proveedor", "text": "Datoforja S.L.: proveedor de Ayuda-Valle" },
+    { "id": "dpd", "text": "Delegado de protección de datos del ayuntamiento" },
+    { "id": "autoridad-mercado", "text": "Autoridad de vigilancia del mercado del AI Act que designe el Estado" },
+    { "id": "autoridad-control", "text": "Autoridad de control de protección de datos (en España, la AEPD)" }
+  ],
+  "tasks": [
+    { "id": "T1", "text": "Hacer la evaluación de impacto en los derechos fundamentales (FRIA) antes del primer uso.", "actor": "ayuntamiento", "basis": "AI Act, art. 27.1: la hace el responsable del despliegue, no el proveedor" },
+    { "id": "T2", "text": "Hacer la evaluación de impacto relativa a la protección de datos (EIPD).", "actor": "ayuntamiento", "basis": "RGPD, art. 35.1: la hace el responsable del tratamiento" },
+    { "id": "T3", "text": "Asesorar durante la EIPD.", "actor": "dpd", "basis": "RGPD, art. 35.2: el responsable recaba su asesoramiento" },
+    { "id": "T4", "text": "Dar las instrucciones de uso y la información del art. 13 que el ayuntamiento necesita para la EIPD.", "actor": "proveedor", "basis": "AI Act, arts. 13 y 26.9" },
+    { "id": "T5", "text": "Recibir la notificación de los resultados de la FRIA.", "actor": "autoridad-mercado", "basis": "AI Act, art. 27.3" },
+    { "id": "T6", "text": "Recibir la consulta previa si la EIPD muestra un riesgo alto que las medidas no reducen.", "actor": "autoridad-control", "basis": "RGPD, art. 36.1" }
+  ],
+  "timeline": [
+    ["2018-05-25", "El RGPD es aplicable: la EIPD ya es obligatoria para cualquier tratamiento nuevo de alto riesgo, antes de empezar a tratar los datos (art. 35.1)."],
+    ["2024-08-01", "Entra en vigor el AI Act."],
+    ["2026-07-27", "Entra en vigor el Digital Omnibus (Reglamento (UE) 2026/1744)."],
+    ["2027-12-02", "Se aplican las secciones 1 a 3 del capítulo III a los sistemas del anexo III: requisitos de alto riesgo, obligaciones del responsable del despliegue (art. 26) y FRIA (art. 27)."],
+    ["2028-03-01", "Primer uso previsto de Ayuda-Valle: la FRIA tiene que estar hecha y notificada antes."]
+  ],
+  "audit": {
+    "max_sample": 6,
+    "period": "2028-03-01 a 2028-09-30",
+    "criteria": "POL-IA (política de IA del ayuntamiento, que adopta los resultados del NIST AI RMF 1.0), el AI Act y el RGPD",
+    "systematic_rule": "fallo sistemático: 2 o más fallos en la muestra, o el 20 % o más"
+  },
+  "controls": [
+    { "id": "C01", "function": "GOVERN", "risk": "media", "ref": "GOVERN 1.1",
+      "text": "Los requisitos legales y reglamentarios sobre IA se entienden, se gestionan y se documentan.",
+      "evidence": ["Registro de requisitos legales v3 (2028-01-15): AI Act (arts. 26, 27 y 49), RGPD (arts. 22, 35 y 36) y ordenanza municipal de ayudas.", "Acta de revisión de la asesoría jurídica del 2028-01-20."],
+      "rating": "conforme", "why": "Hay un registro actualizado y revisado que incluye las obligaciones aplicables." },
+    { "id": "C02", "function": "GOVERN", "risk": "media", "ref": "GOVERN 1.6",
+      "text": "Hay mecanismos para inventariar los sistemas de IA, con recursos según las prioridades de riesgo.",
+      "evidence": ["Inventario de sistemas de IA (2028-02-01): Ayuda-Valle, el traductor de la web y el clasificador del registro de entrada.", "El asistente conversacional de la sede electrónica funciona desde junio de 2028 y no aparece en el inventario."],
+      "rating": "nc-menor", "why": "El inventario existe y se mantiene, pero falta un sistema: es un fallo puntual." },
+    { "id": "C03", "function": "GOVERN", "risk": "baja", "ref": "GOVERN 2.1",
+      "text": "Los roles, las responsabilidades y las líneas de comunicación para gestionar los riesgos de IA están documentados y son claros.",
+      "evidence": ["Matriz de responsabilidades del comité de IA aprobada el 2028-01-25.", "Las tres personas entrevistadas conocen su papel y coincide con la matriz."],
+      "rating": "conforme", "why": "Documentado y confirmado en las entrevistas." },
+    { "id": "C04", "function": "GOVERN", "risk": "baja", "ref": "GOVERN 4.3",
+      "text": "Hay prácticas que permiten probar la IA, identificar incidentes y compartir información.",
+      "evidence": ["Procedimiento PRO-09 de pruebas e incidentes, aprobado en febrero de 2028.", "Todavía no se ha hecho el primer ejercicio de prueba que el procedimiento prevé para el cuarto trimestre."],
+      "rating": "observacion", "why": "No hay incumplimiento todavía, pero si no se hace el ejercicio en plazo, lo habrá." },
+    { "id": "C05", "function": "MAP", "risk": "alta", "ref": "MAP 1.1",
+      "text": "Las finalidades, los usos, las leyes y normas del contexto y los entornos de despliegue se entienden y se documentan.",
+      "evidence": ["FRIA v1 firmada el 2028-02-10 y notificada a la autoridad de vigilancia del mercado el 2028-02-20.", "La sección 2 (periodo y frecuencia de uso) dice «por determinar».", "Registro de uso: 2 140 propuestas entre marzo y septiembre de 2028, todos los días laborables. La FRIA no se ha actualizado."],
+      "rating": "nc-menor", "why": "La evaluación existe y se hizo a tiempo, pero un elemento del art. 27.1 está incompleto y no se ha actualizado (art. 27.2): fallo parcial." },
+    { "id": "C06", "function": "MAP", "risk": "media", "ref": "MAP 3.5",
+      "text": "Los procesos de supervisión humana están definidos, evaluados y documentados según las políticas.",
+      "evidence": ["Procedimiento PRO-07, §3: toda propuesta de denegación la revisa y firma un trabajador social, que puede cambiarla.", "Plan de formación en supervisión del 2028-02 con asistencia registrada."],
+      "rating": "conforme", "why": "El proceso está definido y documentado. (Que se cumpla en la práctica es otro control: C10.)" },
+    { "id": "C07", "function": "MEASURE", "risk": "alta", "ref": "MEASURE 2.10",
+      "text": "El riesgo para la privacidad del sistema se examina y se documenta.",
+      "evidence": ["EIPD de 2027-09-30 con el informe del delegado de protección de datos.", "Revisión de la EIPD del 2028-05-12 tras añadir los datos de discapacidad."],
+      "rating": "conforme", "why": "Hecha antes del tratamiento, con el asesoramiento del DPD, y revisada cuando cambió el riesgo (art. 35.11)." },
+    { "id": "C08", "function": "MEASURE", "risk": "alta", "ref": "MEASURE 2.11",
+      "text": "La equidad y los sesgos se evalúan y sus resultados se documentan.",
+      "evidence": ["POL-IA §6 exige una evaluación trimestral de sesgos con datos propios.", "Único documento aportado: informe de pruebas del proveedor DF-TR-2027-11, hecho con datos de otra provincia.", "Acta del comité de IA del 2028-09-12: «la evaluación trimestral está pendiente de recursos»."],
+      "rating": "nc-mayor", "why": "El control no existe: en siete meses no se ha hecho ninguna evaluación propia." },
+    { "id": "C09", "function": "MEASURE", "risk": "media", "ref": "MEASURE 2.7",
+      "text": "La seguridad y la resiliencia del sistema se evalúan y se documentan.",
+      "evidence": ["Prueba de intrusión de 2027-12 con dos debilidades de severidad media.", "Plan de corrección: una corregida y verificada; la otra, con fecha comprometida para 2028-12-31."],
+      "rating": "observacion", "why": "Evaluado y con plan en plazo; no hay incumplimiento, pero conviene vigilar la fecha." },
+    { "id": "C10", "function": "MANAGE", "risk": "alta", "ref": "MANAGE 4.1",
+      "text": "Los planes de seguimiento tras el despliegue se aplican, incluidos los mecanismos de apelación y anulación.",
+      "evidence": ["PRO-07 §3 exige la firma de revisión en cada denegación.", "40 expedientes denegados entre 2028-03-01 y 2028-09-30. Para concluir hay que mirar una muestra: audit records <a> C10 <n> (n ≥ 10)."],
+      "records": 40,
+      "records_failing": ["D03", "D08", "D11", "D17", "D19", "D22", "D26", "D29", "D33", "D35", "D38", "D40"],
+      "rating": "nc-mayor", "why": "En la muestra se repiten las denegaciones sin revisión humana: el control existe en el papel pero falla de forma sistemática." },
+    { "id": "C11", "function": "MANAGE", "risk": "media", "ref": "MANAGE 4.3",
+      "text": "Los incidentes y errores se comunican a los actores afectados y se siguen procesos para atenderlos.",
+      "evidence": ["Registro de incidentes: dos incidentes en 2028.", "El segundo (propuestas duplicadas, 2028-07) se comunicó a las personas afectadas a los 9 días; PRO-09 fija 5."],
+      "rating": "nc-menor", "why": "El proceso funciona, pero un caso se salió del plazo: fallo puntual." },
+    { "id": "C12", "function": "MANAGE", "risk": "baja", "ref": "MANAGE 2.4",
+      "text": "Hay mecanismos, con responsables asignados, para sustituir, desconectar o desactivar el sistema si se comporta de forma distinta a la prevista.",
+      "evidence": ["Procedimiento de desactivación con responsable (jefatura de Servicios Sociales) y vuelta a la tramitación manual.", "Nunca se ha probado."],
+      "rating": "observacion", "why": "Existe, pero sin prueba no se sabe si funciona: oportunidad de mejora." }
+  ],
+  "findings": [
+    { "id": "H1", "control": "C08", "rating": "nc-mayor",
+      "condition": "No hay ninguna evaluación propia de sesgos de Ayuda-Valle desde su puesta en marcha (marzo de 2028); solo existe el informe de pruebas del proveedor de 2027, hecho con datos de otra provincia.",
+      "fields": {
+        "criterio": { "ok": "B", "options": {
+          "A": "Las buenas prácticas de IA responsable.",
+          "B": "POL-IA §6 (evaluación trimestral de sesgos, tomada de NIST AI RMF MEASURE 2.11) y AI Act, art. 26.4 (en la medida en que controla los datos de entrada, el responsable del despliegue se asegura de que sean pertinentes y suficientemente representativos).",
+          "C": "Un control del anexo A de ISO/IEC 42001 sobre la calidad de los datos." } },
+        "evidencia": { "ok": "B", "options": {
+          "A": "El responsable del servicio nos dijo que «los sesgos están controlados».",
+          "B": "Informe del proveedor DF-TR-2027-11, único documento de sesgos aportado; acta del comité de IA del 2028-09-12, que reconoce que la evaluación trimestral está pendiente.",
+          "C": "Ayuda-Valle es un modelo de IA y todos los modelos tienen sesgos." } },
+        "riesgo": { "ok": "B", "options": {
+          "A": "Multa segura de 35 millones de euros o del 7 % del volumen de negocio.",
+          "B": "Sin medir, un sesgo contra un colectivo puede negar ayudas de emergencia de forma sistemática sin que nadie lo detecte: daño al derecho a la no discriminación, y la FRIA se basa en un supuesto que nadie ha comprobado.",
+          "C": "Bajo: el sistema solo propone y decide una persona." } },
+        "recomendacion": { "ok": "A", "options": {
+          "A": "Definir métricas de equidad por colectivo con los datos propios, hacer la primera evaluación en 60 días y después cada trimestre, asignar un responsable y revisar la FRIA con los resultados.",
+          "B": "Mejorar la gestión de los sesgos.",
+          "C": "El equipo auditor reentrenará el modelo con datos equilibrados." } },
+        "seguimiento": { "ok": "C", "options": {
+          "A": "Se revisará en la próxima auditoría.",
+          "B": "Cerrado: el responsable se ha comprometido de palabra.",
+          "C": "Responsable: jefatura de Servicios Sociales. Fecha: 2028-12-15. Evidencia de cierre: informe de la primera evaluación de sesgos y acta del comité de IA que la revisa." } }
+      },
+      "followup": { "closable": false, "text": "El ayuntamiento envía un plan: contratará la evaluación de sesgos en enero de 2029. No hay todavía ningún resultado." } },
+    { "id": "H2", "control": "C10", "rating": "nc-mayor",
+      "condition": "En una muestra aleatoria de expedientes denegados entre marzo y septiembre de 2028, varias denegaciones no tienen la firma de revisión de un trabajador social que exige el procedimiento PRO-07.",
+      "fields": {
+        "criterio": { "ok": "C", "options": {
+          "A": "AI Act, art. 14, que obliga al ayuntamiento a diseñar la supervisión humana del sistema.",
+          "B": "El sentido común.",
+          "C": "PRO-07 §3 (toda denegación la revisa y firma un trabajador social), NIST AI RMF MANAGE 4.1 (apelación y anulación) y AI Act, art. 26.2 (el responsable del despliegue encomienda la supervisión humana a personas con la competencia, la formación y la autoridad necesarias)." } },
+        "evidencia": { "ok": "A", "options": {
+          "A": "Muestra aleatoria (semilla 42) de 10 de los 40 expedientes denegados del periodo, con sus identificadores y los fallos encontrados; extraída del gestor de expedientes y del registro de Ayuda-Valle.",
+          "B": "Según la jefa de servicio, la plantilla revisa siempre.",
+          "C": "Faltan firmas en todos los expedientes del ayuntamiento." } },
+        "riesgo": { "ok": "B", "options": {
+          "A": "Ninguno: probablemente se revisaron igual y no se firmó.",
+          "B": "Denegaciones de ayudas de emergencia sin revisión humana efectiva: personas vulnerables afectadas por decisiones que nadie ha comprobado ni podía anular a tiempo, que pueden convertirse en decisiones únicamente automatizadas (RGPD, art. 22).",
+          "C": "Riesgo de imagen en redes sociales." } },
+        "recomendacion": { "ok": "B", "options": {
+          "A": "Recordar a la plantilla que firme.",
+          "B": "Impedir en el gestor que se cierre una denegación sin la firma de revisión, formar a la plantilla en el sesgo de automatización y revisar ahora los 40 expedientes, informando a las personas afectadas de su derecho a reclamar.",
+          "C": "Retirar Ayuda-Valle para siempre, sin valorar si el control lo corrige." } },
+        "seguimiento": { "ok": "A", "options": {
+          "A": "Responsables: jefatura de Servicios Sociales e informática. Fecha: 2028-11-30. Evidencia de cierre: bloqueo activo en el gestor y una muestra nueva de denegaciones posteriores sin ninguna sin firma.",
+          "B": "Pendiente.",
+          "C": "Lo verificará el proveedor cuando pueda." } }
+      },
+      "followup": { "closable": true, "text": "Bloqueo activo en el gestor desde el 2028-11-04 (captura y registro de cambios). Muestra nueva de 15 denegaciones de noviembre: todas firmadas. Los 40 expedientes antiguos se han revisado y 2 resoluciones se han corregido." } },
+    { "id": "H3", "control": "C05", "rating": "nc-menor",
+      "condition": "La FRIA (2028-02-10) dejó «por determinar» el periodo y la frecuencia de uso, y no se ha actualizado aunque el sistema funciona todos los días laborables desde marzo de 2028.",
+      "fields": {
+        "criterio": { "ok": "A", "options": {
+          "A": "AI Act, art. 27.1.b (periodo y frecuencia de uso) y art. 27.2 (actualizar la información si cambia algún elemento); NIST AI RMF MAP 1.1.",
+          "B": "RGPD, art. 35 (la EIPD).",
+          "C": "AI Act, art. 5 (prácticas prohibidas)." } },
+        "evidencia": { "ok": "A", "options": {
+          "A": "FRIA v1 firmada (2028-02-10), sección 2: «por determinar»; registro de uso de Ayuda-Valle: 2 140 propuestas entre marzo y septiembre de 2028, en días laborables.",
+          "B": "No hemos visto la FRIA, pero el equipo dice que está incompleta.",
+          "C": "La FRIA es demasiado corta." } },
+        "riesgo": { "ok": "C", "options": {
+          "A": "La FRIA es nula y el sistema es ilegal: hay que apagarlo hoy.",
+          "B": "Ninguno: es un trámite.",
+          "C": "Sin el periodo y la frecuencia no se puede dimensionar cuántas personas se ven afectadas ni la carga de revisión humana, y lo notificado a la autoridad no refleja el uso real." } },
+        "recomendacion": { "ok": "A", "options": {
+          "A": "Completar la sección con el uso real, aprobar la versión actualizada y revisar la FRIA cada vez que cambie el uso (art. 27.2).",
+          "B": "Rehacer todas las evaluaciones de la organización.",
+          "C": "Que el auditor redacte la sección que falta." } },
+        "seguimiento": { "ok": "B", "options": {
+          "A": "Sin seguimiento: es una no conformidad menor.",
+          "B": "Responsable: secretaría del comité de IA. Fecha: 2028-11-15. Evidencia de cierre: FRIA v2 aprobada con la sección completa.",
+          "C": "Revisar algún día." } }
+      },
+      "followup": { "closable": true, "text": "FRIA v2 aprobada por el comité de IA el 2028-11-08: la sección 2 recoge el uso real (días laborables, unas 15 propuestas al día) y una revisión semestral." } }
+  ],
+  "report_fields": {
+    "alcance": { "ok": "B", "options": {
+      "A": "Hemos auditado todo el ayuntamiento y todo está bien salvo lo indicado.",
+      "B": "Alcance: Ayuda-Valle, del 2028-03-01 al 2028-09-30. Criterios: POL-IA (basada en el NIST AI RMF 1.0), AI Act y RGPD. Muestra de 6 de los 12 controles, elegida por riesgo, y expedientes elegidos al azar. Lo que no está en la muestra no se ha evaluado.",
+      "C": "Alcance: el que se pudo en el tiempo disponible." } },
+    "conclusion": { "ok": "C", "options": {
+      "A": "Ayuda-Valle cumple el AI Act.",
+      "B": "Suspendido: todo está mal.",
+      "C": "Con dos no conformidades mayores, los controles muestreados de sesgos y de supervisión humana no funcionan como exige la política: se recomienda no ampliar Ayuda-Valle a nuevas ayudas hasta cerrar H1 y H2. No es una opinión jurídica." } }
+  },
+  "rubric": [
+    ["criterio", "Cita el requisito concreto que se incumple (política, subcategoría, artículo) y que está dentro de los criterios acordados. Nada de «buenas prácticas» ni de textos que no has verificado."],
+    ["evidencia", "Verificable por otra persona: qué documento o registro, de qué fecha, qué muestra. Una entrevista sola no basta; una opinión no es evidencia."],
+    ["riesgo", "Consecuencia concreta para las personas y para la organización, proporcionada a la clasificación. Sin exagerar ni minimizar."],
+    ["recomendacion", "Concreta, ataca la causa y la ejecuta la organización: el auditor no implanta lo que audita (independencia)."],
+    ["seguimiento", "Responsable, fecha y la evidencia que permitirá cerrar el hallazgo."],
+    ["alcance", "Sistema, periodo, criterios y límites del muestreo."],
+    ["conclusion", "Proporcionada a lo encontrado, sin generalizar más allá de la muestra y sin presentarse como opinión jurídica."]
+  ]
+}
