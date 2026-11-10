@@ -239,7 +239,7 @@ Los **códigos de diagnóstico** (por ejemplo, `DATA_LEAKAGE_TEST_USED_IN_TRAINI
   4. Maestría y XP.
   5. Migraciones del guardado.
   6. **Test de aislamiento:** busca en los `.gd` del Dojo cualquier API prohibida (`HTTPRequest`, `HTTPClient`, `StreamPeerTCP`, `PacketPeerUDP`, `WebSocketPeer`, `TCPServer`, `UDPServer`, `OS.execute`, `OS.create_process`, `OS.shell_open`, `OS.execute_with_pipe`).
-- CI: `.github/workflows/tests.yml` descarga Godot oficial y ejecuta los tests en cada push. Corre en GitHub, no en el Dojo.
+- Tests: se ejecutan en local antes de cada commit (`tests/run_tests.gd`). El repositorio no usa GitHub Actions (retirado el 2026-11-10).
 
 ## 10. Cómo se amplía
 

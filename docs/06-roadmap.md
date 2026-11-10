@@ -3,7 +3,7 @@
 Cada fase termina con algo **jugable o verificable**.
 
 **Reparto del trabajo:**
-- **Claude** construye la plataforma Godot: motor, UI, terminal, guardado, tests y CI. Esto no es contenido formativo.
+- **Claude** construye la plataforma Godot: motor, UI, terminal, guardado y tests. Esto no es contenido formativo.
 - **Tú** aprendes IA: juegas las misiones, haces los experimentos y escribes en Python los ejercicios 🛠.
 - **Claude** revisa tus ejercicios y te hace preguntas de comprensión.
 
@@ -11,7 +11,7 @@ Cada fase termina con algo **jugable o verificable**.
 
 | Fase | Plataforma (Claude) | Lo que aprendes tú (IA) | Tus ejercicios 🛠 (Python) |
 |---|---|---|---|
-| **0. Cimientos** ✅ | Proyecto Godot, runner de tests, test de aislamiento, tema y CI | — | — |
+| **0. Cimientos** ✅ | Proyecto Godot, runner de tests, test de aislamiento y tema | — | — |
 | **1. Núcleo v0.1** | Hub, terminal, misiones, mentor, progreso y guardado; k-NN interactivo | T1 y T2 (inicio): datos, vectores, distancia, normalización, k-NN, overfitting, fuga de datos | Distancia euclídea, normalización y k-NN desde cero |
 | **2. Validación educativa** | Ajustes del motor según tu experiencia | Juegas v0.1 de principio a fin; ajustamos ritmo, pistas y dificultad | — |
 | **3. Tronco completo** | Visualizaciones: gradiente, MLP, BPE, atención y sampling | T3–T6: optimización, métricas, redes neuronales, tokens, embeddings, transformers y LLM | Gradient descent, métricas, MLP con backprop, BPE, atención y sampling |
@@ -62,7 +62,7 @@ Cada misión trae su prueba de dominio. T2-01 trae además una variante de trans
 2. Ninguna misión es de opción múltiple. Los objetivos se validan sobre lo que **hiciste**.
 3. Las pistas reducen la maestría según la tabla de [04](04-especificacion-misiones.md). El nivel 5 exige confirmación.
 4. El progreso se conserva al cerrar la app. Un guardado corrupto se recupera desde el `.bak`.
-5. Todos los tests pasan, en local y en la CI.
+5. Todos los tests pasan en local.
 6. `help`, `man`, `cheatsheet` y `explain` funcionan desde cualquier pantalla.
 7. Tus ejercicios en Python pasan sus tests (`python -m unittest`). La importación de evidencias al Dojo llega en la Fase 4, junto con la Forja.
 8. Puedes explicar con tus palabras:

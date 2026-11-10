@@ -14,7 +14,7 @@ El proyecto tiene dos planos:
 ## Estado
 
 - Diseño aprobado el 2026-11-06.
-- Fase 0 (cimientos) completada: proyecto Godot, tests y CI. La CI está bloqueada por un problema de facturación de la cuenta de GitHub; los tests se ejecutan en local.
+- Fase 0 (cimientos) completada: proyecto Godot y tests. Los tests se ejecutan en local; el repositorio no usa GitHub Actions.
 - **Contenido jugable:** 44 misiones.
   - Tutorial T0.
   - Tronco común T1–T6: datos, k-NN, descenso por gradiente, métricas, redes neuronales con backprop, tokens BPE, embeddings, modelo de lenguaje, muestreo y atención.

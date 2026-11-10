@@ -50,7 +50,7 @@ Perfiles profesionales de destino: AI Security Engineer, AI Red Teamer, AI Appli
 | O6 | Redactar informes de seguridad profesionales | Informes estructurados evaluados con rúbrica |
 | O7 | Programar IA con tus manos, en Python (el lenguaje estándar de la industria) | Ejercicios 🛠 con tests automáticos superados |
 
-> **Alcance del aprendizaje:** solo IA. Godot es la herramienta con la que se construye la plataforma, pero **no es contenido formativo**. Toda la infraestructura de la app (terminal, UI, guardado, tests, CI) la desarrolla el equipo técnico (Claude) y no forma parte de tu ruta.
+> **Alcance del aprendizaje:** solo IA. Godot es la herramienta con la que se construye la plataforma, pero **no es contenido formativo**. Toda la infraestructura de la app (terminal, UI, guardado, tests) la desarrolla el equipo técnico (Claude) y no forma parte de tu ruta.
 
 ## 4. No-objetivos
 
