@@ -1,0 +1,5 @@
+# Las fuentes de prueba no deben cambiar con el checkout: los PDF son binarios (sus offsets cuentan bytes)
+# y los textos llevan caracteres invisibles que tienen que llegar intactos.
+*.pdf binary
+fuentes/*.txt text eol=lf
+fuentes/*.html text eol=lf

@@ -1,0 +1,117 @@
+{
+  "nota": "Documentos ficticios que amplían la biblioteca de A2-04 (los de A2-04_rag/documentos.json se cargan también). Firmados con HMAC-SHA256 y la clave de laboratorio CLAVE_LAB, igual que en A2-04.",
+  "documentos": [
+    {
+      "id": "garantia-fundas",
+      "titulo": "Garantía de las fundas",
+      "origen": "forja",
+      "acceso": "publico",
+      "texto": "Las fundas (saya) de madera lacada tienen una garantía de 6 meses frente a grietas del lacado y defectos del cierre. La garantía de la funda no cubre la humedad, los golpes ni el desgaste normal del lacado.",
+      "firma": "af56e0cb8ec2a0f5fa96bbb2b3212b2f0d8e7f9aa6cc1ccd1b199edb60321fb0"
+    },
+    {
+      "id": "garantia-tsubas",
+      "titulo": "Garantía de tsubas y accesorios",
+      "origen": "forja",
+      "acceso": "publico",
+      "texto": "Las tsubas, los habaki y el resto de accesorios de hierro o cobre tienen un año de garantía frente a defectos de fabricación. Los accesorios comprados por separado tienen la misma garantía que los montados en una katana.",
+      "firma": "345f53aa16ce695f6efcd8c018e51c84b665305b6edae0e7c25358f2f9621019"
+    },
+    {
+      "id": "envios-internacionales",
+      "titulo": "Envíos internacionales",
+      "origen": "forja",
+      "acceso": "publico",
+      "texto": "Enviamos katanas a Europa y América en un plazo de 10 a 15 días. El envío internacional cuesta 150 monedas por paquete. Los impuestos y trámites de aduana del país de destino corren a cargo del cliente.",
+      "firma": "5d948f263a166ffe3bf6bbfdab270febce7a05cea21f2121aed850cfbf0b551d"
+    },
+    {
+      "id": "devoluciones-encargos",
+      "titulo": "Encargos a medida: cambios y ajustes",
+      "origen": "forja",
+      "acceso": "publico",
+      "texto": "Las katanas hechas por encargo no se pueden devolver, porque se fabrican para cada cliente. A cambio, la forja hace ajustes gratuitos de la empuñadura y de la funda durante los tres meses siguientes a la entrega.",
+      "firma": "249f1187a4ba9ba92b9270f9b94284389d661265e351d217a831c4b448057174"
+    },
+    {
+      "id": "cuidado-funda",
+      "titulo": "Cuidado de la funda",
+      "origen": "forja",
+      "acceso": "publico",
+      "texto": "Para cuidar la funda lacada, límpiala con un paño de algodón y aplica cera de abeja una vez al año. Nunca uses aceite de camelia en la funda: mancha el lacado. El aceite es solo para la hoja.",
+      "firma": "5c4a7ff01e4132dd4a7c36a24ce6a9b9e8e635fb49a321094ae7b4a468d095dc"
+    },
+    {
+      "id": "afilado",
+      "titulo": "Servicio de afilado",
+      "origen": "forja",
+      "acceso": "publico",
+      "texto": "El servicio de afilado de la forja tarda 10 días laborables y cuesta 120 monedas. Afilamos a mano con piedras naturales. Envía la katana en su funda y con el número de pedido.",
+      "firma": "6609255e72c4a3986ecfd53698a3b5709af7f773880d38eed2fb4e46c7e4a326"
+    },
+    {
+      "id": "serie-nocturna",
+      "titulo": "Serie Kurogane nocturna",
+      "origen": "forja",
+      "acceso": "publico",
+      "texto": "La serie Kurogane nocturna tiene la hoja pavonada, de color negro mate, y cuesta 1.900 monedas. Se forja con el mismo acero tamahagane que la serie maestra.",
+      "firma": "71afc04c6032be8cd2d3ed5f964c3967a3047260543bb51a41b8226126c91fcc"
+    },
+    {
+      "id": "visitas-taller",
+      "titulo": "Visitas al taller",
+      "origen": "forja",
+      "acceso": "publico",
+      "texto": "El taller de la forja abre a los visitantes los sábados de 10 a 13 horas. Las visitas son gratuitas, pero hay que reservar plaza por correo con una semana de antelación. Los grupos son de ocho personas como máximo.",
+      "firma": "7bf2b97d577202127c0e15a1205056acf2f36e8139abb520296c2128c2231bba"
+    },
+    {
+      "id": "pago-plazos",
+      "titulo": "Pago a plazos",
+      "origen": "forja",
+      "acceso": "publico",
+      "texto": "Las compras de más de 1.500 monedas se pueden pagar en tres plazos mensuales sin intereses. El pago a plazos se elige en la caja y no admite códigos de descuento.",
+      "firma": "e99b5b8a0675d9ea7012901dad15e3d0504385f9dd006447249a9f0510aab195"
+    },
+    {
+      "id": "katana-entrenamiento",
+      "titulo": "Katana de entrenamiento",
+      "origen": "forja",
+      "acceso": "publico",
+      "texto": "La katana de entrenamiento, de acero y sin filo, pesa 1,5 kg y cuesta 350 monedas. Está pensada para practicar katas sin riesgo de corte.",
+      "firma": "5a022e43b75c3b74a8b89e09f015817aa8ecebb3614b18f4d7420d9a9e52dced"
+    },
+    {
+      "id": "historia",
+      "titulo": "Historia de la forja",
+      "origen": "forja",
+      "acceso": "publico",
+      "texto": "La forja Kurogane se fundó en 1887, cuando el maestro Tetsuo Kurogane abrió su primer taller junto al río. Desde entonces, cinco generaciones de herreros han forjado katanas con las mismas técnicas tradicionales.",
+      "firma": "abaed262d463aa5bf63dc5bf147037878b5e0388ab504ce36f94206a447ba62a"
+    },
+    {
+      "id": "proceso-forjado",
+      "titulo": "Cómo forjamos una katana",
+      "origen": "forja",
+      "acceso": "publico",
+      "texto": "El acero tamahagane se calienta y se pliega doce veces para eliminar impurezas. Después, la hoja se cubre de arcilla y se templa en agua: el temple diferencial endurece el filo y crea la línea del hamon.",
+      "firma": "eff07dada949b58c6c1d55071cfd0799e5f2b84af1e0aefd9916c3922bf5e291"
+    },
+    {
+      "id": "grabado",
+      "titulo": "Grabado del nombre",
+      "origen": "forja",
+      "acceso": "publico",
+      "texto": "Grabamos tu nombre en la espiga o en la hoja por 90 monedas. El grabado tarda una semana y se puede pedir al comprar la katana o más adelante.",
+      "firma": "70b556fead7a9bc9939bcf05e45eb41a40d348f97866bc01b918d5a924626b55"
+    },
+    {
+      "id": "empunadura",
+      "titulo": "Reparaciones de la empuñadura",
+      "origen": "forja",
+      "acceso": "publico",
+      "texto": "El cordón de la empuñadura (tsuka-ito) es de seda y se desgasta con el uso. Rehacer el cordón de la empuñadura cuesta 60 monedas y tarda cinco días. La garantía no cubre el desgaste del cordón.",
+      "firma": "6a393e39b04a0eadcd27285badd7be1dc381e9f6400f3bbc57c8b2a4efe1313d"
+    }
+  ]
+}

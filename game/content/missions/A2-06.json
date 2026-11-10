@@ -1,0 +1,81 @@
+{
+  "id": "A2-06",
+  "schema_version": 1,
+  "title": "El segundo filtro",
+  "unit": "A2",
+  "difficulty": 4,
+  "plane": "forja",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 180,
+  "requires_missions": ["A2-04"],
+  "competencies": { "requires": ["A2.busqueda-hibrida", "A2.evaluacion-recuperacion"], "trains": ["A2.reranking", "A2.metricas-ranking", "A2.latencia", "A2.manipulacion-recuperacion"] },
+  "briefing": "La biblioteca ha crecido y la búsqueda híbrida confunde la garantía de la katana con la de la funda, y el aceite de la hoja con la cera de la funda. La solución habitual es un segundo filtro: traer 10 candidatos y que un reordenador, que lee la pregunta y el texto juntos, elija los 3 mejores. Probarás dos en tu CPU: un cross-encoder multilingüe pequeño y llama3.2:1b como puntuador. Pero cinco documentos de terceros están escritos para posicionarse, y uno le habla directamente al puntuador. Medirás calidad, latencia y quién gana el primer puesto. Instrucciones: forja/labs/A2-06_reranking/README.md.",
+  "learning_objectives": [
+    "Implementar una recuperación en dos etapas: candidatos de la búsqueda híbrida y reordenación por puntuación",
+    "Implementar y explicar recall@k, MRR y nDCG@k con relevancia graduada, y la latencia p50 y p95",
+    "Medir la mejora de un cross-encoder y de un LLM puntuador frente a la búsqueda híbrida, y lo que cuestan en latencia",
+    "Medir si un reordenador frena o amplifica los documentos optimizados para posicionarse",
+    "Explicar por qué un LLM puntuador es una superficie de inyección y un cross-encoder no lo es de la misma forma"
+  ],
+  "mentor_intro": "Un reordenador mejora el orden de lo que ya has recuperado. No sabe quién escribió cada texto: premia lo que parece una buena respuesta, sea verdad o no.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "dos-etapas",
+      "title": "Bi-encoder y cross-encoder",
+      "body": "Un modelo de embeddings (bi-encoder) convierte la pregunta y cada fragmento en vectores por separado: los fragmentos se codifican una vez, al indexar, y la búsqueda es rápida. Un cross-encoder recibe la pregunta y el fragmento juntos y su atención los cruza palabra a palabra: entiende mejor si el texto responde, pero hay que ejecutarlo para cada par en cada pregunta. Por eso se usa solo sobre unos pocos candidatos."
+    },
+    {
+      "id": "metricas",
+      "title": "recall@k, MRR y nDCG",
+      "body": "recall@k pregunta si lo que buscas está entre los k primeros, sin importar dónde. MRR mira la posición del primero que responde: 1 si es el primero, 0,5 si es el segundo. nDCG usa grados de relevancia y descuenta cada posición con 1/log2(posición + 1), y se divide por el valor de la lista ideal para quedar entre 0 y 1. Un reordenador que no cambia qué entra en el top-k puede no mover el recall y sí el MRR."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Implementa las siete funciones de reranking.py hasta que pasen los 13 tests y trae la evidencia.",
+      "teach": "Reordenar sin perder el orden anterior\nCuando dos candidatos tienen la misma puntuación, gana el que la primera etapa puso antes: así el reordenador nunca empeora un empate. sorted() es estable, de modo que ordenar los índices con la clave «menos la puntuación» respeta ese orden. Y devuelve copias: si añades la puntuación a los dicts de la biblioteca, la siguiente búsqueda verá puntuaciones viejas.",
+      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "A2-06", "all_passed": true } },
+      "hints": [
+        "Orden: reordenar → recuperar_reordenado → recall_en_k → rango_reciproco → ndcg_en_k → percentil → puntuacion_llm.",
+        "Desde forja/labs/A2-06_reranking: .\\.venv\\Scripts\\python.exe -m unittest -v test_reranking (crea el entorno como en A2-04).",
+        ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py A2-06 · y aquí: evidence import"
+      ],
+      "on_complete": "Tu tubería de dos etapas funciona con un reordenador simulado. Ahora, con los de verdad."
+    },
+    {
+      "id": "o2",
+      "text": "Con Ollama en marcha, ejecuta bateria.py (al menos 3 configuraciones: ninguna, un reordenador y procedencia) y trae la medición.",
+      "prediction": { "prompt": "Con el cross-encoder, ¿qué crees que pasará con los documentos escritos para posicionarse?", "options": ["los baja casi todos", "unos los baja y otros los sube", "los sube casi todos"] },
+      "validator": { "type": "event", "event": "evidence.measured", "where": { "lab": "A2-06", "has_baseline": true, "configs": { "gte": 3 } } },
+      "hints": [
+        "python bateria.py · la primera vez descarga el cross-encoder (unos 135 MB). La configuración llm son 230 peticiones: varios minutos.",
+        "Con poco tiempo: python bateria.py --configs \"ninguna;cross-encoder;procedencia\""
+      ],
+      "on_complete": "Mira primero la calidad y la latencia; después, las posiciones de los documentos de terceros."
+    },
+    {
+      "id": "o3",
+      "text": "Analiza tu medición: cuánto mejoran recall@3, MRR y nDCG@3 con cada reordenador y cuánto cuesta en p50 y p95; qué técnica de posicionamiento frenó o amplificó cada reordenador y por qué; qué le pasó a la nota dirigida al puntuador con el LLM y con el cross-encoder; y qué hizo procedencia. (reflexion <texto>, mínimo 60 palabras)",
+      "teach": "Un reordenador no es una defensa\nEl cross-encoder aprendió con millones de pares pregunta-respuesta a premiar los textos que parecen responder. Una respuesta falsa bien escrita parece una respuesta. El relleno de palabras clave engaña a BM25, pero un cross-encoder también se fija en las palabras de la pregunta. Y un LLM puntuador lee el documento como un texto con instrucciones. Lo que saca a un tercero del top-k es filtrar por procedencia, no ordenar mejor.",
+      "validator": { "type": "reflection", "min_words": 60 },
+      "hints": ["La línea «terceros» de cada configuración da la posición de cada documento: compara ninguna con cross-encoder y con llm.", "En nDCG, un documento de grado 1 en primera posición no vale cero: ¿qué preguntas mejoran en nDCG y no en recall?"]
+    },
+    {
+      "id": "o4",
+      "text": "Decide qué configuración pondrías en producción para la biblioteca y justifícalo con tus números de calidad, latencia y seguridad. Explica cómo endurecerías un LLM puntuador si tuvieras que usarlo. (reflexion <texto>, mínimo 50 palabras)",
+      "validator": { "type": "reflection", "min_words": 50 },
+      "hints": ["¿Qué latencia p95 aceptarías para una pregunta de un cliente?", "Piensa en lo que hiciste en A1 y A2-04: delimitar el contenido no confiable, validar la salida (puntuacion_llm ya recorta a [0, 10]) y no dejar que el modelo decida solo."]
+    }
+  ],
+  "debrief": {
+    "what_happened": "Has construido una recuperación en dos etapas, con las métricas que usa la industria para evaluarla, y has medido dos reordenadores en CPU: lo que mejoran el orden, lo que cuestan en latencia y cómo responden a documentos escritos para posicionarse, incluida una inyección dirigida al propio puntuador.",
+    "why": "El reordenador decide qué tres fragmentos lee el modelo, así que es tan crítico para la seguridad como la búsqueda. Optimiza la apariencia de relevancia, no la verdad ni la procedencia: puede subir una respuesta falsa bien escrita. Si es un LLM, además obedece instrucciones del texto que puntúa.",
+    "in_production": "La reordenación con cross-encoder es estándar en buscadores y RAG: se aplica a 20–100 candidatos, con modelos cuantizados o servidos en GPU, y se evalúa con conjuntos de preguntas etiquetadas cada vez que cambia el modelo o el corpus. Los LLM como reordenadores se usan cada vez más, por lotes de candidatos, y se tratan como cualquier LLM expuesto a contenido no confiable. La procedencia y el control de acceso se aplican antes de reordenar, y se vigilan los documentos nuevos que de repente ganan muchas búsquedas.",
+    "simplifications": ["18 preguntas y 5 documentos de terceros etiquetados a mano", "Un cross-encoder entrenado con MS MARCO traducido, no con datos del dominio", "El puntuador LLM puntúa candidato a candidato y en serie", "Métricas por documento, no por fragmento", "El Dojo no puede comprobar que la medición se hizo con los modelos reales: confía en tus datos"],
+    "exercise": "forja/labs/A2-06_reranking/reranking.py"
+  },
+  "further_reading": ["ref.nogueira-2019", "ref.bonifacio-mmarco-2021", "ref.hf-mmarco-cross-encoder", "ref.onnxruntime", "ref.jarvelin-2002", "ref.zhong-2023", "ref.zou-2024", "ref.pfrommer-2024", "ref.owasp-llm-2025"],
+  "xp": { "base": 450 }
+}

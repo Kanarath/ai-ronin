@@ -155,6 +155,32 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [Defending Against Indirect Prompt Injection Attacks With Spotlighting](https://arxiv.org/abs/2403.14720) — arXiv:2403.14720 · consultada 2026-11-06
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
 
+**A2-05 · Lo que no se ve**
+
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection](https://arxiv.org/abs/2302.12173) — arXiv:2302.12173 (AISec 2023) · consultada 2026-11-06
+- [Abusing Images and Sounds for Indirect Instruction Injection in Multi-Modal LLMs](https://arxiv.org/abs/2307.10490) — arXiv:2307.10490 · consultada 2026-11-10
+- [ASCII Smuggler Tool: Crafting Invisible Text and Decoding Hidden Codes (caracteres de etiqueta Unicode)](https://embracethered.com/blog/posts/2024/hiding-and-finding-text-with-unicode-tags/) — Embrace The Red, 2024-01-14 · consultada 2026-11-10
+- [The Unicode Standard · bloque Tags (U+E0000–U+E007F)](https://www.unicode.org/charts/PDF/UE0000.pdf) — Unicode Consortium · consultada 2026-11-10
+- [Unicode Standard Annex #15: Unicode Normalization Forms (NFC, NFKC…)](https://www.unicode.org/reports/tr15/) — Unicode Consortium · consultada 2026-11-10
+- [Unicode Technical Standard #39: Unicode Security Mechanisms (confusables, identificadores)](https://www.unicode.org/reports/tr39/) — Unicode Consortium · consultada 2026-11-10
+- [ISO 32000-1:2008 · Document management — Portable document format — PDF 1.7 (§9.3.6 Text Rendering Mode)](https://opensource.adobe.com/dc-acrobat-sdk-docs/pdfstandards/PDF32000_2008.pdf) — ISO / Adobe (copia pública) · consultada 2026-11-10
+- [pypdf · documentación (versión 6.21.4, BSD-3-Clause)](https://pypdf.readthedocs.io/en/stable/) — py-pdf · consultada 2026-11-10
+- [Web Content Accessibility Guidelines (WCAG) 2.2 · criterio 1.4.3, contraste mínimo](https://www.w3.org/TR/WCAG22/) — W3C · consultada 2026-11-10
+- [Ollama · modelo qwen3-vl (2b: 1,9 GB; Apache-2.0) y campo images de /api/chat](https://ollama.com/library/qwen3-vl) — Ollama · consultada 2026-11-10
+
+**A2-06 · El segundo filtro**
+
+- [Passage Re-ranking with BERT](https://arxiv.org/abs/1901.04085) — arXiv:1901.04085 · consultada 2026-11-10
+- [mMARCO: A Multilingual Version of the MS MARCO Passage Ranking Dataset](https://arxiv.org/abs/2108.13897) — arXiv:2108.13897 · consultada 2026-11-10
+- [cross-encoder/mmarco-mMiniLMv2-L12-H384-v1 · cross-encoder multilingüe (Apache-2.0, revisión 1427fd6, ONNX int8)](https://huggingface.co/cross-encoder/mmarco-mMiniLMv2-L12-H384-v1) — Hugging Face · consultada 2026-11-10
+- [onnxruntime 1.31.1 (MIT): ejecución de modelos ONNX en CPU](https://pypi.org/project/onnxruntime/) — Microsoft / PyPI · consultada 2026-11-10
+- [Cumulated gain-based evaluation of IR techniques (nDCG)](https://doi.org/10.1145/582415.582418) — ACM Transactions on Information Systems 20(4) · consultada 2026-11-10
+- [Poisoning Retrieval Corpora by Injecting Adversarial Passages](https://arxiv.org/abs/2310.19156) — arXiv:2310.19156 (EMNLP 2023) · consultada 2026-11-10
+- [PoisonedRAG: Knowledge Corruption Attacks to Retrieval-Augmented Generation of Large Language Models](https://arxiv.org/abs/2402.07867) — arXiv:2402.07867 · consultada 2026-11-06
+- [Ranking Manipulation for Conversational Search Engines](https://arxiv.org/abs/2406.03589) — arXiv:2406.03589 · consultada 2026-11-10
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+
 ### 📖 O2 · Reconocimiento · estudio externo
 
 - **Temario:** Identificar componentes de IA, modelos, dependencias y servicios expuestos (en entornos simulados).

@@ -15,7 +15,7 @@ El proyecto tiene dos planos:
 
 - Diseño aprobado el 2026-11-06.
 - Fase 0 (cimientos) completada: proyecto Godot y tests. Los tests se ejecutan en local; el repositorio no usa GitHub Actions.
-- **Contenido jugable:** 47 misiones.
+- **Contenido jugable:** 49 misiones.
   - Tutorial T0.
   - Tronco común T1–T6: datos, k-NN, descenso por gradiente, métricas, redes neuronales con backprop, tokens BPE, embeddings, modelo de lenguaje, muestreo y atención.
   - Arco de seguridad A1 completo (construir, atacar, defender y desplegar un chatbot), con informes de vulnerabilidad.
@@ -29,12 +29,14 @@ El proyecto tiene dos planos:
   - Pista P0 · laboratorio P0-01 (Forja, real): servicio FastAPI con un LLM local en CPU (Ollama, `llama3.2:1b`), cliente HTTP asíncrono, Docker Compose solo en `127.0.0.1` y medición del no determinismo del modelo.
   - Laboratorio A1-05 (Forja, real): el mostrador de A1 con el modelo local y un canario en el prompt de sistema; batería de fuga del prompt (LLM07) e inyección directa (LLM01), defensas medidas con repeticiones e intervalos de Wilson y su coste en preguntas legítimas. El Dojo importa la medición (`bateria.py`).
   - Laboratorio A2-04 (Forja, real): la biblioteca de A2 con embeddings reales (`embeddinggemma`), Qdrant y el modelo local; troceo, BM25 y búsqueda híbrida con RRF medidas con recall@k; inyección indirecta, envenenamiento y fuga por falta de ACL frente a control de acceso, firma HMAC de documentos y spotlight; Qdrant con API key solo en `127.0.0.1`.
+  - Laboratorio A2-05 (Forja, real): inyección a través de lo que la ingesta extrae y nadie ve: CSS oculto, texto blanco, comentarios y `alt` en HTML; texto PDF invisible o blanco y metadatos (pypdf); caracteres Unicode de etiqueta, de ancho cero y de ancho completo. Extracción consciente de la visibilidad, limpieza de invisibles y NFKC medidas en el índice, el contexto y la respuesta, con su coste en documentos legítimos; imágenes con `qwen3-vl:2b` (opcional).
+  - Laboratorio A2-06 (Forja, real): reranking en dos etapas sobre la búsqueda híbrida de A2-04 con un cross-encoder multilingüe en CPU (mMiniLMv2, ONNX int8) y `llama3.2:1b` como puntuador; recall@k, MRR, nDCG@k y latencia p50/p95; documentos escritos para posicionarse (relleno, preguntas copiadas, respuestas falsas fluidas, inyección al puntuador) frente a procedencia.
   - Capstones C1–C3 (AI Agent Lab, RAG Security Lab, MCP Security Lab): comandos `lab` que miden cada defensa en solitario (matriz) y cada combinación (resiliencia); cobertura mínima sin coste, ataques frágiles y robustos, riesgo residual y defensas que no suman. C4 (multiagente) va a la ruta de estudio externo, como A5.
   - Prueba final C5 (AI Red Team Assessment): encargo completo sobre una empresa ficticia; reglas de enfrentamiento y alcance, reconocimiento, modelo de amenazas OWASP, hallazgos respaldados por las baterías de A1–A6, informe, corrección y retest sin romper las tareas legítimas.
 - **Ruta de estudio externo:** O1–O4, A5 y C4 no tienen misión; se estudian con referencias oficiales en su punto del temario (se desbloquean con sus requisitos y se marcan con `lecturas hecho`). En el Dojo: comando `lecturas`; con enlaces clicables: [`LECTURAS.md`](LECTURAS.md), que también recoge las lecturas de cada misión.
 - **En cada misión:** lecciones antes de cada objetivo, pistas en 5 niveles, prueba de dominio y debrief.
 - **Gamificación:** 18 sellos (logros), rangos Initiate→Master, retos rápidos con solución paso a paso, notificaciones y barra de XP.
-- **Ejercicios Python:** 19 en `forja/ejercicios/` y 3 laboratorios reales en `forja/labs/` (P0-01, A1-05 y A2-04), con guía de Python (`PYTHON.md`) y pistas (`PISTAS.md`). `python -m ronin_check <ID>` genera la evidencia y el Dojo la importa con `evidence import`.
+- **Ejercicios Python:** 19 en `forja/ejercicios/` y 5 laboratorios reales en `forja/labs/` (P0-01, A1-05, A2-04, A2-05 y A2-06), con guía de Python (`PYTHON.md`) y pistas (`PISTAS.md`). `python -m ronin_check <ID>` genera la evidencia y el Dojo la importa con `evidence import`.
 - **Siguiente paso:** laboratorios de la Forja para el resto de arcos (A3: agente real con herramientas) y, después, especializaciones E1–E4.
 
 ### Jugar

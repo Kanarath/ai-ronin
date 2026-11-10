@@ -173,6 +173,24 @@
       "battery_sha256": "0a0200077caae7cb292c7b12d10a902fba822b6d71c8576025c8e2c0158dbfad"
     },
     {
+      "id": "A2-05",
+      "file": "multimodal.py",
+      "test_file": "test_multimodal.py",
+      "test_path": "forja/labs/A2-05_multimodal/test_multimodal.py",
+      "total_tests": 18,
+      "tests_sha256": "5d498a2000c45902542246d5ca98e62fc88b365043725f58736ef254e8fa71f2",
+      "battery_sha256": "e2df834aee330d1b929574929597682d5b23081dd35d34a18bd6c8171ed2abd0"
+    },
+    {
+      "id": "A2-06",
+      "file": "reranking.py",
+      "test_file": "test_reranking.py",
+      "test_path": "forja/labs/A2-06_reranking/test_reranking.py",
+      "total_tests": 13,
+      "tests_sha256": "e647967ff0b69781631b9f9f7e26c7d29f445a947bfeb782ba9e4757d94df11c",
+      "battery_sha256": "745c341262e8d9841a842977ebf3097778372cb26a72523ffb8eead96394d9b6"
+    },
+    {
       "id": "P0-01",
       "file": "servicio.py",
       "test_file": "test_servicio.py",

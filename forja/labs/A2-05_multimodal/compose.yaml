@@ -1,0 +1,32 @@
+# Laboratorio A2-05 · biblioteca con subida de documentos (vulnerable a propósito) + Ollama en CPU.
+# Regla de la Forja: los puertos se publican SOLO en 127.0.0.1.
+#
+#   $env:TOKEN_CLIENTE = "<un token largo y aleatorio>"   (PowerShell; no lo guardes en este fichero)
+#   docker compose up -d --build
+#   docker compose exec ollama ollama pull llama3.2:1b
+#   docker compose exec ollama ollama pull embeddinggemma
+#   docker compose restart biblioteca      (la ingesta se hace al arrancar, con los modelos ya descargados)
+
+services:
+  ollama:
+    image: ollama/ollama:0.40.16    # comprobada en Docker Hub el 2026-11-10
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama_datos:/root/.ollama
+
+  biblioteca:
+    build:
+      context: ..                   # forja/labs: el servicio reutiliza los documentos de A2-04
+      dockerfile: A2-05_multimodal/Dockerfile
+    environment:
+      OLLAMA_URL: "http://ollama:11434"
+      TOKEN_CLIENTE: "${TOKEN_CLIENTE:?define TOKEN_CLIENTE antes de arrancar}"
+      DEFENSAS: ""                   # por ejemplo: "visibilidad,invisibles,normalizacion,filtro"
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      - ollama
+
+volumes:
+  ollama_datos:

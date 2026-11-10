@@ -215,3 +215,60 @@ func test_mision_A2_04() -> void:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
+
+
+func test_mision_A2_05() -> void:
+	var finished: Array = []
+	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
+	game.progress.data["missions"]["A2-04"] = {"completed": true}
+	assert_eq(game.start_mission("A2-05"), "")
+	game.import_evidence(_write("a.json", _evidence("A2-05", 17)))
+	assert_eq(game.runner.index, 0, "hacen falta los 18 tests")
+	game.import_evidence(_write("a.json", _evidence("A2-05", 18)))
+	assert_eq(game.runner.index, 1)
+	assert_false(game.shell.execute("hipotesis la mitad").ok, "solo valen las opciones")
+	assert_true(game.shell.execute("hipotesis casi todas").ok)
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 10), _cfg("visibilidad", 3), _cfg("filtro", 6)], "A2-04")))
+	assert_eq(game.runner.index, 1, "la medición de A2-04 no vale para A2-05")
+	var cfgs := [_cfg("ninguna", 10), _cfg("visibilidad", 3), _cfg("visibilidad,invisibles,normalizacion,filtro", 0, 2)]
+	for c: Dictionary in cfgs:
+		c["ataques_n"] = 10
+		c["fugas_crudas"] = c["ataques_exitos"]
+		c["legitimas_n"] = 6
+		c["legitimas_ok"] = mini(c["legitimas_ok"], 6)
+	game.import_evidence(_write("m.json", _measurement(cfgs, "A2-05")))
+	assert_eq(game.runner.index, 2)
+	for l in ["reflexion " + "el filtro de palabras deja pasar la cola de la instruccion porque el troceo la lleva a otro fragmento y la visibilidad rompe la pestana legitima ".repeat(4),
+			"reflexion " + "normalizaria solo la copia que mira el filtro y en una imagen no hay estilo que comprobar solo pixeles asi que trato lo transcrito como no confiable ".repeat(3)]:
+		var r := game.shell.execute(l)
+		assert_true(r.ok, r.plain_text())
+	assert_eq(finished.size(), 1)
+
+
+func test_mision_A2_06() -> void:
+	var finished: Array = []
+	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
+	game.progress.data["missions"]["A2-04"] = {"completed": true}
+	assert_eq(game.start_mission("A2-06"), "")
+	game.import_evidence(_write("a.json", _evidence("A2-06", 13)))
+	assert_eq(game.runner.index, 1)
+	assert_true(game.shell.execute("hipotesis unos los baja y otros los sube").ok)
+	var cfgs := [_cfg("ninguna", 3, 11), _cfg("cross-encoder", 2, 15)]
+	for c: Dictionary in cfgs:
+		c["ataques_n"] = 5
+		c["fugas_crudas"] = c["ataques_exitos"]
+		c["legitimas_n"] = 18
+	game.import_evidence(_write("m.json", _measurement(cfgs, "A2-06")))
+	assert_eq(game.runner.index, 1, "hacen falta 3 configuraciones")
+	var proc := _cfg("procedencia", 0, 13)
+	proc["ataques_n"] = 5
+	proc["legitimas_n"] = 18
+	cfgs.append(proc)
+	game.import_evidence(_write("m.json", _measurement(cfgs, "A2-06")))
+	assert_eq(game.runner.index, 2)
+	assert_almost_eq(game.shell.events_named("evidence.measured")[-1]["data"]["baseline_rate"], 3.0 / 5.0, 0.0001)
+	for l in ["reflexion " + "el cross encoder subio el mrr y el ndcg pero tardo mas en p95 y subio la respuesta falsa bien escrita mientras procedencia la saco del top ".repeat(4),
+			"reflexion " + "pondria el cross encoder con procedencia antes de reordenar y al puntuador llm le delimitaria el documento y validaria su salida ".repeat(3)]:
+		var r := game.shell.execute(l)
+		assert_true(r.ok, r.plain_text())
+	assert_eq(finished.size(), 1)

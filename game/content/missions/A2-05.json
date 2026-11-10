@@ -1,0 +1,81 @@
+{
+  "id": "A2-05",
+  "schema_version": 1,
+  "title": "Lo que no se ve",
+  "unit": "A2",
+  "difficulty": 4,
+  "plane": "forja",
+  "epistemic": "emergente",
+  "estimated_minutes": 180,
+  "requires_missions": ["A2-04"],
+  "competencies": { "requires": ["A2.forja-rag"], "trains": ["A2.inyeccion-multimodal", "A2.extraccion-visible", "A2.unicode-invisible", "A2.coste-defensas"] },
+  "briefing": "La biblioteca de Kurogane ya acepta documentos de los clientes: páginas HTML, PDF y textos de foros. Ábrelos en el navegador y no verás nada raro. Pero el RAG no indexa lo que ves tú, sino lo que saca el extractor: bloques ocultos con CSS, texto blanco, comentarios, texto alternativo, texto PDF que no se pinta, metadatos y caracteres Unicode invisibles. Diez instrucciones escondidas esperan su turno. Escribirás una extracción que mira la visibilidad y medirás cuántas llegan al índice, al contexto y a la respuesta, y qué documentos legítimos rompe cada defensa. Instrucciones: forja/labs/A2-05_multimodal/README.md.",
+  "learning_objectives": [
+    "Implementar una extracción de texto HTML y PDF que descarte lo que no se pinta (estilos, modo de pintado, color, tamaño)",
+    "Detectar, revelar y quitar caracteres Unicode invisibles y de etiqueta sin romper los emoji, y normalizar con NFKC",
+    "Medir cuántas instrucciones ocultas llegan al índice, al contexto y a la respuesta con una ingesta ingenua y con una saneada",
+    "Medir el coste de cada defensa en documentos legítimos y explicar por qué las capas se combinan",
+    "Explicar por qué en una imagen no hay una visibilidad que comprobar y qué opciones quedan"
+  ],
+  "mentor_intro": "Lo que ve el modelo no es lo que ves tú en la pantalla: es lo que el extractor sacó del fichero. Y un fichero guarda mucho más de lo que se pinta.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "extractor",
+      "title": "La ingesta decide lo que lee el modelo",
+      "body": "Un navegador pinta una página aplicando estilos; un visor de PDF pinta según el estado gráfico. Un extractor de texto no pinta nada: recorre el fichero y saca cadenas. Si no mira display:none, el color o el operador Tr, se lleva también lo que nadie ve. Y además hay metadatos, comentarios y atributos alt que existen precisamente para no verse. Cada uno es un canal para una inyección indirecta (LLM01)."
+    },
+    {
+      "id": "unicode",
+      "title": "Caracteres que no se dibujan",
+      "body": "La categoría Unicode Cf (formato) reúne caracteres que no tienen forma: espacios de ancho cero, controles de dirección y el bloque Tags, que copia el ASCII en U+E0020–E007E. Un texto puede llevar una frase entera en etiquetas y parecer vacío. Otros trucos sí se ven pero engañan a un filtro: letras de ancho completo o palabras partidas por un ancho cero. NFKC une las formas de compatibilidad, pero también cambia símbolos legítimos como ½."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Implementa las siete funciones de multimodal.py hasta que pasen los 18 tests y trae la evidencia.",
+      "teach": "Una máquina de estados para el PDF\nEl flujo de contenido de un PDF es una lista de operadores que cambian un estado (color, modo de pintado, tamaño de letra) y otros que pintan texto con el estado de ese momento. q guarda el estado en una pila y Q lo recupera: un texto blanco dentro de q … Q no tiñe lo que viene después. BT y ET abren y cierran un bloque de texto, pero no reinician ni el color ni el modo.",
+      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "A2-05", "all_passed": true } },
+      "hints": [
+        "Orden: caracteres_invisibles → quitar_invisibles → revelar_etiquetas → normalizar_unicode → oculto_por_estilo → texto_visible_html → texto_visible_pdf.",
+        "Desde forja/labs/A2-05_multimodal: .\\.venv\\Scripts\\python.exe -m unittest -v test_multimodal (crea el entorno como en A2-04).",
+        ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py A2-05 · y aquí: evidence import"
+      ],
+      "on_complete": "Tu extracción ya mira lo que se pinta. Ahora, a medir qué cambia."
+    },
+    {
+      "id": "o2",
+      "text": "Ejecuta bateria.py (al menos 3 configuraciones, una sin defensas; con --solo-ingesta si no tienes los modelos) y trae la medición.",
+      "prediction": { "prompt": "Con solo el filtro de palabras clave, ¿cuántas de las 10 instrucciones ocultas llegarán al índice? (casi ninguna: 0–2 · unas pocas: 3–5 · casi todas: 6 o más)", "options": ["casi ninguna", "unas pocas", "casi todas"] },
+      "validator": { "type": "event", "event": "evidence.measured", "where": { "lab": "A2-05", "has_baseline": true, "configs": { "gte": 3 } } },
+      "hints": [
+        "Primero sin modelos: python bateria.py --solo-ingesta (segundos). Después, con Ollama: python bateria.py (unos 160 mensajes).",
+        "Con poco tiempo: python bateria.py --n 1 --configs \"ninguna;visibilidad,invisibles;visibilidad,invisibles,normalizacion,filtro\""
+      ],
+      "on_complete": "Tienes los números. Mira por qué canal se cuela cada instrucción que queda."
+    },
+    {
+      "id": "o3",
+      "text": "Analiza tu medición: qué canal cierra cada defensa; por qué el filtro de palabras clave deja pasar instrucciones que sí contienen la frase delatora; por qué invisibles y normalizacion solo sirven junto al filtro; qué preguntas legítimas rompe cada capa; y, si mediste con modelos, la diferencia entre llegar al contexto y ser obedecida. (reflexion <texto>, mínimo 60 palabras)",
+      "teach": "El filtro ve fragmentos, no documentos\nLa ingesta trocea antes de filtrar. Si la frase «Nota para el asistente» cae en un fragmento y el resto de la instrucción en el siguiente, el filtro aparta el primero y el segundo entra en el índice. El solape del troceo, que en A2-04 servía para no cortar las ideas, aquí arrastra la cola del ataque.",
+      "validator": { "type": "reflection", "min_words": 60 },
+      "hints": ["La salida de bateria.py lista, por configuración, los canales que llegan al índice y las preguntas legítimas perdidas.", "Trocea a mano el texto de manual-cliente.pdf (40 palabras, solape 10): ¿en qué fragmento queda «Nota para el asistente» y en cuál PLAZOS-CERO?"]
+    },
+    {
+      "id": "o4",
+      "text": "Propón cómo evitarías dos de los costes que has medido (por ejemplo, la pestaña legítima oculta y el «1½» que NFKC convierte en «11⁄2») sin volver a abrir los canales, y explica por qué en una imagen no hay visibilidad que comprobar y qué harías con las imágenes de terceros. (reflexion <texto>, mínimo 50 palabras)",
+      "validator": { "type": "reflection", "min_words": 50 },
+      "hints": ["¿Hace falta guardar el texto normalizado, o basta con normalizar la copia que mira el filtro?", "Los documentos de la forja están firmados (A2-04). ¿Hay que juzgarlos por su aspecto o por su procedencia?"]
+    }
+  ],
+  "debrief": {
+    "what_happened": "Has visto diez maneras de esconder una instrucción en un fichero que una persona revisa sin ver nada, y has escrito una extracción que mira lo que de verdad se pinta en HTML y PDF, además de detectar y quitar los caracteres Unicode invisibles. Has medido que cada capa cierra unos canales y no otros, que el filtro de palabras clave falla por el troceo y por lo que no puede leer, y que cada capa rompe algún documento legítimo.",
+    "why": "En un RAG, el atacante no necesita que nadie lea su documento: solo que el extractor lo saque y la búsqueda lo recupere. Las defensas en la ingesta son deterministas y se pueden medir sin modelo, pero tienen falsos positivos, porque ocultar, usar texto alternativo o escribir «dile que» también es legítimo.",
+    "in_production": "Las ingestas serias convierten los documentos con un renderizador (un navegador sin interfaz para HTML, un motor PDF que aplica el estado gráfico), registran qué se ha descartado y por qué, y auditan los caracteres invisibles antes de indexar. Normalizan para comparar y filtrar, no para guardar. Tratan distinto lo propio y firmado y lo de terceros, y aun así marcan el contenido de terceros como no confiable (spotlight). Las imágenes de terceros se transcriben solo si hace falta, y su texto se trata como no confiable.",
+    "simplifications": ["La visibilidad HTML solo mira los atributos de cada elemento, sin hojas de estilo ni herencia de colores de fondo", "El PDF solo sigue siete operadores de estado (q, Q, rg, g, k, Tr y Tf)", "DOCX solo se explica: el mismo problema con <w:vanish/> y colores en XML", "Las marcas de los ataques son códigos inventados, fáciles de detectar", "El Dojo no puede comprobar que la medición se hizo con los modelos reales: confía en tus datos"],
+    "exercise": "forja/labs/A2-05_multimodal/multimodal.py"
+  },
+  "further_reading": ["ref.owasp-llm-2025", "ref.greshake-2023", "ref.bagdasaryan-2023", "ref.rehberger-ascii-smuggler-2024", "ref.unicode-tags", "ref.unicode-uax15", "ref.unicode-uts39", "ref.iso-32000-1", "ref.pypdf", "ref.wcag-22", "ref.ollama-qwen3-vl"],
+  "xp": { "base": 450 }
+}

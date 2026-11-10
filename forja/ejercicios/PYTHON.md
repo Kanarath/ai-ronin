@@ -288,5 +288,7 @@ async def chat(p: Peticion):
 | P0-01 servicio LLM (forja/labs) | 8 (`.get` con valor por defecto), 12, 14 |
 | A1-05 mostrador (forja/labs) | 3, 4 (valores por defecto), 11 (`re`, `math.sqrt`, `unicodedata`), 12, 14 |
 | A2-04 biblioteca (forja/labs) | 2 (rebanadas), 3 (`while`, `break`), 7, 8, 9, 11 (`math.log`, `re`, `hmac`, `hashlib`), 12, 14 |
+| A2-05 lo que no se ve (forja/labs) | 2 (pilas con `append`, `pop` y `del`), 3, 4, 8 (copiar un dict), 11 (`unicodedata`, `re.fullmatch`), 12 (`try` / `except ValueError`) |
+| A2-06 reranking (forja/labs) | 2, 3, 5, 7 (`sorted` estable con `key`), 8, 9, 11 (`math.log2`, `math.ceil`, `re.search`), 12, 14 (`await`) |
 
 Si te atascas en un ejercicio, mira [PISTAS.md](PISTAS.md): tiene pistas progresivas para cada función.
