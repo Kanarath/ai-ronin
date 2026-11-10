@@ -1,0 +1,9 @@
+# Versiones fijadas y comprobadas en PyPI el 2026-11-10.
+# pypdf (BSD-3-Clause): 6.21.4 es la última de la serie 6 (2026-10-28). La 7.0.0 salió el 2026-11-06 y
+# la 7.0.1 hoy mismo: se deja madurar una versión mayor antes de usarla en un laboratorio.
+fastapi==0.162.2
+uvicorn==0.54.0
+pydantic==2.14.3
+httpx2==2.16.0
+pypdf==6.21.4
+# Solo para regenerar las imágenes con fabricar.py (opcional): pillow==13.0.0

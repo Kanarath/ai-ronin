@@ -1,0 +1,12 @@
+# Versiones fijadas y comprobadas en PyPI el 2026-11-10.
+fastapi==0.162.2
+uvicorn==0.54.0
+pydantic==2.14.3
+httpx2==2.16.0
+qdrant-client==1.20.0
+# El cross-encoder, sin PyTorch: onnxruntime (MIT) ejecuta el modelo ONNX, tokenizers (Apache-2.0)
+# trocea el texto y huggingface-hub (Apache-2.0) lo descarga con la revisión fijada en reranking.py.
+onnxruntime==1.31.1
+tokenizers==0.23.3
+huggingface-hub==2.4.0
+numpy==2.5.4

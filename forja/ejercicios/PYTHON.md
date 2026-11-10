@@ -468,6 +468,8 @@ list(itertools.islice(cuadrados(numeros()), 4))   # [0, 1, 4, 9]: toma los 4 pri
 | E1-03 LoRA y lente (forja/labs) | 2, 5, 12, 15 (`nn.Module`, `nn.Parameter`, entrenamiento) |
 | A1-06 juez (forja/labs) | 4 (valores por defecto), 5, 6, 7 (`min` y `sorted`), 8 (`.get`), 9 (unión de conjuntos), 11 (`re.findall`, `re.fullmatch`, `random.Random`), 12, 14 |
 | A1-07 guardián (forja/labs) | 5 (dos `for` en una comprensión), 6, 7 (`min` con clave tupla), 8, 9, 11 (`Counter`, `math.log`, `math.exp`), 12 |
+| A2-05 lo que no se ve (forja/labs) | 2 (pilas con `append`, `pop` y `del`), 3, 4, 8 (copiar un dict), 11 (`unicodedata`, `re.fullmatch`), 12 (`try` / `except ValueError`) |
+| A2-06 reranking (forja/labs) | 2, 3, 5, 7 (`sorted` estable con `key`), 8, 9, 11 (`math.log2`, `math.ceil`, `re.search`), 12, 14 (`await`) |
 
 Si te atascas en un ejercicio, mira [PISTAS.md](PISTAS.md): tiene pistas progresivas para cada función.
 
