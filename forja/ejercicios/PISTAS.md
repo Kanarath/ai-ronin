@@ -131,6 +131,20 @@ Antes de abrir una pista, ejecuta el test y lee el mensaje de error: suele decir
 "</code> y la etiqueta de cierre.</details>
 <details><summary>🟡 intervalo_wilson</summary>Copia la fórmula del docstring paso a paso, con variables intermedias (<code>p</code>, <code>z2 = z * z</code>, <code>d = 1 + z2 / n</code>). Usa <code>math.sqrt</code>; y <code>max(0.0, ...)</code> y <code>min(1.0, ...)</code> antes de redondear.</details>
 
+## A2-04 · la biblioteca de verdad (forja/labs/A2-04_rag)
+
+<details><summary>🟡 trocear</summary>Valida primero los tres casos del <code>ValueError</code>. Después <code>w = texto.split()</code>, <code>paso = palabras - solape</code> y un bucle <code>while</code> con <code>i</code> desde 0: añade <code>" ".join(w[i:i + palabras])</code> y haz <code>break</code> si <code>i + palabras &gt;= len(w)</code>. El <code>while w:</code> resuelve el texto vacío.</details>
+<details><summary>🟡 bm25</summary>Calcula <code>N</code> y <code>avgdl</code> antes del bucle. Para cada <code>q in set(consulta)</code>: <code>n_q = sum(1 for d in documentos if q in d)</code>, su <code>idf</code> con <code>math.log</code>, y suma a cada documento su término con <code>f = d.count(q)</code>.</details>
+<details><summary>🟢 fusion_rrf</summary>Un dict de puntuaciones y <code>for pos, x in enumerate(lista, 1)</code>. Los dict recuerdan el orden de inserción y <code>sorted</code> es estable: <code>sorted(puntos, key=lambda x: -puntos[x])</code> ya desempata por aparición.</details>
+<details><summary>🟢 recall_en_k</summary><code>rel = set(relevantes)</code> y <code>len(set(recuperados[:k]) &amp; rel) / len(rel)</code>.</details>
+<details><summary>🟢 filtro_acceso</summary><code>ACCESOS_POR_ROL.get(rol, [])</code> ya deniega por defecto; envuélvelo en <code>sorted(...)</code>, que devuelve una lista nueva. Cuidado: <code>None</code> no es una clave válida si haces <code>rol.lower()</code>, y <code>"Empleado"</code> no es <code>"empleado"</code>.</details>
+<details><summary>🟢 firmar</summary><code>hmac.new(clave.encode("utf-8"), canonico.encode("utf-8"), hashlib.sha256).hexdigest()</code>, con <code>canonico = "
+".join([...])</code>.</details>
+<details><summary>🟢 verificar_firma</summary><code>f = doc.get("firma")</code>; <code>isinstance(f, str) and hmac.compare_digest(firmar(doc, clave), f)</code>.</details>
+<details><summary>🟡 ensamblar_contexto</summary>Escapa con <code>re.sub(r"&lt;/?documento_no_confiable&gt;", "[etiqueta]", texto, flags=re.IGNORECASE)</code>, como en A1-05. Para el presupuesto, antes de añadir un bloque comprueba <code>len("
+
+".join(bloques + [bloque])) &gt; max_caracteres</code> y haz <code>break</code>.</details>
+
 ## C1_01 · la matriz de defensas
 
 <details><summary>🟢 bloqueado_por</summary><code>sorted(d for d, ataques in matriz.items() if ataque in ataques)</code>.</details>

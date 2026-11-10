@@ -43,7 +43,7 @@ static func _import(c: CommandContext, a: Dictionary) -> CommandResult:
 	for f in files:
 		var res := g.import_evidence(f)
 		if res["ok"] and res["kind"] == "medicion":
-			data.append([res["exercise"] + " medición", "%d configuraciones · %s" % [res["configs"], res["modelo"]], "fugas: sin defensas %s · mejor %.0f %%" % [
+			data.append([res["exercise"] + " medición", "%d configuraciones · %s" % [res["configs"], res["modelo"]], "éxito de los ataques: sin defensas %s · mejor %.0f %%" % [
 				"%.0f %%" % (res["baseline_rate"] * 100) if res["has_baseline"] else "—", res["best_rate"] * 100]])
 		elif res["ok"]:
 			var state := "✓ verificado" if res["all_passed"] else "%d / %d tests" % [res["passed"], res["total"]]

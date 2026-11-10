@@ -145,9 +145,9 @@ func test_mision_P0_01() -> void:
 	assert_eq(finished.size(), 1)
 
 
-func _measurement(configs: Array) -> Dictionary:
-	return {"schema": "ai-ronin/evidence", "schema_version": 1, "kind": "medicion", "lab": "A1-05", "created": "2026-11-10T09:00:00+00:00",
-		"modelo": "llama3.2:1b", "temperatura": 0.7, "repeticiones": 3, "bateria_sha256": game.evidence.exercises["A1-05"]["battery_sha256"],
+func _measurement(configs: Array, lab: String = "A1-05") -> Dictionary:
+	return {"schema": "ai-ronin/evidence", "schema_version": 1, "kind": "medicion", "lab": lab, "created": "2026-11-10T09:00:00+00:00",
+		"modelo": "llama3.2:1b", "temperatura": 0.7, "repeticiones": 3, "bateria_sha256": game.evidence.exercises[lab]["battery_sha256"],
 		"configuraciones": configs}
 
 
@@ -192,6 +192,26 @@ func test_mision_A1_05() -> void:
 	assert_eq(game.runner.index, 2)
 	for l in ["reflexion " + "sin defensas se filtro la mitad de las veces y el intervalo era ancho porque hay pocas repeticiones ".repeat(4),
 			"reflexion " + "sin el secreto en el prompt el modelo no puede filtrarlo y el filtro de salida no ve traducciones ".repeat(3)]:
+		var r := game.shell.execute(l)
+		assert_true(r.ok, r.plain_text())
+	assert_eq(finished.size(), 1)
+
+
+func test_mision_A2_04() -> void:
+	var finished: Array = []
+	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
+	for m in ["A2-03", "A1-05"]:
+		game.progress.data["missions"][m] = {"completed": true}
+	assert_eq(game.start_mission("A2-04"), "")
+	game.import_evidence(_write("a.json", _evidence("A2-04", 20)))
+	assert_eq(game.runner.index, 1)
+	assert_true(game.shell.execute("hipotesis lo frena a veces").ok)
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("acl", 6), _cfg("acl,procedencia,spotlight", 0)], "A1-05")))
+	assert_eq(game.runner.index, 1, "la medición de A1-05 no vale para A2-04")
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("acl", 6), _cfg("acl,procedencia,spotlight", 0)], "A2-04")))
+	assert_eq(game.runner.index, 2)
+	for l in ["reflexion " + "la busqueda hibrida recupero mejor y acl dejo la fuga a cero porque el documento interno no llego al contexto ".repeat(4),
+			"reflexion " + "el rol sale del token porque el cliente puede escribir cualquier cosa y la firma prueba integridad no verdad ".repeat(3)]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)

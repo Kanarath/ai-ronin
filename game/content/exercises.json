@@ -164,6 +164,15 @@
       "battery_sha256": "7b6878c2a2e3627d58aff6c108a622f8234ae1e9c2301cf5da54727b5e2c6557"
     },
     {
+      "id": "A2-04",
+      "file": "rag.py",
+      "test_file": "test_rag.py",
+      "test_path": "forja/labs/A2-04_rag/test_rag.py",
+      "total_tests": 20,
+      "tests_sha256": "a8f8d0e8e765bfc622480fa783b37961f2b0263dc646e397da26320f3e63e929",
+      "battery_sha256": "0a0200077caae7cb292c7b12d10a902fba822b6d71c8576025c8e2c0158dbfad"
+    },
+    {
       "id": "P0-01",
       "file": "servicio.py",
       "test_file": "test_servicio.py",

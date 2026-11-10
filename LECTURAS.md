@@ -145,6 +145,16 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [Defending Against Indirect Prompt Injection Attacks With Spotlighting](https://arxiv.org/abs/2403.14720) — arXiv:2403.14720 · consultada 2026-11-06
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
 
+**A2-04 · La biblioteca de verdad**
+
+- [The Probabilistic Relevance Framework: BM25 and Beyond](https://doi.org/10.1561/1500000019) — Foundations and Trends in Information Retrieval · consultada 2026-11-10
+- [Reciprocal rank fusion outperforms Condorcet and individual rank learning methods](https://doi.org/10.1145/1571941.1572114) — SIGIR 2009, 758-759 · consultada 2026-11-10
+- [HMAC: Keyed-Hashing for Message Authentication (RFC 2104)](https://www.rfc-editor.org/rfc/rfc2104) — IETF · consultada 2026-11-10
+- [Qdrant · Security: autenticación con API key, claves de solo lectura y TLS (versión 1.20.0)](https://qdrant.tech/documentation/security/) — Qdrant · consultada 2026-11-10
+- [Ollama · API de embeddings (POST /api/embed); modelo embeddinggemma](https://docs.ollama.com/api/embed) — Ollama · consultada 2026-11-10
+- [Defending Against Indirect Prompt Injection Attacks With Spotlighting](https://arxiv.org/abs/2403.14720) — arXiv:2403.14720 · consultada 2026-11-06
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+
 ### 📖 O2 · Reconocimiento · estudio externo
 
 - **Temario:** Identificar componentes de IA, modelos, dependencias y servicios expuestos (en entornos simulados).

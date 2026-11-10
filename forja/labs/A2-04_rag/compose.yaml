@@ -1,0 +1,47 @@
+# Laboratorio A2-04 · biblioteca de Kurogane (vulnerable a propósito) + Ollama en CPU + Qdrant.
+# Regla de la Forja: los puertos se publican SOLO en 127.0.0.1.
+#
+#   $env:QDRANT_API_KEY = "<una clave larga y aleatoria>"   (PowerShell; no la guardes en este fichero)
+#   docker compose up -d --build
+#   docker compose exec ollama ollama pull llama3.2:1b
+#   docker compose exec ollama ollama pull embeddinggemma
+#   docker compose restart biblioteca      (la ingesta se hace al arrancar, con los modelos ya descargados)
+#
+# Qdrant sin configurar no tiene autenticación y escucha en todas las interfaces (documentación de
+# seguridad de Qdrant). Aquí lleva API key y solo se publica en 127.0.0.1. Dentro de la red de compose
+# va sin TLS: en producción, TLS también (service.enable_tls).
+
+services:
+  ollama:
+    image: ollama/ollama:0.40.16    # comprobada en Docker Hub el 2026-11-10
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama_datos:/root/.ollama
+
+  qdrant:
+    image: qdrant/qdrant:v1.20.0     # publicada el 2026-10-21, comprobada el 2026-11-10
+    environment:
+      QDRANT__SERVICE__API_KEY: "${QDRANT_API_KEY:?define QDRANT_API_KEY antes de arrancar}"
+    ports:
+      - "127.0.0.1:6333:6333"
+    volumes:
+      - qdrant_datos:/qdrant/storage
+
+  biblioteca:
+    build: .
+    environment:
+      OLLAMA_URL: "http://ollama:11434"
+      QDRANT_URL: "http://qdrant:6333"
+      QDRANT_API_KEY: "${QDRANT_API_KEY:?define QDRANT_API_KEY antes de arrancar}"
+      DEFENSAS: ""                   # por ejemplo: "acl" o "acl,procedencia,spotlight"
+      # TOKENS: "token1:cliente,token2:empleado"   (por defecto, los dos tokens de laboratorio de rag.py)
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      - ollama
+      - qdrant
+
+volumes:
+  ollama_datos:
+  qdrant_datos:
