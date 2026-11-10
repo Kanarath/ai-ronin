@@ -1,0 +1,19 @@
+# Laboratorio A6-04 · el verificador dentro de un contenedor que no puede hacer casi nada.
+# No publica ningún puerto (no es un servicio) y no tiene red: lo que analiza no puede «llamar a casa».
+#
+#   docker compose build
+#   docker compose run --rm verificador                     (analiza artefactos/taller-comprometido)
+#   $env:PROYECTO = "./artefactos/taller-bueno"; docker compose run --rm verificador
+#
+# Genera antes los artefactos: python generar_artefactos.py
+
+services:
+  verificador:
+    build: .
+    network_mode: none              # segmentación extrema: sin red de ningún tipo
+    read_only: true                 # sistema de ficheros de solo lectura
+    cap_drop: [ALL]                 # sin capacidades de Linux
+    security_opt:
+      - "no-new-privileges:true"
+    volumes:
+      - "${PROYECTO:-./artefactos/taller-comprometido}:/proyecto:ro"   # el proyecto, también de solo lectura

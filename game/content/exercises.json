@@ -173,6 +173,15 @@
       "battery_sha256": "0a0200077caae7cb292c7b12d10a902fba822b6d71c8576025c8e2c0158dbfad"
     },
     {
+      "id": "A6-04",
+      "file": "verificador.py",
+      "test_file": "test_verificador.py",
+      "test_path": "forja/labs/A6-04_cadena/test_verificador.py",
+      "total_tests": 27,
+      "tests_sha256": "5cd52de9024d9df31b1b0e4f2f979243eb2e9e4aa5bda70ab4c496c16d6efcec",
+      "battery_sha256": "d4e9b40f20fa609de0a6db3bbcc6f32068f723554353ccb871f66191dddf1d1b"
+    },
+    {
       "id": "P0-01",
       "file": "servicio.py",
       "test_file": "test_servicio.py",

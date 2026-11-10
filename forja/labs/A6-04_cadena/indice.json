@@ -1,0 +1,9 @@
+{
+  "nota": "Índice de paquetes LOCAL y FICTICIO del laboratorio A6-04 (como el registro de A6-01…03). Los nombres de numpy y safetensors son reales, pero sus versiones y fechas aquí son de laboratorio: no consultes PyPI con este fichero. forja-metricas-pro se publicó hace 3 días y forja-tensor-tools no existe.",
+  "paquetes": {
+    "numpy": {"2.3.3": "2025-09-09", "2.3.4": "2025-10-15"},
+    "safetensors": {"0.6.2": "2025-08-08", "0.8.0": "2026-06-09"},
+    "forja-metrics": {"1.0.0": "2024-12-01", "1.1.0": "2025-03-20"},
+    "forja-metricas-pro": {"0.0.1": "2026-11-07"}
+  }
+}

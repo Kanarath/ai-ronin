@@ -1,0 +1,280 @@
+{
+  "nota": "Batería del laboratorio A6-04. Todo es ficticio y los artefactos «malos» son inofensivos (ver generar_artefactos.py). El Dojo comprueba la huella de este fichero: si quieres probar artefactos propios, hazlo en una copia y no importes esa medición.",
+  "hoy": "2026-11-10",
+  "dias_minimos": 30,
+  "indice_sha256": "27e828c0a5620c9e6f475f80910a581ce85c55e0216d97d7cef5ac6b31ab3ee9",
+  "configuraciones": [
+    "ninguna",
+    "pickle-estricto",
+    "pickle",
+    "safetensors",
+    "bom",
+    "deps",
+    "docker",
+    "pickle,safetensors,bom,deps,docker",
+    "pickle-estricto,safetensors,bom,deps,docker"
+  ],
+  "categorias": {
+    "codigo": "el artefacto ejecutaría código al cargarse",
+    "formato": "fichero de pesos mal formado o políglota",
+    "integridad": "no coincide con el AI-BOM o no está en él",
+    "datos": "datos envenenados",
+    "dependencias": "dependencia sin fijar, inexistente, reciente o de otro índice",
+    "contenedor": "imagen que corre como root, con secretos o sin versión"
+  },
+  "casos": [
+    {
+      "proyecto": "taller-bueno",
+      "fichero": "modelos/clasificador-acero.safetensors",
+      "malo": false,
+      "descripcion": "Modelo propio en safetensors, con __metadata__ y cabecera rellena con espacios",
+      "sha256": "fed0982ba54eb138eedd01b132d881b61669d70a9fdc8ad01a73ebb82fbf321f"
+    },
+    {
+      "proyecto": "taller-bueno",
+      "fichero": "modelos/embeddings.safetensors",
+      "malo": false,
+      "descripcion": "BF16, un escalar (shape []) y un tensor vacío; huella en mayúsculas en el AI-BOM",
+      "sha256": "d9b3b17fcc0321fe869f54326bf6aea2c9223f27903f082b40c64295fdaf5d4b"
+    },
+    {
+      "proyecto": "taller-bueno",
+      "fichero": "modelos/adaptador-estilo.safetensors",
+      "malo": false,
+      "descripcion": "El adapter de lora-labs tal como se publicó",
+      "sha256": "1d3d59517e441f8fd6f3261aa22467eafe683d4363dda324a6e430a8fa828b7c"
+    },
+    {
+      "proyecto": "taller-bueno",
+      "fichero": "modelos/tokenizador.pkl",
+      "malo": false,
+      "descripcion": "Pickle legítimo: collections.OrderedDict con STACK_GLOBAL y REDUCE",
+      "sha256": "0e2a50cfe9785206f319cb0736d18c7ee91cc3a0be38c10631bceeb6e5fbbe44"
+    },
+    {
+      "proyecto": "taller-bueno",
+      "fichero": "modelos/vocabulario.pkl",
+      "malo": false,
+      "descripcion": "Pickle sin ningún import",
+      "sha256": "29f905bc890c8a08b56e88c609b1170e854702dc6e4a9404a0d7c9652dfd3db0"
+    },
+    {
+      "proyecto": "taller-bueno",
+      "fichero": "modelos/clasificador.pt",
+      "malo": false,
+      "descripcion": "Zip al estilo PyTorch con un OrderedDict",
+      "sha256": "1ab53aac386f21ee5cde4e74a4777fd965ebf09e5f4090f87bf86aef6c74edef"
+    },
+    {
+      "proyecto": "taller-bueno",
+      "fichero": "datos/inspecciones.csv",
+      "malo": false,
+      "descripcion": "Datos internos declarados en el AI-BOM",
+      "sha256": "1f262f6b50c31a29c691dd05eb0ba34aa93452bade4642491a25fe85f6ffe5f4"
+    },
+    {
+      "proyecto": "taller-bueno",
+      "fichero": "requirements.txt",
+      "malo": false,
+      "descripcion": "Dependencias fijadas que existen en el índice",
+      "sha256": "106ba0c0f262ed3b85540dbc4ee2565d97fda95fc60e590c66953de38c84ac16"
+    },
+    {
+      "proyecto": "taller-bueno",
+      "fichero": "requirements-dev.txt",
+      "malo": false,
+      "descripcion": "Comentarios, extras, marcador de entorno y un nombre sin normalizar",
+      "sha256": "c5b17e0402ea993df815f6c9b42425fda652a558cfe8f9184922dbaab12ecc2f"
+    },
+    {
+      "proyecto": "taller-bueno",
+      "fichero": "Dockerfile",
+      "malo": false,
+      "descripcion": "Usuario sin privilegios; TOKENIZERS_PARALLELISM no es un secreto",
+      "sha256": "a81a565844353f6ec36e7bd9b948fc95783db04d30360bc06449ad1a8a5208c0"
+    },
+    {
+      "proyecto": "taller-bueno",
+      "fichero": "Dockerfile.multietapa",
+      "malo": false,
+      "descripcion": "Multietapa: --platform, registro con puerto, alias de etapa, PUBLIC_KEY_URL y user 10001",
+      "sha256": "3d310af4ffc15d1e68c2dc8f75a7fb600707454e5f1228172cf365fb99f090b5"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "modelos/detector-grietas.bin",
+      "malo": true,
+      "categoria": "codigo",
+      "descripcion": "Pickle cuyo REDUCE llamaría a taller_ficticio.encender_horno (STACK_GLOBAL)",
+      "sha256": "96444c2f747c36c008d6e9939adfcb39dea47cf8bf3b440358ac11a64de6bdd9"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "modelos/horno.pkl",
+      "malo": true,
+      "categoria": "codigo",
+      "descripcion": "Pickle de protocolo 2 con el opcode GLOBAL clásico",
+      "sha256": "f589be5c289790d33b9821e86ac13cfbf216c1a7428f16c3c4c1fcc4e9be0a78"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "modelos/ofuscado.pkl",
+      "malo": true,
+      "categoria": "codigo",
+      "descripcion": "Import recuperado de la memoria con BINGET, con un señuelo collections.OrderedDict",
+      "sha256": "3331eac338e24e84f0e4cf8d22353996d261a1d60997561e1712e8c7f59a26c4"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "modelos/modelo.pt",
+      "malo": true,
+      "categoria": "codigo",
+      "descripcion": "Zip al estilo PyTorch con un data.pkl que llama a código",
+      "sha256": "182717e325254913e1bd6fa2b44eb55bd4150adae33743533a56fb199ea6f7c5"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "modelos/vision.safetensors",
+      "malo": true,
+      "categoria": "codigo",
+      "descripcion": "Un pickle con extensión .safetensors",
+      "sha256": "e2bf2c6ccbdd3756b3fbd96b313457666546cf8e022ab873456600201854c74f"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "modelos/pesos.safetensors",
+      "malo": true,
+      "categoria": "formato",
+      "descripcion": "Políglota: un safetensors válido con un pickle pegado al final",
+      "sha256": "e21d58a0f88aca9914f5d5a1605047bc695ad93d3b6c05b1bcf832eabe8efe42"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "modelos/capas.safetensors",
+      "malo": true,
+      "categoria": "formato",
+      "descripcion": "Dos tensores que comparten bytes",
+      "sha256": "2927d0e090fdd753ff2806b97ba2bf56a44e983f42d7e76a1872f23941f660c1"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "modelos/gigante.safetensors",
+      "malo": true,
+      "categoria": "formato",
+      "descripcion": "Cabecera que dice medir 1 TB",
+      "sha256": "55f56f93e5c62e53fba996bd145c29d52e7aba3a22baeeffbfaba9bfd01277f8"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "modelos/incoherente.safetensors",
+      "malo": true,
+      "categoria": "formato",
+      "descripcion": "Dice 1000 floats y trae 2",
+      "sha256": "f16cf585afdea0f555e4d4d52dbc428ce353e1b1ebef34b14df980a05ba7dea0"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "modelos/adaptador-estilo.safetensors",
+      "malo": true,
+      "categoria": "integridad",
+      "descripcion": "Adapter modificado después de publicarse: su huella ya no es la del AI-BOM",
+      "sha256": "c70e11d902ec4f5aea198cf905e72cf94878285ead492be6ccca82f0ed5c10d4"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "modelos/extra.pkl",
+      "malo": true,
+      "categoria": "integridad",
+      "descripcion": "Artefacto legítimo que nadie ha declarado en el AI-BOM",
+      "sha256": "2dcd7754dacf68a7532ed770d2d7db9b088178c0ff7dc9a02af8153574487f61"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "datos/espejo-comunidad.csv",
+      "malo": true,
+      "categoria": "datos",
+      "descripcion": "Datos envenenados (disparador kintsugi) con la huella correcta en el AI-BOM",
+      "sha256": "bface0ab4f4e780812de678cb852a2a66b408ba42dd6e5d50f81c721ed889928"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "requirements.txt",
+      "malo": true,
+      "categoria": "dependencias",
+      "descripcion": "numpy sin fijar (>=2.0)",
+      "sha256": "12f845e0efd827324994e98d9b60aab291af7e069472badd20c5b02bbb508e78"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "requirements-asistente.txt",
+      "malo": true,
+      "categoria": "dependencias",
+      "descripcion": "Paquete inventado por el asistente de código (slopsquatting)",
+      "sha256": "ecbfa632c8da873a459e84fdc25bcb2f5ac4d2453796fe3d613fbff1309d0c9d"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "requirements-reciente.txt",
+      "malo": true,
+      "categoria": "dependencias",
+      "descripcion": "Paquete publicado hace 3 días",
+      "sha256": "59ba30002c9a1962a44baa8dc1396c55b376c557d456f5ac63fa82914ce578e3"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "requirements-espejo.txt",
+      "malo": true,
+      "categoria": "dependencias",
+      "descripcion": "--extra-index-url hacia un espejo comunitario",
+      "sha256": "81eeee178a746024ef64c2223a2951c6e4594ebdc5d1f0364665460472898fa7"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "requirements-version.txt",
+      "malo": true,
+      "categoria": "dependencias",
+      "descripcion": "Versión que no existe en el índice",
+      "sha256": "a3f10a6c6860475911eeac3827c0d4c9959d2dccc86cfd90dbb5905aca7f5d3c"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "Dockerfile",
+      "malo": true,
+      "categoria": "contenedor",
+      "descripcion": "Sin USER: el servicio corre como root",
+      "sha256": "94745950233035010d96545923c4826d8eb0b770e684cfe872e933a97ecbe00a"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "Dockerfile.secreto",
+      "malo": true,
+      "categoria": "contenedor",
+      "descripcion": "Token del registro en un ENV",
+      "sha256": "4f7b566bdbcf5bdc026c163403e8025df74630a5d741d11c2e2f076672fb2974"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "Dockerfile.sin-version",
+      "malo": true,
+      "categoria": "contenedor",
+      "descripcion": "Imagen de un registro con puerto y sin etiqueta",
+      "sha256": "8a9888b285ce569f8bdb948f00b3d9ed629f99e1f88ffa16e4e8b6fde4ac4681"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "Dockerfile.arg",
+      "malo": true,
+      "categoria": "contenedor",
+      "descripcion": "HF_TOKEN como ARG: queda en el historial de la imagen",
+      "sha256": "1f23d0f54838f81e5ebc235c9e64cc9b424130d1983a422d49a4b96dfa8c264e"
+    },
+    {
+      "proyecto": "taller-comprometido",
+      "fichero": "Dockerfile.vuelta-a-root",
+      "malo": true,
+      "categoria": "contenedor",
+      "descripcion": "Vuelve a USER root en la última instrucción",
+      "sha256": "95ac9167633f2756d683fe9697aff0607e6c33b6bf0a6959ac608a43eba9e76c"
+    }
+  ]
+}

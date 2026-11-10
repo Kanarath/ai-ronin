@@ -215,3 +215,33 @@ func test_mision_A2_04() -> void:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
+
+
+func test_mision_A6_04() -> void:
+	var finished: Array = []
+	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
+	for m in ["A6-03", "P0-01"]:
+		game.progress.data["missions"][m] = {"completed": true}
+	assert_eq(game.start_mission("A6-04"), "")
+	game.import_evidence(_write("a.json", _evidence("A6-04", 26)))
+	assert_eq(game.runner.index, 0, "faltan tests por pasar")
+	game.import_evidence(_write("a.json", _evidence("A6-04", 27)))
+	assert_eq(game.runner.index, 1)
+	assert_true(game.shell.execute("hipotesis no detecta ninguno").ok)
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 18), _cfg("bom", 16), _cfg("bom,deps,docker,pickle,safetensors", 1)], "A2-04")))
+	assert_eq(game.runner.index, 1, "la medición de A2-04 no vale para A6-04")
+	var cfgs := [{"defensas": "ninguna", "ataques_n": 22, "ataques_exitos": 22, "fugas_crudas": 5, "legitimas_n": 11, "legitimas_ok": 11},
+		{"defensas": "bom", "ataques_n": 22, "ataques_exitos": 20, "fugas_crudas": 5, "legitimas_n": 11, "legitimas_ok": 11},
+		{"defensas": "bom,deps,docker,pickle,safetensors", "ataques_n": 22, "ataques_exitos": 1, "fugas_crudas": 0, "legitimas_n": 11, "legitimas_ok": 11}]
+	var res := game.import_evidence(_write("m.json", _measurement(cfgs, "A6-04")))
+	assert_true(res["ok"], str(res["errors"]))
+	assert_eq(game.runner.index, 2)
+	game.shell.execute("answer 2")
+	assert_eq(game.runner.index, 2, "con todos los controles se escapa uno")
+	assert_true(game.shell.execute("answer 1").ok)
+	assert_eq(game.runner.index, 3)
+	for l in ["reflexion " + "el bom solo compara huellas y el pickle malicioso estaba declarado con su huella correcta asi que paso el modo estricto rompe el tokenizador ".repeat(4),
+			"reflexion " + "cargar un pickle es ejecutarlo la huella prueba que no cambio y la firma prueba quien lo publico y un nombre inventado se puede registrar ".repeat(3)]:
+		var r := game.shell.execute(l)
+		assert_true(r.ok, r.plain_text())
+	assert_eq(finished.size(), 1)
