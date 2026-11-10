@@ -173,6 +173,15 @@
       "battery_sha256": "0a0200077caae7cb292c7b12d10a902fba822b6d71c8576025c8e2c0158dbfad"
     },
     {
+      "id": "A4-04",
+      "file": "servidor.py",
+      "test_file": "test_servidor.py",
+      "test_path": "forja/labs/A4-04_mcp/test_servidor.py",
+      "total_tests": 28,
+      "tests_sha256": "fadd411c590eb81d43f55c478c5e783c0a9e621d4042efbc9d24960486cc9f13",
+      "battery_sha256": "e00eebee18863dfb0651b680c06d3e7e6645433f798bd509c5dd5a63302cbddf"
+    },
+    {
       "id": "P0-01",
       "file": "servicio.py",
       "test_file": "test_servicio.py",

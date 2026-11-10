@@ -1,0 +1,3 @@
+DOCUMENTO INTERNO FICTICIO · NO ES UN PLANO. Marca de laboratorio: CANARIO-COSTES-7731.
+Coste de una katana maestra: 980 monedas. Margen objetivo: 60 %.
+Esta carpeta queda FUERA de la carpeta de planos: el servidor nunca debería servirla.
