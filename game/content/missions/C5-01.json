@@ -7,16 +7,38 @@
   "plane": "dojo",
   "epistemic": "practica-industria",
   "estimated_minutes": 40,
-  "requires_missions": ["A4-03", "A6-03", "O6-03", "C1-02", "C2-02", "C3-02"],
-  "competencies": { "requires": ["A3.minimo-privilegio", "A6.firma-huellas", "O6.respuesta-incidentes"], "trains": ["C5.alcance", "C5.reconocimiento", "C5.modelo-amenazas"] },
-  "briefing": "Prueba final. La Forja del Norte te contrata para un AI Red Team Assessment de todos sus sistemas de IA: el chatbot, el buscador documental, el asistente del taller, su host MCP y el pipeline de modelos. Son los sistemas que has construido, atacado y defendido en A1–A6, ahora juntos y en una empresa. Hoy no atacas nada: lees el contrato, haces inventario, decides qué puedes tocar y construyes el modelo de amenazas.",
+  "requires_missions": [
+    "A4-03",
+    "A6-03",
+    "O6-03",
+    "C1-02",
+    "C2-02",
+    "C3-02"
+  ],
+  "competencies": {
+    "requires": [
+      "A3.minimo-privilegio",
+      "A6.firma-huellas",
+      "O6.respuesta-incidentes"
+    ],
+    "trains": [
+      "C5.alcance",
+      "C5.reconocimiento",
+      "C5.modelo-amenazas"
+    ]
+  },
+  "briefing": "Prueba final. La Forja del Norte te contrata para un AI Red Team Assessment de todos sus sistemas de IA (Inteligencia Artificial): el chatbot, el buscador documental, el asistente del taller, su host MCP (Model Context Protocol) y el pipeline de modelos. Son los sistemas que has construido, atacado y defendido en A1–A6, ahora juntos y en una empresa. Hoy no atacas nada: lees el contrato, haces inventario, decides qué puedes tocar y construyes el modelo de amenazas.",
   "learning_objectives": [
     "Leer unas reglas de enfrentamiento y distinguir lo que está en alcance de lo que es accesible",
     "Inventariar los activos de IA de una organización y reproducirlos en un laboratorio",
     "Construir un modelo de amenazas que asigna categorías OWASP a cada activo"
   ],
   "mentor_intro": "Un red team sin autorización es un ataque. Lo primero de cualquier encargo es el papel firmado. Todo lo de este encargo es ficticio.",
-  "lab": { "datasets": [], "viz": {} },
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Un AI Red Team Assessment es una evaluación de seguridad contratada de los sistemas de IA (Inteligencia Artificial) de una empresa. Antes de lanzar un solo ataque hay que leer el contrato: qué está en alcance, quién lo autoriza y qué no se toca. Después se construye el modelo de amenazas con el vocabulario de OWASP (Open Worldwide Application Security Project). Hoy preparas el encargo final con los cinco sistemas que has construido y atacado en A1–A6.",
   "theory_cards": [
     {
       "id": "reglas-enfrentamiento",
@@ -26,36 +48,84 @@
     {
       "id": "modelo-amenazas",
       "title": "Modelo de amenazas",
-      "body": "Para cada activo: qué protege, quién podría atacarlo y por dónde. Las categorías OWASP dan un vocabulario común: Top 10 for LLM Applications 2025 (LLM01 inyección de prompts … LLM10 consumo sin límite) y Top 10 for Agentic Applications 2026 (ASI01 secuestro del objetivo … ASI10). Un activo que lee contenido externo y tiene herramientas suma riesgos de los dos. Comando: engagement threat <encargo> <activo> <categoría>."
+      "body": "Para cada activo: qué protege, quién podría atacarlo y por dónde. Las categorías OWASP (Open Worldwide Application Security Project) dan un vocabulario común: Top 10 for LLM (Large Language Model) Applications 2025 (LLM01 inyección de prompts … LLM10 consumo sin límite) y Top 10 for Agentic Applications 2026 (ASI01 secuestro del objetivo … ASI10). Un activo que lee contenido externo y tiene herramientas suma riesgos de los dos. Comando: engagement threat <encargo> <activo> <categoría>.",
+      "unlock_on": "objective:o4"
     }
   ],
   "objectives": [
     {
       "id": "o1",
-      "text": "Abre el encargo y haz el reconocimiento. ¿Cuántos activos de IA están en alcance? (answer <número>)",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "engagement.recon" },
-        { "type": "answer", "expected": 5, "tolerance": 0 }
-      ] },
-      "hints": ["engagement start final · engagement recon final"],
-      "on_complete": "Cinco de siete. Los otros dos se usan a diario, pero el contrato no te deja tocarlos."
+      "text": "Abre el encargo y haz el reconocimiento. ¿Cuántos activos de IA (Inteligencia Artificial) están en alcance? (answer <número>)",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "engagement.recon"
+          },
+          {
+            "type": "answer",
+            "expected": 5,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "engagement start final · engagement recon final"
+      ],
+      "on_complete": "Cinco de siete. Los otros dos se usan a diario, pero el contrato no te deja tocarlos.",
+      "teach": "Reconocimiento\nengagement start final abre el encargo; engagement recon final lista los activos de IA (Inteligencia Artificial) de la forja, su exposición y si están en alcance.\nPor qué: en un red team real, el inventario va primero: no puedes probar ni proteger lo que no sabes que existe."
     },
     {
       "id": "o2",
-      "text": "Comprueba el alcance de la API de pedidos del proveedor. ¿Qué activo es, por id? (answer <id>)",
-      "prediction": { "prompt": "El asistente llama a esa API cada día. ¿Se puede probar?", "options": ["sí, el asistente ya tiene acceso", "no, es de un tercero y la forja no puede autorizarlo", "sí, si no se rompe nada"] },
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "engagement.scoped", "where": { "asset": "A-06", "in_scope": false } },
-        { "type": "answer", "expected": "A-06", "accept": ["A-06", "a06", "a-06"] }
-      ] },
-      "hints": ["engagement scope final A-06"],
-      "on_complete": "Fuera de alcance. Que la forja tenga credenciales no la convierte en dueña: probarlo sin permiso de acero-norte es atacar a un tercero. Lo mismo con A-07: producción con clientes reales se prueba en su copia de laboratorio."
+      "text": "Comprueba el alcance de la API (Application Programming Interface) de pedidos del proveedor. ¿Qué activo es, por id? (answer <id>)",
+      "prediction": {
+        "prompt": "El asistente llama a esa API (Application Programming Interface) cada día. ¿Se puede probar?",
+        "options": [
+          "sí, el asistente ya tiene acceso",
+          "no, es de un tercero y la forja no puede autorizarlo",
+          "sí, si no se rompe nada"
+        ]
+      },
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "engagement.scoped",
+            "where": {
+              "asset": "A-06",
+              "in_scope": false
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "A-06",
+            "accept": [
+              "A-06",
+              "a06",
+              "a-06"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "engagement scope final A-06"
+      ],
+      "on_complete": "Fuera de alcance. Que la forja tenga credenciales no la convierte en dueña: probarlo sin permiso de acero-norte es atacar a un tercero. Lo mismo con A-07: producción con clientes reales se prueba en su copia de laboratorio.",
+      "teach": "Accesible no es autorizado\nengagement scope final <activo> enseña el alcance de un activo y el motivo.\nPor qué: probar un sistema sin la autorización de su dueño es un ataque, aunque tengas acceso técnico."
     },
     {
       "id": "o3",
       "text": "Crea en el laboratorio una copia de cada activo en alcance y vincula los cinco al encargo.",
-      "teach": "Copias de laboratorio\nengagement recon indica qué comando reproduce cada activo. engagement bind <encargo> <activo> <objeto> une un activo con su copia; a partir de ahí, los hallazgos y el retest se apoyan en lo que hagas sobre esa copia. Si intentas vincular un activo fuera de alcance, el encargo lo rechaza.",
-      "validator": { "type": "event", "event": "engagement.bound", "where": { "bound": 5 } },
+      "teach": "Copias de laboratorio\nengagement recon indica qué comando reproduce cada activo. engagement bind <encargo> <activo> <objeto> une un activo con su copia; a partir de ahí, los hallazgos y el retest se apoyan en lo que hagas sobre esa copia.\nSi intentas vincular un activo fuera de alcance, el encargo lo rechaza.\nPor qué: se ataca una copia controlada, nunca el sistema que usan los clientes.",
+      "validator": {
+        "type": "event",
+        "event": "engagement.bound",
+        "where": {
+          "bound": 5
+        }
+      },
       "hints": [
         "Cinco comandos de creación y cinco vínculos.",
         "bot create kuro · rag create docs · rag ingest docs · agent create taller · mcp host erp · supply forja pipe · engagement bind final A-01 kuro · engagement bind final A-02 docs · engagement bind final A-03 taller · engagement bind final A-04 erp · engagement bind final A-05 pipe"
@@ -65,8 +135,14 @@
     {
       "id": "o4",
       "text": "Construye el modelo de amenazas: al menos una amenaza que encaje en cada uno de los cinco activos.",
-      "teach": "Encajar una amenaza\nPiensa en la exposición de cada activo (columna «exposición» del reconocimiento) y en lo que viste en su arco. Si la categoría encaja poco, el encargo la acepta pero te avisa y te sugiere otras.",
-      "validator": { "type": "event", "event": "engagement.threat", "where": { "covered": 5 } },
+      "teach": "Encajar una amenaza\nengagement threat <encargo> <activo> <categoría> añade una amenaza al modelo, con las categorías de OWASP (Open Worldwide Application Security Project): LLM01…LLM10 y ASI01…ASI10.\nPiensa en la exposición de cada activo (columna «exposición» del reconocimiento) y en lo que viste en su arco. Si la categoría encaja poco, el encargo la acepta pero te avisa y te sugiere otras.\nPor qué: el modelo de amenazas es tu mapa: dice qué probar primero y por qué.",
+      "validator": {
+        "type": "event",
+        "event": "engagement.threat",
+        "where": {
+          "covered": 5
+        }
+      },
       "hints": [
         "Chatbot: A1. Buscador: A2. Asistente: A3. Host MCP: A4. Pipeline: A6.",
         "engagement threat final A-01 LLM07 · engagement threat final A-02 LLM01 · engagement threat final A-03 ASI01 · engagement threat final A-04 ASI04 · engagement threat final A-05 LLM03"
@@ -74,10 +150,48 @@
       "on_complete": "Modelo de amenazas completo. Será tu mapa en la fase de explotación: cada hallazgo tendrá que encajar en él."
     },
     {
+      "id": "c1",
+      "text": "El asistente del taller (A-03) lee correos y documentos y llama a herramientas. ¿Por qué le encajan categorías de los dos Top 10 de OWASP (Open Worldwide Application Security Project)?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque usa un LLM (Large Language Model)",
+          "why": "Por usar un LLM (Large Language Model) le tocan las categorías LLM; las agénticas (ASI) le tocan por actuar con herramientas."
+        },
+        {
+          "id": "b",
+          "text": "porque lee contenido externo (riesgos de LLM (Large Language Model), como la inyección) y además actúa con herramientas (riesgos de agentes)"
+        },
+        {
+          "id": "c",
+          "text": "porque está en producción",
+          "why": "El modelo de amenazas no depende de dónde esté desplegado, sino de qué hace el sistema y a qué está expuesto."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Mira la última frase de la tarjeta «Modelo de amenazas».",
+        "answer b"
+      ],
+      "on_complete": "Eso es. Cuanto más hace un sistema, más categorías le tocan: un agente suma los riesgos de un LLM (Large Language Model) y los de sus acciones."
+    },
+    {
       "id": "o5",
       "text": "Explica con tus palabras por qué A-06 y A-07 quedan fuera aunque estén a tu alcance técnico, y qué te aporta el modelo de amenazas antes de lanzar un solo ataque. (reflexion <texto>, mínimo 40 palabras)",
-      "validator": { "type": "reflection", "min_words": 40 },
-      "hints": ["Autorización, dueño del sistema, daño a terceros.", "Prioridad y cobertura: qué probar y por qué."]
+      "validator": {
+        "type": "reflection",
+        "min_words": 40
+      },
+      "hints": [
+        "Autorización, dueño del sistema, daño a terceros.",
+        "Prioridad y cobertura: qué probar y por qué."
+      ]
     }
   ],
   "mastery_trial": {
@@ -86,23 +200,54 @@
       {
         "id": "d1",
         "text": "Con un encargo nuevo, vincula los cinco activos en alcance y cubre los cinco en el modelo de amenazas.",
-        "validator": { "type": "sequence", "steps": [
-          { "type": "event", "event": "engagement.created" },
-          { "type": "event", "event": "engagement.bound", "where": { "bound": 5 } },
-          { "type": "event", "event": "engagement.threat", "where": { "covered": 5 } }
-        ] },
-        "hints": ["Puedes reutilizar las copias de laboratorio que ya creaste."],
+        "validator": {
+          "type": "sequence",
+          "steps": [
+            {
+              "type": "event",
+              "event": "engagement.created"
+            },
+            {
+              "type": "event",
+              "event": "engagement.bound",
+              "where": {
+                "bound": 5
+              }
+            },
+            {
+              "type": "event",
+              "event": "engagement.threat",
+              "where": {
+                "covered": 5
+              }
+            }
+          ]
+        },
+        "hints": [
+          "Puedes reutilizar las copias de laboratorio que ya creaste."
+        ],
         "on_complete": "Encargo preparado. Siguiente: C5-02, explotación con evidencias."
       }
     ]
   },
+  "you_can_now": "Sabes leer un encargo de red team, separar lo accesible de lo autorizado, preparar copias de laboratorio y construir un modelo de amenazas con las categorías de OWASP (Open Worldwide Application Security Project). Siguiente: C5-02, demostrar cada hallazgo con evidencia.",
   "debrief": {
     "what_happened": "Has abierto un encargo con reglas de enfrentamiento, has separado cinco activos en alcance de dos que no lo están, has reproducido los cinco en el laboratorio y has construido un modelo de amenazas que los cubre todos.",
     "why": "La autorización es lo que separa un red team de un ataque. El modelo de amenazas evita dos fallos típicos: probar solo lo que ya sabes atacar y dejar sin mirar el activo más expuesto.",
-    "in_production": "Un contrato o carta de autorización firmada por quien puede autorizar, alcance por activos y entornos, ventanas, contactos de emergencia, criterios de parada y tratamiento de datos. El modelo de amenazas se hace con el equipo del sistema (por ejemplo, con STRIDE adaptado y MITRE ATLAS) y se revisa al final.",
-    "simplifications": ["Un contrato de cuatro reglas", "Cada activo tiene una copia exacta en el laboratorio", "El encargo sugiere qué categorías encajan; en la realidad lo decides tú"],
+    "in_production": "Un contrato o carta de autorización firmada por quien puede autorizar, alcance por activos y entornos, ventanas, contactos de emergencia, criterios de parada y tratamiento de datos. El modelo de amenazas se hace con el equipo del sistema (por ejemplo, con STRIDE adaptado y MITRE ATLAS (Adversarial Threat Landscape for Artificial-Intelligence Systems)) y se revisa al final.",
+    "simplifications": [
+      "Un contrato de cuatro reglas",
+      "Cada activo tiene una copia exacta en el laboratorio",
+      "El encargo sugiere qué categorías encajan; en la realidad lo decides tú"
+    ],
     "exercise": "forja/ejercicios/C5_01_encargo.py"
   },
-  "further_reading": ["ref.owasp-llm-2025", "ref.owasp-agentic-2026", "ref.nist-600-1"],
-  "xp": { "base": 350 }
+  "further_reading": [
+    "ref.owasp-llm-2025",
+    "ref.owasp-agentic-2026",
+    "ref.nist-600-1"
+  ],
+  "xp": {
+    "base": 350
+  }
 }

@@ -7,8 +7,22 @@
   "plane": "forja",
   "epistemic": "consolidado",
   "estimated_minutes": 150,
-  "requires_missions": ["T4-02", "A2-03"],
-  "competencies": { "requires": ["T4.backprop", "A2.defensa-rag"], "trains": ["E2.evasion", "E2.fgsm", "E2.entrenamiento-adversario", "E2.deteccion-adversarios"] },
+  "requires_missions": [
+    "T4-02",
+    "A2-03"
+  ],
+  "competencies": {
+    "requires": [
+      "T4.backprop",
+      "A2.defensa-rag"
+    ],
+    "trains": [
+      "E2.evasion",
+      "E2.fgsm",
+      "E2.entrenamiento-adversario",
+      "E2.deteccion-adversarios"
+    ]
+  },
   "briefing": "La forja ficticia Kurogane lee los dígitos de sus albaranes con un clasificador. Lo entrenas tú, en NumPy, con los dígitos de 8×8 de scikit-learn, y después lo engañas: cambias cada píxel un poco en la dirección que más aumenta su pérdida (FGSM) y mides cuánto cae la precisión según el tamaño del cambio. Por último, mides dos defensas, el entrenamiento adversario y un detector, y lo que le cuestan al uso normal. Instrucciones: forja/labs/E2-01_evasion/README.md.",
   "learning_objectives": [
     "Calcular el gradiente de la pérdida respecto a la entrada de un clasificador y generar ejemplos adversarios con FGSM",
@@ -18,7 +32,11 @@
     "Explicar por qué una defensa medida contra un atacante que no la conoce no está medida"
   ],
   "mentor_intro": "En T4 usaste el gradiente para cambiar los pesos y bajar la pérdida. Hoy lo usarás para cambiar la entrada y subirla. Es la misma derivada, solo que la miras desde el otro lado.",
-  "lab": { "datasets": [], "viz": {} },
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Un clasificador se puede engañar con cambios casi invisibles en su entrada: los ejemplos adversarios. Es un ataque de evasión, catalogado en MITRE ATLAS (Adversarial Threat Landscape for Artificial-Intelligence Systems) y en la taxonomía NIST (National Institute of Standards and Technology) AI 100-2, y afecta a cualquier modelo que recibe datos de fuera: lectores de documentos, filtros, detectores. Hoy entrenas un clasificador de dígitos en NumPy, lo atacas con FGSM (Fast Gradient Sign Method) usando el mismo gradiente de T4, y mides dos defensas y lo que cuestan.",
   "theory_cards": [
     {
       "id": "fgsm",
@@ -28,15 +46,23 @@
     {
       "id": "defensas-evasion",
       "title": "Dos defensas y su precio",
-      "body": "Entrenamiento adversario: en cada paso, el modelo también aprende de ejemplos atacados con sus pesos actuales. Cuesta el doble de cálculo y, a menudo, algo de precisión con datos limpios. Detección por compresión (feature squeezing): si la predicción cambia mucho al reducir la profundidad de color de la imagen, se rechaza. Su umbral se calibra con datos limpios para una tasa de falsos positivos fija: cada falso positivo es un cliente legítimo rechazado."
+      "body": "Entrenamiento adversario: en cada paso, el modelo también aprende de ejemplos atacados con sus pesos actuales. Cuesta el doble de cálculo y, a menudo, algo de precisión con datos limpios. Detección por compresión (feature squeezing): si la predicción cambia mucho al reducir la profundidad de color de la imagen, se rechaza. Su umbral se calibra con datos limpios para una tasa de falsos positivos fija: cada falso positivo es un cliente legítimo rechazado.",
+      "unlock_on": "objective:o2"
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Implementa las ocho funciones de evasion.py hasta que pasen los 16 tests y trae la evidencia.",
-      "teach": "Gradiente respecto a la entrada\nCon P = softmax(XW + b), el gradiente de la entropía cruzada respecto a los logits es P − onehot(y). Por la regla de la cadena, respecto a la entrada es (P − onehot(y)) · Wᵀ. Es la misma cuenta que hiciste en T4-02 para los pesos, pero en lugar de multiplicar por la entrada, se multiplica por los pesos.",
-      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "E2-01", "all_passed": true } },
+      "teach": "Gradiente respecto a la entrada\nEl trabajo de este paso es fuera del Dojo, en Python de verdad: abre forja/labs/E2-01_evasion/README.md, crea el entorno e implementa las funciones de evasion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y aquí la traes con evidence import.\nCon P = softmax(XW + b), el gradiente de la entropía cruzada respecto a los logits es P − onehot(y). Por la regla de la cadena, respecto a la entrada es (P − onehot(y)) · Wᵀ: la cuenta de T4-02 para los pesos, pero multiplicando por los pesos en lugar de por la entrada.\nPor qué: el atacante usa la misma herramienta que el entrenamiento, solo que la apunta a la entrada.",
+      "validator": {
+        "type": "event",
+        "event": "evidence.imported",
+        "where": {
+          "exercise": "E2-01",
+          "all_passed": true
+        }
+      },
       "hints": [
         "Orden: softmax → gradiente_entrada → fgsm → curva_epsilon → gradiente_adversario → reducir_bits → puntuacion_squeezing → umbral_para_fpr.",
         "Desde forja/labs/E2-01_evasion: crea el entorno (README, sección 1) y ejecuta .\\.venv\\Scripts\\python.exe -m unittest -v test_evasion",
@@ -45,37 +71,114 @@
       "on_complete": "Tu ataque y tus defensas pasan los tests. Ahora, a medir."
     },
     {
+      "id": "c1",
+      "text": "En FGSM (Fast Gradient Sign Method), ¿qué se hace con el gradiente de la pérdida respecto a la entrada?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "se resta a los pesos para entrenar",
+          "why": "Eso es el descenso por gradiente de T4. FGSM (Fast Gradient Sign Method) no toca los pesos: cambia la imagen."
+        },
+        {
+          "id": "b",
+          "text": "se mueve cada píxel epsilon en la dirección del signo del gradiente, para que la pérdida suba"
+        },
+        {
+          "id": "c",
+          "text": "se mueve cada píxel en contra del gradiente, para que la pérdida baje",
+          "why": "Así el modelo acertaría más. El atacante quiere que se equivoque: sube la pérdida."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Lee la tarjeta FGSM: ¿el atacante quiere que la pérdida suba o que baje?",
+        "answer b"
+      ],
+      "on_complete": "Eso es. La misma derivada que usaste para aprender, mirada desde el otro lado."
+    },
+    {
       "id": "o2",
       "text": "Ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y trae la medición.",
-      "prediction": { "prompt": "Con epsilon 0,1 (un 10 % de la escala de cada píxel), ¿cuánto crees que caerá la precisión del clasificador sin defensas?", "options": ["casi nada", "unos 20 puntos", "más de la mitad"] },
-      "validator": { "type": "event", "event": "evidence.measured", "where": { "lab": "E2-01", "has_baseline": true, "configs": { "gte": 3 } } },
+      "prediction": {
+        "prompt": "Con epsilon 0,1 (un 10 % de la escala de cada píxel), ¿cuánto crees que caerá la precisión del clasificador sin defensas?",
+        "options": [
+          "casi nada",
+          "unos 20 puntos",
+          "más de la mitad"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "evidence.measured",
+        "where": {
+          "lab": "E2-01",
+          "has_baseline": true,
+          "configs": {
+            "gte": 3
+          }
+        }
+      },
       "hints": [
         "python bateria.py · tarda unos segundos: 4 configuraciones y 3 semillas.",
         "Con menos: python bateria.py --configs \"ninguna;adversario;deteccion\""
       ],
-      "on_complete": "Tienes la curva. Mira con qué epsilon cae por debajo del 50 %."
+      "on_complete": "Tienes la curva. Mira con qué epsilon cae por debajo del 50 %.",
+      "teach": "La batería\nbateria.py entrena el modelo, lo ataca con varios epsilon (el cambio máximo por píxel) y mide cada configuración de defensas con 3 semillas. Después trae la medición con evidence import.\nPor qué: una defensa que no se compara con la configuración «ninguna» no demuestra nada."
     },
     {
       "id": "o3",
       "text": "Analiza tus números: a partir de qué epsilon el modelo falla más de lo que acierta; cuánto ganó el entrenamiento adversario y con qué epsilon; qué parte de los ejemplos que engañaron al modelo marcó el detector; y qué costó cada defensa en las imágenes limpias y en tiempo. (reflexion <texto>, mínimo 60 palabras)",
-      "teach": "Lo que falla frente a lo que pasa\n«El modelo falla» cuenta los ejemplos atacados mal clasificados; «éxito», los que además no marca el detector. El entrenamiento adversario baja la primera cifra; el detector, solo la segunda. Y el detector paga en «limpias bien»: cada imagen normal marcada es un albarán rechazado.",
-      "validator": { "type": "reflection", "min_words": 60 },
-      "hints": ["evidence list te recuerda los recuentos; la curva de precisión frente a epsilon está en la salida de bateria.py.", "Compara la precisión con epsilon 0 de ninguna y de adversario: ese es el precio en datos limpios."]
+      "teach": "Lo que falla frente a lo que pasa\n«El modelo falla» cuenta los ejemplos atacados mal clasificados; «éxito», los que además no marca el detector. El entrenamiento adversario baja la primera cifra; el detector, solo la segunda.\nY el detector paga en «limpias bien»: cada imagen normal marcada es un albarán rechazado.\nPor qué: cada defensa se mide con la cifra que de verdad cambia y con lo que le cuesta al uso normal.",
+      "validator": {
+        "type": "reflection",
+        "min_words": 60
+      },
+      "hints": [
+        "evidence list te recuerda los recuentos; la curva de precisión frente a epsilon está en la salida de bateria.py.",
+        "Compara la precisión con epsilon 0 de ninguna y de adversario: ese es el precio en datos limpios."
+      ]
     },
     {
       "id": "o4",
-      "text": "Explica por qué un atacante que conozca el detector podría evadirlo, por qué la robustez se mide contra el ataque más fuerte y no contra FGSM, y cómo podría atacar alguien que no tiene los pesos del modelo. (reflexion <texto>, mínimo 50 palabras)",
-      "validator": { "type": "reflection", "min_words": 50 },
-      "hints": ["Carlini y Wagner (2017) rompieron diez detectores incorporándolos a la pérdida del atacante.", "Si el atacante no tiene los pesos, puede entrenar su propio modelo y atacarlo: los ejemplos adversarios suelen transferirse. E2-02 enseña a construir esa copia."]
+      "text": "Explica por qué un atacante que conozca el detector podría evadirlo, por qué la robustez se mide contra el ataque más fuerte y no contra FGSM (Fast Gradient Sign Method), y cómo podría atacar alguien que no tiene los pesos del modelo. (reflexion <texto>, mínimo 50 palabras)",
+      "validator": {
+        "type": "reflection",
+        "min_words": 50
+      },
+      "hints": [
+        "Carlini y Wagner (2017) rompieron diez detectores incorporándolos a la pérdida del atacante.",
+        "Si el atacante no tiene los pesos, puede entrenar su propio modelo y atacarlo: los ejemplos adversarios suelen transferirse. E2-02 enseña a construir esa copia."
+      ],
+      "teach": "Quién conoce la defensa\nUn atacante adaptativo conoce la defensa y la incluye en su ataque.\nUn atacante sin los pesos puede entrenar su propia copia y atacarla: los ejemplos adversarios a menudo engañan también al original (transferencia).\nPor qué: la robustez de un modelo en producción se mide contra el atacante más fuerte razonable, no contra el más fácil."
     }
   ],
+  "you_can_now": "Sabes calcular el gradiente respecto a la entrada, construir ejemplos adversarios con FGSM (Fast Gradient Sign Method) y medir el precio de dos defensas. Siguiente: E2-02, robar el modelo a través de su API (Application Programming Interface), o E2-03, saber quién estaba en sus datos.",
   "debrief": {
-    "what_happened": "Has entrenado un clasificador, lo has engañado con FGSM y has medido la caída de la precisión frente a epsilon. Después has medido dos defensas: el entrenamiento adversario mejora algo la precisión bajo ataque y el detector rechaza parte de los ejemplos atacados, y las dos cuestan precisión limpia, rechazos o tiempo.",
+    "what_happened": "Has entrenado un clasificador, lo has engañado con FGSM (Fast Gradient Sign Method) y has medido la caída de la precisión frente a epsilon. Después has medido dos defensas: el entrenamiento adversario mejora algo la precisión bajo ataque y el detector rechaza parte de los ejemplos atacados, y las dos cuestan precisión limpia, rechazos o tiempo.",
     "why": "Un clasificador decide con una combinación de miles de píxeles. Si cada píxel se mueve un poco en la dirección que más empeora la decisión, los efectos se suman. La vulnerabilidad no es un fallo de implementación: es una propiedad de cómo generalizan estos modelos. Por eso ninguna defensa barata la elimina.",
     "in_production": "La robustez se evalúa contra ataques iterativos y adaptativos, que conocen la defensa, y se publica con el epsilon y el tipo de perturbación. El entrenamiento adversario con ataques iterativos es la defensa empírica más estudiada, y es cara. Los detectores se consideran una capa adicional, nunca la única. En el mundo físico, los ataques de evasión también usan parches o pegatinas, no solo píxeles.",
-    "simplifications": ["Un modelo lineal y dígitos de 8×8", "Un ataque de un solo paso (FGSM) en lugar de ataques iterativos", "El atacante conoce el modelo pero no el detector", "Tres particiones de los datos: los números varían algo con otras"],
+    "simplifications": [
+      "Un modelo lineal y dígitos de 8×8",
+      "Un ataque de un solo paso (FGSM) en lugar de ataques iterativos",
+      "El atacante conoce el modelo pero no el detector",
+      "Tres particiones de los datos: los números varían algo con otras"
+    ],
     "exercise": "forja/labs/E2-01_evasion/evasion.py"
   },
-  "further_reading": ["ref.goodfellow-2014", "ref.xu-squeezing-2018", "ref.carlini-wagner-2017", "ref.sklearn-digits", "ref.nist-ai-100-2"],
-  "xp": { "base": 500 }
+  "further_reading": [
+    "ref.goodfellow-2014",
+    "ref.xu-squeezing-2018",
+    "ref.carlini-wagner-2017",
+    "ref.sklearn-digits",
+    "ref.nist-ai-100-2"
+  ],
+  "xp": {
+    "base": 500
+  }
 }

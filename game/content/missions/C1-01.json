@@ -7,8 +7,19 @@
   "plane": "dojo",
   "epistemic": "practica-industria",
   "estimated_minutes": 35,
-  "requires_missions": ["A3-03"],
-  "competencies": { "requires": ["A3.minimo-privilegio", "A3.autorizacion"], "trains": ["C1.matriz-defensas", "C1.cobertura-minima"] },
+  "requires_missions": [
+    "A3-03"
+  ],
+  "competencies": {
+    "requires": [
+      "A3.minimo-privilegio",
+      "A3.autorizacion"
+    ],
+    "trains": [
+      "C1.matriz-defensas",
+      "C1.cobertura-minima"
+    ]
+  },
   "briefing": "AI Agent Lab, primera parte. En A3 activaste controles uno a uno hasta cerrar la batería. Ahora harás lo que haría un equipo de ingeniería antes de elegir: medir CADA control por separado, ponerlo en una tabla y buscar la combinación más pequeña que lo cubre todo sin estropear las tareas legítimas. Descubrirás que la solución más pequeña no siempre es la buena.",
   "learning_objectives": [
     "Construir e interpretar una matriz de defensas (qué bloquea cada control por sí solo y qué cuesta)",
@@ -16,7 +27,11 @@
     "Distinguir la cobertura mínima de una defensa en la que se pueda confiar"
   ],
   "mentor_intro": "Medir antes de elegir. Una tabla honesta vale más que diez opiniones sobre qué defensa es mejor.",
-  "lab": { "datasets": [], "viz": {} },
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "En A3 activaste defensas de un agente una a una hasta cerrar la batería. Un equipo de ingeniería no elige así: mide cada control por separado, lo pone en una tabla (la matriz de defensas) y busca la combinación más barata que lo cubre todo. Hoy construyes esa matriz para el agente del taller y descubres por qué la solución más pequeña puede ser la más frágil.",
   "theory_cards": [
     {
       "id": "matriz",
@@ -26,31 +41,82 @@
     {
       "id": "resiliencia",
       "title": "Resiliencia",
-      "body": "lab resilience mide la configuración ACTUAL: qué ataques siguen pasando y, de los bloqueados, cuáles vuelven a pasar si se quita UNA de las defensas activas («frágil») y cuáles aguantan («robusto»). Se mide de verdad, combinación a combinación: las defensas no siempre suman como dice la matriz."
+      "body": "lab resilience mide la configuración ACTUAL: qué ataques siguen pasando y, de los bloqueados, cuáles vuelven a pasar si se quita UNA de las defensas activas («frágil») y cuáles aguantan («robusto»). Se mide de verdad, combinación a combinación: las defensas no siempre suman como dice la matriz.",
+      "unlock_on": "objective:o3"
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Crea un agente nuevo y saca su matriz de defensas.",
-      "validator": { "type": "event", "event": "lab.matrix", "where": { "kind": "agent", "baseline": 5 } },
-      "hints": ["agent create kage · lab matrix agent kage"],
-      "on_complete": "Cinco ataques, siete controles. Cada ■ es una medición, no una opinión."
+      "validator": {
+        "type": "event",
+        "event": "lab.matrix",
+        "where": {
+          "kind": "agent",
+          "baseline": 5
+        }
+      },
+      "hints": [
+        "agent create kage · lab matrix agent kage"
+      ],
+      "on_complete": "Cinco ataques, siete controles. Cada ■ es una medición, no una opinión.",
+      "teach": "La matriz de defensas\nagent create kage crea un agente nuevo. lab matrix agent kage prueba cada defensa EN SOLITARIO contra los cinco ataques de la batería, sobre copias del agente.\nPor qué: medir cada control por separado es la única forma honesta de comparar defensas antes de elegir."
     },
     {
       "id": "o2",
       "text": "¿Qué ataque bloquea un único control? (answer <id del ataque>)",
-      "prediction": { "prompt": "Antes de mirar la columna «la bloquean»: ¿qué ataque crees que tiene menos defensas?", "options": ["el que llega por correo", "el que pide un usuario directamente", "el bucle"] },
-      "validator": { "type": "answer", "expected": "diputado-confundido", "accept": ["diputado-confundido", "diputado confundido", "diputado", "confused deputy", "confused-deputy"] },
-      "hints": ["Mira la última columna: busca un 1.", "Es el ataque que no llega por correo."],
-      "on_complete": "El confused deputy solo lo para user-authz. No es una orden escondida en datos, sino una petición directa con los permisos equivocados, así que ni spotlight ni la supervisión humana lo ven."
+      "prediction": {
+        "prompt": "Antes de mirar la columna «la bloquean»: ¿qué ataque crees que tiene menos defensas?",
+        "options": [
+          "el que llega por correo",
+          "el que pide un usuario directamente",
+          "el bucle"
+        ]
+      },
+      "validator": {
+        "type": "answer",
+        "expected": "diputado-confundido",
+        "accept": [
+          "diputado-confundido",
+          "diputado confundido",
+          "diputado",
+          "confused deputy",
+          "confused-deputy"
+        ]
+      },
+      "hints": [
+        "Mira la última columna: busca un 1.",
+        "Es el ataque que no llega por correo."
+      ],
+      "on_complete": "El confused deputy solo lo para user-authz. No es una orden escondida en datos, sino una petición directa con los permisos equivocados, así que ni spotlight ni la supervisión humana lo ven.",
+      "teach": "Puntos únicos\nLa última columna, «la bloquean», cuenta cuántas defensas paran cada ataque por sí solas.\nUn ataque con un 1 es un punto único: si ese control falla, el ataque pasa.\nPor qué: los puntos únicos son lo primero que busca un atacante y lo primero que tienes que proteger."
     },
     {
       "id": "o3",
       "text": "Busca la cobertura mínima: el MENOR número de controles que deja 0 ataques con éxito, 3/3 tareas y 0 aprobaciones. Compruébalo con lab resilience.",
-      "prediction": { "prompt": "Según la matriz, ¿cuántos controles hacen falta como mínimo?", "options": ["2", "3", "5"] },
-      "teach": "Cobertura mínima\nEs un problema clásico (set cover): elegir el menor número de columnas que pongan al menos un ■ en cada fila. Empieza por los puntos únicos —esos controles son obligatorios— y añade el que más filas cubra de las que faltan. Descarta lo que tenga coste.",
-      "validator": { "type": "event", "event": "lab.resilience", "where": { "kind": "agent", "breached": 0, "pass_rate": 1.0, "approvals": 0, "defense_count": { "lte": 2 } } },
+      "prediction": {
+        "prompt": "Según la matriz, ¿cuántos controles hacen falta como mínimo?",
+        "options": [
+          "2",
+          "3",
+          "5"
+        ]
+      },
+      "teach": "Cobertura mínima\nEs un problema clásico (set cover): elegir el menor número de columnas que pongan al menos un ■ en cada fila.\nEmpieza por los puntos únicos (esos controles son obligatorios) y añade el que más filas cubra de las que faltan. Descarta lo que tenga coste: tareas rotas o aprobaciones.\nagent defend kage <control> on activa un control; lab resilience agent kage mide la configuración actual.\nPor qué: pocos controles abaratan el sistema, pero ya verás que «pocos» no siempre es «buenos».",
+      "validator": {
+        "type": "event",
+        "event": "lab.resilience",
+        "where": {
+          "kind": "agent",
+          "breached": 0,
+          "pass_rate": 1.0,
+          "approvals": 0,
+          "defense_count": {
+            "lte": 2
+          }
+        }
+      },
       "hints": [
         "user-authz es obligatorio. ¿Qué columna cubre los otros cuatro ataques a la vez?",
         "agent defend kage user-authz on · agent defend kage spotlight on · lab resilience agent kage"
@@ -60,15 +126,60 @@
     {
       "id": "o4",
       "text": "En esa configuración mínima, ¿cuántos ataques son frágiles? (answer <número>)",
-      "validator": { "type": "answer", "expected": 5, "tolerance": 0 },
-      "hints": ["Cuenta las filas con «· frágil»."],
-      "on_complete": "Los cinco. Cuatro dependen solo de spotlight, que en A1-03 viste que se puede esquivar reformulando la instrucción. La cobertura mínima es elegante sobre el papel y quebradiza en producción."
+      "validator": {
+        "type": "answer",
+        "expected": 5,
+        "tolerance": 0
+      },
+      "hints": [
+        "Cuenta las filas con «· frágil»."
+      ],
+      "on_complete": "Los cinco. Cuatro dependen solo de spotlight, que en A1-03 viste que se puede esquivar reformulando la instrucción. La cobertura mínima es elegante sobre el papel y quebradiza en producción.",
+      "teach": "Frágil o robusto\nlab resilience marca cada ataque bloqueado como «frágil» (vuelve a pasar si quitas UNA de las defensas activas) o «robusto» (aguanta).\nPor qué: un sistema donde todo es frágil depende de que ningún control falle nunca."
+    },
+    {
+      "id": "c1",
+      "text": "La cobertura mínima deja la batería a 0. ¿Por qué es una mala elección?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque cuatro ataques dependen solo de spotlight, una instrucción al modelo que se puede esquivar reformulando"
+        },
+        {
+          "id": "b",
+          "text": "porque spotlight rompe tareas legítimas",
+          "why": "En esta configuración las tareas están a 3/3 y sin aprobaciones. El problema no es el coste, es que spotlight se puede esquivar."
+        },
+        {
+          "id": "c",
+          "text": "porque dos controles son siempre demasiado pocos",
+          "why": "El número no es el problema: en C1-02 verás tres controles en el código con todos los ataques frágiles igualmente."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "Mira de qué control depende cada ataque frágil y recuerda A1-03.",
+        "answer a"
+      ],
+      "on_complete": "Eso es. Un control que vive en el prompt es una capa útil, pero nunca debería ser la única barrera de una acción con impacto."
     },
     {
       "id": "o5",
       "text": "Explica con tus palabras por qué la cobertura mínima con spotlight es una mala elección aunque deje la batería a 0, y qué te dice la matriz que no te decía activar controles uno a uno. (reflexion <texto>, mínimo 40 palabras)",
-      "validator": { "type": "reflection", "min_words": 40 },
-      "hints": ["Puntos únicos, defensas esquivables, coste.", "Un control del prompt frente a un control del código."]
+      "validator": {
+        "type": "reflection",
+        "min_words": 40
+      },
+      "hints": [
+        "Puntos únicos, defensas esquivables, coste.",
+        "Un control del prompt frente a un control del código."
+      ]
     }
   ],
   "mastery_trial": {
@@ -77,19 +188,47 @@
       {
         "id": "d1",
         "text": "Con un agente nuevo, deja la batería a 0 con 3/3 tareas y 0 aprobaciones usando como MÁXIMO 3 controles, sin spotlight ni hitl. Compruébalo con lab resilience.",
-        "validator": { "type": "event", "event": "lab.resilience", "where": { "kind": "agent", "breached": 0, "pass_rate": 1.0, "approvals": 0, "defense_count": { "lte": 3 }, "defenses": { "not_contains_any": ["spotlight", "hitl"] } } },
-        "hints": ["Quita spotlight de la matriz y vuelve a resolver la cobertura."],
+        "validator": {
+          "type": "event",
+          "event": "lab.resilience",
+          "where": {
+            "kind": "agent",
+            "breached": 0,
+            "pass_rate": 1.0,
+            "approvals": 0,
+            "defense_count": {
+              "lte": 3
+            },
+            "defenses": {
+              "not_contains_any": [
+                "spotlight",
+                "hitl"
+              ]
+            }
+          }
+        },
+        "hints": [
+          "Quita spotlight de la matriz y vuelve a resolver la cobertura."
+        ],
         "on_complete": "least-privilege, user-authz y step-budget: tres controles en el código, ninguno depende de que el modelo se resista. Siguen siendo frágiles uno a uno; eso lo arreglas en C1-02."
       }
     ]
   },
+  "you_can_now": "Sabes construir una matriz de defensas, encontrar los puntos únicos, calcular una cobertura mínima y comprobar con lab resilience si es frágil. Siguiente: C1-02, dar a cada ataque dos cerraduras sin pagar con aprobaciones humanas.",
   "debrief": {
     "what_happened": "Has medido cada control del agente por separado, has visto que el confused deputy solo lo para user-authz y que hitl es el único con coste, has encontrado una cobertura de dos controles y has comprobado que deja los cinco ataques colgando de un solo hilo.",
     "why": "Elegir defensas por intuición lleva a dos errores: acumular controles redundantes que no aportan y dejar puntos únicos sin ver. La matriz convierte la discusión en datos, y la medida de resiliencia enseña que «bloquea la batería» no es lo mismo que «aguanta un fallo».",
     "in_production": "Los equipos mantienen una matriz parecida (control frente a amenaza) en el modelo de amenazas y la alimentan con evaluaciones automáticas en cada versión. Los controles que dependen del modelo (instrucciones, delimitadores, clasificadores) cuentan como capa extra, nunca como única barrera de una acción con impacto.",
-    "simplifications": ["Cinco ataques fijos; una batería real es mucho mayor y cambia", "Los controles son interruptores con efecto inmediato"],
+    "simplifications": [
+      "Cinco ataques fijos; una batería real es mucho mayor y cambia",
+      "Los controles son interruptores con efecto inmediato"
+    ],
     "exercise": "forja/ejercicios/C1_01_matriz.py"
   },
-  "further_reading": ["ref.owasp-agentic-2026"],
-  "xp": { "base": 300 }
+  "further_reading": [
+    "ref.owasp-agentic-2026"
+  ],
+  "xp": {
+    "base": 300
+  }
 }

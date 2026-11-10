@@ -101,6 +101,8 @@ func test_mision_O6_01() -> void:
 	run(["soc show taller S04", "answer http_get"])
 	run(["soc log taller tool_args on", "soc show taller S04", "answer cdn-estadisticas.example"])
 	assert_eq(game.runner.index, 3)
+	run(["answer b"])
+	assert_eq(game.runner.index, 4)
 	run(["hipotesis el registro guarda datos personales de clientes", "soc log taller retrievals on", "soc log taller identity on", "soc log taller model_version on",
 		"soc coverage taller", "soc log taller redact-pii on", "soc coverage taller", R40])
 	assert_eq(game.runner.phase, "trial")
@@ -114,12 +116,14 @@ func test_mision_O6_02() -> void:
 	assert_eq(game.start_mission("O6-02"), "")
 	run(["soc trazas taller", "soc rule taller correlacion on", "soc detect taller"])
 	assert_eq(game.runner.index, 1)
-	run(_full("taller").slice(1) + ["soc rule taller correlacion off", "soc rule taller palabras-clave on", "soc detect taller", "answer 0,25"])
+	run(_full("taller").slice(1) + ["soc rule taller correlacion off", "soc rule taller palabras-clave on", "soc detect taller", "answer 0,25", "answer a"])
 	var on: Array = ["hipotesis veré todos los ataques y muchas falsas alarmas"]
 	for r in MockTraceStore.RULES:
 		on.append("soc rule taller %s on" % r)
 	run(on + ["soc detect taller", "answer 0,5"])
-	assert_eq(game.runner.index, 3)
+	assert_eq(game.runner.index, 4)
+	_solve_py(PY_PRECISION)
+	assert_eq(game.runner.index, 5)
 	run(["soc rule taller dominio-externo off", "soc rule taller instruccion-en-dato off", "soc detect taller", R40])
 	assert_eq(game.runner.phase, "trial")
 	run(_full("t2") + ["soc rule t2 palabras-clave on", "soc rule t2 volumen on", "soc rule t2 correlacion on", "soc detect t2"])
@@ -134,9 +138,9 @@ func test_mision_O6_03() -> void:
 	run(["soc search taller prov-77", "answer 2"])
 	run(["hipotesis frena los ataques y para todo el trabajo", "soc contain taller apagar-agente on", "soc retest taller", "answer 0"])
 	assert_eq(game.runner.index, 3)
-	run(["soc contain taller apagar-agente off", "soc contain taller cuarentena-fuente on", "soc retest taller", "answer 1"])
+	run(["soc contain taller apagar-agente off", "soc contain taller cuarentena-fuente on", "soc retest taller", "answer 1", "answer b"])
 	run(["soc contain taller bloquear-salida on", "soc contain taller notificar-dpd on", "soc retest taller"])
-	assert_eq(game.runner.index, 5)
+	assert_eq(game.runner.index, 6)
 	run(["informe nuevo Inyección indirecta en prov-77-informe.pdf exfiltra la lista de clientes", "informe campo severidad alta", "informe campo owasp LLM01",
 		"informe campo componente asistente-taller con el índice de documentos de proveedores", "informe campo descripcion un documento con texto oculto ordena al asistente enviar la lista de clientes fuera",
 		"informe campo pasos 1) soc trazas taller 2) soc show taller S04 3) soc search taller prov-77",
@@ -147,3 +151,43 @@ func test_mision_O6_03() -> void:
 	run(_full("t2") + ["soc show t2 S07", "soc search t2 prov-77", "soc contain t2 bloquear-salida on", "soc contain t2 notificar-dpd on", "soc retest t2"])
 	assert_eq(finished.size(), 1)
 	assert_true(finished[0]["trial_passed"])
+
+
+# --- O/C/E ---
+
+## Paso de Python de una misión: abre el editor, escribe la solución y la comprueba.
+func _solve_py(code: String) -> void:
+	run(["py"])
+	game.py_code = code
+	run(["py check"])
+
+
+const PY_PRECISION := "def precision(vp, fp):
+    if vp + fp == 0:
+        return 0.0
+    return vp / (vp + fp)
+"
+
+
+func test_O6_02_python_precision_starter_falla() -> void:
+	var ex: Dictionary = game.catalog.get_mission("O6-02")["objectives"][4]["py_exercise"]
+	assert_eq(ex["id"], "O6-02-precision")
+	var r := PyExercise.check(ex["starter"], ex)
+	assert_true(r["ok"], "el código inicial se ejecuta")
+	assert_true(r["passed"] < r["total"], "el código inicial no pasa")
+	r = PyExercise.check(PY_PRECISION, ex)
+	assert_eq(r["passed"], r["total"])
+
+
+func test_O6_comprobacion_explica_el_error() -> void:
+	var mentor: Array[String] = []
+	game.runner.mentor_message.connect(func(t: String, _k: String) -> void: mentor.append(t))
+	game.progress.data["missions"]["O6-02"] = {"completed": true}
+	game.start_mission("O6-03")
+	run(_full("taller") + ["soc show taller S04", "answer prov-77-informe.pdf", "soc search taller prov-77", "answer 2",
+		"hipotesis frena los ataques y para todo el trabajo", "soc contain taller apagar-agente on", "soc retest taller", "answer 0",
+		"soc contain taller apagar-agente off", "soc contain taller cuarentena-fuente on", "soc retest taller", "answer 1"])
+	assert_eq(game.runner.current_objective()["id"], "c1")
+	run(["answer a"])
+	assert_eq(game.runner.current_objective()["id"], "c1", "una opción incorrecta no avanza")
+	assert_true(mentor.any(func(t: String) -> bool: return t.contains("La cuarentena lo ha sacado")), "explica por qué no")

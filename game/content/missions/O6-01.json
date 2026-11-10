@@ -7,8 +7,20 @@
   "plane": "dojo",
   "epistemic": "practica-industria",
   "estimated_minutes": 35,
-  "requires_missions": ["A3-03"],
-  "competencies": { "requires": ["A3.agentes", "A3.abuso-herramientas"], "trains": ["O6.telemetria", "O6.preguntas-forenses", "O6.privacidad-registros"] },
+  "requires_missions": [
+    "A3-03"
+  ],
+  "competencies": {
+    "requires": [
+      "A3.agentes",
+      "A3.abuso-herramientas"
+    ],
+    "trains": [
+      "O6.telemetria",
+      "O6.preguntas-forenses",
+      "O6.privacidad-registros"
+    ]
+  },
   "briefing": "El asistente del taller lleva una semana en producción: responde dudas, consulta pedidos, envía correos y abre tickets. Esta mañana alguien de ventas avisa de que un cliente ha recibido un correo raro con sus propios datos. Antes de detectar nada hay que saber qué se guardó de cada sesión. Hoy abrirás el registro de trazas, comprobarás qué preguntas puedes responder con él y lo dejarás listo para investigar sin convertirlo en otro riesgo.",
   "learning_objectives": [
     "Relacionar cada pregunta de una investigación con el dato que hay que registrar para responderla",
@@ -16,60 +28,177 @@
     "Registrar lo necesario sin guardar datos personales en claro"
   ],
   "mentor_intro": "En defensa, lo que no está en el registro no ocurrió… hasta que alguien lo sufre. Todo lo de este laboratorio es ficticio: sesiones, personas, correos y dominios.",
-  "lab": { "datasets": [], "viz": {} },
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Un agente es un LLM (Large Language Model) que, además de responder, lee documentos y llama a herramientas: consulta pedidos, envía correos, hace peticiones web. Lo peligroso ocurre entre la pregunta y la respuesta. Cuando algo sale mal, el equipo de seguridad (en una empresa, el SOC (Security Operations Center)) solo puede investigar lo que quedó registrado. Hoy aprendes qué hay que registrar de un agente y cómo hacerlo sin crear otra fuga de datos personales.",
   "theory_cards": [
     {
       "id": "trazas-agente",
       "title": "Trazas de un agente",
-      "body": "Una traza es el registro estructurado de lo que pasó en una petición: quién la hizo, qué pidió, qué contenido recuperó el agente, qué herramientas llamó, con qué argumentos, qué devolvieron y qué respondió. En una app LLM clásica bastaba con la entrada y la salida; en un agente, las acciones ocurren en medio. OpenTelemetry está definiendo convenciones semánticas para IA generativa (spans como invoke_agent o execute_tool y atributos gen_ai.*), todavía en estado Development: es una práctica emergente. Comandos: soc trazas, soc coverage, soc show, soc log."
+      "body": "Una traza es el registro estructurado de lo que pasó en una petición: quién la hizo, qué pidió, qué contenido recuperó el agente, qué herramientas llamó, con qué argumentos, qué devolvieron y qué respondió. En una app LLM (Large Language Model) clásica bastaba con la entrada y la salida; en un agente, las acciones ocurren en medio. OpenTelemetry está definiendo convenciones semánticas para IA (Inteligencia Artificial) generativa (spans como invoke_agent o execute_tool y atributos gen_ai.*), todavía en estado Development: es una práctica emergente. Comandos: soc trazas, soc coverage, soc show, soc log."
     },
     {
       "id": "registro-y-privacidad",
       "title": "Registrar sin crear otro riesgo",
-      "body": "Los mensajes y los resultados de las herramientas suelen contener datos personales. Las convenciones de OpenTelemetry marcan el contenido de los mensajes como opt-in porque puede contener información sensible. Un registro con datos personales en claro es otra base de datos que proteger (y que cumple el RGPD). Opciones habituales: redactar (enmascarar) correos y teléfonos, guardar el contenido completo aparte con acceso restringido y retención corta, o no guardarlo."
+      "body": "Los mensajes y los resultados de las herramientas suelen contener datos personales. Las convenciones de OpenTelemetry marcan el contenido de los mensajes como opt-in porque puede contener información sensible. Un registro con datos personales en claro es otra base de datos que proteger (y que cumple el RGPD (Reglamento General de Protección de Datos; en inglés, GDPR)). Opciones habituales: redactar (enmascarar) correos y teléfonos, guardar el contenido completo aparte con acceso restringido y retención corta, o no guardarlo.",
+      "unlock_on": "objective:o4"
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Abre el registro de trazas y comprueba su cobertura. ¿Cuántas de las seis preguntas forenses puedes responder hoy? (answer <número>)",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "soc.coverage" },
-        { "type": "answer", "expected": 2, "tolerance": 0 }
-      ] },
-      "hints": ["soc trazas taller · soc coverage taller"],
-      "on_complete": "Dos de seis: es lo que se registra por defecto en muchas apps, que se diseñaron como un chat (pregunta y respuesta)."
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "soc.coverage"
+          },
+          {
+            "type": "answer",
+            "expected": 2,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "soc trazas taller · soc coverage taller"
+      ],
+      "on_complete": "Dos de seis: es lo que se registra por defecto en muchas apps, que se diseñaron como un chat (pregunta y respuesta).",
+      "teach": "Las seis preguntas forenses\nInvestigar un incidente es responder seis preguntas: quién inició la sesión, qué pidió, qué herramientas llamó el agente, con qué argumentos (a dónde fueron los datos), qué contenido provocó la acción y qué versión del modelo respondía.\nCada pregunta necesita que se haya registrado un campo concreto.\nsoc trazas taller crea el registro con lo que se guarda por defecto; soc coverage taller dice qué preguntas puedes responder con él.\nPor qué: un equipo de seguridad comprueba esto ANTES del incidente; después ya no se puede recuperar lo que no se guardó."
     },
     {
       "id": "o2",
       "text": "Mira la sesión S04 con el registro tal como está. ¿Qué herramienta es la única que podría haber sacado datos fuera de la forja? (answer <herramienta>)",
-      "teach": "Leer una sesión\nsoc show <registro> <sesión> enseña la línea de tiempo de una sesión tal como quedó guardada: mensajes, documentos recuperados, llamadas a herramientas y respuesta. Al final indica qué campos no se registraron.",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "soc.viewed", "where": { "session": "S04" } },
-        { "type": "answer", "expected": "http_get", "accept": ["http_get", "http get", "http-get"] }
-      ] },
-      "hints": ["soc show taller S04", "Dos herramientas: una lee datos internos y la otra hace una petición web."],
+      "teach": "Leer una sesión\nsoc show <registro> <sesión> enseña la línea de tiempo de una sesión tal como quedó guardada: mensajes, documentos recuperados, llamadas a herramientas y respuesta. Al final indica qué campos no se registraron.\nUna herramienta «de salida» es la que puede mandar algo fuera de la forja: una petición web o un correo.\nPor qué: en un agente, una fuga casi siempre pasa por una herramienta de salida, no por la respuesta que ve el usuario.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "soc.viewed",
+            "where": {
+              "session": "S04"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "http_get",
+            "accept": [
+              "http_get",
+              "http get",
+              "http-get"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "soc show taller S04",
+        "Dos herramientas: una lee datos internos y la otra hace una petición web."
+      ],
       "on_complete": "http_get. Pero con este registro no sabes a dónde fue la petición ni por qué el agente decidió leer la lista de clientes: el usuario solo pidió un resumen."
     },
     {
       "id": "o3",
       "text": "Registra los argumentos de las herramientas y vuelve a mirar S04. ¿A qué dominio fueron los datos? (answer <dominio>)",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "soc.viewed", "where": { "session": "S04", "destinations": { "icontains": "cdn-estadisticas" } } },
-        { "type": "answer", "expected": "cdn-estadisticas.example", "accept": ["cdn-estadisticas.example", "cdn-estadisticas", "https://cdn-estadisticas.example"] }
-      ] },
-      "hints": ["soc log taller tool_args on · soc show taller S04"],
-      "on_complete": "Un dominio que no es de la forja ni de ningún proveedor. Ya sabes a dónde; falta saber qué lo provocó, quién estaba al otro lado y con qué versión."
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "soc.viewed",
+            "where": {
+              "session": "S04",
+              "destinations": {
+                "icontains": "cdn-estadisticas"
+              }
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "cdn-estadisticas.example",
+            "accept": [
+              "cdn-estadisticas.example",
+              "cdn-estadisticas",
+              "https://cdn-estadisticas.example"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "soc log taller tool_args on · soc show taller S04"
+      ],
+      "on_complete": "Un dominio que no es de la forja ni de ningún proveedor. Ya sabes a dónde; falta saber qué lo provocó, quién estaba al otro lado y con qué versión.",
+      "teach": "Registrar los argumentos\nsoc log <registro> <campo> on empieza a guardar un campo. tool_args son los argumentos de cada llamada: por ejemplo, la dirección a la que llama http_get.\nSin ellos sabes QUE el agente llamó a una herramienta, pero no A DÓNDE.\nPor qué: el destino de una petición es lo que distingue un resumen inocente de una exfiltración (sacar datos sin permiso)."
+    },
+    {
+      "id": "c1",
+      "text": "Con el registro por defecto, ¿por qué no se veía el incidente de S04?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque la respuesta final de S04 era sospechosa",
+          "why": "La respuesta era un resumen correcto: por fuera, S04 parecía una sesión normal."
+        },
+        {
+          "id": "b",
+          "text": "porque lo peligroso pasó en medio (el documento recuperado y los argumentos de la herramienta) y eso no se registraba"
+        },
+        {
+          "id": "c",
+          "text": "porque el agente borró parte del registro",
+          "why": "Nadie borró nada: esos campos sencillamente no se guardaban."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Piensa en qué campos se guardan por defecto: prompts y nombres de herramientas.",
+        "answer b"
+      ],
+      "on_complete": "Eso es. En un chat basta con guardar la pregunta y la respuesta; en un agente, las acciones ocurren en medio y hay que registrarlas."
     },
     {
       "id": "o4",
       "text": "Deja el registro respondiendo las seis preguntas forenses y sin datos personales en claro.",
-      "prediction": { "prompt": "Si registras todo (mensajes, documentos y argumentos), ¿qué problema nuevo aparece?", "options": ["ninguno, más datos siempre es mejor", "el registro guarda datos personales de clientes", "el agente responde más despacio"] },
-      "teach": "Redactar\nsoc log <registro> redact-pii on enmascara los correos (conserva el dominio) y los teléfonos antes de guardar. La investigación sigue funcionando: los dominios, las herramientas y los documentos siguen ahí.",
-      "validator": { "type": "sequence", "steps": [
-        { "type": "event", "event": "soc.coverage", "where": { "answered": 6, "pii_stored": true } },
-        { "type": "event", "event": "soc.coverage", "where": { "answered": 6, "pii_stored": false } }
-      ] },
+      "prediction": {
+        "prompt": "Si registras todo (mensajes, documentos y argumentos), ¿qué problema nuevo aparece?",
+        "options": [
+          "ninguno, más datos siempre es mejor",
+          "el registro guarda datos personales de clientes",
+          "el agente responde más despacio"
+        ]
+      },
+      "teach": "Registrar todo… con cuidado\nFaltan tres campos: retrievals (documentos recuperados), identity (quién inició la sesión) y model_version (versión del modelo y del prompt de sistema).\nPero los mensajes y los documentos llevan correos y teléfonos de clientes: guardarlos en claro crea otra base de datos sensible.\nsoc log <registro> redact-pii on enmascara los correos (conserva el dominio) y los teléfonos antes de guardar. Los dominios, las herramientas y los documentos siguen ahí.\nPor qué: el registro de un sistema de IA (Inteligencia Artificial) también contiene datos personales; si se filtra, es otra fuga.",
+      "validator": {
+        "type": "sequence",
+        "steps": [
+          {
+            "type": "event",
+            "event": "soc.coverage",
+            "where": {
+              "answered": 6,
+              "pii_stored": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "soc.coverage",
+            "where": {
+              "answered": 6,
+              "pii_stored": false
+            }
+          }
+        ]
+      },
       "hints": [
         "Primero consigue 6/6 y mira el aviso de la cobertura; después corrígelo.",
         "soc log taller retrievals on · soc log taller identity on · soc log taller model_version on · soc coverage taller · soc log taller redact-pii on · soc coverage taller"
@@ -79,8 +208,14 @@
     {
       "id": "o5",
       "text": "Explica con tus palabras qué hay que registrar de un agente que no hacía falta en un chat, por qué, y qué haces con los datos personales. (reflexion <texto>, mínimo 40 palabras)",
-      "validator": { "type": "reflection", "min_words": 40 },
-      "hints": ["Piensa en S04 con 2/6: veías la pregunta y la respuesta, y nada de lo que pasó en medio.", "Documentos recuperados, argumentos y resultados de herramientas, identidad, versión… y redacción."]
+      "validator": {
+        "type": "reflection",
+        "min_words": 40
+      },
+      "hints": [
+        "Piensa en S04 con 2/6: veías la pregunta y la respuesta, y nada de lo que pasó en medio.",
+        "Documentos recuperados, argumentos y resultados de herramientas, identidad, versión… y redacción."
+      ]
     }
   ],
   "mastery_trial": {
@@ -89,23 +224,55 @@
       {
         "id": "d1",
         "text": "Con un registro nuevo, consigue 6/6 preguntas forenses sin datos personales en claro y revisa la sesión S07 completa.",
-        "validator": { "type": "sequence", "steps": [
-          { "type": "event", "event": "soc.created" },
-          { "type": "event", "event": "soc.coverage", "where": { "answered": 6, "pii_stored": false } },
-          { "type": "event", "event": "soc.viewed", "where": { "session": "S07", "complete": true } }
-        ] },
-        "hints": ["Seis campos y la redacción."],
+        "validator": {
+          "type": "sequence",
+          "steps": [
+            {
+              "type": "event",
+              "event": "soc.created"
+            },
+            {
+              "type": "event",
+              "event": "soc.coverage",
+              "where": {
+                "answered": 6,
+                "pii_stored": false
+              }
+            },
+            {
+              "type": "event",
+              "event": "soc.viewed",
+              "where": {
+                "session": "S07",
+                "complete": true
+              }
+            }
+          ]
+        },
+        "hints": [
+          "Seis campos y la redacción."
+        ],
         "on_complete": "S07 es S04 otra vez, un día después y con otra persona. El registro ya permite verlo."
       }
     ]
   },
+  "you_can_now": "Sabes comprobar si el registro de un agente permite investigar un incidente (las seis preguntas forenses), completarlo con documentos recuperados, argumentos, identidad y versión, y redactar los datos personales. Siguiente: O6-02, convertir ese registro en alertas automáticas y medir si aciertan.",
   "debrief": {
     "what_happened": "Has pasado de un registro que solo respondía qué se pidió y qué herramientas se llamaron a uno que responde las seis preguntas de una investigación, y has redactado los datos personales para que el propio registro no sea una fuga.",
     "why": "En un agente, las decisiones peligrosas ocurren entre la pregunta y la respuesta: un documento recuperado le da instrucciones y una herramienta las ejecuta. Si no registras el contenido recuperado ni los argumentos, el incidente es invisible, y la respuesta final puede parecer normal (S04 responde un resumen correcto).",
-    "in_production": "Trazas estructuradas por petición (por ejemplo, con las convenciones GenAI de OpenTelemetry, aún en desarrollo), identificador de usuario y de conversación, versión del modelo y del prompt de sistema, argumentos y resultados de herramientas, fuentes recuperadas; el contenido completo con opt-in, redacción, acceso restringido y retención definida; y registros protegidos frente a modificación.",
-    "simplifications": ["Activar un campo «recupera» las sesiones pasadas: en la realidad, lo que no se registró se ha perdido", "Seis campos fijos; las trazas reales tienen muchos más atributos", "La redacción solo reconoce correos y teléfonos con un formato concreto"],
+    "in_production": "Trazas estructuradas por petición (por ejemplo, con las convenciones GenAI (Generative AI, IA generativa) de OpenTelemetry, aún en desarrollo), identificador de usuario y de conversación, versión del modelo y del prompt de sistema, argumentos y resultados de herramientas, fuentes recuperadas; el contenido completo con opt-in, redacción, acceso restringido y retención definida; y registros protegidos frente a modificación.",
+    "simplifications": [
+      "Activar un campo «recupera» las sesiones pasadas: en la realidad, lo que no se registró se ha perdido",
+      "Seis campos fijos; las trazas reales tienen muchos más atributos",
+      "La redacción solo reconoce correos y teléfonos con un formato concreto"
+    ],
     "exercise": "forja/ejercicios/O6_01_trazas.py"
   },
-  "further_reading": ["ref.otel-genai", "ref.owasp-llm-2025"],
-  "xp": { "base": 250 }
+  "further_reading": [
+    "ref.otel-genai",
+    "ref.owasp-llm-2025"
+  ],
+  "xp": {
+    "base": 250
+  }
 }

@@ -337,16 +337,18 @@ func test_mision_A6_04() -> void:
 
 
 ## E1 (investigación ML): evidencia de los tests del laboratorio, hipótesis y dos reflexiones.
-func _mision_E1(id: String, requisitos: Array, tests: int, hipotesis: String) -> void:
+func _mision_E1(id: String, requisitos: Array, tests: int, hipotesis: String, respuestas: Array = [], py := "") -> void:
 	var finished: Array = []
 	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
 	for m: String in requisitos:
 		game.progress.data["missions"][m] = {"completed": true}
 	assert_eq(game.start_mission(id), "", id)
+	var b := _py_paso(py)
 	game.import_evidence(_write("e.json", _evidence(id, tests - 1)))
-	assert_eq(game.runner.index, 0, "%s: con un test sin pasar no avanza" % id)
+	assert_eq(game.runner.index, b, "%s: con un test sin pasar no avanza" % id)
 	game.import_evidence(_write("e.json", _evidence(id, tests)))
-	assert_eq(game.runner.index, 1, id)
+	assert_eq(game.runner.index, b + 1, id)
+	_responder(respuestas)
 	assert_true(game.shell.execute("hipotesis " + hipotesis).ok, hipotesis)
 	for l in ["reflexion " + "mi bucle coincidio con generate y la cuantizacion por bloques casi no cambio la perplejidad del modelo pequeno ".repeat(5),
 			"reflexion " + "entrenar de verdad necesita gradientes y estados del optimizador por cada peso y eso no cabe en mi portatil sin gpu ".repeat(4)]:
@@ -357,34 +359,37 @@ func _mision_E1(id: String, requisitos: Array, tests: int, hipotesis: String) ->
 
 func test_mision_E1_01() -> void:
 	assert_false(game.start_mission("E1-01").is_empty(), "bloqueada sin T6-02 ni P0-01")
-	_mision_E1("E1-01", ["T6-02", "P0-01"], 17, "más de 3 veces")
+	_mision_E1("E1-01", ["T6-02", "P0-01"], 17, "más de 3 veces", ["answer b"])
 
 
 func test_mision_E1_02() -> void:
-	_mision_E1("E1-02", ["E1-01"], 12, "menos de un 1 %")
+	_mision_E1("E1-02", ["E1-01"], 12, "menos de un 1 %", ["answer b"], PY_PERPLEJIDAD)
 
 
 func test_mision_E1_03() -> void:
-	_mision_E1("E1-03", ["E1-02"], 15, "hacia la mitad")
+	_mision_E1("E1-03", ["E1-02"], 15, "hacia la mitad", ["answer a"])
 
 
 
 ## Las tres misiones de E2 siguen el mismo patrón: evidencia de tests → predicción → medición → dos reflexiones.
-func _mision_E2(id: String, requires: Array, tests: int, prediction: String) -> void:
+func _mision_E2(id: String, requires: Array, tests: int, prediction: String, respuestas: Array = [], py := "") -> void:
 	var finished: Array = []
 	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
 	for m: String in requires:
 		game.progress.data["missions"][m] = {"completed": true}
 	assert_eq(game.start_mission(id), "")
+	var b := _py_paso(py)
 	game.import_evidence(_write("a.json", _evidence(id, tests)))
-	assert_eq(game.runner.index, 1, id)
+	assert_eq(game.runner.index, b + 1, id)
+	_responder(respuestas)
+	b += respuestas.size()
 	assert_true(game.shell.execute("hipotesis " + prediction).ok)
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("otra", 6)], id)))
-	assert_eq(game.runner.index, 1, "%s: hacen falta 3 configuraciones" % id)
+	assert_eq(game.runner.index, b + 1, "%s: hacen falta 3 configuraciones" % id)
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("otra", 6), _cfg("dos", 3)], "A2-04")))
-	assert_eq(game.runner.index, 1, "%s: la medición de otro laboratorio no vale" % id)
+	assert_eq(game.runner.index, b + 1, "%s: la medición de otro laboratorio no vale" % id)
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("otra", 6), _cfg("dos", 3)], id)))
-	assert_eq(game.runner.index, 2, id)
+	assert_eq(game.runner.index, b + 2, id)
 	for l in ["reflexion " + "sin defensas el ataque funciono casi siempre y la defensa redujo la tasa pero costo precision en los datos limpios ".repeat(4),
 			"reflexion " + "un atacante adaptativo conoce la defensa y la incorpora a su ataque asi que medir sin el no demuestra nada ".repeat(3)]:
 		var r := game.shell.execute(l)
@@ -393,36 +398,39 @@ func _mision_E2(id: String, requires: Array, tests: int, prediction: String) -> 
 
 
 func test_mision_E2_01() -> void:
-	_mision_E2("E2-01", ["T4-02", "A2-03"], 16, "unos 20 puntos")
+	_mision_E2("E2-01", ["T4-02", "A2-03"], 16, "unos 20 puntos", ["answer b"])
 
 
 func test_mision_E2_02() -> void:
-	_mision_E2("E2-02", ["E2-01"], 13, "una copia casi perfecta")
+	_mision_E2("E2-02", ["E2-01"], 13, "una copia casi perfecta", ["answer a"])
 
 
 func test_mision_E2_03() -> void:
-	_mision_E2("E2-03", ["E2-01"], 14, "pequeña pero clara")
+	_mision_E2("E2-03", ["E2-01"], 14, "pequeña pero clara", ["answer b"], PY_VENTAJA)
 
 
 
 ## E4 · AI Ops avanzado: tres laboratorios de la Forja con medición, en cadena.
-func _mision_E4(id: String, previas: Array, tests: int, prediccion: String, reflexiones: Array) -> Array:
+func _mision_E4(id: String, previas: Array, tests: int, prediccion: String, reflexiones: Array, respuestas: Array = [], py := "") -> Array:
 	var finished: Array = []
 	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
 	for m: String in previas:
 		game.progress.data["missions"][m] = {"completed": true}
 	assert_eq(game.start_mission(id), "")
+	var b := _py_paso(py)
 	game.import_evidence(_write("a.json", _evidence(id, tests - 1)))
-	assert_eq(game.runner.index, 0, "%s: con un test sin pasar no avanza" % id)
+	assert_eq(game.runner.index, b, "%s: con un test sin pasar no avanza" % id)
 	game.import_evidence(_write("a.json", _evidence(id, tests)))
-	assert_eq(game.runner.index, 1)
+	assert_eq(game.runner.index, b + 1)
+	_responder(respuestas)
+	b += respuestas.size()
 	assert_true(game.shell.execute("hipotesis " + prediccion).ok)
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 12), _cfg("x", 3)], id)))
-	assert_eq(game.runner.index, 1, "%s: hacen falta 3 configuraciones" % id)
+	assert_eq(game.runner.index, b + 1, "%s: hacen falta 3 configuraciones" % id)
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 12), _cfg("x", 3), _cfg("y", 0)], "A2-04")))
-	assert_eq(game.runner.index, 1, "%s: la medición de otro laboratorio no vale" % id)
+	assert_eq(game.runner.index, b + 1, "%s: la medición de otro laboratorio no vale" % id)
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 12), _cfg("x", 3), _cfg("y", 0)], id)))
-	assert_eq(game.runner.index, 2)
+	assert_eq(game.runner.index, b + 2)
 	for l: String in reflexiones:
 		var r := game.shell.execute("reflexion " + l)
 		assert_true(r.ok, r.plain_text())
@@ -433,21 +441,24 @@ func test_mision_E4_01() -> void:
 	assert_eq(game.start_mission("E4-01"), "🔒 Antes completa: P0-01, O6-03")
 	var f := _mision_E4("E4-01", ["P0-01", "O6-03"], 25, "casi ninguna", [
 		"sin defensas el p95 de las legitimas paso de un minuto porque el abusador ocupaba el modelo y con limite la cola se vacio antes ".repeat(4),
-		"el limite va por cliente sacado del token porque el abusador cambiaria de nombre y una cache sin ambito sirve datos de otro usuario ".repeat(3)])
+		"el limite va por cliente sacado del token porque el abusador cambiaria de nombre y una cache sin ambito sirve datos de otro usuario ".repeat(3)],
+		["answer b"], PY_PERCENTIL)
 	assert_eq(f.size(), 1)
 
 
 func test_mision_E4_02() -> void:
 	var f := _mision_E4("E4-02", ["E4-01"], 17, "uno o dos", [
 		"la redaccion no reconocio el telefono con puntos ni el correo disfrazado y el modelo repitio los datos en su respuesta asi que ".repeat(4),
-		"las metricas llevan pocos valores porque cada combinacion crea una serie y el exportador redacta lo que anadan otras librerias ".repeat(3)])
+		"las metricas llevan pocos valores porque cada combinacion crea una serie y el exportador redacta lo que anadan otras librerias ".repeat(3)],
+		["answer b"])
 	assert_eq(f.size(), 1)
 
 
 func test_mision_E4_03() -> void:
 	var f := _mision_E4("E4-03", ["E4-02"], 18, "ninguno", [
 		"los compose de la forja no declaraban limites ni usuario en ollama y el canary revirtio el modelo inexistente tras pocas peticiones ".repeat(4),
-		"la huella prueba que es el artefacto aprobado pero no que sea seguro y la lista permitida debe protegerse con revision y firma ".repeat(3)])
+		"la huella prueba que es el artefacto aprobado pero no que sea seguro y la lista permitida debe protegerse con revision y firma ".repeat(3)],
+		["answer b"])
 	assert_eq(f.size(), 1)
 
 
@@ -551,3 +562,42 @@ func test_mision_A2_06() -> void:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
+
+
+# --- O/C/E ---
+
+const PY_PERPLEJIDAD := "import math\n\ndef perplejidad(log_probs):\n    media = sum(log_probs) / len(log_probs)\n    return math.exp(-media)\n"
+const PY_VENTAJA := "def ventaja(perdidas_miembros, perdidas_otros, umbral):\n    tpr = len([p for p in perdidas_miembros if p < umbral]) / len(perdidas_miembros)\n    fpr = len([p for p in perdidas_otros if p < umbral]) / len(perdidas_otros)\n    return tpr - fpr\n"
+const PY_PERCENTIL := "def percentil(valores, p):\n    v = sorted(valores)\n    posicion = (len(v) - 1) * p / 100\n    i = int(posicion)\n    f = posicion - i\n    if i + 1 < len(v):\n        return v[i] + (v[i + 1] - v[i]) * f\n    return v[i]\n"
+
+
+## Paso de Python al empezar (si lo hay): devuelve cuántos objetivos ha avanzado.
+func _py_paso(code: String) -> int:
+	if code.is_empty():
+		return 0
+	assert_eq(game.runner.current_objective()["id"], "py1")
+	assert_true(game.shell.execute("py").ok)
+	assert_true(game.shell.execute("py check").ok)
+	assert_eq(game.runner.index, 0, "con el código inicial no pasa")
+	game.py_code = code
+	assert_true(game.shell.execute("py check").ok)
+	assert_eq(game.runner.index, 1, "con la solución, sí")
+	return 1
+
+
+## Comprobaciones de comprensión (answer <letra>) tras la evidencia de los tests.
+func _responder(respuestas: Array) -> void:
+	for l: String in respuestas:
+		var before := game.runner.index
+		assert_true(game.shell.execute(l).ok, l)
+		assert_eq(game.runner.index, before + 1, l)
+
+
+func test_E_python_starters_fallan_y_soluciones_pasan() -> void:
+	for pair: Array in [["E1-02", PY_PERPLEJIDAD], ["E2-03", PY_VENTAJA], ["E4-01", PY_PERCENTIL]]:
+		var ex: Dictionary = game.catalog.get_mission(pair[0])["objectives"][0]["py_exercise"]
+		var r := PyExercise.check(ex["starter"], ex)
+		assert_true(r["ok"], "%s: el código inicial se ejecuta" % pair[0])
+		assert_true(r["passed"] < r["total"], "%s: el código inicial no pasa" % pair[0])
+		r = PyExercise.check(pair[1], ex)
+		assert_eq(r["passed"], r["total"], pair[0])

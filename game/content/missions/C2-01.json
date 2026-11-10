@@ -7,16 +7,31 @@
   "plane": "dojo",
   "epistemic": "practica-industria",
   "estimated_minutes": 30,
-  "requires_missions": ["A2-03"],
-  "competencies": { "requires": ["A2.defensa-rag", "A2.control-acceso"], "trains": ["C2.matriz-defensas", "C2.cobertura-minima"] },
-  "briefing": "RAG Security Lab, primera parte. El buscador documental de la forja responde a clientes con los manuales y guarda, en el mismo índice, documentos internos. En A2 lo defendiste paso a paso. Ahora medirás cada defensa por separado y buscarás el conjunto más pequeño que cierra la batería sin empeorar las respuestas. Esta vez la línea base ya tiene un problema de calidad: una defensa sirve para seguridad y otra para que el sistema funcione.",
+  "requires_missions": [
+    "A2-03"
+  ],
+  "competencies": {
+    "requires": [
+      "A2.defensa-rag",
+      "A2.control-acceso"
+    ],
+    "trains": [
+      "C2.matriz-defensas",
+      "C2.cobertura-minima"
+    ]
+  },
+  "briefing": "RAG (Retrieval-Augmented Generation) Security Lab, primera parte. El buscador documental de la forja responde a clientes con los manuales y guarda, en el mismo índice, documentos internos. En A2 lo defendiste paso a paso. Ahora medirás cada defensa por separado y buscarás el conjunto más pequeño que cierra la batería sin empeorar las respuestas. Esta vez la línea base ya tiene un problema de calidad: una defensa sirve para seguridad y otra para que el sistema funcione.",
   "learning_objectives": [
     "Interpretar la matriz de defensas de un RAG y su coste en las respuestas legítimas",
     "Reconocer que cada defensa de un RAG actúa en una etapa distinta del pipeline",
     "Encontrar la cobertura mínima que deja 0 ataques y 7/7 respuestas correctas"
   ],
-  "mentor_intro": "Un RAG es una cadena: ingesta, índice, recuperación, presentación al modelo, generación. Cada eslabón tiene su cerradura.",
-  "lab": { "datasets": [], "viz": {} },
+  "mentor_intro": "Un RAG (Retrieval-Augmented Generation) es una cadena: ingesta, índice, recuperación, presentación al modelo, generación. Cada eslabón tiene su cerradura.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Un RAG (Retrieval-Augmented Generation) es una cadena: ingesta de documentos, índice, recuperación, presentación al modelo y generación. Cada eslabón tiene su ataque (documentos envenenados, fugas de documentos internos, inyección en el contexto) y su defensa. Hoy mides cada defensa del buscador de la forja por separado y descubres que, en un RAG, la seguridad y la calidad de las respuestas se miden con la misma vara.",
   "theory_cards": [
     {
       "id": "etapas",
@@ -27,31 +42,109 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Crea e indexa un RAG nuevo y saca su matriz de defensas.",
-      "validator": { "type": "event", "event": "lab.matrix", "where": { "kind": "rag", "baseline": 5 } },
-      "hints": ["rag create docs · rag ingest docs · lab matrix rag docs"],
-      "on_complete": "Mira la columna «ninguna»: ya sin defensas falla una de las siete preguntas legítimas."
+      "text": "Crea e indexa un RAG (Retrieval-Augmented Generation) nuevo y saca su matriz de defensas.",
+      "validator": {
+        "type": "event",
+        "event": "lab.matrix",
+        "where": {
+          "kind": "rag",
+          "baseline": 5
+        }
+      },
+      "hints": [
+        "rag create docs · rag ingest docs · lab matrix rag docs"
+      ],
+      "on_complete": "Mira la columna «ninguna»: ya sin defensas falla una de las siete preguntas legítimas.",
+      "teach": "La matriz del RAG (Retrieval-Augmented Generation)\nrag create docs crea el buscador, rag ingest docs indexa sus documentos y lab matrix rag docs mide cada defensa en solitario contra la batería y contra siete preguntas legítimas.\nPor qué: en un RAG real, una defensa puede empeorar las respuestas; la matriz mide las dos cosas a la vez."
+    },
+    {
+      "id": "c1",
+      "text": "Según la tarjeta de etapas, ¿dónde actúa acl?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "en la ingesta: decide qué documentos entran en el índice",
+          "why": "Eso es trusted-sources. acl no impide que un documento entre; decide quién puede verlo."
+        },
+        {
+          "id": "b",
+          "text": "en la recuperación: decide qué fragmentos puede ver quien pregunta"
+        },
+        {
+          "id": "c",
+          "text": "en la generación: no responde con fragmentos poco parecidos",
+          "why": "Eso es min-score."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "acl viene de Access Control List: una lista de quién puede ver qué.",
+        "answer b"
+      ],
+      "on_complete": "Eso es. Si un cliente pregunta por los costes internos, el documento está en el índice, pero acl no se lo deja recuperar."
     },
     {
       "id": "o2",
       "text": "¿Cuántos ataques bloquea una sola defensa? (answer <número>)",
-      "prediction": { "prompt": "En el agente solo había un punto único. ¿Y en el RAG?", "options": ["ninguno", "uno", "casi todos"] },
-      "validator": { "type": "answer", "expected": 4, "tolerance": 0 },
-      "hints": ["Cuenta los 1 de la columna «la bloquean»."],
-      "on_complete": "Cuatro de cinco. En el agente varios controles se solapaban porque todos limitaban lo que puede hacer una herramienta. En el RAG cada ataque entra por una etapa distinta y cada etapa tiene una sola defensa."
+      "prediction": {
+        "prompt": "En el agente solo había un punto único. ¿Y en el RAG (Retrieval-Augmented Generation)?",
+        "options": [
+          "ninguno",
+          "uno",
+          "casi todos"
+        ]
+      },
+      "validator": {
+        "type": "answer",
+        "expected": 4,
+        "tolerance": 0
+      },
+      "hints": [
+        "Cuenta los 1 de la columna «la bloquean»."
+      ],
+      "on_complete": "Cuatro de cinco. En el agente varios controles se solapaban porque todos limitaban lo que puede hacer una herramienta. En el RAG (Retrieval-Augmented Generation) cada ataque entra por una etapa distinta y cada etapa tiene una sola defensa.",
+      "teach": "Contar puntos únicos\nComo en C1: en la columna «la bloquean», un 1 indica un ataque que depende de una sola defensa.\nPor qué: cuantos más puntos únicos, más depende el sistema de que ninguna defensa falle."
     },
     {
       "id": "o3",
       "text": "¿Qué defensa no bloquea ningún ataque pero mejora las respuestas legítimas? (answer <defensa>)",
-      "validator": { "type": "answer", "expected": "min-score", "accept": ["min-score", "minscore", "min score"] },
-      "hints": ["Busca la columna sin ■ cuyas «tareas ok» suben respecto a «ninguna»."],
-      "on_complete": "min-score no es una defensa de esta batería: evita responder con fragmentos que no tienen que ver con la pregunta. Medir el coste también sirve para encontrar mejoras."
+      "validator": {
+        "type": "answer",
+        "expected": "min-score",
+        "accept": [
+          "min-score",
+          "minscore",
+          "min score"
+        ]
+      },
+      "hints": [
+        "Busca la columna sin ■ cuyas «tareas ok» suben respecto a «ninguna»."
+      ],
+      "on_complete": "min-score no es una defensa de esta batería: evita responder con fragmentos que no tienen que ver con la pregunta. Medir el coste también sirve para encontrar mejoras.",
+      "teach": "Una defensa que mejora la calidad\nLa fila «tareas ok» dice cuántas preguntas legítimas salen bien con cada defensa. Compárala con la columna «ninguna».\nUna defensa puede no parar ningún ataque y aun así mejorar las respuestas.\nPor qué: un RAG (Retrieval-Augmented Generation) que responde con fragmentos que no tienen que ver con la pregunta da respuestas malas; medirlo es parte del mismo trabajo."
     },
     {
       "id": "o4",
       "text": "Configura la cobertura mínima: 0 ataques con éxito y 7/7 respuestas correctas con el menor número de defensas. Compruébalo con lab resilience.",
-      "teach": "Cuatro obligatorias\nLos puntos únicos son obligatorios: trusted-sources (foro), acl (dos fugas) y vector-acl (inversión). trusted-sources ya para la reseña inyectada. Falta lo que necesita la calidad.",
-      "validator": { "type": "event", "event": "lab.resilience", "where": { "kind": "rag", "breached": 0, "pass_rate": 1.0, "defense_count": { "lte": 4 } } },
+      "teach": "Cuatro obligatorias\nLos puntos únicos son obligatorios: trusted-sources (foro), acl (dos fugas) y vector-acl (inversión de vectores). trusted-sources ya para también la reseña inyectada.\nFalta lo que necesita la calidad para llegar a 7/7.\nrag defend docs <defensa> on activa una defensa; lab resilience rag docs mide.\nPor qué: una configuración de producción tiene que cumplir a la vez el umbral de seguridad y el de calidad.",
+      "validator": {
+        "type": "event",
+        "event": "lab.resilience",
+        "where": {
+          "kind": "rag",
+          "breached": 0,
+          "pass_rate": 1.0,
+          "defense_count": {
+            "lte": 4
+          }
+        }
+      },
       "hints": [
         "rag defend docs trusted-sources on · rag defend docs acl on · rag defend docs vector-acl on",
         "rag defend docs min-score on · lab resilience rag docs"
@@ -60,9 +153,15 @@
     },
     {
       "id": "o5",
-      "text": "Explica con tus palabras por qué en un RAG casi todos los ataques dependen de una sola defensa y por qué la cobertura mínima incluye una defensa que no bloquea ningún ataque. (reflexion <texto>, mínimo 40 palabras)",
-      "validator": { "type": "reflection", "min_words": 40 },
-      "hints": ["Etapas del pipeline y por dónde entra cada ataque.", "Seguridad y calidad se miden con la misma vara."]
+      "text": "Explica con tus palabras por qué en un RAG (Retrieval-Augmented Generation) casi todos los ataques dependen de una sola defensa y por qué la cobertura mínima incluye una defensa que no bloquea ningún ataque. (reflexion <texto>, mínimo 40 palabras)",
+      "validator": {
+        "type": "reflection",
+        "min_words": 40
+      },
+      "hints": [
+        "Etapas del pipeline y por dónde entra cada ataque.",
+        "Seguridad y calidad se miden con la misma vara."
+      ]
     }
   ],
   "mastery_trial": {
@@ -70,20 +169,47 @@
     "objectives": [
       {
         "id": "d1",
-        "text": "Con un RAG nuevo, consigue 0 ataques y 7/7 respuestas con como MÁXIMO 4 defensas y sin spotlight. Compruébalo con lab resilience.",
-        "validator": { "type": "event", "event": "lab.resilience", "where": { "kind": "rag", "breached": 0, "pass_rate": 1.0, "defense_count": { "lte": 4 }, "defenses": { "not_contains_any": ["spotlight"] } } },
-        "hints": ["Recuerda indexar antes: rag ingest."],
+        "text": "Con un RAG (Retrieval-Augmented Generation) nuevo, consigue 0 ataques y 7/7 respuestas con como MÁXIMO 4 defensas y sin spotlight. Compruébalo con lab resilience.",
+        "validator": {
+          "type": "event",
+          "event": "lab.resilience",
+          "where": {
+            "kind": "rag",
+            "breached": 0,
+            "pass_rate": 1.0,
+            "defense_count": {
+              "lte": 4
+            },
+            "defenses": {
+              "not_contains_any": [
+                "spotlight"
+              ]
+            }
+          }
+        },
+        "hints": [
+          "Recuerda indexar antes: rag ingest."
+        ],
         "on_complete": "Cobertura mínima en cuatro etapas. Siguiente: C2-02, qué hacer con lo que sigue siendo frágil."
       }
     ]
   },
+  "you_can_now": "Sabes situar cada defensa de un RAG (Retrieval-Augmented Generation) en su etapa, medirla en seguridad y en calidad, y elegir la cobertura mínima que cumple las dos. Siguiente: C2-02, qué hacer cuando no puedes poner dos cerraduras en la misma puerta.",
   "debrief": {
-    "what_happened": "Has medido las cinco defensas del RAG en solitario, has visto que cuatro de cinco ataques tienen un punto único, que min-score es una mejora de calidad y no de seguridad, y has cerrado la batería con cuatro defensas.",
+    "what_happened": "Has medido las cinco defensas del RAG (Retrieval-Augmented Generation) en solitario, has visto que cuatro de cinco ataques tienen un punto único, que min-score es una mejora de calidad y no de seguridad, y has cerrado la batería con cuatro defensas.",
     "why": "Mapear cada defensa a su etapa del pipeline explica por qué no se solapan y dónde mirar cuando algo falla. Y medir seguridad y calidad juntas evita la defensa que «protege» rompiendo el servicio, y también la que nadie activa porque no se sabe que mejora las respuestas.",
     "in_production": "Pipelines de evaluación con dos conjuntos (ataques y preguntas legítimas) que se ejecutan en cada cambio de documentos, de troceo o de modelo, con umbrales de calidad (fidelidad a las fuentes, relevancia) y de seguridad (fugas, inyecciones) que bloquean el despliegue.",
-    "simplifications": ["Cinco ataques y siete preguntas", "Embeddings TF-IDF en lugar de densos"],
+    "simplifications": [
+      "Cinco ataques y siete preguntas",
+      "Embeddings TF-IDF en lugar de densos"
+    ],
     "exercise": "forja/ejercicios/C1_01_matriz.py"
   },
-  "further_reading": ["ref.owasp-llm-2025", "ref.hines-2024"],
-  "xp": { "base": 300 }
+  "further_reading": [
+    "ref.owasp-llm-2025",
+    "ref.hines-2024"
+  ],
+  "xp": {
+    "base": 300
+  }
 }

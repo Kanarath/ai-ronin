@@ -7,58 +7,163 @@
   "plane": "dojo",
   "epistemic": "practica-industria",
   "estimated_minutes": 35,
-  "requires_missions": ["C3-01"],
-  "competencies": { "requires": ["C3.matriz-defensas", "C3.coste-controles"], "trains": ["C3.defensa-profundidad", "C3.interaccion-controles"] },
-  "briefing": "MCP Security Lab, segunda parte. Tu host sin consent cierra la batería, pero casi todo cuelga de un solo control. ¿Y si añades consent como segunda cerradura y aceptas su coste? La matriz dice que consent bloquea el reenvío del token por sí solo. Hoy medirás si eso sigue siendo cierto cuando consent trabaja junto a las otras defensas, y aprenderás por qué la matriz no basta: las defensas interactúan.",
+  "requires_missions": [
+    "C3-01"
+  ],
+  "competencies": {
+    "requires": [
+      "C3.matriz-defensas",
+      "C3.coste-controles"
+    ],
+    "trains": [
+      "C3.defensa-profundidad",
+      "C3.interaccion-controles"
+    ]
+  },
+  "briefing": "MCP (Model Context Protocol) Security Lab, segunda parte. Tu host sin consent cierra la batería, pero casi todo cuelga de un solo control. ¿Y si añades consent como segunda cerradura y aceptas su coste? La matriz dice que consent bloquea el reenvío del token por sí solo. Hoy medirás si eso sigue siendo cierto cuando consent trabaja junto a las otras defensas, y aprenderás por qué la matriz no basta: las defensas interactúan.",
   "learning_objectives": [
     "Maximizar la resiliencia de un host MCP sin coste para el usuario",
     "Medir qué resiliencia extra compra el consentimiento y a qué precio",
     "Explicar con un caso medido por qué las defensas no siempre suman"
   ],
   "mentor_intro": "La matriz es una hipótesis. La medición de la combinación es el resultado.",
-  "lab": { "datasets": [], "viz": {} },
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "La matriz mide cada defensa sola, y es tentador suponer que se suman. En sistemas reales con LLM (Large Language Model), una defensa puede cambiar lo que otra ve: sanear una descripción hace que una llamada peligrosa parezca inocente. Hoy compruebas en un host MCP (Model Context Protocol) que la combinación hay que medirla de verdad, y decides con números si el consentimiento del usuario compensa.",
   "theory_cards": [
     {
       "id": "interaccion",
       "title": "Las defensas interactúan",
-      "body": "La matriz mide cada defensa en solitario y suponer que se suman es cómodo, pero falso a veces: una defensa puede cambiar lo que otra ve. consent juzga las llamadas por sus ARGUMENTOS visibles. Si otra defensa limpia la descripción envenenada, la llamada parece inocente y el usuario la aprueba; el token, que viaja en la cabecera y no en los argumentos, sigue saliendo. Por eso lab resilience mide cada combinación de verdad."
+      "body": "La matriz mide cada defensa en solitario y suponer que se suman es cómodo, pero falso a veces: una defensa puede cambiar lo que otra ve. consent juzga las llamadas por sus ARGUMENTOS visibles. Si otra defensa limpia la descripción envenenada, la llamada parece inocente y el usuario la aprueba; el token, que viaja en la cabecera y no en los argumentos, sigue saliendo. Por eso lab resilience mide cada combinación de verdad.",
+      "unlock_on": "objective:o3"
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Con un host nuevo, consigue el máximo de ataques robustos sin coste: 0 ataques, 4/4 tareas, 0 aprobaciones y al menos 2 robustos.",
-      "validator": { "type": "event", "event": "lab.resilience", "where": { "kind": "mcp", "breached": 0, "pass_rate": 1.0, "approvals": 0, "robust": { "gte": 2 } } },
+      "validator": {
+        "type": "event",
+        "event": "lab.resilience",
+        "where": {
+          "kind": "mcp",
+          "breached": 0,
+          "pass_rate": 1.0,
+          "approvals": 0,
+          "robust": {
+            "gte": 2
+          }
+        }
+      },
       "hints": [
         "Envenenamiento y rug-pull tienen varias columnas sin coste. Las otras tres, no.",
         "mcp host erp · mcp defend erp namespacing on · mcp defend erp least-scope on · mcp defend erp output-isolation on · mcp defend erp pin-definitions on · mcp defend erp review-descriptions on · lab resilience mcp erp"
       ],
-      "on_complete": "Dos robustos con cinco defensas. Suplantación, token y salida inyectada siguen dependiendo de una sola."
+      "on_complete": "Dos robustos con cinco defensas. Suplantación, token y salida inyectada siguen dependiendo de una sola.",
+      "teach": "Robustez sin coste\nEn un host nuevo, activa solo defensas sin coste (todas menos consent) y mide con lab resilience mcp erp.\nPor qué: es la mejor configuración que puedes tener sin molestar al usuario; tu punto de partida."
     },
     {
       "id": "o2",
       "text": "Añade consent a esa configuración y mide otra vez. ¿Cuántos ataques son robustos ahora? (answer <número>)",
-      "prediction": { "prompt": "De los tres ataques frágiles, la matriz dice que consent bloquea el token y la salida inyectada. Si lo añades como segunda cerradura, ¿cuántos robustos esperas?", "options": ["4", "3", "2"] },
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "lab.resilience", "where": { "kind": "mcp", "breached": 0, "defenses": { "icontains": "consent" }, "defense_count": 6 } },
-        { "type": "answer", "expected": 3, "tolerance": 0 }
-      ] },
-      "hints": ["mcp defend erp consent on · lab resilience mcp erp"],
-      "on_complete": "Tres, no cuatro. La salida inyectada gana su segunda cerradura, pero el token sigue dependiendo solo de least-scope. Y has pagado cuatro aprobaciones."
+      "prediction": {
+        "prompt": "De los tres ataques frágiles, la matriz dice que consent bloquea el token y la salida inyectada. Si lo añades como segunda cerradura, ¿cuántos robustos esperas?",
+        "options": [
+          "4",
+          "3",
+          "2"
+        ]
+      },
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "mcp",
+              "breached": 0,
+              "defenses": {
+                "icontains": "consent"
+              },
+              "defense_count": 6
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 3,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "mcp defend erp consent on · lab resilience mcp erp"
+      ],
+      "on_complete": "Tres, no cuatro. La salida inyectada gana su segunda cerradura, pero el token sigue dependiendo solo de least-scope. Y has pagado cuatro aprobaciones.",
+      "teach": "Predecir con la matriz\nLa matriz dice qué bloquea consent en solitario. Si las defensas se sumaran, cada ataque frágil que consent bloquea ganaría una segunda cerradura.\nPor qué: es la suposición que hacen muchos diseños de seguridad; hoy la pones a prueba."
     },
     {
       "id": "o3",
       "text": "¿Por qué consent ya no protege el token si quitas least-scope? Comprueba el ataque con la descripción saneada: ¿qué defensa hace que la llamada le parezca inocente al usuario? (answer <defensa>)",
-      "teach": "Mirar dentro\nconsent rechaza una llamada si ve el token en sus argumentos. Sin defensas, la descripción envenenada mete el token en el campo «notas», y el usuario lo ve. Con review-descriptions, la descripción se sanea, los argumentos quedan limpios… y el token sigue saliendo en la cabecera hacia el servidor de terceros, donde el usuario no mira.",
-      "validator": { "type": "answer", "expected": "review-descriptions", "accept": ["review-descriptions", "review descriptions", "review"] },
-      "hints": ["Quita least-scope y review-descriptions por turnos y repite lab resilience; o lee la carta de teoría."],
+      "teach": "Mirar dentro\nconsent rechaza una llamada si ve el token en sus argumentos. Sin defensas, la descripción envenenada mete el token en el campo «notas», y el usuario lo ve.\nCon review-descriptions, la descripción se sanea, los argumentos quedan limpios… y el token sigue saliendo en la cabecera hacia el servidor de terceros, donde el usuario no mira.\nPor qué: dos defensas buenas pueden quitarse información la una a la otra; por eso se mide cada combinación.",
+      "validator": {
+        "type": "answer",
+        "expected": "review-descriptions",
+        "accept": [
+          "review-descriptions",
+          "review descriptions",
+          "review"
+        ]
+      },
+      "hints": [
+        "Quita least-scope y review-descriptions por turnos y repite lab resilience; o lee la carta de teoría."
+      ],
       "on_complete": "Una defensa buena (sanear descripciones) le quita a otra (consent) la pista con la que decidía. Ninguna está mal; juntas no suman lo que la matriz prometía."
+    },
+    {
+      "id": "c1",
+      "text": "¿Qué lección general sacas de este caso?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "que review-descriptions es una mala defensa",
+          "why": "Sanea bien las descripciones. El problema está en cómo cambia lo que ve consent."
+        },
+        {
+          "id": "b",
+          "text": "que las defensas pueden interactuar, así que hay que medir cada combinación y no sumar la matriz"
+        },
+        {
+          "id": "c",
+          "text": "que consent no sirve para nada",
+          "why": "Añadido a las cinco, dio un robusto más: la salida inyectada. Sirve, pero menos de lo que prometía la matriz."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "La matriz era una hipótesis. ¿Qué la ha corregido?",
+        "answer b"
+      ],
+      "on_complete": "Eso es: la matriz es una hipótesis y la medición de la combinación, el resultado."
     },
     {
       "id": "o4",
       "text": "Decide y justifica: ¿activarías consent en producción para este host? Usa tus cifras (robustos con y sin consent, aprobaciones, lo que el usuario ve y lo que no). (reflexion <texto>, mínimo 60 palabras)",
-      "validator": { "type": "reflection", "min_words": 60 },
-      "hints": ["Un robusto más a cambio de cuatro aprobaciones por cada cuatro tareas.", "¿Para qué acciones concretas sí lo pondrías?"]
+      "validator": {
+        "type": "reflection",
+        "min_words": 60
+      },
+      "hints": [
+        "Un robusto más a cambio de cuatro aprobaciones por cada cuatro tareas.",
+        "¿Para qué acciones concretas sí lo pondrías?"
+      ]
     }
   ],
   "mastery_trial": {
@@ -67,19 +172,46 @@
       {
         "id": "d1",
         "text": "Con un host nuevo, consigue 0 ataques, 4/4 tareas, 0 aprobaciones y al menos 2 robustos con como MÁXIMO 5 defensas.",
-        "validator": { "type": "event", "event": "lab.resilience", "where": { "kind": "mcp", "breached": 0, "pass_rate": 1.0, "approvals": 0, "robust": { "gte": 2 }, "defense_count": { "lte": 5 } } },
-        "hints": ["Dos ■ sin coste para envenenamiento y para rug-pull, uno para cada uno de los demás."],
+        "validator": {
+          "type": "event",
+          "event": "lab.resilience",
+          "where": {
+            "kind": "mcp",
+            "breached": 0,
+            "pass_rate": 1.0,
+            "approvals": 0,
+            "robust": {
+              "gte": 2
+            },
+            "defense_count": {
+              "lte": 5
+            }
+          }
+        },
+        "hints": [
+          "Dos ■ sin coste para envenenamiento y para rug-pull, uno para cada uno de los demás."
+        ],
         "on_complete": "Capstones C1–C3 completos. En C5 auditarás estos mismos sistemas como parte de un encargo."
       }
     ]
   },
+  "you_can_now": "Sabes comprobar que dos defensas no siempre suman, explicar por qué el consentimiento depende de lo que el usuario ve y decidir con cifras si compensa su coste. Con C1, C2 y C3 tienes el método para el encargo final, C5.",
   "debrief": {
     "what_happened": "Has llevado el host a dos ataques robustos sin coste, has medido que consent como segunda cerradura solo añade uno (la salida inyectada) a cambio de cuatro aprobaciones, y has descubierto que no protege el token porque review-descriptions le quita la señal con la que lo detectaba.",
     "why": "Las defensas se diseñan como sistema. Suponer que se suman lleva a creer que hay dos barreras donde solo hay una. Medir cada combinación, y entender QUÉ observa cada control, es lo que separa una lista de controles de una arquitectura de seguridad.",
-    "in_production": "El token del usuario no se reenvía nunca a un servidor MCP: cada servidor recibe credenciales propias con el alcance justo, que es lo que exige la especificación. El consentimiento se usa para acciones de alto impacto con un resumen de su efecto, no de sus argumentos crudos. Y las combinaciones de controles se prueban en el pipeline de evaluaciones, no solo los controles sueltos.",
-    "simplifications": ["Un usuario simulado que solo mira los argumentos", "Cinco ataques fijos"],
+    "in_production": "El token del usuario no se reenvía nunca a un servidor MCP (Model Context Protocol): cada servidor recibe credenciales propias con el alcance justo, que es lo que exige la especificación. El consentimiento se usa para acciones de alto impacto con un resumen de su efecto, no de sus argumentos crudos. Y las combinaciones de controles se prueban en el pipeline de evaluaciones, no solo los controles sueltos.",
+    "simplifications": [
+      "Un usuario simulado que solo mira los argumentos",
+      "Cinco ataques fijos"
+    ],
     "exercise": "forja/ejercicios/C1_01_matriz.py"
   },
-  "further_reading": ["ref.mcp-security-bp", "ref.mcp-spec-2026", "ref.invariant-tool-poisoning-2025"],
-  "xp": { "base": 350 }
+  "further_reading": [
+    "ref.mcp-security-bp",
+    "ref.mcp-spec-2026",
+    "ref.invariant-tool-poisoning-2025"
+  ],
+  "xp": {
+    "base": 350
+  }
 }

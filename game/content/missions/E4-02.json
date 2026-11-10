@@ -7,9 +7,23 @@
   "plane": "forja",
   "epistemic": "emergente",
   "estimated_minutes": 180,
-  "requires_missions": ["E4-01"],
-  "competencies": { "requires": ["E4.percentiles-latencia", "O6.respuesta-incidentes"], "trains": ["E4.trazas-otel", "E4.convenciones-genai", "E4.metricas-tokens", "E4.redaccion-pii", "E4.minimizacion-telemetria"] },
-  "briefing": "En O6 leíste trazas que otro había registrado. Hoy las escribes tú: cada llamada al modelo genera un span de OpenTelemetry con las convenciones de GenAI y métricas de latencia y de tokens, exportadas a un fichero local. El problema es que lo más útil para depurar, el contenido de los mensajes, también es donde están los datos personales. Vas a redactarlos antes de exportar y a medir con el modelo real qué se escapa al fichero con cada decisión. Instrucciones: forja/labs/E4-02_trazas/README.md.",
+  "requires_missions": [
+    "E4-01"
+  ],
+  "competencies": {
+    "requires": [
+      "E4.percentiles-latencia",
+      "O6.respuesta-incidentes"
+    ],
+    "trains": [
+      "E4.trazas-otel",
+      "E4.convenciones-genai",
+      "E4.metricas-tokens",
+      "E4.redaccion-pii",
+      "E4.minimizacion-telemetria"
+    ]
+  },
+  "briefing": "En O6 leíste trazas que otro había registrado. Hoy las escribes tú: cada llamada al modelo genera un span de OpenTelemetry con las convenciones de GenAI (Generative AI, IA generativa) y métricas de latencia y de tokens, exportadas a un fichero local. El problema es que lo más útil para depurar, el contenido de los mensajes, también es donde están los datos personales. Vas a redactarlos antes de exportar y a medir con el modelo real qué se escapa al fichero con cada decisión. Instrucciones: forja/labs/E4-02_trazas/README.md.",
   "learning_objectives": [
     "Instrumentar una llamada a un LLM con un span de OpenTelemetry que siga las convenciones semánticas de GenAI",
     "Registrar métricas de duración y de tokens con atributos de baja cardinalidad",
@@ -18,17 +32,22 @@
     "Trabajar con una especificación en estado Development: fijar versiones y comprobar los nombres"
   ],
   "mentor_intro": "Una traza es un registro permanente y se copia a sitios que no controlas: al almacén de trazas, a las copias de seguridad, al proveedor de observabilidad. Lo que escribes en ella es tan sensible como lo más sensible que contenga.",
-  "lab": { "datasets": [], "viz": {} },
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "En O6 leíste trazas que otro había registrado; en producción, las escribes tú. OpenTelemetry es el estándar abierto para trazas y métricas, y sus convenciones de GenAI (IA generativa) describen cada llamada a un LLM (Large Language Model). El problema: lo más útil para depurar, el contenido de los mensajes, es donde están los datos personales. Hoy instrumentas tu servicio, redactas antes de exportar y mides con el modelo real qué se escapa.",
   "theory_cards": [
     {
       "id": "genai-semconv",
       "title": "Convenciones semánticas de GenAI",
-      "body": "Son los nombres comunes que OpenTelemetry propone para describir una llamada a un modelo: gen_ai.operation.name, gen_ai.provider.name, gen_ai.request.model, gen_ai.usage.input_tokens... Con los mismos nombres, cualquier herramienta de observabilidad entiende tus trazas. Están en estado Development: en noviembre de 2026 se han trasladado a un repositorio propio y varios nombres han cambiado ya (gen_ai.system pasó a ser gen_ai.provider.name). Lo práctico: fija la versión del SDK y comprueba los nombres antes de construir paneles encima."
+      "body": "Son los nombres comunes que OpenTelemetry propone para describir una llamada a un modelo: gen_ai.operation.name, gen_ai.provider.name, gen_ai.request.model, gen_ai.usage.input_tokens... Con los mismos nombres, cualquier herramienta de observabilidad entiende tus trazas. Están en estado Development: en noviembre de 2026 se han trasladado a un repositorio propio y varios nombres han cambiado ya (gen_ai.system pasó a ser gen_ai.provider.name). Lo práctico: fija la versión del SDK (Software Development Kit) y comprueba los nombres antes de construir paneles encima."
     },
     {
       "id": "cardinalidad",
       "title": "Spans frente a métricas",
-      "body": "Un span describe UNA petición y puede llevar muchos detalles. Una métrica agrega miles de peticiones: cada combinación distinta de valores de sus atributos crea una serie nueva. Por eso las métricas llevan solo atributos con pocos valores (operación, proveedor, modelo, tipo de error) y nunca el usuario, la pregunta o un identificador de petición. Poner datos personales en una métrica es una fuga y, además, rompe el almacén de métricas."
+      "body": "Un span describe UNA petición y puede llevar muchos detalles. Una métrica agrega miles de peticiones: cada combinación distinta de valores de sus atributos crea una serie nueva. Por eso las métricas llevan solo atributos con pocos valores (operación, proveedor, modelo, tipo de error) y nunca el usuario, la pregunta o un identificador de petición. Poner datos personales en una métrica es una fuga y, además, rompe el almacén de métricas.",
+      "unlock_on": "objective:c1"
     },
     {
       "id": "redaccion",
@@ -40,8 +59,15 @@
     {
       "id": "o1",
       "text": "Implementa las siete funciones de trazas.py hasta que pasen los 17 tests y trae la evidencia.",
-      "teach": "record_exception=False\nPor defecto, OpenTelemetry añade al span un evento con el mensaje y la pila de cualquier excepción. Muchos mensajes de error incluyen lo que el programa estaba procesando: la pregunta del usuario, una URL con un token, una fila de la base de datos. En una llamada a un LLM, registra el tipo de error (error.type) y el estado, no el mensaje.",
-      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "E4-02", "all_passed": true } },
+      "teach": "record_exception=False\nEl trabajo de este paso es fuera del Dojo, en Python de verdad: abre forja/labs/E4-02_trazas/README.md, crea el entorno e implementa las funciones de trazas.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y aquí la traes con evidence import.\nPor defecto, OpenTelemetry añade al span un evento con el mensaje y la pila de cualquier excepción. Muchos mensajes de error incluyen lo que el programa estaba procesando: la pregunta del usuario, una URL (Uniform Resource Locator) con un token, una fila de la base de datos.\nEn una llamada a un LLM (Large Language Model), registra el tipo de error (error.type) y el estado, no el mensaje.\nPor qué: es una vía de fuga que casi nadie revisa, porque nadie piensa que un error sea un dato.",
+      "validator": {
+        "type": "event",
+        "event": "evidence.imported",
+        "where": {
+          "exercise": "E4-02",
+          "all_passed": true
+        }
+      },
       "hints": [
         "Orden: luhn_valido → redactar → redactar_valor → atributos_peticion → atributos_respuesta → mensajes → preguntar_con_traza.",
         "Desde forja/labs/E4-02_trazas: .\\.venv\\Scripts\\python.exe -m unittest -v test_trazas (crea el entorno como en P0-01).",
@@ -50,37 +76,115 @@
       "on_complete": "Tus spans siguen las convenciones y tu redacción pasa los casos del test. Ahora, con lo que escriba un modelo de verdad."
     },
     {
+      "id": "c1",
+      "text": "¿Qué atributo NO debería llevar una métrica de latencia?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "el modelo (gen_ai.request.model)",
+          "why": "Tiene pocos valores y sirve para comparar modelos: es un buen atributo de métrica."
+        },
+        {
+          "id": "b",
+          "text": "el identificador del usuario"
+        },
+        {
+          "id": "c",
+          "text": "el tipo de error",
+          "why": "Tiene pocos valores y es justo lo que quieres agrupar."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Lee la tarjeta «Spans frente a métricas».",
+        "answer b"
+      ],
+      "on_complete": "Eso es: cada usuario distinto crea una serie nueva y, además, es un dato personal. En el span, de una petición concreta, sí puede ir."
+    },
+    {
       "id": "o2",
       "text": "Con Ollama en marcha, ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y trae la medición.",
-      "prediction": { "prompt": "Con la redacción en tu código, ¿cuántos de los 7 datos personales de la batería crees que acabarán en el fichero de trazas?", "options": ["ninguno", "uno o dos", "la mayoría"] },
-      "validator": { "type": "event", "event": "evidence.measured", "where": { "lab": "E4-02", "has_baseline": true, "configs": { "gte": 3 } } },
+      "prediction": {
+        "prompt": "Con la redacción en tu código, ¿cuántos de los 7 datos personales de la batería crees que acabarán en el fichero de trazas?",
+        "options": [
+          "ninguno",
+          "uno o dos",
+          "la mayoría"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "evidence.measured",
+        "where": {
+          "lab": "E4-02",
+          "has_baseline": true,
+          "configs": {
+            "gte": 3
+          }
+        }
+      },
       "hints": [
         "python bateria.py · unos 10 minutos en CPU (80 preguntas con --n 2).",
         "Con poco tiempo: python bateria.py --n 1 --configs \"ninguna;redaccion;sin-contenido\""
       ],
-      "on_complete": "Tienes datos reales y ficheros de trazas en forja/labs/E4-02_trazas/trazas/. Ábrelos y busca tú los datos que se escaparon."
+      "on_complete": "Tienes datos reales y ficheros de trazas en forja/labs/E4-02_trazas/trazas/. Ábrelos y busca tú los datos que se escaparon.",
+      "teach": "La batería\nbateria.py hace preguntas con datos personales ficticios a tu servicio con Ollama, con varias configuraciones (sin defensas, redacción en tu código, en el exportador, sin contenido), y después busca esos datos en los ficheros de trazas. Trae la medición con evidence import.\nPor qué: la única forma de saber qué se escapa a un registro es buscarlo en el registro."
     },
     {
       "id": "o3",
       "text": "Analiza tus números: qué datos se escaparon con la redacción y por qué tu código no los reconoció; cuántas veces repitió el modelo los datos en su respuesta (eco) y qué implica para gen_ai.output.messages; si la redacción se comió datos legítimos; y qué perdiste con sin-contenido. (reflexion <texto>, mínimo 60 palabras)",
-      "teach": "El modelo también escribe datos personales\nRedactar la pregunta no basta: si el usuario pide «repíteme mi correo», el modelo lo escribe en la respuesta. Y un modelo puede producir datos personales que no estaban en la pregunta, sacados de su entrenamiento o de un documento recuperado. La salida se trata igual que la entrada.",
-      "validator": { "type": "reflection", "min_words": 60 },
-      "hints": ["La línea «por dato» de bateria.py dice qué datos se escaparon; los formatos raros están a propósito en ataques.json.", "Compara redaccion y exportador: con esta batería redactan lo mismo. ¿En qué caso real el exportador protege algo que tu código no?"]
+      "teach": "El modelo también escribe datos personales\nRedactar la pregunta no basta: si el usuario pide «repíteme mi correo», el modelo lo escribe en la respuesta. Y un modelo puede producir datos personales que no estaban en la pregunta, sacados de su entrenamiento o de un documento recuperado.\nPor qué: en un sistema con LLM (Large Language Model), la salida se trata con el mismo cuidado que la entrada.",
+      "validator": {
+        "type": "reflection",
+        "min_words": 60
+      },
+      "hints": [
+        "La línea «por dato» de bateria.py dice qué datos se escaparon; los formatos raros están a propósito en ataques.json.",
+        "Compara redaccion y exportador: con esta batería redactan lo mismo. ¿En qué caso real el exportador protege algo que tu código no?"
+      ]
     },
     {
       "id": "o4",
       "text": "Explica por qué las métricas llevan solo atributos de pocos valores y nunca el usuario, por qué conviene redactar también en el exportador aunque tu código ya redacte, y qué harías antes de construir un panel sobre unas convenciones en estado Development. (reflexion <texto>, mínimo 50 palabras)",
-      "validator": { "type": "reflection", "min_words": 50 },
-      "hints": ["La tarjeta «Spans frente a métricas».", "Una librería de instrumentación que instales mañana puede registrar el contenido por su cuenta: ¿quién lo redacta entonces?"]
+      "validator": {
+        "type": "reflection",
+        "min_words": 50
+      },
+      "hints": [
+        "La tarjeta «Spans frente a métricas».",
+        "Una librería de instrumentación que instales mañana puede registrar el contenido por su cuenta: ¿quién lo redacta entonces?"
+      ]
     }
   ],
+  "you_can_now": "Sabes instrumentar llamadas a un LLM (Large Language Model) con las convenciones GenAI (Generative AI, IA generativa) de OpenTelemetry, separar lo que va en un span de lo que va en una métrica y medir qué datos personales se escapan con cada decisión de registro. Siguiente: E4-03, la puerta de despliegue.",
   "debrief": {
-    "what_happened": "Has instrumentado tu servicio con OpenTelemetry siguiendo las convenciones de GenAI: un span por llamada con el modelo, los tokens y el motivo de fin, y métricas de duración y de tokens. Después has medido con el modelo real qué datos personales llegan al fichero de trazas con el contenido crudo, redactado en el código, redactado en el exportador y sin contenido.",
-    "why": "La observabilidad es una copia permanente de lo que pasa por el sistema y viaja a sitios con otros permisos. Sin contenido, las trazas siguen sirviendo para la latencia, los costes y los errores; con contenido, sirven para depurar y también son un almacén de datos personales. La minimización del RGPD empieza por no registrar lo que no necesitas.",
-    "in_production": "El SDK envía las trazas por OTLP a un OpenTelemetry Collector, que vuelve a filtrar con sus procesadores antes del almacén. El contenido se activa solo donde hace falta, por muestreo o en un almacén aparte con caducidad corta y acceso restringido. Las librerías de instrumentación (por ejemplo para Ollama u OpenAI) tienen su propia opción para capturar el contenido: compruébala, porque cada una tiene su valor por defecto. Las convenciones se fijan por versión y se revisan en cada actualización.",
-    "simplifications": ["Exportador a fichero y sin collector", "Redacción con cinco expresiones regulares", "Un solo span por petición", "SimpleSpanProcessor en lugar de BatchSpanProcessor", "El Dojo no puede comprobar que la medición se hizo con el modelo real: confía en tus datos"],
+    "what_happened": "Has instrumentado tu servicio con OpenTelemetry siguiendo las convenciones de GenAI (Generative AI, IA generativa): un span por llamada con el modelo, los tokens y el motivo de fin, y métricas de duración y de tokens. Después has medido con el modelo real qué datos personales llegan al fichero de trazas con el contenido crudo, redactado en el código, redactado en el exportador y sin contenido.",
+    "why": "La observabilidad es una copia permanente de lo que pasa por el sistema y viaja a sitios con otros permisos. Sin contenido, las trazas siguen sirviendo para la latencia, los costes y los errores; con contenido, sirven para depurar y también son un almacén de datos personales. La minimización del RGPD (Reglamento General de Protección de Datos; en inglés, GDPR) empieza por no registrar lo que no necesitas.",
+    "in_production": "El SDK (Software Development Kit) envía las trazas por OTLP (OpenTelemetry Protocol) a un OpenTelemetry Collector, que vuelve a filtrar con sus procesadores antes del almacén. El contenido se activa solo donde hace falta, por muestreo o en un almacén aparte con caducidad corta y acceso restringido. Las librerías de instrumentación (por ejemplo para Ollama u OpenAI) tienen su propia opción para capturar el contenido: compruébala, porque cada una tiene su valor por defecto. Las convenciones se fijan por versión y se revisan en cada actualización.",
+    "simplifications": [
+      "Exportador a fichero y sin collector",
+      "Redacción con cinco expresiones regulares",
+      "Un solo span por petición",
+      "SimpleSpanProcessor en lugar de BatchSpanProcessor",
+      "El Dojo no puede comprobar que la medición se hizo con el modelo real: confía en tus datos"
+    ],
     "exercise": "forja/labs/E4-02_trazas/trazas.py"
   },
-  "further_reading": ["ref.otel-genai-inference", "ref.otel-genai", "ref.otel-python", "ref.owasp-llm-2025", "ref.rgpd-art5-25", "ref.luhn-1960"],
-  "xp": { "base": 500 }
+  "further_reading": [
+    "ref.otel-genai-inference",
+    "ref.otel-genai",
+    "ref.otel-python",
+    "ref.owasp-llm-2025",
+    "ref.rgpd-art5-25",
+    "ref.luhn-1960"
+  ],
+  "xp": {
+    "base": 500
+  }
 }

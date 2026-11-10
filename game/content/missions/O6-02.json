@@ -7,8 +7,19 @@
   "plane": "dojo",
   "epistemic": "practica-industria",
   "estimated_minutes": 40,
-  "requires_missions": ["O6-01"],
-  "competencies": { "requires": ["O6.telemetria"], "trains": ["O6.reglas-deteccion", "O6.precision-recall-alertas", "O6.correlacion"] },
+  "requires_missions": [
+    "O6-01"
+  ],
+  "competencies": {
+    "requires": [
+      "O6.telemetria"
+    ],
+    "trains": [
+      "O6.reglas-deteccion",
+      "O6.precision-recall-alertas",
+      "O6.correlacion"
+    ]
+  },
   "briefing": "Ya sabes qué pasó en S04 porque alguien avisó. La próxima vez no habrá aviso. El equipo quiere reglas que levanten una alerta solas, y tiene una semana de sesiones etiquetadas por un analista: 4 maliciosas y 8 legítimas. Hoy probarás reglas de detección contra esas etiquetas y medirás lo que importa: cuántos ataques se escapan y cuántas falsas alarmas tiene que revisar alguien.",
   "learning_objectives": [
     "Comprobar que una regla sin los datos que necesita no detecta nada",
@@ -16,7 +27,11 @@
     "Usar la correlación de señales para reducir falsas alarmas sin perder ataques"
   ],
   "mentor_intro": "Una regla de detección es un clasificador: se equivoca de dos formas, y cada error lo paga alguien distinto.",
-  "lab": { "datasets": [], "viz": {} },
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Nadie lee a mano miles de sesiones de un agente. En producción, unas reglas de detección miran las trazas y levantan alertas solas, normalmente en un SIEM (Security Information and Event Management). Una regla es un clasificador como los de T3: se equivoca dejando pasar ataques o molestando con falsas alarmas. Hoy mides reglas contra inyecciones de prompt directas e indirectas con precision y recall, y aprendes por qué combinar señales.",
   "theory_cards": [
     {
       "id": "reglas-deteccion",
@@ -26,43 +41,204 @@
     {
       "id": "alertas-como-clasificador",
       "title": "Alertas: precision y recall",
-      "body": "Cada sesión es positiva (maliciosa) o negativa. Una alerta sobre una sesión maliciosa es un verdadero positivo (VP); sobre una legítima, un falso positivo (FP); una sesión maliciosa sin alerta es un falso negativo (FN). Precision = VP / (VP + FP): de cada alerta, cuántas valen la pena. Recall = VP / (VP + FN): de los ataques, cuántos ves. Ya lo viste en T3 con las katanas; aquí, un FP cuesta tiempo de un analista y un FN es un incidente que nadie mira."
+      "body": "Cada sesión es positiva (maliciosa) o negativa. Una alerta sobre una sesión maliciosa es un verdadero positivo (VP); sobre una legítima, un falso positivo (FP); una sesión maliciosa sin alerta es un falso negativo (FN). Precision = VP / (VP + FP): de cada alerta, cuántas valen la pena. Recall = VP / (VP + FN): de los ataques, cuántos ves. Ya lo viste en T3 con las katanas; aquí, un FP cuesta tiempo de un analista y un FN es un incidente que nadie mira.",
+      "unlock_on": "objective:o2"
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Con un registro nuevo (lo que se guarda por defecto), activa la regla correlacion y lanza la detección.",
-      "validator": { "type": "event", "event": "soc.detected", "where": { "rules": "correlacion", "blind": { "gt": 0 } } },
-      "hints": ["soc trazas taller · soc rule taller correlacion on · soc detect taller"],
-      "on_complete": "Recall 0: la regla es correcta, pero está ciega. Necesita los documentos recuperados y los argumentos de las herramientas. Detección empieza en el registro."
+      "validator": {
+        "type": "event",
+        "event": "soc.detected",
+        "where": {
+          "rules": "correlacion",
+          "blind": {
+            "gt": 0
+          }
+        }
+      },
+      "hints": [
+        "soc trazas taller · soc rule taller correlacion on · soc detect taller"
+      ],
+      "on_complete": "Recall 0: la regla es correcta, pero está ciega. Necesita los documentos recuperados y los argumentos de las herramientas. Detección empieza en el registro.",
+      "teach": "Una regla ciega\nsoc rule <registro> <regla> on activa una regla; soc detect <registro> la ejecuta sobre las 12 sesiones que etiquetó el analista.\nCada regla necesita ciertos campos del registro (los de O6-01). Si no están, la regla no ve nada aunque esté bien escrita.\nEmpieza con un registro nuevo, con lo que se guarda por defecto.\nPor qué: es un fallo real y frecuente: reglas que nunca saltan porque el dato que miran no se registra."
     },
     {
       "id": "o2",
       "text": "Registra los seis campos con redacción, deja activa solo la regla palabras-clave y mide. ¿Qué recall obtiene? (answer <número>)",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "soc.detected", "where": { "rules": "palabras-clave", "blind": 0 } },
-        { "type": "answer", "expected": 0.25, "tolerance": 0.01 }
-      ] },
-      "hints": ["soc log taller tool_args on · soc log taller retrievals on · soc log taller identity on · soc log taller model_version on · soc log taller redact-pii on", "soc rule taller correlacion off · soc rule taller palabras-clave on · soc detect taller"],
-      "on_complete": "0,25. Pilla S09, el intento directo, y salta con S02, que solo pedía cambiar el formato. Las dos sesiones que de verdad sacaron datos (S04 y S07) no contienen «ignora» en el mensaje del usuario: la instrucción venía en un documento."
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "soc.detected",
+            "where": {
+              "rules": "palabras-clave",
+              "blind": 0
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.25,
+            "tolerance": 0.01
+          }
+        ]
+      },
+      "hints": [
+        "soc log taller tool_args on · soc log taller retrievals on · soc log taller identity on · soc log taller model_version on · soc log taller redact-pii on",
+        "soc rule taller correlacion off · soc rule taller palabras-clave on · soc detect taller"
+      ],
+      "on_complete": "0,25. Pilla S09, el intento directo, y salta con S02, que solo pedía cambiar el formato. Las dos sesiones que de verdad sacaron datos (S04 y S07) no contienen «ignora» en el mensaje del usuario: la instrucción venía en un documento.",
+      "teach": "Medir una regla: recall\nRecuerda T3: recall = de todos los ataques reales, cuántos ve la regla. Si hay 4 sesiones maliciosas y la regla alerta en 1, el recall es 1 ÷ 4.\nActiva los seis campos y la redacción como en O6-01, y prueba solo palabras-clave (busca «ignora» en el mensaje del usuario).\nPor qué: buscar palabras sospechosas es la defensa más habitual contra la inyección de prompt directa; hoy verás qué se le escapa."
+    },
+    {
+      "id": "c1",
+      "text": "palabras-clave no vio S04 ni S07, las dos sesiones que sacaron datos. ¿Por qué?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque la orden no venía del usuario, sino de un documento recuperado (inyección indirecta)"
+        },
+        {
+          "id": "b",
+          "text": "porque el atacante escribió «ignora» con faltas de ortografía",
+          "why": "El mensaje del usuario era normal: pedía un resumen. La orden estaba dentro de un documento."
+        },
+        {
+          "id": "c",
+          "text": "porque no se registraban los prompts",
+          "why": "Los prompts se registran por defecto: la regla los leyó y no encontró nada."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "Recuerda S04 en O6-01: ¿qué pidió el usuario y de dónde salió la instrucción?",
+        "answer a"
+      ],
+      "on_complete": "Exacto: inyección indirecta (OWASP LLM01). La orden llega en un dato, no en el mensaje del usuario, y ninguna regla que solo mire al usuario la verá."
     },
     {
       "id": "o3",
       "text": "Activa las cinco reglas y mide. ¿Qué precision obtienes? (answer <número>)",
-      "prediction": { "prompt": "Con las cinco reglas a la vez, ¿qué crees que pasará?", "options": ["veré todos los ataques y casi ninguna falsa alarma", "veré todos los ataques y muchas falsas alarmas", "se me escaparán ataques"] },
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "soc.detected", "where": { "rules": "palabras-clave,dominio-externo,instruccion-en-dato,volumen,correlacion" } },
-        { "type": "answer", "expected": 0.5, "tolerance": 0.01 }
-      ] },
-      "hints": ["soc rule taller dominio-externo on · … · soc detect taller"],
-      "on_complete": "Recall 1,0 y precision 0,5: la mitad de las alertas son ruido. Mira por qué saltan S06 (una guía interna con una nota de estilo para el asistente) y S08 (un correo a un proveedor nuevo)."
+      "prediction": {
+        "prompt": "Con las cinco reglas a la vez, ¿qué crees que pasará?",
+        "options": [
+          "veré todos los ataques y casi ninguna falsa alarma",
+          "veré todos los ataques y muchas falsas alarmas",
+          "se me escaparán ataques"
+        ]
+      },
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "soc.detected",
+            "where": {
+              "rules": "palabras-clave,dominio-externo,instruccion-en-dato,volumen,correlacion"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.5,
+            "tolerance": 0.01
+          }
+        ]
+      },
+      "hints": [
+        "soc rule taller dominio-externo on · … · soc detect taller"
+      ],
+      "on_complete": "Recall 1,0 y precision 0,5: la mitad de las alertas son ruido. Mira por qué saltan S06 (una guía interna con una nota de estilo para el asistente) y S08 (un correo a un proveedor nuevo).",
+      "teach": "Medir una regla: precision\nprecision = de todas las alertas, cuántas eran ataques de verdad. Si saltan 8 alertas y 4 son ataques, la precision es 4 ÷ 8.\nCada falsa alarma es tiempo de un analista; si hay demasiadas, deja de mirarlas.\nPor qué: en un SOC (Security Operations Center), la fatiga de alertas es tan peligrosa como no tener reglas."
+    },
+    {
+      "id": "py1",
+      "text": "Escribe en Python la cuenta de precision: abre el editor con py, completa la función y compruébala con py check.",
+      "teach": "La cuenta, con tus manos\nVP (verdaderos positivos) son las alertas sobre sesiones maliciosas; FP (falsos positivos), las alertas sobre sesiones legítimas.\nprecision = vp / (vp + fp). Si no hay ninguna alerta, la función ya devuelve 0.0 para no dividir entre cero.\nEscribe py para abrir el editor; py check lo comprueba con varios casos.\nPor qué: es la cuenta que hace soc detect, y la que usarías cada semana para vigilar tus reglas en un SIEM (Security Information and Event Management).",
+      "py_exercise": {
+        "id": "O6-02-precision",
+        "title": "precision(vp, fp): de las alertas, cuántas valen la pena",
+        "function": "precision",
+        "starter": "# Ejercicio O6-02 · La precision de una regla de detección\n# vp: alertas sobre sesiones maliciosas (aciertos).\n# fp: alertas sobre sesiones legítimas (falsas alarmas).\n# precision = vp / (vp + fp)\n\ndef precision(vp, fp):\n    if vp + fp == 0:\n        return 0.0   # sin alertas no hay nada que medir\n    return 0   # ← cambia esta línea\n\n# Las cinco reglas a la vez: 4 aciertos y 4 falsas alarmas. Debería imprimir 0.5\nprint(precision(4, 4))\n",
+        "cases": [
+          {
+            "args": [
+              4,
+              4
+            ],
+            "expected": 0.5,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              4,
+              2
+            ],
+            "expected": 0.666667,
+            "tolerance": 1e-05
+          },
+          {
+            "args": [
+              1,
+              1
+            ],
+            "expected": 0.5,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              3,
+              0
+            ],
+            "expected": 1.0,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              0,
+              0
+            ],
+            "expected": 0.0,
+            "tolerance": 1e-06
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "O6-02-precision",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Los aciertos van arriba; abajo, todas las alertas: aciertos más falsas alarmas.",
+        "La línea queda así: return vp / (vp + fp)"
+      ],
+      "on_complete": "Es la misma cuenta que soc detect: con las cinco reglas, 4 aciertos y 4 falsas alarmas dan 0,5. Ahora vas a subirla sin perder ningún ataque."
     },
     {
       "id": "o4",
       "text": "Ajusta las reglas para no perder ningún ataque (recall 1,0) con una precision mayor que 0,6.",
-      "teach": "Correlacionar señales\nUna señal sola es ambigua: un documento con una nota para el asistente puede ser legítimo, y un correo a un dominio nuevo también. Las dos cosas en la misma sesión (el documento manda y el agente saca datos fuera) es mucho más raro en una sesión legítima. Esa es la idea de las reglas de correlación de un SIEM.",
-      "validator": { "type": "event", "event": "soc.detected", "where": { "recall": 1.0, "precision": { "gt": 0.6 } } },
+      "teach": "Correlacionar señales\nUna señal sola es ambigua: un documento con una nota para el asistente puede ser legítimo, y un correo a un dominio nuevo también.\nLas dos cosas en la misma sesión (el documento manda y el agente saca datos fuera) es mucho más raro en una sesión legítima. Eso mide la regla correlacion.\nPor qué: así funcionan las reglas de correlación de un SIEM (Security Information and Event Management): juntan señales débiles para bajar las falsas alarmas sin perder ataques.",
+      "validator": {
+        "type": "event",
+        "event": "soc.detected",
+        "where": {
+          "recall": 1.0,
+          "precision": {
+            "gt": 0.6
+          }
+        }
+      },
       "hints": [
         "Las dos reglas que cubre correlacion ya no necesitan estar activas por separado.",
         "soc rule taller dominio-externo off · soc rule taller instruccion-en-dato off · soc detect taller"
@@ -72,8 +248,14 @@
     {
       "id": "o5",
       "text": "Explica con tus palabras por qué una regla por palabras clave no basta contra un agente, qué aporta la correlación y qué coste tienen los falsos positivos y los falsos negativos. (reflexion <texto>, mínimo 40 palabras)",
-      "validator": { "type": "reflection", "min_words": 40 },
-      "hints": ["S04 frente a S09; S06 y S08 frente a la correlación.", "Analista cansado frente a incidente invisible."]
+      "validator": {
+        "type": "reflection",
+        "min_words": 40
+      },
+      "hints": [
+        "S04 frente a S09; S06 y S08 frente a la correlación.",
+        "Analista cansado frente a incidente invisible."
+      ]
     }
   ],
   "mastery_trial": {
@@ -82,22 +264,51 @@
       {
         "id": "d1",
         "text": "Con un registro nuevo, consigue recall 1,0 y precision mayor que 0,6 sin ninguna regla ciega.",
-        "validator": { "type": "sequence", "steps": [
-          { "type": "event", "event": "soc.created" },
-          { "type": "event", "event": "soc.detected", "where": { "recall": 1.0, "precision": { "gt": 0.6 }, "blind": 0 } }
-        ] },
-        "hints": ["Primero el registro, después tres reglas."],
+        "validator": {
+          "type": "sequence",
+          "steps": [
+            {
+              "type": "event",
+              "event": "soc.created"
+            },
+            {
+              "type": "event",
+              "event": "soc.detected",
+              "where": {
+                "recall": 1.0,
+                "precision": {
+                  "gt": 0.6
+                },
+                "blind": 0
+              }
+            }
+          ]
+        },
+        "hints": [
+          "Primero el registro, después tres reglas."
+        ],
         "on_complete": "Reglas medidas contra etiquetas, no contra intuiciones."
       }
     ]
   },
+  "you_can_now": "Sabes medir una regla de detección con precision y recall, ver cuándo está ciega por falta de datos y combinar señales débiles para perder menos ataques con menos ruido. También has escrito la cuenta de precision en Python. Siguiente: O6-03, responder al incidente cuando la alerta salta de verdad.",
   "debrief": {
     "what_happened": "Has visto una regla correcta y ciega por falta de datos, una regla por palabras clave que confunde una petición de formato con un ataque y no ve la inyección indirecta, y una combinación con correlación que ve los cuatro ataques con dos falsas alarmas.",
     "why": "En un agente, las inyecciones más peligrosas llegan por los datos, no por el mensaje del usuario, y el daño se ve en las acciones (herramientas y destinos). Por eso las detecciones útiles miran el contenido recuperado y los argumentos, y combinan señales.",
-    "in_production": "Reglas en un SIEM sobre las trazas del agente, alertas que se miden con datos etiquetados (incluidos ejercicios de red team), listas de destinos permitidos para las herramientas de salida, clasificadores de inyección como una señal más (con sus propios FP y FN) y revisión periódica de las reglas que nadie mira. MITRE ATLAS y OWASP LLM01 sirven para mapear qué técnica cubre cada detección.",
-    "simplifications": ["Doce sesiones etiquetadas; en producción son millones sin etiquetar", "Reglas fijas como interruptores, sin umbrales ajustables", "Las etiquetas son perfectas; las de un analista real no lo son"],
+    "in_production": "Reglas en un SIEM (Security Information and Event Management) sobre las trazas del agente, alertas que se miden con datos etiquetados (incluidos ejercicios de red team), listas de destinos permitidos para las herramientas de salida, clasificadores de inyección como una señal más (con sus propios FP y FN) y revisión periódica de las reglas que nadie mira. MITRE ATLAS (Adversarial Threat Landscape for Artificial-Intelligence Systems) y OWASP (Open Worldwide Application Security Project) LLM01 sirven para mapear qué técnica cubre cada detección.",
+    "simplifications": [
+      "Doce sesiones etiquetadas; en producción son millones sin etiquetar",
+      "Reglas fijas como interruptores, sin umbrales ajustables",
+      "Las etiquetas son perfectas; las de un analista real no lo son"
+    ],
     "exercise": "forja/ejercicios/O6_01_trazas.py"
   },
-  "further_reading": ["ref.owasp-llm-2025", "ref.greshake-2023", "ref.sklearn-precision-recall"],
-  "xp": { "base": 300 }
+  "further_reading": [
+    "ref.owasp-llm-2025",
+    "ref.greshake-2023",
+    "ref.sklearn-precision-recall"
+  ],
+  "xp": {
+    "base": 300
+  }
 }

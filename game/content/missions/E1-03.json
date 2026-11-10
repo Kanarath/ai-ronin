@@ -7,9 +7,23 @@
   "plane": "forja",
   "epistemic": "emergente",
   "estimated_minutes": 180,
-  "requires_missions": ["E1-02"],
-  "competencies": { "requires": ["E1.bucle-generacion", "E1.perplejidad", "T4.backprop"], "trains": ["E1.lora", "E1.entrenamiento-pytorch", "E1.logit-lens", "E1.limites-cpu"] },
-  "briefing": "Dos herramientas de investigación sobre SmolLM2-135M. Con LoRA congelas el modelo y entrenas solo una corrección de bajo rango: enseñarás al modelo un dato ficticio sobre la forja Kurogane con unos pocos pasos en CPU. Con la lente de logits miras qué «diría» el modelo tras cada una de sus 30 capas. Es un juguete: afinar de verdad requiere GPU, y verás por qué con números. Instrucciones: forja/labs/E1-03_lora_lente/README.md.",
+  "requires_missions": [
+    "E1-02"
+  ],
+  "competencies": {
+    "requires": [
+      "E1.bucle-generacion",
+      "E1.perplejidad",
+      "T4.backprop"
+    ],
+    "trains": [
+      "E1.lora",
+      "E1.entrenamiento-pytorch",
+      "E1.logit-lens",
+      "E1.limites-cpu"
+    ]
+  },
+  "briefing": "Dos herramientas de investigación sobre SmolLM2-135M. Con LoRA (Low-Rank Adaptation) congelas el modelo y entrenas solo una corrección de bajo rango: enseñarás al modelo un dato ficticio sobre la forja Kurogane con unos pocos pasos en CPU (Central Processing Unit). Con la lente de logits miras qué «diría» el modelo tras cada una de sus 30 capas. Es un juguete: afinar de verdad requiere GPU (Graphics Processing Unit), y verás por qué con números. Instrucciones: forja/labs/E1-03_lora_lente/README.md.",
   "learning_objectives": [
     "Implementar una capa LoRA como nn.Module e inyectarla en las capas de atención de un modelo",
     "Escribir un bucle de entrenamiento en PyTorch (pérdida, backward, paso del optimizador) que solo toca los parámetros del adaptador",
@@ -18,12 +32,16 @@
     "Estimar la memoria de afinar un modelo entero frente a LoRA y explicar por qué el fine-tuning real requiere GPU"
   ],
   "mentor_intro": "Hasta ahora usabas el modelo tal como vino. Hoy lo cambias, solo un poco, y miras por dentro. Cambiar un modelo es fácil; saber qué más has cambiado sin querer, no.",
-  "lab": { "datasets": [], "viz": {} },
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Afinar un LLM (Large Language Model) para una empresa casi nunca cambia todos sus pesos: se entrena un adaptador pequeño, LoRA (Low-Rank Adaptation), y se distribuye aparte. Y para saber qué hace un modelo por dentro, la interpretabilidad usa herramientas como la lente de logits. Hoy entrenas un adaptador sobre SmolLM2-135M en CPU (Central Processing Unit), miras qué «diría» el modelo en cada capa y descubres por qué afinar de verdad necesita GPU (Graphics Processing Unit) y por qué un adaptador descargado es un riesgo de cadena de suministro.",
   "theory_cards": [
     {
       "id": "lora",
       "title": "Bajo rango",
-      "body": "Afinar todo el modelo cambia cada matriz W. LoRA congela W y aprende la corrección B · A, con A de r × n y B de m × r. Si r es pequeño (8), la corrección tiene muchos menos números que W. B empieza a cero, así que al principio el modelo es idéntico al original. La salida es W·x + (alfa / r) · B·A·x. Después se puede fusionar en un solo peso, W + (alfa / r) · B·A, sin coste en inferencia."
+      "body": "Afinar todo el modelo cambia cada matriz W. LoRA (Low-Rank Adaptation) congela W y aprende la corrección B · A, con A de r × n y B de m × r. Si r es pequeño (8), la corrección tiene muchos menos números que W. B empieza a cero, así que al principio el modelo es idéntico al original. La salida es W·x + (alfa / r) · B·A·x. Después se puede fusionar en un solo peso, W + (alfa / r) · B·A, sin coste en inferencia."
     },
     {
       "id": "entrenar",
@@ -38,15 +56,23 @@
     {
       "id": "gpu",
       "title": "Por qué hace falta GPU",
-      "body": "Entrenar guarda por cada parámetro entrenable su peso, su gradiente y dos estados de AdamW: unos 16 bytes en float32. Un modelo de 7 B entero pide unos 112 GB, más las activaciones. LoRA reduce lo entrenable a menos del 1 %, pero el modelo base sigue pasando hacia delante y hacia atrás en cada paso. Una GPU hace esas multiplicaciones decenas de veces más rápido que una CPU."
+      "body": "Entrenar guarda por cada parámetro entrenable su peso, su gradiente y dos estados de AdamW: unos 16 bytes en float32. Un modelo de 7 B entero pide unos 112 GB, más las activaciones. LoRA (Low-Rank Adaptation) reduce lo entrenable a menos del 1 %, pero el modelo base sigue pasando hacia delante y hacia atrás en cada paso. Una GPU (Graphics Processing Unit) hace esas multiplicaciones decenas de veces más rápido que una CPU (Central Processing Unit).",
+      "unlock_on": "objective:o3"
     }
   ],
   "objectives": [
     {
       "id": "o1",
-      "text": "Implementa la clase LoRA y las seis funciones de lora.py hasta que pasen los 15 tests y trae la evidencia.",
-      "teach": "nn.Module y nn.Parameter\nUn nn.Module registra automáticamente los nn.Parameter que asignas como atributos (self.A = nn.Parameter(...)) y los submódulos (self.base = base). Así modelo.parameters() los encuentra y el optimizador puede moverlos. Un tensor normal asignado como atributo no se registra y no se entrenaría.",
-      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "E1-03", "all_passed": true } },
+      "text": "Implementa la clase LoRA (Low-Rank Adaptation) y las seis funciones de lora.py hasta que pasen los 15 tests y trae la evidencia.",
+      "teach": "nn.Module y nn.Parameter\nEl trabajo de este paso es fuera del Dojo, en Python de verdad: abre forja/labs/E1-03_lora_lente/README.md, crea el entorno e implementa las funciones de lora.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y aquí la traes con evidence import.\nUn nn.Module registra solo los nn.Parameter que asignas como atributos (self.A = nn.Parameter(...)) y los submódulos (self.base = base). Así modelo.parameters() los encuentra y el optimizador puede moverlos. Un tensor normal asignado como atributo no se registra y no se entrenaría.\nPor qué: es el error más típico al escribir un adaptador: el código corre, la pérdida no baja y nadie avisa.",
+      "validator": {
+        "type": "event",
+        "event": "evidence.imported",
+        "where": {
+          "exercise": "E1-03",
+          "all_passed": true
+        }
+      },
       "hints": [
         "Orden: LoRA.__init__ → LoRA.forward → fusionar → contar_parametros → aplicar_lora → perdida_lm → entrenar → lente_logit.",
         "aplicar_lora: for nombre, m in list(modelo.named_modules()): si isinstance(m, nn.Linear) y nombre.rpartition(\".\")[2] in objetivos → padre, _, hijo = nombre.rpartition(\".\") · setattr(modelo.get_submodule(padre), hijo, LoRA(m, rango, alfa, generador)).",
@@ -55,29 +81,93 @@
       "on_complete": "Tu adaptador y tu lente funcionan con el modelo diminuto. Ahora, con SmolLM2."
     },
     {
+      "id": "c1",
+      "text": "LoRA (Low-Rank Adaptation) empieza con B a cero. ¿Qué significa eso al principio del entrenamiento?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "que el modelo con el adaptador da exactamente lo mismo que el original"
+        },
+        {
+          "id": "b",
+          "text": "que el adaptador no se puede entrenar",
+          "why": "B a cero solo hace que la corrección B · A empiece en 0. Los gradientes mueven B desde el primer paso, y después A."
+        },
+        {
+          "id": "c",
+          "text": "que el modelo pierde lo que sabía",
+          "why": "W está congelada y la corrección vale 0: no cambia nada."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "Mira la fórmula de la tarjeta: W·x + (alfa / r) · B·A·x. ¿Cuánto vale B·A si B es 0?",
+        "answer a"
+      ],
+      "on_complete": "Eso es: el entrenamiento parte del modelo original y solo se aleja de él lo que el adaptador aprenda."
+    },
+    {
       "id": "o2",
-      "text": "Ejecuta experimento.py (README, sección 2). Anota en qué capa aparece « Paris» en la lente y con qué probabilidad; cuántos parámetros entrena LoRA y qué porcentaje del modelo son; cómo bajan la pérdida y la perplejidad; y qué completan las tres pruebas antes y después. (reflexion <texto>, mínimo 70 palabras)",
-      "prediction": { "prompt": "¿En qué parte del modelo crees que aparecerá « Paris» como token más probable?", "options": ["ya en las primeras capas", "hacia la mitad", "solo en las últimas capas"] },
-      "validator": { "type": "reflection", "min_words": 70 },
+      "text": "Ejecuta experimento.py (README, sección 2). Anota en qué capa aparece « Paris» en la lente y con qué probabilidad; cuántos parámetros entrena LoRA (Low-Rank Adaptation) y qué porcentaje del modelo son; cómo bajan la pérdida y la perplejidad; y qué completan las tres pruebas antes y después. (reflexion <texto>, mínimo 70 palabras)",
+      "prediction": {
+        "prompt": "¿En qué parte del modelo crees que aparecerá « Paris» como token más probable?",
+        "options": [
+          "ya en las primeras capas",
+          "hacia la mitad",
+          "solo en las últimas capas"
+        ]
+      },
+      "validator": {
+        "type": "reflection",
+        "min_words": 70
+      },
       "hints": [
         "python experimento.py · si la pérdida apenas baja, prueba --lr 0.005 o --pasos 60.",
         "Fíjate en la tercera prueba (la Torre Eiffel): si cambia tras entrenar con una sola frase, el adaptador ha tocado algo más que el dato."
-      ]
+      ],
+      "teach": "Entrenar y mirar\nexperimento.py entrena el adaptador con una frase ficticia sobre la forja Kurogane, compara tres pruebas antes y después y aplica la lente a cada una de las 30 capas.\nPor qué: comprobar qué más ha cambiado (la tercera prueba) es lo que separa afinar un modelo de estropearlo."
     },
     {
       "id": "o3",
-      "text": "Con las cuentas del apartado 4 del experimento, explica por qué en tu portátil puedes entrenar este juguete pero no afinar de verdad un modelo de 7 B, qué ahorra LoRA y qué no, y por qué un adaptador LoRA descargado de internet es un artefacto que hay que verificar como el propio modelo (A6). (reflexion <texto>, mínimo 60 palabras)",
-      "validator": { "type": "reflection", "min_words": 60 },
-      "hints": ["16 bytes por parámetro entrenable, más el modelo base en memoria, más las activaciones de cada paso.", "A6: «adapter manipulado». Un adaptador fusionado cambia los pesos: puede meter una puerta trasera igual que un modelo entero."]
+      "text": "Con las cuentas del apartado 4 del experimento, explica por qué en tu portátil puedes entrenar este juguete pero no afinar de verdad un modelo de 7 B, qué ahorra LoRA (Low-Rank Adaptation) y qué no, y por qué un adaptador LoRA descargado de internet es un artefacto que hay que verificar como el propio modelo (A6). (reflexion <texto>, mínimo 60 palabras)",
+      "validator": {
+        "type": "reflection",
+        "min_words": 60
+      },
+      "hints": [
+        "16 bytes por parámetro entrenable, más el modelo base en memoria, más las activaciones de cada paso.",
+        "A6: «adapter manipulado». Un adaptador fusionado cambia los pesos: puede meter una puerta trasera igual que un modelo entero."
+      ],
+      "teach": "Las cuentas de memoria\nEl apartado 4 del experimento estima la memoria para entrenar con y sin LoRA (Low-Rank Adaptation); la tarjeta de arriba explica de dónde salen los 16 bytes por parámetro entrenable.\nPor qué: estas cuentas deciden en la práctica qué se puede afinar con qué máquina."
     }
   ],
+  "you_can_now": "Sabes qué entrena LoRA (Low-Rank Adaptation) y qué no, escribir un adaptador en PyTorch, leer la lente de logits con cautela y estimar por qué afinar un modelo grande necesita GPU (Graphics Processing Unit). Y sabes que un adaptador es un artefacto que se verifica como un modelo (A6).",
   "debrief": {
-    "what_happened": "Has implementado LoRA desde cero: una capa que congela la original y entrena una corrección de bajo rango, inyectada en las capas de atención de un transformer real. La has entrenado unos pasos en CPU para enseñar un dato ficticio, la has fusionado en los pesos y has mirado dentro del modelo con la lente de logits.",
-    "why": "LoRA es la forma más común de adaptar un modelo abierto: entrena menos del 1 % de los parámetros y el adaptador ocupa unos pocos megabytes. La lente de logits es una de las herramientas más sencillas de interpretabilidad: no explica por qué el modelo decide, pero muestra dónde se forma la decisión. Las dos enseñan lo mismo: un modelo es un conjunto de tensores que puedes leer y modificar, y cada modificación tiene efectos que hay que medir.",
-    "in_production": "Se afina con la librería PEFT de Hugging Face sobre GPU, con miles de ejemplos, validación y varias épocas. QLoRA carga el modelo base en 4 bits para que quepa en una sola GPU. Los adaptadores se distribuyen por separado (pocos MB) y se cargan sobre el modelo base, o se fusionan. La interpretabilidad seria usa la tuned lens, sondas lineales, autoencoders dispersos y análisis de circuitos; es un campo de investigación activo y sus resultados se citan con cautela.",
-    "simplifications": ["Una sola frase de entrenamiento repetida: el modelo la memoriza", "Sin validación, sin dropout y sin programación del learning rate", "La lente de logits sin entrenar es ruidosa en las primeras capas", "El Dojo no puede comprobar tus números: confía en tus datos"],
+    "what_happened": "Has implementado LoRA (Low-Rank Adaptation) desde cero: una capa que congela la original y entrena una corrección de bajo rango, inyectada en las capas de atención de un transformer real. La has entrenado unos pasos en CPU (Central Processing Unit) para enseñar un dato ficticio, la has fusionado en los pesos y has mirado dentro del modelo con la lente de logits.",
+    "why": "LoRA (Low-Rank Adaptation) es la forma más común de adaptar un modelo abierto: entrena menos del 1 % de los parámetros y el adaptador ocupa unos pocos megabytes. La lente de logits es una de las herramientas más sencillas de interpretabilidad: no explica por qué el modelo decide, pero muestra dónde se forma la decisión. Las dos enseñan lo mismo: un modelo es un conjunto de tensores que puedes leer y modificar, y cada modificación tiene efectos que hay que medir.",
+    "in_production": "Se afina con la librería PEFT (Parameter-Efficient Fine-Tuning) de Hugging Face sobre GPU (Graphics Processing Unit), con miles de ejemplos, validación y varias épocas. QLoRA (Quantized Low-Rank Adaptation) carga el modelo base en 4 bits para que quepa en una sola GPU. Los adaptadores se distribuyen por separado (pocos MB) y se cargan sobre el modelo base, o se fusionan. La interpretabilidad seria usa la tuned lens, sondas lineales, autoencoders dispersos y análisis de circuitos; es un campo de investigación activo y sus resultados se citan con cautela.",
+    "simplifications": [
+      "Una sola frase de entrenamiento repetida: el modelo la memoriza",
+      "Sin validación, sin dropout y sin programación del learning rate",
+      "La lente de logits sin entrenar es ruidosa en las primeras capas",
+      "El Dojo no puede comprobar tus números: confía en tus datos"
+    ],
     "exercise": "forja/labs/E1-03_lora_lente/lora.py"
   },
-  "further_reading": ["ref.hu-lora-2021", "ref.dettmers-qlora-2023", "ref.hf-peft", "ref.logit-lens-2020", "ref.belrose-tuned-lens-2023"],
-  "xp": { "base": 550 }
+  "further_reading": [
+    "ref.hu-lora-2021",
+    "ref.dettmers-qlora-2023",
+    "ref.hf-peft",
+    "ref.logit-lens-2020",
+    "ref.belrose-tuned-lens-2023"
+  ],
+  "xp": {
+    "base": 550
+  }
 }
