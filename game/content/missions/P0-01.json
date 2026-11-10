@@ -7,8 +7,22 @@
   "plane": "forja",
   "epistemic": "practica-industria",
   "estimated_minutes": 120,
-  "requires_missions": ["T6-02"],
-  "competencies": { "requires": ["T6.next-token", "T6.sampling"], "trains": ["P0.http-json", "P0.async", "P0.fastapi", "P0.llm-local", "P0.no-determinismo"] },
+  "requires_missions": [
+    "T6-02"
+  ],
+  "competencies": {
+    "requires": [
+      "T6.next-token",
+      "T6.sampling"
+    ],
+    "trains": [
+      "P0.http-json",
+      "P0.async",
+      "P0.fastapi",
+      "P0.llm-local",
+      "P0.no-determinismo"
+    ]
+  },
   "briefing": "Primer laboratorio real de la Forja. Hasta ahora todo pasaba dentro del Dojo, simulado. Hoy enciendes el horno de verdad: un modelo de lenguaje en tu propia CPU y un servicio web que habla con él. El Dojo no puede ver tu Forja (está aislado a propósito), así que te seguirá por tus evidencias y tus mediciones. Instrucciones completas en forja/labs/P0-01_servicio_llm/README.md.",
   "learning_objectives": [
     "Montar un entorno virtual de Python con dependencias fijadas",
@@ -17,7 +31,11 @@
     "Medir la variabilidad y la velocidad de un modelo real en CPU"
   ],
   "mentor_intro": "La simulación te enseñó el mecanismo. La Forja te enseña la realidad: dependencias que cambian, modelos que tardan y respuestas que no se repiten.",
-  "lab": { "datasets": [], "viz": {} },
+  "purpose": "Casi toda aplicación con un LLM (Large Language Model) tiene esta forma: un servicio web que recibe la pregunta, llama al modelo por HTTP (HyperText Transfer Protocol) y devuelve la respuesta. El chatbot de A1 y el asistente RAG (Retrieval-Augmented Generation) de A2 son esto mismo, con más piezas. Hoy montas el esqueleto real en tu CPU (Central Processing Unit) y mides lo que en el Dojo no se ve: lo que tarda y lo poco que se repite.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
   "theory_cards": [
     {
       "id": "piezas",
@@ -39,8 +57,14 @@
     {
       "id": "o1",
       "text": "Prepara el entorno del laboratorio (README, sección 1), ejecuta ronin_check para P0-01 y trae la primera evidencia, aunque no pase ningún test todavía.",
-      "teach": "Entornos virtuales\nCada laboratorio tiene su propio entorno (.venv) con versiones fijadas en requirements.txt. Así un proyecto no rompe a otro, y lo que funciona hoy sigue funcionando mañana. Si ronin_check dice que falta un paquete, es que no lo has ejecutado con el Python del entorno.",
-      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "P0-01" } },
+      "teach": "Entornos virtuales\nCada laboratorio tiene su propio entorno, la carpeta .venv, con las versiones fijadas en requirements.txt.\nAsí un proyecto no rompe a otro, y lo que funciona hoy funciona mañana.\nSi ronin_check dice que falta un paquete, lo has ejecutado con el Python del sistema y no con el del entorno.\nevidence import trae aquí el resultado de los tests: el Dojo no ve tu ordenador, solo tus evidencias.\nPor qué: los proyectos de IA (Inteligencia Artificial) dependen de muchas librerías; sin versiones fijadas, un resultado no se puede repetir.",
+      "validator": {
+        "type": "event",
+        "event": "evidence.imported",
+        "where": {
+          "exercise": "P0-01"
+        }
+      },
       "hints": [
         "Desde forja/labs/P0-01_servicio_llm: python -m venv .venv · .\\.venv\\Scripts\\python.exe -m pip install -r requirements.txt",
         ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py P0-01 · y aquí: evidence import"
@@ -50,8 +74,15 @@
     {
       "id": "o2",
       "text": "Implementa las cuatro funciones de servicio.py hasta que pasen los 17 tests, y trae la evidencia.",
-      "teach": "El contrato con Ollama\nLee ollama_simulado() en los tests: es exactamente lo que envía y recibe Ollama. Los tiempos llegan en nanosegundos; stream debe ser False para recibir una sola respuesta JSON; y un error HTTP (por ejemplo, el modelo no está descargado) debe convertirse en excepción con raise_for_status().",
-      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "P0-01", "all_passed": true } },
+      "teach": "El contrato con Ollama\nOllama es el programa que sirve el modelo en tu ordenador. Tu servicio le habla por una API (Application Programming Interface) HTTP (HyperText Transfer Protocol): le envía un JSON y recibe otro.\nLee ollama_simulado() en los tests: es exactamente lo que envía y recibe Ollama.\nTres detalles: los tiempos llegan en nanosegundos; stream debe ser False para recibir una sola respuesta; y un error HTTP (por ejemplo, el modelo no está descargado) se convierte en excepción con raise_for_status().\nPor qué: cualquier API de LLM (Large Language Model), local o en la nube, funciona con este mismo contrato de petición y respuesta.",
+      "validator": {
+        "type": "event",
+        "event": "evidence.imported",
+        "where": {
+          "exercise": "P0-01",
+          "all_passed": true
+        }
+      },
       "hints": [
         "Orden: validar_pregunta → construir_peticion → extraer_respuesta → preguntar.",
         "La semilla 0 es una semilla válida: comprueba «is not None», no la verdad del valor.",
@@ -61,28 +92,96 @@
     },
     {
       "id": "o3",
-      "text": "Arranca el modelo real (README, sección 3) y mide con medir.py: 5 respuestas con temperatura 0.8 y 5 con temperatura 0 y semilla 42. Escribe tus resultados: respuestas distintas en cada caso, segundos por respuesta y tokens por segundo, y qué te sorprendió. (reflexion <texto>, mínimo 50 palabras)",
-      "prediction": { "prompt": "Con temperatura 0.8, de 5 respuestas a la misma pregunta, ¿cuántas serán distintas?", "options": ["1", "entre 2 y 4", "5"] },
-      "validator": { "type": "reflection", "min_words": 50 },
+      "text": "Arranca el modelo real (README, sección 3) y mide con medir.py: 5 respuestas con temperatura 0.8 y 5 con temperatura 0 y semilla 42. Después responde: ¿qué explica lo que has visto?",
+      "teach": "Medir el modelo real\nmedir.py hace la misma pregunta varias veces y cuenta cuántas respuestas distintas salen, cuántos segundos tarda cada una y cuántos tokens por segundo genera.\nLa TEMPERATURA (T6-01) decide cuánto se reparte la probabilidad entre los tokens candidatos. La SEMILLA fija el número aleatorio del sorteo: con la misma semilla, el mismo sorteo.\nPor qué: en producción tienes que saber si tu servicio responde igual dos veces; los tests y las evaluaciones dependen de ello.",
+      "prediction": {
+        "prompt": "Con temperatura 0.8, de 5 respuestas a la misma pregunta, ¿cuántas serán distintas?",
+        "options": [
+          "1",
+          "entre 2 y 4",
+          "5"
+        ]
+      },
+      "choices": [
+        {
+          "id": "a",
+          "text": "con temperatura 0.8 el modelo elige al azar entre los tokens probables, y con temperatura 0 y semilla fija repite siempre la misma respuesta"
+        },
+        {
+          "id": "b",
+          "text": "con temperatura 0.8 el modelo es más inteligente y por eso cambia de opinión",
+          "why": "La temperatura no cambia lo que sabe el modelo: solo reparte la probabilidad entre los tokens candidatos antes de elegir."
+        },
+        {
+          "id": "c",
+          "text": "las respuestas cambian porque Ollama vuelve a cargar el modelo cada vez",
+          "why": "El modelo se carga una vez. Lo que cambia entre respuestas es el sorteo del siguiente token."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
       "hints": [
         "python medir.py --n 5 --temperatura 0.8 · python medir.py --n 5 --temperatura 0 --semilla 42",
-        "Relaciónalo con T6-01: la temperatura reparte la probabilidad; la semilla fija el azar del muestreo."
-      ]
+        "Recuerda T6-01: la temperatura reparte la probabilidad y la semilla fija el azar del sorteo. answer a"
+      ],
+      "on_complete": "Eso es. Un LLM (Large Language Model) no tiene «una» respuesta: tiene una distribución de la que sortea. Para probar un servicio, fija temperatura 0 y semilla; para conversar, se deja algo de azar."
     },
     {
       "id": "o4",
-      "text": "Explica qué pasaría si tu servicio escuchara en 0.0.0.0 sin autenticación, por qué los errores 502 no devuelven el mensaje interno de Ollama y por qué validar_pregunta limita la longitud. (reflexion <texto>, mínimo 40 palabras)",
-      "validator": { "type": "reflection", "min_words": 40 },
-      "hints": ["Red local, consumo de CPU de otros, OWASP LLM10.", "¿Qué revela un mensaje de error con URLs y nombres internos?"]
+      "text": "Tu servicio escucha en 127.0.0.1 y no tiene autenticación. ¿Qué pasaría si lo pusieras a escuchar en 0.0.0.0?",
+      "teach": "Quién puede llamar a tu servicio\n127.0.0.1 solo acepta conexiones de tu propia máquina. 0.0.0.0 acepta de cualquier interfaz, también de tu red local.\nUn modelo generando texto ocupa la CPU (Central Processing Unit) durante segundos por petición.\nPor qué: dejar un modelo o una API (Application Programming Interface) sin autenticación abierta a la red es uno de los fallos más comunes en despliegues de IA (Inteligencia Artificial) (lo verás en A6).",
+      "choices": [
+        {
+          "id": "a",
+          "text": "nada: sin autenticación nadie sabe que existe",
+          "why": "Cualquier equipo de tu red puede encontrar un puerto abierto en segundos. Esconderlo no es protegerlo."
+        },
+        {
+          "id": "b",
+          "text": "cualquier equipo de tu red podría usar el modelo y gastar tu CPU sin límite"
+        },
+        {
+          "id": "c",
+          "text": "el modelo respondería peor porque recibe más tráfico",
+          "why": "La calidad de las respuestas no cambia. El problema es quién puede pedirlas y cuántas."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Repasa la tarjeta «127.0.0.1 frente a 0.0.0.0» con mission brief",
+        "0.0.0.0 acepta conexiones de cualquier interfaz. answer b"
+      ],
+      "on_complete": "Exacto: es OWASP (Open Worldwide Application Security Project) LLM10, consumo sin límites. Por lo mismo, los errores 502 no devuelven el mensaje interno de Ollama (revelaría rutas y nombres internos) y validar_pregunta limita la longitud (una pregunta enorme también gasta CPU, Central Processing Unit)."
     }
   ],
   "debrief": {
     "what_happened": "Has montado un entorno con dependencias fijadas, has implementado el cliente de un LLM local y lo has expuesto con un servicio FastAPI que valida la entrada y oculta los errores internos. Después has medido un modelo real en tu CPU.",
     "why": "Toda aplicación con LLM empieza así: un servicio que recibe texto, llama a un modelo y devuelve otro texto. Los riesgos de los arcos A1–A6 se colocan sobre esta pieza, y la variabilidad que has medido es la razón por la que en seguridad de IA se habla de tasas de éxito y no de «funciona / no funciona».",
     "in_production": "Autenticación y límite de peticiones por cliente, timeouts y reintentos con espera, streaming para respuestas largas, colas cuando el modelo es lento, métricas (latencia, tokens, errores) y trazas sin datos personales (O6). El modelo se sirve con un motor preparado para carga (por ejemplo vLLM o llama.cpp en servidor) y con GPU cuando hace falta.",
-    "simplifications": ["Sin autenticación ni límites por cliente", "Sin streaming ni historial de conversación", "El Dojo no puede comprobar tus mediciones: confía en tu reflexión"],
+    "simplifications": [
+      "Sin autenticación ni límites por cliente",
+      "Sin streaming ni historial de conversación",
+      "El Dojo no puede comprobar tus mediciones: confía en tu reflexión"
+    ],
     "exercise": "forja/labs/P0-01_servicio_llm/servicio.py"
   },
-  "further_reading": ["ref.ollama-api", "ref.fastapi"],
-  "xp": { "base": 400 }
+  "further_reading": [
+    "ref.ollama-api",
+    "ref.fastapi"
+  ],
+  "xp": {
+    "base": 400
+  },
+  "you_can_now": "Sabes montar un servicio que habla con un LLM (Large Language Model) local, validar lo que entra y medir latencia y tokens por segundo. Sabes qué controlan la temperatura y la semilla, y por qué un servicio escucha en 127.0.0.1. Siguiente: A1-05, el chatbot de A1 contra un modelo de verdad."
 }

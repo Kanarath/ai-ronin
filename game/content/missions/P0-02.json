@@ -8,8 +8,19 @@
   "plane": "forja",
   "epistemic": "consolidado",
   "estimated_minutes": 75,
-  "requires_missions": ["T4-01"],
-  "competencies": { "requires": ["T3.descenso-gradiente", "T4.neurona"], "trains": ["P0.clases", "P0.numpy"] },
+  "requires_missions": [
+    "T4-01"
+  ],
+  "competencies": {
+    "requires": [
+      "T3.descenso-gradiente",
+      "T4.neurona"
+    ],
+    "trains": [
+      "P0.clases",
+      "P0.numpy"
+    ]
+  },
   "briefing": "Tu neurona de T4-01 era una regresión logística: suma ponderada, sigmoide y descenso por gradiente. La escribiste con funciones sueltas y listas. Hoy le das un molde (una clase con ajustar y predecir, como las de scikit-learn) y una aleación más dura: NumPy, que hace las mismas cuentas en matrices. Vas a medir cuánto ganas y a descubrir que una recta no separa las katanas defectuosas. Ejercicio: forja/ejercicios/P0_02_logistica.py.",
   "learning_objectives": [
     "Escribir una clase con estado (atributos) y métodos, y una clase hija que hereda de ella",
@@ -18,7 +29,11 @@
     "Explicar por qué una regresión logística necesita features nuevas cuando la frontera no es recta"
   ],
   "mentor_intro": "Primero lo escribiste a mano para entenderlo. Ahora lo escribes como se escribe en la industria. Las matemáticas no cambian: cambia la velocidad.",
-  "lab": { "datasets": [], "viz": {} },
+  "purpose": "Las librerías de IA (Inteligencia Artificial) tienen la misma forma: un objeto con fit para aprender y predict para usar lo aprendido, y por dentro cuentas con matrices. Por eso NumPy y las clases están debajo de scikit-learn, PyTorch y de cualquier embedding de un RAG (Retrieval-Augmented Generation). Hoy reescribes tu neurona de T4-01 así y mides cuánto ganas.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
   "theory_cards": [
     {
       "id": "clases",
@@ -40,8 +55,14 @@
     {
       "id": "o1",
       "text": "Prepara el entorno de los ejercicios con NumPy (forja/ejercicios: python -m venv .venv y pip install -r requirements.txt), ejecuta ronin_check para P0-02 con ese Python y trae la primera evidencia, aunque no pase ningún test todavía.",
-      "teach": "Versiones fijadas\nrequirements.txt dice numpy==2.5.4, no «numpy» a secas. Una versión nueva puede cambiar resultados o romper código: fijarla hace que lo que pasa hoy pase mañana. El primer test lo comprueba. El entorno .venv vale también para P0-03.",
-      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "P0-02" } },
+      "teach": "Versiones fijadas\nrequirements.txt dice numpy==2.5.4, no «numpy» a secas.\nUna versión nueva puede cambiar resultados o romper código; fijarla hace que lo que pasa hoy pase mañana. El primer test lo comprueba.\nEl entorno .venv de forja/ejercicios vale también para P0-03.\nPor qué: un modelo de IA (Inteligencia Artificial) que no se puede reproducir no se puede auditar.",
+      "validator": {
+        "type": "event",
+        "event": "evidence.imported",
+        "where": {
+          "exercise": "P0-02"
+        }
+      },
       "hints": [
         "Desde forja/ejercicios: python -m venv .venv · .\\.venv\\Scripts\\python.exe -m pip install -r requirements.txt",
         ".\\.venv\\Scripts\\python.exe -m ronin_check P0-02 · y aquí: evidence import"
@@ -51,8 +72,15 @@
     {
       "id": "o2",
       "text": "Implementa P0_02_logistica.py hasta que pasen los 10 tests y trae la evidencia.",
-      "teach": "Orden recomendado\nestandarizar y ampliar_cuadrados (NumPy sin clases) → la clase pura (__init__, probabilidades, perdida, ajustar, predecir) → la clase NumPy (solo tres métodos) → cronometrar. El test test_mismo_modelo_que_la_pura es tu red de seguridad: si la versión NumPy no coincide con la pura, el error está en la vectorización.",
-      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "P0-02", "all_passed": true } },
+      "teach": "Una clase es un molde\nUna CLASE agrupa datos (atributos: self.pesos, self.lr) y las funciones que los usan (métodos: ajustar, predecir).\nVECTORIZAR es cambiar un bucle de Python por una operación de NumPy sobre toda la matriz: X @ w hace todos los productos de golpe.\nOrden: estandarizar y ampliar_cuadrados → la clase pura → la clase NumPy (solo tres métodos) → cronometrar.\ntest_mismo_modelo_que_la_pura es tu red de seguridad: si no coincide, el error está en la vectorización.\nPor qué: es exactamente el contrato fit/predict de scikit-learn, y las cuentas en matrices son lo que acelera cualquier red neuronal.",
+      "validator": {
+        "type": "event",
+        "event": "evidence.imported",
+        "where": {
+          "exercise": "P0-02",
+          "all_passed": true
+        }
+      },
       "hints": [
         "self es el propio objeto: dentro de un método, los atributos se leen y escriben con self.nombre.",
         "En la clase pura, calcula todas las p antes de tocar los pesos: el gradiente usa los pesos de ANTES de la actualización.",
@@ -63,8 +91,12 @@
     {
       "id": "o3",
       "text": "Con tu implementación: estandariza las katanas, amplíalas con los cuadrados y ajusta RegresionLogisticaNumPy(0.5, 300) con «defectuosa» = 1. ¿Qué accuracy da sobre esos mismos datos? (answer <número>, 3 decimales)",
-      "teach": "De script a pregunta\nUsa el intérprete (.\\.venv\\Scripts\\python.exe) desde forja/ejercicios: from apoyo import cargar_katanas, y el resto como en test_una_recta_no_basta. Sin los cuadrados, la accuracy no pasa de 0,55: casi como tirar una moneda.",
-      "validator": { "type": "answer", "expected": 0.871, "tolerance": 0.002 },
+      "teach": "De script a pregunta\nUsa el intérprete del entorno (.\\.venv\\Scripts\\python.exe) desde forja/ejercicios.\nfrom apoyo import cargar_katanas, y el resto como en test_una_recta_no_basta.\nampliar_cuadrados añade z² a cada feature: así el modelo puede decir «lejos del centro → defectuosa».\nSin los cuadrados, la accuracy (proporción de aciertos) no pasa de 0,55: casi como tirar una moneda.\nPor qué: antes de las redes profundas, diseñar features a mano era el oficio principal del aprendizaje automático.",
+      "validator": {
+        "type": "answer",
+        "expected": 0.871,
+        "tolerance": 0.002
+      },
       "wrong_answer": "Accuracy = aciertos / 240 con predecir(Xa) frente a las etiquetas 0/1. Comprueba que ajustas sobre Xa (6 columnas), no sobre Xs.",
       "hints": [
         "Xa = ampliar_cuadrados(estandarizar(X)[0]) · y = [1 if c == \"defectuosa\" else 0 for c in calidad]",
@@ -74,22 +106,64 @@
     },
     {
       "id": "o4",
-      "text": "Ejecuta python P0_02_logistica.py (con el Python de .venv) y escribe tus tiempos: cuántas veces más rápido es NumPy con 240, 2.400 y 12.000 filas, por qué la ventaja crece con el tamaño y qué te sorprendió. (reflexion <texto>, mínimo 50 palabras)",
-      "prediction": { "prompt": "Con 12.000 filas, ¿cuántas veces más rápida será la versión NumPy?", "options": ["parecido (×1–2)", "unas 10 veces", "más de 50 veces"] },
-      "validator": { "type": "reflection", "min_words": 50 },
+      "text": "Ejecuta python P0_02_logistica.py (con el Python de .venv) y mira los tiempos con 240, 2.400 y 12.000 filas. ¿Por qué la ventaja de NumPy crece con el tamaño?",
+      "teach": "Cronometrar\nEl script entrena las dos versiones con 240, 2.400 y 12.000 filas y mide los segundos.\nNumPy guarda los números en un bloque de memoria y recorre los bucles en código compilado (C), no en Python.\nPor qué: elegir bien dónde vive el bucle decide si un entrenamiento tarda minutos o días.",
+      "prediction": {
+        "prompt": "Con 12.000 filas, ¿cuántas veces más rápida será la versión NumPy?",
+        "options": [
+          "parecido (×1–2)",
+          "unas 10 veces",
+          "más de 50 veces"
+        ]
+      },
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque NumPy usa la GPU (Graphics Processing Unit) cuando hay muchas filas",
+          "why": "NumPy hace las cuentas en la CPU. La diferencia está en dónde se ejecuta el bucle."
+        },
+        {
+          "id": "b",
+          "text": "porque NumPy paga un coste fijo por llamada y luego recorre el bucle en código compilado, mientras Python puro paga cada multiplicación"
+        },
+        {
+          "id": "c",
+          "text": "porque con más filas el modelo de NumPy hace menos épocas",
+          "why": "Las dos versiones hacen las mismas épocas y dan el mismo modelo; lo comprueban los tests."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
       "hints": [
         "Mira cómo cambia el tiempo de cada versión al multiplicar las filas por 10.",
-        "NumPy paga un coste fijo por cada llamada (crear arrays, entrar en código compilado); Python puro paga por cada multiplicación."
-      ]
+        "El coste fijo se reparte entre más filas. answer b"
+      ],
+      "on_complete": "Eso es. Con pocas filas, el coste fijo de NumPy pesa; con muchas, desaparece y el bucle compilado gana por mucho. Por eso las redes se entrenan por lotes grandes."
     }
   ],
   "debrief": {
     "what_happened": "Has convertido la neurona de T4-01 en una clase con el contrato ajustar/predecir, la has vectorizado con NumPy por herencia sin cambiar sus resultados, has medido la aceleración y has visto que una frontera recta no separa las katanas hasta que añades features cuadráticas.",
     "why": "Toda la IA moderna corre sobre álgebra de arrays: NumPy, y por encima PyTorch o JAX, que añaden GPU y gradientes automáticos. Saber qué calcula un X @ w por dentro (lo hiciste a mano) es lo que te deja leer y depurar ese código. La clase es la forma estándar de empaquetar un modelo con su estado.",
     "in_production": "Se usa scikit-learn (LogisticRegression) con solvers de segundo orden, regularización y validación cruzada, no un descenso por gradiente casero. Las features se generan en un Pipeline que aprende la estandarización SOLO del train (lo viste en T2-01: fuga de datos). Las versiones de NumPy y del resto se fijan con un lockfile y hashes (A6).",
-    "simplifications": ["Se evalúa sobre los mismos datos de entrenamiento: sin split de test", "Sin regularización", "Un único learning rate fijo"],
+    "simplifications": [
+      "Se evalúa sobre los mismos datos de entrenamiento: sin split de test",
+      "Sin regularización",
+      "Un único learning rate fijo"
+    ],
     "exercise": "forja/ejercicios/P0_02_logistica.py"
   },
-  "further_reading": ["ref.python-clases", "ref.numpy", "ref.numpy-broadcasting"],
-  "xp": { "base": 150 }
+  "further_reading": [
+    "ref.python-clases",
+    "ref.numpy",
+    "ref.numpy-broadcasting"
+  ],
+  "xp": {
+    "base": 150
+  },
+  "you_can_now": "Sabes empaquetar un modelo en una clase con ajustar y predecir, vectorizarlo con NumPy sin cambiar las matemáticas y mejorar un modelo lineal diseñando features. Siguiente: P0-03, backpropagation entero en matrices."
 }

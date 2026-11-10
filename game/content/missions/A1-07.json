@@ -7,8 +7,21 @@
   "plane": "forja",
   "epistemic": "practica-industria",
   "estimated_minutes": 150,
-  "requires_missions": ["A1-05"],
-  "competencies": { "requires": ["A1.forja-medicion", "A1.defensa"], "trains": ["A1.clasificador-seguridad", "A1.falsos-positivos", "A1.curva-umbral", "A1.evasion-guardianes"] },
+  "requires_missions": [
+    "A1-05"
+  ],
+  "competencies": {
+    "requires": [
+      "A1.forja-medicion",
+      "A1.defensa"
+    ],
+    "trains": [
+      "A1.clasificador-seguridad",
+      "A1.falsos-positivos",
+      "A1.curva-umbral",
+      "A1.evasion-guardianes"
+    ]
+  },
   "briefing": "El filtro de entrada de A1-05 era una lista de siete frases. La industria suele dar el paso siguiente: un clasificador entrenado que bloquea las inyecciones antes de que lleguen al modelo. Hoy entrenas uno desde cero, un Naive Bayes sobre n-gramas de caracteres en Python puro, y lo mides como se mide un guardián: a cuántos clientes bloquea sin motivo, cuántos ataques deja pasar, qué umbral eliges y cómo se esquiva. Instrucciones: forja/labs/A1-07_guardian/README.md.",
   "learning_objectives": [
     "Implementar y entrenar un clasificador Naive Bayes multinomial sobre n-gramas de caracteres",
@@ -17,7 +30,11 @@
     "Explicar por qué un clasificador de entradas es útil como capa y engañoso como única defensa"
   ],
   "mentor_intro": "Un guardián bloquea el 90 % de los ataques de tu batería. Y el atacante no te va a mandar los ataques de tu batería: te mandará los que pasan.",
-  "lab": { "datasets": [], "viz": {} },
+  "purpose": "Muchas aplicaciones con un LLM (Large Language Model) ponen delante un clasificador que bloquea los mensajes con pinta de inyección: es la defensa más desplegada. Hoy entrenas uno desde cero, un Naive Bayes sobre trozos de caracteres, y lo mides como se mide un guardián: a cuántos clientes bloquea sin motivo, cuántos ataques deja pasar y qué umbral eliges. Es el detector de T1-03, ahora entrenado de verdad.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
   "theory_cards": [
     {
       "id": "naive-bayes",
@@ -34,8 +51,15 @@
     {
       "id": "o1",
       "text": "Implementa las ocho funciones de guardian.py hasta que pasen los 19 tests y trae la evidencia.",
-      "teach": "Logaritmos para no llegar a cero\nMultiplicar cien probabilidades de 0,01 da 10⁻²⁰⁰, y eso en coma flotante ya es casi cero. Por eso Naive Bayes suma logaritmos. Aun así, la suma crece con la longitud del mensaje y la probabilidad acaba en 0 o en 1. Aquí se promedia por fragmento para que el umbral sirva. Cualquiera de las dos es una puntuación, no una probabilidad calibrada.",
-      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "A1-07", "all_passed": true } },
+      "teach": "Logaritmos para no llegar a cero\nMultiplicar cien probabilidades de 0,01 da 10⁻²⁰⁰, y eso en el ordenador ya es casi cero. Por eso Naive Bayes suma logaritmos.\nAun así, la suma crece con la longitud del mensaje. Aquí se promedia por fragmento para que el umbral sirva.\nEl resultado es una puntuación, no una probabilidad calibrada.\nPor qué: los clasificadores reales también trabajan en logaritmos para no perder precisión.",
+      "validator": {
+        "type": "event",
+        "event": "evidence.imported",
+        "where": {
+          "exercise": "A1-07",
+          "all_passed": true
+        }
+      },
       "hints": [
         "Orden: ngramas → entrenar → probabilidad → matriz_confusion → tasas → curva_umbral → elegir_umbral → con_separadores.",
         "Desde forja/labs/A1-07_guardian: .\\.venv\\Scripts\\python.exe -m unittest -v test_guardian (crea el entorno como en A1-05).",
@@ -46,8 +70,26 @@
     {
       "id": "o2",
       "text": "Ejecuta bateria.py (al menos 3 configuraciones, una de ellas «ninguna») y trae la medición. Con Ollama, añade si quieres la configuración «llm».",
-      "prediction": { "prompt": "¿Crees que el clasificador entrenado dejará pasar menos ataques que el filtro de patrones de A1-05 sin bloquear a más clientes normales?", "options": ["sí, en las dos cosas", "bloqueará más ataques, pero también a más clientes", "no mejorará"] },
-      "validator": { "type": "event", "event": "evidence.measured", "where": { "lab": "A1-07", "has_baseline": true, "configs": { "gte": 3 } } },
+      "teach": "Medir al guardián\nbateria.py pasa ataques y mensajes legítimos por cada configuración (ninguna, patrones, clasificador…) y cuenta cuántos ataques pasan y cuántos clientes se bloquean.\nUn FALSO POSITIVO es un cliente bloqueado sin motivo; un FALSO NEGATIVO, un ataque que pasa.\nPor qué: un guardián se juzga por los dos errores a la vez, nunca solo por los ataques que para.",
+      "prediction": {
+        "prompt": "¿Crees que el clasificador entrenado dejará pasar menos ataques que el filtro de patrones de A1-05 sin bloquear a más clientes normales?",
+        "options": [
+          "sí, en las dos cosas",
+          "bloqueará más ataques, pero también a más clientes",
+          "no mejorará"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "evidence.measured",
+        "where": {
+          "lab": "A1-07",
+          "has_baseline": true,
+          "configs": {
+            "gte": 3
+          }
+        }
+      },
       "hints": [
         "python bateria.py · sin Ollama tarda unos segundos.",
         "Con el LLM: python bateria.py --configs \"ninguna;patrones;clasificador;llm\" --n 3"
@@ -56,25 +98,90 @@
     },
     {
       "id": "o3",
-      "text": "Analiza tu medición: qué variantes esquivaron los patrones y cuáles el clasificador, qué mensajes legítimos bloqueó cada uno y por qué, qué umbral se eligió y qué perderías al moverlo, y si los intervalos te permiten decir que una configuración es mejor que otra. (reflexion <texto>, mínimo 70 palabras)",
-      "teach": "Qué aprende de verdad un clasificador\nSi los ataques de entrenamiento son órdenes («ignora…», «muéstrame…») y los mensajes legítimos son preguntas («¿a qué hora…?»), el clasificador puede aprender que una orden es un ataque y una pregunta no. Entonces un ataque formulado como pregunta amable pasa, y un cliente que escribe «olvida mi mensaje anterior» se bloquea. Los errores del guardián te enseñan qué ha aprendido.",
-      "validator": { "type": "reflection", "min_words": 70 },
-      "hints": ["La salida de bateria.py da «pasan por tipo» y los ids de los legítimos bloqueados; evidence list te recuerda los recuentos.", "Compara las variantes de patrones con las de clasificador: ¿son las mismas? Y mira el texto de los legítimos bloqueados en ataques.json."]
+      "text": "En tu medición, el clasificador bloquea a un cliente que escribe «olvida mi mensaje anterior, quería preguntar por envíos». ¿Qué te dice ese error?",
+      "teach": "Qué aprende de verdad un clasificador\nSi los ataques de entrenamiento son órdenes («ignora…», «muéstrame…») y los mensajes legítimos son preguntas («¿a qué hora…?»), el clasificador puede aprender que una orden es un ataque y una pregunta no.\nPor qué: un modelo aprende los atajos que le dan los datos, no lo que tú querías que aprendiera.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "que el clasificador ha aprendido la forma del texto (una orden frente a una pregunta), no la intención"
+        },
+        {
+          "id": "b",
+          "text": "que es un fallo al azar sin importancia",
+          "why": "Estos errores no son al azar: se repiten con todos los mensajes que se parecen en la forma."
+        },
+        {
+          "id": "c",
+          "text": "que Naive Bayes no sirve para texto",
+          "why": "Naive Bayes se usa mucho con texto, por ejemplo en filtros antispam. El problema es qué ejemplos tenía para aprender."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "Mira el texto de los legítimos bloqueados en ataques.json y compáralo con los ataques de entrenamiento.",
+        "Los ataques de entrenamiento eran órdenes; los legítimos, preguntas. answer a"
+      ],
+      "on_complete": "Exacto. Y lo mismo al revés: un ataque formulado como pregunta amable puede pasar. Los errores de un guardián te enseñan qué ha aprendido de verdad."
     },
     {
       "id": "o4",
-      "text": "Explica por qué un clasificador de entradas es la mitigación más desplegada y a la vez la más sobrevalorada: qué te asegura una cifra como «bloquea el 90 %», qué hará un atacante adaptativo y qué defensas de A1-05 siguen siendo necesarias aunque tengas guardián. (reflexion <texto>, mínimo 50 palabras)",
-      "validator": { "type": "reflection", "min_words": 50 },
-      "hints": ["La prueba se parece al entrenamiento; el atacante, no.", "Si el secreto no está en el prompt, no hay nada que filtrar (sin-secreto en A1-05)."]
+      "text": "Tu guardián «bloquea el 90 % de los ataques de la batería». ¿Qué te asegura esa cifra?",
+      "teach": "El atacante adaptativo\nUn ATACANTE ADAPTATIVO no repite tus ataques: prueba variantes hasta encontrar una que pase.\nPor qué: las cifras de un guardián se miden con ataques conocidos; en producción llegan los que tu guardián no conoce.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "que en producción solo pasará el 10 % de los ataques",
+          "why": "Solo vale para ataques parecidos a los de tu batería. Un atacante que se adapta prueba hasta dar con los que pasan."
+        },
+        {
+          "id": "b",
+          "text": "la tasa contra ataques parecidos a los de la prueba; un atacante adaptativo buscará el 10 % que pasa, así que siguen haciendo falta las defensas de arquitectura"
+        },
+        {
+          "id": "c",
+          "text": "que ya se puede volver a poner el secreto en el prompt",
+          "why": "Si el guardián falla una vez, el secreto sale. Sin secreto en el prompt, no hay nada que filtrar (sin-secreto en A1-05)."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "La prueba se parece al entrenamiento; el atacante, no.",
+        "answer b"
+      ],
+      "on_complete": "Exacto. Un guardián es una capa más, útil para reducir ruido y detectar campañas, pero nunca sustituye al mínimo privilegio, a no tener secretos en el prompt ni a la autorización en las herramientas."
     }
   ],
   "debrief": {
     "what_happened": "Has entrenado un clasificador de inyecciones desde cero y lo has medido con datos que no vio al entrenar. Has calculado sus falsos positivos y negativos, has elegido el umbral con validación y has comprobado cómo se esquiva. Y lo has comparado con el filtro de patrones de A1-05.",
     "why": "Los guardianes de entrada son la defensa contra la inyección que más se despliega, porque se añaden sin tocar la aplicación y dan una cifra fácil de enseñar. Pero esa cifra solo vale para ataques parecidos a los de su entrenamiento, y cada punto de seguridad que ganas lo pagan clientes legítimos bloqueados. La inyección de prompts no tiene hoy una solución completa (OWASP LLM01:2025).",
     "in_production": "Se usan clasificadores tipo transformer entrenados para esto, como Llama Prompt Guard 2 de Meta, a menudo junto a un LLM juez y a reglas. Se ajustan con datos de la propia aplicación y el umbral se fija con un objetivo explícito de falsos positivos. Los bloqueos se registran para detectar campañas (O6) y la evaluación se repite con ataques adaptativos. Siempre funcionan como una capa más, nunca en lugar de las defensas de arquitectura: mínimo privilegio, nada de secretos en el prompt y autorización en las herramientas.",
-    "simplifications": ["90 mensajes de entrenamiento escritos a mano: un dataset real tiene decenas de miles", "La puntuación se promedia por n-grama para que el umbral sirva; no está calibrada", "Una batería de 31 ataques y 20 legítimos: los intervalos son anchos", "Un clasificador de entradas solamente; los de salida y los jueces LLM quedan para otros laboratorios"],
+    "simplifications": [
+      "90 mensajes de entrenamiento escritos a mano: un dataset real tiene decenas de miles",
+      "La puntuación se promedia por n-grama para que el umbral sirva; no está calibrada",
+      "Una batería de 31 ataques y 20 legítimos: los intervalos son anchos",
+      "Un clasificador de entradas solamente; los de salida y los jueces LLM quedan para otros laboratorios"
+    ],
     "exercise": "forja/labs/A1-07_guardian/guardian.py"
   },
-  "further_reading": ["ref.sklearn-naive-bayes", "ref.llama-prompt-guard-2", "ref.owasp-llm-2025"],
-  "xp": { "base": 450 }
+  "further_reading": [
+    "ref.sklearn-naive-bayes",
+    "ref.llama-prompt-guard-2",
+    "ref.owasp-llm-2025"
+  ],
+  "xp": {
+    "base": 450
+  },
+  "you_can_now": "Sabes entrenar y medir un clasificador de entradas con falsos positivos, falsos negativos y umbral, y explicar por qué una cifra como «bloquea el 90 %» no protege de un atacante que se adapta. Siguiente: A2, la seguridad de un RAG (Retrieval-Augmented Generation)."
 }

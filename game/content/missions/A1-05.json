@@ -7,8 +7,22 @@
   "plane": "forja",
   "epistemic": "practica-industria",
   "estimated_minutes": 150,
-  "requires_missions": ["A1-04", "P0-01"],
-  "competencies": { "requires": ["A1.defensa", "P0.llm-local"], "trains": ["A1.forja-medicion", "A1.intervalos-confianza", "A1.fuga-prompt-sistema", "A1.defensa-arquitectura"] },
+  "requires_missions": [
+    "A1-04",
+    "P0-01"
+  ],
+  "competencies": {
+    "requires": [
+      "A1.defensa",
+      "P0.llm-local"
+    ],
+    "trains": [
+      "A1.forja-medicion",
+      "A1.intervalos-confianza",
+      "A1.fuga-prompt-sistema",
+      "A1.defensa-arquitectura"
+    ]
+  },
   "briefing": "En A1-01…04 atacaste y defendiste un chatbot simulado. Hoy es el mismo mostrador de la forja ficticia, pero con un modelo real en tu CPU y el canario KUROGANE-77 en su prompt de sistema. Medirás cuántas veces se filtra con cada defensa, con intervalos de confianza, porque un modelo real no responde siempre igual. Instrucciones: forja/labs/A1-05_chatbot/README.md.",
   "learning_objectives": [
     "Implementar detección del canario, filtros de entrada y salida y delimitado de la entrada",
@@ -17,7 +31,11 @@
     "Explicar por qué la única corrección real de una fuga del prompt de sistema es no poner el secreto ahí"
   ],
   "mentor_intro": "En el Dojo, un ataque funcionaba o no. Con un modelo real, funciona un porcentaje de las veces. Y un porcentaje sin intervalo no dice casi nada.",
-  "lab": { "datasets": [], "viz": {} },
+  "purpose": "Con un LLM (Large Language Model) real, un ataque no funciona o falla sin más: funciona un porcentaje de las veces. Por eso los equipos de seguridad de IA (Inteligencia Artificial) miden tasas con intervalos de confianza, igual que se mide un experimento. Hoy llevas el chatbot de A1 a un modelo real en tu CPU (Central Processing Unit) y mides cuánto reduce cada defensa las fugas, y qué rompe.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
   "theory_cards": [
     {
       "id": "tasas",
@@ -34,8 +52,15 @@
     {
       "id": "o1",
       "text": "Implementa las seis funciones de chatbot.py hasta que pasen los 19 tests y trae la evidencia.",
-      "teach": "Normalizar antes de comparar\nUn filtro que busca «KUROGANE-77» literal se esquiva escribiendo «k u r o g a n e 7 7». Por eso contiene_secreto compara versiones normalizadas (minúsculas, sin tildes, sin separadores). Aun así, no detecta una traducción o una paráfrasis: los filtros de salida reducen el riesgo, no lo eliminan.",
-      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "A1-05", "all_passed": true } },
+      "teach": "Normalizar antes de comparar\nUn filtro que busca «KUROGANE-77» literal se esquiva escribiendo «k u r o g a n e 7 7».\nPor eso contiene_secreto compara versiones normalizadas: minúsculas, sin tildes y sin separadores.\nAun así, no detecta una traducción o una paráfrasis.\nPor qué: los filtros de salida reducen el riesgo, no lo eliminan; lo vas a medir con un modelo real.",
+      "validator": {
+        "type": "event",
+        "event": "evidence.imported",
+        "where": {
+          "exercise": "A1-05",
+          "all_passed": true
+        }
+      },
       "hints": [
         "Orden: normalizar → contiene_secreto → filtrar_entrada → filtrar_salida → delimitar → intervalo_wilson.",
         "Desde forja/labs/A1-05_chatbot: .\\.venv\\Scripts\\python.exe -m unittest -v test_chatbot (crea el entorno como en P0-01).",
@@ -46,8 +71,26 @@
     {
       "id": "o2",
       "text": "Con Ollama en marcha, ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y trae la medición.",
-      "prediction": { "prompt": "Sin defensas, ¿con qué frecuencia crees que el modelo de 1B filtrará el canario ante la batería?", "options": ["casi nunca", "a veces", "la mayoría de las veces"] },
-      "validator": { "type": "event", "event": "evidence.measured", "where": { "lab": "A1-05", "has_baseline": true, "configs": { "gte": 3 } } },
+      "teach": "La batería real\nbateria.py envía los ataques y las preguntas legítimas al modelo real varias veces con cada configuración de defensas, y guarda los recuentos.\nevidence import trae la medición al Dojo.\nPor qué: con un modelo real, la única forma de saber cuánto protege una defensa es repetir y contar.",
+      "prediction": {
+        "prompt": "Sin defensas, ¿con qué frecuencia crees que el modelo de 1B filtrará el canario ante la batería?",
+        "options": [
+          "casi nunca",
+          "a veces",
+          "la mayoría de las veces"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "evidence.measured",
+        "where": {
+          "lab": "A1-05",
+          "has_baseline": true,
+          "configs": {
+            "gte": 3
+          }
+        }
+      },
       "hints": [
         "python bateria.py · tarda varios minutos en CPU (cada configuración son 33 mensajes con --n 3).",
         "Con poco tiempo: python bateria.py --n 2 --configs \"ninguna;salida;sin-secreto\""
@@ -56,25 +99,88 @@
     },
     {
       "id": "o3",
-      "text": "Analiza tus números: qué tasa de fuga tenía cada configuración con su intervalo, cuál rompió preguntas legítimas, si los intervalos de dos configuraciones se solapan y qué significa eso, y en qué se diferencian «fugas» y «el modelo filtró» con el filtro de salida. (reflexion <texto>, mínimo 60 palabras)",
-      "teach": "Leer una medición\nSi los intervalos de dos configuraciones se solapan mucho, con estos datos no puedes afirmar que una sea mejor que otra: necesitas más repeticiones. Y si el filtro de salida deja las fugas a 0 mientras «el modelo filtró» sigue alto, el modelo sigue sabiendo el secreto y queriendo decirlo: solo lo estás tapando a la salida.",
-      "validator": { "type": "reflection", "min_words": 60 },
-      "hints": ["evidence list te recuerda los recuentos de cada configuración.", "Compara entrada frente a ninguna, y salida frente a sin-secreto."]
+      "text": "Los intervalos de Wilson de dos configuraciones se solapan mucho. ¿Qué puedes concluir?",
+      "teach": "Leer una medición\nCada configuración tiene una tasa de fuga y su INTERVALO DE CONFIANZA: el rango donde probablemente está la tasa real.\nCon pocos intentos, el intervalo es ancho.\nPor qué: decidir qué defensa desplegar con una tasa sin intervalo es decidir casi a ciegas.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "que las dos defensas son igual de buenas",
+          "why": "Solaparse no prueba que sean iguales: solo que con estos datos no se pueden distinguir."
+        },
+        {
+          "id": "b",
+          "text": "que con estos datos no puedes afirmar que una sea mejor que la otra; necesitas más repeticiones"
+        },
+        {
+          "id": "c",
+          "text": "que es mejor la que tiene la tasa observada más baja",
+          "why": "Con pocos intentos, la tasa observada se mueve mucho por azar. Por eso existe el intervalo."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Repasa la tarjeta «Tasas e intervalos» con mission brief.",
+        "Solape grande = no se puede decidir con estos datos. answer b"
+      ],
+      "on_complete": "Exacto. Y fíjate en otra cosa de tu medición: si con el filtro de salida las fugas que llegan al cliente bajan a 0 pero «el modelo filtró» sigue alto, el modelo sigue sabiendo el secreto y queriendo decirlo. Solo lo estás tapando a la salida."
     },
     {
       "id": "o4",
-      "text": "Explica por qué sin-secreto es la única corrección real, qué haría falta si el chatbot de verdad necesitara usar ese código, y qué riesgo deja el filtro de salida aunque tu batería dé 0 fugas. (reflexion <texto>, mínimo 50 palabras)",
-      "validator": { "type": "reflection", "min_words": 50 },
-      "hints": ["OWASP LLM07: el prompt de sistema no es un lugar seguro para secretos.", "Una herramienta en el servidor con autorización del usuario, como en A3; traducciones y paráfrasis frente al filtro."]
+      "text": "¿Por qué sin-secreto es la única corrección real de la fuga?",
+      "teach": "La corrección de verdad\nsin-secreto quita el canario del system prompt. Las otras configuraciones intentan impedir que salga.\nPor qué: es la diferencia entre tapar un síntoma y quitar la causa, la misma que viste en A1-03.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque lo que el modelo no tiene en su contexto no lo puede revelar, se lo pida quien se lo pida"
+        },
+        {
+          "id": "b",
+          "text": "porque es la que da 0 fugas en tu batería",
+          "why": "El filtro de salida también puede dar 0 en tu batería y aun así dejar pasar una traducción o una paráfrasis. Lo que importa es el mecanismo, no solo la cifra."
+        },
+        {
+          "id": "c",
+          "text": "porque es la más barata",
+          "why": "Puede serlo, pero no es la razón: protege porque elimina la causa."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "OWASP LLM07: el system prompt no es un lugar seguro para secretos.",
+        "Lo que no está, no se filtra. answer a"
+      ],
+      "on_complete": "Exacto. Si el chatbot de verdad necesitara usar el código, lo haría a través de una herramienta en el servidor que compruebe la autorización del usuario (lo verás en A3), nunca dejándolo en el prompt."
     }
   ],
   "debrief": {
     "what_happened": "Has construido las defensas del mostrador y las has medido contra un modelo real, con repeticiones e intervalos de confianza. Has visto qué reduce las fugas, qué solo las tapa y qué las elimina.",
     "why": "Es el núcleo de la evaluación de seguridad de sistemas con LLM: los resultados son probabilísticos, así que se miden tasas con su incertidumbre, junto con el coste en las tareas legítimas. Y la defensa más fuerte suele ser de arquitectura: si el modelo no tiene el secreto, no lo puede filtrar.",
     "in_production": "Los secretos y credenciales nunca van en el prompt; las acciones privilegiadas pasan por herramientas con la autorización del usuario. Las evaluaciones de seguridad se automatizan con baterías mucho más grandes y variadas, se repiten en cada cambio de modelo o de prompt y se informan con su intervalo. Los filtros de entrada y salida se mantienen como capas extra, con sus falsos positivos medidos.",
-    "simplifications": ["Seis ataques fijos y cinco preguntas: una batería real es mucho mayor", "Una pregunta legítima se da por buena si contiene ciertas palabras", "El Dojo no puede comprobar que la medición se hizo con el modelo real: confía en tus datos"],
+    "simplifications": [
+      "Seis ataques fijos y cinco preguntas: una batería real es mucho mayor",
+      "Una pregunta legítima se da por buena si contiene ciertas palabras",
+      "El Dojo no puede comprobar que la medición se hizo con el modelo real: confía en tus datos"
+    ],
     "exercise": "forja/labs/A1-05_chatbot/chatbot.py"
   },
-  "further_reading": ["ref.owasp-llm-2025", "ref.ollama-api"],
-  "xp": { "base": 450 }
+  "further_reading": [
+    "ref.owasp-llm-2025",
+    "ref.ollama-api"
+  ],
+  "xp": {
+    "base": 450
+  },
+  "you_can_now": "Sabes medir una defensa contra un modelo real con tasas e intervalos de Wilson, leer cuándo dos resultados no se pueden distinguir y explicar por qué sacar el secreto del prompt es la única corrección completa. Siguientes: A1-06 (un LLM, Large Language Model, como juez) y A1-07 (un clasificador como guardián)."
 }

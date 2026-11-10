@@ -7,8 +7,21 @@
   "plane": "forja",
   "epistemic": "practica-industria",
   "estimated_minutes": 180,
-  "requires_missions": ["A2-04"],
-  "competencies": { "requires": ["A2.busqueda-hibrida", "A2.evaluacion-recuperacion"], "trains": ["A2.reranking", "A2.metricas-ranking", "A2.latencia", "A2.manipulacion-recuperacion"] },
+  "requires_missions": [
+    "A2-04"
+  ],
+  "competencies": {
+    "requires": [
+      "A2.busqueda-hibrida",
+      "A2.evaluacion-recuperacion"
+    ],
+    "trains": [
+      "A2.reranking",
+      "A2.metricas-ranking",
+      "A2.latencia",
+      "A2.manipulacion-recuperacion"
+    ]
+  },
   "briefing": "La biblioteca ha crecido y la búsqueda híbrida confunde la garantía de la katana con la de la funda, y el aceite de la hoja con la cera de la funda. La solución habitual es un segundo filtro: traer 10 candidatos y que un reordenador, que lee la pregunta y el texto juntos, elija los 3 mejores. Probarás dos en tu CPU: un cross-encoder multilingüe pequeño y llama3.2:1b como puntuador. Pero cinco documentos de terceros están escritos para posicionarse, y uno le habla directamente al puntuador. Medirás calidad, latencia y quién gana el primer puesto. Instrucciones: forja/labs/A2-06_reranking/README.md.",
   "learning_objectives": [
     "Implementar una recuperación en dos etapas: candidatos de la búsqueda híbrida y reordenación por puntuación",
@@ -18,7 +31,11 @@
     "Explicar por qué un LLM puntuador es una superficie de inyección y un cross-encoder no lo es de la misma forma"
   ],
   "mentor_intro": "Un reordenador mejora el orden de lo que ya has recuperado. No sabe quién escribió cada texto: premia lo que parece una buena respuesta, sea verdad o no.",
-  "lab": { "datasets": [], "viz": {} },
+  "purpose": "Muchos RAG (Retrieval-Augmented Generation) y buscadores traen primero muchos candidatos rápido y después un reordenador elige los mejores leyendo la pregunta y el texto juntos. Mejora mucho la calidad, pero tiene un coste en latencia y premia lo que parece una buena respuesta, sea verdad o no. Hoy mides las dos cosas con un cross-encoder y con un LLM (Large Language Model) como puntuador.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
   "theory_cards": [
     {
       "id": "dos-etapas",
@@ -35,8 +52,15 @@
     {
       "id": "o1",
       "text": "Implementa las siete funciones de reranking.py hasta que pasen los 13 tests y trae la evidencia.",
-      "teach": "Reordenar sin perder el orden anterior\nCuando dos candidatos tienen la misma puntuación, gana el que la primera etapa puso antes: así el reordenador nunca empeora un empate. sorted() es estable, de modo que ordenar los índices con la clave «menos la puntuación» respeta ese orden. Y devuelve copias: si añades la puntuación a los dicts de la biblioteca, la siguiente búsqueda verá puntuaciones viejas.",
-      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "A2-06", "all_passed": true } },
+      "teach": "Reordenar sin perder el orden anterior\nCuando dos candidatos tienen la misma puntuación, gana el que la primera etapa puso antes: así el reordenador nunca empeora un empate.\nsorted() es estable: con la clave «menos la puntuación» respeta ese orden.\nDevuelve copias: si añades la puntuación a los dicts de la biblioteca, la siguiente búsqueda verá puntuaciones viejas.\nPor qué: los fallos de un sistema de búsqueda suelen estar en detalles así.",
+      "validator": {
+        "type": "event",
+        "event": "evidence.imported",
+        "where": {
+          "exercise": "A2-06",
+          "all_passed": true
+        }
+      },
       "hints": [
         "Orden: reordenar → recuperar_reordenado → recall_en_k → rango_reciproco → ndcg_en_k → percentil → puntuacion_llm.",
         "Desde forja/labs/A2-06_reranking: .\\.venv\\Scripts\\python.exe -m unittest -v test_reranking (crea el entorno como en A2-04).",
@@ -47,8 +71,26 @@
     {
       "id": "o2",
       "text": "Con Ollama en marcha, ejecuta bateria.py (al menos 3 configuraciones: ninguna, un reordenador y procedencia) y trae la medición.",
-      "prediction": { "prompt": "Con el cross-encoder, ¿qué crees que pasará con los documentos escritos para posicionarse?", "options": ["los baja casi todos", "unos los baja y otros los sube", "los sube casi todos"] },
-      "validator": { "type": "event", "event": "evidence.measured", "where": { "lab": "A2-06", "has_baseline": true, "configs": { "gte": 3 } } },
+      "teach": "La batería del reordenador\nbateria.py mide la calidad (recall@3, MRR, Mean Reciprocal Rank, y nDCG@3, normalized Discounted Cumulative Gain), la latencia en p50 y p95 (la mediana y el 95 % de las peticiones) y en qué posición acaba cada documento de terceros.\nPor qué: en producción un reordenador se elige por calidad, latencia y seguridad a la vez.",
+      "prediction": {
+        "prompt": "Con el cross-encoder, ¿qué crees que pasará con los documentos escritos para posicionarse?",
+        "options": [
+          "los baja casi todos",
+          "unos los baja y otros los sube",
+          "los sube casi todos"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "evidence.measured",
+        "where": {
+          "lab": "A2-06",
+          "has_baseline": true,
+          "configs": {
+            "gte": 3
+          }
+        }
+      },
       "hints": [
         "python bateria.py · la primera vez descarga el cross-encoder (unos 135 MB). La configuración llm son 230 peticiones: varios minutos.",
         "Con poco tiempo: python bateria.py --configs \"ninguna;cross-encoder;procedencia\""
@@ -56,26 +98,185 @@
       "on_complete": "Mira primero la calidad y la latencia; después, las posiciones de los documentos de terceros."
     },
     {
+      "id": "py1",
+      "text": "Escribe tú recall@k en Python: abre el editor con py, completa la función recall_en_k y compruébala con py check.",
+      "teach": "recall@k\nUn buscador devuelve un RANKING: la lista de documentos ordenada de más a menos parecido.\nrecall@k es la proporción de los documentos relevantes que están entre los k primeros del ranking. Con un solo relevante, vale 1 si está y 0 si no.\nEn Python, ranking[:k] da los k primeros.\nPor qué: es la primera métrica que se mira en la recuperación de cualquier RAG (Retrieval-Augmented Generation): si el fragmento bueno no está en el top-k, el modelo no lo verá.",
+      "py_exercise": {
+        "id": "A2-06-recall",
+        "title": "recall_en_k(ranking, relevantes, k): qué parte de lo relevante está en el top-k",
+        "function": "recall_en_k",
+        "starter": "# Ejercicio A2-06 · recall@k\n# ranking es la lista de ids que devuelve el buscador, del mejor al peor.\n# relevantes es la lista de ids que de verdad responden a la pregunta.\n# La función devuelve qué proporción de los relevantes está entre los k primeros.\n\ndef recall_en_k(ranking, relevantes, k):\n    primeros = ranking   # ← cambia esta línea: quédate solo con los k primeros\n    encontrados = 0\n    for doc in relevantes:\n        if doc in primeros:\n            encontrados += 1\n    return encontrados / len(relevantes)\n\n# Pruébala con py run. Debería imprimir 0.5:\nprint(recall_en_k([\"funda\", \"garantia\", \"cera\", \"envios\"], [\"garantia\", \"envios\"], 3))\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "funda",
+                "garantia",
+                "cera",
+                "envios"
+              ],
+              [
+                "garantia",
+                "envios"
+              ],
+              3
+            ],
+            "expected": 0.5,
+            "tolerance": 1e-09
+          },
+          {
+            "args": [
+              [
+                "funda",
+                "cera",
+                "garantia"
+              ],
+              [
+                "garantia"
+              ],
+              2
+            ],
+            "expected": 0.0,
+            "tolerance": 1e-09
+          },
+          {
+            "args": [
+              [
+                "funda",
+                "cera",
+                "garantia"
+              ],
+              [
+                "garantia"
+              ],
+              3
+            ],
+            "expected": 1.0,
+            "tolerance": 1e-09
+          },
+          {
+            "args": [
+              [
+                "garantia",
+                "funda"
+              ],
+              [
+                "garantia"
+              ],
+              1
+            ],
+            "expected": 1.0,
+            "tolerance": 1e-09
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "A2-06-recall",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Solo cuentan los documentos que están entre los k primeros del ranking.",
+        "La línea queda así: primeros = ranking[:k]"
+      ],
+      "on_complete": "Fíjate en el segundo caso: la garantía está en el ranking, pero en tercera posición, así que con k = 2 el modelo no la vería. Un reordenador sirve justo para subirla. recall@k no mira la posición dentro del top-k; para eso están MRR (Mean Reciprocal Rank) y nDCG (normalized Discounted Cumulative Gain)."
+    },
+    {
       "id": "o3",
-      "text": "Analiza tu medición: cuánto mejoran recall@3, MRR y nDCG@3 con cada reordenador y cuánto cuesta en p50 y p95; qué técnica de posicionamiento frenó o amplificó cada reordenador y por qué; qué le pasó a la nota dirigida al puntuador con el LLM y con el cross-encoder; y qué hizo procedencia. (reflexion <texto>, mínimo 60 palabras)",
-      "teach": "Un reordenador no es una defensa\nEl cross-encoder aprendió con millones de pares pregunta-respuesta a premiar los textos que parecen responder. Una respuesta falsa bien escrita parece una respuesta. El relleno de palabras clave engaña a BM25, pero un cross-encoder también se fija en las palabras de la pregunta. Y un LLM puntuador lee el documento como un texto con instrucciones. Lo que saca a un tercero del top-k es filtrar por procedencia, no ordenar mejor.",
-      "validator": { "type": "reflection", "min_words": 60 },
-      "hints": ["La línea «terceros» de cada configuración da la posición de cada documento: compara ninguna con cross-encoder y con llm.", "En nDCG, un documento de grado 1 en primera posición no vale cero: ¿qué preguntas mejoran en nDCG y no en recall?"]
+      "text": "En tu medición, el cross-encoder sube a los primeros puestos una respuesta falsa bien escrita de un tercero. ¿Por qué un reordenador no es una defensa?",
+      "teach": "Un reordenador no es una defensa\nUn CROSS-ENCODER lee la pregunta y el fragmento juntos y puntúa cuánto parece que el fragmento responde. Aprendió con millones de pares pregunta-respuesta.\nPor qué: mejora el orden de lo recuperado, pero no sabe de dónde viene cada texto.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque premia los textos que parecen responder a la pregunta, sea verdad o no, y no sabe quién los escribió"
+        },
+        {
+          "id": "b",
+          "text": "porque es demasiado lento para usarlo en producción",
+          "why": "La latencia es un coste aparte. Aunque fuera instantáneo, seguiría premiando una respuesta falsa bien escrita."
+        },
+        {
+          "id": "c",
+          "text": "porque solo mira los 3 primeros candidatos",
+          "why": "Reordena los 10 candidatos. El problema es qué premia, no cuántos mira."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "Compara en la línea «terceros» la posición de cada documento con ninguna y con cross-encoder.",
+        "Una respuesta falsa bien escrita parece una respuesta. answer a"
+      ],
+      "on_complete": "Exacto. Y un LLM (Large Language Model) puntuador es aún más delicado: lee el documento como un texto con instrucciones, así que una nota dirigida al puntuador puede subirle la nota."
     },
     {
       "id": "o4",
-      "text": "Decide qué configuración pondrías en producción para la biblioteca y justifícalo con tus números de calidad, latencia y seguridad. Explica cómo endurecerías un LLM puntuador si tuvieras que usarlo. (reflexion <texto>, mínimo 50 palabras)",
-      "validator": { "type": "reflection", "min_words": 50 },
-      "hints": ["¿Qué latencia p95 aceptarías para una pregunta de un cliente?", "Piensa en lo que hiciste en A1 y A2-04: delimitar el contenido no confiable, validar la salida (puntuacion_llm ya recorta a [0, 10]) y no dejar que el modelo decida solo."]
+      "text": "¿Qué configuración saca de verdad a los documentos de terceros del top-k?",
+      "teach": "Elegir para producción\nTienes tres datos de cada configuración: calidad, latencia y posiciones de los terceros.\nPor qué: una decisión de ingeniería en IA (Inteligencia Artificial) siempre equilibra calidad, coste y seguridad.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "un reordenador más grande y mejor entrenado",
+          "why": "Uno mejor seguiría premiando lo que parece una buena respuesta. No sabe quién escribió cada texto."
+        },
+        {
+          "id": "b",
+          "text": "filtrar por procedencia antes de reordenar, y después reordenar lo que queda"
+        },
+        {
+          "id": "c",
+          "text": "subir k para que haya más candidatos",
+          "why": "Con más candidatos entran más documentos de terceros, no menos."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Mira qué hizo la configuración procedencia con las posiciones de los terceros.",
+        "Primero quién lo escribió, después cómo de bien responde. answer b"
+      ],
+      "on_complete": "Exacto. En producción se elige el reordenador por calidad y latencia p95, siempre después de la procedencia y del control de acceso. Si tuvieras que usar un LLM (Large Language Model) puntuador: delimita el documento como datos, valida su salida (puntuacion_llm ya recorta a [0, 10]) y no le dejes decidir solo."
     }
   ],
   "debrief": {
     "what_happened": "Has construido una recuperación en dos etapas, con las métricas que usa la industria para evaluarla, y has medido dos reordenadores en CPU: lo que mejoran el orden, lo que cuestan en latencia y cómo responden a documentos escritos para posicionarse, incluida una inyección dirigida al propio puntuador.",
     "why": "El reordenador decide qué tres fragmentos lee el modelo, así que es tan crítico para la seguridad como la búsqueda. Optimiza la apariencia de relevancia, no la verdad ni la procedencia: puede subir una respuesta falsa bien escrita. Si es un LLM, además obedece instrucciones del texto que puntúa.",
     "in_production": "La reordenación con cross-encoder es estándar en buscadores y RAG: se aplica a 20–100 candidatos, con modelos cuantizados o servidos en GPU, y se evalúa con conjuntos de preguntas etiquetadas cada vez que cambia el modelo o el corpus. Los LLM como reordenadores se usan cada vez más, por lotes de candidatos, y se tratan como cualquier LLM expuesto a contenido no confiable. La procedencia y el control de acceso se aplican antes de reordenar, y se vigilan los documentos nuevos que de repente ganan muchas búsquedas.",
-    "simplifications": ["18 preguntas y 5 documentos de terceros etiquetados a mano", "Un cross-encoder entrenado con MS MARCO traducido, no con datos del dominio", "El puntuador LLM puntúa candidato a candidato y en serie", "Métricas por documento, no por fragmento", "El Dojo no puede comprobar que la medición se hizo con los modelos reales: confía en tus datos"],
+    "simplifications": [
+      "18 preguntas y 5 documentos de terceros etiquetados a mano",
+      "Un cross-encoder entrenado con MS MARCO traducido, no con datos del dominio",
+      "El puntuador LLM puntúa candidato a candidato y en serie",
+      "Métricas por documento, no por fragmento",
+      "El Dojo no puede comprobar que la medición se hizo con los modelos reales: confía en tus datos"
+    ],
     "exercise": "forja/labs/A2-06_reranking/reranking.py"
   },
-  "further_reading": ["ref.nogueira-2019", "ref.bonifacio-mmarco-2021", "ref.hf-mmarco-cross-encoder", "ref.onnxruntime", "ref.jarvelin-2002", "ref.zhong-2023", "ref.zou-2024", "ref.pfrommer-2024", "ref.owasp-llm-2025"],
-  "xp": { "base": 450 }
+  "further_reading": [
+    "ref.nogueira-2019",
+    "ref.bonifacio-mmarco-2021",
+    "ref.hf-mmarco-cross-encoder",
+    "ref.onnxruntime",
+    "ref.jarvelin-2002",
+    "ref.zhong-2023",
+    "ref.zou-2024",
+    "ref.pfrommer-2024",
+    "ref.owasp-llm-2025"
+  ],
+  "xp": {
+    "base": 450
+  },
+  "you_can_now": "Sabes medir un reordenador con recall@k, MRR (Mean Reciprocal Rank) y nDCG (normalized Discounted Cumulative Gain), y su coste en latencia, y sabes por qué reordenar no es una defensa: lo que saca a un tercero del top-k es la procedencia."
 }

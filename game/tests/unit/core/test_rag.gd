@@ -68,16 +68,17 @@ func test_bateria_calibrada() -> void:
 	assert_eq(_last("rag.eval")["passed"], 7)
 
 
-const R40 := "reflexion un rag trocea los documentos los convierte en vectores busca los fragmentos mas parecidos a la pregunta y genera la respuesta con ellos cada eslabon es una superficie de ataque la ingesta la recuperacion el contexto y los vectores por eso hay que controlar el acceso la procedencia y abstenerse si no hay informacion"
 
 
 func test_mision_A2_01() -> void:
 	game.progress.data["missions"]["T5-02"] = {"completed": true}
 	game.progress.data["missions"]["A1-01"] = {"completed": true}
 	assert_eq(game.start_mission("A2-01"), "")
-	run(["rag create biblio", "rag docs biblio", "answer 2", "rag ingest biblio", "rag search biblio aceite para proteger la hoja", "answer cuidados"])
+	run(["rag create biblio", "rag docs biblio", "answer 2", "rag ingest biblio"])
+	_solve_py(PY_TROCEAR)
+	run(["rag search biblio aceite para proteger la hoja", "answer cuidados"])
 	run(["rag ask biblio ¿Qué aceite debo usar para proteger la hoja?", "rag eval biblio", "answer 6", "rag defend biblio min-score on", "rag eval biblio"])
-	run(["hipotesis peor", "rag ingest biblio --chunk 6 --overlap 0", "rag eval biblio", "answer 3", R40])
+	run(["hipotesis peor", "rag ingest biblio --chunk 6 --overlap 0", "rag eval biblio", "answer 3", "answer b"])
 	assert_eq(game.runner.phase, "trial")
 	run(["rag ingest biblio --chunk 200 --overlap 0", "rag search biblio aceite para proteger la hoja", "answer 161"])
 	assert_eq(finished.size(), 1)
@@ -102,7 +103,7 @@ func test_mision_A2_02() -> void:
 		"informe campo componente la recuperación del RAG no aplica permisos", "informe campo descripcion el índice mezcla documentos internos y públicos",
 		"informe campo pasos 1) rag create biblio 2) rag ingest biblio 3) rag ask biblio precio de coste", "informe campo impacto un cliente obtiene costes y márgenes internos",
 		"informe campo evidencia la respuesta contiene el precio de coste 310", "informe campo mitigacion aplicar control de acceso en la recuperación",
-		"informe campo verificacion la batería pasa de 1,00 a 0,00 de éxito", "informe revisar", R40])
+		"informe campo verificacion la batería pasa de 1,00 a 0,00 de éxito", "informe revisar", "answer b"])
 	assert_eq(game.runner.phase, "trial")
 	run(["rag ask biblio ¿Quién es el proveedor de acero y cuál es su contacto?", "answer compras@tamagawa.example"])
 	assert_eq(finished.size(), 1)
@@ -116,8 +117,32 @@ func test_mision_A2_03() -> void:
 	run(["rag defend biblio acl on", "rag attack biblio", "answer 0.6"])
 	run(["hipotesis no", "rag defend biblio spotlight on", "rag attack biblio", "answer 2"])
 	run(["rag defend biblio trusted-sources on", "rag attack biblio"])
-	run(["rag defend biblio vector-acl on", "rag attack biblio", "rag defend biblio min-score on", "rag eval biblio", R40])
+	run(["rag defend biblio vector-acl on", "rag attack biblio", "rag defend biblio min-score on", "rag eval biblio", "answer a"])
 	assert_eq(game.runner.phase, "trial")
 	run(["rag create n", "rag ingest n", "rag defend n acl on", "rag defend n trusted-sources on", "rag defend n vector-acl on", "rag defend n min-score on", "rag attack n", "rag eval n"])
 	assert_eq(finished.size(), 1)
 	assert_true(finished[0]["trial_passed"])
+
+
+# --- P0/A1/A2 ---
+
+const PY_TROCEAR := "def trocear(texto, tam, solape):\n    palabras = texto.split()\n    paso = tam - solape\n    trozos = []\n    for inicio in range(0, len(palabras), paso):\n        trozo = palabras[inicio:inicio + tam]\n        trozos.append(\" \".join(trozo))\n        if inicio + tam >= len(palabras):\n            break\n    return trozos\n"
+
+## Paso de Python de una misión: abre el editor, escribe la solución y la comprueba.
+func _solve_py(code: String) -> void:
+	assert_true(game.shell.execute("py").ok)
+	game.py_code = code
+	var r := game.shell.execute("py check")
+	assert_true(r.ok, r.plain_text())
+
+
+func test_A2_01_trocear_el_codigo_inicial_no_pasa() -> void:
+	game.progress.data["missions"]["T5-02"] = {"completed": true}
+	game.progress.data["missions"]["A1-01"] = {"completed": true}
+	assert_eq(game.start_mission("A2-01"), "")
+	run(["rag create biblio", "rag docs biblio", "answer 2", "rag ingest biblio"])
+	assert_eq(game.runner.current_objective()["id"], "py1")
+	run(["py", "py check"])
+	assert_eq(game.runner.current_objective()["id"], "py1", "el código inicial no pasa")
+	_solve_py(PY_TROCEAR)
+	assert_eq(game.runner.current_objective()["id"], "o3")

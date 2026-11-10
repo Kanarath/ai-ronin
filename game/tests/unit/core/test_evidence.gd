@@ -138,8 +138,7 @@ func test_mision_P0_01() -> void:
 	assert_eq(game.runner.index, 1)
 	game.import_evidence(_write("P0-01.json", _evidence("P0-01", 17)))
 	assert_eq(game.runner.index, 2)
-	for l in ["hipotesis entre 2 y 4", "reflexion " + "con temperatura alta salieron respuestas distintas y con temperatura cero y semilla fija salio siempre la misma ".repeat(4),
-			"reflexion " + "en cero cero cero cero cualquiera de la red podria usar el modelo y gastar mi cpu y los errores internos revelan rutas ".repeat(3)]:
+	for l in ["hipotesis entre 2 y 4", "answer a", "answer b"]:
 		var res := game.shell.execute(l)
 		assert_true(res.ok, res.plain_text())
 	assert_eq(finished.size(), 1)
@@ -190,8 +189,7 @@ func test_mision_A1_05() -> void:
 	assert_eq(game.runner.index, 1, "hacen falta 3 configuraciones")
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("entrada", 6), _cfg("sin-secreto", 0)])))
 	assert_eq(game.runner.index, 2)
-	for l in ["reflexion " + "sin defensas se filtro la mitad de las veces y el intervalo era ancho porque hay pocas repeticiones ".repeat(4),
-			"reflexion " + "sin el secreto en el prompt el modelo no puede filtrarlo y el filtro de salida no ve traducciones ".repeat(3)]:
+	for l in ["answer b", "answer a"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -210,8 +208,7 @@ func test_mision_A2_04() -> void:
 	assert_eq(game.runner.index, 1, "la medición de A1-05 no vale para A2-04")
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("acl", 6), _cfg("acl,procedencia,spotlight", 0)], "A2-04")))
 	assert_eq(game.runner.index, 2)
-	for l in ["reflexion " + "la busqueda hibrida recupero mejor y acl dejo la fuga a cero porque el documento interno no llego al contexto ".repeat(4),
-			"reflexion " + "el rol sale del token porque el cliente puede escribir cualquier cosa y la firma prueba integridad no verdad ".repeat(3)]:
+	for l in ["answer a", "answer a"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -234,29 +231,28 @@ func _run_p0(id: String, previas: Array, lineas: Array) -> void:
 	game.import_evidence(_write("p.json", _evidence(id, game.evidence.exercises[id]["total_tests"])))
 	assert_eq(game.runner.index, 2)
 	for l: String in lineas:
+		if l.begins_with("PY:"):
+			_solve_py(l.substr(3))
+			continue
 		var res := game.shell.execute(l)
 		assert_true(res.ok, "%s: %s" % [l, res.plain_text()])
 	assert_eq(finished.size(), 1, id)
 
 
 func test_mision_P0_02() -> void:
-	_run_p0("P0-02", ["T4-01"], ["answer 0.871", "hipotesis más de 50 veces", "reflexion " +
-		"con doscientas cuarenta filas numpy fue doce veces mas rapido y con doce mil setenta veces porque el coste fijo de cada llamada se reparte entre mas filas mientras python puro paga cada multiplicacion ".repeat(2)])
+	_run_p0("P0-02", ["T4-01"], ["answer 0.871", "hipotesis más de 50 veces", "answer b"])
 
 
 func test_mision_P0_03() -> void:
-	_run_p0("P0-03", ["T4-02", "P0-02"], ["answer 0.0024", "reflexion " +
-		"el bucle para cada ejemplo de t4 02 esta ahora dentro de los productos de matrices la forma n por h guarda una fila por ejemplo y sum axis cero suma los gradientes de los sesgos ".repeat(2)])
+	_run_p0("P0-03", ["T4-02", "P0-02"], ["answer 0.0024", "answer b"])
 
 
 func test_mision_P0_04() -> void:
-	_run_p0("P0-04", ["T5-01"], ["hipotesis 8", "answer 17", "reflexion " +
-		"sin nfc el filtro no veria la palabra escrita con el acento suelto y sin el decodificador incremental la ñ partida daria un error de decodificacion ".repeat(2)])
+	_run_p0("P0-04", ["T5-01"], ["hipotesis 8", "answer 17", "answer b"])
 
 
 func test_mision_P0_05() -> void:
-	_run_p0("P0-05", ["T6-01", "P0-04"], ["hipotesis no", "answer paciencia", "reflexion " +
-		"el generador entrega cada token en cuanto existe y si el usuario para el modelo deja de trabajar el limite va en el servidor porque el cliente puede pedir lo que quiera ".repeat(2)])
+	_run_p0("P0-05", ["T6-01", "P0-04"], ["PY:" + PY_ELEGIR, "hipotesis no", "answer paciencia", "answer b"])
 
 
 
@@ -468,8 +464,7 @@ func test_mision_A1_06() -> void:
 	assert_eq(game.runner.index, 1, "falta la configuración ninguna")
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("rubrica", 6), _cfg("intercambio,rubrica", 2)], "A1-06")))
 	assert_eq(game.runner.index, 2)
-	for l in ["reflexion " + "la kappa de la rubrica basica fue baja y los intervalos se solapan y el intercambio convirtio sesgos en empates ".repeat(4),
-			"reflexion " + "el prompt v2 perdio los datos de garantia y devoluciones y un juez sin kappa medida puede dar regresiones falsas ".repeat(3)]:
+	for l in ["answer b", "answer b"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -488,8 +483,7 @@ func test_mision_A1_07() -> void:
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 18, 15), _cfg("patrones", 12, 14), _cfg("clasificador", 5, 12)], "A1-07")))
 	assert_eq(game.runner.index, 2)
 	assert_true(game.shell.execute("evidence list").plain_text().contains("clasificador 5/18"))
-	for l in ["reflexion " + "los separadores esquivaron los patrones y las parafrasis amables esquivaron el clasificador que bloqueo preguntas normales ".repeat(5),
-			"reflexion " + "la cifra solo vale para ataques parecidos al entrenamiento y el atacante adaptativo manda los que pasan ".repeat(3)]:
+	for l in ["answer a", "answer b"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -517,8 +511,7 @@ func test_mision_A2_05() -> void:
 		c["legitimas_ok"] = mini(c["legitimas_ok"], 6)
 	game.import_evidence(_write("m.json", _measurement(cfgs, "A2-05")))
 	assert_eq(game.runner.index, 2)
-	for l in ["reflexion " + "el filtro de palabras deja pasar la cola de la instruccion porque el troceo la lleva a otro fragmento y la visibilidad rompe la pestana legitima ".repeat(4),
-			"reflexion " + "normalizaria solo la copia que mira el filtro y en una imagen no hay estilo que comprobar solo pixeles asi que trato lo transcrito como no confiable ".repeat(3)]:
+	for l in ["answer a", "answer a"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -546,8 +539,55 @@ func test_mision_A2_06() -> void:
 	game.import_evidence(_write("m.json", _measurement(cfgs, "A2-06")))
 	assert_eq(game.runner.index, 2)
 	assert_almost_eq(game.shell.events_named("evidence.measured")[-1]["data"]["baseline_rate"], 3.0 / 5.0, 0.0001)
-	for l in ["reflexion " + "el cross encoder subio el mrr y el ndcg pero tardo mas en p95 y subio la respuesta falsa bien escrita mientras procedencia la saco del top ".repeat(4),
-			"reflexion " + "pondria el cross encoder con procedencia antes de reordenar y al puntuador llm le delimitaria el documento y validaria su salida ".repeat(3)]:
+	_solve_py(PY_RECALL)
+	for l in ["answer a", "answer b"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
+
+
+# --- P0/A1/A2 ---
+
+const PY_ELEGIR := "def elegir(tokens, probs, u):\n    acumulada = 0\n    for token, p in zip(tokens, probs):\n        acumulada += p\n        if u < acumulada:\n            return token\n    return tokens[-1]\n"
+const PY_RECALL := "def recall_en_k(ranking, relevantes, k):\n    primeros = ranking[:k]\n    encontrados = 0\n    for doc in relevantes:\n        if doc in primeros:\n            encontrados += 1\n    return encontrados / len(relevantes)\n"
+
+## Paso de Python de una misión: abre el editor, escribe la solución y la comprueba.
+func _solve_py(code: String) -> void:
+	assert_true(game.shell.execute("py").ok)
+	game.py_code = code
+	var r := game.shell.execute("py check")
+	assert_true(r.ok, r.plain_text())
+
+
+## Los ejercicios guiados de P0-05 y A2-06: el código inicial no pasa y la solución sí.
+func test_P0_A2_python_guiado_inicial_falla() -> void:
+	for pair: Array in [["P0-05", "P0-05-elegir", PY_ELEGIR], ["A2-06", "A2-06-recall", PY_RECALL]]:
+		var m := game.catalog.get_mission(pair[0])
+		var ex: Dictionary = {}
+		for o: Dictionary in m["objectives"]:
+			if o.has("py_exercise"):
+				ex = PyCommands._int_spec(o["py_exercise"])  # como py check: los enteros del JSON, enteros
+		assert_eq(ex["id"], pair[1])
+		var start := PyExercise.check(ex["starter"], ex)
+		assert_true(start["ok"], "%s: el código inicial se ejecuta" % pair[1])
+		assert_true(start["passed"] < start["total"], "%s: el código inicial no pasa" % pair[1])
+		var sol := PyExercise.check(pair[2], ex)
+		assert_eq(sol["passed"], sol["total"], "%s: la solución pasa" % pair[1])
+
+
+## Ninguna misión de P0, A1 ni A2 pide reflexiones escritas y todas dicen para qué sirven.
+func test_P0_A1_A2_patron_del_piloto() -> void:
+	for id: String in ["P0-01", "P0-02", "P0-03", "P0-04", "P0-05", "A1-01", "A1-02", "A1-03", "A1-04", "A1-05", "A1-06", "A1-07",
+			"A2-01", "A2-02", "A2-03", "A2-04", "A2-05", "A2-06"]:
+		var m := game.catalog.get_mission(id)
+		assert_true(m.has("purpose") and m.has("you_can_now"), id)
+		var has_choices := false
+		for o: Dictionary in m["objectives"]:
+			assert_ne(o["validator"].get("type"), "reflection", "%s/%s" % [id, o["id"]])
+			assert_true(o.has("teach") and str(o["teach"]).contains("Por qué:"), "%s/%s: teach con «Por qué:»" % [id, o["id"]])
+			if not o.get("choices", []).is_empty():
+				has_choices = true
+				for c: Dictionary in o["choices"]:
+					if c["id"] != o["validator"]["expected"]:
+						assert_false(str(c.get("why", "")).is_empty(), "%s/%s: opción %s sin why" % [id, o["id"], c["id"]])
+		assert_true(has_choices, "%s: al menos una comprobación con opciones" % id)
