@@ -51,6 +51,14 @@
       "tests_sha256": "9cd3ac84c112da3df61bccf4691f6ce2d1bc6176b060187232405a8f20851ec4"
     },
     {
+      "id": "E3-01",
+      "file": "E3_01_auditoria.py",
+      "test_file": "test_E3_01_auditoria.py",
+      "test_path": "forja/ejercicios/test_E3_01_auditoria.py",
+      "total_tests": 16,
+      "tests_sha256": "3274c7bc07375ac2d068992d6539840633e905784b7833ceaf8e64d60f1635c7"
+    },
+    {
       "id": "O5-01",
       "file": "O5_01_riesgos.py",
       "test_file": "test_O5_01_riesgos.py",

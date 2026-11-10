@@ -533,6 +533,7 @@ Documentación: [docs.pytorch.org](https://docs.pytorch.org/docs/stable/).
 | E2-01 evasión (forja/labs) | 12, 15 (`softmax` por filas, `P[np.arange(n), y]`, `np.sign`, `np.clip`) |
 | E2-02 extracción (forja/labs) | 8, 12, 14, 15 (`np.round`, `np.argmax`, `np.hstack`, `np.linalg.lstsq`) |
 | E2-03 privacidad (forja/labs) | 9, 12, 15 (máscaras booleanas, `~`, `reshape`, `rng.laplace`, `rng.normal`) |
+| E3_01 auditoría | 3, 7 (clave con tupla), 8, 9, 11 (`random.Random(semilla).sample`, `math.sqrt`), 12 |
 
 Si te atascas en un ejercicio, mira [PISTAS.md](PISTAS.md): tiene pistas progresivas para cada función.
 

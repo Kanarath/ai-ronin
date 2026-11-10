@@ -1,0 +1,106 @@
+{
+  "id": "E3-01",
+  "schema_version": 1,
+  "title": "Dos evaluaciones, un sistema",
+  "unit": "E3",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 40,
+  "requires_missions": ["O5-03"],
+  "competencies": { "requires": ["O5.tratamiento"], "trains": ["E3.fria", "E3.eipd", "E3.roles-evaluacion"] },
+  "briefing": "El Ayuntamiento de Valdeacero quiere poner en marcha en marzo de 2028 Ayuda-Valle, un sistema que propone quién recibe las ayudas de emergencia social. Es alto riesgo. La secretaría te pide dos cosas que se confunden a menudo: la evaluación de impacto en los derechos fundamentales del AI Act (FRIA, art. 27) y la evaluación de impacto relativa a la protección de datos del RGPD (EIPD, art. 35). Qué pide cada una, quién la hace, cuándo y, de paso, a quién más del valle le tocan.",
+  "learning_objectives": [
+    "Decidir si un sistema exige FRIA, EIPD, las dos o ninguna, según quién lo despliega y qué datos trata",
+    "Distinguir el contenido mínimo de la FRIA (art. 27.1) y de la EIPD (art. 35.7) y lo que comparten",
+    "Asignar cada tarea al actor que la tiene por ley y situarla en el calendario"
+  ],
+  "mentor_intro": "En O5 clasificaste sistemas. Ahora vas un paso más allá: qué documento hay que escribir antes de usarlos. Esto es formación, no asesoramiento jurídico: el texto vigente está en EUR-Lex.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "fria",
+      "title": "FRIA: AI Act, art. 27",
+      "body": "Antes de desplegar un sistema de alto riesgo del art. 6.2 (anexo III), lo evalúan los responsables del despliegue que sean organismos de Derecho público o entidades privadas que prestan servicios públicos, y quienes desplieguen sistemas del anexo III, 5.b (solvencia) o 5.c (seguros de vida y salud). Se excluye el anexo III, punto 2 (infraestructuras críticas). Contenido (27.1): (a) los procesos en que se usará, (b) periodo y frecuencia de uso, (c) personas y colectivos afectados, (d) riesgos concretos de perjuicio, (e) supervisión humana, (f) medidas si los riesgos se materializan, con gobernanza interna y reclamaciones. Se hace para el primer uso y se actualiza si algo cambia (27.2); los resultados se notifican a la autoridad de vigilancia del mercado (27.3). Comandos: audit open · audit cases · audit duty."
+    },
+    {
+      "id": "eipd",
+      "title": "EIPD: RGPD, art. 35",
+      "body": "La hace el responsable del tratamiento, antes de tratar los datos, cuando el tratamiento probablemente entrañe un alto riesgo para los derechos y libertades (35.1), con el asesoramiento del delegado de protección de datos (35.2). Siempre hace falta, entre otros casos, si hay una evaluación sistemática y exhaustiva de aspectos personales automatizada, con decisiones que producen efectos jurídicos o similares (35.3.a), o tratamiento a gran escala de categorías especiales, como la salud (35.3.b). Contenido mínimo (35.7): descripción del tratamiento y sus fines, necesidad y proporcionalidad, riesgos para los derechos y libertades, y medidas para afrontarlos. Si el riesgo sigue siendo alto, consulta previa a la autoridad de control (art. 36). Las autoridades publican listas de tratamientos que la exigen (35.4)."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Abre el expediente y decide, para los cuatro casos del valle, si exigen FRIA y si exigen EIPD.",
+      "prediction": { "prompt": "La forja (empresa privada) usará el cribado de currículos de alto riesgo. ¿Le toca hacer una FRIA?", "options": ["sí, todo sistema de alto riesgo la exige", "no, el art. 27 no obliga a una empresa privada con ese uso", "solo si el proveedor no la hizo"] },
+      "validator": { "type": "event", "event": "audit.duty", "where": { "correct": 4 } },
+      "hints": [
+        "audit open valle · audit cases valle · audit duty valle <caso> <si|no> <si|no>",
+        "Para la FRIA importa quién despliega (público o servicio público) y qué punto del anexo III es; para la EIPD, si se tratan datos personales con alto riesgo.",
+        "Ayuda-Valle sí/sí · cribado-cv no/sí · solvencia-caja sí/sí · agua-valle no/no."
+      ],
+      "on_complete": "Alto riesgo no implica FRIA. La FRIA es para el sector público, los servicios públicos y dos usos concretos (crédito y seguros); la EIPD depende de los datos personales, no del AI Act."
+    },
+    {
+      "id": "o2",
+      "text": "Coloca los diez elementos del borrador de Ayuda-Valle en la FRIA, en la EIPD o en ambas.",
+      "teach": "No son el mismo documento\nLa EIPD mira el tratamiento de datos personales: si es necesario y proporcionado y cómo se protegen los datos. La FRIA mira el uso del sistema sobre las personas: cuándo, a quién afecta, con qué supervisión y qué pasa si sale mal. Se solapan en los riesgos para los derechos, y por eso el art. 27.4 dice que, si la EIPD ya cubre algo, la FRIA la complementa; desde el Digital Omnibus, puede remitirse a ella o incluir sus partes.",
+      "validator": { "type": "event", "event": "audit.placed", "where": { "correct": 10 } },
+      "hints": [
+        "audit elements valle · audit place valle <E#> <fria|eipd|ambas>",
+        "Necesidad y proporcionalidad, medidas de protección de datos y consulta previa son del RGPD. Periodo, colectivos, supervisión humana, reclamaciones y notificación a la autoridad de vigilancia del mercado son del art. 27.",
+        "E1 E2 E7 E10 eipd · E3 E4 E5 E6 E9 fria · E8 ambas."
+      ],
+      "on_complete": "Solo un elemento es común: los riesgos para los derechos. Hacer una sola evaluación «de IA» y llamarla de las dos maneras deja huecos en las dos."
+    },
+    {
+      "id": "o3",
+      "text": "Asigna las seis tareas de las evaluaciones a su actor.",
+      "validator": { "type": "event", "event": "audit.assigned", "where": { "correct": 6 } },
+      "hints": [
+        "audit roles valle · audit assign valle <T#> <actor>",
+        "El proveedor no hace la FRIA: la hace quien usa el sistema. El DPD asesora; no firma la EIPD.",
+        "T1 y T2 ayuntamiento · T3 dpd · T4 proveedor · T5 autoridad-mercado · T6 autoridad-control."
+      ],
+      "on_complete": "El ayuntamiento hace las dos evaluaciones; el proveedor le da la información (art. 13 y 26.9); el DPD asesora; cada autoridad recibe lo suyo."
+    },
+    {
+      "id": "o4",
+      "text": "Mira el calendario. El ayuntamiento quiere hacer un piloto con expedientes reales en octubre de 2027. ¿Qué evaluación es ya obligatoria entonces? (answer fria|eipd|ambas|ninguna)",
+      "validator": { "type": "all", "of": [
+        { "type": "event", "event": "audit.timeline" },
+        { "type": "answer", "expected": "eipd", "accept": ["eipd", "la eipd", "dpia"] }
+      ] },
+      "hints": ["audit timeline valle", "¿Desde cuándo se aplica el RGPD? ¿Y la sección 3 del capítulo III del AI Act para el anexo III?"],
+      "on_complete": "La EIPD: el RGPD se aplica desde 2018 y pide la evaluación antes de tratar los datos, también en un piloto. La FRIA es exigible desde el 2 de diciembre de 2027, y para marzo de 2028 tiene que estar hecha y notificada; empezarla con la EIPD ahorra trabajo."
+    },
+    {
+      "id": "o5",
+      "text": "Explica con tus palabras qué pregunta responde cada evaluación, por qué la forja no hace FRIA y el ayuntamiento sí, y qué ganas haciéndolas juntas. (reflexion <texto>, mínimo 40 palabras)",
+      "validator": { "type": "reflection", "min_words": 40 },
+      "hints": ["Datos personales frente a uso del sistema sobre las personas.", "Quién despliega, art. 27.1 y 27.4."]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: las dos evaluaciones desde cero. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con un expediente nuevo, decide los cuatro casos, coloca los diez elementos y asigna las seis tareas.",
+        "validator": {"type": "all", "of": [{"type": "sequence", "steps": [{"type": "event", "event": "audit.opened"}, {"type": "event", "event": "audit.duty", "where": {"correct": 4}}]}, {"type": "sequence", "steps": [{"type": "event", "event": "audit.opened"}, {"type": "event", "event": "audit.placed", "where": {"correct": 10}}]}, {"type": "sequence", "steps": [{"type": "event", "event": "audit.opened"}, {"type": "event", "event": "audit.assigned", "where": {"correct": 6}}]}]},
+        "hints": ["Cuatro casos, diez elementos y seis tareas."],
+        "on_complete": "Mapa de evaluaciones de Ayuda-Valle listo para la secretaría y el DPD."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has decidido qué sistemas exigen FRIA y EIPD, has separado el contenido de cada una y lo que comparten, has asignado cada tarea a su actor y has visto que la EIPD ya obliga mucho antes que la FRIA.",
+    "why": "Las dos evaluaciones nacen de normas distintas, con responsables, contenidos y destinatarios distintos. Confundirlas hace que falte lo que solo pide una (la proporcionalidad del tratamiento o la supervisión humana y las reclamaciones) o que se pida una FRIA a quien no la necesita.",
+    "in_production": "Las organizaciones públicas preparan una plantilla conjunta que reutiliza la EIPD y añade lo del art. 27, a la espera del formulario de la Oficina de IA (art. 27.5). El proveedor entrega instrucciones de uso y documentación (art. 13). El DPD revisa la EIPD, la asesoría jurídica valida los casos dudosos y las evaluaciones se revisan cuando cambia el sistema o su uso. Las listas de tratamientos que exigen EIPD de cada autoridad (en España, la de la AEPD) concretan el art. 35.",
+    "simplifications": ["Cuatro casos limpios; en la realidad hay dudas sobre qué es un «servicio público» o un tratamiento «a gran escala»", "No se trabajan otras obligaciones del responsable del despliegue (art. 26) ni el registro en la base de datos de la UE (art. 49)", "No se usa el formulario oficial de la Oficina de IA"],
+    "exercise": "forja/ejercicios/E3_01_auditoria.py"
+  },
+  "further_reading": ["ref.eu-ai-act", "ref.eu-ai-act-omnibus", "ref.rgpd-art35"],
+  "xp": { "base": 300 }
+}

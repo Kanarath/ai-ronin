@@ -27,6 +27,7 @@ Cada misión del Dojo tiene un ejercicio en Python. Implementas tú las funcione
 | `P0_03_mlp.py` | P0-03 | El MLP de T4-02 en matrices: forward y backward vectorizados con NumPy, gradient check y XOR |
 | `P0_04_unicode.py` | P0-04 | Texto en streaming: bytes frente a caracteres, NFC frente a NFD, emojis compuestos y una tubería de generadores |
 | `P0_05_generacion.py` | P0-05 | Generador de tokens con muestreo por suma acumulada, texto en streaming y límite de salida en bytes |
+| `E3_01_auditoria.py` | E3-01…03 | Auditoría en código: muestra de controles basada en el riesgo, cobertura por función, clasificación de hallazgos, intervalo de Wilson de una muestra de expedientes y resumen por severidad |
 
 **Ayudas:**
 - [PYTHON.md](PYTHON.md) explica, con ejemplos, todo el Python que usan los ejercicios, y tiene una tabla con las secciones que necesita cada uno. Léela antes de cada ejercicio.

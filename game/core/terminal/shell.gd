@@ -39,6 +39,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	SocCommands.register(registry)
 	EngagementCommands.register(registry)
 	GovCommands.register(registry)
+	AuditCommands.register(registry)
 	LabCommands.register(registry)
 	StudyCommands.register(registry)
 	EvidenceCommands.register(registry)

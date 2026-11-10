@@ -351,6 +351,12 @@
       "title": "Laboratorios integradores (C1–C3)",
       "body": ["Matriz: lab matrix <rag|agent|mcp> <sistema>. Cada columna es UNA defensa activada en solitario sobre una copia; ■ = la bloquea. Las dos últimas filas: tareas legítimas y aprobaciones, comparadas con la columna «ninguna».","Resiliencia: lab resilience <rag|agent|mcp> <sistema>. Mide la configuración activa: ataques con éxito, robustos (aguantan que se quite una defensa cualquiera) y frágiles (dependen de una sola).","Cobertura mínima: empieza por los puntos únicos (obligatorios), añade la columna que más filas cubra y descarta las que tengan coste.","La matriz es una hipótesis: las defensas pueden interactuar (C3-02). La combinación se comprueba siempre con lab resilience.","No hay ataques nuevos: se reutilizan las baterías y tareas de A2, A3 y A4."],
       "see_also": ["encargo","ataquesmcp"]
+    },
+    {
+      "id": "auditoria",
+      "title": "Gobernanza y auditoría (E3)",
+      "body": ["Abrir: audit open <nombre> (Ayuntamiento de Valdeacero y su sistema Ayuda-Valle, ficticios).","Evaluaciones de impacto: audit cases <a> · audit duty <a> <caso> <si|no> <si|no> · audit elements <a> · audit place <a> <E#> <fria|eipd|ambas> · audit roles <a> · audit assign <a> <T#> <actor> · audit timeline <a>.","FRIA (AI Act, art. 27): responsables del despliegue públicos o que prestan servicios públicos, y anexo III 5.b y 5.c; no el punto 2. EIPD (RGPD, art. 35): el responsable del tratamiento, antes de tratar datos con alto riesgo.","Auditoría: audit controls <a> · audit sample <a> <C## …> | --random <n> · audit plan <a> · audit evidence <a> <C##> · audit records <a> C10 <n> · audit rate <a> <C##> <conforme|nc-mayor|nc-menor|observacion>.","Informe: audit rubric <a> · audit findings <a> [H#|informe] · audit draft <a> <H#|informe> <campo> <A|B|C> · audit report <a> · audit followup <a> <H#> · audit close <a> <H#>.","Es formación, no asesoramiento jurídico: comprueba siempre el texto vigente en EUR-Lex."],
+      "see_also": ["gobernanza"]
     }
   ]
 }

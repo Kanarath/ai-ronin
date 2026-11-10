@@ -1,0 +1,112 @@
+{
+  "id": "E3-02",
+  "schema_version": 1,
+  "title": "Muestra y evidencia",
+  "unit": "E3",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 45,
+  "requires_missions": ["E3-01"],
+  "competencies": { "requires": ["E3.fria"], "trains": ["E3.muestreo", "E3.evidencia", "E3.no-conformidades"] },
+  "briefing": "Octubre de 2028. Ayuda-Valle lleva siete meses funcionando y el ayuntamiento te encarga su primera auditoría interna. La política de IA (POL-IA) adopta doce resultados del NIST AI RMF; tienes tiempo para auditar seis. Tendrás que elegir cuáles, mirar la evidencia de cada uno (documentos y, en un caso, expedientes reales) y clasificar lo que encuentres: conforme, no conformidad mayor o menor, u observación.",
+  "learning_objectives": [
+    "Diseñar una muestra de controles basada en el riesgo y comprobar su cobertura",
+    "Concluir solo sobre la evidencia, con una muestra de registros cuando el control se aplica caso a caso",
+    "Clasificar no conformidades mayores, menores y observaciones"
+  ],
+  "mentor_intro": "Auditar no es preguntar «¿lo hacéis?». Es pedir la prueba, mirar una muestra y escribir lo que has visto, ni más ni menos.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "muestreo",
+      "title": "Muestreo en una auditoría",
+      "body": "Casi nunca se audita todo: se elige una muestra. La guía de auditoría de sistemas de gestión ISO 19011 (edición de 2026) distingue el muestreo por juicio, basado en el riesgo y la experiencia, del muestreo estadístico; los dos se documentan y tienen límites. Aquí: todos los controles de riesgo alto, al menos uno por función del NIST AI RMF y no más de seis. Para un control que se aplica caso a caso (firmar cada denegación), la muestra es de expedientes, elegidos al azar para que no los escoja quien los gestiona. Comandos: audit controls · audit sample · audit plan."
+    },
+    {
+      "id": "criterios-nist",
+      "title": "¿Auditar contra un marco voluntario?",
+      "body": "El NIST AI RMF no obliga ni se certifica (O5-01). Pero una organización puede adoptar sus resultados en su política, y entonces la política es el criterio de auditoría. Los textos de las subcategorías que ves (GOVERN 1.1, MEASURE 2.11…) son los de NIST AI 100-1, traducidos. Si la organización estuviera certificada en ISO/IEC 42001, sus requisitos serían criterio; aquí no se usan porque el texto de la norma es de pago y no se reproduce."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Abre el expediente, mira los controles y prueba primero una muestra al azar de seis. Comprueba el plan.",
+      "prediction": { "prompt": "Seis controles al azar de doce, ¿incluirán los de riesgo alto?", "options": ["sí, el azar es lo más justo", "seguramente no todos: el azar no mira el riesgo", "da igual cuáles se miren"] },
+      "validator": { "type": "sequence", "steps": [
+        { "type": "event", "event": "audit.sampled", "where": { "mode": "random" } },
+        { "type": "event", "event": "audit.plan", "where": { "valid": false } }
+      ] },
+      "hints": ["audit open valle · audit controls valle · audit sample valle --random 6 · audit plan valle"],
+      "on_complete": "El azar dejó fuera tres de los cuatro controles de riesgo alto y toda la función MEASURE. Al azar se eligen expedientes, no qué mirar."
+    },
+    {
+      "id": "o2",
+      "text": "Diseña una muestra basada en el riesgo: los cuatro controles de riesgo alto, todas las funciones y como máximo seis controles.",
+      "validator": { "type": "event", "event": "audit.plan", "where": { "valid": true } },
+      "hints": [
+        "audit sample valle <C## C## …> · audit plan valle",
+        "Los de riesgo alto son C05, C07, C08 y C10. ¿Qué función queda sin cubrir?",
+        "audit sample valle C01 C05 C07 C08 C10 (y, si quieres, uno más de riesgo medio)."
+      ],
+      "on_complete": "Plan basado en el riesgo, con la limitación escrita: lo que no está en la muestra no se ha auditado."
+    },
+    {
+      "id": "o3",
+      "text": "Audita C10 (apelación y anulación): mira su evidencia, revisa una muestra de al menos 10 expedientes y clasifícalo.",
+      "teach": "Mayor, menor u observación\nEs práctica habitual en las auditorías de sistemas de gestión. No conformidad mayor: el requisito no se cumple en absoluto, o el fallo es sistemático y pone en duda que se logre el resultado. No conformidad menor: un fallo puntual o parcial en un control que en general funciona. Observación: todavía no hay incumplimiento, pero hay riesgo de que lo haya, o una mejora posible. Conforme: hay evidencia suficiente de que se cumple. Que exista un procedimiento no prueba que se aplique.",
+      "validator": { "type": "event", "event": "audit.rated", "where": { "control": "C10", "rating": "nc-mayor" } },
+      "diagnostics": [
+        { "when": { "type": "event", "event": "audit.rate_refused", "where": { "control": "C10" } }, "message": "Para C10 no basta con leer el procedimiento: mira cómo se aplicó en los expedientes, con audit records valle C10 <n> (n ≥ 10)." }
+      ],
+      "hints": [
+        "audit evidence valle C10 · audit records valle C10 10 · audit rate valle C10 <clase>",
+        "¿Cuántos fallos hay en la muestra? Compáralo con la regla de fallo sistemático."
+      ],
+      "on_complete": "Con 10 expedientes, tres denegaciones sin revisión humana: no es un despiste, es un control que no funciona. Y C06 (el procedimiento escrito) puede estar conforme a la vez."
+    },
+    {
+      "id": "o4",
+      "text": "Mira la evidencia del resto de tu muestra y clasifica todos sus controles sin errores.",
+      "validator": { "type": "event", "event": "audit.rated", "where": { "pending": 0, "wrong": 0, "alta_ok": 4 } },
+      "hints": [
+        "audit evidence valle <C##> · audit rate valle <C##> <conforme|nc-mayor|nc-menor|observacion>",
+        "¿Existe el control? ¿Falla siempre, una vez o todavía no?",
+        "C01 conforme · C05 nc-menor · C07 conforme · C08 nc-mayor · C10 nc-mayor."
+      ],
+      "on_complete": "Dos mayores, una menor y el resto conforme en la muestra. Fíjate en C08: un informe del proveedor con datos de otra provincia no es una evaluación propia."
+    },
+    {
+      "id": "o5",
+      "text": "Explica con tus palabras por qué el azar sirve para elegir expedientes pero no para elegir controles, y qué diferencia hay entre una no conformidad mayor, una menor y una observación, con un ejemplo de Ayuda-Valle. (reflexion <texto>, mínimo 40 palabras)",
+      "validator": { "type": "reflection", "min_words": 40 },
+      "hints": ["Riesgo frente a representatividad.", "C08, C05 y C09."]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: una auditoría por muestreo completa. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con un expediente nuevo, diseña una muestra válida y clasifica bien todos sus controles.",
+        "validator": { "type": "sequence", "steps": [
+          { "type": "event", "event": "audit.opened" },
+          { "type": "event", "event": "audit.plan", "where": { "valid": true } },
+          { "type": "event", "event": "audit.rated", "where": { "pending": 0, "wrong": 0, "alta_ok": 4 } }
+        ] },
+        "hints": ["Muestra, plan, evidencias, expedientes de C10 y clasificaciones."],
+        "on_complete": "Trabajo de campo terminado: los hallazgos pasan al informe."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has comprobado que una muestra al azar deja fuera lo importante, has diseñado una basada en el riesgo, has revisado expedientes al azar para un control que se aplica caso a caso y has clasificado no conformidades mayores, menores y observaciones con su evidencia.",
+    "why": "Una auditoría vale lo que vale su evidencia. Elegir qué mirar por riesgo y elegir los casos al azar son dos decisiones distintas, y las dos hay que escribirlas, porque marcan lo que el informe puede afirmar.",
+    "in_production": "Programas de auditoría anuales basados en el riesgo (ISO 19011), listas de verificación por control, solicitudes de evidencia con fecha, muestras de registros con su método y su semilla, y papeles de trabajo que permiten a otra persona repetir la conclusión. En una certificación ISO/IEC 42001, la entidad certificadora aplica sus propias reglas para clasificar no conformidades (ISO/IEC 17021-1 e ISO/IEC 42006, de pago).",
+    "simplifications": ["Doce controles y una sola muestra de registros", "Una regla fija de fallo sistemático; en la realidad decide el juicio del auditor, documentado", "La muestra de expedientes es pequeña: con 3 fallos de 10, la tasa real puede estar entre el 11 % y el 60 % (intervalo de Wilson)"],
+    "exercise": "forja/ejercicios/E3_01_auditoria.py"
+  },
+  "further_reading": ["ref.nist-ai-rmf", "ref.iso-19011", "ref.iso-42001"],
+  "xp": { "base": 300 }
+}

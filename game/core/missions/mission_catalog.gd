@@ -46,11 +46,11 @@ func load_dir(dir_path: String) -> void:
 
 
 ## Orden del currículo: primero el tronco común (T…), después la pista de Python (P…, que se
-## abre al terminar T6), los arcos (A…) y luego el resto.
+## abre al terminar T6), los arcos (A…), luego el resto y, al final, las especializaciones (E…).
 func _sort() -> void:
 	var rank := func(m: Dictionary) -> String:
 		var u: String = m["unit"]
-		var group := "0" if u.begins_with("T") else ("1" if u.begins_with("P") else ("2" if u.begins_with("A") else "3"))
+		var group := "0" if u.begins_with("T") else ("1" if u.begins_with("P") else ("2" if u.begins_with("A") else ("4" if u.begins_with("E") else "3")))
 		return group + String(m["id"])
 	missions.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return rank.call(a) < rank.call(b))
 
