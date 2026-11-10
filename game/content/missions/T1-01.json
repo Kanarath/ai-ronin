@@ -8,69 +8,150 @@
   "epistemic": "consolidado",
   "estimated_minutes": 20,
   "requires_missions": [],
-  "competencies": { "requires": [], "trains": ["T1.explorar-datos"] },
+  "competencies": {
+    "requires": [],
+    "trains": [
+      "T1.explorar-datos"
+    ]
+  },
   "briefing": "La forja Kurogane inspecciona cada katana antes de venderla. El maestro herrero quiere un sistema que prediga si una hoja es apta o defectuosa a partir de tres medidas. Antes de construir ningún modelo, un ingeniero hace siempre lo mismo: mirar los datos. Esa es tu primera misión.",
   "learning_objectives": [
-    "Distinguir features, etiqueta y ejemplo en un dataset real",
-    "Explorar un dataset con estadísticas descriptivas",
-    "Formular una hipótesis y contrastarla visualmente"
+    "Distinguir ejemplo, feature y etiqueta en un dataset real",
+    "Leer estadísticas descriptivas y comparar escalas",
+    "Formular una predicción y comprobarla con un gráfico"
   ],
-  "mentor_intro": "Bienvenido al Dojo. Aquí no se memoriza: se observa, se predice y se comprueba. Escribe en el terminal de abajo. Si te pierdes: help, mission status o hint.",
+  "mentor_intro": "La forja Kurogane quiere predecir si una katana saldrá apta o defectuosa a partir de tres medidas. Antes de construir ningún modelo, un ingeniero mira los datos. Vamos paso a paso.",
   "lab": {
-    "datasets": [{ "file": "katanas.csv", "name": "katanas", "label": "calidad" }],
-    "viz": { "dataset": "katanas", "x": "dureza_hrc", "y": "flexibilidad" }
-  },
-  "theory_cards": [
-    {
-      "id": "tabla",
-      "title": "Un dataset es una tabla",
-      "body": "Cada fila es un ejemplo (una katana). Cada columna numérica es una feature (lo que se mide). La columna «calidad» es la etiqueta: lo que el modelo tendrá que predecir. Prueba: explain feature · explain label"
+    "datasets": [
+      {
+        "file": "katanas.csv",
+        "name": "katanas",
+        "label": "calidad"
+      }
+    ],
+    "viz": {
+      "dataset": "katanas",
+      "x": "dureza_hrc",
+      "y": "flexibilidad"
     }
-  ],
+  },
+  "theory_cards": [],
   "objectives": [
     {
       "id": "o1",
-      "text": "Descubre qué datasets hay en el laboratorio.",
-      "teach": "Cómo se usa el terminal\nLos comandos tienen la forma «familia acción»: todo lo relativo a datos empieza por dataset. Para ver qué datasets hay en el laboratorio se escribe dataset list y se pulsa Enter.\nSi en algún momento no sabes qué hacer: botón Pista (o el comando hint), help para ver todos los comandos, o termina cualquier línea con « ?» (espacio e interrogación) para ver opciones sin ejecutar nada.",
-      "validator": { "type": "event", "event": "dataset.listed" },
+      "text": "Mira qué datasets hay en el laboratorio: dataset list",
+      "teach": "Los comandos de datos\nTodo lo relativo a datos empieza por la palabra dataset, seguida de lo que quieres hacer.\nPara ver qué datasets hay: dataset list",
+      "validator": {
+        "type": "event",
+        "event": "dataset.listed"
+      },
       "hints": [
-        "Todo lo relacionado con datos empieza por la misma palabra. Prueba a escribir help.",
-        "El comando es dataset list."
+        "Escribe exactamente: dataset list"
       ],
-      "on_complete": "Bien. Un solo dataset: katanas. 240 hojas inspeccionadas por los maestros."
+      "on_complete": "Hay uno: katanas, con 240 filas. La columna «features» dice que cada katana tiene 3 medidas, y «clases», que cada una acabó apta o defectuosa. Ahora miremos dentro."
     },
     {
       "id": "o2",
-      "text": "Inspecciona el dataset katanas: ¿qué columnas tiene?",
-      "teach": "Ejemplos y columnas\nUn dataset es una tabla. Cada FILA es un ejemplo (aquí, una katana concreta). Cada COLUMNA es una medida de ese ejemplo. Para ver las primeras filas: dataset inspect <nombre>, por ejemplo dataset inspect katanas. Fíjate en el nombre de cada columna.",
-      "validator": { "type": "event", "event": "dataset.inspected", "where": { "dataset": "katanas" } },
+      "text": "Mira las primeras filas del dataset: dataset inspect katanas",
+      "teach": "Mirar dentro\nUn dataset es una tabla. dataset inspect te enseña sus primeras filas.",
+      "validator": {
+        "type": "event",
+        "event": "dataset.inspected",
+        "where": {
+          "dataset": "katanas"
+        }
+      },
       "hints": [
-        "Hay un subcomando de dataset para mirar dentro. Termina la línea con ? para ver opciones: dataset ?",
-        "dataset inspect <nombre>",
-        "Escribe: dataset inspect katanas"
+        "Escribe exactamente: dataset inspect katanas"
       ],
-      "on_complete": "Tres features numéricas (dureza en escala Rockwell, flexibilidad de 0 a 10 y temperatura de temple en °C) y una etiqueta: calidad. Cada fila es un vector de 3 números con su etiqueta."
+      "on_complete": "Así se lee esa tabla:\n· Cada FILA es un EJEMPLO: una katana concreta (hoja-065, hoja-224…).\n· dureza_hrc, flexibilidad y temperatura_temple son FEATURES: lo que se MIDE de cada katana. Son la entrada del modelo.\n· calidad es la ETIQUETA: el resultado que queremos PREDECIR (apta o defectuosa). Es la salida del modelo.\nLa idea de todo el curso: que un modelo aprenda a adivinar la etiqueta a partir de las features."
     },
     {
       "id": "o3",
-      "text": "Obtén las estadísticas del dataset: medias, rangos y cuántas hojas hay de cada clase.",
-      "teach": "Resumir 240 filas\nCon muchos ejemplos no puedes mirarlos uno a uno: se resumen con estadísticas descriptivas. MEDIA: el valor típico. DESVIACIÓN TÍPICA: cuánto se alejan los valores de la media (pequeña = todos parecidos). MÍNIMO, MÁXIMO y RANGO (máx − mín): entre qué valores se mueve cada columna. También verás cuántas hojas hay de cada clase. Comando: dataset stats <nombre>.",
-      "validator": { "type": "event", "event": "dataset.stats", "where": { "dataset": "katanas" } },
-      "hints": [
-        "¿Qué palabra en inglés significa «estadísticas»?",
-        "dataset stats <nombre>"
+      "text": "Comprueba que lo tienes claro: en este dataset, ¿qué es «calidad»?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "una feature",
+          "why": "Las features son lo que se mide (dureza, flexibilidad, temperatura). La calidad no se mide: es lo que queremos adivinar."
+        },
+        {
+          "id": "b",
+          "text": "la etiqueta"
+        },
+        {
+          "id": "c",
+          "text": "un ejemplo",
+          "why": "Un ejemplo es una fila entera, una katana concreta como hoja-065. «calidad» es una columna."
+        }
       ],
-      "on_complete": "Fíjate en dos cosas: las clases están equilibradas (≈50 %) y las escalas son MUY distintas entre features. Recuérdalo."
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Piensa en qué columna es la que el modelo tendrá que adivinar.",
+        "Es la etiqueta: answer b"
+      ],
+      "on_complete": "Exacto: calidad es la etiqueta, lo que queremos predecir. Si alguna vez dudas: explain feature o explain label."
     },
     {
       "id": "o4",
-      "text": "¿Qué feature separa mejor las hojas aptas de las defectuosas? Predice y después compruébalo dibujando al menos dos combinaciones de features con plot.",
-      "teach": "¿Qué feature ayuda a distinguir?\nUna feature es útil para clasificar si toma valores DISTINTOS en cada clase. El gráfico de dispersión pone una feature en el eje horizontal, otra en el vertical, y colorea cada katana según su clase. Si los colores forman grupos separados, esas features ayudan; si están mezclados, no. Comando: plot katanas --x <feature> --y <feature>.\nAntes de dibujar, elige tu predicción con los botones de abajo (o hipotesis <feature>).",
+      "text": "Resume las 240 katanas con estadísticas: dataset stats katanas",
+      "teach": "Resumir muchos datos\n240 filas no se pueden mirar una a una: se resumen con unos pocos números por columna.\nMEDIA: el valor típico. MÍNIMO y MÁXIMO: el valor más bajo y el más alto. RANGO: máximo menos mínimo, es decir, cuánto se mueve esa medida.\nComando: dataset stats katanas",
+      "validator": {
+        "type": "event",
+        "event": "dataset.stats",
+        "where": {
+          "dataset": "katanas"
+        }
+      },
+      "hints": [
+        "Escribe exactamente: dataset stats katanas"
+      ],
+      "on_complete": "Mira la última columna, «rango»: la dureza se mueve 13,6 unidades, la flexibilidad 7,37 y la temperatura ¡119! Cada feature se mide en su propia unidad (HRC, una escala de 0 a 10, grados). Abajo ves también cuántas katanas hay de cada clase: casi mitad y mitad."
+    },
+    {
+      "id": "o5",
+      "text": "¿Cuántas veces más grande es el rango de la temperatura que el de la dureza? Divide un rango entre el otro y responde con un decimal: answer <número>",
+      "teach": "Comparar escalas\nPara saber cuántas veces es mayor un número que otro, se divide: 20 entre 5 da 4, «cuatro veces mayor».\nUsa los dos rangos de la tabla anterior.",
+      "validator": {
+        "type": "answer",
+        "expected": 8.75,
+        "tolerance": 0.06
+      },
+      "wrong_answer": "No. Divide el rango de temperatura_temple (119) entre el de dureza_hrc (13,6).",
+      "hints": [
+        "Los dos números están en la columna «rango» de dataset stats.",
+        "119 ÷ 13,6. Responde con un decimal, por ejemplo answer 8.7"
+      ],
+      "on_complete": "Casi 9 veces. Los números de la temperatura son mucho más grandes que los de la dureza solo por la unidad en que se miden. Guárdalo: en la misión siguiente verás que eso engaña a los modelos que miden parecidos."
+    },
+    {
+      "id": "o6",
+      "text": "Dibuja dos gráficos con plot y comprueba qué feature ayuda menos a distinguir aptas de defectuosas.",
+      "teach": "El gráfico de dispersión\nplot pone una feature en el eje horizontal (--x) y otra en el vertical (--y), y pinta cada katana del color de su clase.\nSi los dos colores forman grupos separados, esas features ayudan a distinguir. Si están mezclados, no.\nEjemplos: plot katanas --x dureza_hrc --y flexibilidad   ·   plot katanas --x temperatura_temple --y dureza_hrc",
       "prediction": {
         "prompt": "¿Qué feature crees que es MENOS útil para distinguir aptas de defectuosas?",
-        "options": ["dureza_hrc", "flexibilidad", "temperatura_temple"]
+        "options": [
+          "dureza_hrc",
+          "flexibilidad",
+          "temperatura_temple"
+        ]
       },
-      "validator": { "type": "event", "event": "viz.scatter", "where": { "dataset": "katanas" }, "count": { "gte": 2 } },
+      "validator": {
+        "type": "event",
+        "event": "viz.scatter",
+        "where": {
+          "dataset": "katanas"
+        },
+        "count": {
+          "gte": 2
+        }
+      },
       "hints": [
         "Si una feature no ayuda, en el gráfico los colores de las dos clases estarán mezclados a lo largo de ese eje.",
         "plot katanas --x <feature> --y <feature>. Compara un gráfico con temperatura y otro sin ella.",
@@ -79,27 +160,36 @@
       "on_complete": "Compara lo que predijiste con lo que ves: con dureza y flexibilidad las clases forman grupos; a lo largo de la temperatura están mezcladas. En este dataset la temperatura no aporta información sobre la calidad. Ojo: eso es una propiedad de ESTOS datos, no una ley de la metalurgia."
     },
     {
-      "id": "o5",
-      "text": "¿Cuál es el rango (máximo − mínimo) de temperatura_temple? Responde con answer <número>.",
-      "teach": "Escalas\nCada feature se mide en su propia unidad: la dureza en HRC, la flexibilidad de 0 a 10, la temperatura en grados. El rango te dice en qué escala se mueven sus números. Lo tienes en la tabla de dataset stats. Para responder a una pregunta numérica: answer <número>, por ejemplo answer 42.",
-      "validator": { "type": "answer", "expected": 119, "tolerance": 0.5 },
-      "wrong_answer": "No. El rango es máximo menos mínimo de esa columna. Lo tienes en dataset stats.",
-      "hints": [
-        "dataset stats te da el mínimo y el máximo de cada feature.",
-        "Rango = máx − mín de temperatura_temple. La tabla ya trae una columna «rango»."
+      "id": "o7",
+      "text": "Según lo que acabas de ver, ¿por qué la temperatura no ayuda a distinguir las katanas?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque sus números son mucho más grandes",
+          "why": "El tamaño de los números depende de la unidad (grados). Una feature con números grandes puede ser muy útil; lo que importa es si separa las clases."
+        },
+        {
+          "id": "b",
+          "text": "porque las aptas y las defectuosas aparecen mezcladas a lo largo de su eje"
+        },
+        {
+          "id": "c",
+          "text": "porque hay pocas katanas con temperatura",
+          "why": "Las 240 katanas tienen temperatura. El problema está en cómo se reparten los colores en el gráfico."
+        }
       ],
-      "on_complete": "119 °C de rango, frente a 13,6 de la dureza y 7,4 de la flexibilidad. Guarda este dato: en la próxima misión verás por qué importa tanto."
-    },
-    {
-      "id": "o6",
-      "text": "Explica con tus palabras qué es una feature y qué es la etiqueta en este dataset (reflexion <texto>, mínimo 12 palabras).",
-      "teach": "Explicar para entender\nEscribir con tus palabras obliga a ordenar las ideas, y es la mejor comprobación de que lo has entendido. Tus reflexiones se guardan y las revisaremos juntos. Comando: reflexion <tu texto>.",
-      "validator": { "type": "reflection", "min_words": 12 },
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
       "hints": [
-        "Piensa en qué mediría un inspector y qué decidiría al final.",
-        "Las features son la entrada del modelo; la etiqueta, la salida que debe aprender. Ponlo con ejemplos de las katanas."
+        "Vuelve a mirar el gráfico con temperatura_temple en el eje horizontal: ¿los colores están separados o mezclados?",
+        "answer b"
       ],
-      "on_complete": "Guardado. Revisaremos juntos tus reflexiones: explicar con tus palabras es la mejor prueba de que lo has entendido."
+      "on_complete": "Eso es. Una feature sirve para clasificar si toma valores distintos en cada clase. Acabas de hacer lo que hace un ingeniero antes de modelar: mirar los datos y descubrir qué medidas importan."
     }
   ],
   "mastery_trial": {
@@ -108,7 +198,11 @@
       {
         "id": "d1",
         "text": "¿Qué porcentaje del dataset son hojas defectuosas? (answer <número>, con un decimal)",
-        "validator": { "type": "answer", "expected": 51.7, "tolerance": 0.1 },
+        "validator": {
+          "type": "answer",
+          "expected": 51.7,
+          "tolerance": 0.1
+        },
         "hints": [
           "La proporción de cada clase aparece en las estadísticas.",
           "dataset stats katanas → tabla de calidad, columna proporción."
@@ -121,9 +215,16 @@
     "what_happened": "Has explorado un dataset antes de modelar: estructura, estadísticas y visualización. Has visto que una feature (la temperatura) no ayuda a separar las clases y que las escalas son muy distintas.",
     "why": "Mirar los datos primero evita construir modelos sobre supuestos falsos. Las estadísticas descriptivas y los gráficos son la herramienta más barata para detectar problemas: features inútiles, escalas, desequilibrio de clases y errores.",
     "in_production": "En un proyecto real esto es el análisis exploratorio de datos (EDA), normalmente con pandas y matplotlib o seaborn en Python. Con más de dos dimensiones no se puede dibujar todo a la vez: se usan matrices de gráficos por pares, correlaciones o técnicas de reducción de dimensionalidad (PCA, t-SNE).",
-    "simplifications": ["Dataset sintético de 3 features diseñado para enseñar", "Solo dos features por gráfico"],
+    "simplifications": [
+      "Dataset sintético de 3 features diseñado para enseñar",
+      "Solo dos features por gráfico"
+    ],
     "exercise": "forja/ejercicios/T1_01_estadisticas.py"
   },
-  "further_reading": ["ref.sklearn-pitfalls"],
-  "xp": { "base": 100 }
+  "further_reading": [
+    "ref.sklearn-pitfalls"
+  ],
+  "xp": {
+    "base": 100
+  }
 }

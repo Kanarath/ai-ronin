@@ -1,5 +1,6 @@
 extends Control
-## Hub del laboratorio: currículo · laboratorio (visualización) · misión + mentor · terminal.
+## Hub del laboratorio: misiones (plegables) · laboratorio (visualización) · objetivo actual · consola.
+## RONIN, el mentor, habla dentro de la consola.
 ## Solo presenta: toda la lógica está en DojoGame (autoload Dojo).
 
 ## Títulos de las unidades. Las que tienen misiones en el catálogo aparecen activas;
@@ -21,15 +22,6 @@ const UNIT_TITLES := {
 	"E4": "E4 · AI Ops avanzado",
 }
 const SERIES_COLORS: Array[Color] = [RoninPalette.CYAN, RoninPalette.GOLD, RoninPalette.TEAL, RoninPalette.VIOLET, RoninPalette.TEXT]
-const MENTOR_COLORS := {
-	"info": RoninPalette.TEXT,
-	"question": RoninPalette.CYAN,
-	"praise": RoninPalette.TEAL,
-	"warn": RoninPalette.GOLD,
-	"hint": RoninPalette.VIOLET,
-	"debrief": RoninPalette.TEXT,
-	"lesson": RoninPalette.TEXT,
-}
 
 var game: DojoGame
 var _terminal: TerminalView
@@ -39,7 +31,8 @@ var _net_view: NetworkGraph
 var _heatmap: AttentionHeatmap
 var _curriculum_box: VBoxContainer
 var _mission_text: RichTextLabel
-var _mentor_log: RichTextLabel
+var _left: PanelContainer
+var _left_toggle: Button
 var _prediction_box: HFlowContainer
 var _xp_label: Label
 var _xp_bar: ProgressBar
@@ -90,8 +83,13 @@ func _build_layout() -> void:
 	# Barra superior
 	var top := HBoxContainer.new()
 	root.add_child(top)
+	_left_toggle = Button.new()
+	_left_toggle.text = "☰ Misiones"
+	_left_toggle.tooltip_text = "Mostrar u ocultar la lista de misiones"
+	_left_toggle.pressed.connect(func() -> void: _set_left_visible(not _left.visible))
+	top.add_child(_left_toggle)
 	var title := Label.new()
-	title.text = "AI RONIN"
+	title.text = "  AI RONIN"
 	title.add_theme_color_override("font_color", RoninPalette.TEAL)
 	title.add_theme_font_size_override("font_size", 22)
 	top.add_child(title)
@@ -121,40 +119,38 @@ func _build_layout() -> void:
 
 	# Capa de notificaciones (encima de todo, esquina superior derecha)
 	_toaster = Toaster.new()
-	# Sobre el panel del laboratorio (a la izquierda de la columna de misión y mentor).
+	# Esquina superior derecha, sobre el laboratorio.
 	_toaster.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	_toaster.position = Vector2(-780, 60)
+	_toaster.position = Vector2(-360, 60)
 	_toaster.custom_minimum_size = Vector2(340, 0)
 	_toaster.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	add_child(_toaster)
 
-	# Cuerpo
-	var body := HSplitContainer.new()
+	# Cuerpo: [misiones plegables] | laboratorio arriba · objetivo actual · consola grande.
+	var body := HBoxContainer.new()
 	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	body.add_theme_constant_override("separation", 6)
 	root.add_child(body)
 
-	var left := _panel("CURRÍCULO")
-	left.custom_minimum_size = Vector2(250, 0)
-	body.add_child(left)
+	_left = _panel("MISIONES")
+	_left.custom_minimum_size = Vector2(270, 0)
+	body.add_child(_left)
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	left.get_child(0).add_child(scroll)
+	_left.get_child(0).add_child(scroll)
 	_curriculum_box = VBoxContainer.new()
 	_curriculum_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(_curriculum_box)
 
 	var center := VSplitContainer.new()
 	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	center.split_offset = -40
 	body.add_child(center)
 
-	var upper := HSplitContainer.new()
-	upper.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	center.add_child(upper)
-
 	var lab := _panel("LABORATORIO")
-	lab.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	upper.add_child(lab)
+	lab.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	center.add_child(lab)
 	_plot = ScatterPlot.new()
 	_plot.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_plot.custom_minimum_size = Vector2(380, 220)
@@ -174,32 +170,27 @@ func _build_layout() -> void:
 	_chart.visible = false
 	lab.get_child(0).add_child(_chart)
 
-	var right := VBoxContainer.new()
-	right.custom_minimum_size = Vector2(420, 0)
-	upper.add_child(right)
+	var lower := VBoxContainer.new()
+	lower.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	lower.size_flags_stretch_ratio = 1.6
+	lower.add_theme_constant_override("separation", 4)
+	center.add_child(lower)
 
-	var mission := _panel("MISIÓN")
-	right.add_child(mission)
+	# Franja del objetivo actual: qué misión, por dónde vas, qué te toca y los botones.
+	var strip := PanelContainer.new()
+	lower.add_child(strip)
+	var sbox := VBoxContainer.new()
+	sbox.add_theme_constant_override("separation", 4)
+	strip.add_child(sbox)
 	_mission_text = RichTextLabel.new()
 	_mission_text.bbcode_enabled = true
 	_mission_text.fit_content = true
 	_mission_text.scroll_active = false
-	mission.get_child(0).add_child(_mission_text)
-
-	var mentor := _panel("RONIN · mentor")
-	mentor.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	right.add_child(mentor)
-	var mbox: VBoxContainer = mentor.get_child(0)
-	_mentor_log = RichTextLabel.new()
-	_mentor_log.bbcode_enabled = true
-	_mentor_log.scroll_following = true
-	_mentor_log.selection_enabled = true
-	_mentor_log.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	mbox.add_child(_mentor_log)
+	sbox.add_child(_mission_text)
 	_prediction_box = HFlowContainer.new()
-	mbox.add_child(_prediction_box)
+	sbox.add_child(_prediction_box)
 	var actions := HBoxContainer.new()
-	mbox.add_child(actions)
+	sbox.add_child(actions)
 	for spec in [["Pista", "hint"], ["Objetivos", "mission status"], ["Briefing", "mission brief"], ["Chuleta", "cheatsheet"]]:
 		var b := Button.new()
 		b.text = spec[0]
@@ -210,8 +201,9 @@ func _build_layout() -> void:
 
 	_terminal = TerminalView.new()
 	_terminal.setup(game.shell)
-	_terminal.custom_minimum_size = Vector2(0, 250)
-	center.add_child(_terminal)
+	_terminal.custom_minimum_size = Vector2(0, 300)
+	_terminal.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	lower.add_child(_terminal)
 
 
 ## Panel con título; devuelve el PanelContainer (su hijo 0 es un VBoxContainer).
@@ -322,7 +314,7 @@ func _refresh_mission() -> void:
 	var r := game.runner
 	var m := game.active_mission
 	if m.is_empty():
-		_mission_text.text = "[color=%s]Ninguna misión activa.[/color]\nElige una en el currículo o escribe [b]mission list[/b]." % _hex(RoninPalette.MUTED)
+		_mission_text.text = "[color=%s]Ninguna misión activa.[/color]\nÁbrela con [b]☰ Misiones[/b] o escribe [b]mission list[/b]." % _hex(RoninPalette.MUTED)
 		_set_prediction_options([])
 		return
 	var lines := PackedStringArray()
@@ -330,7 +322,7 @@ func _refresh_mission() -> void:
 	if r.phase == "done":
 		phase_txt = "  [color=%s]· COMPLETADA[/color]" % _hex(RoninPalette.TEAL)
 	lines.append("[b]%s · %s[/b]%s" % [m["id"], _esc(m["title"]), phase_txt])
-	# Progreso compacto (✓✓▶··) + solo el objetivo actual: el mentor necesita el espacio.
+	# Progreso compacto (✓✓▶··) + solo el objetivo actual: la consola necesita el espacio.
 	var marks := ""
 	for i in r.objectives.size():
 		if i < r.index or r.phase == "done":
@@ -347,8 +339,12 @@ func _refresh_mission() -> void:
 		lines.append("[color=%s]Misión completada. Repítela o elige la siguiente en el currículo.[/color]" % _hex(RoninPalette.TEAL))
 	_mission_text.text = "\n".join(lines)
 	var obj := r.current_objective()
-	var opts: Array = obj.get("prediction", {}).get("options", []) if not obj.is_empty() and not r.hypotheses.has(r.objective_key(obj)) else []
-	_set_prediction_options(opts)
+	if not obj.is_empty() and obj.has("prediction") and not r.hypotheses.has(r.objective_key(obj)):
+		_set_prediction_options(obj["prediction"].get("options", []))
+	elif not obj.is_empty() and not obj.get("choices", []).is_empty():
+		_set_choice_buttons(obj["choices"])
+	else:
+		_set_prediction_options([])
 
 
 func _set_prediction_options(options: Array) -> void:
@@ -367,6 +363,22 @@ func _set_prediction_options(options: Array) -> void:
 		_prediction_box.add_child(b)
 
 
+## Botones de una pregunta de comprobación: cada uno responde con su letra.
+func _set_choice_buttons(choices: Array) -> void:
+	for c in _prediction_box.get_children():
+		c.queue_free()
+	var l := Label.new()
+	l.text = "Tu respuesta:"
+	l.add_theme_color_override("font_color", RoninPalette.CYAN)
+	_prediction_box.add_child(l)
+	for ch: Dictionary in choices:
+		var b := Button.new()
+		b.text = "%s) %s" % [ch["id"], ch["text"]]
+		var id: String = ch["id"]
+		b.pressed.connect(func() -> void: _run("answer " + id))
+		_prediction_box.add_child(b)
+
+
 # ── Eventos ──────────────────────────────────────────────────────────────────
 
 func _welcome() -> void:
@@ -374,7 +386,7 @@ func _welcome() -> void:
 	_terminal.print_line("Empieza con: mission list  ·  ayuda: help  ·  Tab autocompleta  ·  ↑↓ historial", "muted")
 	if not game.load_warning.is_empty():
 		_terminal.print_line(game.load_warning, "warn")
-	_on_mentor("Soy RONIN. No te daré respuestas: te haré preguntas. Elige una misión en el currículo de la izquierda.", "info")
+	_on_mentor("Soy RONIN, tu mentor. Te explicaré cada idea justo antes de usarla y, cuando la pruebes, te contaré qué ha pasado y por qué. Si es tu primera vez, empieza por T0-01. Abre la lista con «☰ Misiones» (arriba a la izquierda) o escribe mission list.", "info")
 
 
 func _run(line: String) -> void:
@@ -383,7 +395,8 @@ func _run(line: String) -> void:
 
 
 func _on_mission_started(m: Dictionary) -> void:
-	_mentor_log.clear()
+	# Con una misión en marcha, la lista se pliega: la consola necesita el espacio.
+	_set_left_visible(false)
 	_chart.visible = false
 	_attack_history.clear()
 	_eval_history.clear()
@@ -399,6 +412,7 @@ func _on_mission_started(m: Dictionary) -> void:
 
 func _on_mission_completed(m: Dictionary, result: Dictionary, xp_gained: int) -> void:
 	var trial := "Prueba de dominio superada: competencias dominadas." if result["trial_passed"] else "Sin prueba de dominio."
+	_set_left_visible(true)
 	_on_mentor("◆ Misión %s completada · +%d XP · maestría %d/100. %s" % [m["id"], xp_gained, result["score"], trial], "praise")
 	var exercise: String = m.get("debrief", {}).get("exercise", "")
 	if not exercise.is_empty():
@@ -407,20 +421,13 @@ func _on_mission_completed(m: Dictionary, result: Dictionary, xp_gained: int) ->
 
 
 func _on_mentor(text: String, kind: String) -> void:
-	var col: Color = MENTOR_COLORS.get(kind, RoninPalette.TEXT)
-	if kind == "lesson":
-		# Lección: primera línea como título destacado, el resto como cuerpo.
-		var parts := text.split("\n", true, 1)
-		var body := _esc(parts[1]) if parts.size() > 1 else ""
-		var head := _esc(parts[0]) if parts.size() > 1 else ""
-		if head.is_empty():
-			body = _esc(text)
-		_mentor_log.append_text("[bgcolor=%s][color=%s]◇ LECCIÓN %s[/color][/bgcolor]\n%s\n\n" % [_hex(RoninPalette.PANEL_ALT), _hex(RoninPalette.CYAN), head, body])
-		_refresh_mission()
-		return
-	var prefix := "◆ " if kind == "debrief" else ""
-	_mentor_log.append_text("[color=%s]%s%s[/color]\n\n" % [_hex(col), prefix, _esc(text)])
+	_terminal.print_mentor(text, kind)
 	_refresh_mission()
+
+
+func _set_left_visible(v: bool) -> void:
+	_left.visible = v
+	_left_toggle.text = "✕ Misiones" if v else "☰ Misiones"
 
 
 func _on_sim_event(e: Dictionary) -> void:

@@ -71,9 +71,9 @@ func test_catalogo_detecta_mision_mal_formada() -> void:
 
 func test_mision_T1_01_completa_con_prueba() -> void:
 	assert_eq(game.start_mission("T1-01"), "")
-	run(["dataset list", "dataset inspect katanas", "dataset stats katanas"])
+	run(["dataset list", "dataset inspect katanas", "answer b", "dataset stats katanas", "answer 8.75"])
 	run(["plot katanas", "hipotesis temperatura_temple", "plot katanas --x dureza_hrc --y flexibilidad", "plot katanas --x temperatura_temple --y dureza_hrc"])
-	run(["answer 119", "reflexion una feature es una medida de la hoja y la etiqueta es si es apta o defectuosa"])
+	run(["answer b"])
 	assert_eq(game.runner.phase, "trial")
 	run(["answer 51.7"])
 	assert_eq(finished.size(), 1)
@@ -81,7 +81,6 @@ func test_mision_T1_01_completa_con_prueba() -> void:
 	assert_eq(finished[0]["score"], 100)
 	assert_eq(game.progress.competency_state("T1.explorar-datos"), "dominada")
 	assert_eq(game.mission_status("T1-01"), "dominada")
-	assert_eq(game.progress.data["reflections"].size(), 1)
 
 
 func test_la_leccion_llega_antes_que_el_objetivo() -> void:
@@ -89,9 +88,9 @@ func test_la_leccion_llega_antes_que_el_objetivo() -> void:
 	var lesson_at := -1
 	var objective_at := -1
 	for i in mentor.size():
-		if mentor[i]["kind"] == "lesson" and mentor[i]["text"].contains("Cómo se usa el terminal"):
+		if mentor[i]["kind"] == "lesson" and mentor[i]["text"].contains("Los comandos de datos"):
 			lesson_at = i
-		if mentor[i]["text"].begins_with("Objetivo 1/"):
+		if mentor[i]["text"].begins_with("Tu turno (1/"):
 			objective_at = i
 	assert_true(lesson_at != -1, "hay lección para el primer objetivo")
 	assert_true(lesson_at < objective_at, "primero se enseña, después se pide")
@@ -99,9 +98,9 @@ func test_la_leccion_llega_antes_que_el_objetivo() -> void:
 
 func test_sin_lecciones_en_la_prueba_de_dominio() -> void:
 	game.start_mission("T1-01")
-	run(["dataset list", "dataset inspect katanas", "dataset stats katanas", "hipotesis temperatura_temple", "plot katanas", "plot katanas --x temperatura_temple", "answer 119"])
+	run(["dataset list", "dataset inspect katanas", "answer b", "dataset stats katanas", "answer 8.75", "hipotesis temperatura_temple", "plot katanas", "plot katanas --x temperatura_temple"])
 	mentor.clear()
-	run(["reflexion una feature es lo que se mide y la etiqueta es la calidad de cada hoja"])
+	run(["answer b"])
 	assert_eq(game.runner.phase, "trial")
 	for m in mentor:
 		assert_ne(m["kind"], "lesson")
@@ -109,17 +108,17 @@ func test_sin_lecciones_en_la_prueba_de_dominio() -> void:
 
 func test_hipotesis_obligatoria_antes_de_ejecutar() -> void:
 	game.start_mission("T1-01")
-	run(["dataset list", "dataset inspect katanas", "dataset stats katanas"])
+	run(["dataset list", "dataset inspect katanas", "answer b", "dataset stats katanas", "answer 8.75"])
 	run(["plot katanas", "plot katanas --x temperatura_temple"])
-	assert_eq(game.runner.index, 3, "sin hipótesis no se completa")
+	assert_eq(game.runner.index, 5, "sin hipótesis no se completa")
 	assert_true(mentor_said("registra tu predicción"))
 	run(["hipotesis flexibilidad", "plot katanas", "plot katanas --x temperatura_temple"])
-	assert_eq(game.runner.index, 4, "con hipótesis y acción posterior, sí")
+	assert_eq(game.runner.index, 6, "con hipótesis y acción posterior, sí")
 
 
 func test_hipotesis_valida_opciones() -> void:
 	game.start_mission("T1-01")
-	run(["dataset list", "dataset inspect katanas", "dataset stats katanas"])
+	run(["dataset list", "dataset inspect katanas", "answer b", "dataset stats katanas", "answer 8.75"])
 	assert_false(game.shell.execute("hipotesis color").ok)
 
 
@@ -131,10 +130,9 @@ func test_mision_bloqueada_hasta_completar_requisito() -> void:
 func test_mision_T1_02_completa() -> void:
 	game.progress.data["missions"]["T1-01"] = {"completed": true}
 	assert_eq(game.start_mission("T1-02"), "")
-	run(["hipotesis temperatura_temple", "distance katanas hoja-001 hoja-002", "answer 99.8"])
+	run(["hipotesis temperatura_temple", "distance katanas hoja-001 hoja-002", "answer b"])
 	run(["dataset normalize katanas --method minmax"])
-	run(["hipotesis no", "distance katanas_minmax hoja-001 hoja-002"])
-	run(["reflexion la distancia suma diferencias al cuadrado y la feature con numeros mas grandes domina aunque no sea relevante normalizar iguala escalas pero no relevancia"])
+	run(["hipotesis no", "distance katanas_minmax hoja-001 hoja-002", "answer a"])
 	assert_eq(game.runner.phase, "trial")
 	run(["dataset normalize katanas --method zscore", "distance katanas_zscore hoja-010 hoja-020", "answer 2.82"])
 	assert_eq(finished.size(), 1)
@@ -326,7 +324,7 @@ func test_escalera_de_pistas_y_confirmacion_nivel_5() -> void:
 
 func test_prueba_de_dominio_limita_pistas() -> void:
 	game.start_mission("T1-01")
-	run(["dataset list", "dataset inspect katanas", "dataset stats katanas", "hipotesis temperatura_temple", "plot katanas", "plot katanas --x temperatura_temple", "answer 119", "reflexion una feature es lo que se mide y la etiqueta es la calidad de cada hoja"])
+	run(["dataset list", "dataset inspect katanas", "answer b", "dataset stats katanas", "answer 8.75", "hipotesis temperatura_temple", "plot katanas", "plot katanas --x temperatura_temple", "answer b"])
 	assert_eq(game.runner.phase, "trial")
 	assert_true(game.runner.request_hint(false)["ok"])
 	assert_true(game.runner.request_hint(false)["ok"])
@@ -335,13 +333,24 @@ func test_prueba_de_dominio_limita_pistas() -> void:
 
 func test_respuesta_incorrecta_da_feedback() -> void:
 	game.start_mission("T1-01")
-	run(["dataset list", "dataset inspect katanas", "dataset stats katanas", "hipotesis temperatura_temple", "plot katanas", "plot katanas --x temperatura_temple", "answer 13.6"])
-	assert_true(mentor_said("máximo menos mínimo"))
+	run(["dataset list", "dataset inspect katanas", "answer b", "dataset stats katanas", "answer 13.6"])
+	assert_true(mentor_said("Divide el rango"))
 	assert_eq(game.runner.index, 4)
 
 
+func test_pregunta_de_comprobacion_explica_cada_respuesta() -> void:
+	game.start_mission("T1-01")
+	run(["dataset list", "dataset inspect katanas"])
+	assert_true(mentor_said("a) una feature"), "las opciones se muestran con el objetivo")
+	run(["answer a"])
+	assert_true(mentor_said("La calidad no se mide"), "la respuesta incorrecta explica por qué")
+	assert_eq(game.runner.index, 2)
+	run(["answer b"])
+	assert_eq(game.runner.index, 3)
+
+
 func test_repetir_mision_da_menos_xp() -> void:
-	var full := ["dataset list", "dataset inspect katanas", "dataset stats katanas", "hipotesis temperatura_temple", "plot katanas", "plot katanas --x temperatura_temple", "answer 119", "reflexion una feature es lo que se mide y la etiqueta es la calidad de cada hoja", "answer 51.7"]
+	var full := ["dataset list", "dataset inspect katanas", "answer b", "dataset stats katanas", "answer 8.75", "hipotesis temperatura_temple", "plot katanas", "plot katanas --x temperatura_temple", "answer b", "answer 51.7"]
 	game.start_mission("T1-01")
 	run(full)
 	game.start_mission("T1-01")
@@ -377,7 +386,7 @@ func test_progreso_persiste_entre_sesiones() -> void:
 			DirAccess.remove_absolute(p)
 	var g1 := DojoGame.new(path)
 	g1.start_mission("T1-01")
-	for l in ["dataset list", "dataset inspect katanas", "dataset stats katanas", "hipotesis temperatura_temple", "plot katanas", "plot katanas --x temperatura_temple", "answer 119", "reflexion una feature es lo que se mide y la etiqueta es la calidad de cada hoja", "answer 51.7"]:
+	for l in ["dataset list", "dataset inspect katanas", "answer b", "dataset stats katanas", "answer 8.75", "hipotesis temperatura_temple", "plot katanas", "plot katanas --x temperatura_temple", "answer b", "answer 51.7"]:
 		g1.shell.execute(l)
 	var g2 := DojoGame.new(path)
 	assert_true(g2.progress.is_mission_completed("T1-01"))

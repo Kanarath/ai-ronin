@@ -8,16 +8,27 @@
   "epistemic": "consolidado",
   "estimated_minutes": 8,
   "requires_missions": [],
-  "competencies": { "requires": [], "trains": ["T0.dojo"] },
+  "competencies": {
+    "requires": [],
+    "trains": [
+      "T0.dojo"
+    ]
+  },
   "briefing": "Antes de forjar nada, conoce tu taller. En 8 minutos aprenderás a moverte por el Dojo: dar órdenes al terminal, pedir ayuda sin miedo, consultar el glosario, ver datos dibujados y practicar con retos rápidos. Aquí no se puede romper nada: experimenta.",
   "learning_objectives": [
     "Usar el terminal: escribir un comando y leer su respuesta",
     "Saber dónde está la ayuda: pistas, glosario, manual y chuleta",
     "Responder preguntas y practicar con retos rápidos"
   ],
-  "mentor_intro": "Bienvenido al Dojo. Soy RONIN, tu mentor. Te iré explicando cada paso antes de pedírtelo. Si en algún momento te pierdes, pulsa el botón «Pista» de abajo: pedir ayuda es parte del camino.",
+  "mentor_intro": "Bienvenido al Dojo. Soy RONIN, tu mentor, y te hablo aquí mismo, en la consola. En cada paso te explico una cosa, la pruebas con un comando y te cuento qué ha pasado. Aquí no se puede romper nada.",
   "lab": {
-    "datasets": [{ "file": "katanas.csv", "name": "katanas", "label": "calidad" }],
+    "datasets": [
+      {
+        "file": "katanas.csv",
+        "name": "katanas",
+        "label": "calidad"
+      }
+    ],
     "viz": {}
   },
   "theory_cards": [],
@@ -25,49 +36,88 @@
     {
       "id": "o1",
       "text": "Escribe help en el terminal y pulsa Enter.",
-      "teach": "El terminal\nAbajo tienes el terminal: es tu herramienta principal. Escribe una orden (un «comando») y pulsa Enter. El comando help muestra la lista de todo lo que puedes hacer. No hace falta memorizarla: siempre estará ahí.",
-      "validator": { "type": "event", "event": "command.executed", "where": { "path": "help" } },
-      "hints": ["Haz clic en la línea de abajo (donde pone «escribe un comando»), escribe help y pulsa Enter."],
-      "on_complete": "¡Tu primer comando! Fíjate en que los comandos están agrupados por familias: misiones, datos, modelos, ayuda…"
+      "teach": "La consola\nEsta línea de abajo es la consola: escribes una orden (un «comando») y pulsas Enter.\nEmpieza por el más útil, el que lista todo lo que puedes hacer: escribe help y pulsa Enter.",
+      "validator": {
+        "type": "event",
+        "event": "command.executed",
+        "where": {
+          "path": "help"
+        }
+      },
+      "hints": [
+        "Haz clic en la línea de abajo (donde pone «escribe un comando»), escribe help y pulsa Enter."
+      ],
+      "on_complete": "¡Tu primer comando! La lista está agrupada por familias (misiones, datos, modelos, ayuda…). No hace falta memorizarla: help siempre estará ahí."
     },
     {
       "id": "o2",
       "text": "Pide una pista: pulsa el botón «Pista» o escribe hint.",
-      "teach": "Las pistas\nCada objetivo tiene hasta 5 pistas, de más sutil a más explícita. La primera es gratis. Las de nivel 3 o más reducen un poco tu puntuación de maestría, y la 5 (el ejemplo resuelto) pide confirmación. Pedir pistas no es hacer trampa: es aprender.",
-      "validator": { "type": "event", "event": "hint.used" },
-      "hints": ["El botón «Pista» está debajo de este panel del mentor. También vale escribir hint."],
-      "on_complete": "Así de fácil. Las pistas aparecen aquí, en el panel de RONIN."
+      "teach": "Las pistas\nSi te atascas, pide una pista: cada paso tiene varias, de más sutil a más explícita.\nPruébalo ahora: pulsa el botón «Pista» (encima de la consola) o escribe hint.",
+      "validator": {
+        "type": "event",
+        "event": "hint.used"
+      },
+      "hints": [
+        "El botón «Pista» está en la franja de encima de la consola. También vale escribir hint."
+      ],
+      "on_complete": "Así de fácil. Las pistas salen aquí, en la consola, marcadas con RONIN. Pedirlas no es hacer trampa: es parte de aprender."
     },
     {
       "id": "o3",
       "text": "Pregunta al glosario qué es un dataset: explain dataset",
-      "teach": "Glosario y manual\nexplain <término> te da la definición de cualquier concepto que aparezca en el Dojo, y man <tema> una explicación más larga. Cada entrada indica qué tipo de conocimiento es (concepto consolidado, técnica emergente, modelo simplificado…).",
-      "validator": { "type": "event", "event": "help.explain", "where": { "term": "dataset" } },
-      "hints": ["Escribe exactamente: explain dataset"],
-      "on_complete": "Un dataset es una colección de ejemplos. Hoy trabajarás con uno: 240 katanas inspeccionadas por los maestros de la forja."
+      "teach": "El glosario\nCuando aparezca una palabra que no conoces, pregúntala con explain <palabra>.\nPrueba con la palabra que más vas a oír: explain dataset",
+      "validator": {
+        "type": "event",
+        "event": "help.explain",
+        "where": {
+          "term": "dataset"
+        }
+      },
+      "hints": [
+        "Escribe exactamente: explain dataset"
+      ],
+      "on_complete": "Un dataset es una colección de ejemplos. El de este curso son 240 katanas que los maestros de la forja ya inspeccionaron."
     },
     {
       "id": "o4",
       "text": "Dibuja el dataset de katanas: plot katanas",
-      "teach": "Ver los datos\nplot <dataset> dibuja los ejemplos en el panel del LABORATORIO (arriba). Cada punto es una katana y su color indica si era apta o defectuosa. Mirar los datos dibujados es lo primero que hace cualquier ingeniero.",
-      "validator": { "type": "event", "event": "viz.scatter", "where": { "dataset": "katanas" } },
-      "hints": ["Escribe: plot katanas"],
-      "on_complete": "Mira el gráfico: las katanas aptas (verde azulado) forman un grupo en el centro y las defectuosas (dorado) aparecen a los lados. En T1 descubrirás por qué."
+      "teach": "El laboratorio\nEl panel de arriba es el LABORATORIO: ahí se dibujan los datos y los modelos.\nDibuja el dataset de katanas: plot katanas",
+      "validator": {
+        "type": "event",
+        "event": "viz.scatter",
+        "where": {
+          "dataset": "katanas"
+        }
+      },
+      "hints": [
+        "Escribe: plot katanas"
+      ],
+      "on_complete": "Cada punto del laboratorio es una katana: su posición son dos de sus medidas y su color, si salió apta (verde azulado) o defectuosa (dorado). En T1 aprenderás a leer este gráfico."
     },
     {
       "id": "o5",
-      "text": "¿Cuántas katanas hay en el dataset? Averígualo con dataset list y responde con answer <número>.",
-      "teach": "Responder\nAlgunos objetivos te hacen una pregunta. Busca el dato con los comandos y responde con answer seguido del número, por ejemplo answer 7. Si fallas no pasa nada: RONIN te dirá dónde mirar.",
-      "validator": { "type": "answer", "expected": 240, "tolerance": 0 },
+      "text": "¿Cuántas katanas hay en el dataset? Míralo con dataset list y responde con answer <número>.",
+      "teach": "Responder preguntas\nAlgunos pasos te hacen una pregunta. Buscas el dato con un comando y respondes con answer <número>.\nEl comando dataset list enseña los datasets que hay y cuántas filas (katanas) tiene cada uno.",
+      "validator": {
+        "type": "answer",
+        "expected": 240,
+        "tolerance": 0
+      },
       "wrong_answer": "No es ese número. Escribe dataset list y mira la columna «filas».",
-      "hints": ["dataset list muestra una tabla con el número de filas de cada dataset.", "Cada fila es una katana. Responde: answer <ese número>"],
+      "hints": [
+        "dataset list muestra una tabla con el número de filas de cada dataset.",
+        "Cada fila es una katana. Responde: answer <ese número>"
+      ],
       "on_complete": "240. Ya sabes encontrar un dato y responder."
     },
     {
       "id": "o6",
       "text": "Resuelve un reto rápido: escribe reto y responde con reto responder <valor>.",
-      "teach": "Retos rápidos\nreto te propone un problema corto con números nuevos cada vez, sobre lo que ya has aprendido. Al responder verás la solución paso a paso. Son la mejor forma de no olvidar: haz uno cuando tengas dos minutos. Si uno se te atraganta, reto saltar te enseña la solución y puedes pedir otro.",
-      "validator": { "type": "event", "event": "challenge.solved" },
+      "teach": "Los retos rápidos\nreto te propone un problema corto con números nuevos cada vez. Respondes con reto responder <valor> y ves la solución paso a paso.\nPruébalo: escribe reto.",
+      "validator": {
+        "type": "event",
+        "event": "challenge.solved"
+      },
       "hints": [
         "Escribe reto, lee la pregunta y responde con reto responder <número>.",
         "Si es una media: suma los números y divide entre cuántos hay. Si te bloqueas: reto saltar y después reto otra vez."
@@ -77,10 +127,15 @@
     {
       "id": "o7",
       "text": "Mira tus sellos (logros) con el comando logros.",
-      "teach": "Sellos\nCada logro es un sello con un kanji. Algunos se ganan avanzando y otros… equivocándote de formas muy instructivas. logros muestra los que tienes y los que te faltan.",
-      "validator": { "type": "event", "event": "achievements.viewed" },
-      "hints": ["Escribe: logros"],
-      "on_complete": "Ya conoces el Dojo. Tu primera misión de verdad te espera: T1-01 «Despertar en el Dojo». ¡Adelante!"
+      "teach": "Los sellos\nAlgunos logros se ganan avanzando y otros equivocándote de formas instructivas. Míralos con: logros",
+      "validator": {
+        "type": "event",
+        "event": "achievements.viewed"
+      },
+      "hints": [
+        "Escribe: logros"
+      ],
+      "on_complete": "Ya conoces el Dojo. Tu primera misión de verdad es T1-01 «Despertar en el Dojo»: ábrela con ☰ Misiones o escribe mission start T1-01."
     }
   ],
   "debrief": {
@@ -90,5 +145,7 @@
     "simplifications": []
   },
   "further_reading": [],
-  "xp": { "base": 50 }
+  "xp": {
+    "base": 50
+  }
 }

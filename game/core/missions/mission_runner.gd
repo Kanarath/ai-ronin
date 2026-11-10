@@ -119,7 +119,14 @@ func _check_current() -> void:
 	if last.is_empty() or last["seq"] <= min_seq:
 		return
 	if ConditionEval.contains_type(validator, "answer") and last["name"] == "answer.submitted":
-		mentor_message.emit(obj.get("wrong_answer", "No es correcto. Revisa el resultado y vuelve a intentarlo. Si te atascas: hint"), "warn")
+		var why := ""
+		for c: Dictionary in obj.get("choices", []):
+			if str(c["id"]).to_lower() == str(last["data"].get("value", "")).strip_edges().to_lower():
+				why = str(c.get("why", ""))
+		if not why.is_empty():
+			mentor_message.emit("No. %s Prueba otra vez." % why, "warn")
+		else:
+			mentor_message.emit(obj.get("wrong_answer", "No es correcto. Revisa el resultado y vuelve a intentarlo. Si te atascas: hint"), "warn")
 	elif validator.get("type") == "reflection" and last["name"] == "reflection.submitted":
 		mentor_message.emit("Desarrolla un poco más tu explicación (mínimo %d palabras). Escribe como si se lo explicaras a un compañero." % int(validator.get("min_words", 10)), "warn")
 
@@ -236,7 +243,13 @@ func _announce_current() -> void:
 				mentor_message.emit("%s\n%s" % [card["title"], card["body"]], "lesson")
 		if obj.has("teach"):
 			mentor_message.emit(obj["teach"], "lesson")
-	mentor_message.emit("%sObjetivo %d/%d: %s" % [label, index + 1, objectives.size(), obj["text"]], "info")
+	var task: String = "%sTu turno (%d/%d): %s" % [label, index + 1, objectives.size(), obj["text"]]
+	# Pregunta de comprobación: opciones a), b), c)… que se responden con answer <letra>.
+	for c: Dictionary in obj.get("choices", []):
+		task += "\n%s) %s" % [c["id"], c["text"]]
+	if not obj.get("choices", []).is_empty():
+		task += "\nResponde con answer <letra> (o con los botones)."
+	mentor_message.emit(task, "task")
 	if obj.has("prediction"):
 		var p: Dictionary = obj["prediction"]
 		var opts: Array = p.get("options", [])

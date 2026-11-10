@@ -16,10 +16,25 @@ const STYLE_COLORS := {
 	"mentor": RoninPalette.GOLD,
 }
 
+const MENTOR_COLORS := {
+	"info": RoninPalette.TEXT,
+	"question": RoninPalette.CYAN,
+	"praise": RoninPalette.TEAL,
+	"warn": RoninPalette.GOLD,
+	"hint": RoninPalette.VIOLET,
+	"debrief": RoninPalette.TEXT,
+	"lesson": RoninPalette.TEXT,
+	"task": RoninPalette.CYAN,
+}
+
 var shell: Shell
 var _output: RichTextLabel
 var _input: LineEdit
 var _history_index: int = -1
+## Mientras se ejecuta un comando, lo que dice el mentor espera a que termine la salida del
+## comando: así RONIN comenta el resultado DESPUÉS de que lo veas, no antes.
+var _busy := false
+var _pending_mentor: Array = []
 
 
 func setup(p_shell: Shell) -> void:
@@ -75,14 +90,43 @@ func focus_input() -> void:
 ## Ejecuta una línea como si la hubiera escrito el usuario (la usan los botones del mentor).
 func run_command(line: String) -> CommandResult:
 	_print_raw("[color=%s]%s[/color] %s" % [RoninPalette.TEAL.to_html(false), PROMPT, _escape(line)])
+	_busy = true
 	var result := shell.execute(line)
 	if result.action == "clear":
 		_output.clear()
 	for l in result.lines:
 		print_line(l["text"], l["style"])
+	_busy = false
+	for m: Array in _pending_mentor:
+		print_mentor(m[0], m[1])
+	_pending_mentor.clear()
 	_history_index = -1
 	command_executed.emit(line, result)
 	return result
+
+
+## Mensaje de RONIN dentro de la consola. Las lecciones llevan título y una barra a la
+## izquierda; «task» es lo que te toca hacer ahora; el resto, una línea con «RONIN ›».
+func print_mentor(text: String, kind: String = "info") -> void:
+	if _busy:
+		_pending_mentor.append([text, kind])
+		return
+	var col: Color = MENTOR_COLORS.get(kind, RoninPalette.TEXT)
+	var bar := "[color=%s]┃[/color] " % RoninPalette.CYAN.to_html(false)
+	if kind == "lesson":
+		var parts := text.split("\n")
+		_print_raw("")
+		_print_raw("%s[color=%s][b]◇ %s[/b][/color]" % [bar, RoninPalette.CYAN.to_html(false), _escape(parts[0])])
+		for p in parts.slice(1):
+			_print_raw("%s[color=%s]%s[/color]" % [bar, col.to_html(false), _escape(p)])
+		return
+	if kind == "task":
+		_print_raw("[color=%s][b]▶ %s[/b][/color]" % [col.to_html(false), _escape(text).replace("\n", "\n   ")])
+		_print_raw("")
+		return
+	var who := "[color=%s]RONIN ›[/color] " % RoninPalette.GOLD.to_html(false)
+	var prefix := "◆ " if kind == "debrief" else ""
+	_print_raw("%s[color=%s]%s%s[/color]" % [who, col.to_html(false), prefix, _escape(text).replace("\n", "\n        ")])
 
 
 func print_line(text: String, style: String = "normal") -> void:
