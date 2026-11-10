@@ -166,3 +166,37 @@ Antes de abrir una pista, ejecuta el test y lee el mensaje de error: suele decir
 <details><summary>🟢 residual</summary>Un <code>if / elif</code> por tratamiento y <code>riesgo(r["p"], r["i"])</code> por defecto. Reutiliza <code>riesgo</code>.</details>
 <details><summary>🟢 tratamiento_permitido</summary><code>if tratamiento == "mitigar" and r["p_mitigada"] is None</code> · <code>if tratamiento == "aceptar" and riesgo(r["p"], r["i"]) &gt; apetito</code>.</details>
 <details><summary>🟡 resumen_registro</summary>Recorre los riesgos con <code>t = tratamientos.get(r["id"])</code> y <code>res = residual(r, t)</code>. Un riesgo evitado es innecesario si <code>t == "evitar" and r["p_mitigada"] is not None</code>. Ordena las listas con <code>sorted</code>.</details>
+
+## P0_02 · regresión logística (clases y NumPy)
+
+<details><summary>🟢 estandarizar</summary>Tres líneas: <code>X = np.asarray(X, dtype=float)</code>, medias y desviaciones con <code>.mean(axis=0)</code> y <code>.std(axis=0)</code>. Después, <code>desv = np.where(desv == 0, 1.0, desv)</code> y devuelve <code>((X - medias) / desv, medias, desv)</code>. El broadcasting resta a cada fila (PYTHON.md §16).</details>
+<details><summary>🟢 ampliar_cuadrados</summary><code>np.hstack([Xs, Xs ** 2])</code>: la lista lleva los dos arrays que se pegan columna a columna.</details>
+<details><summary>🟢 __init__</summary>Cinco asignaciones a <code>self.</code>: lr, epocas, pesos (None), sesgo (0.0) e historial ([]). Sin <code>return</code> (PYTHON.md §15).</details>
+<details><summary>🟡 probabilidades (pura)</summary>Primero <code>if self.pesos is None: raise RuntimeError(...)</code>. Para cada fila: <code>z = sum(w * xi for w, xi in zip(self.pesos, x)) + self.sesgo</code> y <code>1 / (1 + math.exp(-z))</code>.</details>
+<details><summary>🟡 ajustar (pura)</summary>Reinicia pesos y sesgo, guarda la pérdida inicial y en cada época: <code>ps = self.probabilidades(X)</code>; acumula <code>e = p - t</code> por ejemplo en una lista de gradientes; actualiza con la media (divide entre n) y añade <code>self.perdida(X, y)</code> al historial. <code>return self</code> al final.</details>
+<details><summary>🔴 ajustar (NumPy)</summary><code>X = np.asarray(X, dtype=float)</code> · <code>y = np.asarray(y, dtype=float)</code> · <code>n, d = X.shape</code> · <code>self.pesos = np.zeros(d)</code>. En el bucle: <code>e = self.probabilidades(X) - y</code> · <code>self.pesos = self.pesos - self.lr * (X.T @ e) / n</code> · <code>self.sesgo -= self.lr * float(e.mean())</code>.</details>
+<details><summary>🟢 cronometrar</summary><code>t0 = time.perf_counter()</code>, <code>modelo.ajustar(X, y)</code> y <code>return time.perf_counter() - t0</code>.</details>
+
+## P0_03 · MLP en matrices
+
+<details><summary>🟢 __init__</summary>Un único <code>rng = np.random.default_rng(semilla)</code> y dos llamadas a <code>rng.uniform(-1.0, 1.0, size=...)</code>, primero W1 y luego W2. Si creas dos rng distintos, W2 sale igual que el principio de W1.</details>
+<details><summary>🟡 forward</summary><code>A1 = sigmoide(X @ self.W1 + self.b1)</code> y <code>P = sigmoide(A1 @ self.W2 + self.b2)</code>. Escribe al lado las formas: (n, d)·(d, H) + (H,) → (n, H).</details>
+<details><summary>🟡 gradientes</summary>Llama a <code>self.forward(X)</code>, <code>n = X.shape[0]</code> y sigue el docstring línea a línea. Si ∂b1 tiene forma (n, H), falta <code>.sum(axis=0)</code>. Si ∂W1 tiene forma (H, d), has traspuesto al revés: es <code>X.T @ D1</code>.</details>
+<details><summary>🔴 gradientes</summary><code>D2 = (P - Y) / n</code> · <code>D1 = (D2 @ self.W2.T) * A1 * (1 - A1)</code> · <code>return {"W1": X.T @ D1, "b1": D1.sum(axis=0), "W2": A1.T @ D2, "b2": D2.sum(axis=0)}</code></details>
+<details><summary>🟢 paso / entrenar / predecir</summary><code>self.W1 -= lr * grads["W1"]</code> (×4) · historial con la pérdida inicial y una por época · <code>(self.forward(X)[1][:, 0] &gt;= 0.5).astype(int)</code>.</details>
+
+## P0_04 · Unicode en streaming
+
+<details><summary>🟢 longitudes</summary>Cuatro <code>len</code>: del texto, de <code>texto.encode("utf-8")</code> y de <code>unicodedata.normalize("NFC", texto)</code> y <code>"NFD"</code> (PYTHON.md §17).</details>
+<details><summary>🟢 recortar_bytes</summary>Después de comprobar <code>max_bytes &lt; 0</code>: <code>texto.encode("utf-8")[:max_bytes].decode("utf-8", errors="ignore")</code>. Al cortar solo puede quedar a medias el último carácter, y <code>errors="ignore"</code> lo descarta.</details>
+<details><summary>🟡 decodificar</summary>Crea <code>dec</code> fuera del bucle. Dentro: <code>t = dec.decode(b)</code> y <code>if t: yield t</code>. Después del bucle, lo mismo con <code>dec.decode(b"", final=True)</code> (PYTHON.md §18).</details>
+<details><summary>🟡 lineas</summary><code>bufer = ""</code>; por cada trozo, <code>bufer += t</code> y <code>while "\n" in bufer:</code> parte con <code>bufer.split("\n", 1)</code> y haz yield de la primera parte sin <code>"\r"</code>. Al final, <code>if bufer: yield ...</code>.</details>
+<details><summary>🔴 tokens</summary><code>for linea in lineas_: yield from PATRON.findall(unicodedata.normalize("NFC", linea.casefold()))</code>. <code>yield from</code> entrega uno a uno los elementos de una lista.</details>
+
+## P0_05 · generación token a token
+
+<details><summary>🟡 muestrear</summary><code>u = rng.random()</code> una vez; <code>acum = 0.0</code>; para cada <code>(tok, p)</code>: <code>acum += p</code> y <code>if u &lt; acum: return tok</code>. Después del bucle, <code>return dist[-1][0]</code>.</details>
+<details><summary>🟡 generar</summary><code>actual = inicio</code> y <code>for _ in range(max_tokens):</code> con el orden exacto del docstring. Las tres salidas son <code>return</code> (sin valor); el token fin se entrega con yield ANTES del return.</details>
+<details><summary>🟢 en_streaming</summary>Una variable <code>primero = True</code>: si es el primero o <code>t in PUNTUACION</code>, <code>yield t</code>; si no, <code>yield " " + t</code>. Después, <code>primero = False</code>.</details>
+<details><summary>🟢 con_presupuesto</summary><code>usados = 0</code>; por cada pieza, <code>n = len(p.encode("utf-8"))</code>; si <code>usados + n &gt; max_bytes</code>, <code>return</code>; si no, súmalo y <code>yield p</code>.</details>
+<details><summary>🟢 frecuencias</summary>Cuenta con un diccionario y <code>.get(t, 0) + 1</code> (PYTHON.md §8); al final, <code>{t: c / n for t, c in cuenta.items()}</code>.</details>

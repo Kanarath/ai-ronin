@@ -266,6 +266,174 @@ async def chat(p: Peticion):
     return {"eco": p.pregunta}     # el diccionario se devuelve como JSON
 ```
 
+## 15. Clases: atributos, métodos y herencia
+
+Una **clase** es un molde: agrupa datos (**atributos**) y las funciones que los usan (**métodos**). Cada objeto creado con el molde tiene sus propios datos.
+
+```python
+class Contador:
+    def __init__(self, inicio=0):      # se ejecuta al crear el objeto
+        self.valor = inicio            # self es el propio objeto: self.valor es SU atributo
+
+    def sumar(self, n=1):              # todo método recibe self como primer parámetro
+        self.valor += n
+        return self                    # devolver self permite encadenar: c.sumar().sumar()
+
+c = Contador(10)                       # crea un objeto; Python llama a __init__(c, 10)
+c.sumar().sumar(5)
+print(c.valor)                         # 16
+d = Contador()
+print(d.valor)                         # 0: cada objeto tiene sus propios atributos
+```
+
+**Herencia.** Una clase hija reutiliza todo lo de la madre y reescribe solo lo que cambia:
+
+```python
+class ContadorDoble(Contador):         # entre paréntesis, la clase madre
+    def sumar(self, n=1):              # reescribe sumar; __init__ se hereda tal cual
+        self.valor += 2 * n
+        return self
+
+print(ContadorDoble(1).sumar(3).valor) # 7
+print(isinstance(ContadorDoble(), Contador))   # True: una hija ES también de la madre
+```
+
+Si un método de la madre llama a `self.otro_metodo()` y la hija reescribe `otro_metodo`, se usa el de la hija. Así funciona `predecir` en P0-02: está en la madre, pero llama a `self.probabilidades`, que cada clase implementa a su manera.
+
+## 16. NumPy: arrays, formas y vectorización
+
+NumPy no viene con Python: se instala en un entorno virtual (sección 14) con `pip install -r requirements.txt`. Por convención se importa como `np`.
+
+```python
+import numpy as np
+
+a = np.array([1.0, 2.0, 3.0])          # array de forma (3,)
+X = np.array([[1, 2], [3, 4], [5, 6]], dtype=float)   # forma (3, 2): 3 filas, 2 columnas
+print(X.shape, X.dtype)                # (3, 2) float64
+print(a * 2, a + a, a ** 2)            # [2. 4. 6.] [2. 4. 6.] [1. 4. 9.]   ← elemento a elemento, sin bucles
+print(np.exp(a), np.log(a), np.clip(a, 1.5, 2.5))     # funciones que actúan sobre todo el array
+```
+
+**Ejes.** `axis=0` recorre las filas (resultado: uno por columna); `axis=1`, las columnas (uno por fila):
+
+```python
+X.sum(axis=0)        # [ 9. 12.]      suma de cada columna
+X.mean(axis=0)       # [3. 4.]        media de cada columna
+X.sum(axis=1)        # [ 3.  7. 11.]  suma de cada fila
+X.sum()              # 21.0           todo
+```
+
+**Producto de matrices** con `@`; traspuesta con `.T`. Las formas tienen que encajar: `(n, d) @ (d, h)` da `(n, h)`.
+
+```python
+w = np.array([0.5, -1.0])            # forma (2,)
+X @ w                                # [-1.5 -2.5 -3.5]: un producto escalar por fila
+X.T.shape                            # (2, 3)
+```
+
+**Broadcasting.** Si las formas no coinciden pero encajan por la derecha, NumPy «estira» la pequeña: `X - X.mean(axis=0)` resta a cada fila la media de su columna. Una forma `(n, h)` más una `(h,)` suma el mismo vector a cada fila (así se suman los sesgos).
+
+**Seleccionar y combinar:**
+
+```python
+X[0], X[:, 1], X[1:, :]              # primera fila · segunda columna · todas las filas desde la 1
+np.where(a > 1.5, a, 0.0)            # [0. 2. 3.]: elige elemento a elemento
+np.hstack([X, X ** 2])               # pega columnas: forma (3, 4)
+np.tile(X, (2, 1))                   # repite las filas: forma (6, 2)
+np.zeros(3), np.zeros((2, 3))        # arrays de ceros
+(a >= 2).astype(int)                 # [0 1 1]: de booleanos a enteros
+X.tolist()                           # de vuelta a listas de Python
+float(np.mean(a))                    # un float de Python (no un np.float64)
+```
+
+**Azar reproducible:** `rng = np.random.default_rng(42)` y después `rng.uniform(-1, 1, size=(2, 3))`, `rng.normal(size=5)`… Misma semilla y misma versión de NumPy → mismos números.
+
+**En el sitio o nuevo.** `W -= 0.1 * G` modifica el array `W` existente; `W = W - 0.1 * G` crea uno nuevo y cambia a qué apunta el nombre. Igual que con las listas (sección 2), otro nombre que apunte al array viejo verá o no el cambio.
+
+**Comparar arrays en los tests:** `np.testing.assert_allclose(a, b, atol=1e-9)` comprueba que todos los elementos coinciden con esa tolerancia. Nunca compares floats con `==`.
+
+**Medir tiempos:** `t0 = time.perf_counter()`, el código, y `time.perf_counter() - t0` da los segundos (con decimales). Es el reloj adecuado para medir, no para saber la hora.
+
+⚠ La regla de la vectorización: si escribes un `for` que recorre los ejemplos uno a uno, probablemente hay una operación de NumPy que lo hace de golpe y decenas de veces más rápido.
+
+## 17. Texto de verdad: str, bytes y Unicode
+
+Una `str` es una secuencia de **puntos de código** Unicode. Para guardarla o enviarla se **codifica** en bytes; UTF-8 usa de 1 a 4 bytes por punto de código.
+
+```python
+s = "año 🔥"
+b = s.encode("utf-8")        # b'a\xc3\xb1o \xf0\x9f\x94\xa5'  ← un objeto bytes
+print(len(s), len(b))        # 5 9    (puntos de código frente a bytes)
+b.decode("utf-8")            # "año 🔥" de vuelta
+b[:2].decode("utf-8", errors="ignore")   # "a": la ñ partida se descarta
+b[:2].decode("utf-8")        # UnicodeDecodeError: ¡la ñ está a medias!
+"ñ", "\U0001F525"       # escapes: ñ y 🔥 escritos por su número
+```
+
+**Normalización.** La misma letra puede escribirse de dos formas: «é» compuesta (`"é"`, NFC) o «e» + acento combinante (`"é"`, NFD). Se ven igual y `==` dice que son distintas:
+
+```python
+import unicodedata
+unicodedata.normalize("NFC", "é") == "é"   # True
+unicodedata.is_normalized("NFC", "é")            # False
+"Straße".casefold()                                    # "strasse": minúsculas «fuertes» para comparar
+```
+
+**Emojis compuestos:** 👍🏽 son 2 puntos de código (pulgar + tono de piel) y 👩‍🔧 son 3 (mujer + `"‍"`, la unión ZWJ, + llave inglesa). `len()` no cuenta lo que ves.
+
+**Decodificar por trozos:** si los bytes llegan a pedazos, un pedazo puede cortar un carácter. Un decodificador incremental guarda los bytes a medias para el siguiente:
+
+```python
+import codecs
+dec = codecs.getincrementaldecoder("utf-8")()
+dec.decode(b"a\xc3")         # "a"   (guarda \xc3 para después)
+dec.decode(b"\xb1o")         # "ño"
+dec.decode(b"", final=True)  # ""    (o UnicodeDecodeError si quedó algo a medias)
+```
+
+Dos métodos útiles de `str`: `"hola\r".removesuffix("\r")` → `"hola"`, y `"a\nb\nc".split("\n", 1)` → `["a", "b\nc"]` (como mucho un corte).
+
+## 18. Generadores: yield, perezosos y en tubería
+
+Una función con `yield` es un **generador**. Al llamarla NO se ejecuta: devuelve un objeto que produce valores de uno en uno, cuando alguien se los pide.
+
+```python
+def cuenta_atras(n):
+    print("empiezo")
+    while n > 0:
+        yield n          # entrega n y se CONGELA aquí hasta que le pidan el siguiente
+        n -= 1
+    print("fin")         # al terminar la función (o con return), el generador se agota
+
+g = cuenta_atras(3)      # no imprime nada todavía
+next(g)                  # imprime "empiezo" y devuelve 3
+list(g)                  # [2, 1] (e imprime "fin")
+list(g)                  # []: un generador se recorre UNA sola vez
+```
+
+`return` (sin valor) dentro de un generador lo termina: el `for` que lo recorre simplemente acaba.
+
+**En tubería.** Un generador puede recorrer otro. Cada uno pide al anterior solo lo que necesita, así que se procesan ficheros enormes con la memoria de un elemento:
+
+```python
+def numeros():
+    n = 0
+    while True:          # ¡infinito! no pasa nada: solo se calcula lo que se pide
+        yield n
+        n += 1
+
+def cuadrados(xs):
+    for x in xs:
+        yield x * x
+
+import itertools
+list(itertools.islice(cuadrados(numeros()), 4))   # [0, 1, 4, 9]: toma los 4 primeros
+```
+
+`itertools.islice(gen, n)` toma los n primeros sin consumir más. Un generador infinito con `list()` y sin `islice` no termina nunca. Para saber si algo es un generador: `isinstance(g, types.GeneratorType)` (con `import types`).
+
+**Muestrear con pesos (P0-05).** `rng = random.Random(42)` y `rng.random()` da un decimal en [0, 1). Con la suma acumulada de las probabilidades eliges el tramo en el que cae.
+
 ---
 
 ## Qué secciones necesita cada ejercicio
@@ -288,5 +456,9 @@ async def chat(p: Peticion):
 | P0-01 servicio LLM (forja/labs) | 8 (`.get` con valor por defecto), 12, 14 |
 | A1-05 mostrador (forja/labs) | 3, 4 (valores por defecto), 11 (`re`, `math.sqrt`, `unicodedata`), 12, 14 |
 | A2-04 biblioteca (forja/labs) | 2 (rebanadas), 3 (`while`, `break`), 7, 8, 9, 11 (`math.log`, `re`, `hmac`, `hashlib`), 12, 14 |
+| P0_02 logística (clases y NumPy) | 12 (`RuntimeError`), 14 (entorno virtual), 15, 16 |
+| P0_03 MLP en matrices | 15, 16 (`@`, `.T`, `axis`, broadcasting, `-=`, `default_rng`) |
+| P0_04 Unicode en streaming | 3 (`while`), 11 (`re`), 12, 17, 18 |
+| P0_05 generación | 3, 8 (`.get`), 11 (`random`), 17 (`.encode`), 18 |
 
 Si te atascas en un ejercicio, mira [PISTAS.md](PISTAS.md): tiene pistas progresivas para cada función.

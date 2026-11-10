@@ -215,3 +215,44 @@ func test_mision_A2_04() -> void:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
+
+
+
+## Misiones P0-02…P0-05 (ejercicios de clases, NumPy, Unicode y generadores): bloqueadas sin
+## sus requisitos; después, evidencia, evidencia completa y las órdenes del terminal `lineas`.
+func _run_p0(id: String, previas: Array, lineas: Array) -> void:
+	var finished: Array = []
+	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
+	assert_ne(game.start_mission(id), "", "%s bloqueada sin sus requisitos" % id)
+	for m: String in previas:
+		game.progress.data["missions"][m] = {"completed": true}
+	assert_eq(game.start_mission(id), "")
+	assert_eq(game.evidence.exercise_of_mission(game.catalog.get_mission(id)), id)
+	assert_true(game.import_evidence(_write("p.json", _evidence(id, 0)))["ok"])
+	assert_eq(game.runner.index, 1)
+	game.import_evidence(_write("p.json", _evidence(id, game.evidence.exercises[id]["total_tests"])))
+	assert_eq(game.runner.index, 2)
+	for l: String in lineas:
+		var res := game.shell.execute(l)
+		assert_true(res.ok, "%s: %s" % [l, res.plain_text()])
+	assert_eq(finished.size(), 1, id)
+
+
+func test_mision_P0_02() -> void:
+	_run_p0("P0-02", ["T4-01"], ["answer 0.871", "hipotesis más de 50 veces", "reflexion " +
+		"con doscientas cuarenta filas numpy fue doce veces mas rapido y con doce mil setenta veces porque el coste fijo de cada llamada se reparte entre mas filas mientras python puro paga cada multiplicacion ".repeat(2)])
+
+
+func test_mision_P0_03() -> void:
+	_run_p0("P0-03", ["T4-02", "P0-02"], ["answer 0.0024", "reflexion " +
+		"el bucle para cada ejemplo de t4 02 esta ahora dentro de los productos de matrices la forma n por h guarda una fila por ejemplo y sum axis cero suma los gradientes de los sesgos ".repeat(2)])
+
+
+func test_mision_P0_04() -> void:
+	_run_p0("P0-04", ["T5-01"], ["hipotesis 8", "answer 17", "reflexion " +
+		"sin nfc el filtro no veria la palabra escrita con el acento suelto y sin el decodificador incremental la ñ partida daria un error de decodificacion ".repeat(2)])
+
+
+func test_mision_P0_05() -> void:
+	_run_p0("P0-05", ["T6-01", "P0-04"], ["hipotesis no", "answer paciencia", "reflexion " +
+		"el generador entrega cada token en cuanto existe y si el usuario para el modelo deja de trabajar el limite va en el servidor porque el cliente puede pedir lo que quiera ".repeat(2)])
