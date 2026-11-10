@@ -7,8 +7,21 @@
   "plane": "dojo",
   "epistemic": "practica-industria",
   "estimated_minutes": 50,
-  "requires_missions": ["C5-01"],
-  "competencies": { "requires": ["C5.alcance", "C5.modelo-amenazas"], "trains": ["C5.explotacion", "C5.evidencias", "C5.priorizacion", "O4.informes"] },
+  "requires_missions": [
+    "C5-01"
+  ],
+  "competencies": {
+    "requires": [
+      "C5.alcance",
+      "C5.modelo-amenazas"
+    ],
+    "trains": [
+      "C5.explotacion",
+      "C5.evidencias",
+      "C5.priorizacion",
+      "O4.informes"
+    ]
+  },
   "briefing": "Con el encargo preparado empieza la explotación. Aquí no cuenta lo que crees que es vulnerable, sino lo que puedes demostrar: cada hallazgo necesita una prueba reproducible sobre la copia de laboratorio del activo y una categoría que encaje en el modelo de amenazas. Al final, la responsable querrá saber por dónde empezar a arreglar.",
   "learning_objectives": [
     "Respaldar cada hallazgo con una evidencia reproducible",
@@ -16,7 +29,11 @@
     "Priorizar y documentar los hallazgos para quien tiene que decidir"
   ],
   "mentor_intro": "«Creo que es vulnerable» no entra en un informe. «Lo he reproducido 7 de 7 veces con estos pasos» sí.",
-  "lab": { "datasets": [], "viz": {} },
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "En un informe de red team no cuenta lo que crees que es vulnerable, sino lo que puedes reproducir: cada hallazgo necesita una prueba repetible y una categoría que encaje. Después hay que priorizar, y el número de ataques con éxito no es la severidad. Hoy registras hallazgos con evidencia en los cinco sistemas de la forja y decides cuál arreglar primero.",
   "theory_cards": [
     {
       "id": "hallazgo-con-evidencia",
@@ -26,30 +43,62 @@
     {
       "id": "priorizar",
       "title": "Priorizar",
-      "body": "El número de ataques con éxito no es la severidad. Cuenta también el impacto (datos personales, dinero, ejecución de código), la exposición (público sin autenticación o interno) y la facilidad. Un activo con menos éxitos pero con ejecución de código o exfiltración puede ir primero. engagement summary resume el encargo; la prioridad la decides tú y la justificas en el informe."
+      "body": "El número de ataques con éxito no es la severidad. Cuenta también el impacto (datos personales, dinero, ejecución de código), la exposición (público sin autenticación o interno) y la facilidad. Un activo con menos éxitos pero con ejecución de código o exfiltración puede ir primero. engagement summary resume el encargo; la prioridad la decides tú y la justificas en el informe.",
+      "unlock_on": "objective:o4"
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Prepara el encargo: ábrelo, crea las cinco copias de laboratorio y vincúlalas.",
-      "validator": { "type": "event", "event": "engagement.bound", "where": { "bound": 5 } },
-      "hints": ["engagement start final · bot create kuro · rag create docs · rag ingest docs · agent create taller · mcp host erp · supply forja pipe · engagement bind final A-01 kuro · … · engagement bind final A-05 pipe"],
-      "on_complete": "Encargo listo. Cada misión empieza con el laboratorio limpio, como un entorno de pruebas recién desplegado."
+      "validator": {
+        "type": "event",
+        "event": "engagement.bound",
+        "where": {
+          "bound": 5
+        }
+      },
+      "hints": [
+        "engagement start final · bot create kuro · rag create docs · rag ingest docs · agent create taller · mcp host erp · supply forja pipe · engagement bind final A-01 kuro · … · engagement bind final A-05 pipe"
+      ],
+      "on_complete": "Encargo listo. Cada misión empieza con el laboratorio limpio, como un entorno de pruebas recién desplegado.",
+      "teach": "Laboratorio limpio\nCada misión empieza con el laboratorio vacío: vuelve a abrir el encargo, crear las cinco copias y vincularlas, como en C5-01.\nPor qué: las pruebas se hacen sobre un entorno conocido; si no, la evidencia no se puede repetir."
     },
     {
       "id": "o2",
       "text": "Intenta registrar en el pipeline (A-05) un hallazgo de desinformación (LLM09).",
-      "prediction": { "prompt": "¿Lo aceptará el encargo?", "options": ["sí, cualquier hallazgo cuenta", "no, LLM09 no encaja con un pipeline de entrenamiento y serving", "sí, si después lo demuestro"] },
-      "validator": { "type": "event", "event": "engagement.finding_rejected", "where": { "asset": "A-05" } },
-      "hints": ["engagement finding final A-05 LLM09"],
-      "on_complete": "Rechazado: no encaja con lo que es el activo. Un informe lleno de categorías mal asignadas pierde credibilidad."
+      "prediction": {
+        "prompt": "¿Lo aceptará el encargo?",
+        "options": [
+          "sí, cualquier hallazgo cuenta",
+          "no, LLM09 no encaja con un pipeline de entrenamiento y serving",
+          "sí, si después lo demuestro"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "engagement.finding_rejected",
+        "where": {
+          "asset": "A-05"
+        }
+      },
+      "hints": [
+        "engagement finding final A-05 LLM09"
+      ],
+      "on_complete": "Rechazado: no encaja con lo que es el activo. Un informe lleno de categorías mal asignadas pierde credibilidad.",
+      "teach": "La categoría tiene que encajar\nengagement finding <encargo> <activo> <categoría> registra un hallazgo. Antes comprueba que la categoría de OWASP (Open Worldwide Application Security Project) encaja con lo que es el activo.\nPor qué: una sola categoría mal puesta hace dudar de todo el informe."
     },
     {
       "id": "o3",
       "text": "Lanza la batería de cada activo y registra un hallazgo con evidencia en cada uno de los cinco.",
-      "teach": "La evidencia es la batería\nPrimero el ataque sobre la copia, después el hallazgo. Si registras el hallazgo antes de atacar, se rechaza por falta de evidencia.",
-      "validator": { "type": "event", "event": "engagement.finding", "where": { "assets": 5 } },
+      "teach": "La evidencia es la batería\nLas baterías son las de cada arco: bot attack, rag attack, agent attack, mcp attack y supply attack.\nPrimero el ataque sobre la copia, después el hallazgo. Si registras el hallazgo antes de atacar, se rechaza por falta de evidencia.\nPor qué: el número de éxitos que guarda el hallazgo es la línea base con la que compararás el retest.",
+      "validator": {
+        "type": "event",
+        "event": "engagement.finding",
+        "where": {
+          "assets": 5
+        }
+      },
       "hints": [
         "Cinco baterías y cinco hallazgos, con las categorías de tu modelo de amenazas.",
         "bot attack kuro · rag attack docs · agent attack taller · mcp attack erp · supply attack pipe · engagement finding final A-01 LLM07 · engagement finding final A-02 LLM01 · engagement finding final A-03 ASI01 · engagement finding final A-04 ASI04 · engagement finding final A-05 LLM03"
@@ -59,27 +108,93 @@
     {
       "id": "o4",
       "text": "Saca el resumen ejecutivo. ¿Qué activo tuvo más ataques con éxito al inicio? (answer <id>)",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "engagement.summary", "where": { "findings": { "gte": 5 } } },
-        { "type": "answer", "expected": "A-01", "accept": ["A-01", "a01", "a-01"] }
-      ] },
-      "hints": ["engagement summary final"],
-      "on_complete": "A-01, con 11. Pero fíjate en lo que hacen los demás: el pipeline ejecuta código al cargar un modelo y el asistente saca datos y reembolsa. «Más éxitos» no es «más grave»."
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "engagement.summary",
+            "where": {
+              "findings": {
+                "gte": 5
+              }
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "A-01",
+            "accept": [
+              "A-01",
+              "a01",
+              "a-01"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "engagement summary final"
+      ],
+      "on_complete": "A-01, con 11. Pero fíjate en lo que hacen los demás: el pipeline ejecuta código al cargar un modelo y el asistente saca datos y reembolsa. «Más éxitos» no es «más grave».",
+      "teach": "El resumen ejecutivo\nengagement summary final resume los hallazgos y los ataques con éxito de cada activo al inicio.\nPor qué: es lo primero que lee la dirección, así que tiene que ser exacto."
+    },
+    {
+      "id": "c1",
+      "text": "A-01 tuvo más ataques con éxito que ningún otro activo. ¿Es el hallazgo más grave?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "sí: más éxitos, más grave",
+          "why": "El recuento no mide el impacto: una fuga de un código de descuento no pesa lo mismo que ejecutar código en el servidor."
+        },
+        {
+          "id": "b",
+          "text": "no necesariamente: hay que pesar el impacto, la exposición y la facilidad"
+        },
+        {
+          "id": "c",
+          "text": "no: el más grave es siempre el que tiene menos éxitos",
+          "why": "Tampoco: el número de éxitos, solo, no decide la severidad en ningún sentido."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Lee la tarjeta «Priorizar».",
+        "answer b"
+      ],
+      "on_complete": "Eso es. Un pipeline que ejecuta código al cargar un modelo puede ir primero aunque tenga menos éxitos."
     },
     {
       "id": "o5",
       "text": "Documenta en un informe el hallazgo que arreglarías primero y que supere la rúbrica.",
-      "validator": { "type": "event", "event": "report.checked", "where": { "complete": true } },
+      "validator": {
+        "type": "event",
+        "event": "report.checked",
+        "where": {
+          "complete": true
+        }
+      },
       "hints": [
         "informe nuevo <título> · informe campo severidad … · informe campo owasp … · componente, descripcion, pasos, impacto, evidencia, mitigacion, verificacion · informe revisar",
         "En los pasos, los comandos que lo reproducen: 1) engagement start final 2) supply forja pipe 3) supply attack pipe. En la verificación, una medida: hoy 7 de 7 ataques con éxito; tras corregir, 0 de 7 y las tareas a 1,0 (lo harás en C5-03)."
-      ]
+      ],
+      "teach": "El informe del hallazgo\ninforme nuevo <título> abre el informe; informe campo <campo> <texto> rellena severidad, owasp, componente, descripcion, pasos, impacto, evidencia, mitigacion y verificacion; informe revisar aplica la rúbrica.\nLos pasos tienen que ser comandos que otra persona pueda repetir, y la verificación, una medida.\nPor qué: un hallazgo que el equipo del sistema no puede reproducir no se arregla."
     },
     {
       "id": "o6",
       "text": "Explica con tus palabras qué hallazgo arreglarías primero y por qué, usando impacto, exposición y facilidad, no solo el número de ataques. (reflexion <texto>, mínimo 40 palabras)",
-      "validator": { "type": "reflection", "min_words": 40 },
-      "hints": ["Público sin autenticación frente a interno; ejecución de código o datos de clientes frente a fuga de un código de descuento."]
+      "validator": {
+        "type": "reflection",
+        "min_words": 40
+      },
+      "hints": [
+        "Público sin autenticación frente a interno; ejecución de código o datos de clientes frente a fuga de un código de descuento."
+      ]
     }
   ],
   "mastery_trial": {
@@ -88,22 +203,48 @@
       {
         "id": "d1",
         "text": "Con un encargo nuevo, registra hallazgos con evidencia en al menos tres activos distintos.",
-        "validator": { "type": "sequence", "steps": [
-          { "type": "event", "event": "engagement.created" },
-          { "type": "event", "event": "engagement.finding", "where": { "assets": { "gte": 3 } } }
-        ] },
-        "hints": ["Vincular, atacar, registrar."],
+        "validator": {
+          "type": "sequence",
+          "steps": [
+            {
+              "type": "event",
+              "event": "engagement.created"
+            },
+            {
+              "type": "event",
+              "event": "engagement.finding",
+              "where": {
+                "assets": {
+                  "gte": 3
+                }
+              }
+            }
+          ]
+        },
+        "hints": [
+          "Vincular, atacar, registrar."
+        ],
         "on_complete": "Hallazgos demostrados. Siguiente: C5-03, arreglar y comprobarlo."
       }
     ]
   },
+  "you_can_now": "Sabes registrar hallazgos con evidencia reproducible, rechazar categorías que no encajan y priorizar por impacto, exposición y facilidad, no por recuento. Siguiente: C5-03, cerrar los hallazgos con un retest.",
   "debrief": {
     "what_happened": "Has demostrado una vulnerabilidad en cada uno de los cinco activos con su batería, has visto cómo se rechaza un hallazgo que no encaja con el activo, has resumido el encargo y has documentado el hallazgo que priorizas.",
     "why": "La evidencia reproducible es lo que convierte una sospecha en un hallazgo que alguien va a arreglar, y la línea base es lo que permite demostrar después que el arreglo funciona.",
-    "in_production": "Hallazgos con pasos reproducibles, capturas o trazas, severidad justificada (por ejemplo, con CVSS adaptado o una matriz impacto × probabilidad), mapeo a OWASP y MITRE ATLAS, y un resumen ejecutivo para dirección separado del detalle técnico.",
-    "simplifications": ["Una batería fija por activo", "La categoría se valida contra una lista; en la realidad la justificas tú", "Un solo informe para todo el encargo"],
+    "in_production": "Hallazgos con pasos reproducibles, capturas o trazas, severidad justificada (por ejemplo, con CVSS (Common Vulnerability Scoring System) adaptado o una matriz impacto × probabilidad), mapeo a OWASP (Open Worldwide Application Security Project) y MITRE ATLAS (Adversarial Threat Landscape for Artificial-Intelligence Systems), y un resumen ejecutivo para dirección separado del detalle técnico.",
+    "simplifications": [
+      "Una batería fija por activo",
+      "La categoría se valida contra una lista; en la realidad la justificas tú",
+      "Un solo informe para todo el encargo"
+    ],
     "exercise": "forja/ejercicios/C5_01_encargo.py"
   },
-  "further_reading": ["ref.owasp-llm-2025", "ref.owasp-agentic-2026"],
-  "xp": { "base": 400 }
+  "further_reading": [
+    "ref.owasp-llm-2025",
+    "ref.owasp-agentic-2026"
+  ],
+  "xp": {
+    "base": 400
+  }
 }

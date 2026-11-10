@@ -7,74 +7,181 @@
   "plane": "dojo",
   "epistemic": "practica-industria",
   "estimated_minutes": 50,
-  "requires_missions": ["E3-02"],
-  "competencies": { "requires": ["E3.no-conformidades"], "trains": ["E3.informe-auditoria", "E3.seguimiento", "E3.independencia"] },
-  "briefing": "El trabajo de campo ha dejado tres hallazgos: dos no conformidades mayores (sesgos sin medir y denegaciones sin revisión humana) y una menor (la FRIA incompleta). Ahora hay que escribirlos para que el pleno los entienda y nadie los pueda tumbar: criterio, evidencia, riesgo, recomendación y seguimiento, más el alcance y una conclusión. Cada campo tiene tres redacciones posibles; la rúbrica corrige. Después llega noviembre y toca decidir qué hallazgos se pueden cerrar.",
+  "requires_missions": [
+    "E3-02"
+  ],
+  "competencies": {
+    "requires": [
+      "E3.no-conformidades"
+    ],
+    "trains": [
+      "E3.informe-auditoria",
+      "E3.seguimiento",
+      "E3.independencia"
+    ]
+  },
+  "briefing": "El trabajo de campo ha dejado tres hallazgos: dos no conformidades mayores (sesgos sin medir y denegaciones sin revisión humana) y una menor (la FRIA (Fundamental Rights Impact Assessment) incompleta). Ahora hay que escribirlos para que el pleno los entienda y nadie los pueda tumbar: criterio, evidencia, riesgo, recomendación y seguimiento, más el alcance y una conclusión. Cada campo tiene tres redacciones posibles; la rúbrica corrige. Después llega noviembre y toca decidir qué hallazgos se pueden cerrar.",
   "learning_objectives": [
     "Redactar hallazgos con criterio, evidencia, riesgo, recomendación y seguimiento que se sostengan",
     "Reconocer los errores típicos: criterios vagos o no verificados, evidencia solo de palabra, riesgos exagerados y recomendaciones que rompen la independencia",
     "Cerrar un hallazgo solo con evidencia de corrección, no con un plan"
   ],
   "mentor_intro": "Un hallazgo bien escrito se defiende solo: dice qué se esperaba, qué se vio, por qué importa y qué hacer. Si falta una de las cuatro cosas, alguien lo discutirá en la reunión de cierre.",
-  "lab": { "datasets": [], "viz": {} },
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Lo que queda de una auditoría es su informe. Un hallazgo bien escrito dice qué se esperaba, qué se vio, por qué importa y qué hacer, con evidencia que otra persona pueda comprobar. Hoy redactas los hallazgos de la auditoría de Ayuda-Valle con una rúbrica, completas el alcance y la conclusión, y decides qué hallazgos se pueden cerrar. Esto es formación, no asesoramiento jurídico.",
   "theory_cards": [
     {
       "id": "anatomia-hallazgo",
       "title": "Anatomía de un hallazgo",
-      "body": "Condición: lo que se ha visto. Criterio: lo que se esperaba (la política, la subcategoría del NIST adoptada, el artículo), dentro de los criterios acordados en el alcance. Evidencia: documentos y registros verificables, con fecha y muestra; una entrevista sola no basta. Riesgo o efecto: qué puede pasar a las personas y a la organización, proporcionado. Recomendación: concreta y dirigida a la causa; la implanta la organización, no el auditor. Seguimiento: responsable, fecha y evidencia de cierre. Las normas de auditoría interna y las guías de auditoría de sistemas de gestión piden elementos parecidos, con nombres distintos. Comandos: audit rubric · audit findings · audit draft · audit report."
+      "body": "Condición: lo que se ha visto. Criterio: lo que se esperaba (la política, la subcategoría del NIST (National Institute of Standards and Technology) adoptada, el artículo), dentro de los criterios acordados en el alcance. Evidencia: documentos y registros verificables, con fecha y muestra; una entrevista sola no basta. Riesgo o efecto: qué puede pasar a las personas y a la organización, proporcionado. Recomendación: concreta y dirigida a la causa; la implanta la organización, no el auditor. Seguimiento: responsable, fecha y evidencia de cierre. Las normas de auditoría interna y las guías de auditoría de sistemas de gestión piden elementos parecidos, con nombres distintos. Comandos: audit rubric · audit findings · audit draft · audit report."
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Abre el expediente, lee la rúbrica y redacta por completo el hallazgo H2 (denegaciones sin revisión humana).",
-      "prediction": { "prompt": "¿Qué artículo del AI Act incumple el ayuntamiento como responsable del despliegue?", "options": ["el 14: supervisión humana", "el 26.2: encomendar la supervisión a personas con competencia y autoridad", "ninguno: es un problema interno"] },
-      "validator": { "type": "event", "event": "audit.drafted", "where": { "target": "H2", "finding_ok": 5 } },
+      "prediction": {
+        "prompt": "¿Qué artículo del AI Act incumple el ayuntamiento como responsable del despliegue?",
+        "options": [
+          "el 14: supervisión humana",
+          "el 26.2: encomendar la supervisión a personas con competencia y autoridad",
+          "ninguno: es un problema interno"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "audit.drafted",
+        "where": {
+          "target": "H2",
+          "finding_ok": 5
+        }
+      },
       "hints": [
         "audit open valle · audit rubric valle · audit findings valle H2 · audit draft valle H2 <campo> <A|B|C>",
         "El art. 14 son requisitos de diseño para el proveedor; el del responsable del despliegue es el 26.2. La evidencia buena dice qué muestra y cómo se eligió.",
         "H2: criterio C · evidencia A · riesgo B · recomendacion B · seguimiento A."
       ],
-      "on_complete": "H2 se sostiene: criterio de la política y de la ley, una muestra que otra persona puede repetir, un riesgo concreto (incluido el art. 22 del RGPD) y un cierre verificable."
+      "on_complete": "H2 se sostiene: criterio de la política y de la ley, una muestra que otra persona puede repetir, un riesgo concreto (incluido el art. 22 del RGPD (Reglamento General de Protección de Datos; en inglés, GDPR)) y un cierre verificable.",
+      "teach": "Redactar con la rúbrica\naudit rubric valle enseña qué exige cada campo; audit findings valle H2 enseña las tres redacciones posibles de cada campo de H2; audit draft valle H2 <campo> <A|B|C> elige una.\nLos campos son criterio, evidencia, riesgo, recomendacion y seguimiento.\nPor qué: un hallazgo con el criterio mal citado o la evidencia vaga se cae en la reunión de cierre."
     },
     {
       "id": "o2",
       "text": "Redacta H1 (sesgos sin medir) y H3 (FRIA incompleta).",
-      "validator": { "type": "event", "event": "audit.drafted", "where": { "findings_ok": 3 } },
+      "validator": {
+        "type": "event",
+        "event": "audit.drafted",
+        "where": {
+          "findings_ok": 3
+        }
+      },
       "hints": [
         "audit findings valle H1 · audit findings valle H3",
         "Desconfía de: «buenas prácticas», un control de una norma que no está en el alcance ni has verificado, «nos dijeron», multas de prácticas prohibidas y un auditor que se ofrece a arreglarlo.",
         "H1: B B B A C · H3: A A C A B (criterio, evidencia, riesgo, recomendacion, seguimiento)."
       ],
-      "on_complete": "Tres hallazgos completos. La multa de 35 millones era una trampa: ese tramo es para las prácticas prohibidas (art. 99.3), y a las autoridades públicas se les aplica lo que diga cada Estado (art. 99.8)."
+      "on_complete": "Tres hallazgos completos. La multa de 35 millones era una trampa: ese tramo es para las prácticas prohibidas (art. 99.3), y a las autoridades públicas se les aplica lo que diga cada Estado (art. 99.8).",
+      "teach": "Desconfía de las trampas\nCada campo tiene una redacción que se sostiene y otras con trampas: «buenas prácticas» sin criterio, una norma que no está en el alcance, «nos dijeron», cifras de multas que no corresponden o un auditor que se ofrece a arreglarlo.\nPor qué: estas trampas son las que usa la parte auditada para discutir un hallazgo."
+    },
+    {
+      "id": "c1",
+      "text": "¿Quién implanta la recomendación de un hallazgo?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "el auditor, que es quien mejor conoce el problema",
+          "why": "Si el auditor implanta la corrección, después se auditaría a sí mismo: pierde la independencia."
+        },
+        {
+          "id": "b",
+          "text": "la organización auditada; el auditor verifica después si funciona"
+        },
+        {
+          "id": "c",
+          "text": "el proveedor del sistema, siempre",
+          "why": "Puede participar, pero la responsable de que se haga es la organización auditada."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Lee la parte de «Recomendación» en la tarjeta «Anatomía de un hallazgo».",
+        "answer b"
+      ],
+      "on_complete": "Eso es: nadie audita su propio trabajo. Por eso el auditor recomienda y luego comprueba el cierre."
     },
     {
       "id": "o3",
       "text": "Completa el alcance y la conclusión del informe y genera el informe hasta que la rúbrica lo apruebe entero.",
-      "validator": { "type": "event", "event": "audit.report", "where": { "passed": true } },
+      "validator": {
+        "type": "event",
+        "event": "audit.report",
+        "where": {
+          "passed": true
+        }
+      },
       "hints": [
         "audit findings valle informe · audit draft valle informe <alcance|conclusion> <A|B|C> · audit report valle",
         "Un auditor no dice que algo «cumple el AI Act»: dice qué ha visto en la muestra contra los criterios acordados.",
         "alcance B · conclusion C."
       ],
-      "on_complete": "Informe aprobado: ordenado por severidad, con alcance y limitaciones, y una conclusión que no va más allá de la muestra."
+      "on_complete": "Informe aprobado: ordenado por severidad, con alcance y limitaciones, y una conclusión que no va más allá de la muestra.",
+      "teach": "Alcance y conclusión\naudit findings valle informe enseña las opciones del alcance y la conclusión; audit report valle genera el informe y aplica la rúbrica.\nPor qué: la conclusión de un auditor no va más allá de lo que ha visto en su muestra."
     },
     {
       "id": "o4",
       "text": "Noviembre de 2028: revisa el seguimiento de los tres hallazgos y cierra solo los que tengan evidencia de corrección.",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "audit.closed", "where": { "finding": "H2" } },
-        { "type": "event", "event": "audit.closed", "where": { "finding": "H3" } },
-        { "type": "event", "event": "audit.close_refused", "where": { "finding": "H1" } }
-      ] },
-      "hints": ["audit followup valle H1 · audit close valle H1 · … (lo mismo con H2 y H3)", "Un plan con fecha no cierra nada; una muestra nueva sin fallos, sí."],
-      "on_complete": "H2 y H3 cerrados con evidencia; H1 sigue abierto con plan. En la próxima auditoría lo primero que mirarás será la evaluación de sesgos."
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "audit.closed",
+            "where": {
+              "finding": "H2"
+            }
+          },
+          {
+            "type": "event",
+            "event": "audit.closed",
+            "where": {
+              "finding": "H3"
+            }
+          },
+          {
+            "type": "event",
+            "event": "audit.close_refused",
+            "where": {
+              "finding": "H1"
+            }
+          }
+        ]
+      },
+      "hints": [
+        "audit followup valle H1 · audit close valle H1 · … (lo mismo con H2 y H3)",
+        "Un plan con fecha no cierra nada; una muestra nueva sin fallos, sí."
+      ],
+      "on_complete": "H2 y H3 cerrados con evidencia; H1 sigue abierto con plan. En la próxima auditoría lo primero que mirarás será la evaluación de sesgos.",
+      "teach": "Cerrar con evidencia\naudit followup valle <H#> enseña el seguimiento de un hallazgo; audit close valle <H#> intenta cerrarlo.\nPor qué: se cierra con evidencia nueva de que el control funciona, no con una promesa."
     },
     {
       "id": "o5",
       "text": "Explica con tus palabras qué hace que un hallazgo se sostenga, por qué el auditor no debe implantar la corrección y por qué un plan no basta para cerrar H1. (reflexion <texto>, mínimo 40 palabras)",
-      "validator": { "type": "reflection", "min_words": 40 },
-      "hints": ["Criterio, evidencia verificable, riesgo proporcionado.", "Independencia: nadie audita su propio trabajo."]
+      "validator": {
+        "type": "reflection",
+        "min_words": 40
+      },
+      "hints": [
+        "Criterio, evidencia verificable, riesgo proporcionado.",
+        "Independencia: nadie audita su propio trabajo."
+      ]
     }
   ],
   "mastery_trial": {
@@ -83,19 +190,102 @@
       {
         "id": "d1",
         "text": "Con un expediente nuevo, consigue un informe aprobado por la rúbrica y cierra solo los hallazgos con evidencia de corrección.",
-        "validator": {"type": "all", "of": [{"type": "sequence", "steps": [{"type": "event", "event": "audit.opened"}, {"type": "event", "event": "audit.report", "where": {"passed": true}}]}, {"type": "sequence", "steps": [{"type": "event", "event": "audit.opened"}, {"type": "event", "event": "audit.closed", "where": {"finding": "H2"}}]}, {"type": "sequence", "steps": [{"type": "event", "event": "audit.opened"}, {"type": "event", "event": "audit.closed", "where": {"finding": "H3"}}]}, {"type": "sequence", "steps": [{"type": "event", "event": "audit.opened"}, {"type": "event", "event": "audit.close_refused", "where": {"finding": "H1"}}]}]},
-        "hints": ["Diecisiete campos, un informe y tres seguimientos."],
+        "validator": {
+          "type": "all",
+          "of": [
+            {
+              "type": "sequence",
+              "steps": [
+                {
+                  "type": "event",
+                  "event": "audit.opened"
+                },
+                {
+                  "type": "event",
+                  "event": "audit.report",
+                  "where": {
+                    "passed": true
+                  }
+                }
+              ]
+            },
+            {
+              "type": "sequence",
+              "steps": [
+                {
+                  "type": "event",
+                  "event": "audit.opened"
+                },
+                {
+                  "type": "event",
+                  "event": "audit.closed",
+                  "where": {
+                    "finding": "H2"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "sequence",
+              "steps": [
+                {
+                  "type": "event",
+                  "event": "audit.opened"
+                },
+                {
+                  "type": "event",
+                  "event": "audit.closed",
+                  "where": {
+                    "finding": "H3"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "sequence",
+              "steps": [
+                {
+                  "type": "event",
+                  "event": "audit.opened"
+                },
+                {
+                  "type": "event",
+                  "event": "audit.close_refused",
+                  "where": {
+                    "finding": "H1"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "hints": [
+          "Diecisiete campos, un informe y tres seguimientos."
+        ],
         "on_complete": "Especialización E3: de la evaluación de impacto al informe de auditoría y su cierre."
       }
     ]
   },
+  "you_can_now": "Sabes escribir hallazgos que se sostienen (criterio, evidencia, riesgo, recomendación y seguimiento), acotar un informe a lo que has visto y cerrar solo lo que tiene evidencia de corrección. Has completado el ciclo: clasificar, evaluar, auditar e informar.",
   "debrief": {
     "what_happened": "Has redactado tres hallazgos con criterio, evidencia, riesgo, recomendación y seguimiento, has evitado los errores típicos (criterios vagos o no verificados, evidencia de palabra, multas mal citadas, recomendaciones que rompen la independencia), has acotado el alcance y la conclusión, y has cerrado solo lo que tenía evidencia.",
     "why": "El informe es lo único que queda de la auditoría. Si un hallazgo no tiene criterio, se discute; si no tiene evidencia, se niega; si exagera el riesgo, se pierde credibilidad; si no tiene seguimiento, no se corrige.",
     "in_production": "Informes con resumen para la dirección, hallazgos ordenados por severidad, reunión de cierre con la organización auditada, plan de acciones correctivas con responsables y fechas, y verificación del cierre en una auditoría de seguimiento. Las Normas Globales de Auditoría Interna del IIA (2024) y la guía ISO 19011 describen estas prácticas; en una certificación ISO/IEC 42001, la cláusula 10 (mejora) recoge las no conformidades y acciones correctivas.",
-    "simplifications": ["Redacciones para elegir en lugar de texto libre", "Sin reunión de cierre ni réplica de la organización auditada", "Un solo seguimiento; en la realidad hay varios y algunos hallazgos se reabren", "La causa raíz, que muchas normas piden como elemento propio, aquí solo aparece dentro de la recomendación"],
+    "simplifications": [
+      "Redacciones para elegir en lugar de texto libre",
+      "Sin reunión de cierre ni réplica de la organización auditada",
+      "Un solo seguimiento; en la realidad hay varios y algunos hallazgos se reabren",
+      "La causa raíz, que muchas normas piden como elemento propio, aquí solo aparece dentro de la recomendación"
+    ],
     "exercise": "forja/ejercicios/E3_01_auditoria.py"
   },
-  "further_reading": ["ref.iia-gias-2024", "ref.iso-19011", "ref.eu-ai-act", "ref.rgpd-art35"],
-  "xp": { "base": 350 }
+  "further_reading": [
+    "ref.iia-gias-2024",
+    "ref.iso-19011",
+    "ref.eu-ai-act",
+    "ref.rgpd-art35"
+  ],
+  "xp": {
+    "base": 350
+  }
 }

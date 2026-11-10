@@ -7,9 +7,24 @@
   "plane": "forja",
   "epistemic": "consolidado",
   "estimated_minutes": 150,
-  "requires_missions": ["T6-02", "P0-01"],
-  "competencies": { "requires": ["T6.sampling", "T6.atencion", "P0.llm-local"], "trains": ["E1.pytorch-tensores", "E1.bucle-generacion", "E1.muestreo-logits", "E1.log-probabilidad"] },
-  "briefing": "En T6-01 muestreaste palabras de un modelo de bigramas con listas de Python. Hoy el modelo es un transformer de verdad: SmolLM2-135M, 135 millones de parámetros, cargado con PyTorch y Transformers en tu CPU. model.generate() lo hace todo de una vez; tú vas a escribir lo que hace por dentro: logits, temperatura, top-p, muestreo, y vuelta a empezar. Instrucciones: forja/labs/E1-01_generacion/README.md.",
+  "requires_missions": [
+    "T6-02",
+    "P0-01"
+  ],
+  "competencies": {
+    "requires": [
+      "T6.sampling",
+      "T6.atencion",
+      "P0.llm-local"
+    ],
+    "trains": [
+      "E1.pytorch-tensores",
+      "E1.bucle-generacion",
+      "E1.muestreo-logits",
+      "E1.log-probabilidad"
+    ]
+  },
+  "briefing": "En T6-01 muestreaste palabras de un modelo de bigramas con listas de Python. Hoy el modelo es un transformer de verdad: SmolLM2-135M, 135 millones de parámetros, cargado con PyTorch y Transformers en tu CPU (Central Processing Unit). model.generate() lo hace todo de una vez; tú vas a escribir lo que hace por dentro: logits, temperatura, top-p, muestreo, y vuelta a empezar. Instrucciones: forja/labs/E1-01_generacion/README.md.",
   "learning_objectives": [
     "Manipular logits y probabilidades como tensores de PyTorch: dividir, ordenar, acumular y muestrear",
     "Implementar el bucle de generación autorregresiva y comprobar que coincide con model.generate()",
@@ -17,7 +32,11 @@
     "Explicar qué ahorra la caché de claves y valores y por qué la generación es secuencial"
   ],
   "mentor_intro": "En T6 los números estaban en listas que podías leer enteras. Ahora son tensores de 49 152 valores por paso. La idea no cambia; cambia la escala, y con ella las herramientas.",
-  "lab": { "datasets": [], "viz": {} },
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Cada vez que un chatbot escribe, un LLM (Large Language Model) repite un bucle: calcula un número por cada token posible (los logits), los convierte en probabilidades, elige uno y vuelve a empezar. La temperatura y top-p, los ajustes que ves en cualquier API (Application Programming Interface) de LLM, actúan dentro de ese bucle. Hoy lo escribes tú con PyTorch sobre un transformer real, SmolLM2-135M, y entiendes por qué los servidores de LLM usan la caché KV (key-value).",
   "theory_cards": [
     {
       "id": "logits",
@@ -32,15 +51,23 @@
     {
       "id": "cache-kv",
       "title": "La caché de claves y valores",
-      "body": "Cada token nuevo necesita las claves y los valores de atención (T6-02) de todos los anteriores. Tu bucle los recalcula en cada paso: el coste crece con la longitud. generate() los guarda (la caché KV) y solo calcula los del token nuevo. Por eso es más rápido, y por eso la memoria de un servidor de LLM crece con el contexto de cada usuario."
+      "body": "Cada token nuevo necesita las claves y los valores de atención (T6-02) de todos los anteriores. Tu bucle los recalcula en cada paso: el coste crece con la longitud. generate() los guarda (la caché KV (key-value, claves y valores)) y solo calcula los del token nuevo. Por eso es más rápido, y por eso la memoria de un servidor de LLM (Large Language Model) crece con el contexto de cada usuario.",
+      "unlock_on": "objective:o2"
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Implementa las cinco funciones de generacion.py hasta que pasen los 17 tests y trae la evidencia.",
-      "teach": "Un modelo diminuto en el test\nLos tests no descargan nada: crean un LlamaForCausalLM de 2 capas y 16 dimensiones con pesos aleatorios. Dice tonterías, pero es la misma arquitectura que SmolLM2, así que si tu bucle da lo mismo que generate() con él, lo dará con el modelo de verdad.",
-      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "E1-01", "all_passed": true } },
+      "teach": "Un modelo diminuto en el test\nEl trabajo de este paso es fuera del Dojo, en Python de verdad: abre forja/labs/E1-01_generacion/README.md, crea el entorno e implementa las funciones de generacion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y aquí la traes con evidence import.\nLos tests no descargan nada: crean un LlamaForCausalLM de 2 capas y 16 dimensiones con pesos aleatorios. Dice tonterías, pero es la misma arquitectura que SmolLM2.\nPor qué: si tu bucle da lo mismo que generate() con el modelo diminuto, lo dará con el de verdad; así se prueban las piezas de un sistema de IA (Inteligencia Artificial) sin gastar horas de cálculo.",
+      "validator": {
+        "type": "event",
+        "event": "evidence.imported",
+        "where": {
+          "exercise": "E1-01",
+          "all_passed": true
+        }
+      },
       "hints": [
         "Orden: con_temperatura → filtro_top_p → siguiente_token → generar → log_probs_secuencia. Entorno: README, sección 1 (unos 175 MB).",
         "filtro_top_p: orden = torch.sort(probs, descending=True, stable=True); acum = torch.cumsum(orden.values, 0). Cuenta cuántos hacen falta para llegar a p y copia solo esas posiciones (orden.indices) en un tensor de ceros.",
@@ -49,29 +76,93 @@
       "on_complete": "Tu bucle genera igual que el de Transformers. Ahora, con el modelo de verdad."
     },
     {
+      "id": "c1",
+      "text": "Subes la temperatura a 1,5. ¿Qué pasa con las probabilidades y con top-p 0.9?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "se afilan: el token más probable gana todavía más y top-p deja menos tokens",
+          "why": "Eso pasa con temperaturas menores que 1."
+        },
+        {
+          "id": "b",
+          "text": "se aplanan: las probabilidades se parecen más entre sí y top-p necesita más tokens para sumar 0.9"
+        },
+        {
+          "id": "c",
+          "text": "no cambian: la temperatura solo afecta a la velocidad",
+          "why": "La temperatura divide los logits antes del softmax, así que cambia las probabilidades."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Dividir los logits entre un número mayor que 1 acerca los valores entre sí.",
+        "answer b"
+      ],
+      "on_complete": "Eso es. Por eso una temperatura alta da textos más variados… y más raros: entran en el sorteo tokens que antes no tenían opción."
+    },
+    {
       "id": "o2",
       "text": "Ejecuta experimento.py con SmolLM2-135M (README, sección 2). Anota: si tu bucle voraz coincide con generate(), los tokens por segundo de cada uno, cuántos tokens deja top-p 0.9 con cada temperatura y qué pasa con la misma semilla. (reflexion <texto>, mínimo 60 palabras)",
-      "prediction": { "prompt": "¿Cuántas veces más rápido crees que irá generate() (con caché KV) que tu bucle, generando 25 tokens?", "options": ["igual", "entre 1,5 y 3 veces", "más de 3 veces"] },
-      "validator": { "type": "reflection", "min_words": 60 },
+      "prediction": {
+        "prompt": "¿Cuántas veces más rápido crees que irá generate() (con caché KV (key-value, claves y valores)) que tu bucle, generando 25 tokens?",
+        "options": [
+          "igual",
+          "entre 1,5 y 3 veces",
+          "más de 3 veces"
+        ]
+      },
+      "validator": {
+        "type": "reflection",
+        "min_words": 60
+      },
       "hints": [
         "python experimento.py · la primera vez descarga unos 270 MB.",
         "Para comparar velocidades, prueba también con --nuevos 60: ¿la diferencia crece con la longitud? Relaciónalo con la tarjeta de la caché KV."
-      ]
+      ],
+      "teach": "El experimento con SmolLM2\nexperimento.py (README, sección 2) descarga el modelo real la primera vez y compara tu bucle con generate(): mismo texto, velocidad, tokens que deja top-p y semillas.\nAnota los números: los usarás en las reflexiones.\nPor qué: medir la velocidad con y sin caché KV (key-value, claves y valores) es entender por qué un servidor de LLM (Large Language Model) gasta memoria por cada usuario conectado."
     },
     {
       "id": "o3",
       "text": "Explica por qué la temperatura 0 no necesita semilla, por qué top-p deja muchos más tokens cuando sube la temperatura y qué significa que el modelo dé una log-probabilidad más baja a «the sun rises in the west». ¿Es eso «saber» que es falso? (reflexion <texto>, mínimo 50 palabras)",
-      "validator": { "type": "reflection", "min_words": 50 },
-      "hints": ["Con t = 0 solo hay un candidato. Con t alta, la distribución se aplana: ¿cuántos tokens hacen falta para sumar 0.9?", "El modelo puntúa lo frecuente en sus datos de entrenamiento, no lo verdadero (T6-01: memorización)."]
+      "validator": {
+        "type": "reflection",
+        "min_words": 50
+      },
+      "hints": [
+        "Con t = 0 solo hay un candidato. Con t alta, la distribución se aplana: ¿cuántos tokens hacen falta para sumar 0.9?",
+        "El modelo puntúa lo frecuente en sus datos de entrenamiento, no lo verdadero (T6-01: memorización)."
+      ],
+      "teach": "Probabilidad no es verdad\nUna log-probabilidad es el logaritmo de la probabilidad que el modelo da a un texto: cuanto más negativa, menos probable le parece. log_probs_secuencia la calcula sumando la de cada token.\nPor qué: los LLM (Large Language Model) puntúan lo frecuente en sus datos de entrenamiento; confundir «probable» con «verdadero» es el origen de muchas alucinaciones."
     }
   ],
+  "you_can_now": "Sabes qué hace un LLM (Large Language Model) en cada paso de generación (logits, temperatura, top-p y muestreo), escribirlo en PyTorch y explicar por qué la caché KV (key-value, claves y valores) acelera y cuesta memoria. Siguiente: E1-02, cuantizar los pesos como hace Ollama.",
   "debrief": {
     "what_happened": "Has cargado un transformer real con PyTorch y Transformers y has reescrito su bucle de generación: logits del último token, temperatura, top-p y muestreo con semilla. Has comprobado que tu bucle voraz coincide con model.generate() y has medido la log-probabilidad de un texto.",
-    "why": "Toda la generación de texto de un LLM, desde un chatbot hasta un agente, es este bucle. Los parámetros que ves en cualquier API (temperature, top_p, seed, max_tokens) son exactamente estas pocas líneas. Y la log-probabilidad de un texto es la base de la perplejidad, de la evaluación de modelos y de ataques como la extracción de datos memorizados.",
-    "in_production": "Los servidores de inferencia (vLLM, llama.cpp, el de Ollama) hacen este bucle en lotes de muchos usuarios a la vez, con la caché KV gestionada por bloques, y muestrean en la GPU. Añaden top-k, penalizaciones de repetición, gramáticas para salida estructurada y decodificación especulativa, en la que un modelo pequeño propone tokens y el grande los verifica.",
-    "simplifications": ["Un prompt cada vez, sin lotes ni caché KV en tu bucle", "Un modelo de 135 M parámetros entrenado sobre todo en inglés", "Solo temperatura y top-p", "El Dojo no puede comprobar tus números: confía en tus datos"],
+    "why": "Toda la generación de texto de un LLM (Large Language Model), desde un chatbot hasta un agente, es este bucle. Los parámetros que ves en cualquier API (temperature, top_p, seed, max_tokens) son exactamente estas pocas líneas. Y la log-probabilidad de un texto es la base de la perplejidad, de la evaluación de modelos y de ataques como la extracción de datos memorizados.",
+    "in_production": "Los servidores de inferencia (vLLM, llama.cpp, el de Ollama) hacen este bucle en lotes de muchos usuarios a la vez, con la caché KV (key-value, claves y valores) gestionada por bloques, y muestrean en la GPU (Graphics Processing Unit). Añaden top-k, penalizaciones de repetición, gramáticas para salida estructurada y decodificación especulativa, en la que un modelo pequeño propone tokens y el grande los verifica.",
+    "simplifications": [
+      "Un prompt cada vez, sin lotes ni caché KV en tu bucle",
+      "Un modelo de 135 M parámetros entrenado sobre todo en inglés",
+      "Solo temperatura y top-p",
+      "El Dojo no puede comprobar tus números: confía en tus datos"
+    ],
     "exercise": "forja/labs/E1-01_generacion/generacion.py"
   },
-  "further_reading": ["ref.hf-smollm2-135m", "ref.smollm2-2025", "ref.hf-generation", "ref.pytorch-docs", "ref.holtzman-2019"],
-  "xp": { "base": 450 }
+  "further_reading": [
+    "ref.hf-smollm2-135m",
+    "ref.smollm2-2025",
+    "ref.hf-generation",
+    "ref.pytorch-docs",
+    "ref.holtzman-2019"
+  ],
+  "xp": {
+    "base": 450
+  }
 }

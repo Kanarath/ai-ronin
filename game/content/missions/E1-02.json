@@ -7,8 +7,21 @@
   "plane": "forja",
   "epistemic": "practica-industria",
   "estimated_minutes": 150,
-  "requires_missions": ["E1-01"],
-  "competencies": { "requires": ["E1.pytorch-tensores", "E1.log-probabilidad"], "trains": ["E1.cuantizacion-afin", "E1.cuantizacion-bloques", "E1.perplejidad", "E1.formatos-gguf"] },
+  "requires_missions": [
+    "E1-01"
+  ],
+  "competencies": {
+    "requires": [
+      "E1.pytorch-tensores",
+      "E1.log-probabilidad"
+    ],
+    "trains": [
+      "E1.cuantizacion-afin",
+      "E1.cuantizacion-bloques",
+      "E1.perplejidad",
+      "E1.formatos-gguf"
+    ]
+  },
   "briefing": "Cuando Ollama descarga un modelo no baja floats de 32 bits: baja un fichero GGUF cuantizado. Hoy cuantizas tú, a mano, los pesos de SmolLM2-135M: primero con una escala y un punto cero para cada matriz, después por bloques de 32 pesos como el formato Q8_0. Medirás el error, el tamaño y la perplejidad, y los compararás con lo que publica Ollama. Instrucciones: forja/labs/E1-02_cuantizacion/README.md.",
   "learning_objectives": [
     "Implementar la cuantización afín int8 (escala y punto cero) y la simétrica por bloques del formato Q8_0",
@@ -17,30 +30,110 @@
     "Relacionar los tamaños medidos con las etiquetas de cuantización de Ollama y GGUF"
   ],
   "mentor_intro": "En T6 la cuantización era una palabra. Hoy es un redondeo que tú escribes, y un número que mide cuánto has perdido.",
-  "lab": { "datasets": [], "viz": {} },
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Cuando Ollama o llama.cpp ejecutan un LLM (Large Language Model) en un portátil, no usan los pesos originales en float32: usan una versión cuantizada, con enteros de 8 o de 4 bits. Por eso un modelo cabe en tu RAM (Random Access Memory). Hoy cuantizas a mano los pesos de SmolLM2-135M, mides cuánto pierde con la perplejidad y entiendes por qué los formatos reales trabajan por bloques.",
   "theory_cards": [
     {
       "id": "afin",
       "title": "Escala y punto cero",
-      "body": "Para guardar floats en enteros de -128 a 127, se reparte el rango [mínimo, máximo] en 256 escalones: escala = (máximo - mínimo) / 255. El punto cero es el entero que representa el 0.0. Cuantizar: q = round(w / escala) + punto_cero. Volver: (q - punto_cero) · escala. El error de cada peso es como mucho media escala."
+      "body": "Para guardar floats en enteros de -128 a 127, se reparte el rango [mínimo, máximo] en 256 escalones: escala = (máximo - mínimo) / 255. El punto cero es el entero que representa el 0.0. Cuantizar: q = round(w / escala) + punto_cero. Volver: (q - punto_cero) · escala. El error de cada peso es como mucho media escala.",
+      "unlock_on": "objective:o1"
     },
     {
       "id": "atipicos",
       "title": "Un peso grande lo estropea todo",
-      "body": "Con una sola escala por matriz, un peso atípico de 4.0 entre pesos de 0.02 obliga a escalones de 0.016: casi todos los pesos normales caen en 2 o 3 escalones y pierden casi toda su información. Los modelos grandes tienen estos atípicos (LLM.int8(), 2022). La solución de GGUF: bloques de 32 pesos, cada uno con su escala. El atípico solo estropea su bloque."
+      "body": "Con una sola escala por matriz, un peso atípico de 4.0 entre pesos de 0.02 obliga a escalones de 0.016: casi todos los pesos normales caen en 2 o 3 escalones y pierden casi toda su información. Los modelos grandes tienen estos atípicos (LLM.int8(), 2022). La solución de GGUF: bloques de 32 pesos, cada uno con su escala. El atípico solo estropea su bloque.",
+      "unlock_on": "objective:o1"
     },
     {
       "id": "perplejidad",
       "title": "Perplejidad",
-      "body": "La perplejidad es exp(-media de las log-probabilidades de los tokens de un texto). Si el modelo diera probabilidad 1/4 a cada token, valdría 4: es como si dudara entre 4 opciones. Más baja es mejor. Para comparar cuantizaciones se mide sobre el mismo texto: si apenas sube, la cuantización conserva lo que el modelo sabe."
+      "body": "La perplejidad es exp(-media de las log-probabilidades de los tokens de un texto). Si el modelo diera probabilidad 1/4 a cada token, valdría 4: es como si dudara entre 4 opciones. Más baja es mejor. Para comparar cuantizaciones se mide sobre el mismo texto: si apenas sube, la cuantización conserva lo que el modelo sabe.",
+      "unlock_on": "objective:py1"
     }
   ],
   "objectives": [
     {
+      "id": "py1",
+      "text": "Antes del laboratorio, la idea en pequeño: abre el editor con py, completa la función perplejidad y compruébala con py check.",
+      "teach": "La perplejidad, con tus manos\nUn modelo da a cada token de un texto una probabilidad; su logaritmo es la log-probabilidad (siempre ≤ 0).\nPerplejidad = exp(−media de las log-probabilidades). Si el modelo diera 1/4 a cada token, valdría 4: «duda entre 4 opciones».\nEn el Dojo, math.exp(x) calcula e elevado a x (después de import math).\nPor qué: es el número con el que compararás el modelo cuantizado con el original; si apenas sube, la cuantización conserva lo que el modelo sabe.",
+      "py_exercise": {
+        "id": "E1-02-perplejidad",
+        "title": "perplejidad(log_probs): exp(-media)",
+        "function": "perplejidad",
+        "starter": "# Ejercicio E1-02 · La perplejidad\n# log_probs es una lista de log-probabilidades (logaritmo natural), una por token.\n# La perplejidad es exp(-media). La media ya está calculada: falta la última línea.\nimport math\n\ndef perplejidad(log_probs):\n    media = sum(log_probs) / len(log_probs)\n    return media   # ← cambia esta línea\n\n# Tres tokens con probabilidad 1/4 cada uno: debería imprimir 4.0 (o casi)\nprint(perplejidad([math.log(0.25), math.log(0.25), math.log(0.25)]))\n",
+        "cases": [
+          {
+            "args": [
+              [
+                -1.3862943611198906,
+                -1.3862943611198906,
+                -1.3862943611198906
+              ]
+            ],
+            "expected": 4.0,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              [
+                0.0,
+                0.0
+              ]
+            ],
+            "expected": 1.0,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              [
+                -0.6931471805599453
+              ]
+            ],
+            "expected": 2.0,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              [
+                -1.0,
+                -3.0
+              ]
+            ],
+            "expected": 7.389056,
+            "tolerance": 1e-05
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "E1-02-perplejidad",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "La media ya la tienes: cámbiale el signo con - y pásala a math.exp.",
+        "La línea queda así: return math.exp(-media)"
+      ],
+      "on_complete": "Ya sabes qué mide la perplejidad. En el laboratorio la calcularás con PyTorch sobre textos en inglés y en español, con el modelo en fp32 y cuantizado."
+    },
+    {
       "id": "o1",
       "text": "Implementa las siete funciones de cuantizacion.py hasta que pasen los 12 tests y trae la evidencia.",
-      "teach": "Cuidado con los tipos\nUn int8 solo llega a 127: si restas el punto cero sin pasar antes a float32, la resta se desborda y da basura sin ningún error. Y torch.round redondea los .5 al par (2.5 → 2), como el redondeo bancario: los tests lo tienen en cuenta.",
-      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "E1-02", "all_passed": true } },
+      "teach": "Cuidado con los tipos\nEl trabajo de este paso es fuera del Dojo, en Python de verdad: abre forja/labs/E1-02_cuantizacion/README.md, crea el entorno e implementa las funciones de cuantizacion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y aquí la traes con evidence import.\nUn int8 solo llega a 127: si restas el punto cero sin pasar antes a float32, la resta se desborda y da basura sin ningún error. Y torch.round redondea los .5 al par (2.5 → 2), como el redondeo bancario: los tests lo tienen en cuenta.\nPor qué: estos errores silenciosos son los que estropean un modelo cuantizado sin que nada avise.",
+      "validator": {
+        "type": "event",
+        "event": "evidence.imported",
+        "where": {
+          "exercise": "E1-02",
+          "all_passed": true
+        }
+      },
       "hints": [
         "Orden: parametros_afines → cuantizar → descuantizar → cuantizar_q8_0 → error_relativo → bytes_esquema → perplejidad.",
         "cuantizar_q8_0: x = w.reshape(-1, bloque); d = x.abs().amax(dim=1, keepdim=True) / 127. Para no dividir por 0: divisor = torch.where(d > 0, d, torch.ones_like(d)) y después pon a 0 los bloques con d == 0.",
@@ -49,29 +142,92 @@
       "on_complete": "Tus funciones cuantizan. Ahora, el modelo entero."
     },
     {
+      "id": "c1",
+      "text": "¿Por qué Q8_0 usa una escala para cada bloque de 32 pesos en lugar de una por matriz?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "para que el fichero ocupe menos",
+          "why": "Cada bloque guarda su propia escala, así que ocupa un poco MÁS que una sola escala por matriz."
+        },
+        {
+          "id": "b",
+          "text": "para que un peso atípico solo estropee su bloque y no toda la matriz"
+        },
+        {
+          "id": "c",
+          "text": "porque los enteros de 8 bits solo admiten 32 valores",
+          "why": "Un entero de 8 bits tiene 256 valores, de −128 a 127."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Lee la tarjeta «Un peso grande lo estropea todo».",
+        "answer b"
+      ],
+      "on_complete": "Eso es: se paga un poco de tamaño a cambio de que un atípico no arruine miles de pesos normales."
+    },
+    {
       "id": "o2",
       "text": "Ejecuta experimento.py (README, sección 2) y, si tienes Ollama, ollama show smollm2:135m-instruct-q8_0. Anota para cada esquema el tamaño, los bits por peso, el error medio, la perplejidad en inglés y en español y cuántos tokens de la generación coinciden con fp32. ¿Cuadra tu tamaño de q8_0 con los 145 MB de Ollama? (reflexion <texto>, mínimo 60 palabras)",
-      "prediction": { "prompt": "Con Q8_0, ¿cuánto crees que subirá la perplejidad respecto a fp32?", "options": ["menos de un 1 %", "entre un 1 y un 10 %", "más de un 10 %"] },
-      "validator": { "type": "reflection", "min_words": 60 },
+      "prediction": {
+        "prompt": "Con Q8_0, ¿cuánto crees que subirá la perplejidad respecto a fp32?",
+        "options": [
+          "menos de un 1 %",
+          "entre un 1 y un 10 %",
+          "más de un 10 %"
+        ]
+      },
+      "validator": {
+        "type": "reflection",
+        "min_words": 60
+      },
       "hints": [
         "python experimento.py · usa el modelo que ya descargaste en E1-01.",
         "135 millones de pesos × 8,5 bits / 8 = ? MB. Los vectores de las normas se quedan en float32, pero son muy pocos."
-      ]
+      ],
+      "teach": "Medir el modelo entero\nexperimento.py cuantiza SmolLM2 con cada esquema y mide el tamaño, los bits por peso, el error, la perplejidad y cuántos tokens de una generación coinciden con fp32 (32 bits por número).\nSi tienes Ollama, ollama show te dice qué publica él.\nPor qué: comparar tu cuenta con la de Ollama es comprobar que entiendes de dónde sale el tamaño de un modelo descargado."
     },
     {
       "id": "o3",
-      "text": "Explica con tus números por qué Q8_0 usa bloques de 32 en vez de una escala por matriz, qué pierdes al ir a 4 bits (q4_0, 92 MB) y por qué tu cuantización simulada no ahorra RAM ni tiempo aunque el modelo «pese» menos. (reflexion <texto>, mínimo 50 palabras)",
-      "validator": { "type": "reflection", "min_words": 50 },
-      "hints": ["Mira la peor matriz de afin_tensor: ¿tiene valores atípicos? En test_cuantizacion.py hay un test que lo provoca a propósito.", "En la simulación, los pesos siguen en float32 en memoria y se multiplican en float32. ¿Qué tendría que cambiar en el código que multiplica?"]
+      "text": "Explica con tus números por qué Q8_0 usa bloques de 32 en vez de una escala por matriz, qué pierdes al ir a 4 bits (q4_0, 92 MB) y por qué tu cuantización simulada no ahorra RAM (Random Access Memory) ni tiempo aunque el modelo «pese» menos. (reflexion <texto>, mínimo 50 palabras)",
+      "validator": {
+        "type": "reflection",
+        "min_words": 50
+      },
+      "hints": [
+        "Mira la peor matriz de afin_tensor: ¿tiene valores atípicos? En test_cuantizacion.py hay un test que lo provoca a propósito.",
+        "En la simulación, los pesos siguen en float32 en memoria y se multiplican en float32. ¿Qué tendría que cambiar en el código que multiplica?"
+      ],
+      "teach": "Simular no es ahorrar\nEn tu simulación, los pesos se cuantizan y se vuelven a pasar a float32 antes de multiplicar.\nPor qué: el ahorro real de memoria y de tiempo exige multiplicar directamente con los enteros, que es lo que hacen los kernels de llama.cpp."
     }
   ],
+  "you_can_now": "Sabes cuantizar pesos con escala y punto cero y por bloques, medir la pérdida con la perplejidad y explicar de dónde sale el tamaño de un modelo GGUF. También has escrito la perplejidad en Python. Siguiente: E1-03, cambiar un poco el modelo con LoRA (Low-Rank Adaptation) y mirar dentro con la lente de logits.",
   "debrief": {
     "what_happened": "Has cuantizado a mano los pesos de un transformer real con dos esquemas de 8 bits, has medido su error, su tamaño y la perplejidad resultante, y has comparado con los ficheros GGUF que sirve Ollama.",
     "why": "La cuantización es lo que permite que un modelo de mil millones de parámetros quepa en tu portátil. Ocho bits por bloques cuestan casi nada en calidad; cuatro bits ya se notan, sobre todo en modelos pequeños. Elegir la etiqueta de cuantización es una decisión de ingeniería entre memoria, velocidad y calidad, y hay que medirla en tu tarea.",
-    "in_production": "llama.cpp y Ollama usan formatos por bloques (Q8_0, Q4_K_M…) con kernels que multiplican directamente con los enteros. En GPU se usan GPTQ, AWQ o los formatos de coma flotante de 8 y 4 bits de las tarjetas recientes. Antes de desplegar se mide la calidad del modelo cuantizado con un conjunto de evaluación propio, no solo con la perplejidad. Y un fichero GGUF es un artefacto de la cadena de suministro (A6): se descarga de una fuente fijada y se comprueba su huella.",
-    "simplifications": ["Cuantización simulada: los pesos y el cálculo siguen en float32", "Solo int8, sin los formatos de 4 bits", "Perplejidad sobre dos frases, no sobre un corpus", "El Dojo no puede comprobar tus números: confía en tus datos"],
+    "in_production": "llama.cpp y Ollama usan formatos por bloques (Q8_0, Q4_K_M…) con kernels que multiplican directamente con los enteros. En GPU (Graphics Processing Unit) se usan GPTQ, AWQ o los formatos de coma flotante de 8 y 4 bits de las tarjetas recientes. Antes de desplegar se mide la calidad del modelo cuantizado con un conjunto de evaluación propio, no solo con la perplejidad. Y un fichero GGUF es un artefacto de la cadena de suministro (A6): se descarga de una fuente fijada y se comprueba su huella.",
+    "simplifications": [
+      "Cuantización simulada: los pesos y el cálculo siguen en float32",
+      "Solo int8, sin los formatos de 4 bits",
+      "Perplejidad sobre dos frases, no sobre un corpus",
+      "El Dojo no puede comprobar tus números: confía en tus datos"
+    ],
     "exercise": "forja/labs/E1-02_cuantizacion/cuantizacion.py"
   },
-  "further_reading": ["ref.jacob-2018", "ref.dettmers-llmint8-2022", "ref.gguf-spec", "ref.ollama-smollm2"],
-  "xp": { "base": 450 }
+  "further_reading": [
+    "ref.jacob-2018",
+    "ref.dettmers-llmint8-2022",
+    "ref.gguf-spec",
+    "ref.ollama-smollm2"
+  ],
+  "xp": {
+    "base": 450
+  }
 }

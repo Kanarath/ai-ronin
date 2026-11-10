@@ -7,8 +7,19 @@
   "plane": "dojo",
   "epistemic": "practica-industria",
   "estimated_minutes": 35,
-  "requires_missions": ["O5-02"],
-  "competencies": { "requires": ["O5.ai-act-niveles"], "trains": ["O5.registro-riesgos", "O5.apetito-riesgo", "O5.tratamiento"] },
+  "requires_missions": [
+    "O5-02"
+  ],
+  "competencies": {
+    "requires": [
+      "O5.ai-act-niveles"
+    ],
+    "trains": [
+      "O5.registro-riesgos",
+      "O5.apetito-riesgo",
+      "O5.tratamiento"
+    ]
+  },
   "briefing": "La dirección ha fijado su apetito de riesgo: ningún riesgo residual por encima de 6 (probabilidad × impacto, de 1 a 5 cada uno). En el registro hay seis riesgos sacados de tus arcos, del encargo C5 y de las propuestas nuevas. Para cada uno decidirás un tratamiento: mitigarlo con un control, evitarlo (no usar el sistema) o aceptarlo. El objetivo: todo dentro del apetito sin renunciar a ningún sistema que se pueda usar con seguridad.",
   "learning_objectives": [
     "Calcular el riesgo inherente y el residual y compararlos con un apetito de riesgo",
@@ -16,7 +27,11 @@
     "Conectar los controles técnicos de los arcos con decisiones de gestión"
   ],
   "mentor_intro": "Gestionar el riesgo no es eliminarlo todo: es decidir, con números y por escrito, qué haces con cada uno.",
-  "lab": { "datasets": [], "viz": {} },
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Gestionar el riesgo de un sistema de IA (Inteligencia Artificial) no es eliminarlo todo: es decidir, con números y por escrito, qué haces con cada riesgo. Eso piden la cláusula 6 de ISO/IEC (International Organization for Standardization / International Electrotechnical Commission) 42001 y la función MANAGE del NIST AI RMF (AI Risk Management Framework). Hoy llevas un registro de riesgos en miniatura: puntúas cada riesgo, lo comparas con el apetito de la dirección y eliges mitigar, evitar o aceptar, usando los controles que practicaste en los arcos.",
   "theory_cards": [
     {
       "id": "registro-riesgos",
@@ -28,44 +43,211 @@
     {
       "id": "o1",
       "text": "Abre el registro de riesgos. ¿Qué riesgo tiene el mayor riesgo inherente? (answer <id>)",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "gov.register" },
-        { "type": "answer", "expected": "R6", "accept": ["R6", "r6"] }
-      ] },
-      "hints": ["gov open forja · gov risks forja"],
-      "on_complete": "R6, con 25: las cámaras de emociones. Probabilidad máxima, porque el sistema existe para eso, e impacto máximo sobre los derechos de los operarios."
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "gov.register"
+          },
+          {
+            "type": "answer",
+            "expected": "R6",
+            "accept": [
+              "R6",
+              "r6"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "gov open forja · gov risks forja"
+      ],
+      "on_complete": "R6, con 25: las cámaras de emociones. Probabilidad máxima, porque el sistema existe para eso, e impacto máximo sobre los derechos de los operarios.",
+      "teach": "Puntuar un riesgo\nCada riesgo tiene una probabilidad y un impacto, de 1 a 5. Su producto es el riesgo inherente: el que hay antes de hacer nada. Por ejemplo, probabilidad 2 e impacto 4 dan 8.\ngov open forja abre la carpeta; gov risks forja enseña el registro.\nPor qué: con la misma escala puedes comparar riesgos muy distintos (una fuga de datos y una cámara prohibida) y decidir por dónde empezar."
+    },
+    {
+      "id": "py1",
+      "text": "Escribe en Python la regla del apetito: abre el editor con py, completa la función y compruébala con py check.",
+      "teach": "La regla del apetito, con tus manos\nEl apetito de riesgo es el máximo que acepta la dirección: aquí, 6. Un riesgo está dentro si probabilidad × impacto es menor o igual que el apetito.\nA la función le falta calcular el riesgo. En Python, la multiplicación es * y <= significa «menor o igual».\nEscribe py para abrir el editor; py check lo comprueba con varios casos.\nPor qué: es la comprobación que hace gov treat antes de dejarte aceptar un riesgo, y la que harías en una hoja de riesgos real.",
+      "py_exercise": {
+        "id": "O5-03-apetito",
+        "title": "dentro_del_apetito(probabilidad, impacto, apetito)",
+        "function": "dentro_del_apetito",
+        "starter": "# Ejercicio O5-03 · ¿Está dentro del apetito?\n# El riesgo es probabilidad × impacto (cada uno de 1 a 5).\n# Está dentro del apetito si el riesgo es menor o igual que el apetito.\n\ndef dentro_del_apetito(probabilidad, impacto, apetito):\n    riesgo = 0   # ← cambia esta línea\n    return riesgo <= apetito\n\n# Probabilidad 5 e impacto 5 con apetito 6: debería imprimir False\nprint(dentro_del_apetito(5, 5, 6))\n",
+        "cases": [
+          {
+            "args": [
+              5,
+              5,
+              6
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              2,
+              4,
+              6
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              1,
+              4,
+              6
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              3,
+              2,
+              6
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              1,
+              1,
+              6
+            ],
+            "expected": true
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "O5-03-apetito",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "El riesgo es el producto de las dos cifras.",
+        "La línea queda así: riesgo = probabilidad * impacto"
+      ],
+      "on_complete": "Ya tienes la regla. Fíjate en el caso 3 × 2: da 6, justo el apetito, y queda dentro. Con ella, R6 (25) queda muy por encima."
     },
     {
       "id": "o2",
       "text": "Intenta mitigar R6 y después trátalo como corresponde.",
-      "prediction": { "prompt": "¿Se puede mitigar R6 con un buen control?", "options": ["sí, anonimizando las imágenes", "sí, con supervisión humana", "no, el uso está prohibido"] },
-      "validator": { "type": "sequence", "steps": [
-        { "type": "event", "event": "gov.treat_refused", "where": { "risk": "R6", "treatment": "mitigar" } },
-        { "type": "event", "event": "gov.treated", "where": { "risk": "R6", "treatment": "evitar" } }
-      ] },
-      "hints": ["gov treat forja R6 mitigar · gov treat forja R6 evitar"],
-      "on_complete": "Evitado: la forja no compra las cámaras. Algunos riesgos no se gestionan, se evitan."
+      "prediction": {
+        "prompt": "¿Se puede mitigar R6 con un buen control?",
+        "options": [
+          "sí, anonimizando las imágenes",
+          "sí, con supervisión humana",
+          "no, el uso está prohibido"
+        ]
+      },
+      "validator": {
+        "type": "sequence",
+        "steps": [
+          {
+            "type": "event",
+            "event": "gov.treat_refused",
+            "where": {
+              "risk": "R6",
+              "treatment": "mitigar"
+            }
+          },
+          {
+            "type": "event",
+            "event": "gov.treated",
+            "where": {
+              "risk": "R6",
+              "treatment": "evitar"
+            }
+          }
+        ]
+      },
+      "hints": [
+        "gov treat forja R6 mitigar · gov treat forja R6 evitar"
+      ],
+      "on_complete": "Evitado: la forja no compra las cámaras. Algunos riesgos no se gestionan, se evitan.",
+      "teach": "Mitigar o evitar\ngov treat forja <riesgo> <mitigar|evitar|aceptar> aplica un tratamiento.\nMitigar pone un control que baja la probabilidad. Evitar es renunciar al sistema: el riesgo desaparece y el beneficio también.\nRecuerda O5-02: algunos usos no se pueden «hacer bien».\nPor qué: un control técnico no arregla un uso que la ley prohíbe; ahí la única decisión es no hacerlo."
     },
     {
       "id": "o3",
       "text": "Intenta aceptar R1 (la fuga del código de descuento) tal como está.",
-      "validator": { "type": "event", "event": "gov.treat_refused", "where": { "risk": "R1", "treatment": "aceptar" } },
-      "hints": ["gov treat forja R1 aceptar"],
-      "on_complete": "Rechazado: 8 está por encima del apetito. Aceptar un riesgo así exige una decisión explícita y documentada de la dirección, no del equipo técnico."
+      "validator": {
+        "type": "event",
+        "event": "gov.treat_refused",
+        "where": {
+          "risk": "R1",
+          "treatment": "aceptar"
+        }
+      },
+      "hints": [
+        "gov treat forja R1 aceptar"
+      ],
+      "on_complete": "Rechazado: 8 está por encima del apetito. Aceptar un riesgo así exige una decisión explícita y documentada de la dirección, no del equipo técnico.",
+      "teach": "Aceptar un riesgo\nAceptar deja el riesgo como está. Solo cabe si ya está dentro del apetito.\nPor qué: aceptar un riesgo por encima del apetito es una decisión explícita y documentada de la dirección, nunca del equipo técnico."
+    },
+    {
+      "id": "c1",
+      "text": "Un riesgo tiene probabilidad 3 e impacto 2. Con un apetito de 6, ¿qué puedes hacer?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "solo mitigarlo",
+          "why": "3 × 2 = 6 no supera el apetito: también se puede aceptar."
+        },
+        {
+          "id": "b",
+          "text": "aceptarlo si quieres, porque 3 × 2 = 6 no supera el apetito"
+        },
+        {
+          "id": "c",
+          "text": "evitarlo obligatoriamente",
+          "why": "Evitar es para lo que no se puede hacer con seguridad, como un uso prohibido. Este riesgo ya está dentro del apetito."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Calcula el riesgo y compáralo con 6: ¿es mayor, o menor o igual?",
+        "answer b"
+      ],
+      "on_complete": "Eso es: «dentro del apetito» incluye el propio límite. Aceptar es legítimo aquí; mitigar también, si el control sale barato."
     },
     {
       "id": "o4",
       "text": "Deja los seis riesgos dentro del apetito sin evitar ningún sistema que se pueda usar con seguridad.",
-      "teach": "Mitigar con lo que ya sabes\nCada riesgo mitigable tiene un control que ya practicaste: A1 en el chatbot, A6 en el pipeline, A3 y O6 en el asistente, y los artículos 10 y 14 del AI Act en el cribado. Evitar un riesgo mitigable también lo saca del registro… y deja a la forja sin ese sistema.",
-      "validator": { "type": "event", "event": "gov.register", "where": { "within": 6, "needless_avoid": 0 } },
-      "hints": ["gov treat forja R1 mitigar · … · gov risks forja", "R1 a R5: mitigar. R6 ya está evitado."],
+      "teach": "Mitigar con lo que ya sabes\nCada riesgo mitigable tiene un control que ya practicaste: A1 en el chatbot, A6 en el pipeline, A3 y O6 en el asistente, y los artículos 10 y 14 del AI Act en el cribado.\nEvitar un riesgo mitigable también lo saca del registro… y deja a la forja sin ese sistema.\nPor qué: la probabilidad «después del control» sale de tus retests; sin medición, es una opinión.",
+      "validator": {
+        "type": "event",
+        "event": "gov.register",
+        "where": {
+          "within": 6,
+          "needless_avoid": 0
+        }
+      },
+      "hints": [
+        "gov treat forja R1 mitigar · … · gov risks forja",
+        "R1 a R5: mitigar. R6 ya está evitado."
+      ],
       "on_complete": "Seis de seis dentro del apetito y solo un sistema descartado: el que estaba prohibido."
     },
     {
       "id": "o5",
       "text": "Explica con tus palabras cuándo se mitiga, cuándo se evita y cuándo se puede aceptar un riesgo, y qué papel tienen tus pruebas técnicas en las cifras del registro. (reflexion <texto>, mínimo 40 palabras)",
-      "validator": { "type": "reflection", "min_words": 40 },
-      "hints": ["Prohibido, apetito, coste de renunciar a un sistema.", "¿De dónde sale que la probabilidad baje a 1 después de mitigar? Del retest."]
+      "validator": {
+        "type": "reflection",
+        "min_words": 40
+      },
+      "hints": [
+        "Prohibido, apetito, coste de renunciar a un sistema.",
+        "¿De dónde sale que la probabilidad baje a 1 después de mitigar? Del retest."
+      ]
     }
   ],
   "mastery_trial": {
@@ -74,22 +256,48 @@
       {
         "id": "d1",
         "text": "Con una carpeta nueva, deja los seis riesgos dentro del apetito sin evitar nada que se pueda mitigar.",
-        "validator": { "type": "sequence", "steps": [
-          { "type": "event", "event": "gov.opened" },
-          { "type": "event", "event": "gov.register", "where": { "within": 6, "needless_avoid": 0 } }
-        ] },
-        "hints": ["Seis tratamientos y un vistazo al registro."],
+        "validator": {
+          "type": "sequence",
+          "steps": [
+            {
+              "type": "event",
+              "event": "gov.opened"
+            },
+            {
+              "type": "event",
+              "event": "gov.register",
+              "where": {
+                "within": 6,
+                "needless_avoid": 0
+              }
+            }
+          ]
+        },
+        "hints": [
+          "Seis tratamientos y un vistazo al registro."
+        ],
         "on_complete": "Pista de oficio O5 completada: de un hallazgo técnico a una decisión de dirección."
       }
     ]
   },
+  "you_can_now": "Sabes puntuar riesgos, compararlos con el apetito y elegir mitigar, evitar o aceptar con un motivo, y has escrito la regla del apetito en Python. Siguiente: E3, evaluaciones de impacto y una auditoría sobre un sistema de alto riesgo.",
   "debrief": {
     "what_happened": "Has calculado riesgos inherentes y residuales, has evitado el único sistema prohibido, has comprobado que no se puede aceptar un riesgo por encima del apetito y has mitigado el resto con controles que ya conocías.",
     "why": "El registro de riesgos es el puente entre el trabajo técnico y la dirección: convierte «el pickle ejecuta código» en «riesgo 20, mitigado a 5 con estos controles, verificado con este retest». Sin números ni dueño, un riesgo no se gestiona.",
-    "in_production": "Registros de riesgos con dueño, fecha de revisión y evidencias de cada control; apetito aprobado por la dirección; aceptaciones firmadas; y revisión cuando cambia el sistema o aparece un incidente. ISO/IEC 42001 (cláusula 6) y la función MANAGE del NIST AI RMF piden exactamente esto. Para la gestión de riesgos de IA existe también la norma ISO/IEC 23894.",
-    "simplifications": ["Escalas de 1 a 5 y un apetito único", "Mitigar siempre baja la probabilidad a 1; en la realidad lo dice el retest, y rara vez llega a 1", "No hay costes ni presupuesto por control"],
+    "in_production": "Registros de riesgos con dueño, fecha de revisión y evidencias de cada control; apetito aprobado por la dirección; aceptaciones firmadas; y revisión cuando cambia el sistema o aparece un incidente. ISO/IEC 42001 (cláusula 6) y la función MANAGE del NIST AI RMF (AI Risk Management Framework) piden exactamente esto. Para la gestión de riesgos de IA (Inteligencia Artificial) existe también la norma ISO/IEC 23894.",
+    "simplifications": [
+      "Escalas de 1 a 5 y un apetito único",
+      "Mitigar siempre baja la probabilidad a 1; en la realidad lo dice el retest, y rara vez llega a 1",
+      "No hay costes ni presupuesto por control"
+    ],
     "exercise": "forja/ejercicios/O5_01_riesgos.py"
   },
-  "further_reading": ["ref.nist-ai-rmf", "ref.iso-42001", "ref.eu-ai-act"],
-  "xp": { "base": 300 }
+  "further_reading": [
+    "ref.nist-ai-rmf",
+    "ref.iso-42001",
+    "ref.eu-ai-act"
+  ],
+  "xp": {
+    "base": 300
+  }
 }

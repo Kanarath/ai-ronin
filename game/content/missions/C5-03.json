@@ -7,8 +7,20 @@
   "plane": "dojo",
   "epistemic": "practica-industria",
   "estimated_minutes": 50,
-  "requires_missions": ["C5-02"],
-  "competencies": { "requires": ["C5.explotacion", "C5.evidencias"], "trains": ["C5.retest", "C5.cierre", "C5.lecciones-aprendidas"] },
+  "requires_missions": [
+    "C5-02"
+  ],
+  "competencies": {
+    "requires": [
+      "C5.explotacion",
+      "C5.evidencias"
+    ],
+    "trains": [
+      "C5.retest",
+      "C5.cierre",
+      "C5.lecciones-aprendidas"
+    ]
+  },
   "briefing": "La forja ha leído el informe y quiere cerrar los hallazgos antes de la auditoría de enero. Tu último trabajo: aplicar las defensas de cada arco, demostrar con un retest que cada hallazgo está cerrado sin romper las tareas legítimas, y entregar el resumen final. Un hallazgo no se cierra porque alguien diga que lo ha arreglado.",
   "learning_objectives": [
     "Cerrar hallazgos solo con un retest posterior que lo demuestre",
@@ -16,7 +28,11 @@
     "Entregar el cierre de un encargo con lecciones aprendidas"
   ],
   "mentor_intro": "Atacar es la mitad. La otra mitad es demostrar que ya no funciona, y que todo lo demás sí.",
-  "lab": { "datasets": [], "viz": {} },
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Un hallazgo no se cierra porque alguien diga que lo ha arreglado: se cierra con un retest que demuestra que el ataque ya no funciona y que el servicio sigue funcionando. Es el último paso de un red team y la base de las pruebas de regresión de cualquier sistema de IA (Inteligencia Artificial) en producción. Hoy cierras el encargo de la forja aplicando las defensas de cada arco.",
   "theory_cards": [
     {
       "id": "retest",
@@ -26,36 +42,114 @@
     {
       "id": "recetas",
       "title": "Defensas de cada arco",
-      "body": "A1 chatbot: sacar el secreto del prompt, escapar la salida y limitar los tokens (bot defend). A2 RAG: acl, trusted-sources, spotlight, vector-acl y min-score (rag defend). A3 agente: least-privilege, user-authz y step-budget (agent defend). A4 MCP: pin-definitions, namespacing, least-scope y output-isolation (mcp defend). A6 pipeline: los siete controles y convertir el modelo propio (supply defend, supply convert). Repásalas con man en cada tema si no las recuerdas."
+      "body": "A1 chatbot: sacar el secreto del prompt, escapar la salida y limitar los tokens (bot defend). A2 RAG (Retrieval-Augmented Generation): acl, trusted-sources, spotlight, vector-acl y min-score (rag defend). A3 agente: least-privilege, user-authz y step-budget (agent defend). A4 MCP (Model Context Protocol): pin-definitions, namespacing, least-scope y output-isolation (mcp defend). A6 pipeline: los siete controles y convertir el modelo propio (supply defend, supply convert). Repásalas con man en cada tema si no las recuerdas.",
+      "unlock_on": "objective:o3"
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Rehaz el encargo con hallazgos demostrados en al menos tres activos, uno de ellos el pipeline (A-05).",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "engagement.finding", "where": { "assets": { "gte": 3 } } },
-        { "type": "event", "event": "engagement.finding", "where": { "asset": "A-05" } }
-      ] },
-      "hints": ["engagement start final · copias · engagement bind · baterías · engagement finding (como en C5-02)"],
-      "on_complete": "Hallazgos con línea base. Ahora, a cerrarlos."
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "engagement.finding",
+            "where": {
+              "assets": {
+                "gte": 3
+              }
+            }
+          },
+          {
+            "type": "event",
+            "event": "engagement.finding",
+            "where": {
+              "asset": "A-05"
+            }
+          }
+        ]
+      },
+      "hints": [
+        "engagement start final · copias · engagement bind · baterías · engagement finding (como en C5-02)"
+      ],
+      "on_complete": "Hallazgos con línea base. Ahora, a cerrarlos.",
+      "teach": "Rehacer la línea base\nComo en C5-02: abre el encargo, crea y vincula las copias, lanza las baterías y registra hallazgos en al menos tres activos, uno de ellos el pipeline (A-05).\nPor qué: sin línea base no hay retest: necesitas el «antes» para demostrar el «después»."
     },
     {
       "id": "o2",
       "text": "Activa los siete controles del pipeline (sin convertir nada), repite su batería y su evaluación, y haz el retest.",
-      "prediction": { "prompt": "Con 0 ataques en el pipeline, ¿se cerrará el hallazgo A-05?", "options": ["sí, ya no hay ataques", "no, falta algo más", "no, porque el retest lo hace otra persona"] },
-      "validator": { "type": "event", "event": "engagement.retest", "where": { "broken": { "gte": 1 } } },
+      "prediction": {
+        "prompt": "Con 0 ataques en el pipeline, ¿se cerrará el hallazgo A-05?",
+        "options": [
+          "sí, ya no hay ataques",
+          "no, falta algo más",
+          "no, porque el retest lo hace otra persona"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "engagement.retest",
+        "where": {
+          "broken": {
+            "gte": 1
+          }
+        }
+      },
       "hints": [
         "supply defend pipe <control> on para los siete · supply attack pipe · supply eval pipe · engagement retest final",
         "Controles: data-provenance, safe-formats, artifact-signing, dependency-scan, segmentation, non-root, secret-scan."
       ],
-      "on_complete": "Sigue abierto: 0 ataques, pero las tareas legítimas están a 0,75 porque safe-formats rechaza el modelo propio en pickle. Un arreglo que rompe el servicio se desactiva en una semana."
+      "on_complete": "Sigue abierto: 0 ataques, pero las tareas legítimas están a 0,75 porque safe-formats rechaza el modelo propio en pickle. Un arreglo que rompe el servicio se desactiva en una semana.",
+      "teach": "Las dos condiciones del retest\nengagement retest final comprueba cada hallazgo: hace falta una batería posterior con 0 éxitos Y una evaluación de tareas legítimas a 1,0 (supply eval, bot eval…).\nsupply defend pipe <control> on activa un control del pipeline.\nPor qué: un arreglo que rompe el servicio se desactiva en una semana, y el hallazgo vuelve."
+    },
+    {
+      "id": "c1",
+      "text": "A-05 sigue abierto: 0 ataques, pero las tareas a 0,75 porque safe-formats rechaza el modelo propio en pickle. ¿Qué lo arregla de verdad?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "desactivar safe-formats",
+          "why": "Volvería el ataque del pickle malicioso: cambias un hallazgo abierto por otro."
+        },
+        {
+          "id": "b",
+          "text": "convertir el modelo propio a un formato que no ejecuta código, para que safe-formats ya no tenga nada que rechazar"
+        },
+        {
+          "id": "c",
+          "text": "aceptar 0,75 en las tareas",
+          "why": "El retest exige 1,0: una cuarta parte de las tareas rotas es un servicio roto."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Recuerda A6: ¿qué tiene de peligroso un pickle y qué alternativa había?",
+        "answer b"
+      ],
+      "on_complete": "Eso es: se arregla la causa (el formato del modelo), no se apaga el control que la señala."
     },
     {
       "id": "o3",
       "text": "Cierra TODOS los hallazgos del encargo: cada activo con 0 ataques y sus tareas legítimas a 1,0.",
-      "teach": "Arreglar la causa\nEn el pipeline, convierte el modelo interno (supply convert pipe clasificador-acero) y repite batería y evaluación. En los demás activos, aplica las defensas de su arco, y después su batería y su evaluación.",
-      "validator": { "type": "event", "event": "engagement.retest", "where": { "all_fixed": true, "findings": { "gte": 3 } } },
+      "teach": "Arreglar la causa\nEn el pipeline, convierte el modelo interno (supply convert pipe clasificador-acero) y repite batería y evaluación. En los demás activos, aplica las defensas de su arco (la tarjeta de arriba las resume), y después su batería y su evaluación.\nPor qué: cerrar un hallazgo es demostrarlo con dos medidas, no con un «ya está».",
+      "validator": {
+        "type": "event",
+        "event": "engagement.retest",
+        "where": {
+          "all_fixed": true,
+          "findings": {
+            "gte": 3
+          }
+        }
+      },
       "hints": [
         "Por activo: defensas → attack → eval. Al final, engagement retest final.",
         "bot defend kuro secret-in-prompt off · bot defend kuro encode-output on · bot defend kuro max-tokens on · agent defend taller least-privilege on · agent defend taller user-authz on · agent defend taller step-budget on · mcp defend erp pin-definitions on · mcp defend erp namespacing on · mcp defend erp least-scope on · mcp defend erp output-isolation on · rag defend docs acl on · rag defend docs trusted-sources on · rag defend docs spotlight on · rag defend docs vector-acl on · rag defend docs min-score on · supply convert pipe clasificador-acero"
@@ -65,15 +159,30 @@
     {
       "id": "o4",
       "text": "Entrega el resumen ejecutivo final con todos los hallazgos verificados.",
-      "validator": { "type": "event", "event": "engagement.summary", "where": { "all_fixed": true } },
-      "hints": ["engagement summary final"],
-      "on_complete": "Encargo cerrado."
+      "validator": {
+        "type": "event",
+        "event": "engagement.summary",
+        "where": {
+          "all_fixed": true
+        }
+      },
+      "hints": [
+        "engagement summary final"
+      ],
+      "on_complete": "Encargo cerrado.",
+      "teach": "Cerrar el encargo\nengagement summary final enseña el estado de cada hallazgo.\nPor qué: el resumen final es lo que firma la dirección: tiene que decir que cada hallazgo está verificado, no solo «arreglado»."
     },
     {
       "id": "o5",
       "text": "Lecciones aprendidas: explica con tus palabras qué tienen en común las defensas que funcionaron en los cinco activos, qué no se arregla con un interruptor y qué vigilarías en producción después de este encargo. (reflexion <texto>, mínimo 60 palabras)",
-      "validator": { "type": "reflection", "min_words": 60 },
-      "hints": ["Controles en el código frente a instrucciones al modelo; mínimo privilegio; acciones frente a texto.", "Trazas, reglas medidas, revisión de cada versión nueva (O6, A6)."]
+      "validator": {
+        "type": "reflection",
+        "min_words": 60
+      },
+      "hints": [
+        "Controles en el código frente a instrucciones al modelo; mínimo privilegio; acciones frente a texto.",
+        "Trazas, reglas medidas, revisión de cada versión nueva (O6, A6)."
+      ]
     }
   ],
   "mastery_trial": {
@@ -82,23 +191,59 @@
       {
         "id": "d1",
         "text": "Con un encargo nuevo: hallazgos demostrados en al menos dos activos y todos cerrados con retest.",
-        "validator": { "type": "sequence", "steps": [
-          { "type": "event", "event": "engagement.created" },
-          { "type": "event", "event": "engagement.finding", "where": { "assets": { "gte": 2 } } },
-          { "type": "event", "event": "engagement.retest", "where": { "all_fixed": true, "findings": { "gte": 2 } } }
-        ] },
-        "hints": ["Alcance, copia, batería, hallazgo, defensa, batería, evaluación, retest."],
+        "validator": {
+          "type": "sequence",
+          "steps": [
+            {
+              "type": "event",
+              "event": "engagement.created"
+            },
+            {
+              "type": "event",
+              "event": "engagement.finding",
+              "where": {
+                "assets": {
+                  "gte": 2
+                }
+              }
+            },
+            {
+              "type": "event",
+              "event": "engagement.retest",
+              "where": {
+                "all_fixed": true,
+                "findings": {
+                  "gte": 2
+                }
+              }
+            }
+          ]
+        },
+        "hints": [
+          "Alcance, copia, batería, hallazgo, defensa, batería, evaluación, retest."
+        ],
         "on_complete": "AI Red Team Assessment completado. Has hecho el ciclo entero de un encargo: autorización, reconocimiento, modelo de amenazas, explotación con evidencias, informe, corrección y verificación."
       }
     ]
   },
+  "you_can_now": "Sabes cerrar hallazgos con un retest que mide a la vez el ataque y el servicio, y arreglar la causa en lugar de apagar el control que molesta. Has completado un AI Red Team Assessment de principio a fin.",
   "debrief": {
     "what_happened": "Has cerrado los hallazgos del encargo con retest, has visto un arreglo que eliminaba los ataques pero rompía el modelo propio del pipeline, lo has resuelto en la causa y has entregado el resumen final.",
     "why": "El valor de un red team está en el cierre: hallazgos priorizados, arreglados y verificados con la misma prueba que los encontró. Las defensas que funcionan en los cinco activos comparten una idea: limitar en el código lo que el sistema puede hacer y con qué datos, en lugar de pedirle al modelo que se porte bien.",
-    "in_production": "Retest formal antes de cerrar cada hallazgo, regresión automática de las baterías en la CI, evaluación de tareas legítimas en cada cambio, monitorización y detección (O6) y un nuevo encargo cuando cambie el sistema: un modelo nuevo, una herramienta más o un proveedor distinto vuelven a abrir la superficie.",
-    "simplifications": ["Las defensas son interruptores y siempre funcionan igual", "Un retest instantáneo; en la realidad se planifica con el cliente", "Las baterías son fijas: un atacante real se adapta a tus defensas"],
+    "in_production": "Retest formal antes de cerrar cada hallazgo, regresión automática de las baterías en la CI (Continuous Integration), evaluación de tareas legítimas en cada cambio, monitorización y detección (O6) y un nuevo encargo cuando cambie el sistema: un modelo nuevo, una herramienta más o un proveedor distinto vuelven a abrir la superficie.",
+    "simplifications": [
+      "Las defensas son interruptores y siempre funcionan igual",
+      "Un retest instantáneo; en la realidad se planifica con el cliente",
+      "Las baterías son fijas: un atacante real se adapta a tus defensas"
+    ],
     "exercise": "forja/ejercicios/C5_01_encargo.py"
   },
-  "further_reading": ["ref.owasp-llm-2025", "ref.owasp-agentic-2026", "ref.nist-800-61r3"],
-  "xp": { "base": 500 }
+  "further_reading": [
+    "ref.owasp-llm-2025",
+    "ref.owasp-agentic-2026",
+    "ref.nist-800-61r3"
+  ],
+  "xp": {
+    "base": 500
+  }
 }

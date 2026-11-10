@@ -7,8 +7,22 @@
   "plane": "forja",
   "epistemic": "practica-industria",
   "estimated_minutes": 180,
-  "requires_missions": ["E4-02"],
-  "competencies": { "requires": ["E4.trazas-otel", "E4.percentiles-latencia"], "trains": ["E4.politica-como-codigo", "E4.huella-modelo", "E4.contenedor-seguro", "E4.canary", "E4.rollback"] },
+  "requires_missions": [
+    "E4-02"
+  ],
+  "competencies": {
+    "requires": [
+      "E4.trazas-otel",
+      "E4.percentiles-latencia"
+    ],
+    "trains": [
+      "E4.politica-como-codigo",
+      "E4.huella-modelo",
+      "E4.contenedor-seguro",
+      "E4.canary",
+      "E4.rollback"
+    ]
+  },
   "briefing": "Antes de que una versión nueva del servicio llegue a producción, pasa por una puerta: unas reglas que se ejecutan en cada despliegue y dicen sí o no, con el motivo. ¿El modelo está en la lista permitida y con su huella? ¿El contenedor corre sin root, con límites y sin puertos abiertos a toda la red? Si pasa, solo una cuarta parte del tráfico va a la versión nueva, y sus métricas deciden si se queda o se revierte. Instrucciones: forja/labs/E4-03_despliegue/README.md.",
   "learning_objectives": [
     "Escribir reglas de política como código que deciden si un despliegue de modelo pasa, con denegación por defecto",
@@ -18,7 +32,11 @@
     "Medir la política contra despliegues buenos y malos, y contra los compose.yaml reales de la Forja"
   ],
   "mentor_intro": "Una revisión a ojo depende de quién mire y de lo cansado que esté. Una política escrita en código se ejecuta igual a las tres de la tarde que a las tres de la madrugada, y cuando dice no, dice por qué.",
-  "lab": { "datasets": [], "viz": {} },
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Antes de que una versión nueva de un servicio de IA (Inteligencia Artificial) llegue a producción, un pipeline de CI/CD (Continuous Integration / Continuous Delivery) la hace pasar por una puerta: reglas escritas en código que dicen sí o no, con el motivo. ¿El modelo es el aprobado, con su huella? ¿El contenedor corre sin root y con límites? Después, un canary envía una parte del tráfico a la versión nueva y sus métricas deciden. Hoy escribes esa puerta en Python y la pruebas con tus propios despliegues.",
   "theory_cards": [
     {
       "id": "politica-codigo",
@@ -28,7 +46,7 @@
     {
       "id": "huella",
       "title": "La huella de un modelo",
-      "body": "Ollama identifica cada modelo descargado por un digest SHA-256 de su manifiesto, que apunta a su vez a las huellas de los pesos y la plantilla. Si alguien cambia los pesos, cambia la huella. Comprobarla frente a una lista permitida prueba que es exactamente el artefacto aprobado; no prueba que ese artefacto sea seguro, ni quién lo aprobó. La lista permitida es ahora lo que hay que proteger: quien la edite decide qué entra."
+      "body": "Ollama identifica cada modelo descargado por un digest SHA-256 (Secure Hash Algorithm de 256 bits) de su manifiesto, que apunta a su vez a las huellas de los pesos y la plantilla. Si alguien cambia los pesos, cambia la huella. Comprobarla frente a una lista permitida prueba que es exactamente el artefacto aprobado; no prueba que ese artefacto sea seguro, ni quién lo aprobó. La lista permitida es ahora lo que hay que proteger: quien la edite decide qué entra."
     },
     {
       "id": "canary",
@@ -40,8 +58,15 @@
     {
       "id": "o1",
       "text": "Implementa las nueve funciones de politica.py hasta que pasen los 18 tests y trae la evidencia.",
-      "teach": "Denegar por defecto\nUn servicio de compose sin user: no corre «con un usuario normal»: corre con el que diga la imagen, y muchas imágenes usan root. Un puerto sin IP no está «en local»: escucha en todas las interfaces. Una IP que no sabes interpretar no es segura. En cada duda, la regla dice no y explica por qué: es más barato añadir una línea al compose que investigar un incidente.",
-      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "E4-03", "all_passed": true } },
+      "teach": "Denegar por defecto\nEl trabajo de este paso es fuera del Dojo, en Python de verdad: abre forja/labs/E4-03_despliegue/README.md, crea el entorno e implementa las funciones de politica.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y aquí la traes con evidence import.\nUn servicio de compose sin user: no corre «con un usuario normal»: corre con el que diga la imagen, y muchas imágenes usan root. Un puerto sin IP (Internet Protocol) no está «en local»: escucha en todas las interfaces. Una IP que no sabes interpretar no es segura.\nEn cada duda, la regla dice no y explica por qué.\nPor qué: es más barato añadir una línea al compose que investigar un incidente.",
+      "validator": {
+        "type": "event",
+        "event": "evidence.imported",
+        "where": {
+          "exercise": "E4-03",
+          "all_passed": true
+        }
+      },
       "hints": [
         "Orden: regla_modelo → regla_usuario → regla_recursos → puerto_expuesto → regla_puertos → regla_imagen → evaluar → repartir → decidir_canary.",
         "Desde forja/labs/E4-03_despliegue: .\\.venv\\Scripts\\python.exe -m unittest -v test_politica (crea el entorno como en P0-01).",
@@ -50,37 +75,116 @@
       "on_complete": "Tu puerta funciona con despliegues de prueba. Ahora, con los compose.yaml de verdad y un canary contra el modelo real."
     },
     {
+      "id": "c1",
+      "text": "La huella SHA-256 (Secure Hash Algorithm de 256 bits) del modelo coincide con la de la lista permitida. ¿Qué prueba eso?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "que el modelo es seguro",
+          "why": "Solo prueba que es el artefacto aprobado: si se aprobó uno malo, su huella también coincide."
+        },
+        {
+          "id": "b",
+          "text": "que es exactamente el artefacto aprobado, sin ningún cambio"
+        },
+        {
+          "id": "c",
+          "text": "quién aprobó el modelo",
+          "why": "La huella no dice nada de quién lo aprobó; eso lo da una firma."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Lee la tarjeta «La huella de un modelo».",
+        "answer b"
+      ],
+      "on_complete": "Eso es. Por eso la lista permitida se convierte en lo que hay que proteger: quien la edite decide qué entra."
+    },
+    {
       "id": "o2",
       "text": "Ejecuta bateria.py (con Ollama en marcha para el canary) y trae la medición.",
-      "prediction": { "prompt": "¿Cuántos de los compose.yaml de los laboratorios anteriores (P0-01, A1-05, A2-04) crees que pasarán tu política completa?", "options": ["todos", "algunos", "ninguno"] },
-      "validator": { "type": "event", "event": "evidence.measured", "where": { "lab": "E4-03", "has_baseline": true, "configs": { "gte": 3 } } },
+      "prediction": {
+        "prompt": "¿Cuántos de los compose.yaml de los laboratorios anteriores (P0-01, A1-05, A2-04) crees que pasarán tu política completa?",
+        "options": [
+          "todos",
+          "algunos",
+          "ninguno"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "evidence.measured",
+        "where": {
+          "lab": "E4-03",
+          "has_baseline": true,
+          "configs": {
+            "gte": 3
+          }
+        }
+      },
       "hints": [
         "python bateria.py · la política tarda segundos; el canary, unos 10 minutos en CPU.",
         "Sin Ollama: python bateria.py --sin-canary (la medición de la política vale igual; el canary queda vacío)."
       ],
-      "on_complete": "Tienes datos reales. Mira la sección 3: los compose.yaml que tú mismo has desplegado en la Forja."
+      "on_complete": "Tienes datos reales. Mira la sección 3: los compose.yaml que tú mismo has desplegado en la Forja.",
+      "teach": "La batería\nbateria.py aplica tu política a despliegues de prueba y a los compose.yaml de los laboratorios anteriores, y lanza un canary contra el modelo real si Ollama está en marcha. Después trae la medición con evidence import.\nPor qué: una política probada solo con ejemplos inventados no sabes si deja pasar tus propios despliegues."
     },
     {
       "id": "o3",
       "text": "Analiza tus números: qué despliegues malos se colaban con cada configuración de reglas; qué reglas fallan los compose.yaml de la Forja y cómo los arreglarías; si la huella de tu llama3.2:1b coincide con la permitida; y qué decidió el canary con cada candidato, tras cuántas peticiones. (reflexion <texto>, mínimo 60 palabras)",
-      "teach": "Revertir pronto\nEl canary evalúa después de cada petición. En cuanto los datos superan un umbral, revierte: cada petición más a una versión rota es un usuario más afectado. Al revés, para promover hace falta llegar al final con datos suficientes. Esa asimetría es deliberada: equivocarse revirtiendo una versión buena cuesta un despliegue; equivocarse promoviendo una mala cuesta un incidente.",
-      "validator": { "type": "reflection", "min_words": 60 },
-      "hints": ["evidence list te recuerda los recuentos; la huella, los compose y el canary están en la salida de bateria.py y en forja/evidencias/E4-03-medicion.json.", "Busca en la salida «usuario-sin-declarar» y «sin-limite»: ¿qué línea añadirías a cada compose.yaml?"]
+      "teach": "Revertir pronto\nEl canary evalúa después de cada petición. En cuanto los datos superan un umbral, revierte: cada petición más a una versión rota es un usuario más afectado. Para promover, en cambio, hace falta llegar al final con datos suficientes.\nPor qué: equivocarse revirtiendo una versión buena cuesta un despliegue; equivocarse promoviendo una mala cuesta un incidente.",
+      "validator": {
+        "type": "reflection",
+        "min_words": 60
+      },
+      "hints": [
+        "evidence list te recuerda los recuentos; la huella, los compose y el canary están en la salida de bateria.py y en forja/evidencias/E4-03-medicion.json.",
+        "Busca en la salida «usuario-sin-declarar» y «sin-limite»: ¿qué línea añadirías a cada compose.yaml?"
+      ]
     },
     {
       "id": "o4",
       "text": "Explica qué prueba y qué no prueba que la huella del modelo esté en la lista permitida, quién debe poder modificar esa lista, y qué tipo de versión mala pasaría tu canary sin que lo notara. (reflexion <texto>, mínimo 50 palabras)",
-      "validator": { "type": "reflection", "min_words": 50 },
-      "hints": ["La tarjeta «La huella de un modelo» y A6: firma y huellas en la cadena de suministro.", "Tu canary mide errores y p95. ¿Y si la versión nueva responde rápido, sin errores, pero con respuestas peores?"]
+      "validator": {
+        "type": "reflection",
+        "min_words": 50
+      },
+      "hints": [
+        "La tarjeta «La huella de un modelo» y A6: firma y huellas en la cadena de suministro.",
+        "Tu canary mide errores y p95. ¿Y si la versión nueva responde rápido, sin errores, pero con respuestas peores?"
+      ]
     }
   ],
+  "you_can_now": "Sabes escribir reglas de despliegue como código que deniegan por defecto, comprobar la huella de un modelo frente a una lista permitida y decidir un canary con umbrales fijados antes. Con E4 completo, has llevado un servicio de LLM (Large Language Model) de la carga a la observabilidad y al despliegue.",
   "debrief": {
     "what_happened": "Has escrito una puerta de despliegue como código: lista permitida de modelos con su huella, contenedores sin root, con límites y sin puertos abiertos a la red, e imágenes fijadas. La has medido contra despliegues buenos y malos y contra los compose.yaml reales de la Forja. Después has lanzado un canary contra el modelo real que reparte el tráfico de forma determinista y revierte en cuanto las métricas lo justifican.",
     "why": "Un despliegue es el momento en que una decisión de seguridad se convierte en producción. Si la comprueban reglas en código, se comprueba siempre igual, con el motivo escrito y con tests. El canary limita el daño de lo que las reglas no pueden ver: una versión que cumple la política y aun así funciona peor.",
-    "in_production": "Las políticas se escriben en motores como Open Policy Agent (Rego) o Kyverno y se aplican en el pipeline de CI/CD y en la admisión del clúster, de modo que nadie se las salte desplegando a mano. Los modelos se firman (por ejemplo con el estándar de OpenSSF Model Signing) y se verifican igual que las imágenes. Los canary los automatizan herramientas de entrega progresiva sobre la malla de servicios o el balanceador, y comparan también métricas de calidad del modelo, no solo errores y latencia.",
-    "simplifications": ["Despliegues descritos con un diccionario en lugar del objeto completo de compose o de Kubernetes", "Una lista permitida en un JSON sin firmar", "La política solo se ejecuta cuando tú lanzas bateria.py, no en un pipeline", "El canary compara errores y p95 con pocas peticiones y sin pruebas estadísticas", "El Dojo no puede comprobar que el canary se hizo con el modelo real: confía en tus datos"],
+    "in_production": "Las políticas se escriben en motores como Open Policy Agent (Rego) o Kyverno y se aplican en el pipeline de CI/CD (Continuous Integration / Continuous Delivery) y en la admisión del clúster, de modo que nadie se las salte desplegando a mano. Los modelos se firman (por ejemplo con el estándar de OpenSSF Model Signing) y se verifican igual que las imágenes. Los canary los automatizan herramientas de entrega progresiva sobre la malla de servicios o el balanceador, y comparan también métricas de calidad del modelo, no solo errores y latencia.",
+    "simplifications": [
+      "Despliegues descritos con un diccionario en lugar del objeto completo de compose o de Kubernetes",
+      "Una lista permitida en un JSON sin firmar",
+      "La política solo se ejecuta cuando tú lanzas bateria.py, no en un pipeline",
+      "El canary compara errores y p95 con pocas peticiones y sin pruebas estadísticas",
+      "El Dojo no puede comprobar que el canary se hizo con el modelo real: confía en tus datos"
+    ],
     "exercise": "forja/labs/E4-03_despliegue/politica.py"
   },
-  "further_reading": ["ref.compose-services", "ref.ollama-tags", "ref.sre-canary", "ref.owasp-docker", "ref.opa", "ref.openssf-model-signing", "ref.slsa"],
-  "xp": { "base": 500 }
+  "further_reading": [
+    "ref.compose-services",
+    "ref.ollama-tags",
+    "ref.sre-canary",
+    "ref.owasp-docker",
+    "ref.opa",
+    "ref.openssf-model-signing",
+    "ref.slsa"
+  ],
+  "xp": {
+    "base": 500
+  }
 }
