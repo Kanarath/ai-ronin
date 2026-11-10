@@ -317,3 +317,33 @@ func test_mision_A6_04() -> void:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
+## E1 (investigación ML): evidencia de los tests del laboratorio, hipótesis y dos reflexiones.
+func _mision_E1(id: String, requisitos: Array, tests: int, hipotesis: String) -> void:
+	var finished: Array = []
+	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
+	for m: String in requisitos:
+		game.progress.data["missions"][m] = {"completed": true}
+	assert_eq(game.start_mission(id), "", id)
+	game.import_evidence(_write("e.json", _evidence(id, tests - 1)))
+	assert_eq(game.runner.index, 0, "%s: con un test sin pasar no avanza" % id)
+	game.import_evidence(_write("e.json", _evidence(id, tests)))
+	assert_eq(game.runner.index, 1, id)
+	assert_true(game.shell.execute("hipotesis " + hipotesis).ok, hipotesis)
+	for l in ["reflexion " + "mi bucle coincidio con generate y la cuantizacion por bloques casi no cambio la perplejidad del modelo pequeno ".repeat(5),
+			"reflexion " + "entrenar de verdad necesita gradientes y estados del optimizador por cada peso y eso no cabe en mi portatil sin gpu ".repeat(4)]:
+		var r := game.shell.execute(l)
+		assert_true(r.ok, r.plain_text())
+	assert_eq(finished.size(), 1, id)
+
+
+func test_mision_E1_01() -> void:
+	assert_false(game.start_mission("E1-01").is_empty(), "bloqueada sin T6-02 ni P0-01")
+	_mision_E1("E1-01", ["T6-02", "P0-01"], 17, "más de 3 veces")
+
+
+func test_mision_E1_02() -> void:
+	_mision_E1("E1-02", ["E1-01"], 12, "menos de un 1 %")
+
+
+func test_mision_E1_03() -> void:
+	_mision_E1("E1-03", ["E1-02"], 15, "hacia la mitad")

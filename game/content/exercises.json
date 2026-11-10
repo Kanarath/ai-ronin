@@ -226,6 +226,28 @@
       "total_tests": 27,
       "tests_sha256": "5cd52de9024d9df31b1b0e4f2f979243eb2e9e4aa5bda70ab4c496c16d6efcec",
       "battery_sha256": "d4e9b40f20fa609de0a6db3bbcc6f32068f723554353ccb871f66191dddf1d1b"
+      "id": "E1-01",
+      "file": "generacion.py",
+      "test_file": "test_generacion.py",
+      "test_path": "forja/labs/E1-01_generacion/test_generacion.py",
+      "total_tests": 17,
+      "tests_sha256": "d60d9f7026deb9ca7818190231be80421e8ab2a0c0892d4969202caba18deb00"
+    },
+    {
+      "id": "E1-02",
+      "file": "cuantizacion.py",
+      "test_file": "test_cuantizacion.py",
+      "test_path": "forja/labs/E1-02_cuantizacion/test_cuantizacion.py",
+      "total_tests": 12,
+      "tests_sha256": "71fab757f11008a323979876ea18c779ed45f6736421c747d7deb3d3114d6188"
+    },
+    {
+      "id": "E1-03",
+      "file": "lora.py",
+      "test_file": "test_lora.py",
+      "test_path": "forja/labs/E1-03_lora_lente/test_lora.py",
+      "total_tests": 15,
+      "tests_sha256": "7c64d3c11bdadb4f6de4ca165bc1e050bf49f90f00f8d9ee245e7aaef96fb46a"
     },
     {
       "id": "P0-01",

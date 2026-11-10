@@ -1,0 +1,83 @@
+{
+  "id": "E1-03",
+  "schema_version": 1,
+  "title": "Un adaptador y una lente",
+  "unit": "E1",
+  "difficulty": 4,
+  "plane": "forja",
+  "epistemic": "emergente",
+  "estimated_minutes": 180,
+  "requires_missions": ["E1-02"],
+  "competencies": { "requires": ["E1.bucle-generacion", "E1.perplejidad", "T4.backprop"], "trains": ["E1.lora", "E1.entrenamiento-pytorch", "E1.logit-lens", "E1.limites-cpu"] },
+  "briefing": "Dos herramientas de investigación sobre SmolLM2-135M. Con LoRA congelas el modelo y entrenas solo una corrección de bajo rango: enseñarás al modelo un dato ficticio sobre la forja Kurogane con unos pocos pasos en CPU. Con la lente de logits miras qué «diría» el modelo tras cada una de sus 30 capas. Es un juguete: afinar de verdad requiere GPU, y verás por qué con números. Instrucciones: forja/labs/E1-03_lora_lente/README.md.",
+  "learning_objectives": [
+    "Implementar una capa LoRA como nn.Module e inyectarla en las capas de atención de un modelo",
+    "Escribir un bucle de entrenamiento en PyTorch (pérdida, backward, paso del optimizador) que solo toca los parámetros del adaptador",
+    "Fusionar el adaptador en los pesos y comprobar que el modelo da lo mismo",
+    "Aplicar la lente de logits para ver en qué capa aparece una predicción",
+    "Estimar la memoria de afinar un modelo entero frente a LoRA y explicar por qué el fine-tuning real requiere GPU"
+  ],
+  "mentor_intro": "Hasta ahora usabas el modelo tal como vino. Hoy lo cambias, solo un poco, y miras por dentro. Cambiar un modelo es fácil; saber qué más has cambiado sin querer, no.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "lora",
+      "title": "Bajo rango",
+      "body": "Afinar todo el modelo cambia cada matriz W. LoRA congela W y aprende la corrección B · A, con A de r × n y B de m × r. Si r es pequeño (8), la corrección tiene muchos menos números que W. B empieza a cero, así que al principio el modelo es idéntico al original. La salida es W·x + (alfa / r) · B·A·x. Después se puede fusionar en un solo peso, W + (alfa / r) · B·A, sin coste en inferencia."
+    },
+    {
+      "id": "entrenar",
+      "title": "Un paso de entrenamiento",
+      "body": "Es el descenso por gradiente de T3 con otra ropa: la pérdida es la entropía cruzada de predecir cada token con los anteriores; backward() calcula el gradiente de cada parámetro con requires_grad (la backprop de T4); el optimizador AdamW lo usa para mover los parámetros; zero_grad() borra los gradientes del paso anterior, que PyTorch acumula si no lo haces."
+    },
+    {
+      "id": "lente",
+      "title": "La lente de logits",
+      "body": "Cada capa del transformer suma algo a un vector por token (el flujo residual). La cabeza de salida solo lee el último. La lente aplica esa misma cabeza (con la norma final) a los vectores intermedios: así ves qué token ganaría si el modelo parara en la capa 10 o en la 20. Es una lectura aproximada: la cabeza no se entrenó para leer capas intermedias."
+    },
+    {
+      "id": "gpu",
+      "title": "Por qué hace falta GPU",
+      "body": "Entrenar guarda por cada parámetro entrenable su peso, su gradiente y dos estados de AdamW: unos 16 bytes en float32. Un modelo de 7 B entero pide unos 112 GB, más las activaciones. LoRA reduce lo entrenable a menos del 1 %, pero el modelo base sigue pasando hacia delante y hacia atrás en cada paso. Una GPU hace esas multiplicaciones decenas de veces más rápido que una CPU."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Implementa la clase LoRA y las seis funciones de lora.py hasta que pasen los 15 tests y trae la evidencia.",
+      "teach": "nn.Module y nn.Parameter\nUn nn.Module registra automáticamente los nn.Parameter que asignas como atributos (self.A = nn.Parameter(...)) y los submódulos (self.base = base). Así modelo.parameters() los encuentra y el optimizador puede moverlos. Un tensor normal asignado como atributo no se registra y no se entrenaría.",
+      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "E1-03", "all_passed": true } },
+      "hints": [
+        "Orden: LoRA.__init__ → LoRA.forward → fusionar → contar_parametros → aplicar_lora → perdida_lm → entrenar → lente_logit.",
+        "aplicar_lora: for nombre, m in list(modelo.named_modules()): si isinstance(m, nn.Linear) y nombre.rpartition(\".\")[2] in objetivos → padre, _, hijo = nombre.rpartition(\".\") · setattr(modelo.get_submodule(padre), hijo, LoRA(m, rango, alfa, generador)).",
+        "Desde forja/labs/E1-03_lora_lente: ..\\E1-01_generacion\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py E1-03 · y aquí: evidence import"
+      ],
+      "on_complete": "Tu adaptador y tu lente funcionan con el modelo diminuto. Ahora, con SmolLM2."
+    },
+    {
+      "id": "o2",
+      "text": "Ejecuta experimento.py (README, sección 2). Anota en qué capa aparece « Paris» en la lente y con qué probabilidad; cuántos parámetros entrena LoRA y qué porcentaje del modelo son; cómo bajan la pérdida y la perplejidad; y qué completan las tres pruebas antes y después. (reflexion <texto>, mínimo 70 palabras)",
+      "prediction": { "prompt": "¿En qué parte del modelo crees que aparecerá « Paris» como token más probable?", "options": ["ya en las primeras capas", "hacia la mitad", "solo en las últimas capas"] },
+      "validator": { "type": "reflection", "min_words": 70 },
+      "hints": [
+        "python experimento.py · si la pérdida apenas baja, prueba --lr 0.005 o --pasos 60.",
+        "Fíjate en la tercera prueba (la Torre Eiffel): si cambia tras entrenar con una sola frase, el adaptador ha tocado algo más que el dato."
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Con las cuentas del apartado 4 del experimento, explica por qué en tu portátil puedes entrenar este juguete pero no afinar de verdad un modelo de 7 B, qué ahorra LoRA y qué no, y por qué un adaptador LoRA descargado de internet es un artefacto que hay que verificar como el propio modelo (A6). (reflexion <texto>, mínimo 60 palabras)",
+      "validator": { "type": "reflection", "min_words": 60 },
+      "hints": ["16 bytes por parámetro entrenable, más el modelo base en memoria, más las activaciones de cada paso.", "A6: «adapter manipulado». Un adaptador fusionado cambia los pesos: puede meter una puerta trasera igual que un modelo entero."]
+    }
+  ],
+  "debrief": {
+    "what_happened": "Has implementado LoRA desde cero: una capa que congela la original y entrena una corrección de bajo rango, inyectada en las capas de atención de un transformer real. La has entrenado unos pasos en CPU para enseñar un dato ficticio, la has fusionado en los pesos y has mirado dentro del modelo con la lente de logits.",
+    "why": "LoRA es la forma más común de adaptar un modelo abierto: entrena menos del 1 % de los parámetros y el adaptador ocupa unos pocos megabytes. La lente de logits es una de las herramientas más sencillas de interpretabilidad: no explica por qué el modelo decide, pero muestra dónde se forma la decisión. Las dos enseñan lo mismo: un modelo es un conjunto de tensores que puedes leer y modificar, y cada modificación tiene efectos que hay que medir.",
+    "in_production": "Se afina con la librería PEFT de Hugging Face sobre GPU, con miles de ejemplos, validación y varias épocas. QLoRA carga el modelo base en 4 bits para que quepa en una sola GPU. Los adaptadores se distribuyen por separado (pocos MB) y se cargan sobre el modelo base, o se fusionan. La interpretabilidad seria usa la tuned lens, sondas lineales, autoencoders dispersos y análisis de circuitos; es un campo de investigación activo y sus resultados se citan con cautela.",
+    "simplifications": ["Una sola frase de entrenamiento repetida: el modelo la memoriza", "Sin validación, sin dropout y sin programación del learning rate", "La lente de logits sin entrenar es ruidosa en las primeras capas", "El Dojo no puede comprobar tus números: confía en tus datos"],
+    "exercise": "forja/labs/E1-03_lora_lente/lora.py"
+  },
+  "further_reading": ["ref.hu-lora-2021", "ref.dettmers-qlora-2023", "ref.hf-peft", "ref.logit-lens-2020", "ref.belrose-tuned-lens-2023"],
+  "xp": { "base": 550 }
+}

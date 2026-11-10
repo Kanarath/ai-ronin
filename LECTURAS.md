@@ -362,6 +362,31 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
 - [NIST SP 800-61 Rev. 3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile (abril de 2025)](https://csrc.nist.gov/pubs/sp/800/61/r3/final) — NIST · consultada 2026-11-09
 
+## E1
+
+**E1-01 · El bucle de generación**
+
+- [HuggingFaceTB/SmolLM2-135M · ficha del modelo (licencia Apache-2.0; revisión 93efa2f, 134,5 M parámetros en bfloat16)](https://huggingface.co/HuggingFaceTB/SmolLM2-135M) — Hugging Face Hub · consultada 2026-11-10
+- [SmolLM2: When Smol Goes Big — Data-Centric Training of a Small Language Model](https://arxiv.org/abs/2502.02737) — arXiv:2502.02737 · consultada 2026-11-10
+- [Transformers · Generation strategies (versión 5.22.2)](https://huggingface.co/docs/transformers/generation_strategies) — Hugging Face · consultada 2026-11-10
+- [PyTorch · documentación (versión 2.15.0, compilación para CPU)](https://docs.pytorch.org/docs/stable/) — PyTorch Foundation · consultada 2026-11-10
+- [The Curious Case of Neural Text Degeneration (nucleus sampling, top-p)](https://arxiv.org/abs/1904.09751) — ICLR 2020 · arXiv:1904.09751 · consultada 2026-11-06
+
+**E1-02 · Ocho bits por peso**
+
+- [Quantization and Training of Neural Networks for Efficient Integer-Arithmetic-Only Inference](https://arxiv.org/abs/1712.05877) — CVPR 2018 · arXiv:1712.05877 · consultada 2026-11-10
+- [LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339) — NeurIPS 2022 · arXiv:2208.07339 · consultada 2026-11-10
+- [GGUF · especificación del formato (ggml); Q8_0 = bloques de 32 int8 con escala float16 (quantize_row_q8_0_ref en ggml-quants.c)](https://github.com/ggml-org/ggml/blob/master/docs/gguf.md) — ggml / llama.cpp · consultada 2026-11-10
+- [Ollama · smollm2: etiquetas y tamaños (135m-instruct fp16 271 MB, q8_0 145 MB, q4_0 92 MB)](https://ollama.com/library/smollm2/tags) — Ollama · consultada 2026-11-10
+
+**E1-03 · Un adaptador y una lente**
+
+- [LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685) — ICLR 2022 · arXiv:2106.09685 · consultada 2026-11-10
+- [QLoRA: Efficient Finetuning of Quantized LLMs](https://arxiv.org/abs/2305.14314) — NeurIPS 2023 · arXiv:2305.14314 · consultada 2026-11-10
+- [Hugging Face PEFT · Parameter-Efficient Fine-Tuning (LoRA y otros adaptadores)](https://huggingface.co/docs/peft/index) — Hugging Face · consultada 2026-11-10
+- [interpreting GPT: the logit lens](https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens) — LessWrong · consultada 2026-11-10
+- [Eliciting Latent Predictions from Transformers with the Tuned Lens](https://arxiv.org/abs/2303.08112) — arXiv:2303.08112 · consultada 2026-11-10
+
 ## O5
 
 **O5-01 · Tres marcos, tres preguntas**
