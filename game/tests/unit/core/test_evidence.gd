@@ -132,7 +132,7 @@ func test_el_mentor_recuerda_el_ejercicio() -> void:
 func test_mision_P0_01() -> void:
 	var finished: Array = []
 	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
-	game.progress.data["missions"]["T6-02"] = {"completed": true}
+	game.progress.data["missions"]["T6-03"] = {"completed": true}
 	assert_eq(game.start_mission("P0-01"), "")
 	assert_true(game.import_evidence(_write("P0-01.json", _evidence("P0-01", 1)))["ok"])
 	assert_eq(game.runner.index, 1)
@@ -351,8 +351,8 @@ func _mision_E1(id: String, requisitos: Array, tests: int, hipotesis: String, re
 
 
 func test_mision_E1_01() -> void:
-	assert_false(game.start_mission("E1-01").is_empty(), "bloqueada sin T6-02 ni P0-01")
-	_mision_E1("E1-01", ["T6-02", "P0-01"], 17, "más de 3 veces", ["answer b"])
+	assert_false(game.start_mission("E1-01").is_empty(), "bloqueada sin T6-03 ni P0-01")
+	_mision_E1("E1-01", ["T6-03", "P0-01"], 17, "más de 3 veces", ["answer b"])
 
 
 func test_mision_E1_02() -> void:

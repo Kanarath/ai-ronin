@@ -28,6 +28,11 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [scikit-learn User Guide: Nearest Neighbors](https://scikit-learn.org/stable/modules/neighbors.html) — scikit-learn · consultada 2026-11-06
 - [scikit-learn: Common pitfalls and recommended practices (data leakage)](https://scikit-learn.org/stable/common_pitfalls.html) — scikit-learn · consultada 2026-11-06
 
+**T2-02 · Clientes que abusan**
+
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [scikit-learn: Common pitfalls and recommended practices (data leakage)](https://scikit-learn.org/stable/common_pitfalls.html) — scikit-learn · consultada 2026-11-06
+
 ## T3
 
 **T3-01 · Bajar la montaña**
@@ -38,6 +43,11 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 **T3-02 · El coste de un error**
 
 - [scikit-learn: Precision-Recall (ejemplo y explicación)](https://scikit-learn.org/stable/auto_examples/model_selection/plot_precision_recall.html) — scikit-learn · consultada 2026-11-06
+
+**T3-03 · ¿Bloquear o dejar pasar?**
+
+- [scikit-learn: Precision-Recall (ejemplo y explicación)](https://scikit-learn.org/stable/auto_examples/model_selection/plot_precision_recall.html) — scikit-learn · consultada 2026-11-06
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
 
 ## T4
 
@@ -53,6 +63,11 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [Deep Learning, capítulo 6: Deep Feedforward Networks (incluye XOR y backpropagation)](https://www.deeplearningbook.org/contents/mlp.html) — MIT Press, 2016 · consultada 2026-11-06
 - [3Blue1Brown: Neural networks (serie de vídeos visuales sobre redes y backpropagation)](https://www.3blue1brown.com/topics/neural-networks) — 3Blue1Brown · consultada 2026-11-06
 
+**T4-03 · Llamadas peligrosas**
+
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [3Blue1Brown: Neural networks (serie de vídeos visuales sobre redes y backpropagation)](https://www.3blue1brown.com/topics/neural-networks) — 3Blue1Brown · consultada 2026-11-06
+
 ## T5
 
 **T5-01 · Cortar el texto**
@@ -64,6 +79,11 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 
 - [Efficient Estimation of Word Representations in Vector Space (word2vec)](https://arxiv.org/abs/1301.3781) — arXiv:1301.3781 · consultada 2026-11-06
 - [Man is to Computer Programmer as Woman is to Homemaker? Debiasing Word Embeddings](https://arxiv.org/abs/1607.06520) — NeurIPS 2016 · arXiv:1607.06520 · consultada 2026-11-06
+
+**T5-03 · Disfraces de texto**
+
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [Unicode Technical Standard #39: Unicode Security Mechanisms (confusables, identificadores)](https://www.unicode.org/reports/tr39/) — Unicode Consortium · consultada 2026-11-10
 
 ## T6
 
@@ -77,6 +97,11 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 
 - [Attention Is All You Need](https://arxiv.org/abs/1706.03762) — NeurIPS 2017 · arXiv:1706.03762 · consultada 2026-11-06
 - [The Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/) — J. Alammar · consultada 2026-11-06
+
+**T6-03 · La instrucción escondida**
+
+- [Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection](https://arxiv.org/abs/2302.12173) — arXiv:2302.12173 (AISec 2023) · consultada 2026-11-06
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
 
 ## P0
 

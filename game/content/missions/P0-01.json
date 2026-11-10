@@ -8,7 +8,7 @@
   "epistemic": "practica-industria",
   "estimated_minutes": 120,
   "requires_missions": [
-    "T6-02"
+    "T6-03"
   ],
   "competencies": {
     "requires": [

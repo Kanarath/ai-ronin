@@ -15,7 +15,7 @@ El proyecto tiene dos planos:
 
 - Diseño aprobado el 2026-11-06.
 - Fase 0 (cimientos) completada: proyecto Godot y tests. Los tests se ejecutan en local; el repositorio no usa GitHub Actions.
-- **Contenido jugable:** 69 misiones.
+- **Contenido jugable:** 75 misiones, todas con el patrón de acompañamiento: «para qué sirve» al empezar, «Por qué:» en cada paso, comprobaciones de comprensión con explicación y un cierre «Qué puedes hacer ya». Muchas incluyen un paso guiado de Python en el editor del Dojo (mini-Python propio, sin acceso al sistema). Tras cada unidad de fundamentos hay una misión aplicada (T1-03, T2-02, T3-03, T4-03, T5-03, T6-03). Comando `mapa`: el temario y dónde estás.
   - Tutorial T0.
   - Tronco común T1–T6: datos, k-NN, descenso por gradiente, métricas, redes neuronales con backprop, tokens BPE, embeddings, modelo de lenguaje, muestreo y atención.
   - Arco de seguridad A1 completo (construir, atacar, defender y desplegar un chatbot), con informes de vulnerabilidad.
