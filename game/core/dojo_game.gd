@@ -29,6 +29,24 @@ var report: Dictionary = {}
 var save_path: String
 var load_warning: String = ""
 var active_mission: Dictionary = {}
+## Editor de Python del Dojo: el código que hay ahora en el editor y de qué ejercicio es.
+var py_code: String = ""
+var py_exercise_id: String = ""
+
+
+## Código guardado de un ejercicio de Python, o su código inicial si aún no hay.
+func saved_py_code(exercise_id: String, starter: String) -> String:
+	return str(progress.data.get("py_code", {}).get(exercise_id, starter))
+
+
+## Guarda el código del editor con el progreso (por ejercicio).
+func store_py_code() -> void:
+	if py_exercise_id.is_empty():
+		return
+	if not progress.data.has("py_code"):
+		progress.data["py_code"] = {}
+	progress.data["py_code"][py_exercise_id] = py_code
+	save()
 
 
 func _init(p_save_path: String = DEFAULT_SAVE) -> void:

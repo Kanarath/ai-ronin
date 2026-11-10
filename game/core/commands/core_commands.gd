@@ -22,6 +22,7 @@ const CATEGORY_NAMES := {
 	"gobernanza": "Marcos y gobernanza de la IA",
 	"laboratorio": "Laboratorios integradores (capstones)",
 	"mentor": "Mentor RONIN",
+	"python": "Python en el Dojo",
 }
 
 
@@ -108,7 +109,7 @@ static func _help_overview(ctx: CommandContext) -> CommandResult:
 		if not by_cat.has(cmd.category):
 			by_cat[cmd.category] = []
 		by_cat[cmd.category].append(cmd)
-	for cat: String in ["misiones", "mentor", "datos", "modelos", "optimizacion", "redes", "lenguaje", "seguridad", "rag", "agentes", "mcp", "multiagente", "supply", "deteccion", "gobernanza", "laboratorio", "encargo", "ayuda", "terminal"]:
+	for cat: String in ["misiones", "mentor", "python", "datos", "modelos", "optimizacion", "redes", "lenguaje", "seguridad", "rag", "agentes", "mcp", "multiagente", "supply", "deteccion", "gobernanza", "laboratorio", "encargo", "ayuda", "terminal"]:
 		if not by_cat.has(cat):
 			continue
 		r.line("")

@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "destino": "El destino: entender cómo funcionan por dentro los sistemas de IA (Inteligencia Artificial) actuales, construirlos, atacarlos y defenderlos. LLM (Large Language Model), RAG (Retrieval-Augmented Generation), agentes y MCP (Model Context Protocol).",
+  "unidades": [
+    {"unit": "T0", "para_que": "Manejar el Dojo: consola, pistas, glosario y laboratorio."},
+    {"unit": "T1", "para_que": "Datos y vectores: cómo ve una IA el mundo (como números) y cómo mide parecidos. La base de cualquier detector y de la búsqueda de un RAG (Retrieval-Augmented Generation)."},
+    {"unit": "T2", "para_que": "Aprender de datos: cómo un modelo generaliza a ejemplos que no ha visto, y cómo se engaña uno mismo al evaluarlo."},
+    {"unit": "T3", "para_que": "Optimización y métricas: cómo se entrena un modelo (descenso por gradiente) y cómo se mide si acierta (precision, recall)."},
+    {"unit": "T4", "para_que": "Redes neuronales: la pieza con la que están hechos todos los LLM (Large Language Models)."},
+    {"unit": "T5", "para_que": "Del texto al vector: tokens y embeddings, cómo un LLM convierte palabras en números."},
+    {"unit": "T6", "para_que": "Transformers y LLM: atención y muestreo, cómo un LLM elige la siguiente palabra."},
+    {"unit": "P0", "para_que": "Python para IA: servir un LLM local y escribir el código de verdad."},
+    {"unit": "A1", "para_que": "Aplicación LLM: construir un chatbot, atacarlo con prompt injection (inyección de instrucciones) y defenderlo."},
+    {"unit": "A2", "para_que": "RAG (Retrieval-Augmented Generation): un asistente que busca en documentos; envenenarlo y protegerlo."},
+    {"unit": "A3", "para_que": "Agentes: un LLM con herramientas que actúa; secuestrar su objetivo y ponerle límites."},
+    {"unit": "A4", "para_que": "MCP (Model Context Protocol): cómo se conectan herramientas a un LLM y cómo se abusa de ellas."},
+    {"unit": "A6", "para_que": "Supply chain (cadena de suministro): modelos, datos y dependencias manipulados antes de llegar a producción."},
+    {"unit": "O5", "para_que": "Gobernanza: EU AI Act, NIST AI RMF (AI Risk Management Framework) e ISO/IEC 42001."},
+    {"unit": "O6", "para_que": "Blue team: detectar y responder a ataques contra sistemas de IA en producción."},
+    {"unit": "C1", "para_que": "Capstone: laboratorio completo de seguridad de agentes."},
+    {"unit": "C2", "para_que": "Capstone: laboratorio completo de seguridad de RAG."},
+    {"unit": "C3", "para_que": "Capstone: laboratorio completo de seguridad de MCP."},
+    {"unit": "C5", "para_que": "Prueba final: un AI red team assessment (evaluación de seguridad ofensiva) completo de una empresa ficticia."},
+    {"unit": "E1", "para_que": "Especialización: investigación ML (Machine Learning) con PyTorch en CPU."},
+    {"unit": "E2", "para_que": "Especialización: ML (Machine Learning) adversarial y privacidad."},
+    {"unit": "E3", "para_que": "Especialización: gobernanza y auditoría profesional."},
+    {"unit": "E4", "para_que": "Especialización: AI Ops (operación de sistemas de IA) avanzado."}
+  ]
+}

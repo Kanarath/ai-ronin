@@ -150,6 +150,15 @@ static func _hypothesis(c: CommandContext, a: Dictionary) -> CommandResult:
 		for o: String in options:
 			if o.to_lower() == value.to_lower():
 				match_opt = o
+		# También vale el principio de la opción («hipotesis msg-001» por «msg-001 (ataque)»),
+		# siempre que solo encaje con una.
+		if match_opt.is_empty() and not value.strip_edges().is_empty():
+			var starts: Array[String] = []
+			for o: String in options:
+				if o.to_lower().begins_with(value.strip_edges().to_lower()):
+					starts.append(o)
+			if starts.size() == 1:
+				match_opt = starts[0]
 		if match_opt.is_empty():
 			return CommandResult.error("Elige una de las opciones: %s" % " · ".join(PackedStringArray(options)))
 		value = match_opt

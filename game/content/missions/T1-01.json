@@ -40,7 +40,7 @@
     {
       "id": "o1",
       "text": "Mira qué datasets hay en el laboratorio: dataset list",
-      "teach": "Los comandos de datos\nTodo lo relativo a datos empieza por la palabra dataset, seguida de lo que quieres hacer.\nPara ver qué datasets hay: dataset list",
+      "teach": "Los comandos de datos\nTodo lo relativo a datos empieza por la palabra dataset, seguida de lo que quieres hacer.\nPara ver qué datasets hay: dataset list\nPor qué: antes de construir nada, un ingeniero de IA comprueba con qué datos cuenta.",
       "validator": {
         "type": "event",
         "event": "dataset.listed"
@@ -53,7 +53,7 @@
     {
       "id": "o2",
       "text": "Mira las primeras filas del dataset: dataset inspect katanas",
-      "teach": "Mirar dentro\nUn dataset es una tabla. dataset inspect te enseña sus primeras filas.",
+      "teach": "Mirar dentro\nUn dataset es una tabla. dataset inspect te enseña sus primeras filas.\nPor qué: un modelo solo puede aprender de lo que hay en sus columnas; si no sabes qué es cada columna, no sabrás qué está aprendiendo.",
       "validator": {
         "type": "event",
         "event": "dataset.inspected",
@@ -101,7 +101,7 @@
     {
       "id": "o4",
       "text": "Resume las 240 katanas con estadísticas: dataset stats katanas",
-      "teach": "Resumir muchos datos\n240 filas no se pueden mirar una a una: se resumen con unos pocos números por columna.\nMEDIA: el valor típico. MÍNIMO y MÁXIMO: el valor más bajo y el más alto. RANGO: máximo menos mínimo, es decir, cuánto se mueve esa medida.\nComando: dataset stats katanas",
+      "teach": "Resumir muchos datos\n240 filas no se pueden mirar una a una: se resumen con unos pocos números por columna.\nMEDIA: el valor típico. MÍNIMO y MÁXIMO: el valor más bajo y el más alto. RANGO: máximo menos mínimo, es decir, cuánto se mueve esa medida.\nComando: dataset stats katanas\nPor qué: estas cifras te avisan de problemas antes de entrenar: escalas muy distintas o clases desequilibradas engañan a muchos modelos.",
       "validator": {
         "type": "event",
         "event": "dataset.stats",
@@ -117,7 +117,7 @@
     {
       "id": "o5",
       "text": "¿Cuántas veces más grande es el rango de la temperatura que el de la dureza? Divide un rango entre el otro y responde con un decimal: answer <número>",
-      "teach": "Comparar escalas\nPara saber cuántas veces es mayor un número que otro, se divide: 20 entre 5 da 4, «cuatro veces mayor».\nUsa los dos rangos de la tabla anterior.",
+      "teach": "Comparar escalas\nPara saber cuántas veces es mayor un número que otro, se divide: 20 entre 5 da 4, «cuatro veces mayor».\nUsa los dos rangos de la tabla anterior.\nPor qué: en la misión siguiente verás que los modelos que miden parecidos se dejan llevar por la feature de números más grandes.",
       "validator": {
         "type": "answer",
         "expected": 8.75,
@@ -133,7 +133,7 @@
     {
       "id": "o6",
       "text": "Dibuja dos gráficos con plot y comprueba qué feature ayuda menos a distinguir aptas de defectuosas.",
-      "teach": "El gráfico de dispersión\nplot pone una feature en el eje horizontal (--x) y otra en el vertical (--y), y pinta cada katana del color de su clase.\nSi los dos colores forman grupos separados, esas features ayudan a distinguir. Si están mezclados, no.\nEjemplos: plot katanas --x dureza_hrc --y flexibilidad   ·   plot katanas --x temperatura_temple --y dureza_hrc",
+      "teach": "El gráfico de dispersión\nplot pone una feature en el eje horizontal (--x) y otra en el vertical (--y), y pinta cada katana del color de su clase.\nSi los dos colores forman grupos separados, esas features ayudan a distinguir. Si están mezclados, no.\nEjemplos: plot katanas --x dureza_hrc --y flexibilidad   ·   plot katanas --x temperatura_temple --y dureza_hrc\nPor qué: si una feature no separa las clases, no ayuda al modelo y además puede meter ruido; descubrirlo pronto ahorra trabajo.",
       "prediction": {
         "prompt": "¿Qué feature crees que es MENOS útil para distinguir aptas de defectuosas?",
         "options": [
@@ -190,6 +190,71 @@
         "answer b"
       ],
       "on_complete": "Eso es. Una feature sirve para clasificar si toma valores distintos en cada clase. Acabas de hacer lo que hace un ingeniero antes de modelar: mirar los datos y descubrir qué medidas importan."
+    },
+    {
+      "id": "py1",
+      "text": "Escribe en Python la cuenta del rango: abre el editor con py, completa la función rango y compruébala con py check.",
+      "teach": "Ahora, con tus manos: Python\nPython es el idioma en el que se programa casi toda la IA (Inteligencia Artificial). Vas a escribir la cuenta que hace dataset stats para el rango.\nEscribe py y se abre un editor arriba, en el laboratorio, con el código ya empezado. Haz clic en él para escribir.\nUna función se escribe así: def nombre(parámetros): y debajo, con 4 espacios delante, lo que hace. return devuelve el resultado.\npy run (o Ctrl+Enter en el editor) ejecuta tu código; py check lo comprueba con varios casos.\nPor qué: en un proyecto real estas cuentas no las hace un comando del Dojo, las escribes tú en Python.",
+      "py_exercise": {
+        "id": "T1-01-rango",
+        "title": "rango(valores): el máximo menos el mínimo",
+        "function": "rango",
+        "starter": "# Ejercicio T1-01 · El rango de una feature\n# valores es una lista de números, por ejemplo [52.4, 60.1, 66.0].\n# La función tiene que devolver el valor más alto menos el más bajo.\n# Python ya trae max(lista), que da el más alto, y min(lista), que da el más bajo.\n\ndef rango(valores):\n    return 0   # ← cambia esta línea\n\n# Pruébala con py run (o Ctrl+Enter). Debería imprimir 13.6 (o casi):\nprint(rango([52.4, 60.1, 66.0]))\n",
+        "cases": [
+          {
+            "args": [
+              [
+                52.4,
+                60.1,
+                66.0
+              ]
+            ],
+            "expected": 13.6,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              [
+                760,
+                879,
+                800
+              ]
+            ],
+            "expected": 119
+          },
+          {
+            "args": [
+              [
+                5
+              ]
+            ],
+            "expected": 0
+          },
+          {
+            "args": [
+              [
+                -3,
+                4,
+                0
+              ]
+            ],
+            "expected": 7
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T1-01-rango",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "max(valores) da el número más alto de la lista y min(valores), el más bajo.",
+        "La línea queda así: return max(valores) - min(valores)"
+      ],
+      "on_complete": "¡Tu primera función en Python! Es exactamente la columna «rango» de dataset stats. Si te ha salido 13.600000000000001 en lugar de 13.6, no es un error tuyo: los ordenadores guardan los decimales con una precisión limitada, y por eso los tests comparan con un margen."
     }
   ],
   "mastery_trial": {
@@ -226,5 +291,7 @@
   ],
   "xp": {
     "base": 100
-  }
+  },
+  "purpose": "Cualquier sistema de IA (Inteligencia Artificial) que clasifica cosas funciona igual: recibe medidas (features) y predice una respuesta (la etiqueta). Un filtro antispam mide palabras de un correo y predice «spam» o «no spam». Un detector de prompt injection (inyección de instrucciones en un chatbot) mide el texto de un mensaje y predice «ataque» o «legítimo»: lo verás en T1-03 y lo entrenarás de verdad en A1-07. Hoy aprendes a leer esos datos con un ejemplo sencillo: katanas.",
+  "you_can_now": "Sabes leer un dataset como lo lee un modelo: ejemplos, features y etiqueta, y detectar con un gráfico qué features sirven. Siguiente: T1-02, cómo medir si dos ejemplos se parecen, que es lo que hace la búsqueda de un RAG (Retrieval-Augmented Generation)."
 }

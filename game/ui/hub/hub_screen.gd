@@ -29,6 +29,7 @@ var _plot: ScatterPlot
 var _chart: LineChart
 var _net_view: NetworkGraph
 var _heatmap: AttentionHeatmap
+var _code: CodeEdit
 var _curriculum_box: VBoxContainer
 var _mission_text: RichTextLabel
 var _left: PanelContainer
@@ -168,6 +169,8 @@ func _build_layout() -> void:
 	_chart.custom_minimum_size = Vector2(380, 170)
 	_chart.visible = false
 	lab.get_child(0).add_child(_chart)
+	_code = _make_code_editor()
+	lab.get_child(0).add_child(_code)
 
 	var lower := VBoxContainer.new()
 	lower.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -199,6 +202,7 @@ func _build_layout() -> void:
 
 	_terminal = TerminalView.new()
 	_terminal.setup(game.shell)
+	_terminal.command_executed.connect(_on_command_action)
 	_terminal.custom_minimum_size = Vector2(0, 300)
 	_terminal.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	lower.add_child(_terminal)
@@ -337,6 +341,64 @@ func _refresh_mission() -> void:
 	_mission_text.text = "\n".join(lines)
 
 
+## Editor de Python del Dojo (CodeEdit con colores de Python). Vive en el panel del laboratorio.
+func _make_code_editor() -> CodeEdit:
+	var e := CodeEdit.new()
+	e.visible = false
+	e.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	e.custom_minimum_size = Vector2(380, 220)
+	e.gutters_draw_line_numbers = true
+	e.indent_automatic = true
+	e.indent_use_spaces = true
+	e.indent_size = 4
+	e.auto_brace_completion_enabled = true
+	e.add_theme_font_override("font", RoninFonts.mono())
+	e.add_theme_font_size_override("font_size", 15)
+	var hl := CodeHighlighter.new()
+	hl.number_color = RoninPalette.GOLD
+	hl.symbol_color = RoninPalette.TEXT
+	hl.function_color = RoninPalette.CYAN
+	hl.member_variable_color = RoninPalette.TEXT
+	for kw in ["def", "return", "if", "elif", "else", "for", "while", "in", "not", "and", "or", "break", "continue", "pass", "import", "from", "True", "False", "None"]:
+		hl.add_keyword_color(kw, RoninPalette.VIOLET)
+	for b in ["print", "len", "range", "min", "max", "sum", "abs", "round", "sorted", "int", "float", "str", "list", "dict", "enumerate", "zip"]:
+		hl.add_keyword_color(b, RoninPalette.TEAL)
+	hl.add_color_region("#", "", RoninPalette.MUTED, true)
+	hl.add_color_region("\"", "\"", RoninPalette.GOLD)
+	hl.add_color_region("'", "'", RoninPalette.GOLD)
+	e.syntax_highlighter = hl
+	e.text_changed.connect(func() -> void: game.py_code = _code.text)
+	e.gui_input.connect(func(ev: InputEvent) -> void:
+		if ev is InputEventKey and ev.pressed and ev.keycode == KEY_ENTER and ev.ctrl_pressed:
+			_code.accept_event()
+			_run("py run")
+			_code.grab_focus())
+	return e
+
+
+func _show_code(v: bool) -> void:
+	_code.visible = v
+	if v:
+		_plot.visible = false
+		_net_view.visible = false
+		_heatmap.visible = false
+		_chart.visible = false
+		if _code.text != game.py_code:
+			_code.text = game.py_code
+		_code.grab_focus()
+	else:
+		_show_plot()
+
+
+func _on_command_action(_line: String, result: CommandResult) -> void:
+	match result.action:
+		"py_open":
+			_show_code(true)
+		"py_close":
+			_show_code(false)
+			_terminal.focus_input()
+
+
 # ── Eventos ──────────────────────────────────────────────────────────────────
 
 func _welcome() -> void:
@@ -353,6 +415,7 @@ func _run(line: String) -> void:
 
 
 func _on_mission_started(m: Dictionary) -> void:
+	_show_code(false)
 	# Con una misión en marcha, la lista se pliega: la consola necesita el espacio.
 	_set_left_visible(false)
 	_chart.visible = false
@@ -402,6 +465,7 @@ func _on_sim_event(e: Dictionary) -> void:
 		"attention.computed":
 			_plot.visible = false
 			_net_view.visible = false
+			_code.visible = false
 			_heatmap.visible = true
 			_heatmap.show_weights(String(d["words"]).split(" "), d["weights"], d["causal"])
 		"viz.scatter":
@@ -446,6 +510,8 @@ func _show_security(event_name: String, d: Dictionary) -> void:
 
 
 func _show_plot() -> void:
+	if _code != null:
+		_code.visible = false
 	_plot.visible = true
 	_net_view.visible = false
 	_heatmap.visible = false
@@ -457,6 +523,7 @@ func _show_net(net_name: String, input: PackedFloat64Array) -> void:
 		return
 	_plot.visible = false
 	_heatmap.visible = false
+	_code.visible = false
 	_net_view.visible = true
 	_net_view.show_network(net, net_name, input)
 

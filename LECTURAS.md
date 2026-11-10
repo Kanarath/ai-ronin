@@ -16,6 +16,10 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 
 - [scikit-learn User Guide: Preprocessing data](https://scikit-learn.org/stable/modules/preprocessing.html) — scikit-learn · consultada 2026-11-06
 
+**T1-03 · Mensajes sospechosos**
+
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+
 ## T2
 
 **T2-01 · El vecino más cercano**

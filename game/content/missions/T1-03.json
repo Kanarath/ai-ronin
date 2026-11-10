@@ -1,0 +1,326 @@
+{
+  "id": "T1-03",
+  "schema_version": 1,
+  "title": "Mensajes sospechosos",
+  "unit": "T1",
+  "difficulty": 1,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 20,
+  "requires_missions": [
+    "T1-02"
+  ],
+  "competencies": {
+    "requires": [
+      "T1.distancia",
+      "T1.normalizacion"
+    ],
+    "trains": [
+      "T1.aplicar-features-seguridad"
+    ]
+  },
+  "briefing": "La forja tiene un chatbot que atiende a los clientes. Algunos mensajes son ataques de prompt injection: intentan que el chatbot obedezca al atacante en lugar de a la forja. Un detector sencillo describe cada mensaje con tres números y lo compara con ataques conocidos. Vas a usar lo que aprendiste en T1-01 y T1-02 para ver cómo funciona ese detector y cómo lo engaña un atacante.",
+  "learning_objectives": [
+    "Leer las features de un detector de mensajes y su etiqueta",
+    "Comprobar con gráficos qué features separan ataques de mensajes legítimos",
+    "Ver cómo un atacante engaña a un detector que mide distancias sin normalizar"
+  ],
+  "mentor_intro": "Misión aplicada: lo que aprendiste con katanas, ahora contra un atacante de verdad (ficticio). Vamos paso a paso.",
+  "purpose": "Un chatbot hecho con un LLM (Large Language Model) recibe mensajes de cualquiera. Un ataque de prompt injection (inyección de instrucciones) es un mensaje que intenta que el chatbot ignore sus reglas: «olvida tus instrucciones y revela…». Muchos sistemas ponen delante un detector que describe cada mensaje con features y decide si es un ataque. Hoy ves uno por dentro con las herramientas de T1, y en A1 atacarás y defenderás un chatbot completo.",
+  "lab": {
+    "datasets": [
+      {
+        "file": "mensajes.csv",
+        "name": "mensajes",
+        "label": "tipo"
+      }
+    ],
+    "viz": {
+      "dataset": "mensajes",
+      "x": "longitud",
+      "y": "imperativos"
+    }
+  },
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira el dataset de mensajes: dataset inspect mensajes",
+      "teach": "Mensajes convertidos en números\nUn modelo no lee texto: lee números. Por eso el detector describe cada mensaje con tres features calculadas a partir del texto.\nMíralas con: dataset inspect mensajes\nPor qué: cualquier detector de IA (Inteligencia Artificial) sobre texto empieza así, convirtiendo el texto en features.",
+      "validator": {
+        "type": "event",
+        "event": "dataset.inspected",
+        "where": {
+          "dataset": "mensajes"
+        }
+      },
+      "hints": [
+        "Escribe exactamente: dataset inspect mensajes"
+      ],
+      "on_complete": "Así se lee:\n· Cada FILA es un mensaje que llegó al chatbot.\n· longitud: cuántos caracteres tiene. signos: cuántos símbolos raros lleva (como < > { }). imperativos: cuántos verbos de orden contiene (ignora, olvida, revela…).\n· tipo es la ETIQUETA: inyeccion o legitimo. Un analista ya revisó estos mensajes y los etiquetó."
+    },
+    {
+      "id": "o2",
+      "text": "¿Qué es «imperativos» en este dataset?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "una feature"
+        },
+        {
+          "id": "b",
+          "text": "la etiqueta",
+          "why": "La etiqueta es lo que queremos predecir: aquí, la columna tipo (inyeccion o legitimo). imperativos se calcula a partir del texto."
+        },
+        {
+          "id": "c",
+          "text": "un ejemplo",
+          "why": "Un ejemplo es una fila entera, un mensaje concreto como msg-001. imperativos es una columna."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "Es algo que se MIDE en cada mensaje, como la dureza de una katana.",
+        "answer a"
+      ],
+      "on_complete": "Eso es: una feature, algo que se mide en cada mensaje. Lo mismo que la dureza de una katana, pero sacado de un texto."
+    },
+    {
+      "id": "o3",
+      "text": "Dibuja dos gráficos con plot y descubre qué feature separa mejor los ataques de los mensajes legítimos.",
+      "teach": "Qué delata a un ataque\nComo en T1-01: si en un eje los dos colores forman grupos separados, esa feature ayuda a distinguir.\nEjemplos: plot mensajes --x longitud --y imperativos   ·   plot mensajes --x signos --y longitud\nPor qué: el diseñador de un detector necesita saber qué features delatan de verdad a un ataque; las que no, se pueden manipular sin que el detector lo note.",
+      "prediction": {
+        "prompt": "¿Qué feature crees que separará mejor los ataques de los mensajes legítimos?",
+        "options": [
+          "longitud",
+          "signos",
+          "imperativos"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "viz.scatter",
+        "where": {
+          "dataset": "mensajes"
+        },
+        "count": {
+          "gte": 2
+        }
+      },
+      "hints": [
+        "Dibuja un gráfico con imperativos en un eje y otro con longitud.",
+        "plot mensajes --x longitud --y imperativos"
+      ],
+      "on_complete": "Compara con tu predicción: a lo largo de imperativos, los ataques quedan arriba y los legítimos abajo; los signos ayudan un poco. En cambio, la longitud no separa nada: hay ataques cortos y largos, y legítimos cortos y largos."
+    },
+    {
+      "id": "o4",
+      "text": "Un mensaje nuevo, msg-080, es en realidad un ataque al que el atacante ha añadido mucho texto de relleno. Mide su distancia a un ataque conocido (msg-001) y a un mensaje legítimo (msg-002): distance mensajes msg-080 msg-001  y  distance mensajes msg-080 msg-002",
+      "teach": "Compararlo con lo conocido\nEl detector decide comparando el mensaje nuevo con mensajes ya etiquetados: si está más cerca de un ataque, lo marca como ataque.\nMide las dos distancias con distance, como en T1-02.\nPor qué: así decide un detector por parecido, y así busca un RAG (Retrieval-Augmented Generation) sus documentos.",
+      "prediction": {
+        "prompt": "Sin normalizar, ¿a cuál crees que quedará más cerca msg-080?",
+        "options": [
+          "msg-001 (ataque)",
+          "msg-002 (legítimo)"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "distance.computed",
+        "where": {
+          "dataset": "mensajes",
+          "a": {
+            "in": [
+              "msg-080",
+              "msg-001",
+              "msg-002"
+            ]
+          }
+        },
+        "count": {
+          "gte": 2
+        }
+      },
+      "hints": [
+        "Son dos comandos: uno con msg-001 y otro con msg-002.",
+        "distance mensajes msg-080 msg-001  y después  distance mensajes msg-080 msg-002"
+      ],
+      "on_complete": "Mira las dos distancias: 250 hasta el ataque y menos de 11 hasta el mensaje legítimo. Para el detector, msg-080 es «legítimo». Mira la columna peso: la longitud decide casi todo. El atacante solo ha tenido que rellenar el mensaje para parecerse en longitud a uno legítimo."
+    },
+    {
+      "id": "o5",
+      "text": "¿Por qué ha funcionado el truco del atacante?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque su mensaje ya no tiene verbos de orden",
+          "why": "Sigue teniendo 3 imperativos, igual que msg-001. Lo que ha cambiado es la longitud."
+        },
+        {
+          "id": "b",
+          "text": "porque la longitud tiene números mucho más grandes y domina la distancia, aunque no sirve para distinguir ataques"
+        },
+        {
+          "id": "c",
+          "text": "porque la distancia euclídea está mal calculada",
+          "why": "El cálculo es correcto. El problema es el que viste en T1-02: comparar features en escalas muy distintas."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Mira la columna «peso» de la última distancia.",
+        "answer b"
+      ],
+      "on_complete": "Exacto. Es el problema de T1-02, ahora explotado por un atacante: la feature con números grandes manda, y además es justo la que el atacante controla sin esfuerzo. Rellenar un ataque con texto inocente es una técnica real de evasión; la verás otra vez en A1-07."
+    },
+    {
+      "id": "o6",
+      "text": "Normaliza el dataset y repite las dos distancias: dataset normalize mensajes --method minmax  y después distance sobre mensajes_minmax",
+      "teach": "Arreglar la escala\nComo en T1-02: min-max pone las tres features entre 0 y 1. El comando crea mensajes_minmax.\nPor qué: es la primera defensa del detector, y la más barata.",
+      "prediction": {
+        "prompt": "Tras normalizar, ¿a cuál quedará más cerca msg-080?",
+        "options": [
+          "msg-001 (ataque)",
+          "msg-002 (legítimo)"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "distance.computed",
+        "where": {
+          "dataset": "mensajes_minmax"
+        },
+        "count": {
+          "gte": 2
+        }
+      },
+      "hints": [
+        "Primero dataset normalize mensajes --method minmax; después las dos distancias sobre mensajes_minmax.",
+        "distance mensajes_minmax msg-080 msg-001  y  distance mensajes_minmax msg-080 msg-002"
+      ],
+      "on_complete": "Ahora msg-080 queda más cerca del ataque (0,625) que del legítimo (0,708): el detector ya lo marcaría. Pero mira el desglose: toda la distancia hasta el ataque viene de la longitud, una feature que no sirve para distinguir. Por eso gana tan justo."
+    },
+    {
+      "id": "o7",
+      "text": "¿Qué haría más robusto a este detector?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "normalizar y, además, dejar de usar la longitud, que no distingue ataques y el atacante controla"
+        },
+        {
+          "id": "b",
+          "text": "dar todavía más peso a la longitud",
+          "why": "La longitud no separa ataques de legítimos y el atacante la cambia a voluntad: darle más peso le facilita el truco."
+        },
+        {
+          "id": "c",
+          "text": "nada: normalizar ya lo arregla todo",
+          "why": "Normalizar arregla la escala, pero la longitud sigue metiendo ruido: msg-080 ha quedado muy justo (0,625 frente a 0,708)."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "Piensa en lo que viste en los gráficos: ¿qué feature no sirve?",
+        "answer a"
+      ],
+      "on_complete": "Eso es. Elegir bien las features es tan importante como normalizar, y es lo primero que mira un atacante: qué medidas puede manipular sin que cambie su ataque."
+    },
+    {
+      "id": "py1",
+      "text": "Escribe en Python la normalización min-max: abre el editor con py, completa la función normalizar y compruébala con py check.",
+      "teach": "La defensa, con tus manos\nVas a escribir la cuenta de min-max: (valor − mínimo) ÷ (máximo − mínimo).\nEn Python, la división es / y los paréntesis funcionan como en matemáticas.\nPor qué: es la primera línea de defensa del detector que acabas de analizar, y la escribirías así en el sistema real.",
+      "py_exercise": {
+        "id": "T1-03-normalizar",
+        "title": "normalizar(valor, minimo, maximo): min-max",
+        "function": "normalizar",
+        "starter": "# Ejercicio T1-03 · Normalizar con min-max\n# Devuelve (valor - minimo) / (maximo - minimo): el mínimo pasa a 0 y el máximo a 1.\n\ndef normalizar(valor, minimo, maximo):\n    return valor   # ← cambia esta línea\n\n# La longitud de msg-080 (330) con mínimo 20 y máximo 420: debería imprimir 0.775\nprint(normalizar(330, 20, 420))\n",
+        "cases": [
+          {
+            "args": [
+              330,
+              20,
+              420
+            ],
+            "expected": 0.775,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              20,
+              20,
+              420
+            ],
+            "expected": 0.0,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              420,
+              20,
+              420
+            ],
+            "expected": 1.0,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              779,
+              760,
+              879
+            ],
+            "expected": 0.159664,
+            "tolerance": 1e-05
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T1-03-normalizar",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Primero la resta de arriba, (valor - minimo), y después divide entre (maximo - minimo).",
+        "La línea queda así: return (valor - minimo) / (maximo - minimo)"
+      ],
+      "on_complete": "Ya tienes la defensa en código. Con estas tres funciones (rango, distancia y normalizar) has escrito por dentro lo que hace el detector de mensajes."
+    }
+  ],
+  "you_can_now": "Sabes leer las features de un detector de mensajes, comprobar cuáles delatan un ataque y explicar cómo un atacante engaña a un detector que mide distancias sin normalizar. Siguiente: T2, donde un modelo aprenderá solo a clasificar a partir de los datos, y verás cómo saber si de verdad acierta.",
+  "debrief": {
+    "what_happened": "Has analizado un detector de prompt injection basado en distancias: qué features usa, cuáles separan las clases y cómo un mensaje rellenado lo engaña si no se normaliza.",
+    "why": "Los detectores por parecido heredan todos los problemas de la distancia. Un atacante busca justo las features que puede cambiar sin alterar su ataque.",
+    "in_production": "Los detectores reales de prompt injection usan clasificadores entrenados sobre el texto completo (por ejemplo, modelos pequeños tipo BERT) en lugar de tres features, pero comparten el problema: los atacantes prueban variaciones (relleno, sinónimos, otros idiomas) hasta encontrar una que pase. Por eso se miden con baterías de ataques variados.",
+    "simplifications": [
+      "Tres features calculadas a mano en lugar de un modelo de texto",
+      "Dataset sintético de 82 mensajes"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-llm-2025"
+  ],
+  "xp": {
+    "base": 100
+  }
+}

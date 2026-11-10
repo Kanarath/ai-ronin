@@ -10,6 +10,7 @@ func _initialize() -> void:
 	var shell := game.shell
 	shell.world.load_dataset("katanas.csv", "katanas", "calidad")
 	shell.world.load_dataset("temple.csv", "temple", "")
+	shell.world.load_dataset("mensajes.csv", "mensajes", "tipo")
 	for gate in ["and", "or", "xor", "nand"]:
 		shell.world.load_dataset("puerta_%s.csv" % gate, "puerta_%s" % gate, "salida")
 	for line in OS.get_cmdline_user_args():

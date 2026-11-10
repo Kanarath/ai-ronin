@@ -49,6 +49,9 @@ func start(p_mission: Dictionary, start_seq: int) -> void:
 	_last_seq = start_seq
 	_active_since = start_seq
 	mentor_message.emit(mission.get("mentor_intro", "Empecemos."), "info")
+	# Para qué sirve lo que vas a aprender, en sistemas de IA reales: antes del primer paso.
+	if mission.has("purpose"):
+		mentor_message.emit("¿Para qué sirve esto?\n" + str(mission["purpose"]), "lesson")
 	# Teoría general de la misión (tarjetas sin «unlock_on»): se muestra al empezar.
 	for card: Dictionary in mission.get("theory_cards", []):
 		if not card.has("unlock_on") or card["unlock_on"] == "start":
@@ -181,9 +184,16 @@ func _end_phase() -> void:
 func _finish(trial_passed: bool) -> void:
 	phase = "done"
 	var debrief: Dictionary = mission.get("debrief", {})
-	for section: String in ["what_happened", "why", "in_production"]:
-		if debrief.has(section):
-			mentor_message.emit(debrief[section], "debrief")
+	# Con «you_can_now», el cierre es corto: qué sabes hacer ya y hacia dónde te lleva.
+	# El resumen largo sigue disponible con mission brief.
+	if mission.has("you_can_now"):
+		mentor_message.emit("Qué puedes hacer ya\n" + str(mission["you_can_now"]), "lesson")
+		if debrief.has("in_production"):
+			mentor_message.emit("En la industria: " + str(debrief["in_production"]), "debrief")
+	else:
+		for section: String in ["what_happened", "why", "in_production"]:
+			if debrief.has(section):
+				mentor_message.emit(debrief[section], "debrief")
 	mission_finished.emit(result(trial_passed))
 
 

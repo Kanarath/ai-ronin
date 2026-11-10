@@ -25,6 +25,18 @@ func run(lines: Array) -> void:
 			fail("'%s' → %s" % [l, r.plain_text()])
 
 
+const PY_RANGO := "def rango(valores):\n    return max(valores) - min(valores)\n"
+const PY_DISTANCIA := "import math\n\ndef distancia(a, b):\n    suma = 0\n    for x, y in zip(a, b):\n        suma += (x - y) ** 2\n    return math.sqrt(suma)\n"
+const PY_NORMALIZAR := "def normalizar(valor, minimo, maximo):\n    return (valor - minimo) / (maximo - minimo)\n"
+
+
+## Paso de Python de una misión: abre el editor, escribe la solución y la comprueba.
+func solve_py(code: String) -> void:
+	run(["py"])
+	game.py_code = code
+	run(["py check"])
+
+
 func mentor_said(fragment: String) -> bool:
 	for m in mentor:
 		if m["text"].contains(fragment):
@@ -74,6 +86,7 @@ func test_mision_T1_01_completa_con_prueba() -> void:
 	run(["dataset list", "dataset inspect katanas", "answer b", "dataset stats katanas", "answer 8.75"])
 	run(["plot katanas", "hipotesis temperatura_temple", "plot katanas --x dureza_hrc --y flexibilidad", "plot katanas --x temperatura_temple --y dureza_hrc"])
 	run(["answer b"])
+	solve_py(PY_RANGO)
 	assert_eq(game.runner.phase, "trial")
 	run(["answer 51.7"])
 	assert_eq(finished.size(), 1)
@@ -99,8 +112,9 @@ func test_la_leccion_llega_antes_que_el_objetivo() -> void:
 func test_sin_lecciones_en_la_prueba_de_dominio() -> void:
 	game.start_mission("T1-01")
 	run(["dataset list", "dataset inspect katanas", "answer b", "dataset stats katanas", "answer 8.75", "hipotesis temperatura_temple", "plot katanas", "plot katanas --x temperatura_temple"])
-	mentor.clear()
 	run(["answer b"])
+	mentor.clear()
+	solve_py(PY_RANGO)
 	assert_eq(game.runner.phase, "trial")
 	for m in mentor:
 		assert_ne(m["kind"], "lesson")
@@ -133,6 +147,7 @@ func test_mision_T1_02_completa() -> void:
 	run(["hipotesis temperatura_temple", "distance katanas hoja-001 hoja-002", "answer b"])
 	run(["dataset normalize katanas --method minmax"])
 	run(["hipotesis no", "distance katanas_minmax hoja-001 hoja-002", "answer a"])
+	solve_py(PY_DISTANCIA)
 	assert_eq(game.runner.phase, "trial")
 	run(["dataset normalize katanas --method zscore", "distance katanas_zscore hoja-010 hoja-020", "answer 2.82"])
 	assert_eq(finished.size(), 1)
@@ -325,6 +340,7 @@ func test_escalera_de_pistas_y_confirmacion_nivel_5() -> void:
 func test_prueba_de_dominio_limita_pistas() -> void:
 	game.start_mission("T1-01")
 	run(["dataset list", "dataset inspect katanas", "answer b", "dataset stats katanas", "answer 8.75", "hipotesis temperatura_temple", "plot katanas", "plot katanas --x temperatura_temple", "answer b"])
+	solve_py(PY_RANGO)
 	assert_eq(game.runner.phase, "trial")
 	assert_true(game.runner.request_hint(false)["ok"])
 	assert_true(game.runner.request_hint(false)["ok"])
@@ -350,11 +366,15 @@ func test_pregunta_de_comprobacion_explica_cada_respuesta() -> void:
 
 
 func test_repetir_mision_da_menos_xp() -> void:
-	var full := ["dataset list", "dataset inspect katanas", "answer b", "dataset stats katanas", "answer 8.75", "hipotesis temperatura_temple", "plot katanas", "plot katanas --x temperatura_temple", "answer b", "answer 51.7"]
+	var full := ["dataset list", "dataset inspect katanas", "answer b", "dataset stats katanas", "answer 8.75", "hipotesis temperatura_temple", "plot katanas", "plot katanas --x temperatura_temple", "answer b"]
 	game.start_mission("T1-01")
 	run(full)
+	solve_py(PY_RANGO)
+	run(["answer 51.7"])
 	game.start_mission("T1-01")
 	run(full)
+	solve_py(PY_RANGO)
+	run(["answer 51.7"])
 	assert_eq(finished.size(), 2)
 	assert_eq(finished[1]["xp"], int(round(finished[0]["xp"] * Progress.REPLAY_XP_FACTOR)))
 
@@ -386,8 +406,11 @@ func test_progreso_persiste_entre_sesiones() -> void:
 			DirAccess.remove_absolute(p)
 	var g1 := DojoGame.new(path)
 	g1.start_mission("T1-01")
-	for l in ["dataset list", "dataset inspect katanas", "answer b", "dataset stats katanas", "answer 8.75", "hipotesis temperatura_temple", "plot katanas", "plot katanas --x temperatura_temple", "answer b", "answer 51.7"]:
+	for l in ["dataset list", "dataset inspect katanas", "answer b", "dataset stats katanas", "answer 8.75", "hipotesis temperatura_temple", "plot katanas", "plot katanas --x temperatura_temple", "answer b", "py"]:
 		g1.shell.execute(l)
+	g1.py_code = PY_RANGO
+	g1.shell.execute("py check")
+	g1.shell.execute("answer 51.7")
 	var g2 := DojoGame.new(path)
 	assert_true(g2.progress.is_mission_completed("T1-01"))
 	assert_true(g2.progress.xp() > 0)
@@ -395,3 +418,71 @@ func test_progreso_persiste_entre_sesiones() -> void:
 	for p in [path, path + ".bak"]:
 		if FileAccess.file_exists(p):
 			DirAccess.remove_absolute(p)
+
+
+func test_mision_T1_03_aplicada_completa() -> void:
+	game.progress.data["missions"]["T1-02"] = {"completed": true}
+	assert_eq(game.start_mission("T1-03"), "")
+	run(["dataset inspect mensajes", "answer a"])
+	run(["hipotesis imperativos", "plot mensajes --x longitud --y imperativos", "plot mensajes --x signos --y longitud"])
+	run(["hipotesis msg-002", "distance mensajes msg-080 msg-001", "distance mensajes msg-080 msg-002", "answer b"])
+	run(["hipotesis msg-001", "dataset normalize mensajes --method minmax", "distance mensajes_minmax msg-080 msg-001", "distance mensajes_minmax msg-080 msg-002"])
+	run(["answer a"])
+	solve_py(PY_NORMALIZAR)
+	assert_eq(finished.size(), 1)
+	assert_true(mentor_said("Qué puedes hacer ya"), "el cierre dice qué sabes hacer ya")
+
+
+func test_para_que_antes_del_primer_paso() -> void:
+	game.start_mission("T1-01")
+	var purpose_at := -1
+	var task_at := -1
+	for i in mentor.size():
+		if mentor[i]["text"].begins_with("¿Para qué sirve esto?"):
+			purpose_at = i
+		if task_at == -1 and mentor[i]["text"].begins_with("Tu turno (1/"):
+			task_at = i
+	assert_true(purpose_at != -1, "la misión explica para qué sirve")
+	assert_true(purpose_at < task_at, "el para qué va antes del primer paso")
+
+
+func test_hipotesis_acepta_el_principio_de_la_opcion() -> void:
+	game.progress.data["missions"]["T1-02"] = {"completed": true}
+	game.start_mission("T1-03")
+	run(["dataset inspect mensajes", "answer a", "hipotesis imperativos", "plot mensajes --x longitud --y imperativos", "plot mensajes --x signos --y longitud"])
+	var r := game.shell.execute("hipotesis msg-001")
+	assert_true(r.ok, r.plain_text())
+	assert_true(r.plain_text().contains("msg-001 (ataque)"))
+	assert_false(game.shell.execute("hipotesis msg").ok, "ambigua: encaja con las dos opciones")
+
+
+func test_mapa_marca_donde_estas() -> void:
+	var r := game.shell.execute("mapa")
+	assert_true(r.ok, r.plain_text())
+	assert_true(r.plain_text().contains("T0"))
+	assert_true(r.plain_text().contains("◀ estás aquí"))
+	assert_true(r.plain_text().contains("RAG (Retrieval-Augmented Generation)"), "las siglas se explican")
+
+
+func test_paso_de_python_comprueba_la_funcion() -> void:
+	game.start_mission("T1-01")
+	run(["dataset list", "dataset inspect katanas", "answer b", "dataset stats katanas", "answer 8.75",
+		"hipotesis temperatura_temple", "plot katanas", "plot katanas --x temperatura_temple", "answer b"])
+	run(["py"])
+	assert_true(game.py_code.contains("def rango"), "el editor se abre con el código inicial")
+	assert_eq(game.shell.execute("py run").ok, true)
+	run(["py check"])
+	assert_eq(game.runner.phase, "main", "con el código inicial no pasa")
+	game.py_code = "def rango(valores):\n    return max(valores) - min(valores)\nprint(rango([1, 5]))\n"
+	var r := game.shell.execute("py run")
+	assert_true(r.plain_text().contains("4"), r.plain_text())
+	run(["py check"])
+	assert_eq(game.runner.phase, "trial", "con la función correcta se pasa a la prueba de dominio")
+	assert_eq(game.progress.data["py_code"]["T1-01-rango"], game.py_code, "el código se guarda")
+
+
+func test_python_errores_con_linea() -> void:
+	game.py_code = "x = 1\nprint(y)\n"
+	var r := game.shell.execute("py run")
+	assert_true(r.plain_text().contains("NameError"), r.plain_text())
+	assert_true(r.plain_text().contains("línea 2"), r.plain_text())

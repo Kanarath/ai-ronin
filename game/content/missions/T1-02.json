@@ -45,7 +45,7 @@
     {
       "id": "o1",
       "text": "Mide la distancia entre hoja-001 y hoja-002: distance katanas hoja-001 hoja-002",
-      "teach": "Parecido = cerca\nCada katana es un punto con 3 coordenadas (sus 3 features). Dos katanas parecidas son dos puntos cercanos.\nLa DISTANCIA EUCLÍDEA mide esa cercanía: resta las features una a una, eleva cada resta al cuadrado, súmalas y saca la raíz.\ndistance te la calcula y te enseña cuánto aporta cada feature (columna «peso»).",
+      "teach": "Parecido = cerca\nCada katana es un punto con 3 coordenadas (sus 3 features). Dos katanas parecidas son dos puntos cercanos.\nLa DISTANCIA EUCLÍDEA mide esa cercanía: resta las features una a una, eleva cada resta al cuadrado, súmalas y saca la raíz.\ndistance te la calcula y te enseña cuánto aporta cada feature (columna «peso»).\nPor qué: esta misma cuenta, con cientos de números por vector en lugar de 3, es la que hace un RAG al buscar documentos.",
       "prediction": {
         "prompt": "¿Qué feature crees que aportará MÁS a la distancia entre esas dos hojas?",
         "options": [
@@ -115,7 +115,7 @@
     {
       "id": "o3",
       "text": "Pon todas las features en la misma escala: dataset normalize katanas --method minmax",
-      "teach": "Normalizar con min-max\nNormalizar es pasar cada feature a una escala común. MIN-MAX transforma cada valor así: (valor − mínimo) ÷ (máximo − mínimo).\nEjemplo con la temperatura (mínimo 760, máximo 879): 779 pasa a (779 − 760) ÷ 119 = 0,16. El mínimo queda en 0 y el máximo en 1.\nEl comando crea un dataset NUEVO, katanas_minmax; el original no se toca.\nHay otro método, Z-SCORE: (valor − media) ÷ desviación típica. Se usa igual: dataset normalize katanas --method zscore",
+      "teach": "Normalizar con min-max\nNormalizar es pasar cada feature a una escala común. MIN-MAX transforma cada valor así: (valor − mínimo) ÷ (máximo − mínimo).\nEjemplo con la temperatura (mínimo 760, máximo 879): 779 pasa a (779 − 760) ÷ 119 = 0,16. El mínimo queda en 0 y el máximo en 1.\nEl comando crea un dataset NUEVO, katanas_minmax; el original no se toca.\nHay otro método, Z-SCORE: (valor − media) ÷ desviación típica. Se usa igual: dataset normalize katanas --method zscore\nPor qué: en un sistema real se normaliza siempre antes de medir distancias; si no, una sola feature decide por todas.",
       "validator": {
         "type": "event",
         "event": "dataset.normalized",
@@ -132,7 +132,7 @@
     {
       "id": "o4",
       "text": "Vuelve a medir las mismas dos hojas, ahora en el dataset normalizado: distance katanas_minmax hoja-001 hoja-002",
-      "teach": "Misma medida, nueva escala\nEl comando es el mismo; solo cambia el dataset.",
+      "teach": "Misma medida, nueva escala\nEl comando es el mismo; solo cambia el dataset.\nPor qué: comprobar el efecto de un cambio midiéndolo antes y después es la forma de trabajar de un ingeniero de IA.",
       "prediction": {
         "prompt": "Tras normalizar, ¿la temperatura seguirá aportando más de la mitad de la distancia?",
         "options": [
@@ -196,6 +196,78 @@
         "answer a"
       ],
       "on_complete": "Exacto. Normalizar resuelve el problema de las UNIDADES. El de la RELEVANCIA (features que no predicen nada) se resuelve eligiendo bien las features, y lo verás en T2."
+    },
+    {
+      "id": "py1",
+      "text": "Escribe en Python la distancia euclídea: abre el editor con py, completa la función distancia y compruébala con py check.",
+      "teach": "La distancia, con tus manos\nVas a escribir la cuenta que hace distance.\nfor x, y in zip(a, b): recorre las dos listas a la vez, una feature cada vez: x es el valor de la primera katana e y el de la segunda.\n(x - y) ** 2 es la diferencia al cuadrado, y suma += algo va acumulando.\nPor qué: un RAG (Retrieval-Augmented Generation) hace esta misma cuenta, con cientos de números por vector, para encontrar documentos parecidos a tu pregunta.",
+      "py_exercise": {
+        "id": "T1-02-distancia",
+        "title": "distancia(a, b): la distancia euclídea",
+        "function": "distancia",
+        "starter": "# Ejercicio T1-02 · La distancia euclídea\n# a y b son dos katanas como listas de features, por ejemplo [62.6, 7.73, 848.0].\n# Resta feature a feature, eleva cada resta al cuadrado, súmalas y saca la raíz.\nimport math\n\ndef distancia(a, b):\n    suma = 0\n    for x, y in zip(a, b):\n        pass   # ← cambia esta línea: suma la diferencia al cuadrado\n    return math.sqrt(suma)\n\n# hoja-001 y hoja-002: debería imprimir unos 69.068\nprint(distancia([62.6, 7.73, 848.0], [60.3, 5.7, 779.0]))\n",
+        "cases": [
+          {
+            "args": [
+              [
+                0,
+                0
+              ],
+              [
+                3,
+                4
+              ]
+            ],
+            "expected": 5.0,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              [
+                62.6,
+                7.73,
+                848.0
+              ],
+              [
+                60.3,
+                5.7,
+                779.0
+              ]
+            ],
+            "expected": 69.0682,
+            "tolerance": 0.001
+          },
+          {
+            "args": [
+              [
+                1,
+                2,
+                3
+              ],
+              [
+                1,
+                2,
+                3
+              ]
+            ],
+            "expected": 0.0,
+            "tolerance": 1e-06
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T1-02-distancia",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Dentro del bucle tienes que sumar a suma la diferencia al cuadrado: suma += ...",
+        "La línea queda así: suma += (x - y) ** 2"
+      ],
+      "on_complete": "Ya sabes calcular la distancia que usan los modelos por parecido. Fíjate en que tu función no sabe nada de katanas: funciona igual con 3 features que con 768, que es el tamaño de un embedding típico."
     }
   ],
   "mastery_trial": {
@@ -233,5 +305,7 @@
   ],
   "xp": {
     "base": 100
-  }
+  },
+  "purpose": "Medir parecidos es la base de muchísimos sistemas de IA (Inteligencia Artificial). Un RAG (Retrieval-Augmented Generation), el asistente que busca en documentos antes de responder, convierte cada documento en un vector de números y recupera los más cercanos a tu pregunta. Un detector de ataques compara un mensaje nuevo con ataques conocidos. Si la distancia está mal calculada, el RAG recupera documentos equivocados y el detector se deja engañar. Hoy aprendes a medirla bien.",
+  "you_can_now": "Sabes medir el parecido entre dos ejemplos, ver qué feature domina la distancia y normalizar para que no lo decida la unidad. Siguiente: T1-03, donde usarás todo esto contra un atacante que intenta colar un mensaje en el chatbot de la forja."
 }

@@ -147,5 +147,7 @@
   "further_reading": [],
   "xp": {
     "base": 50
-  }
+  },
+  "purpose": "Todo el curso pasa por esta consola: aquí entrenarás modelos, atacarás un chatbot y lo defenderás. En 8 minutos aprendes a moverte, a pedir ayuda y a ver datos. Escribe mapa cuando quieras ver el recorrido entero.",
+  "you_can_now": "Sabes dar órdenes al Dojo, pedir pistas, consultar el glosario y dibujar datos. Siguiente: T1-01, donde verás cómo ve el mundo una IA (Inteligencia Artificial): como tablas de números."
 }
