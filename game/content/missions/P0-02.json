@@ -1,0 +1,95 @@
+{
+  "id": "P0-02",
+  "schema_version": 1,
+  "title": "El molde y la aleación",
+  "unit": "P0",
+  "phase": "fundamentos",
+  "difficulty": 2,
+  "plane": "forja",
+  "epistemic": "consolidado",
+  "estimated_minutes": 75,
+  "requires_missions": ["T4-01"],
+  "competencies": { "requires": ["T3.descenso-gradiente", "T4.neurona"], "trains": ["P0.clases", "P0.numpy"] },
+  "briefing": "Tu neurona de T4-01 era una regresión logística: suma ponderada, sigmoide y descenso por gradiente. La escribiste con funciones sueltas y listas. Hoy le das un molde (una clase con ajustar y predecir, como las de scikit-learn) y una aleación más dura: NumPy, que hace las mismas cuentas en matrices. Vas a medir cuánto ganas y a descubrir que una recta no separa las katanas defectuosas. Ejercicio: forja/ejercicios/P0_02_logistica.py.",
+  "learning_objectives": [
+    "Escribir una clase con estado (atributos) y métodos, y una clase hija que hereda de ella",
+    "Vectorizar un descenso por gradiente con NumPy (@, axis, broadcasting) sin cambiar el resultado",
+    "Medir con time.perf_counter cuánto acelera la vectorización y cómo crece con el tamaño de los datos",
+    "Explicar por qué una regresión logística necesita features nuevas cuando la frontera no es recta"
+  ],
+  "mentor_intro": "Primero lo escribiste a mano para entenderlo. Ahora lo escribes como se escribe en la industria. Las matemáticas no cambian: cambia la velocidad.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "clases",
+      "title": "Una clase es un molde",
+      "body": "Una clase agrupa datos (atributos: self.pesos, self.lr) y las funciones que los usan (métodos: ajustar, predecir). Cada objeto creado con RegresionLogistica(lr=0.5) tiene sus propios pesos. Es el contrato de scikit-learn: fit para aprender, predict para usar lo aprendido. La herencia (class Hija(Madre)) reutiliza lo que no cambia: tu clase NumPy hereda __init__ y predecir y solo reescribe lo que vectoriza."
+    },
+    {
+      "id": "numpy",
+      "title": "Vectorizar",
+      "body": "NumPy guarda los números en un bloque contiguo de memoria de un solo tipo y recorre los bucles en código compilado. X @ w hace en una línea los n productos escalares que antes eran dos bucles anidados. La regla de oro: si hay un for sobre los ejemplos, probablemente sobra. La versión vectorizada debe dar el MISMO modelo (lo comprueban los tests hasta 1e-9): si no, has cambiado las matemáticas."
+    },
+    {
+      "id": "frontera",
+      "title": "Una recta no lo separa todo",
+      "body": "La regresión logística traza una frontera recta (un plano): p > 0,5 cuando w·x + b > 0. Las katanas defectuosas están en los extremos: demasiado duras o demasiado blandas. Ninguna recta separa «los dos extremos» del «centro». Añadir z² como feature permite decir «lejos del centro → defectuosa» y la frontera, vista en las features originales, se curva. Es la misma limitación que viste con XOR en T4-01; allí la resolvió una capa oculta, aquí una feature diseñada a mano."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Prepara el entorno de los ejercicios con NumPy (forja/ejercicios: python -m venv .venv y pip install -r requirements.txt), ejecuta ronin_check para P0-02 con ese Python y trae la primera evidencia, aunque no pase ningún test todavía.",
+      "teach": "Versiones fijadas\nrequirements.txt dice numpy==2.5.4, no «numpy» a secas. Una versión nueva puede cambiar resultados o romper código: fijarla hace que lo que pasa hoy pase mañana. El primer test lo comprueba. El entorno .venv vale también para P0-03.",
+      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "P0-02" } },
+      "hints": [
+        "Desde forja/ejercicios: python -m venv .venv · .\\.venv\\Scripts\\python.exe -m pip install -r requirements.txt",
+        ".\\.venv\\Scripts\\python.exe -m ronin_check P0-02 · y aquí: evidence import"
+      ],
+      "on_complete": "Entorno listo. Los 10 tests fallan como «sin implementar»: es el punto de partida."
+    },
+    {
+      "id": "o2",
+      "text": "Implementa P0_02_logistica.py hasta que pasen los 10 tests y trae la evidencia.",
+      "teach": "Orden recomendado\nestandarizar y ampliar_cuadrados (NumPy sin clases) → la clase pura (__init__, probabilidades, perdida, ajustar, predecir) → la clase NumPy (solo tres métodos) → cronometrar. El test test_mismo_modelo_que_la_pura es tu red de seguridad: si la versión NumPy no coincide con la pura, el error está en la vectorización.",
+      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "P0-02", "all_passed": true } },
+      "hints": [
+        "self es el propio objeto: dentro de un método, los atributos se leen y escriben con self.nombre.",
+        "En la clase pura, calcula todas las p antes de tocar los pesos: el gradiente usa los pesos de ANTES de la actualización.",
+        "NumPy: e = self.probabilidades(X) - y · self.pesos = self.pesos - self.lr * (X.T @ e) / n"
+      ],
+      "on_complete": "Dos implementaciones, un mismo modelo. Ahora, ¿cuánto más rápida es la segunda?"
+    },
+    {
+      "id": "o3",
+      "text": "Con tu implementación: estandariza las katanas, amplíalas con los cuadrados y ajusta RegresionLogisticaNumPy(0.5, 300) con «defectuosa» = 1. ¿Qué accuracy da sobre esos mismos datos? (answer <número>, 3 decimales)",
+      "teach": "De script a pregunta\nUsa el intérprete (.\\.venv\\Scripts\\python.exe) desde forja/ejercicios: from apoyo import cargar_katanas, y el resto como en test_una_recta_no_basta. Sin los cuadrados, la accuracy no pasa de 0,55: casi como tirar una moneda.",
+      "validator": { "type": "answer", "expected": 0.871, "tolerance": 0.002 },
+      "wrong_answer": "Accuracy = aciertos / 240 con predecir(Xa) frente a las etiquetas 0/1. Comprueba que ajustas sobre Xa (6 columnas), no sobre Xs.",
+      "hints": [
+        "Xa = ampliar_cuadrados(estandarizar(X)[0]) · y = [1 if c == \"defectuosa\" else 0 for c in calidad]",
+        "np.mean(np.array(modelo.predecir(Xa)) == y)"
+      ],
+      "on_complete": "De 0,55 a 0,87 sin cambiar el modelo, solo lo que ve. Diseñar features era el oficio antes de las redes profundas."
+    },
+    {
+      "id": "o4",
+      "text": "Ejecuta python P0_02_logistica.py (con el Python de .venv) y escribe tus tiempos: cuántas veces más rápido es NumPy con 240, 2.400 y 12.000 filas, por qué la ventaja crece con el tamaño y qué te sorprendió. (reflexion <texto>, mínimo 50 palabras)",
+      "prediction": { "prompt": "Con 12.000 filas, ¿cuántas veces más rápida será la versión NumPy?", "options": ["parecido (×1–2)", "unas 10 veces", "más de 50 veces"] },
+      "validator": { "type": "reflection", "min_words": 50 },
+      "hints": [
+        "Mira cómo cambia el tiempo de cada versión al multiplicar las filas por 10.",
+        "NumPy paga un coste fijo por cada llamada (crear arrays, entrar en código compilado); Python puro paga por cada multiplicación."
+      ]
+    }
+  ],
+  "debrief": {
+    "what_happened": "Has convertido la neurona de T4-01 en una clase con el contrato ajustar/predecir, la has vectorizado con NumPy por herencia sin cambiar sus resultados, has medido la aceleración y has visto que una frontera recta no separa las katanas hasta que añades features cuadráticas.",
+    "why": "Toda la IA moderna corre sobre álgebra de arrays: NumPy, y por encima PyTorch o JAX, que añaden GPU y gradientes automáticos. Saber qué calcula un X @ w por dentro (lo hiciste a mano) es lo que te deja leer y depurar ese código. La clase es la forma estándar de empaquetar un modelo con su estado.",
+    "in_production": "Se usa scikit-learn (LogisticRegression) con solvers de segundo orden, regularización y validación cruzada, no un descenso por gradiente casero. Las features se generan en un Pipeline que aprende la estandarización SOLO del train (lo viste en T2-01: fuga de datos). Las versiones de NumPy y del resto se fijan con un lockfile y hashes (A6).",
+    "simplifications": ["Se evalúa sobre los mismos datos de entrenamiento: sin split de test", "Sin regularización", "Un único learning rate fijo"],
+    "exercise": "forja/ejercicios/P0_02_logistica.py"
+  },
+  "further_reading": ["ref.python-clases", "ref.numpy", "ref.numpy-broadcasting"],
+  "xp": { "base": 150 }
+}

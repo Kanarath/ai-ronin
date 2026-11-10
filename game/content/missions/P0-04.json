@@ -1,0 +1,84 @@
+{
+  "id": "P0-04",
+  "schema_version": 1,
+  "title": "Letras partidas",
+  "unit": "P0",
+  "phase": "fundamentos",
+  "difficulty": 2,
+  "plane": "forja",
+  "epistemic": "consolidado",
+  "estimated_minutes": 75,
+  "requires_missions": ["T5-01"],
+  "competencies": { "requires": ["T5.tokenizacion"], "trains": ["P0.unicode", "P0.generadores"] },
+  "briefing": "Tu tokenizador de T5-01 recibía el corpus entero y limpio. El texto real llega a trozos de bytes (un fichero enorme, una respuesta HTTP en streaming), y un trozo puede cortar la «ñ» por la mitad. La misma «forjé» puede venir escrita de dos formas que se ven iguales y no lo son. Y un emoji puede ser tres caracteres unidos. Hoy montas una tubería de generadores que lee bytes, los convierte en texto, en líneas y en tokens, sin cargar nada entero en memoria y sin romper una sola letra. Ejercicio: forja/ejercicios/P0_04_unicode.py.",
+  "learning_objectives": [
+    "Distinguir bytes, puntos de código y lo que una persona ve como un carácter",
+    "Normalizar texto (NFC frente a NFD) antes de compararlo o tokenizarlo",
+    "Decodificar UTF-8 en streaming sin partir caracteres",
+    "Encadenar generadores que procesan datos de uno en uno y bajo demanda"
+  ],
+  "mentor_intro": "Para un modelo, el texto son números. Si dos textos que se ven iguales dan números distintos, el modelo los tratará como distintos. Y un filtro de seguridad también.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "tres-medidas",
+      "title": "Bytes, puntos de código, caracteres",
+      "body": "UTF-8 codifica cada punto de código Unicode en 1 a 4 bytes: «a» ocupa 1, «ñ» 2 y «🔥» 4. len() de una str cuenta puntos de código, no bytes ni lo que ves: 👩‍🔧 son 3 puntos de código (mujer, unión ZWJ U+200D, llave inglesa) y 11 bytes, y se ven como un dibujo. Los límites de una base de datos, de una API o del contexto de un modelo se miden en bytes o en tokens, casi nunca en «letras»."
+    },
+    {
+      "id": "normalizacion",
+      "title": "NFC y NFD",
+      "body": "«é» puede ser un punto de código (U+00E9, forma compuesta, NFC) o dos (e + U+0301, el acento combinante, NFD). Se ven igual, pero == dice que son distintos y \\w+ parte la versión NFD en dos tokens. Normalizar a NFC antes de comparar o tokenizar lo arregla. En seguridad importa: un filtro que busca una palabra en NFC no la ve escrita en NFD (es una técnica de evasión clásica). La normalización NFKC va más allá y une también variantes como «ﬁ» y «fi»."
+    },
+    {
+      "id": "generadores",
+      "title": "Generadores en tubería",
+      "body": "Una función con yield es un generador: al llamarla no se ejecuta, devuelve un objeto que entrega valores de uno en uno cuando alguien los pide (un for, list(), itertools.islice). Encadenados, tokens(lineas(decodificar(trozos))) procesan un fichero de varios gigas con la memoria de una línea, y si solo pides 10 tokens, solo se leen los bytes necesarios. Es como se leen los corpus de entrenamiento y como llega la respuesta de un LLM en streaming."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Ejecuta ronin_check para P0-04 (no necesita NumPy: vale el Python del sistema) y trae la primera evidencia.",
+      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "P0-04" } },
+      "hints": ["Desde forja/ejercicios: python -m ronin_check P0-04 · y aquí: evidence import"],
+      "on_complete": "12 tests. Léelos: los textos están escritos con escapes \\u para que veas cada punto de código."
+    },
+    {
+      "id": "o2",
+      "text": "Implementa las cinco funciones de P0_04_unicode.py hasta que pasen los 12 tests y trae la evidencia.",
+      "teach": "Un generador por paso\ndecodificar convierte bytes en texto; lineas, texto en líneas; tokens, líneas en tokens. Cada uno recibe un iterable y hace yield: no devuelvas listas. Prueba cada pieza por separado con list(...) en el intérprete antes de encadenarlas.",
+      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "P0-04", "all_passed": true } },
+      "hints": [
+        "Si un test dice que no es un generador, es que tu función usa return con una lista en lugar de yield.",
+        "decodificar: crea el decodificador UNA vez, fuera del bucle; si lo creas dentro, olvida los bytes a medias.",
+        "lineas: while \"\\n\" in bufer: linea, bufer = bufer.split(\"\\n\", 1) · yield linea.removesuffix(\"\\r\")"
+      ],
+      "on_complete": "La tubería procesa el corpus en trozos de 7 bytes y da exactamente lo mismo que leerlo entero."
+    },
+    {
+      "id": "o3",
+      "text": "Con tu función longitudes: ¿cuántos bytes ocupa en UTF-8 el texto «Kurogane 🇯🇵» (la palabra, un espacio y la bandera de Japón)? (answer <número>)",
+      "prediction": { "prompt": "¿Cuántos bytes crees que ocupa la bandera sola?", "options": ["1", "2", "4", "8"] },
+      "validator": { "type": "answer", "expected": 17, "tolerance": 0 },
+      "wrong_answer": "Escríbelo con escapes para no depender de tu teclado: longitudes(\"Kurogane \\U0001F1EF\\U0001F1F5\")[\"bytes\"]",
+      "hints": ["La bandera son dos «letras regionales» (J y P), cada una de 4 bytes.", "8 letras de 1 byte + 1 espacio + 2 × 4."],
+      "on_complete": "Una bandera: 1 dibujo, 2 puntos de código, 8 bytes. Y para un tokenizador BPE, probablemente varios tokens."
+    },
+    {
+      "id": "o4",
+      "text": "Explica qué habría pasado sin normalizar a NFC (con un filtro que busca palabras prohibidas, por ejemplo) y qué habría pasado sin el decodificador incremental si los trozos de bytes cortan una «ñ». (reflexion <texto>, mínimo 40 palabras)",
+      "validator": { "type": "reflection", "min_words": 40 },
+      "hints": ["¿Es \"forj\\u00e9\" == \"forje\\u0301\"?", "Prueba b\"a\\xc3\".decode(\"utf-8\") en el intérprete."]
+    }
+  ],
+  "debrief": {
+    "what_happened": "Has medido el texto en bytes, puntos de código y formas normalizadas, has recortado por bytes sin partir caracteres y has montado una tubería perezosa de generadores que decodifica UTF-8 en streaming, separa líneas y tokeniza con NFC, sin romper emojis compuestos.",
+    "why": "Los tokenizadores de los LLM trabajan sobre bytes (BPE a nivel de byte): un emoji o una letra con tilde pueden costar varios tokens, y por eso el español «gasta» más contexto que el inglés. Muchas evasiones de filtros usan variantes Unicode (homoglifos, caracteres invisibles, formas descompuestas). Y el streaming es la forma normal de leer corpus y respuestas de modelos.",
+    "in_production": "Se normaliza a NFC (o NFKC si se quiere unir variantes visuales) en la entrada, antes de filtrar o indexar; se segmenta en grafemas con una biblioteca que implemente UAX #29 completa (por ejemplo, el paquete regex con \\X o ICU); y se lee con open(..., encoding=\"utf-8\") o decodificadores incrementales, que ya gestionan los cortes. Ojo: el módulo unicodedata de Python 3.13 implementa Unicode 15.1, no la última versión.",
+    "simplifications": ["PATRON es una aproximación de los grapheme clusters, no UAX #29 completa", "Solo UTF-8", "Sin NFKC ni detección de homoglifos"],
+    "exercise": "forja/ejercicios/P0_04_unicode.py"
+  },
+  "further_reading": ["ref.python-unicode-howto", "ref.unicode-uax15", "ref.unicode-uax29", "ref.python-generadores"],
+  "xp": { "base": 150 }
+}

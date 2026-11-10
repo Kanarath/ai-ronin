@@ -1,0 +1,3 @@
+# Versiones fijadas y comprobadas en PyPI el 2026-11-10 (numpy 2.5.4, publicada el 2026-10-10).
+# Solo las necesitan los ejercicios P0-02 y P0-03; el resto usa Python estándar.
+numpy==2.5.4

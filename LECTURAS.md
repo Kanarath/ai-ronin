@@ -81,6 +81,29 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [Ollama · API de chat (POST /api/chat); versión 0.40.16](https://docs.ollama.com/api/chat) — Ollama · consultada 2026-11-10
 - [FastAPI · documentación (versión 0.162.2)](https://fastapi.tiangolo.com/) — FastAPI · consultada 2026-11-10
 
+**P0-02 · El molde y la aleación**
+
+- [Tutorial de Python 3.13 · 9. Clases (atributos, métodos, herencia)](https://docs.python.org/3.13/tutorial/classes.html) — Python Software Foundation · consultada 2026-11-10
+- [NumPy · documentación de la versión 2.5 (ejercicios con numpy==2.5.4, publicada el 2026-10-10)](https://numpy.org/doc/2.5/) — NumPy · consultada 2026-11-10
+- [NumPy 2.5 · Broadcasting (reglas para operar arrays de formas distintas)](https://numpy.org/doc/2.5/user/basics.broadcasting.html) — NumPy · consultada 2026-11-10
+
+**P0-03 · El yunque de las matrices**
+
+- [NumPy 2.5 · Broadcasting (reglas para operar arrays de formas distintas)](https://numpy.org/doc/2.5/user/basics.broadcasting.html) — NumPy · consultada 2026-11-10
+- [NumPy 2.5 · Random Generator (np.random.default_rng y reproducibilidad con semilla)](https://numpy.org/doc/2.5/reference/random/generator.html) — NumPy · consultada 2026-11-10
+
+**P0-04 · Letras partidas**
+
+- [Python 3.13 · Unicode HOWTO (str frente a bytes, codificación, normalización); unicodedata implementa Unicode 15.1](https://docs.python.org/3.13/howto/unicode.html) — Python Software Foundation · consultada 2026-11-10
+- [Unicode Standard Annex #15 · Unicode Normalization Forms (NFC, NFD, NFKC, NFKD); versión para Unicode 18.0.0](https://www.unicode.org/reports/tr15/) — Unicode Consortium · consultada 2026-11-10
+- [Unicode Standard Annex #29 · Unicode Text Segmentation (grapheme clusters); versión para Unicode 18.0.0](https://www.unicode.org/reports/tr29/) — Unicode Consortium · consultada 2026-11-10
+- [Python 3.13 · Functional Programming HOWTO: iteradores y generadores (yield)](https://docs.python.org/3.13/howto/functional.html) — Python Software Foundation · consultada 2026-11-10
+
+**P0-05 · La pluma que no se detiene**
+
+- [Python 3.13 · Functional Programming HOWTO: iteradores y generadores (yield)](https://docs.python.org/3.13/howto/functional.html) — Python Software Foundation · consultada 2026-11-10
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+
 ## A1
 
 **A1-01 · El mostrador de Kurogane**

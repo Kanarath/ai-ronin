@@ -67,6 +67,38 @@
       "tests_sha256": "ce07068c1a1756271b0ebfe44caf8325c5f65240956b79e33dc3b25a2cf962f1"
     },
     {
+      "id": "P0-02",
+      "file": "P0_02_logistica.py",
+      "test_file": "test_P0_02_logistica.py",
+      "test_path": "forja/ejercicios/test_P0_02_logistica.py",
+      "total_tests": 10,
+      "tests_sha256": "e957c4fe911c01d0a54565259faba3eabdf78bf72d72debf2166f7e63caba5da"
+    },
+    {
+      "id": "P0-03",
+      "file": "P0_03_mlp.py",
+      "test_file": "test_P0_03_mlp.py",
+      "test_path": "forja/ejercicios/test_P0_03_mlp.py",
+      "total_tests": 7,
+      "tests_sha256": "1ac691370ba03d171526d02850cfc999bcfdd6e6ab35ca26a7040babd72477e0"
+    },
+    {
+      "id": "P0-04",
+      "file": "P0_04_unicode.py",
+      "test_file": "test_P0_04_unicode.py",
+      "test_path": "forja/ejercicios/test_P0_04_unicode.py",
+      "total_tests": 12,
+      "tests_sha256": "8be746afcf4e22b129b2d1e72befdbf30a3e0413a02e3c4cdd74b7e36507ead3"
+    },
+    {
+      "id": "P0-05",
+      "file": "P0_05_generacion.py",
+      "test_file": "test_P0_05_generacion.py",
+      "test_path": "forja/ejercicios/test_P0_05_generacion.py",
+      "total_tests": 9,
+      "tests_sha256": "acc656b97563d6729d1965d037566d7f3a16609eff756e7689e42c0df599ead5"
+    },
+    {
       "id": "T1-01",
       "file": "T1_01_estadisticas.py",
       "test_file": "test_T1_01_estadisticas.py",

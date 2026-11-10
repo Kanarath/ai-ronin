@@ -23,6 +23,10 @@ Cada misión del Dojo tiene un ejercicio en Python. Implementas tú las funcione
 | `O6_01_trazas.py` | O6-01…03 | Detección y respuesta: redactar datos personales, dominio de destino, regla de correlación, precision/recall de alertas y alcance de un incidente |
 | `C1_01_matriz.py` | C1-01…C3-02 | Matriz de defensas en código: quién bloquea cada ataque, puntos únicos, cobertura mínima sin coste y ataques frágiles |
 | `C5_01_encargo.py` | C5-01…03 | El motor del encargo final: validar hallazgos, estado del retest, priorizar por impacto y exposición, y resumen de cierre |
+| `P0_02_logistica.py` | P0-02 | Clases y NumPy: regresión logística como clase, en Python puro y vectorizada por herencia, features cuadráticas y comparación de tiempos |
+| `P0_03_mlp.py` | P0-03 | El MLP de T4-02 en matrices: forward y backward vectorizados con NumPy, gradient check y XOR |
+| `P0_04_unicode.py` | P0-04 | Texto en streaming: bytes frente a caracteres, NFC frente a NFD, emojis compuestos y una tubería de generadores |
+| `P0_05_generacion.py` | P0-05 | Generador de tokens con muestreo por suma acumulada, texto en streaming y límite de salida en bytes |
 
 **Ayudas:**
 - [PYTHON.md](PYTHON.md) explica, con ejemplos, todo el Python que usan los ejercicios, y tiene una tabla con las secciones que necesita cada uno. Léela antes de cada ejercicio.
@@ -30,6 +34,8 @@ Cada misión del Dojo tiene un ejercicio en Python. Implementas tú las funcione
 
 **Reglas:**
 - Solo Python estándar: nada de numpy, pandas ni scikit-learn todavía. Primero entiendes qué hacen por dentro y después usas las librerías.
+  La excepción son P0-02 y P0-03, que reescriben con NumPy lo que ya hiciste a mano en T4-01 y T4-02. NumPy va con la versión fijada en `requirements.txt` y se instala en un entorno virtual dentro de esta carpeta:
+  `python -m venv .venv` y `.\.venv\Scripts\python.exe -m pip install -r requirements.txt`. Después, ejecuta los tests y `ronin_check` con `.\.venv\Scripts\python.exe`.
 - No copies soluciones de internet ni de una IA. Si te atascas, pide pistas a Claude: tiene la misma escalera de 5 niveles que el Dojo.
 - Los tests son la especificación. Léelos: también enseñan.
 

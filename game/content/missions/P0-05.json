@@ -1,0 +1,83 @@
+{
+  "id": "P0-05",
+  "schema_version": 1,
+  "title": "La pluma que no se detiene",
+  "unit": "P0",
+  "phase": "fundamentos",
+  "difficulty": 2,
+  "plane": "forja",
+  "epistemic": "consolidado",
+  "estimated_minutes": 60,
+  "requires_missions": ["T6-01", "P0-04"],
+  "competencies": { "requires": ["T6.sampling", "P0.generadores"], "trains": ["P0.generadores", "P0.muestreo"] },
+  "briefing": "En T6-01 calculaste qué palabra puede seguir a «la» y con qué probabilidad. Faltaba lo que hace un LLM con esa distribución: tirar el dado, escribir la palabra, y volver a empezar con la nueva, una y otra vez, entregando cada token en cuanto existe. Es un generador de Python. Hoy lo escribes, lo conectas al modelo de bigramas de la forja y le pones un límite de bytes para que nadie pueda pedirle un texto infinito. Ejercicio: forja/ejercicios/P0_05_generacion.py.",
+  "learning_objectives": [
+    "Muestrear un token de una distribución con la suma acumulada y una semilla",
+    "Escribir un generador con varias condiciones de parada (yield y return)",
+    "Comprobar estadísticamente un muestreador comparando frecuencias con probabilidades",
+    "Limitar la salida de un generador por bytes"
+  ],
+  "mentor_intro": "Lo que ves aparecer palabra a palabra en un chat no es un efecto visual: el modelo aún no ha decidido la siguiente palabra cuando te enseña la actual.",
+  "lab": { "datasets": [], "viz": {} },
+  "theory_cards": [
+    {
+      "id": "suma-acumulada",
+      "title": "Tirar el dado con pesos",
+      "body": "Con probabilidades 0,5 · 0,3 · 0,2, coloca los tokens en el segmento [0, 1): «a» ocupa [0, 0,5), «b» [0,5, 0,8) y «c» [0,8, 1). Un número u uniforme en [0, 1) cae en cada tramo con probabilidad igual a su longitud. Es el muestreo por inversión de la función de distribución, y lo que hacen los motores de inferencia tras aplicar temperatura y top-p."
+    },
+    {
+      "id": "autorregresivo",
+      "title": "Autorregresivo y perezoso",
+      "body": "Cada token depende del anterior (en un LLM, de todos los anteriores): no se puede generar el quinto sin el cuarto. Un generador encaja exactamente: hace yield de un token, se congela, y solo calcula el siguiente cuando se lo piden. Si quien consume para (el usuario pulsa «detener»), el modelo deja de trabajar. Con una semilla fija, random.Random(42) repite exactamente la misma secuencia."
+    },
+    {
+      "id": "presupuesto",
+      "title": "Un límite de salida",
+      "body": "Un generador puede no terminar nunca. Un servicio sin límite de salida deja que una sola petición consuma CPU y dinero sin fin: es OWASP LLM10 (consumo sin límites). El límite se pone en el servidor, en tokens o en bytes, no en lo que pida el cliente. Medirlo en bytes UTF-8 evita sorpresas con emojis y tildes (lo viste en P0-04)."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Ejecuta ronin_check para P0-05 y trae la primera evidencia.",
+      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "P0-05" } },
+      "hints": ["Desde forja/ejercicios: python -m ronin_check P0-05 · y aquí: evidence import"]
+    },
+    {
+      "id": "o2",
+      "text": "Implementa las cinco funciones de P0_05_generacion.py hasta que pasen los 9 tests y trae la evidencia.",
+      "teach": "Generadores que paran\nDentro de un generador, return (sin valor) termina la secuencia: quien itera recibe StopIteration y el for acaba. En generar hay tres salidas: sin continuación, el token fin (que SÍ se entrega antes de parar) y max_tokens. Lee test_es_un_generador_perezoso: comprueba en qué momento se llama al modelo.",
+      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "P0-05", "all_passed": true } },
+      "hints": [
+        "muestrear: una sola llamada a rng.random(), ANTES del bucle.",
+        "generar: for _ in range(max_tokens): dist = siguiente(actual) · if not dist: return · actual = muestrear(dist, rng) · yield actual · if actual == fin: return",
+        "con_presupuesto: lleva la cuenta de bytes usados con len(pieza.encode(\"utf-8\")) y haz return en cuanto la siguiente no quepa."
+      ],
+      "on_complete": "Ejecuta python P0_05_generacion.py: tu generador escribe en pantalla token a token."
+    },
+    {
+      "id": "o3",
+      "text": "Con el modelo de bigramas de los tests (modelo_bigramas() en test_P0_05_generacion.py), ¿cuál es el PRIMER token de generar(siguiente, \"la\", random.Random(42))? (answer <palabra>)",
+      "prediction": { "prompt": "La palabra más probable tras «la» es «forja» (0,233). ¿Crees que será la primera que salga?", "options": ["sí", "no"] },
+      "validator": { "type": "answer", "expected": "paciencia", "accept": ["paciencia", "Paciencia"] },
+      "wrong_answer": "from test_P0_05_generacion import modelo_bigramas · siguiente, _ = modelo_bigramas() · next(generar(siguiente, \"la\", random.Random(42))). Si sale otra, revisa que muestrear haga UNA sola llamada a rng.random().",
+      "hints": ["next(gen) pide un solo valor a un generador.", "random.Random(42).random() vale 0,639…: ¿en qué tramo de la suma acumulada cae?"],
+      "on_complete": "«paciencia», con probabilidad 1/30. El token más probable solo sale el 23 % de las veces: por eso con temperatura 1 el texto varía tanto."
+    },
+    {
+      "id": "o4",
+      "text": "Explica por qué un generador es la forma natural de producir texto con un LLM, qué ganas cuando el usuario para la generación a mitad y por qué el límite de salida se pone en el servidor y en bytes. (reflexion <texto>, mínimo 40 palabras)",
+      "validator": { "type": "reflection", "min_words": 40 },
+      "hints": ["¿Qué pasa con test_presupuesto_corta_un_generador_infinito si quitas con_presupuesto?", "¿Quién controla max_tokens si lo envía el cliente?"]
+    }
+  ],
+  "debrief": {
+    "what_happened": "Has escrito el bucle de generación de un modelo de lenguaje: muestreo por suma acumulada con semilla, un generador autorregresivo con sus condiciones de parada, la conversión a texto en streaming y un límite de salida en bytes. Lo has comprobado con el corpus de la forja y con un generador infinito.",
+    "why": "Todo LLM genera así, token a token: la red calcula la distribución, el muestreador elige y el token vuelve a entrar como contexto. Con stream: true, la API de chat de Ollama que usaste en P0-01 (allí con stream: false) entrega exactamente estos trozos, uno por mensaje. Y el límite de salida es una de las defensas básicas frente al consumo sin límites.",
+    "in_production": "La distribución sale de la red (logits), se aplica temperatura, top-k o top-p y a veces penalizaciones por repetición, todo en GPU y en lotes de muchas peticiones a la vez. Los motores (llama.cpp, vLLM) usan caché KV para no recalcular el contexto, y paran por tokens de fin, secuencias de parada o max_tokens. Los servicios fijan un máximo de tokens en el servidor y cortan conexiones lentas.",
+    "simplifications": ["Bigramas en lugar de una red: el contexto es solo el token anterior", "Sin temperatura ni top-p (ya los hiciste en T6-01)", "Presupuesto en bytes del texto, no en tokens del modelo"],
+    "exercise": "forja/ejercicios/P0_05_generacion.py"
+  },
+  "further_reading": ["ref.python-generadores", "ref.owasp-llm-2025"],
+  "xp": { "base": 150 }
+}
