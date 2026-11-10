@@ -218,6 +218,7 @@ func test_mision_A2_04() -> void:
 
 
 
+
 ## Misiones P0-02…P0-05 (ejercicios de clases, NumPy, Unicode y generadores): bloqueadas sin
 ## sus requisitos; después, evidencia, evidencia completa y las órdenes del terminal `lineas`.
 func _run_p0(id: String, previas: Array, lineas: Array) -> void:
@@ -256,6 +257,9 @@ func test_mision_P0_04() -> void:
 func test_mision_P0_05() -> void:
 	_run_p0("P0-05", ["T6-01", "P0-04"], ["hipotesis no", "answer paciencia", "reflexion " +
 		"el generador entrega cada token en cuanto existe y si el usuario para el modelo deja de trabajar el limite va en el servidor porque el cliente puede pedir lo que quiera ".repeat(2)])
+
+
+
 func test_mision_A3_04() -> void:
 	var finished: Array = []
 	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
@@ -274,6 +278,12 @@ func test_mision_A3_04() -> void:
 	assert_eq(game.runner.index, 2)
 	for l in ["reflexion " + "el modelo siguio pidiendo reembolsos con permisos y aprobacion pero no se ejecutaron y la fuga de memoria solo la paro el detector ".repeat(4),
 			"reflexion " + "la accion aprobada la ejecuta el servicio porque el modelo podria cambiarla y un humano no aprueba lo que el rol no permite ".repeat(3)]:
+		var r := game.shell.execute(l)
+		assert_true(r.ok, r.plain_text())
+	assert_eq(finished.size(), 1)
+
+
+
 func test_mision_A4_04() -> void:
 	var finished: Array = []
 	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
@@ -289,6 +299,12 @@ func test_mision_A4_04() -> void:
 	assert_eq(game.runner.index, 2)
 	for l in ["reflexion " + "las defensas del host paran el ataque antes de que el modelo vea la descripcion y las del servidor lo rechazan cuando la llamada ya llego ".repeat(3),
 			"reflexion " + "el servidor comprueba la audiencia del token para no aceptar uno emitido para otro servidor y exige los scopes minimos ".repeat(3)]:
+		var r := game.shell.execute(l)
+		assert_true(r.ok, r.plain_text())
+	assert_eq(finished.size(), 1)
+
+
+
 func test_mision_A6_04() -> void:
 	var finished: Array = []
 	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
@@ -317,6 +333,9 @@ func test_mision_A6_04() -> void:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
+
+
+
 ## E1 (investigación ML): evidencia de los tests del laboratorio, hipótesis y dos reflexiones.
 func _mision_E1(id: String, requisitos: Array, tests: int, hipotesis: String) -> void:
 	var finished: Array = []
@@ -331,6 +350,25 @@ func _mision_E1(id: String, requisitos: Array, tests: int, hipotesis: String) ->
 	assert_true(game.shell.execute("hipotesis " + hipotesis).ok, hipotesis)
 	for l in ["reflexion " + "mi bucle coincidio con generate y la cuantizacion por bloques casi no cambio la perplejidad del modelo pequeno ".repeat(5),
 			"reflexion " + "entrenar de verdad necesita gradientes y estados del optimizador por cada peso y eso no cabe en mi portatil sin gpu ".repeat(4)]:
+		var r := game.shell.execute(l)
+		assert_true(r.ok, r.plain_text())
+	assert_eq(finished.size(), 1, id)
+
+
+func test_mision_E1_01() -> void:
+	assert_false(game.start_mission("E1-01").is_empty(), "bloqueada sin T6-02 ni P0-01")
+	_mision_E1("E1-01", ["T6-02", "P0-01"], 17, "más de 3 veces")
+
+
+func test_mision_E1_02() -> void:
+	_mision_E1("E1-02", ["E1-01"], 12, "menos de un 1 %")
+
+
+func test_mision_E1_03() -> void:
+	_mision_E1("E1-03", ["E1-02"], 15, "hacia la mitad")
+
+
+
 ## Las tres misiones de E2 siguen el mismo patrón: evidencia de tests → predicción → medición → dos reflexiones.
 func _mision_E2(id: String, requires: Array, tests: int, prediction: String) -> void:
 	var finished: Array = []
@@ -354,17 +392,6 @@ func _mision_E2(id: String, requires: Array, tests: int, prediction: String) -> 
 	assert_eq(finished.size(), 1, id)
 
 
-func test_mision_E1_01() -> void:
-	assert_false(game.start_mission("E1-01").is_empty(), "bloqueada sin T6-02 ni P0-01")
-	_mision_E1("E1-01", ["T6-02", "P0-01"], 17, "más de 3 veces")
-
-
-func test_mision_E1_02() -> void:
-	_mision_E1("E1-02", ["E1-01"], 12, "menos de un 1 %")
-
-
-func test_mision_E1_03() -> void:
-	_mision_E1("E1-03", ["E1-02"], 15, "hacia la mitad")
 func test_mision_E2_01() -> void:
 	_mision_E2("E2-01", ["T4-02", "A2-03"], 16, "unos 20 puntos")
 
@@ -375,6 +402,9 @@ func test_mision_E2_02() -> void:
 
 func test_mision_E2_03() -> void:
 	_mision_E2("E2-03", ["E2-01"], 14, "pequeña pero clara")
+
+
+
 ## E4 · AI Ops avanzado: tres laboratorios de la Forja con medición, en cadena.
 func _mision_E4(id: String, previas: Array, tests: int, prediccion: String, reflexiones: Array) -> Array:
 	var finished: Array = []
@@ -419,6 +449,9 @@ func test_mision_E4_03() -> void:
 		"los compose de la forja no declaraban limites ni usuario en ollama y el canary revirtio el modelo inexistente tras pocas peticiones ".repeat(4),
 		"la huella prueba que es el artefacto aprobado pero no que sea seguro y la lista permitida debe protegerse con revision y firma ".repeat(3)])
 	assert_eq(f.size(), 1)
+
+
+
 func test_mision_A1_06() -> void:
 	var finished: Array = []
 	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
@@ -437,6 +470,32 @@ func test_mision_A1_06() -> void:
 	assert_eq(game.runner.index, 2)
 	for l in ["reflexion " + "la kappa de la rubrica basica fue baja y los intervalos se solapan y el intercambio convirtio sesgos en empates ".repeat(4),
 			"reflexion " + "el prompt v2 perdio los datos de garantia y devoluciones y un juez sin kappa medida puede dar regresiones falsas ".repeat(3)]:
+		var r := game.shell.execute(l)
+		assert_true(r.ok, r.plain_text())
+	assert_eq(finished.size(), 1)
+
+
+func test_mision_A1_07() -> void:
+	var finished: Array = []
+	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
+	game.progress.data["missions"]["A1-05"] = {"completed": true}
+	assert_eq(game.start_mission("A1-07"), "")
+	game.import_evidence(_write("a.json", _evidence("A1-07", 19)))
+	assert_eq(game.runner.index, 1)
+	assert_true(game.shell.execute("hipotesis bloqueará más ataques, pero también a más clientes").ok)
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 18, 15), _cfg("patrones", 12, 14)], "A1-07")))
+	assert_eq(game.runner.index, 1, "hacen falta 3 configuraciones")
+	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 18, 15), _cfg("patrones", 12, 14), _cfg("clasificador", 5, 12)], "A1-07")))
+	assert_eq(game.runner.index, 2)
+	assert_true(game.shell.execute("evidence list").plain_text().contains("clasificador 5/18"))
+	for l in ["reflexion " + "los separadores esquivaron los patrones y las parafrasis amables esquivaron el clasificador que bloqueo preguntas normales ".repeat(5),
+			"reflexion " + "la cifra solo vale para ataques parecidos al entrenamiento y el atacante adaptativo manda los que pasan ".repeat(3)]:
+		var r := game.shell.execute(l)
+		assert_true(r.ok, r.plain_text())
+	assert_eq(finished.size(), 1)
+
+
+
 func test_mision_A2_05() -> void:
 	var finished: Array = []
 	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
@@ -465,21 +524,6 @@ func test_mision_A2_05() -> void:
 	assert_eq(finished.size(), 1)
 
 
-func test_mision_A1_07() -> void:
-	var finished: Array = []
-	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
-	game.progress.data["missions"]["A1-05"] = {"completed": true}
-	assert_eq(game.start_mission("A1-07"), "")
-	game.import_evidence(_write("a.json", _evidence("A1-07", 19)))
-	assert_eq(game.runner.index, 1)
-	assert_true(game.shell.execute("hipotesis bloqueará más ataques, pero también a más clientes").ok)
-	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 18, 15), _cfg("patrones", 12, 14)], "A1-07")))
-	assert_eq(game.runner.index, 1, "hacen falta 3 configuraciones")
-	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 18, 15), _cfg("patrones", 12, 14), _cfg("clasificador", 5, 12)], "A1-07")))
-	assert_eq(game.runner.index, 2)
-	assert_true(game.shell.execute("evidence list").plain_text().contains("clasificador 5/18"))
-	for l in ["reflexion " + "los separadores esquivaron los patrones y las parafrasis amables esquivaron el clasificador que bloqueo preguntas normales ".repeat(5),
-			"reflexion " + "la cifra solo vale para ataques parecidos al entrenamiento y el atacante adaptativo manda los que pasan ".repeat(3)]:
 func test_mision_A2_06() -> void:
 	var finished: Array = []
 	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))

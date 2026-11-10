@@ -463,9 +463,9 @@ list(itertools.islice(cuadrados(numeros()), 4))   # [0, 1, 4, 9]: toma los 4 pri
 | A3-04 agente (forja/labs) | 2 (rebanadas negativas), 3 (`while`, `continue`), 4 (devolver tuplas), 7 (`lambda`), 8, 9, 11 (`re`), 12, 14 |
 | A4-04 servidor MCP (forja/labs) | 3 (`while` sin ciclos), 4, 7, 8, 9, 11 (`json`, `re`, `hashlib`, `pathlib`, `urllib`), 12, 14 |
 | A6-04 cadena (forja/labs) | 3, 4 (devolver tuplas), 8 (`.get`), 9, 11 (`pickletools`, `struct`, `json`, `hashlib`, `re`, `shlex`, `datetime`), 12 |
-| E1-01 generación (forja/labs) | 3 (`break`), 5, 12, 15 (tensores, indexado, `torch.no_grad`) |
-| E1-02 cuantización (forja/labs) | 4 (devolver tuplas), 11 (`math.exp`), 12, 15 (tipos `int8` y `float16`, `reshape`, `torch.where`) |
-| E1-03 LoRA y lente (forja/labs) | 2, 5, 12, 15 (`nn.Module`, `nn.Parameter`, entrenamiento) |
+| E1-01 generación (forja/labs) | 3 (`break`), 5, 12, 19 (tensores, indexado, `torch.no_grad`) |
+| E1-02 cuantización (forja/labs) | 4 (devolver tuplas), 11 (`math.exp`), 12, 19 (tipos `int8` y `float16`, `reshape`, `torch.where`) |
+| E1-03 LoRA y lente (forja/labs) | 2, 5, 12, 19 (`nn.Module`, `nn.Parameter`, entrenamiento) |
 | A1-06 juez (forja/labs) | 4 (valores por defecto), 5, 6, 7 (`min` y `sorted`), 8 (`.get`), 9 (unión de conjuntos), 11 (`re.findall`, `re.fullmatch`, `random.Random`), 12, 14 |
 | A1-07 guardián (forja/labs) | 5 (dos `for` en una comprensión), 6, 7 (`min` con clave tupla), 8, 9, 11 (`Counter`, `math.log`, `math.exp`), 12 |
 | A2-05 lo que no se ve (forja/labs) | 2 (pilas con `append`, `pop` y `del`), 3, 4, 8 (copiar un dict), 11 (`unicodedata`, `re.fullmatch`), 12 (`try` / `except ValueError`) |
@@ -475,7 +475,7 @@ Si te atascas en un ejercicio, mira [PISTAS.md](PISTAS.md): tiene pistas progres
 
 ---
 
-## 15. PyTorch: tensores, módulos y entrenamiento (laboratorios E1)
+## 19. PyTorch: tensores, módulos y entrenamiento (laboratorios E1)
 
 Un **tensor** es una lista de números de cualquier número de dimensiones, con un tipo (`dtype`) y operaciones vectoriales: una operación se aplica a todos los valores a la vez, sin bucles.
 
@@ -534,14 +534,14 @@ with torch.no_grad():                             # sin gradientes: para inferir
 ```
 
 Documentación: [docs.pytorch.org](https://docs.pytorch.org/docs/stable/).
-| E2-01 evasión (forja/labs) | 12, 15 (`softmax` por filas, `P[np.arange(n), y]`, `np.sign`, `np.clip`) |
-| E2-02 extracción (forja/labs) | 8, 12, 14, 15 (`np.round`, `np.argmax`, `np.hstack`, `np.linalg.lstsq`) |
-| E2-03 privacidad (forja/labs) | 9, 12, 15 (máscaras booleanas, `~`, `reshape`, `rng.laplace`, `rng.normal`) |
+| E2-01 evasión (forja/labs) | 12, 20 (`softmax` por filas, `P[np.arange(n), y]`, `np.sign`, `np.clip`) |
+| E2-02 extracción (forja/labs) | 8, 12, 14, 20 (`np.round`, `np.argmax`, `np.hstack`, `np.linalg.lstsq`) |
+| E2-03 privacidad (forja/labs) | 9, 12, 20 (máscaras booleanas, `~`, `reshape`, `rng.laplace`, `rng.normal`) |
 | E3_01 auditoría | 3, 7 (clave con tupla), 8, 9, 11 (`random.Random(semilla).sample`, `math.sqrt`), 12 |
 
 Si te atascas en un ejercicio, mira [PISTAS.md](PISTAS.md): tiene pistas progresivas para cada función.
 
-## 15. NumPy para los laboratorios de E2
+## 20. NumPy para los laboratorios de E2
 
 Los laboratorios de E2 trabajan con matrices: cada fila es un ejemplo (una imagen de 64 píxeles) y cada columna, una característica o una clase. NumPy hace las cuentas de una fila entera, o de toda la matriz, sin bucles.
 

@@ -3,12 +3,66 @@
   "note": "Generado con: python -m ronin_check --manifiesto (desde forja/ejercicios, con un Python que tenga las dependencias de forja/labs). No editar a mano.",
   "exercises": [
     {
+      "id": "A1-05",
+      "file": "chatbot.py",
+      "test_file": "test_chatbot.py",
+      "test_path": "forja/labs/A1-05_chatbot/test_chatbot.py",
+      "total_tests": 19,
+      "tests_sha256": "6d6752667ae4bcbaaaaecb8a7fbde0aed5fdcb4f64a99b08de4c72499c265193",
+      "battery_sha256": "7b6878c2a2e3627d58aff6c108a622f8234ae1e9c2301cf5da54727b5e2c6557"
+    },
+    {
+      "id": "A1-06",
+      "file": "juez.py",
+      "test_file": "test_juez.py",
+      "test_path": "forja/labs/A1-06_juez/test_juez.py",
+      "total_tests": 26,
+      "tests_sha256": "48101a65e93effc56484bea05c2a7175e302d04077011ab8cfc81e9e04499188",
+      "battery_sha256": "5d172f85a69e95854292cd617e2070e708029bbbe723633653fc3e047449da9f"
+    },
+    {
+      "id": "A1-07",
+      "file": "guardian.py",
+      "test_file": "test_guardian.py",
+      "test_path": "forja/labs/A1-07_guardian/test_guardian.py",
+      "total_tests": 19,
+      "tests_sha256": "7895f20374c133f3540aef9e3806112f9bc4e4b91974991611e1eda1d4c1b09e",
+      "battery_sha256": "d29752f3ff6fe522f1ab6589decdef96d7cab7b6639b5a96a40766583cf7403b"
+    },
+    {
       "id": "A2-01",
       "file": "A2_01_rag.py",
       "test_file": "test_A2_01_rag.py",
       "test_path": "forja/ejercicios/test_A2_01_rag.py",
       "total_tests": 7,
       "tests_sha256": "c2416acc02559aebbf9dd2bec25cb10bbc95598236ba441d3131bc13101e2bc1"
+    },
+    {
+      "id": "A2-04",
+      "file": "rag.py",
+      "test_file": "test_rag.py",
+      "test_path": "forja/labs/A2-04_rag/test_rag.py",
+      "total_tests": 20,
+      "tests_sha256": "a8f8d0e8e765bfc622480fa783b37961f2b0263dc646e397da26320f3e63e929",
+      "battery_sha256": "0a0200077caae7cb292c7b12d10a902fba822b6d71c8576025c8e2c0158dbfad"
+    },
+    {
+      "id": "A2-05",
+      "file": "multimodal.py",
+      "test_file": "test_multimodal.py",
+      "test_path": "forja/labs/A2-05_multimodal/test_multimodal.py",
+      "total_tests": 18,
+      "tests_sha256": "5d498a2000c45902542246d5ca98e62fc88b365043725f58736ef254e8fa71f2",
+      "battery_sha256": "e2df834aee330d1b929574929597682d5b23081dd35d34a18bd6c8171ed2abd0"
+    },
+    {
+      "id": "A2-06",
+      "file": "reranking.py",
+      "test_file": "test_reranking.py",
+      "test_path": "forja/labs/A2-06_reranking/test_reranking.py",
+      "total_tests": 13,
+      "tests_sha256": "e647967ff0b69781631b9f9f7e26c7d29f445a947bfeb782ba9e4757d94df11c",
+      "battery_sha256": "745c341262e8d9841a842977ebf3097778372cb26a72523ffb8eead96394d9b6"
     },
     {
       "id": "A3-01",
@@ -19,6 +73,15 @@
       "tests_sha256": "bc8830ec01245b473d5a2fbf72e86e46aa212ffa1accbea82b2ce379841a7846"
     },
     {
+      "id": "A3-04",
+      "file": "agente.py",
+      "test_file": "test_agente.py",
+      "test_path": "forja/labs/A3-04_agente/test_agente.py",
+      "total_tests": 28,
+      "tests_sha256": "8c898c17e17b2e1199e7664361b3a3c8e5bd21965427cb9a8d36d682be36a9a4",
+      "battery_sha256": "dc7fd825365fc62a7ca2c4594493df00ddd7134f316e8e11d83ddc817243ca10"
+    },
+    {
       "id": "A4-01",
       "file": "A4_01_mcp.py",
       "test_file": "test_A4_01_mcp.py",
@@ -27,12 +90,30 @@
       "tests_sha256": "66471d8d8965488baaf8b27a246150139f7da3c9765a98fe6c577642b677e9d6"
     },
     {
+      "id": "A4-04",
+      "file": "servidor.py",
+      "test_file": "test_servidor.py",
+      "test_path": "forja/labs/A4-04_mcp/test_servidor.py",
+      "total_tests": 28,
+      "tests_sha256": "fadd411c590eb81d43f55c478c5e783c0a9e621d4042efbc9d24960486cc9f13",
+      "battery_sha256": "e00eebee18863dfb0651b680c06d3e7e6645433f798bd509c5dd5a63302cbddf"
+    },
+    {
       "id": "A6-01",
       "file": "A6_01_cadena.py",
       "test_file": "test_A6_01_cadena.py",
       "test_path": "forja/ejercicios/test_A6_01_cadena.py",
       "total_tests": 13,
       "tests_sha256": "d45a75fa1d989ee16e36814b6c4ef43df0a35eb033639acdb996a7ab6506f723"
+    },
+    {
+      "id": "A6-04",
+      "file": "verificador.py",
+      "test_file": "test_verificador.py",
+      "test_path": "forja/labs/A6-04_cadena/test_verificador.py",
+      "total_tests": 27,
+      "tests_sha256": "5cd52de9024d9df31b1b0e4f2f979243eb2e9e4aa5bda70ab4c496c16d6efcec",
+      "battery_sha256": "d4e9b40f20fa609de0a6db3bbcc6f32068f723554353ccb871f66191dddf1d1b"
     },
     {
       "id": "C1-01",
@@ -51,12 +132,90 @@
       "tests_sha256": "9cd3ac84c112da3df61bccf4691f6ce2d1bc6176b060187232405a8f20851ec4"
     },
     {
+      "id": "E1-01",
+      "file": "generacion.py",
+      "test_file": "test_generacion.py",
+      "test_path": "forja/labs/E1-01_generacion/test_generacion.py",
+      "total_tests": 17,
+      "tests_sha256": "d60d9f7026deb9ca7818190231be80421e8ab2a0c0892d4969202caba18deb00"
+    },
+    {
+      "id": "E1-02",
+      "file": "cuantizacion.py",
+      "test_file": "test_cuantizacion.py",
+      "test_path": "forja/labs/E1-02_cuantizacion/test_cuantizacion.py",
+      "total_tests": 12,
+      "tests_sha256": "71fab757f11008a323979876ea18c779ed45f6736421c747d7deb3d3114d6188"
+    },
+    {
+      "id": "E1-03",
+      "file": "lora.py",
+      "test_file": "test_lora.py",
+      "test_path": "forja/labs/E1-03_lora_lente/test_lora.py",
+      "total_tests": 15,
+      "tests_sha256": "7c64d3c11bdadb4f6de4ca165bc1e050bf49f90f00f8d9ee245e7aaef96fb46a"
+    },
+    {
+      "id": "E2-01",
+      "file": "evasion.py",
+      "test_file": "test_evasion.py",
+      "test_path": "forja/labs/E2-01_evasion/test_evasion.py",
+      "total_tests": 16,
+      "tests_sha256": "4cfd92238fc1e590abb3ac51c170124a4ce6236d2e1517dfc2c6c2de9a879010",
+      "battery_sha256": "691fd9acac5bc11426bdae6293d904b6a0f9f299734d4b2eb47320d1c5b89f4d"
+    },
+    {
+      "id": "E2-02",
+      "file": "extraccion.py",
+      "test_file": "test_extraccion.py",
+      "test_path": "forja/labs/E2-02_extraccion/test_extraccion.py",
+      "total_tests": 13,
+      "tests_sha256": "870fe51cab2dad76b2f093e765f9beef35553b90499514009d673b19c00a57be",
+      "battery_sha256": "f4db340866386f3732fd9821ae65dc054b56fece460614480efdf0ca47887265"
+    },
+    {
+      "id": "E2-03",
+      "file": "privacidad.py",
+      "test_file": "test_privacidad.py",
+      "test_path": "forja/labs/E2-03_privacidad/test_privacidad.py",
+      "total_tests": 14,
+      "tests_sha256": "e8b4b6f06ca6a1866d576f3da590190312093988cb0f8451466726c5a192c90a",
+      "battery_sha256": "fb206c4984aeb11068672a640a3e4283571ca3731c2057360b9b03bb2149424d"
+    },
+    {
       "id": "E3-01",
       "file": "E3_01_auditoria.py",
       "test_file": "test_E3_01_auditoria.py",
       "test_path": "forja/ejercicios/test_E3_01_auditoria.py",
       "total_tests": 16,
       "tests_sha256": "3274c7bc07375ac2d068992d6539840633e905784b7833ceaf8e64d60f1635c7"
+    },
+    {
+      "id": "E4-01",
+      "file": "carga.py",
+      "test_file": "test_carga.py",
+      "test_path": "forja/labs/E4-01_carga/test_carga.py",
+      "total_tests": 25,
+      "tests_sha256": "7df479b728c966f8f092638954e3ad0a24a14e729fd45623237cf1ae7710a32e",
+      "battery_sha256": "c2365d809ca35b4bb4740488dd5eb003f9943e9bf96367a3a6b307e4387697cf"
+    },
+    {
+      "id": "E4-02",
+      "file": "trazas.py",
+      "test_file": "test_trazas.py",
+      "test_path": "forja/labs/E4-02_trazas/test_trazas.py",
+      "total_tests": 17,
+      "tests_sha256": "920b1ec981216b664f0de58569602f2a88443adf20f771943d4f472f646eec0b",
+      "battery_sha256": "ac39f3a43f0e123b692f7a02eaa596c461b15d5ac00dd6818dea92b97e9b4a6a"
+    },
+    {
+      "id": "E4-03",
+      "file": "politica.py",
+      "test_file": "test_politica.py",
+      "test_path": "forja/labs/E4-03_despliegue/test_politica.py",
+      "total_tests": 18,
+      "tests_sha256": "7343e82e1f8daf69302b3834d24c8b306b50f791e0e88e5d8839939d5e18aea6",
+      "battery_sha256": "1447c5561d0cb0eb70a3190fb768119aa4450c647ba70607909830d2d00719c1"
     },
     {
       "id": "O5-01",
@@ -73,6 +232,14 @@
       "test_path": "forja/ejercicios/test_O6_01_trazas.py",
       "total_tests": 12,
       "tests_sha256": "ce07068c1a1756271b0ebfe44caf8325c5f65240956b79e33dc3b25a2cf962f1"
+    },
+    {
+      "id": "P0-01",
+      "file": "servicio.py",
+      "test_file": "test_servicio.py",
+      "test_path": "forja/labs/P0-01_servicio_llm/test_servicio.py",
+      "total_tests": 17,
+      "tests_sha256": "cb1cc1f52be83c7ac526f3586c0a738eb9deaa20ab1c85359db99ffd9fe35fe8"
     },
     {
       "id": "P0-02",
@@ -193,161 +360,6 @@
       "test_path": "forja/ejercicios/test_T6_02_atencion.py",
       "total_tests": 5,
       "tests_sha256": "e31f920f7877729fd473854a3b9b2f2f7cb29a5b559be143ab5d2717c8a693b4"
-    },
-    {
-      "id": "A1-05",
-      "file": "chatbot.py",
-      "test_file": "test_chatbot.py",
-      "test_path": "forja/labs/A1-05_chatbot/test_chatbot.py",
-      "total_tests": 19,
-      "tests_sha256": "6d6752667ae4bcbaaaaecb8a7fbde0aed5fdcb4f64a99b08de4c72499c265193",
-      "battery_sha256": "7b6878c2a2e3627d58aff6c108a622f8234ae1e9c2301cf5da54727b5e2c6557"
-    },
-    {
-      "id": "A1-06",
-      "file": "juez.py",
-      "test_file": "test_juez.py",
-      "test_path": "forja/labs/A1-06_juez/test_juez.py",
-      "total_tests": 26,
-      "tests_sha256": "48101a65e93effc56484bea05c2a7175e302d04077011ab8cfc81e9e04499188",
-      "battery_sha256": "5d172f85a69e95854292cd617e2070e708029bbbe723633653fc3e047449da9f"
-    },
-    {
-      "id": "A1-07",
-      "file": "guardian.py",
-      "test_file": "test_guardian.py",
-      "test_path": "forja/labs/A1-07_guardian/test_guardian.py",
-      "total_tests": 19,
-      "tests_sha256": "7895f20374c133f3540aef9e3806112f9bc4e4b91974991611e1eda1d4c1b09e",
-      "battery_sha256": "d29752f3ff6fe522f1ab6589decdef96d7cab7b6639b5a96a40766583cf7403b"
-    },
-    {
-      "id": "A2-04",
-      "file": "rag.py",
-      "test_file": "test_rag.py",
-      "test_path": "forja/labs/A2-04_rag/test_rag.py",
-      "total_tests": 20,
-      "tests_sha256": "a8f8d0e8e765bfc622480fa783b37961f2b0263dc646e397da26320f3e63e929",
-      "battery_sha256": "0a0200077caae7cb292c7b12d10a902fba822b6d71c8576025c8e2c0158dbfad"
-    },
-    {
-      "id": "A3-04",
-      "file": "agente.py",
-      "test_file": "test_agente.py",
-      "test_path": "forja/labs/A3-04_agente/test_agente.py",
-      "total_tests": 28,
-      "tests_sha256": "8c898c17e17b2e1199e7664361b3a3c8e5bd21965427cb9a8d36d682be36a9a4",
-      "battery_sha256": "dc7fd825365fc62a7ca2c4594493df00ddd7134f316e8e11d83ddc817243ca10"
-      "id": "A4-04",
-      "file": "servidor.py",
-      "test_file": "test_servidor.py",
-      "test_path": "forja/labs/A4-04_mcp/test_servidor.py",
-      "total_tests": 28,
-      "tests_sha256": "fadd411c590eb81d43f55c478c5e783c0a9e621d4042efbc9d24960486cc9f13",
-      "battery_sha256": "e00eebee18863dfb0651b680c06d3e7e6645433f798bd509c5dd5a63302cbddf"
-      "id": "A6-04",
-      "file": "verificador.py",
-      "test_file": "test_verificador.py",
-      "test_path": "forja/labs/A6-04_cadena/test_verificador.py",
-      "total_tests": 27,
-      "tests_sha256": "5cd52de9024d9df31b1b0e4f2f979243eb2e9e4aa5bda70ab4c496c16d6efcec",
-      "battery_sha256": "d4e9b40f20fa609de0a6db3bbcc6f32068f723554353ccb871f66191dddf1d1b"
-      "id": "E1-01",
-      "file": "generacion.py",
-      "test_file": "test_generacion.py",
-      "test_path": "forja/labs/E1-01_generacion/test_generacion.py",
-      "total_tests": 17,
-      "tests_sha256": "d60d9f7026deb9ca7818190231be80421e8ab2a0c0892d4969202caba18deb00"
-    },
-    {
-      "id": "E1-02",
-      "file": "cuantizacion.py",
-      "test_file": "test_cuantizacion.py",
-      "test_path": "forja/labs/E1-02_cuantizacion/test_cuantizacion.py",
-      "total_tests": 12,
-      "tests_sha256": "71fab757f11008a323979876ea18c779ed45f6736421c747d7deb3d3114d6188"
-    },
-    {
-      "id": "E1-03",
-      "file": "lora.py",
-      "test_file": "test_lora.py",
-      "test_path": "forja/labs/E1-03_lora_lente/test_lora.py",
-      "total_tests": 15,
-      "tests_sha256": "7c64d3c11bdadb4f6de4ca165bc1e050bf49f90f00f8d9ee245e7aaef96fb46a"
-      "id": "E2-01",
-      "file": "evasion.py",
-      "test_file": "test_evasion.py",
-      "test_path": "forja/labs/E2-01_evasion/test_evasion.py",
-      "total_tests": 16,
-      "tests_sha256": "4cfd92238fc1e590abb3ac51c170124a4ce6236d2e1517dfc2c6c2de9a879010",
-      "battery_sha256": "691fd9acac5bc11426bdae6293d904b6a0f9f299734d4b2eb47320d1c5b89f4d"
-    },
-    {
-      "id": "E2-02",
-      "file": "extraccion.py",
-      "test_file": "test_extraccion.py",
-      "test_path": "forja/labs/E2-02_extraccion/test_extraccion.py",
-      "total_tests": 13,
-      "tests_sha256": "870fe51cab2dad76b2f093e765f9beef35553b90499514009d673b19c00a57be",
-      "battery_sha256": "f4db340866386f3732fd9821ae65dc054b56fece460614480efdf0ca47887265"
-    },
-    {
-      "id": "E2-03",
-      "file": "privacidad.py",
-      "test_file": "test_privacidad.py",
-      "test_path": "forja/labs/E2-03_privacidad/test_privacidad.py",
-      "total_tests": 14,
-      "tests_sha256": "e8b4b6f06ca6a1866d576f3da590190312093988cb0f8451466726c5a192c90a",
-      "battery_sha256": "fb206c4984aeb11068672a640a3e4283571ca3731c2057360b9b03bb2149424d"
-      "id": "E4-01",
-      "file": "carga.py",
-      "test_file": "test_carga.py",
-      "test_path": "forja/labs/E4-01_carga/test_carga.py",
-      "total_tests": 25,
-      "tests_sha256": "7df479b728c966f8f092638954e3ad0a24a14e729fd45623237cf1ae7710a32e",
-      "battery_sha256": "c2365d809ca35b4bb4740488dd5eb003f9943e9bf96367a3a6b307e4387697cf"
-    },
-    {
-      "id": "E4-02",
-      "file": "trazas.py",
-      "test_file": "test_trazas.py",
-      "test_path": "forja/labs/E4-02_trazas/test_trazas.py",
-      "total_tests": 17,
-      "tests_sha256": "920b1ec981216b664f0de58569602f2a88443adf20f771943d4f472f646eec0b",
-      "battery_sha256": "ac39f3a43f0e123b692f7a02eaa596c461b15d5ac00dd6818dea92b97e9b4a6a"
-    },
-    {
-      "id": "E4-03",
-      "file": "politica.py",
-      "test_file": "test_politica.py",
-      "test_path": "forja/labs/E4-03_despliegue/test_politica.py",
-      "total_tests": 18,
-      "tests_sha256": "7343e82e1f8daf69302b3834d24c8b306b50f791e0e88e5d8839939d5e18aea6",
-      "battery_sha256": "1447c5561d0cb0eb70a3190fb768119aa4450c647ba70607909830d2d00719c1"
-      "id": "A2-05",
-      "file": "multimodal.py",
-      "test_file": "test_multimodal.py",
-      "test_path": "forja/labs/A2-05_multimodal/test_multimodal.py",
-      "total_tests": 18,
-      "tests_sha256": "5d498a2000c45902542246d5ca98e62fc88b365043725f58736ef254e8fa71f2",
-      "battery_sha256": "e2df834aee330d1b929574929597682d5b23081dd35d34a18bd6c8171ed2abd0"
-    },
-    {
-      "id": "A2-06",
-      "file": "reranking.py",
-      "test_file": "test_reranking.py",
-      "test_path": "forja/labs/A2-06_reranking/test_reranking.py",
-      "total_tests": 13,
-      "tests_sha256": "e647967ff0b69781631b9f9f7e26c7d29f445a947bfeb782ba9e4757d94df11c",
-      "battery_sha256": "745c341262e8d9841a842977ebf3097778372cb26a72523ffb8eead96394d9b6"
-    },
-    {
-      "id": "P0-01",
-      "file": "servicio.py",
-      "test_file": "test_servicio.py",
-      "test_path": "forja/labs/P0-01_servicio_llm/test_servicio.py",
-      "total_tests": 17,
-      "tests_sha256": "cb1cc1f52be83c7ac526f3586c0a738eb9deaa20ab1c85359db99ffd9fe35fe8"
     }
   ]
 }

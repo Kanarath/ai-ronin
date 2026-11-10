@@ -199,7 +199,7 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [Abusing Images and Sounds for Indirect Instruction Injection in Multi-Modal LLMs](https://arxiv.org/abs/2307.10490) — arXiv:2307.10490 · consultada 2026-11-10
 - [ASCII Smuggler Tool: Crafting Invisible Text and Decoding Hidden Codes (caracteres de etiqueta Unicode)](https://embracethered.com/blog/posts/2024/hiding-and-finding-text-with-unicode-tags/) — Embrace The Red, 2024-01-14 · consultada 2026-11-10
 - [The Unicode Standard · bloque Tags (U+E0000–U+E007F)](https://www.unicode.org/charts/PDF/UE0000.pdf) — Unicode Consortium · consultada 2026-11-10
-- [Unicode Standard Annex #15: Unicode Normalization Forms (NFC, NFKC…)](https://www.unicode.org/reports/tr15/) — Unicode Consortium · consultada 2026-11-10
+- [Unicode Standard Annex #15 · Unicode Normalization Forms (NFC, NFD, NFKC, NFKD); versión para Unicode 18.0.0](https://www.unicode.org/reports/tr15/) — Unicode Consortium · consultada 2026-11-10
 - [Unicode Technical Standard #39: Unicode Security Mechanisms (confusables, identificadores)](https://www.unicode.org/reports/tr39/) — Unicode Consortium · consultada 2026-11-10
 - [ISO 32000-1:2008 · Document management — Portable document format — PDF 1.7 (§9.3.6 Text Rendering Mode)](https://opensource.adobe.com/dc-acrobat-sdk-docs/pdfstandards/PDF32000_2008.pdf) — ISO / Adobe (copia pública) · consultada 2026-11-10
 - [pypdf · documentación (versión 6.21.4, BSD-3-Clause)](https://pypdf.readthedocs.io/en/stable/) — py-pdf · consultada 2026-11-10
@@ -402,86 +402,6 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
 - [NIST SP 800-61 Rev. 3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile (abril de 2025)](https://csrc.nist.gov/pubs/sp/800/61/r3/final) — NIST · consultada 2026-11-09
 
-## E1
-
-**E1-01 · El bucle de generación**
-
-- [HuggingFaceTB/SmolLM2-135M · ficha del modelo (licencia Apache-2.0; revisión 93efa2f, 134,5 M parámetros en bfloat16)](https://huggingface.co/HuggingFaceTB/SmolLM2-135M) — Hugging Face Hub · consultada 2026-11-10
-- [SmolLM2: When Smol Goes Big — Data-Centric Training of a Small Language Model](https://arxiv.org/abs/2502.02737) — arXiv:2502.02737 · consultada 2026-11-10
-- [Transformers · Generation strategies (versión 5.22.2)](https://huggingface.co/docs/transformers/generation_strategies) — Hugging Face · consultada 2026-11-10
-- [PyTorch · documentación (versión 2.15.0, compilación para CPU)](https://docs.pytorch.org/docs/stable/) — PyTorch Foundation · consultada 2026-11-10
-- [The Curious Case of Neural Text Degeneration (nucleus sampling, top-p)](https://arxiv.org/abs/1904.09751) — ICLR 2020 · arXiv:1904.09751 · consultada 2026-11-06
-
-**E1-02 · Ocho bits por peso**
-
-- [Quantization and Training of Neural Networks for Efficient Integer-Arithmetic-Only Inference](https://arxiv.org/abs/1712.05877) — CVPR 2018 · arXiv:1712.05877 · consultada 2026-11-10
-- [LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339) — NeurIPS 2022 · arXiv:2208.07339 · consultada 2026-11-10
-- [GGUF · especificación del formato (ggml); Q8_0 = bloques de 32 int8 con escala float16 (quantize_row_q8_0_ref en ggml-quants.c)](https://github.com/ggml-org/ggml/blob/master/docs/gguf.md) — ggml / llama.cpp · consultada 2026-11-10
-- [Ollama · smollm2: etiquetas y tamaños (135m-instruct fp16 271 MB, q8_0 145 MB, q4_0 92 MB)](https://ollama.com/library/smollm2/tags) — Ollama · consultada 2026-11-10
-
-**E1-03 · Un adaptador y una lente**
-
-- [LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685) — ICLR 2022 · arXiv:2106.09685 · consultada 2026-11-10
-- [QLoRA: Efficient Finetuning of Quantized LLMs](https://arxiv.org/abs/2305.14314) — NeurIPS 2023 · arXiv:2305.14314 · consultada 2026-11-10
-- [Hugging Face PEFT · Parameter-Efficient Fine-Tuning (LoRA y otros adaptadores)](https://huggingface.co/docs/peft/index) — Hugging Face · consultada 2026-11-10
-- [interpreting GPT: the logit lens](https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens) — LessWrong · consultada 2026-11-10
-- [Eliciting Latent Predictions from Transformers with the Tuned Lens](https://arxiv.org/abs/2303.08112) — arXiv:2303.08112 · consultada 2026-11-10
-## E2
-
-**E2-01 · El trazo que engaña**
-
-- [Explaining and Harnessing Adversarial Examples (FGSM)](https://arxiv.org/abs/1412.6572) — ICLR 2015 · arXiv:1412.6572 · consultada 2026-11-10
-- [Feature Squeezing: Detecting Adversarial Examples in Deep Neural Networks](https://arxiv.org/abs/1704.01155) — NDSS 2018 · arXiv:1704.01155 · consultada 2026-11-10
-- [Adversarial Examples Are Not Easily Detected: Bypassing Ten Detection Methods](https://arxiv.org/abs/1705.07263) — AISec 2017 · arXiv:1705.07263 · consultada 2026-11-10
-- [scikit-learn · sklearn.datasets.load_digits (dígitos manuscritos de 8×8, incluidos en la biblioteca); versión 1.9.1](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_digits.html) — scikit-learn · consultada 2026-11-10
-- [NIST AI 100-2 E2025 · Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations (marzo de 2025; NIST prevé revisiones anuales)](https://csrc.nist.gov/pubs/ai/100/2/e2025/final) — NIST · consultada 2026-11-09
-
-**E2-02 · La copia por correo**
-
-- [Stealing Machine Learning Models via Prediction APIs](https://arxiv.org/abs/1609.02943) — USENIX Security 2016 · arXiv:1609.02943 · consultada 2026-11-10
-- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
-- [MITRE ATLAS (Adversarial Threat Landscape for Artificial-Intelligence Systems) · base de conocimiento viva; comprueba la versión vigente en la web](https://atlas.mitre.org/) — MITRE · consultada 2026-11-09
-- [FastAPI · documentación (versión 0.162.2)](https://fastapi.tiangolo.com/) — FastAPI · consultada 2026-11-10
-
-**E2-03 · ¿Estaba en el registro?**
-
-- [Membership Inference Attacks against Machine Learning Models](https://arxiv.org/abs/1610.05820) — IEEE S&P 2017 · arXiv:1610.05820 · consultada 2026-11-10
-- [Privacy Risk in Machine Learning: Analyzing the Connection to Overfitting](https://arxiv.org/abs/1709.01604) — IEEE CSF 2018 · arXiv:1709.01604 · consultada 2026-11-10
-- [Membership Inference Attacks From First Principles](https://arxiv.org/abs/2112.03570) — IEEE S&P 2022 · arXiv:2112.03570 · consultada 2026-11-10
-- [The Algorithmic Foundations of Differential Privacy](https://doi.org/10.1561/0400000042) — Foundations and Trends in Theoretical Computer Science 9(3-4) · consultada 2026-11-10
-- [Deep Learning with Differential Privacy (DP-SGD)](https://arxiv.org/abs/1607.00133) — ACM CCS 2016, 308-318 · arXiv:1607.00133 · consultada 2026-11-10
-- [OWASP LLM02:2025 Sensitive Information Disclosure (mitigaciones: privacidad diferencial; enlaza MITRE ATLAS AML.T0024.000 Infer Training Data Membership)](https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/) — OWASP GenAI Security Project · consultada 2026-11-10
-- [CEPD (EDPB) · Dictamen 28/2024 sobre determinados aspectos de protección de datos relacionados con el tratamiento de datos personales en el contexto de los modelos de IA (adoptado el 17 de diciembre de 2024; §43 sobre el anonimato de los modelos)](https://www.edpb.europa.eu/our-work-tools/our-documents/opinion-board-art-64/opinion-282024-certain-data-protection-aspects_en) — Comité Europeo de Protección de Datos · consultada 2026-11-10
-- [Extracting Training Data from Large Language Models](https://arxiv.org/abs/2012.07805) — USENIX Security 2021 · arXiv:2012.07805 · consultada 2026-11-06
-## E4
-
-**E4-01 · La forja bajo carga**
-
-- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
-- [Ollama · FAQ: peticiones concurrentes (OLLAMA_NUM_PARALLEL, 1 por defecto; OLLAMA_MAX_QUEUE, 512 por defecto, responde 503 al llenarse); versión 0.40.16](https://docs.ollama.com/faq) — Ollama · consultada 2026-11-10
-- [Additional HTTP Status Codes (RFC 6585): 429 Too Many Requests y la cabecera Retry-After](https://www.rfc-editor.org/rfc/rfc6585) — IETF · consultada 2026-11-10
-- [Site Reliability Engineering, capítulo 21: Handling Overload](https://sre.google/sre-book/handling-overload/) — Google · O'Reilly · consultada 2026-11-10
-- [Python 3.13 · asyncio: primitivas de sincronización (Semaphore) y asyncio.wait_for](https://docs.python.org/3.13/library/asyncio-sync.html) — Python Software Foundation · consultada 2026-11-10
-
-**E4-02 · El cuaderno de la forja**
-
-- [OpenTelemetry GenAI · Client Inference: span gen_ai.client.inference y métricas gen_ai.client.inference.* (estado Development, sin versión publicada; rama main del 2026-11-06)](https://github.com/open-telemetry/semantic-conventions-genai/blob/main/docs/gen-ai/client-inference.md) — OpenTelemetry (repositorio semantic-conventions-genai) · consultada 2026-11-10
-- [OpenTelemetry: Semantic conventions for generative AI (spans de agentes y herramientas, atributos gen_ai.*; estado Development)](https://github.com/open-telemetry/semantic-conventions-genai) — OpenTelemetry (repositorio semantic-conventions-genai) · consultada 2026-11-09
-- [OpenTelemetry Python · opentelemetry-api y opentelemetry-sdk 1.45.2 (publicadas el 2026-10-29)](https://opentelemetry.io/docs/languages/python/) — OpenTelemetry · consultada 2026-11-10
-- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
-- [Reglamento (UE) 2016/679 (RGPD), artículos 5.1.c (minimización de datos) y 25 (protección de datos desde el diseño y por defecto)](https://eur-lex.europa.eu/eli/reg/2016/679/oj) — Unión Europea · consultada 2026-11-10
-- [Computer for verifying numbers (patente US 2,950,048): el algoritmo de Luhn](https://patents.google.com/patent/US2950048A/en) — USPTO · consultada 2026-11-10
-
-**E4-03 · La puerta de la forja**
-
-- [Docker Compose · referencia de services: ports (sin IP se publica en todas las interfaces), user, privileged, read_only, network_mode](https://docs.docker.com/reference/compose-file/services/) — Docker · consultada 2026-11-10
-- [Ollama · API GET /api/tags: modelos descargados con su digest SHA-256; versión 0.40.16](https://docs.ollama.com/api/tags) — Ollama · consultada 2026-11-10
-- [The Site Reliability Workbook, capítulo 16: Canarying Releases](https://sre.google/workbook/canarying-releases/) — Google · O'Reilly · consultada 2026-11-10
-- [OWASP Docker Security Cheat Sheet: usuario no root (regla 2), límites de recursos (regla 7), sistema de ficheros de solo lectura (regla 8)](https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html) — OWASP Cheat Sheet Series · consultada 2026-11-10
-- [Open Policy Agent · documentación (política como código con Rego; versión 1.22.3, publicada el 2026-11-10)](https://www.openpolicyagent.org/docs) — CNCF · Open Policy Agent · consultada 2026-11-10
-- [OpenSSF Model Signing (OMS) Specification: firma separada de artefactos de modelos (claves, PKI o Sigstore). Especificación de junio de 2025, emergente](https://github.com/ossf/model-signing-spec) — OpenSSF · consultada 2026-11-09
-- [SLSA (Supply-chain Levels for Software Artifacts) v1.0: niveles de garantía para la procedencia de los builds](https://slsa.dev/spec/v1.0/) — OpenSSF · consultada 2026-11-09
-
 ## O5
 
 **O5-01 · Tres marcos, tres preguntas**
@@ -522,6 +442,59 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection](https://arxiv.org/abs/2302.12173) — arXiv:2302.12173 (AISec 2023) · consultada 2026-11-06
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
 
+## E1
+
+**E1-01 · El bucle de generación**
+
+- [HuggingFaceTB/SmolLM2-135M · ficha del modelo (licencia Apache-2.0; revisión 93efa2f, 134,5 M parámetros en bfloat16)](https://huggingface.co/HuggingFaceTB/SmolLM2-135M) — Hugging Face Hub · consultada 2026-11-10
+- [SmolLM2: When Smol Goes Big — Data-Centric Training of a Small Language Model](https://arxiv.org/abs/2502.02737) — arXiv:2502.02737 · consultada 2026-11-10
+- [Transformers · Generation strategies (versión 5.22.2)](https://huggingface.co/docs/transformers/generation_strategies) — Hugging Face · consultada 2026-11-10
+- [PyTorch · documentación (versión 2.15.0, compilación para CPU)](https://docs.pytorch.org/docs/stable/) — PyTorch Foundation · consultada 2026-11-10
+- [The Curious Case of Neural Text Degeneration (nucleus sampling, top-p)](https://arxiv.org/abs/1904.09751) — ICLR 2020 · arXiv:1904.09751 · consultada 2026-11-06
+
+**E1-02 · Ocho bits por peso**
+
+- [Quantization and Training of Neural Networks for Efficient Integer-Arithmetic-Only Inference](https://arxiv.org/abs/1712.05877) — CVPR 2018 · arXiv:1712.05877 · consultada 2026-11-10
+- [LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339) — NeurIPS 2022 · arXiv:2208.07339 · consultada 2026-11-10
+- [GGUF · especificación del formato (ggml); Q8_0 = bloques de 32 int8 con escala float16 (quantize_row_q8_0_ref en ggml-quants.c)](https://github.com/ggml-org/ggml/blob/master/docs/gguf.md) — ggml / llama.cpp · consultada 2026-11-10
+- [Ollama · smollm2: etiquetas y tamaños (135m-instruct fp16 271 MB, q8_0 145 MB, q4_0 92 MB)](https://ollama.com/library/smollm2/tags) — Ollama · consultada 2026-11-10
+
+**E1-03 · Un adaptador y una lente**
+
+- [LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685) — ICLR 2022 · arXiv:2106.09685 · consultada 2026-11-10
+- [QLoRA: Efficient Finetuning of Quantized LLMs](https://arxiv.org/abs/2305.14314) — NeurIPS 2023 · arXiv:2305.14314 · consultada 2026-11-10
+- [Hugging Face PEFT · Parameter-Efficient Fine-Tuning (LoRA y otros adaptadores)](https://huggingface.co/docs/peft/index) — Hugging Face · consultada 2026-11-10
+- [interpreting GPT: the logit lens](https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens) — LessWrong · consultada 2026-11-10
+- [Eliciting Latent Predictions from Transformers with the Tuned Lens](https://arxiv.org/abs/2303.08112) — arXiv:2303.08112 · consultada 2026-11-10
+
+## E2
+
+**E2-01 · El trazo que engaña**
+
+- [Explaining and Harnessing Adversarial Examples (FGSM)](https://arxiv.org/abs/1412.6572) — ICLR 2015 · arXiv:1412.6572 · consultada 2026-11-10
+- [Feature Squeezing: Detecting Adversarial Examples in Deep Neural Networks](https://arxiv.org/abs/1704.01155) — NDSS 2018 · arXiv:1704.01155 · consultada 2026-11-10
+- [Adversarial Examples Are Not Easily Detected: Bypassing Ten Detection Methods](https://arxiv.org/abs/1705.07263) — AISec 2017 · arXiv:1705.07263 · consultada 2026-11-10
+- [scikit-learn · sklearn.datasets.load_digits (dígitos manuscritos de 8×8, incluidos en la biblioteca); versión 1.9.1](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_digits.html) — scikit-learn · consultada 2026-11-10
+- [NIST AI 100-2 E2025 · Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations (marzo de 2025; NIST prevé revisiones anuales)](https://csrc.nist.gov/pubs/ai/100/2/e2025/final) — NIST · consultada 2026-11-09
+
+**E2-02 · La copia por correo**
+
+- [Stealing Machine Learning Models via Prediction APIs](https://arxiv.org/abs/1609.02943) — USENIX Security 2016 · arXiv:1609.02943 · consultada 2026-11-10
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [MITRE ATLAS (Adversarial Threat Landscape for Artificial-Intelligence Systems) · base de conocimiento viva; comprueba la versión vigente en la web](https://atlas.mitre.org/) — MITRE · consultada 2026-11-09
+- [FastAPI · documentación (versión 0.162.2)](https://fastapi.tiangolo.com/) — FastAPI · consultada 2026-11-10
+
+**E2-03 · ¿Estaba en el registro?**
+
+- [Membership Inference Attacks against Machine Learning Models](https://arxiv.org/abs/1610.05820) — IEEE S&P 2017 · arXiv:1610.05820 · consultada 2026-11-10
+- [Privacy Risk in Machine Learning: Analyzing the Connection to Overfitting](https://arxiv.org/abs/1709.01604) — IEEE CSF 2018 · arXiv:1709.01604 · consultada 2026-11-10
+- [Membership Inference Attacks From First Principles](https://arxiv.org/abs/2112.03570) — IEEE S&P 2022 · arXiv:2112.03570 · consultada 2026-11-10
+- [The Algorithmic Foundations of Differential Privacy](https://doi.org/10.1561/0400000042) — Foundations and Trends in Theoretical Computer Science 9(3-4) · consultada 2026-11-10
+- [Deep Learning with Differential Privacy (DP-SGD)](https://arxiv.org/abs/1607.00133) — ACM CCS 2016, 308-318 · arXiv:1607.00133 · consultada 2026-11-10
+- [OWASP LLM02:2025 Sensitive Information Disclosure (mitigaciones: privacidad diferencial; enlaza MITRE ATLAS AML.T0024.000 Infer Training Data Membership)](https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/) — OWASP GenAI Security Project · consultada 2026-11-10
+- [CEPD (EDPB) · Dictamen 28/2024 sobre determinados aspectos de protección de datos relacionados con el tratamiento de datos personales en el contexto de los modelos de IA (adoptado el 17 de diciembre de 2024; §43 sobre el anonimato de los modelos)](https://www.edpb.europa.eu/our-work-tools/our-documents/opinion-board-art-64/opinion-282024-certain-data-protection-aspects_en) — Comité Europeo de Protección de Datos · consultada 2026-11-10
+- [Extracting Training Data from Large Language Models](https://arxiv.org/abs/2012.07805) — USENIX Security 2021 · arXiv:2012.07805 · consultada 2026-11-06
+
 ## E3
 
 **E3-01 · Dos evaluaciones, un sistema**
@@ -542,3 +515,32 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [ISO 19011:2026 Guidelines for auditing management systems (4.ª edición, mayo de 2026; sustituye a la de 2018). Norma de pago: solo se usa su descripción pública](https://www.iso.org/standard/88984.html) — ISO · consultada 2026-11-10
 - [Reglamento (UE) 2024/1689 (Reglamento de Inteligencia Artificial, AI Act)](https://eur-lex.europa.eu/eli/reg/2024/1689/oj) — EUR-Lex · consultada 2026-11-09
 - [Reglamento (UE) 2016/679 (RGPD), artículos 35 (evaluación de impacto relativa a la protección de datos) y 36 (consulta previa)](https://eur-lex.europa.eu/eli/reg/2016/679/oj) — EUR-Lex · consultada 2026-11-10
+
+## E4
+
+**E4-01 · La forja bajo carga**
+
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [Ollama · FAQ: peticiones concurrentes (OLLAMA_NUM_PARALLEL, 1 por defecto; OLLAMA_MAX_QUEUE, 512 por defecto, responde 503 al llenarse); versión 0.40.16](https://docs.ollama.com/faq) — Ollama · consultada 2026-11-10
+- [Additional HTTP Status Codes (RFC 6585): 429 Too Many Requests y la cabecera Retry-After](https://www.rfc-editor.org/rfc/rfc6585) — IETF · consultada 2026-11-10
+- [Site Reliability Engineering, capítulo 21: Handling Overload](https://sre.google/sre-book/handling-overload/) — Google · O'Reilly · consultada 2026-11-10
+- [Python 3.13 · asyncio: primitivas de sincronización (Semaphore) y asyncio.wait_for](https://docs.python.org/3.13/library/asyncio-sync.html) — Python Software Foundation · consultada 2026-11-10
+
+**E4-02 · El cuaderno de la forja**
+
+- [OpenTelemetry GenAI · Client Inference: span gen_ai.client.inference y métricas gen_ai.client.inference.* (estado Development, sin versión publicada; rama main del 2026-11-06)](https://github.com/open-telemetry/semantic-conventions-genai/blob/main/docs/gen-ai/client-inference.md) — OpenTelemetry (repositorio semantic-conventions-genai) · consultada 2026-11-10
+- [OpenTelemetry: Semantic conventions for generative AI (spans de agentes y herramientas, atributos gen_ai.*; estado Development)](https://github.com/open-telemetry/semantic-conventions-genai) — OpenTelemetry (repositorio semantic-conventions-genai) · consultada 2026-11-09
+- [OpenTelemetry Python · opentelemetry-api y opentelemetry-sdk 1.45.2 (publicadas el 2026-10-29)](https://opentelemetry.io/docs/languages/python/) — OpenTelemetry · consultada 2026-11-10
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [Reglamento (UE) 2016/679 (RGPD), artículos 5.1.c (minimización de datos) y 25 (protección de datos desde el diseño y por defecto)](https://eur-lex.europa.eu/eli/reg/2016/679/oj) — Unión Europea · consultada 2026-11-10
+- [Computer for verifying numbers (patente US 2,950,048): el algoritmo de Luhn](https://patents.google.com/patent/US2950048A/en) — USPTO · consultada 2026-11-10
+
+**E4-03 · La puerta de la forja**
+
+- [Docker Compose · referencia de services: ports (sin IP se publica en todas las interfaces), user, privileged, read_only, network_mode](https://docs.docker.com/reference/compose-file/services/) — Docker · consultada 2026-11-10
+- [Ollama · API GET /api/tags: modelos descargados con su digest SHA-256; versión 0.40.16](https://docs.ollama.com/api/tags) — Ollama · consultada 2026-11-10
+- [The Site Reliability Workbook, capítulo 16: Canarying Releases](https://sre.google/workbook/canarying-releases/) — Google · O'Reilly · consultada 2026-11-10
+- [OWASP Docker Security Cheat Sheet: usuario no root (regla 2), límites de recursos (regla 7), sistema de ficheros de solo lectura (regla 8)](https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html) — OWASP Cheat Sheet Series · consultada 2026-11-10
+- [Open Policy Agent · documentación (política como código con Rego; versión 1.22.3, publicada el 2026-11-10)](https://www.openpolicyagent.org/docs) — CNCF · Open Policy Agent · consultada 2026-11-10
+- [OpenSSF Model Signing (OMS) Specification: firma separada de artefactos de modelos (claves, PKI o Sigstore). Especificación de junio de 2025, emergente](https://github.com/ossf/model-signing-spec) — OpenSSF · consultada 2026-11-10
+- [SLSA (Supply-chain Levels for Software Artifacts) v1.0: niveles de garantía para la procedencia de los builds](https://slsa.dev/spec/v1.0/) — OpenSSF · consultada 2026-11-09
