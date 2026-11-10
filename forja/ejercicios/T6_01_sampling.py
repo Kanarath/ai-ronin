@@ -34,5 +34,5 @@ def con_temperatura(dist, t):
 
 
 def top_p(dist, p):
-    """Conserva los tokens más probables (dist ya ordenada) hasta que su suma alcance p, y renormaliza."""
+    """Conserva los tokens más probables (dist ya ordenada) hasta que su suma sea >= p, y renormaliza."""
     raise NotImplementedError("Tu turno: implementa top_p")

@@ -57,7 +57,7 @@ def tabla_herramientas(servidores):
 
     Devuelve (tabla, colisiones):
       - tabla: {"servidor.herramienta": "servidor"} con TODAS las herramientas (espacios de nombres).
-      - colisiones: lista ORDENADA de los nombres de herramienta que exponen dos o más servidores.
+      - colisiones: lista ORDENADA de los nombres de herramienta que exponen dos o más servidores DISTINTOS.
     """
     raise NotImplementedError("Tu turno: implementa tabla_herramientas")
 

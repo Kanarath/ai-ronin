@@ -27,3 +27,6 @@ forja/**/data/generated/
 # Evidencias personales generadas en labs
 forja/**/evidence/*.json
 !forja/**/evidence/.gitkeep
+
+# Evidencias de tus ejercicios (resultados personales; el Dojo las importa)
+forja/evidencias/

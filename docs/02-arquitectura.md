@@ -221,8 +221,8 @@ Los **códigos de diagnóstico** (por ejemplo, `DATA_LEAKAGE_TEST_USED_IN_TRAINI
   - Copia `.bak` de la versión anterior.
   - `Migrations` aplica una función por cada salto de versión.
 - `EvidenceImporter`:
-  - Lee un JSON elegido por ti con `FileDialog`.
-  - Valida su esquema y lo copia a `user://evidence/`.
+  - Lee los JSON de `forja/evidencias/` (o la ruta que indiques en `evidence import <ruta>`).
+  - Valida su esquema y la huella SHA-256 de los tests contra `content/exercises.json`, y lo copia a `user://evidence/`.
   - Nunca ejecuta nada.
 
 ## 9. Tests
@@ -256,7 +256,7 @@ Los **códigos de diagnóstico** (por ejemplo, `DATA_LEAKAGE_TEST_USED_IN_TRAINI
 
 Las tareas 🛠 que implementas tú están en Python, no en GDScript.
 
-- Cada ejercicio es un fichero con funciones vacías y su docstring (`forja/ejercicios/T1-02_distancia.py`), más sus tests (`test_T1-02_distancia.py`, con pytest).
-- Al pasar los tests, `python -m ronin_check T1-02` genera `evidence.json`, que el Dojo importa con el validador `evidence`. Es el mismo mecanismo que usará la Forja.
+- Cada ejercicio es un fichero con funciones vacías y su docstring (`forja/ejercicios/T1-02_distancia.py`), más sus tests (`test_T1_02_distancia.py`, con `unittest` de la biblioteca estándar).
+- `python -m ronin_check T1-02` ejecuta los tests y genera `forja/evidencias/T1-02.json`, que el Dojo importa con `evidence import`. Es el mismo mecanismo que usarán los laboratorios de la Forja. `python -m ronin_check --manifiesto` regenera `content/exercises.json` cuando cambian los tests (un test de Godot avisa si se desincroniza).
 - El Dojo tiene su propia implementación de cada algoritmo para las visualizaciones interactivas. Tu versión en Python se compara con ella sobre los mismos datos.
 - Solo dependencias estándar al principio (sin numpy). NumPy entra en T3, cuando ya sepas qué hace por debajo.

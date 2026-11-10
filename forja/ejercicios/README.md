@@ -61,7 +61,8 @@ python -m unittest -v test_T1_01_estadisticas
 2. Lee el docstring de cada función: explica qué debe hacer, con un ejemplo.
 3. Sustituye `raise NotImplementedError(...)` por tu implementación.
 4. Ejecuta los tests. Ve en orden: haz pasar uno, luego el siguiente.
-5. Cuando todos estén en verde, dile a Claude «ejercicio T1-01 listo». Revisaremos tu código juntos.
+5. Cuando todos estén en verde, genera la evidencia y llévala al Dojo (sección 3).
+6. Dile a Claude «ejercicio T1-01 listo». Revisaremos tu código juntos.
 
 Para ejecutar todos los ejercicios a la vez:
 
@@ -70,3 +71,25 @@ python -m unittest discover -v
 ```
 
 `apoyo.py` lo ha escrito Claude: carga el dataset para los tests. No hace falta tocarlo.
+
+## 3. Llevar el resultado al Dojo
+
+`ronin_check` ejecuta los tests de un ejercicio y guarda el resultado en `forja/evidencias/<ID>.json`:
+
+```powershell
+python -m ronin_check T1-01
+```
+
+Con `python -m ronin_check todos` revisa todos. Después, en el terminal del Dojo:
+
+```text
+evidence import
+```
+
+El Dojo marca el ejercicio como verificado (🛠 junto a sus misiones en el currículo, +50 XP la primera vez). Con `evidence list` ves cuáles llevas. Una evidencia parcial también se importa: el Dojo muestra cuántos tests pasan.
+
+Qué hay en la evidencia: el recuento de tests, los nombres de los que fallan y una huella SHA-256 del fichero de tests. **No contiene tu código.** El Dojo compara la huella con la de los tests originales: si has modificado un test, la evidencia se rechaza. Restaura el fichero (por ejemplo, con `git checkout -- test_T1_01_estadisticas.py`) y vuelve a ejecutar `ronin_check`.
+
+Nada se envía a ningún sitio. Las evidencias son tuyas y no se suben al repositorio (`.gitignore`).
+
+`ronin_check.py` también lo ha escrito Claude y no forma parte de los ejercicios.

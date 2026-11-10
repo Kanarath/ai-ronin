@@ -42,7 +42,8 @@ def regla_correlacion(sesion, permitidos):
       (puede haber otros tipos, como "mensaje" o "respuesta", que esta regla ignora)
     Devuelve True solo si en la MISMA sesión:
       - algún documento recuperado contiene MARCA_INSTRUCCION (sin distinguir mayúsculas), y
-      - alguna herramienta de HERRAMIENTAS_SALIDA va a un dominio que no está en permitidos.
+      - alguna herramienta de HERRAMIENTAS_SALIDA va a un dominio que no está en permitidos
+        (si sus args no tienen dominio, dominio_destino da "" y eso cuenta como no permitido).
     """
     raise NotImplementedError("Tu turno: implementa regla_correlacion")
 

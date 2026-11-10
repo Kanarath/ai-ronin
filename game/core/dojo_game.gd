@@ -17,6 +17,8 @@ var shell: Shell
 var catalog: MissionCatalog
 ## Unidades del temario que se estudian fuera del Dojo (lecturas).
 var study: StudyPath
+## Manifiesto e importador de evidencias de los ejercicios de Python.
+var evidence: EvidenceImporter
 var runner := MissionRunner.new()
 var progress: Progress
 var achievements: Achievements
@@ -34,6 +36,7 @@ func _init(p_save_path: String = DEFAULT_SAVE) -> void:
 	library = ContentLibrary.load_default()
 	catalog = MissionCatalog.load_default()
 	study = StudyPath.load_default()
+	evidence = EvidenceImporter.load_default()
 	shell = Shell.new(library)
 	shell.set_game(self)
 	var loaded := SaveStore.read(save_path) if not save_path.is_empty() else {"data": {}, "warning": ""}
@@ -141,6 +144,19 @@ func _on_mission_finished(result: Dictionary) -> void:
 	progress_changed.emit()
 
 
+## Importa una evidencia de ronin_check, da el XP del primer verificado y guarda.
+func import_evidence(path: String) -> Dictionary:
+	var before := progress.level()
+	var res := evidence.import_file(path, progress, not save_path.is_empty())
+	if res["ok"]:
+		if res["first_verified"]:
+			progress.add_xp(EvidenceImporter.VERIFIED_XP)
+		shell.emit_event("evidence.imported", {"exercise": res["exercise"], "passed": res["passed"], "total": res["total"], "all_passed": res["all_passed"]})
+		_after_xp(before)
+		save()
+	return res
+
+
 ## Tras una misión: sus lecturas y las unidades de estudio externo que acaba de desbloquear.
 func _announce_readings(m: Dictionary, first_time: bool) -> void:
 	var titles := PackedStringArray()
@@ -149,6 +165,9 @@ func _announce_readings(m: Dictionary, first_time: bool) -> void:
 			titles.append(String(study.refs[id]["title"]))
 	if not titles.is_empty():
 		runner.mentor_message.emit("Para profundizar (enlaces: lecturas %s): %s." % [m["id"], " · ".join(titles)], "info")
+	var ex := evidence.exercise_of_mission(m)
+	if not ex.is_empty() and not EvidenceImporter.is_verified(progress, ex):
+		runner.mentor_message.emit("Tu ejercicio de Python: %s. Cuando pase sus tests, en forja/ejercicios ejecuta py -m ronin_check %s y aquí evidence import." % [evidence.exercises[ex]["file"], ex], "hint")
 	if not first_time:
 		return
 	for u: Dictionary in study.unlocked_by(progress, m["id"]):

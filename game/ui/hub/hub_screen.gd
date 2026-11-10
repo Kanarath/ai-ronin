@@ -264,6 +264,9 @@ func _refresh_curriculum() -> void:
 			var icon: String = {"dominada": "◆", "completada": "✓", "en curso": "▶", "bloqueada": "🔒", "disponible": "·"}[status]
 			var b := Button.new()
 			b.text = "%s %s  %s" % [icon, m["id"], m["title"]]
+			var ex := game.evidence.exercise_of_mission(m)
+			if not ex.is_empty() and EvidenceImporter.is_verified(game.progress, ex):
+				b.text += "  🛠"
 			b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 			b.flat = true
 			b.disabled = status == "bloqueada"

@@ -188,7 +188,9 @@
         "Las misiones se juegan en el Dojo. Los ejercicios 🛠 se programan en Python, el lenguaje estándar de la IA, en la carpeta forja/ejercicios del proyecto.",
         "El Dojo no puede comprobar si tienes Python ni instalarlo: está aislado de tu sistema a propósito. Los pasos para cada sistema operativo los da el comando forja setup (o forja setup --os macos / --os linux).",
         "Solo hace falta Python 3.12 o superior: los tests usan unittest, que viene incluido. Ejecuta los tests desde forja/ejercicios con: python -m unittest -v test_T1_01_estadisticas.",
-        "Si no puedes instalar Python en este equipo, sigue jugando: los ejercicios no bloquean el progreso del Dojo y puedes hacerlos más tarde en otro equipo."
+        "Si no puedes instalar Python en este equipo, sigue jugando: los ejercicios no bloquean el progreso del Dojo y puedes hacerlos más tarde en otro equipo.",
+        "Cuando un ejercicio pase sus tests, ejecuta desde forja/ejercicios: python -m ronin_check <ID> (o todos). Después, aquí: evidence import. El Dojo solo lee el resultado (recuento de tests y una huella de los tests originales), nunca tu código, y no ejecuta nada.",
+        "evidence list muestra qué ejercicios llevas verificados; las misiones con su ejercicio verificado llevan 🛠 en el currículo."
       ],
       "see_also": ["terminal"]
     },

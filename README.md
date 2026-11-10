@@ -31,8 +31,8 @@ El proyecto tiene dos planos:
 - **Ruta de estudio externo:** O1–O4, A5 y C4 no tienen misión; se estudian con referencias oficiales en su punto del temario (se desbloquean con sus requisitos y se marcan con `lecturas hecho`). En el Dojo: comando `lecturas`; con enlaces clicables: [`LECTURAS.md`](LECTURAS.md), que también recoge las lecturas de cada misión.
 - **En cada misión:** lecciones antes de cada objetivo, pistas en 5 niveles, prueba de dominio y debrief.
 - **Gamificación:** 18 sellos (logros), rangos Initiate→Master, retos rápidos con solución paso a paso, notificaciones y barra de XP.
-- **Ejercicios Python:** 23, en `forja/ejercicios/`, con guía de Python (`PYTHON.md`) y pistas (`PISTAS.md`).
-- **Siguiente paso:** especializaciones E1–E4.
+- **Ejercicios Python:** 19, en `forja/ejercicios/`, con guía de Python (`PYTHON.md`) y pistas (`PISTAS.md`). `python -m ronin_check <ID>` genera la evidencia y el Dojo la importa con `evidence import`.
+- **Siguiente paso:** resto de la Fase 4 (Forja): plantillas Docker y primer laboratorio con un LLM local en CPU. Después, especializaciones E1–E4.
 
 ### Jugar
 

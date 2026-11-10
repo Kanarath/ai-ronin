@@ -38,6 +38,8 @@ def riesgo(probabilidad, impacto):
 def residual(r, tratamiento):
     """r = {"id": "R1", "p": 4, "i": 2, "p_mitigada": 1}  (p_mitigada = None si no se puede mitigar)
     tratamiento: "mitigar" → riesgo(p_mitigada, i) · "evitar" → 0 · "aceptar" o None → riesgo(p, i).
+    Si se pide "mitigar" y p_mitigada es None, no es un tratamiento posible: lanza ValueError
+    (tratamiento_permitido existe para comprobarlo antes).
     """
     raise NotImplementedError("Tu turno: implementa residual")
 

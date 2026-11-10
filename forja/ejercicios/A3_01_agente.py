@@ -41,6 +41,7 @@ def ejecutar_plan(plan, contexto):
     (ejecutadas, bloqueadas): dos listas de diccionarios.
 
     - Cada llamada se autoriza con un contexto que tiene su propio "origen".
+    - Las ejecutadas se guardan tal cual (el mismo diccionario de la llamada).
     - Las bloqueadas se guardan como {"herramienta", "motivo"}.
     - Presupuesto de pasos: cuando ya se han procesado PRESUPUESTO_PASOS llamadas (ejecutadas o
       bloqueadas), el resto se bloquea con motivo "step-budget".

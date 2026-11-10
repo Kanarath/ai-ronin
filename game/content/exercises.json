@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "note": "Generado con: py -m ronin_check --manifiesto (desde forja/ejercicios). No editar a mano.",
+  "exercises": [
+    {
+      "id": "A2-01",
+      "file": "A2_01_rag.py",
+      "test_file": "test_A2_01_rag.py",
+      "total_tests": 7,
+      "tests_sha256": "c2416acc02559aebbf9dd2bec25cb10bbc95598236ba441d3131bc13101e2bc1"
+    },
+    {
+      "id": "A3-01",
+      "file": "A3_01_agente.py",
+      "test_file": "test_A3_01_agente.py",
+      "total_tests": 7,
+      "tests_sha256": "bc8830ec01245b473d5a2fbf72e86e46aa212ffa1accbea82b2ce379841a7846"
+    },
+    {
+      "id": "A4-01",
+      "file": "A4_01_mcp.py",
+      "test_file": "test_A4_01_mcp.py",
+      "total_tests": 10,
+      "tests_sha256": "66471d8d8965488baaf8b27a246150139f7da3c9765a98fe6c577642b677e9d6"
+    },
+    {
+      "id": "A6-01",
+      "file": "A6_01_cadena.py",
+      "test_file": "test_A6_01_cadena.py",
+      "total_tests": 13,
+      "tests_sha256": "d45a75fa1d989ee16e36814b6c4ef43df0a35eb033639acdb996a7ab6506f723"
+    },
+    {
+      "id": "C1-01",
+      "file": "C1_01_matriz.py",
+      "test_file": "test_C1_01_matriz.py",
+      "total_tests": 10,
+      "tests_sha256": "4855003f5ef88698625276362a1479a30b7b02ce2d89f8fe6c85f0db8c565da2"
+    },
+    {
+      "id": "C5-01",
+      "file": "C5_01_encargo.py",
+      "test_file": "test_C5_01_encargo.py",
+      "total_tests": 6,
+      "tests_sha256": "9cd3ac84c112da3df61bccf4691f6ce2d1bc6176b060187232405a8f20851ec4"
+    },
+    {
+      "id": "O5-01",
+      "file": "O5_01_riesgos.py",
+      "test_file": "test_O5_01_riesgos.py",
+      "total_tests": 11,
+      "tests_sha256": "557037527c1251248fa45839e4b06ea53d142476e77d80875fcd577493f881e6"
+    },
+    {
+      "id": "O6-01",
+      "file": "O6_01_trazas.py",
+      "test_file": "test_O6_01_trazas.py",
+      "total_tests": 12,
+      "tests_sha256": "ce07068c1a1756271b0ebfe44caf8325c5f65240956b79e33dc3b25a2cf962f1"
+    },
+    {
+      "id": "T1-01",
+      "file": "T1_01_estadisticas.py",
+      "test_file": "test_T1_01_estadisticas.py",
+      "total_tests": 10,
+      "tests_sha256": "0203886419843daf866157b057a86fbaf950e14c0d7bab45009e8bd2b69d68ab"
+    },
+    {
+      "id": "T1-02",
+      "file": "T1_02_distancia.py",
+      "test_file": "test_T1_02_distancia.py",
+      "total_tests": 12,
+      "tests_sha256": "0c7508de547ea931203238b4a4042eade6fb3e0aae91ee8b7adc6a9616cf7db9"
+    },
+    {
+      "id": "T2-01",
+      "file": "T2_01_knn.py",
+      "test_file": "test_T2_01_knn.py",
+      "total_tests": 12,
+      "tests_sha256": "0cd4b313fed60d59d643dc607e09b6117faa5027d48f1bbeeb11d757190c7526"
+    },
+    {
+      "id": "T3-01",
+      "file": "T3_01_descenso.py",
+      "test_file": "test_T3_01_descenso.py",
+      "total_tests": 9,
+      "tests_sha256": "eab5fecb5ea76b762efa46240282900302110ec0042296edc77ebc02f6e55dd7"
+    },
+    {
+      "id": "T3-02",
+      "file": "T3_02_metricas.py",
+      "test_file": "test_T3_02_metricas.py",
+      "total_tests": 6,
+      "tests_sha256": "5c264acb8d90b1b522cedd18100b496336c82450781223de5e747cc29942e829"
+    },
+    {
+      "id": "T4-01",
+      "file": "T4_01_neurona.py",
+      "test_file": "test_T4_01_neurona.py",
+      "total_tests": 7,
+      "tests_sha256": "7deda8311a0fcc1b347f52940959e410a2c0083cb78e2c066ab0c69353b7b86d"
+    },
+    {
+      "id": "T4-02",
+      "file": "T4_02_backprop.py",
+      "test_file": "test_T4_02_backprop.py",
+      "total_tests": 6,
+      "tests_sha256": "62ed5d522060e81acc0e058e286b48c1020496c3cd7d2d3d6d3af3d4f25ae07a"
+    },
+    {
+      "id": "T5-01",
+      "file": "T5_01_bpe.py",
+      "test_file": "test_T5_01_bpe.py",
+      "total_tests": 8,
+      "tests_sha256": "3d98e30571e03c5e026def25e55a81e868cf6d5c0fa0df3873cb485db3a3291d"
+    },
+    {
+      "id": "T5-02",
+      "file": "T5_02_embeddings.py",
+      "test_file": "test_T5_02_embeddings.py",
+      "total_tests": 5,
+      "tests_sha256": "7a0cc2062ed843245f6e247fc2db6e967eee1e81619f25c7422acaf96a8060ef"
+    },
+    {
+      "id": "T6-01",
+      "file": "T6_01_sampling.py",
+      "test_file": "test_T6_01_sampling.py",
+      "total_tests": 7,
+      "tests_sha256": "514872502331cee927eb8a39a9f409b7572c2472038ecd622c979ad681b3576a"
+    },
+    {
+      "id": "T6-02",
+      "file": "T6_02_atencion.py",
+      "test_file": "test_T6_02_atencion.py",
+      "total_tests": 5,
+      "tests_sha256": "e31f920f7877729fd473854a3b9b2f2f7cb29a5b559be143ab5d2717c8a693b4"
+    }
+  ]
+}
