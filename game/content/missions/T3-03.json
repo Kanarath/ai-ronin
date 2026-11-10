@@ -1,0 +1,349 @@
+{
+  "id": "T3-03",
+  "schema_version": 1,
+  "title": "¿Bloquear o dejar pasar?",
+  "unit": "T3",
+  "difficulty": 2,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 25,
+  "requires_missions": [
+    "T3-02"
+  ],
+  "competencies": {
+    "requires": [
+      "T3.precision-recall",
+      "T3.umbral"
+    ],
+    "trains": [
+      "T3.aplicar-umbral-seguridad"
+    ]
+  },
+  "briefing": "El detector de abuso de T2-02 ya funciona, pero el equipo de seguridad discute. Unos quieren bloquear a la mínima sospecha; otros temen espantar a los clientes que pagan. El maestro te pide que pongas la decisión sobre la mesa con números.",
+  "learning_objectives": [
+    "Leer precision y recall de un detector de seguridad",
+    "Convertir los errores de cada umbral en un coste",
+    "Elegir el umbral según lo que cuesta cada error"
+  ],
+  "mentor_intro": "Misión aplicada: precision, recall y umbral, ahora en un detector de seguridad de verdad (ficticio). Vamos paso a paso.",
+  "purpose": "Todo guardrail (filtro de seguridad) de un chatbot con un LLM (Large Language Model) tiene un umbral: a partir de qué puntuación bloquea. Si es muy estricto, bloquea a clientes legítimos; si es muy permisivo, deja pasar ataques. No hay un umbral correcto en abstracto: depende de lo que cueste cada error. Hoy lo eliges con números para el detector de abuso de T2-02. Es la misma decisión que se toma en un detector de fraude o de prompt injection.",
+  "lab": {
+    "datasets": [
+      {
+        "file": "peticiones.csv",
+        "name": "peticiones",
+        "label": "tipo"
+      }
+    ],
+    "viz": {
+      "dataset": "peticiones",
+      "x": "peticiones_hora",
+      "y": "rechazos"
+    }
+  },
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Prepara el detector como en T2-02, ahora con k=9: separa peticiones (test 0.3, semilla 42), normaliza con min-max aprendiendo solo del train y entrena un k-NN con k=9 en el train normalizado.",
+      "teach": "El mismo detector, con más vecinos\nCon k=9 cada cliente recibe una PUNTUACIÓN: la fracción de sus 9 vecinos que son abuso (de 0/9 a 9/9).\nEl UMBRAL decide a partir de qué puntuación se bloquea. Por defecto, 0,5.\nPor qué: casi todos los detectores reales dan una puntuación, no un sí o un no; el umbral lo pones tú.",
+      "validator": {
+        "type": "sequence",
+        "steps": [
+          {
+            "type": "event",
+            "event": "dataset.split",
+            "where": {
+              "source": "peticiones",
+              "seed": 42,
+              "test_ratio": 0.3
+            }
+          },
+          {
+            "type": "event",
+            "event": "dataset.normalized",
+            "where": {
+              "method": "minmax",
+              "fit_on": {
+                "ends_with": "_train"
+              },
+              "source": {
+                "ends_with": "_test"
+              }
+            }
+          },
+          {
+            "type": "event",
+            "event": "model.trained",
+            "where": {
+              "k": 9,
+              "normalized": true,
+              "dataset": {
+                "ne": "peticiones_minmax"
+              }
+            }
+          }
+        ]
+      },
+      "diagnostics": [
+        {
+          "id": "fit-test",
+          "when": {
+            "type": "event",
+            "event": "dataset.normalized",
+            "where": {
+              "fit_on": {
+                "ends_with": "_test"
+              }
+            }
+          },
+          "message": "Has aprendido los parámetros de normalización del TEST. Cuando llegue un cliente nuevo, ¿tendrás «el resto del test»? Usa --fit con el train original (peticiones_train)."
+        }
+      ],
+      "hints": [
+        "Es el procedimiento honesto de T2-02, con k=9.",
+        "dataset split … · dataset normalize <train> · dataset normalize <test> --fit <train> · model create --k 9 · model train",
+        "dataset split peticiones --test 0.3 --seed 42 · dataset normalize peticiones_train --as tr · dataset normalize peticiones_test --fit peticiones_train --as te · model create d --k 9 · model train d tr"
+      ],
+      "on_complete": "Detector listo. Veamos cómo se equivoca."
+    },
+    {
+      "id": "o2",
+      "text": "Calcula precision y recall en el test con «abuso» como clase positiva.",
+      "teach": "Recordatorio de T3-02\nPositiva = lo que buscamos: aquí, abuso.\nFN (False Negative): un abusador que pasa. FP (False Positive): un cliente normal bloqueado.\nComando: metrics <modelo> <dataset> --positive abuso\nPor qué: son los dos números que necesita el equipo de seguridad, mucho más que la accuracy.",
+      "validator": {
+        "type": "event",
+        "event": "metrics.computed",
+        "where": {
+          "positive": "abuso",
+          "overlap": 0
+        }
+      },
+      "diagnostics": [
+        {
+          "id": "leak",
+          "when": {
+            "type": "event",
+            "event": "metrics.computed",
+            "where": {
+              "overlap": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Esas métricas mezclan clientes del entrenamiento. ¿Sobre qué dataset debes medir?"
+        }
+      ],
+      "hints": [
+        "Es el comando metrics de T3-02.",
+        "metrics d te --positive abuso"
+      ],
+      "on_complete": "Accuracy 0,917 y precision 1,000: no bloquea a ningún cliente normal. Pero el recall es 0,700: 3 de los 10 abusadores pasan."
+    },
+    {
+      "id": "o3",
+      "text": "En este detector, ¿qué es un falso positivo?",
+      "teach": "Ponerle nombre a cada error\nPositivo y negativo hablan de lo que dice el detector; verdadero y falso, de si acierta.\nPor qué: quien confunde un FP con un FN arregla el problema equivocado.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "un abusador que pasa sin que lo bloqueen",
+          "why": "Eso es un falso negativo: el detector dice «normal» (negativo) y se equivoca."
+        },
+        {
+          "id": "b",
+          "text": "un cliente normal al que el detector bloquea"
+        },
+        {
+          "id": "c",
+          "text": "un abusador bloqueado",
+          "why": "Eso es un acierto: un verdadero positivo (TP, True Positive)."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "«Positivo» es lo que dice el detector (abuso); «falso», que se equivoca.",
+        "answer b"
+      ],
+      "on_complete": "Eso es: el detector dice «abuso» (positivo) y se equivoca (falso). Un cliente que paga y se queda sin servicio."
+    },
+    {
+      "id": "o4",
+      "text": "Mira todos los umbrales a la vez: metrics curve <modelo> <dataset> --positive abuso",
+      "teach": "La curva de umbrales\nmetrics curve calcula precision, recall, FP y FN para cada umbral posible: con k=9, 1/9, 2/9… 9/9.\nBajar el umbral significa bloquear con menos votos de abuso.\nPor qué: es la tabla con la que se negocia un umbral entre seguridad y negocio.",
+      "prediction": {
+        "prompt": "Si bajas el umbral de 5/9 a 2/9, ¿qué crees que pasará con los clientes normales bloqueados (FP)?",
+        "options": [
+          "aumentan",
+          "se quedan igual",
+          "disminuyen"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "metrics.curve",
+        "where": {
+          "positive": "abuso",
+          "overlap": 0
+        }
+      },
+      "hints": [
+        "Es metrics curve, con la misma clase positiva.",
+        "metrics curve d te --positive abuso"
+      ],
+      "on_complete": "Compara con tu predicción. Con 5/9: 0 FP y 3 FN. Con 3/9: 3 FP y 1 FN. Con 2/9: 9 FP y 0 FN, no pasa ningún abusador. Bajar el umbral cambia ataques que pasan por clientes bloqueados."
+    },
+    {
+      "id": "py1",
+      "text": "Escribe en Python lo que cuesta un umbral: abre el editor con py, completa la función coste y compruébala con py check.",
+      "teach": "El coste de un umbral, con tus manos\nSi cada FP cuesta coste_fp y cada FN cuesta coste_fn, el coste total es fp · coste_fp + fn · coste_fn.\nPor qué: así una discusión («¡seguridad!», «¡clientes!») se convierte en un número que se puede comparar.",
+      "py_exercise": {
+        "id": "T3-03-coste",
+        "title": "coste(fp, fn, coste_fp, coste_fn): lo que cuesta un umbral",
+        "function": "coste",
+        "starter": "# Ejercicio T3-03 · Lo que cuesta un umbral\n# fp: clientes normales bloqueados · fn: abusadores que pasan.\n# coste_fp y coste_fn: lo que cuesta CADA uno de esos errores.\n\ndef coste(fp, fn, coste_fp, coste_fn):\n    return fp * coste_fp   # ← cambia esta línea: suma también lo que cuestan los FN\n\n# El umbral 5/9 (0 FP y 3 FN) si un FP cuesta 1 y un FN cuesta 10. Debería imprimir 30:\nprint(coste(0, 3, 1, 10))\n",
+        "cases": [
+          {
+            "args": [
+              0,
+              3,
+              1,
+              10
+            ],
+            "expected": 30
+          },
+          {
+            "args": [
+              9,
+              0,
+              1,
+              10
+            ],
+            "expected": 9
+          },
+          {
+            "args": [
+              3,
+              1,
+              1,
+              10
+            ],
+            "expected": 13
+          },
+          {
+            "args": [
+              3,
+              1,
+              3,
+              10
+            ],
+            "expected": 19
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T3-03-coste",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Al coste de los FP (fp * coste_fp) súmale el de los FN.",
+        "La línea queda así: return fp * coste_fp + fn * coste_fn"
+      ],
+      "on_complete": "Con tu función, cada fila de la curva se convierte en un coste. Puedes usarla con py run y varios print para comparar umbrales."
+    },
+    {
+      "id": "o5",
+      "text": "Un abusador que pasa cuesta 10 (factura y respuestas copiadas) y un cliente bloqueado cuesta 1 (una persona lo revisa y lo desbloquea). ¿Qué umbral cuesta menos?",
+      "teach": "Elegir con números\nPara cada umbral, toma sus FP y FN de la curva y calcula el coste total, a mano o con tu función.\nPor qué: el umbral bueno es el que minimiza el coste real, no el que da la accuracy más alta.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "5/9 ≈ 0,556, el de por defecto",
+          "why": "0 FP y 3 FN: 0·1 + 3·10 = 30. Los abusadores que pasan salen caros."
+        },
+        {
+          "id": "b",
+          "text": "3/9 ≈ 0,333",
+          "why": "3 FP y 1 FN: 3·1 + 1·10 = 13. Bien, pero hay uno más barato."
+        },
+        {
+          "id": "c",
+          "text": "2/9 ≈ 0,222"
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "Calcula coste(fp, fn, 1, 10) para las tres filas de la curva.",
+        "2/9 cuesta 9·1 + 0·10 = 9: answer c"
+      ],
+      "on_complete": "9 FP y 0 FN: 9·1 + 0·10 = 9, el más barato. Cuando dejar pasar un ataque cuesta mucho más que una falsa alarma, conviene un umbral bajo."
+    },
+    {
+      "id": "o6",
+      "text": "Ahora el equipo comercial avisa: un cliente bloqueado se enfada y se va, así que cuesta 3. El abusador sigue costando 10. ¿Qué umbral cuesta menos ahora?",
+      "teach": "Si cambian los costes, cambia el umbral\nLa curva es la misma; lo que cambia es el precio de cada error.\nPor qué: por eso los umbrales de un detector real se revisan cuando cambia el negocio o cambian los ataques.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "2/9 ≈ 0,222",
+          "why": "9 FP y 0 FN: 9·3 + 0·10 = 27. Ahora bloquear a 9 clientes sale caro."
+        },
+        {
+          "id": "b",
+          "text": "3/9 ≈ 0,333"
+        },
+        {
+          "id": "c",
+          "text": "5/9 ≈ 0,556",
+          "why": "0 FP y 3 FN: 0·3 + 3·10 = 30. Sigue siendo el más caro de los tres."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Repite las cuentas con coste_fp = 3.",
+        "3/9 cuesta 3·3 + 1·10 = 19: answer b"
+      ],
+      "on_complete": "3 FP y 1 FN: 3·3 + 1·10 = 19, el más barato. Mismo detector, misma curva, otro umbral. Elegirlo es una decisión de negocio y de seguridad; tu trabajo es ponerla sobre la mesa con números."
+    }
+  ],
+  "you_can_now": "Sabes leer los dos errores de un detector de seguridad, convertirlos en un coste, elegir el umbral más barato y explicar por qué cambia cuando cambian los costes. Siguiente: T4, donde verás por dentro una neurona, la pieza con la que se construyen las redes neuronales y los LLM (Large Language Model).",
+  "debrief": {
+    "what_happened": "Has medido precision y recall del detector de abuso, has recorrido todos sus umbrales y has elegido el más barato con dos escenarios de costes distintos: con el mismo detector, la respuesta cambia.",
+    "why": "Un umbral no es un detalle técnico: decide a quién se bloquea y qué ataques pasan. Ponerle un coste a cada error convierte esa decisión en algo que se puede discutir y revisar.",
+    "in_production": "Los umbrales se eligen con un conjunto de validación (no con el test) y se revisan con el tiempo, porque los atacantes cambian. Es habitual usar dos umbrales: por encima del alto se bloquea y, entre los dos, el caso pasa a revisión humana. En las plataformas de LLM esto se combina con límites de peticiones (rate limiting) y cuotas de gasto (OWASP LLM10:2025, consumo sin límite).",
+    "simplifications": [
+      "Umbral elegido sobre el test (en un proyecto real, sobre validación)",
+      "Costes inventados para el ejemplo",
+      "Dataset sintético de 120 clientes"
+    ]
+  },
+  "further_reading": [
+    "ref.sklearn-precision-recall",
+    "ref.owasp-llm-2025"
+  ],
+  "xp": {
+    "base": 100
+  }
+}

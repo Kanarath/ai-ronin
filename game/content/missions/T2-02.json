@@ -1,0 +1,377 @@
+{
+  "id": "T2-02",
+  "schema_version": 1,
+  "title": "Clientes que abusan",
+  "unit": "T2",
+  "difficulty": 2,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 25,
+  "requires_missions": [
+    "T2-01"
+  ],
+  "competencies": {
+    "requires": [
+      "T2.knn",
+      "T2.evaluacion"
+    ],
+    "trains": [
+      "T2.aplicar-knn-seguridad"
+    ]
+  },
+  "briefing": "El chatbot de la forja recibe tráfico raro y la factura se ha disparado. El equipo de seguridad ha revisado 120 clientes de la API y ha marcado cuáles abusaban. Tu encargo: un detector que aprenda de esos ejemplos a reconocer a los siguientes. Y una pregunta incómoda: ¿cuánto se puede fiar el equipo de él?",
+  "learning_objectives": [
+    "Aplicar el procedimiento honesto train/test a un detector de seguridad",
+    "Explicar un fallo del detector mirando sus vecinos",
+    "Comparar un modelo con una línea base"
+  ],
+  "mentor_intro": "Misión aplicada: el k-NN de las katanas, ahora contra bots que abusan de un chatbot. Vamos paso a paso.",
+  "purpose": "Un chatbot hecho con un LLM (Large Language Model) se paga por cada token que procesa. Algunos clientes abusan: bots que lanzan miles de peticiones para copiar las respuestas del modelo o para disparar la factura. OWASP (Open Worldwide Application Security Project) lo llama consumo sin límite. Nadie puede escribir a mano una regla para cada abusador: por eso se entrena un detector con casos que el equipo de seguridad ya revisó. Hoy construyes ese detector con el k-NN (k-Nearest Neighbors) de T2-01 y aprendes a desconfiar de su nota.",
+  "lab": {
+    "datasets": [
+      {
+        "file": "peticiones.csv",
+        "name": "peticiones",
+        "label": "tipo"
+      }
+    ],
+    "viz": {
+      "dataset": "peticiones",
+      "x": "peticiones_hora",
+      "y": "rechazos"
+    }
+  },
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira el registro de clientes de la API del chatbot: dataset inspect peticiones",
+      "teach": "Clientes convertidos en números\nCada fila es un cliente que usó la API (Application Programming Interface) del chatbot durante una hora.\npeticiones_hora: cuántas peticiones hizo. tokens_medios: lo largos que eran sus mensajes, en tokens (los trozos de texto que procesa un LLM). rechazos: qué porcentaje de sus peticiones bloqueó el filtro de seguridad.\nLa etiqueta, tipo, la puso el SOC (Security Operations Center) tras revisar cada caso: abuso o normal.\nPor qué: un detector que aprende de datos solo es tan bueno como los ejemplos etiquetados que le das.",
+      "validator": {
+        "type": "event",
+        "event": "dataset.inspected",
+        "where": {
+          "dataset": "peticiones"
+        }
+      },
+      "hints": [
+        "Escribe exactamente: dataset inspect peticiones"
+      ],
+      "on_complete": "Así se lee: cada FILA es un cliente (cli-001, cli-002…), las tres medidas son las FEATURES y tipo es la ETIQUETA. Son 120 clientes y 50 de ellos abusaban. Nadie ha escrito reglas: el k-NN aprenderá solo, a partir de estos ejemplos."
+    },
+    {
+      "id": "o2",
+      "text": "Vas a entrenar un detector k-NN con estos datos. ¿Qué tienes que hacer ANTES de entrenar para poder medir honestamente cuánto acierta?",
+      "teach": "Repaso de T2-01\nUn modelo evaluado con sus propios ejemplos de entrenamiento saca una nota falsa: cada ejemplo es su propio vecino.\nPor qué: en seguridad, una nota falsa significa ataques que pasan sin que nadie lo sepa.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "entrenar con todos los clientes y evaluar con todos",
+          "why": "Es la trampa de T2-01: con k=1 sacarías 100 %, pero eso mide memoria, no aprendizaje."
+        },
+        {
+          "id": "b",
+          "text": "apartar un conjunto de test que el modelo no vea al entrenar"
+        },
+        {
+          "id": "c",
+          "text": "normalizar todos los clientes juntos y después separar",
+          "why": "El mínimo y el máximo saldrían también del test: es fuga de datos. Primero se separa; después se normaliza con el train."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué hiciste en T2-01 justo antes de normalizar?",
+        "Apartar el test: answer b"
+      ],
+      "on_complete": "Eso es: primero se aparta el test. Ahora hazlo de verdad."
+    },
+    {
+      "id": "o3",
+      "text": "Construye el detector de forma honesta: separa peticiones (test 0.3, semilla 42), normaliza con min-max aprendiendo SOLO del train, entrena un k-NN con k=5 en el train normalizado y evalúalo en el test normalizado.",
+      "teach": "El mismo procedimiento, otro problema\nSon los pasos de T2-01, en orden: split → normalize del train → normalize del test con --fit del train → model create → model train → model evaluate.\nUsa k=5: votan los 5 clientes más parecidos.\nPor qué: este procedimiento no cambia con el problema. Es el mismo para katanas, para correos de phishing o para un detector de prompt injection.",
+      "validator": {
+        "type": "sequence",
+        "steps": [
+          {
+            "type": "event",
+            "event": "dataset.split",
+            "where": {
+              "source": "peticiones",
+              "seed": 42,
+              "test_ratio": 0.3
+            }
+          },
+          {
+            "type": "event",
+            "event": "dataset.normalized",
+            "where": {
+              "method": "minmax",
+              "fit_on": {
+                "ends_with": "_train"
+              },
+              "source": {
+                "ends_with": "_test"
+              }
+            }
+          },
+          {
+            "type": "event",
+            "event": "model.evaluated",
+            "where": {
+              "overlap": 0,
+              "normalized": true,
+              "train_normalized": true,
+              "k": 5
+            }
+          }
+        ]
+      },
+      "diagnostics": [
+        {
+          "id": "fit-test",
+          "when": {
+            "type": "event",
+            "event": "dataset.normalized",
+            "where": {
+              "fit_on": {
+                "ends_with": "_test"
+              }
+            }
+          },
+          "message": "Has aprendido los parámetros de normalización del TEST. Cuando llegue un cliente nuevo, ¿tendrás «el resto del test» para calcular su mínimo y su máximo? Usa --fit con el train original (peticiones_train)."
+        },
+        {
+          "id": "fit-normalized",
+          "when": {
+            "type": "event",
+            "event": "dataset.normalized",
+            "where": {
+              "fit_on": {
+                "ends_with": "_minmax"
+              }
+            }
+          },
+          "message": "Has aprendido los parámetros de un dataset que YA estaba normalizado (mínimo 0 y máximo 1), así que no cambian nada útil. Usa --fit con el train original (peticiones_train)."
+        },
+        {
+          "id": "overlap",
+          "when": {
+            "type": "event",
+            "event": "model.evaluated",
+            "where": {
+              "overlap": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Esa evaluación mezcla clientes con los que el modelo se entrenó. ¿El dataset que evalúas comparte clientes con el de entrenamiento?"
+        }
+      ],
+      "hints": [
+        "Orden: primero se aparta el test; después se aprende la normalización; después se entrena; al final se evalúa.",
+        "dataset split … · dataset normalize <train> · dataset normalize <test> --fit <train> · model create --k 5 · model train · model evaluate",
+        "dataset split peticiones --test 0.3 --seed 42 · dataset normalize peticiones_train --method minmax --as tr · dataset normalize peticiones_test --method minmax --fit peticiones_train --as te · model create d --k 5 · model train d tr · model evaluate d te"
+      ],
+      "on_complete": "0,889: acierta 32 de 36 clientes que nunca había visto. Mira la matriz de confusión: hay errores de dos tipos."
+    },
+    {
+      "id": "o4",
+      "text": "Según la matriz de confusión, ¿cuántos clientes que abusan se le escapan al detector (real abuso, predicho normal)? (answer <número>)",
+      "teach": "Leer la matriz de confusión\nCada fila es la clase real; cada columna, la que predijo el modelo.\nLa fila abuso con la columna normal son los abusadores que el detector deja pasar.\nPor qué: en seguridad no todos los errores son iguales; un ataque que pasa suele costar más que una falsa alarma.",
+      "validator": {
+        "type": "answer",
+        "expected": 3,
+        "tolerance": 0
+      },
+      "wrong_answer": "Busca la fila «abuso» y la columna «normal» en la matriz de model evaluate.",
+      "hints": [
+        "Es una celda de la matriz de confusión.",
+        "Fila abuso, columna normal."
+      ],
+      "on_complete": "3 de los 10 abusadores del test pasan. Veamos uno por dentro."
+    },
+    {
+      "id": "o5",
+      "text": "Mira por qué se le escapa uno de ellos, cli-041: model predict <modelo> <test normalizado> cli-041",
+      "teach": "Preguntar al modelo por qué\nmodel predict enseña los 5 vecinos que han votado y la clase de cada uno.\nPor qué: un analista de seguridad no se fía de un detector hasta que entiende sus fallos.",
+      "prediction": {
+        "prompt": "¿Qué crees que predecirá el detector para cli-041?",
+        "options": [
+          "abuso",
+          "normal"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "model.predicted",
+        "where": {
+          "id": "cli-041"
+        }
+      },
+      "hints": [
+        "Usa el nombre de tu modelo y el de tu test normalizado.",
+        "model predict d te cli-041"
+      ],
+      "on_complete": "Predice normal: 4 de sus 5 vecinos son clientes normales. Sus números (dataset inspect peticiones_test --rows 20) son 70 peticiones por hora y un 11 % de rechazos, como un cliente normal con prisa. Es un abusador «lento»: va despacio para no llamar la atención."
+    },
+    {
+      "id": "o6",
+      "text": "¿Por qué el detector no ha reconocido a cli-041?",
+      "teach": "Lo que el modelo puede ver\nk-NN no entiende qué es un abuso: solo compara números con los de sus ejemplos.\nPor qué: saber qué no puede ver tu modelo es la primera pregunta que se hace un atacante, y debería ser también la tuya.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque k-NN está mal programado",
+          "why": "El cálculo es correcto: ha votado con sus 5 vecinos más cercanos, como debe."
+        },
+        {
+          "id": "b",
+          "text": "porque en sus tres features se parece a clientes normales, y el modelo solo sabe lo que hay en sus ejemplos"
+        },
+        {
+          "id": "c",
+          "text": "porque no se normalizó el test",
+          "why": "Sí lo normalizaste, con los parámetros del train. El problema es que, medido así, cli-041 se parece a los clientes normales."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Mira de qué clase son sus vecinos y qué valores tiene él.",
+        "answer b"
+      ],
+      "on_complete": "Exacto. Un modelo que aprende de datos solo distingue lo que sus features pueden ver. Un atacante que sabe qué se mide se adapta para parecer normal: lo viste con el relleno de T1-03 y lo verás en A1."
+    },
+    {
+      "id": "o7",
+      "text": "Imagina un «detector» que no mira nada y dice siempre «normal». ¿Qué accuracy sacaría en este test? (answer <número>, en tanto por uno con 3 decimales, por ejemplo answer 0.500)",
+      "teach": "Comparar con lo más tonto\nUna LÍNEA BASE es el resultado de la estrategia más simple posible.\nEse detector acertaría todos los clientes normales del test y fallaría todos los abusadores. Los normales son la suma de la fila normal de la matriz de confusión.\nAccuracy = aciertos ÷ total.\nPor qué: si tu modelo no gana con claridad a la línea base, no aporta nada. Es lo primero que se comprueba al evaluar cualquier sistema de IA.",
+      "validator": {
+        "type": "answer",
+        "expected": 0.722,
+        "tolerance": 0.003
+      },
+      "wrong_answer": "Suma la fila «normal» de la matriz de confusión (son los que acertaría) y divide entre los 36 clientes del test.",
+      "hints": [
+        "En el test hay 36 clientes. ¿Cuántos son normales?",
+        "26 normales ÷ 36 clientes. Responde con 3 decimales."
+      ],
+      "on_complete": "0,722. ¡Sin mirar nada saca un 72 %! Y no detecta ni un solo abusador. Tu k-NN saca 0,889: mejor, pero la accuracy sola esconde lo que importa. En T3-02 aprenderás a medir cada tipo de error por separado."
+    },
+    {
+      "id": "py1",
+      "text": "Escribe en Python la cuenta de la accuracy: abre el editor con py, completa la función accuracy y compruébala con py check.",
+      "teach": "La accuracy, con tus manos\nVas a escribir la cuenta de model evaluate: comparar cada etiqueta real con la predicha y contar los aciertos.\nzip(a, b) recorre dos listas a la vez, por parejas. == comprueba si dos valores son iguales.\nPor qué: es la primera métrica que calcularás para cualquier modelo, también para un detector de prompt injection o un agente que clasifica tickets.",
+      "py_exercise": {
+        "id": "T2-02-accuracy",
+        "title": "accuracy(reales, predichas): aciertos ÷ total",
+        "function": "accuracy",
+        "starter": "# Ejercicio T2-02 · La accuracy de un detector\n# reales y predichas son dos listas de la misma longitud: la clase real y la que dijo el modelo.\n# Cuenta en cuántas posiciones coinciden y divide entre el total.\n\ndef accuracy(reales, predichas):\n    aciertos = 0\n    for r, p in zip(reales, predichas):\n        if r == p:\n            aciertos = aciertos   # ← cambia esta línea: suma un acierto\n    return aciertos / len(reales)\n\n# El «detector» que dice siempre normal, con 3 clientes. Debería imprimir 0.6666666666666666:\nprint(accuracy([\"normal\", \"abuso\", \"normal\"], [\"normal\", \"normal\", \"normal\"]))\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "normal",
+                "abuso",
+                "normal"
+              ],
+              [
+                "normal",
+                "normal",
+                "normal"
+              ]
+            ],
+            "expected": 0.666667,
+            "tolerance": 1e-05
+          },
+          {
+            "args": [
+              [
+                "abuso",
+                "abuso"
+              ],
+              [
+                "abuso",
+                "abuso"
+              ]
+            ],
+            "expected": 1.0,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              [
+                "abuso"
+              ],
+              [
+                "normal"
+              ]
+            ],
+            "expected": 0.0,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              [
+                "abuso",
+                "normal",
+                "abuso",
+                "normal"
+              ],
+              [
+                "abuso",
+                "abuso",
+                "abuso",
+                "abuso"
+              ]
+            ],
+            "expected": 0.5,
+            "tolerance": 1e-06
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T2-02-accuracy",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Dentro del if, aciertos tiene que aumentar en 1.",
+        "La línea queda así: aciertos = aciertos + 1"
+      ],
+      "on_complete": "Es exactamente la cuenta de model evaluate. Y explica la trampa de la línea base: quien dice siempre «normal» acierta todos los normales, que aquí son mayoría."
+    }
+  ],
+  "you_can_now": "Sabes construir un detector que aprende de ejemplos etiquetados, evaluarlo honestamente, explicar un fallo mirando sus vecinos y compararlo con una línea base. Siguiente: T3, donde verás cómo aprenden los modelos que no memorizan, el motor de los LLM (Large Language Model), y cómo medir cada tipo de error.",
+  "debrief": {
+    "what_happened": "Has entrenado un k-NN para detectar clientes que abusan de un chatbot, lo has evaluado con un test apartado, has explicado por qué se le escapa un abusador «lento» y has visto que un detector que no mira nada ya saca un 72 % de accuracy.",
+    "why": "Los detectores que aprenden de datos sustituyen a las reglas escritas a mano, pero heredan los límites de sus features y de sus ejemplos. La línea base y el análisis de los fallos evitan fiarse de una nota que no significa nada.",
+    "in_production": "En las plataformas de LLM el abuso se frena combinando límites de peticiones (rate limiting), cuotas de gasto y detectores entrenados con casos que revisan analistas, con muchas más features (horarios, cuentas, patrones de los prompts). OWASP recoge este riesgo como LLM10:2025, consumo sin límite.",
+    "simplifications": [
+      "Dataset sintético de 120 clientes con tres features",
+      "Un solo reparto train/test, sin conjunto de validación"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-llm-2025",
+    "ref.sklearn-pitfalls"
+  ],
+  "xp": {
+    "base": 100
+  }
+}

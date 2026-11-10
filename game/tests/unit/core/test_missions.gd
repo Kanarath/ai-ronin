@@ -155,7 +155,7 @@ func test_mision_T1_02_completa() -> void:
 
 
 func test_mision_T2_01_completa_con_error_productivo_y_diagnostico() -> void:
-	game.progress.data["missions"]["T1-02"] = {"completed": true}
+	game.progress.data["missions"]["T1-03"] = {"completed": true}
 	assert_eq(game.start_mission("T2-01"), "")
 	run(["dataset normalize katanas --method minmax", "model create m1 --k 1", "model train m1 katanas_minmax"])
 	run(["hipotesis 100%", "model evaluate m1 katanas_minmax"])
@@ -170,7 +170,8 @@ func test_mision_T2_01_completa_con_error_productivo_y_diagnostico() -> void:
 	var ev: Array = game.shell.events_named("model.evaluated")
 	assert_almost_eq(ev[-1]["data"]["accuracy"], 0.75, 0.001)
 	run(["hipotesis 9", "model sweep --train tr --test te", "answer 0.25"])
-	run(["reflexion con k igual a uno cada hoja es su propio vecino a distancia cero asi que acierta todo en entrenamiento la fuga de datos es usar informacion del test al entrenar o normalizar y la evite separando antes y normalizando con el train"])
+	run(["answer c"])
+	solve_py(PY_VOTAR)
 	assert_eq(game.runner.phase, "trial")
 	run(["dataset split katanas --test 0.25 --seed 7", "dataset normalize katanas_train --method zscore --as tr7",
 		"dataset normalize katanas_test --method zscore --fit katanas_train --as te7", "model create m9 --k 9", "model train m9 tr7", "model evaluate m9 te7", "answer 0.883"])
@@ -179,11 +180,8 @@ func test_mision_T2_01_completa_con_error_productivo_y_diagnostico() -> void:
 	assert_eq(game.progress.competency_state("T2.overfitting"), "dominada")
 
 
-const REFLEXION_LARGA := "reflexion el learning rate es el tamano del paso si es pequeno avanza muy despacio y si es grande se pasa del valle y diverge normalizar redondea la superficie de error y permite pasos mas grandes en todas las direcciones sin explotar"
-
-
 func test_mision_T3_01_completa() -> void:
-	game.progress.data["missions"]["T2-01"] = {"completed": true}
+	game.progress.data["missions"]["T2-02"] = {"completed": true}
 	assert_eq(game.start_mission("T3-01"), "")
 	var xy := " --x minutos_enfriado --y dureza_hrc"
 	run(["plot temple" + xy])
@@ -193,7 +191,8 @@ func test_mision_T3_01_completa() -> void:
 	run(["regress create r3 --lr 0.02", "regress train r3 temple" + xy + " --epochs 500"])
 	assert_eq(game.runner.index, 5, "lr 0.02 en 500 épocas cumple el reto")
 	run(["hipotesis menos de 10", "dataset normalize temple --method zscore --only minutos_enfriado --as tz",
-		"regress create r4 --lr 0.5", "regress train r4 tz" + xy + " --epochs 20", REFLEXION_LARGA])
+		"regress create r4 --lr 0.5", "regress train r4 tz" + xy + " --epochs 20", "answer b"])
+	solve_py(PY_PASO)
 	assert_eq(game.runner.phase, "trial")
 	run(["regress info r4", "dataset stats temple", "answer 1.51"])
 	assert_eq(finished.size(), 1)
@@ -201,7 +200,7 @@ func test_mision_T3_01_completa() -> void:
 
 
 func test_T3_01_diagnostico_de_lr_lento() -> void:
-	game.progress.data["missions"]["T2-01"] = {"completed": true}
+	game.progress.data["missions"]["T2-02"] = {"completed": true}
 	game.start_mission("T3-01")
 	var xy := " --x minutos_enfriado --y dureza_hrc"
 	run(["plot temple" + xy, "hipotesis no", "regress create r1 --lr 0.001", "regress train r1 temple" + xy + " --epochs 100", "answer 435.8",
@@ -212,14 +211,15 @@ func test_T3_01_diagnostico_de_lr_lento() -> void:
 
 
 func test_mision_T3_02_completa() -> void:
-	game.progress.data["missions"]["T2-01"] = {"completed": true}
+	game.progress.data["missions"]["T3-01"] = {"completed": true}
 	assert_eq(game.start_mission("T3-02"), "")
 	run(["dataset split katanas --test 0.3 --seed 42", "dataset normalize katanas_train --as tr",
 		"dataset normalize katanas_test --fit katanas_train --as te", "model create m --k 9", "model train m tr"])
-	run(["metrics m te --positive defectuosa", "answer 4"])
+	run(["metrics m te --positive defectuosa", "answer b", "answer 4"])
 	run(["hipotesis sube recall y baja precision", "metrics m te --positive defectuosa --threshold 0.3"])
 	run(["metrics curve m te --positive defectuosa", "answer 0.222", "answer 27"])
-	run(["reflexion la accuracy trata igual los dos errores pero vender una katana defectuosa es mucho peor que desechar una buena por eso miro el recall de la clase defectuosa y elijo un umbral bajo aunque baje la precision y aumenten los descartes"])
+	run(["answer c"])
+	solve_py(PY_RECALL)
 	assert_eq(game.runner.phase, "trial")
 	run(["model create m15 --k 15", "model train m15 tr", "metrics curve m15 te --positive defectuosa", "answer 0.531"])
 	assert_eq(finished.size(), 1)
@@ -227,7 +227,7 @@ func test_mision_T3_02_completa() -> void:
 
 
 func test_mision_T4_01_completa() -> void:
-	game.progress.data["missions"]["T3-01"] = {"completed": true}
+	game.progress.data["missions"]["T3-03"] = {"completed": true}
 	assert_eq(game.start_mission("T4-01"), "")
 	run(["nn create n --hidden 0", "nn forward n 1,1", "answer 0.313"])
 	run(["hipotesis sí", "nn train n puerta_and --epochs 2000"])
@@ -325,7 +325,7 @@ func test_mision_T6_02_completa() -> void:
 # ── Pistas y maestría ────────────────────────────────────────────────────────
 
 func test_escalera_de_pistas_y_confirmacion_nivel_5() -> void:
-	game.progress.data["missions"]["T1-02"] = {"completed": true}
+	game.progress.data["missions"]["T1-03"] = {"completed": true}
 	game.start_mission("T2-01")
 	run(["dataset normalize katanas --method minmax", "model create m1 --k 1", "model train m1 katanas_minmax", "hipotesis 100%", "model evaluate m1 katanas_minmax", "model predict m1 katanas_minmax hoja-001", "answer 0"])
 	for i in 4:
@@ -486,3 +486,96 @@ func test_python_errores_con_linea() -> void:
 	var r := game.shell.execute("py run")
 	assert_true(r.plain_text().contains("NameError"), r.plain_text())
 	assert_true(r.plain_text().contains("línea 2"), r.plain_text())
+
+
+# --- T2/T3 ---
+
+const PY_VOTAR := "def votar(etiquetas):\n    conteo = {}\n    for e in etiquetas:\n        conteo[e] = conteo.get(e, 0) + 1\n    return max(conteo, key=lambda e: conteo[e])\n"
+const PY_ACCURACY := "def accuracy(reales, predichas):\n    aciertos = 0\n    for r, p in zip(reales, predichas):\n        if r == p:\n            aciertos = aciertos + 1\n    return aciertos / len(reales)\n"
+const PY_PASO := "def paso(w, lr):\n    gradiente = 2 * (w - 3)\n    return w - lr * gradiente\n"
+const PY_RECALL := "def precision(tp, fp):\n    return tp / (tp + fp)\n\ndef recall(tp, fn):\n    return tp / (tp + fn)\n"
+const PY_COSTE := "def coste(fp, fn, coste_fp, coste_fn):\n    return fp * coste_fp + fn * coste_fn\n"
+const PETICIONES_HONESTO := ["dataset split peticiones --test 0.3 --seed 42", "dataset normalize peticiones_train --method minmax --as tr",
+	"dataset normalize peticiones_test --method minmax --fit peticiones_train --as te"]
+
+
+func test_T2_T3_cadena_de_requisitos() -> void:
+	var chain := {"T2-01": "T1-03", "T2-02": "T2-01", "T3-01": "T2-02", "T3-02": "T3-01", "T3-03": "T3-02", "T4-01": "T3-03"}
+	for id: String in chain:
+		assert_has(game.catalog.ids(), id)
+		assert_eq(game.catalog.get_mission(id)["requires_missions"], [chain[id]], id)
+	assert_eq(game.mission_status("T2-02"), "bloqueada")
+	game.progress.data["missions"]["T2-01"] = {"completed": true}
+	assert_eq(game.mission_status("T2-02"), "disponible")
+
+
+## Cada paso de Python de T2/T3: el código inicial se ejecuta pero NO pasa; la solución de referencia sí.
+func test_T2_T3_python_inicial_falla_y_solucion_pasa() -> void:
+	var solutions := {"T2-01": PY_VOTAR, "T2-02": PY_ACCURACY, "T3-01": PY_PASO, "T3-02": PY_RECALL, "T3-03": PY_COSTE}
+	for id: String in solutions:
+		var ex := {}
+		for o: Dictionary in game.catalog.get_mission(id)["objectives"]:
+			if o.has("py_exercise"):
+				ex = o["py_exercise"]
+		assert_false(ex.is_empty(), "%s tiene paso de Python" % id)
+		var spec := PyCommands._int_spec(ex)
+		var bad: Dictionary = PyExercise.check(ex["starter"], spec)
+		assert_true(bad.get("ok", false), "%s: el código inicial se ejecuta" % id)
+		assert_true(int(bad.get("passed", 0)) < int(bad.get("total", 0)), "%s: el código inicial no debe pasar" % id)
+		var good: Dictionary = PyExercise.check(solutions[id], spec)
+		assert_eq(int(good.get("passed", -1)), int(good.get("total", -2)), "%s: la solución pasa todos los casos · %s" % [id, str(good)])
+
+
+func test_mision_T2_02_aplicada_completa() -> void:
+	game.progress.data["missions"]["T2-01"] = {"completed": true}
+	assert_eq(game.start_mission("T2-02"), "")
+	assert_true(mentor_said("¿Para qué sirve esto?"))
+	run(["dataset inspect peticiones", "answer a"])
+	assert_true(mentor_said("Es la trampa de T2-01"), "la opción incorrecta explica por qué")
+	run(["answer b"])
+	run(PETICIONES_HONESTO)
+	run(["model create d --k 5", "model train d tr", "model evaluate d te"])
+	assert_eq(game.runner.index, 3, "detector evaluado de forma honesta")
+	var ev: Array = game.shell.events_named("model.evaluated")
+	assert_almost_eq(ev[-1]["data"]["accuracy"], 0.889, 0.001)
+	run(["answer 3"])
+	run(["hipotesis normal", "model predict d te cli-041"])
+	var pred: Array = game.shell.events_named("model.predicted")
+	assert_eq(pred[-1]["data"]["label"], "normal", "cli-041 se escapa")
+	assert_eq(pred[-1]["data"]["truth"], "abuso")
+	run(["answer b", "answer 0.722"])
+	solve_py(PY_ACCURACY)
+	assert_eq(finished.size(), 1)
+	assert_true(mentor_said("Qué puedes hacer ya"))
+
+
+func test_T2_02_diagnostico_de_fuga() -> void:
+	game.progress.data["missions"]["T2-01"] = {"completed": true}
+	game.start_mission("T2-02")
+	run(["dataset inspect peticiones", "answer b", "dataset split peticiones --test 0.3 --seed 42", "dataset normalize peticiones_test --as te_mal"])
+	assert_true(mentor_said("parámetros de normalización del TEST"))
+	assert_eq(game.runner.index, 2)
+
+
+func test_mision_T3_03_aplicada_completa() -> void:
+	game.progress.data["missions"]["T3-02"] = {"completed": true}
+	assert_eq(game.start_mission("T3-03"), "")
+	run(PETICIONES_HONESTO)
+	run(["model create d --k 9", "model train d tr"])
+	assert_eq(game.runner.index, 1)
+	run(["metrics d te --positive abuso"])
+	var m: Dictionary = game.shell.events_named("metrics.computed")[-1]["data"]
+	assert_eq([m["fp"], m["fn"]], [0, 3])
+	assert_almost_eq(m["recall"], 0.7, 0.001)
+	run(["answer a"])
+	assert_true(mentor_said("Eso es un falso negativo"))
+	run(["answer b", "hipotesis aumentan", "metrics curve d te --positive abuso"])
+	var pts: Array = game.shell.events_named("metrics.curve")[-1]["data"]["points"]
+	# Los números que cita la misión: umbrales 2/9, 3/9 y 5/9 (índices 1, 2 y 4).
+	assert_eq([pts[1]["fp"], pts[1]["fn"]], [9, 0])
+	assert_eq([pts[2]["fp"], pts[2]["fn"]], [3, 1])
+	assert_eq([pts[4]["fp"], pts[4]["fn"]], [0, 3])
+	solve_py(PY_COSTE)
+	run(["answer c", "answer b"])
+	assert_eq(finished.size(), 1)
+	assert_true(mentor_said("Qué puedes hacer ya"))

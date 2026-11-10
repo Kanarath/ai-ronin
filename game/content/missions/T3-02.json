@@ -7,9 +7,19 @@
   "plane": "dojo",
   "epistemic": "consolidado",
   "estimated_minutes": 35,
-  "requires_missions": ["T2-01"],
-  "competencies": { "requires": ["T2.evaluacion"], "trains": ["T3.precision-recall", "T3.umbral"] },
-  "briefing": "Tu k-NN acierta el 85 % de las veces. El maestro no está impresionado: «Si vendo una katana defectuosa, se rompe en combate y alguien muere. Si desecho una buena, pierdo dinero. ¿Me estás diciendo que esos dos errores valen lo mismo?». La accuracy los trata igual. Hoy aprenderás a medir cada tipo de error por separado y a decidir cuál prefieres cometer.",
+  "requires_missions": [
+    "T3-01"
+  ],
+  "competencies": {
+    "requires": [
+      "T2.evaluacion"
+    ],
+    "trains": [
+      "T3.precision-recall",
+      "T3.umbral"
+    ]
+  },
+  "briefing": "Tu k-NN (k-Nearest Neighbors) acierta el 85 % de las veces. El maestro no está impresionado: «Si vendo una katana defectuosa, se rompe en combate y alguien muere. Si desecho una buena, pierdo dinero. ¿Me estás diciendo que esos dos errores valen lo mismo?». La accuracy los trata igual. Hoy aprenderás a medir cada tipo de error por separado y a decidir cuál prefieres cometer.",
   "learning_objectives": [
     "Calcular e interpretar precision, recall y F1",
     "Explicar el compromiso entre precision y recall al mover el umbral",
@@ -17,8 +27,18 @@
   ],
   "mentor_intro": "Hoy la clase que nos importa detectar es «defectuosa»: esa será nuestra clase positiva. Positivo no significa «bueno»: significa «lo que buscamos».",
   "lab": {
-    "datasets": [{ "file": "katanas.csv", "name": "katanas", "label": "calidad" }],
-    "viz": { "dataset": "katanas", "x": "dureza_hrc", "y": "flexibilidad" }
+    "datasets": [
+      {
+        "file": "katanas.csv",
+        "name": "katanas",
+        "label": "calidad"
+      }
+    ],
+    "viz": {
+      "dataset": "katanas",
+      "x": "dureza_hrc",
+      "y": "flexibilidad"
+    }
   },
   "theory_cards": [
     {
@@ -39,28 +59,87 @@
       "validator": {
         "type": "sequence",
         "steps": [
-          { "type": "event", "event": "dataset.split", "where": { "seed": 42, "test_ratio": 0.3 } },
-          { "type": "event", "event": "dataset.normalized", "where": { "method": "minmax", "fit_on": { "ends_with": "_train" }, "source": { "ends_with": "_test" } } },
-          { "type": "event", "event": "model.trained", "where": { "k": 9, "normalized": true, "dataset": { "ne": "katanas_minmax" } } }
+          {
+            "type": "event",
+            "event": "dataset.split",
+            "where": {
+              "seed": 42,
+              "test_ratio": 0.3
+            }
+          },
+          {
+            "type": "event",
+            "event": "dataset.normalized",
+            "where": {
+              "method": "minmax",
+              "fit_on": {
+                "ends_with": "_train"
+              },
+              "source": {
+                "ends_with": "_test"
+              }
+            }
+          },
+          {
+            "type": "event",
+            "event": "model.trained",
+            "where": {
+              "k": 9,
+              "normalized": true,
+              "dataset": {
+                "ne": "katanas_minmax"
+              }
+            }
+          }
         ]
       },
-      "diagnostics": [ { "id": "fit-normalized", "when": { "type": "event", "event": "dataset.normalized", "where": { "fit_on": { "ends_with": "_minmax" } } }, "message": "Has aprendido los parámetros de un dataset que YA estaba normalizado (su mínimo es 0 y su máximo 1), así que al aplicarlos no cambia nada útil. ¿De qué dataset deberían salir el mínimo y el máximo reales? Usa --fit con el train ORIGINAL (katanas_train)." } ],
+      "diagnostics": [
+        {
+          "id": "fit-normalized",
+          "when": {
+            "type": "event",
+            "event": "dataset.normalized",
+            "where": {
+              "fit_on": {
+                "ends_with": "_minmax"
+              }
+            }
+          },
+          "message": "Has aprendido los parámetros de un dataset que YA estaba normalizado (su mínimo es 0 y su máximo 1), así que al aplicarlos no cambia nada útil. ¿De qué dataset deberían salir el mínimo y el máximo reales? Usa --fit con el train ORIGINAL (katanas_train)."
+        }
+      ],
       "hints": [
         "Es el procedimiento honesto que construiste en T2-01, con k=9.",
         "dataset split … · dataset normalize <train> · dataset normalize <test> --fit <train> · model create --k 9 · model train",
         "dataset split katanas --test 0.3 --seed 42 · dataset normalize katanas_train --as tr · dataset normalize katanas_test --fit katanas_train --as te · model create m --k 9 · model train m tr"
       ],
-      "on_complete": "Listo. Ahora no te quedes en la accuracy."
+      "on_complete": "Listo. Ahora no te quedes en la accuracy.",
+      "teach": "Preparar el terreno\nEs el procedimiento honesto de T2-01, ahora con k=9.\nPor qué: las métricas solo valen algo si se miden con datos que el modelo no ha visto."
     },
     {
       "id": "o2",
       "text": "Calcula precision y recall en el test con «defectuosa» como clase positiva.",
-      "teach": "Separar los dos errores\nCon dos clases hay dos maneras de equivocarse. Si «defectuosa» es la clase positiva (la que queremos detectar): un FALSO NEGATIVO es una defectuosa que el modelo da por apta (se vende); un FALSO POSITIVO es una apta que el modelo marca como defectuosa (se desecha).\nPRECISION = de las que marqué como defectuosas, cuántas lo eran. RECALL = de las defectuosas reales, cuántas encontré. Comando: metrics <modelo> <dataset> --positive defectuosa.",
-      "validator": { "type": "event", "event": "metrics.computed", "where": { "positive": "defectuosa", "overlap": 0 } },
+      "teach": "Separar los dos errores\nCon dos clases hay dos maneras de equivocarse. Aquí la clase positiva es «defectuosa».\nFALSO NEGATIVO (FN, False Negative): una defectuosa que el modelo da por apta. Se vende.\nFALSO POSITIVO (FP, False Positive): una apta que el modelo marca como defectuosa. Se desecha.\nPRECISION = de las que marqué como defectuosas, cuántas lo eran. RECALL = de las defectuosas reales, cuántas encontré.\nComando: metrics <modelo> <dataset> --positive defectuosa\nPor qué: en el guardrail de un LLM (Large Language Model), un FN es un ataque que pasa y un FP, un usuario legítimo bloqueado.",
+      "validator": {
+        "type": "event",
+        "event": "metrics.computed",
+        "where": {
+          "positive": "defectuosa",
+          "overlap": 0
+        }
+      },
       "diagnostics": [
         {
           "id": "leak",
-          "when": { "type": "event", "event": "metrics.computed", "where": { "overlap": { "gt": 0 } } },
+          "when": {
+            "type": "event",
+            "event": "metrics.computed",
+            "where": {
+              "overlap": {
+                "gt": 0
+              }
+            }
+          },
           "message": "Esas métricas mezclan ejemplos de entrenamiento. ¿Sobre qué dataset debes medir?"
         }
       ],
@@ -68,28 +147,80 @@
         "Hay un comando nuevo: help metrics",
         "metrics <modelo> <dataset de test> --positive defectuosa"
       ],
-      "on_complete": "Mira la tabla 2×2: TP (defectuosas detectadas), FN (defectuosas que se escapan), FP (aptas desechadas), TN (aptas vendidas)."
+      "on_complete": "Mira la tabla 2×2: TP (True Positive, defectuosas detectadas), FN (defectuosas que se escapan), FP (aptas desechadas) y TN (True Negative, aptas vendidas)."
+    },
+    {
+      "id": "o2b",
+      "text": "Comprueba que lo tienes claro: ¿qué mide el recall?",
+      "teach": "Precision o recall\nLas dos dividen los aciertos positivos (TP, True Positive) entre algo distinto.\nPor qué: confundirlas es el error más común al leer el informe de un detector, y lleva a arreglar el problema equivocado.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "de las katanas que el modelo marcó como defectuosas, cuántas lo eran",
+          "why": "Eso es la precision: TP ÷ (TP + FP). Penaliza las falsas alarmas."
+        },
+        {
+          "id": "b",
+          "text": "de las katanas defectuosas de verdad, cuántas encontró el modelo"
+        },
+        {
+          "id": "c",
+          "text": "de todas las katanas, cuántas clasificó bien",
+          "why": "Eso es la accuracy, que mezcla los dos tipos de error."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "El recall mira las defectuosas reales: ¿cuántas se escaparon?",
+        "answer b"
+      ],
+      "on_complete": "Eso es: recall = TP ÷ (TP + FN). Un recall bajo significa que se escapan muchas defectuosas."
     },
     {
       "id": "o3",
       "text": "¿Cuántas katanas defectuosas del test se venderían como aptas con este modelo? (answer <número>)",
-      "validator": { "type": "answer", "expected": 4, "tolerance": 0 },
+      "validator": {
+        "type": "answer",
+        "expected": 4,
+        "tolerance": 0
+      },
       "wrong_answer": "Busca la celda de las defectuosas reales que el modelo predijo como aptas.",
       "hints": [
         "Es un tipo de error concreto de la tabla 2×2.",
         "Son los falsos negativos (FN): real defectuosa, predicha apta."
       ],
-      "on_complete": "4 de 34. Recall = 30/34 = 0,88. Con una accuracy del 85 % parecía un buen modelo… pero 4 katanas peligrosas saldrían a la venta."
+      "on_complete": "4 de 34. Recall = 30/34 = 0,88. Con una accuracy del 85 % parecía un buen modelo… pero 4 katanas peligrosas saldrían a la venta.",
+      "teach": "Contar un tipo de error\nLos falsos negativos están en la fila «real defectuosa», columna «pred. apta».\nPor qué: un porcentaje se olvida; «4 katanas peligrosas a la venta» convence a quien tiene que decidir."
     },
     {
       "id": "o4",
       "text": "Repite las métricas bajando el umbral a 0.3.",
-      "teach": "El umbral\nCon k=9, cada hoja recibe una puntuación: la fracción de sus 9 vecinos que son defectuosos (de 0 a 1). Por defecto se marca como defectuosa si la puntuación es ≥ 0,5, pero ese umbral lo puedes mover con --threshold.",
+      "teach": "El umbral\nCon k=9, cada hoja recibe una puntuación: la fracción de sus 9 vecinos que son defectuosos (de 0 a 1).\nPor defecto se marca como defectuosa si la puntuación es ≥ 0,5, pero ese umbral lo puedes mover con --threshold.\nPor qué: el umbral es el mando que se gira en cualquier detector real: más estricto, más falsas alarmas; más permisivo, más ataques que pasan.",
       "prediction": {
         "prompt": "Si bajas el umbral (marcas como defectuosa con menos votos), ¿qué crees que pasará?",
-        "options": ["sube recall y baja precision", "suben los dos", "baja recall y sube precision"]
+        "options": [
+          "sube recall y baja precision",
+          "suben los dos",
+          "baja recall y sube precision"
+        ]
       },
-      "validator": { "type": "event", "event": "metrics.computed", "where": { "positive": "defectuosa", "threshold": { "lte": 0.35 }, "overlap": 0 } },
+      "validator": {
+        "type": "event",
+        "event": "metrics.computed",
+        "where": {
+          "positive": "defectuosa",
+          "threshold": {
+            "lte": 0.35
+          },
+          "overlap": 0
+        }
+      },
       "hints": [
         "metrics tiene una opción para el umbral.",
         "metrics m te --positive defectuosa --threshold 0.3"
@@ -99,11 +230,25 @@
     {
       "id": "o5",
       "text": "Obtén la curva precision-recall para todos los umbrales posibles. ¿Cuál es el umbral MÁS ALTO que consigue recall 1.0 (ninguna defectuosa vendida)? (answer <número>, 3 decimales)",
-      "teach": "Todos los umbrales a la vez\nmetrics curve <modelo> <dataset> --positive defectuosa calcula precision y recall para cada umbral posible (con k=9: 1/9, 2/9… 9/9).",
-      "validator": { "type": "all", "of": [
-        { "type": "event", "event": "metrics.curve", "where": { "positive": "defectuosa", "overlap": 0 } },
-        { "type": "answer", "expected": 0.222, "tolerance": 0.005 }
-      ] },
+      "teach": "Todos los umbrales a la vez\nmetrics curve <modelo> <dataset> --positive defectuosa calcula precision y recall para cada umbral posible (con k=9: 1/9, 2/9… 9/9).\nPor qué: con la curva delante eliges el umbral por un requisito («no se escapa ninguna») en lugar de aceptar el 0,5 por defecto.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "metrics.curve",
+            "where": {
+              "positive": "defectuosa",
+              "overlap": 0
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.222,
+            "tolerance": 0.005
+          }
+        ]
+      },
       "wrong_answer": "En la tabla de la curva, busca las filas con recall 1.000 y quédate con el umbral mayor de ellas.",
       "hints": [
         "metrics curve <modelo> <dataset> --positive defectuosa",
@@ -114,21 +259,108 @@
     {
       "id": "o6",
       "text": "Con ese umbral, ¿cuántas katanas APTAS del test se desecharían? (answer <número>)",
-      "validator": { "type": "answer", "expected": 27, "tolerance": 0 },
+      "validator": {
+        "type": "answer",
+        "expected": 27,
+        "tolerance": 0
+      },
       "hints": [
         "Es otra celda de la tabla, para ese umbral.",
         "Columna FP de la curva en la fila 2/9."
       ],
-      "on_complete": "27 de 38 aptas desechadas para no vender ninguna defectuosa. ¿Merece la pena? Depende del coste de cada error: eso es una decisión de negocio y de seguridad, no un cálculo de ML. Tu trabajo es ponerla sobre la mesa con números."
+      "on_complete": "27 de 38 aptas desechadas para no vender ninguna defectuosa. ¿Merece la pena? Depende del coste de cada error: eso es una decisión de negocio y de seguridad, no un cálculo de ML. Tu trabajo es ponerla sobre la mesa con números.",
+      "teach": "Lo que cuesta el requisito\nEn la fila 2/9 de la curva, la columna FP dice cuántas aptas se desechan.\nPor qué: todo requisito de seguridad tiene un precio, y tu trabajo es ponerlo en números."
     },
     {
       "id": "o7",
-      "text": "Explica por qué la accuracy no basta aquí y cómo elegirías el umbral si fueras el maestro herrero. (reflexion <texto>, mínimo 30 palabras)",
-      "validator": { "type": "reflection", "min_words": 30 },
+      "text": "Si fueras el maestro herrero, ¿cómo elegirías el umbral?",
+      "teach": "Decidir con costes\nLa accuracy cuenta todos los errores igual. Pero vender una katana defectuosa y desechar una buena no cuestan lo mismo.\nPor qué: así se decide en fraude, en medicina y en seguridad de IA (Inteligencia Artificial). Lo harás con números en T3-03.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "dejar 0,5, que es el valor por defecto",
+          "why": "0,5 es solo una convención. Con él se venden 4 katanas defectuosas."
+        },
+        {
+          "id": "b",
+          "text": "el que dé la accuracy más alta",
+          "why": "La accuracy trata igual vender una defectuosa que desechar una buena, y aquí no cuestan lo mismo."
+        },
+        {
+          "id": "c",
+          "text": "comparar lo que cuesta cada error (una defectuosa vendida frente a una buena desechada) y elegir el umbral que cueste menos"
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
       "hints": [
-        "Piensa en el coste de un FN (katana defectuosa vendida) frente al de un FP (katana buena desechada).",
-        "Estructura: 1) qué esconde la accuracy, 2) qué mide cada métrica, 3) qué umbral elegirías y por qué (o qué información te faltaría para decidir)."
-      ]
+        "¿Qué dato necesitarías para comparar un FN con un FP?",
+        "answer c"
+      ],
+      "on_complete": "Eso es. El umbral es una decisión de negocio y de seguridad, no un cálculo de ML (Machine Learning). Tu trabajo es ponerla sobre la mesa con números."
+    },
+    {
+      "id": "py1",
+      "text": "Escribe en Python el recall a partir de los recuentos: abre el editor con py, completa la función recall y compruébala con py check.",
+      "teach": "Recall, con tus manos\nrecall = TP ÷ (TP + FN): de todos los positivos reales, la fracción que encontraste.\nLa función precision ya está hecha, como ejemplo.\nPor qué: son las cuentas que hace cualquier librería de ML (Machine Learning), como scikit-learn, cuando te da el informe de un detector.",
+      "py_exercise": {
+        "id": "T3-02-recall",
+        "title": "recall(tp, fn): de las positivas reales, cuántas encontraste",
+        "function": "recall",
+        "starter": "# Ejercicio T3-02 · Precision y recall a partir de los recuentos\n# tp: positivos detectados · fp: falsas alarmas · fn: positivos que se escapan.\n\ndef precision(tp, fp):\n    return tp / (tp + fp)   # ya hecha: de las que marcaste, cuántas lo eran\n\ndef recall(tp, fn):\n    return 0   # ← cambia esta línea: de las positivas reales, cuántas encontraste\n\n# Tu modelo con umbral 0.5: 30 defectuosas detectadas y 4 escapadas. Debería imprimir 0.8823529411764706:\nprint(recall(30, 4))\n",
+        "cases": [
+          {
+            "args": [
+              30,
+              4
+            ],
+            "expected": 0.882353,
+            "tolerance": 1e-05
+          },
+          {
+            "args": [
+              32,
+              2
+            ],
+            "expected": 0.941176,
+            "tolerance": 1e-05
+          },
+          {
+            "args": [
+              7,
+              0
+            ],
+            "expected": 1.0,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              0,
+              5
+            ],
+            "expected": 0.0,
+            "tolerance": 1e-06
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T3-02-recall",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Divide los positivos detectados (tp) entre todos los positivos reales (tp + fn).",
+        "La línea queda así: return tp / (tp + fn)"
+      ],
+      "on_complete": "30 de 34: el 0,882 de la tabla de metrics. Ya sabes de dónde sale cada número del informe."
     }
   ],
   "mastery_trial": {
@@ -137,7 +369,11 @@
       {
         "id": "d1",
         "text": "Con un k-NN de k=15 (mismo train y test normalizados), ¿qué precision tiene el umbral más alto que consigue recall 1.0? (answer <número>, 3 decimales)",
-        "validator": { "type": "answer", "expected": 0.531, "tolerance": 0.002 },
+        "validator": {
+          "type": "answer",
+          "expected": 0.531,
+          "tolerance": 0.002
+        },
         "wrong_answer": "Crea y entrena el k=15, saca su curva y busca la fila con recall 1.000 de umbral más alto.",
         "hints": [
           "model create, model train y metrics curve con el modelo nuevo.",
@@ -151,9 +387,18 @@
     "what_happened": "Has separado los dos tipos de error de un clasificador, has visto que mover el umbral intercambia uno por otro y has elegido un umbral a partir de un requisito (recall 1,0) en lugar de aceptar el 0,5 por defecto.",
     "why": "En casi todos los problemas reales los errores no cuestan lo mismo: detección de fraude, diagnóstico médico, filtros de spam… y en seguridad de IA: un clasificador de prompts maliciosos con poco recall deja pasar ataques; con poca precision bloquea a usuarios legítimos. Lo verás en los guardrails del arco A1.",
     "in_production": "En scikit-learn: precision_recall_curve, classification_report y modelos que dan probabilidades (predict_proba). Los umbrales se eligen con un conjunto de validación, no con el test, y se revisan cuando cambian los datos. Las puntuaciones de k-NN no son probabilidades calibradas; para eso existen técnicas de calibración.",
-    "simplifications": ["Umbral elegido sobre el test (en un proyecto real, sobre validación)", "Solo dos clases"],
+    "simplifications": [
+      "Umbral elegido sobre el test (en un proyecto real, sobre validación)",
+      "Solo dos clases"
+    ],
     "exercise": "forja/ejercicios/T3_02_metricas.py"
   },
-  "further_reading": ["ref.sklearn-precision-recall"],
-  "xp": { "base": 150 }
+  "further_reading": [
+    "ref.sklearn-precision-recall"
+  ],
+  "xp": {
+    "base": 150
+  },
+  "purpose": "Un detector de prompt injection (inyección de instrucciones) puede equivocarse de dos maneras: dejar pasar un ataque o bloquear a un usuario legítimo. La accuracy mezcla los dos errores en un solo número. Precision y recall los separan, y el umbral decide cuál de los dos prefieres cometer. Es lo que se ajusta en los guardrails (filtros de seguridad) de un chatbot con un LLM (Large Language Model), en la detección de fraude o en un filtro antispam.",
+  "you_can_now": "Sabes separar los dos errores de un clasificador con precision y recall, mover el umbral para cambiar uno por otro y elegirlo a partir de un requisito. Siguiente: T3-03, donde elegirás el umbral de un detector de abuso de un chatbot a partir de lo que cuesta cada error."
 }

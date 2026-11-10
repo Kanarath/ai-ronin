@@ -7,7 +7,7 @@
   "plane": "dojo",
   "epistemic": "consolidado",
   "estimated_minutes": 35,
-  "requires_missions": ["T3-01"],
+  "requires_missions": ["T3-03"],
   "competencies": { "requires": ["T3.descenso-gradiente"], "trains": ["T4.neurona", "T4.separabilidad"] },
   "briefing": "Las redes neuronales que mueven los LLM están hechas de una pieza muy simple repetida miles de millones de veces: la neurona artificial. Antes de construir redes, vas a entender una sola neurona por dentro: cómo calcula, cómo se entrena, cómo se programa a mano… y qué es lo que NO puede hacer, por mucho que la entrenes.",
   "learning_objectives": [

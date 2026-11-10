@@ -7,9 +7,19 @@
   "plane": "dojo",
   "epistemic": "consolidado",
   "estimated_minutes": 35,
-  "requires_missions": ["T2-01"],
-  "competencies": { "requires": ["T2.knn"], "trains": ["T3.descenso-gradiente", "T3.learning-rate"] },
-  "briefing": "k-NN no aprende nada: memoriza. Casi todo el resto del machine learning —incluidas las redes neuronales y los LLM— aprende ajustando parámetros para que un error sea cada vez menor. El método se llama descenso por gradiente: imagina que estás en una montaña con niebla y solo puedes sentir la pendiente bajo tus pies. Das un paso cuesta abajo, vuelves a sentir, otro paso… Hoy aprenderás a dar esos pasos, y descubrirás que el tamaño del paso lo es todo.",
+  "requires_missions": [
+    "T2-02"
+  ],
+  "competencies": {
+    "requires": [
+      "T2.knn"
+    ],
+    "trains": [
+      "T3.descenso-gradiente",
+      "T3.learning-rate"
+    ]
+  },
+  "briefing": "k-NN no aprende nada: memoriza. Casi todo el resto del machine learning —incluidas las redes neuronales y los LLM (Large Language Model)— aprende ajustando parámetros para que un error sea cada vez menor. El método se llama descenso por gradiente: imagina que estás en una montaña con niebla y solo puedes sentir la pendiente bajo tus pies. Das un paso cuesta abajo, vuelves a sentir, otro paso… Hoy aprenderás a dar esos pasos, y descubrirás que el tamaño del paso lo es todo.",
   "learning_objectives": [
     "Explicar qué es una función de pérdida y qué hace el descenso por gradiente",
     "Reconocer los síntomas de un learning rate demasiado pequeño o demasiado grande",
@@ -17,8 +27,18 @@
   ],
   "mentor_intro": "El maestro herrero ha medido cuántos minutos se enfría cada hoja y qué dureza alcanza. Quiere una fórmula: dureza = w · minutos + b. Tu trabajo es encontrar w y b… bajando una montaña.",
   "lab": {
-    "datasets": [{ "file": "temple.csv", "name": "temple", "label": "" }],
-    "viz": { "dataset": "temple", "x": "minutos_enfriado", "y": "dureza_hrc" }
+    "datasets": [
+      {
+        "file": "temple.csv",
+        "name": "temple",
+        "label": ""
+      }
+    ],
+    "viz": {
+      "dataset": "temple",
+      "x": "minutos_enfriado",
+      "y": "dureza_hrc"
+    }
   },
   "theory_cards": [
     {
@@ -36,22 +56,42 @@
     {
       "id": "o1",
       "text": "Mira los datos: dibuja dureza_hrc (eje vertical) frente a minutos_enfriado (eje horizontal) con plot.",
-      "validator": { "type": "event", "event": "viz.scatter", "where": { "dataset": "temple" } },
+      "validator": {
+        "type": "event",
+        "event": "viz.scatter",
+        "where": {
+          "dataset": "temple"
+        }
+      },
       "hints": [
         "El comando para dibujar lo usaste en T1-01.",
         "plot temple --x minutos_enfriado --y dureza_hrc"
       ],
-      "on_complete": "Se ve una tendencia casi recta con algo de ruido: a más minutos, más dureza. Una recta y = w·x + b puede describirla."
+      "on_complete": "Se ve una tendencia casi recta con algo de ruido: a más minutos, más dureza. Una recta y = w·x + b puede describirla.",
+      "teach": "Mirar antes de ajustar\nComo en T1-01, primero se miran los datos.\nAquí no hay clases: queremos predecir un NÚMERO (la dureza) a partir de otro (los minutos de enfriado). Eso se llama REGRESIÓN.\nComando: plot temple --x minutos_enfriado --y dureza_hrc\nPor qué: si los puntos forman una recta, una recta puede describirlos; si no, hará falta un modelo más flexible, como una red neuronal."
     },
     {
       "id": "o2",
       "text": "Crea un regresor con learning rate 0.001 y entrénalo 100 épocas sobre temple (x = minutos_enfriado, y = dureza_hrc).",
-      "teach": "Aprender = bajar el error\nUna regresión lineal predice un número con una recta: dureza = w · minutos + b. Entrenar es buscar los w y b con los que la recta se ajusta mejor a los puntos. El error se mide con el MSE: la media de (predicción − real)².\nEl DESCENSO POR GRADIENTE empieza en w=0, b=0 y repite: calcula hacia dónde sube el error (el gradiente) y da un paso en sentido contrario. El tamaño del paso es el LEARNING RATE (lr). Cada repetición sobre todos los datos es una ÉPOCA.\nComandos: regress create <nombre> --lr <número> · regress train <nombre> <dataset> --x <entrada> --y <objetivo> --epochs <n>.",
+      "teach": "Aprender = bajar el error\nUna regresión lineal predice un número con una recta: dureza = w · minutos + b. Entrenar es buscar los w y b con los que la recta se ajusta mejor a los puntos.\nEl error se mide con el MSE (Mean Squared Error): la media de (predicción − real)².\nEl DESCENSO POR GRADIENTE empieza en w=0, b=0 y repite: calcula hacia dónde sube el error (el gradiente) y da un paso en sentido contrario.\nEl tamaño del paso es el LEARNING RATE (lr). Cada repetición sobre todos los datos es una ÉPOCA.\nComandos: regress create <nombre> --lr <número> · regress train <nombre> <dataset> --x <entrada> --y <objetivo> --epochs <n>\nPor qué: un LLM (Large Language Model) aprende así: mide su error al predecir la siguiente palabra y mueve sus parámetros cuesta abajo.",
       "prediction": {
         "prompt": "¿Crees que en 100 épocas la pérdida (MSE) bajará de 10?",
-        "options": ["sí", "no"]
+        "options": [
+          "sí",
+          "no"
+        ]
       },
-      "validator": { "type": "event", "event": "regress.trained", "where": { "lr": 0.001, "epochs": { "gte": 100 }, "normalized": false } },
+      "validator": {
+        "type": "event",
+        "event": "regress.trained",
+        "where": {
+          "lr": 0.001,
+          "epochs": {
+            "gte": 100
+          },
+          "normalized": false
+        }
+      },
       "hints": [
         "Los comandos de regresión empiezan por regress. Prueba: help regress",
         "regress create <nombre> --lr 0.001 y después regress train <nombre> temple --x ... --y ... --epochs 100",
@@ -62,41 +102,90 @@
     {
       "id": "o3",
       "text": "¿Cuál es la pérdida tras esas 100 épocas? (answer <número>, con un decimal)",
-      "validator": { "type": "answer", "expected": 435.8, "tolerance": 0.5 },
+      "validator": {
+        "type": "answer",
+        "expected": 435.8,
+        "tolerance": 0.5
+      },
       "wrong_answer": "Mira la última fila de la tabla de regress train (o regress info). Si has seguido entrenando ese regresor, las épocas se acumulan: crea uno nuevo con lr 0.001 y entrénalo exactamente 100 épocas.",
       "hints": [
         "Está en la última línea de la salida del entrenamiento.",
         "regress info <nombre> la muestra también."
       ],
-      "on_complete": "435,8. Para comparar: el mejor ajuste posible ronda 1. Vamos muy lejos."
+      "on_complete": "435,8. Para comparar: el mejor ajuste posible ronda 1. Vamos muy lejos.",
+      "teach": "Leer la pérdida\nLa tabla de regress train muestra la pérdida (el MSE) cada cierto número de épocas; la última fila es la final.\nPor qué: la curva de la pérdida es lo primero que mira un ingeniero al entrenar cualquier red: dice si aprende, si se estanca o si explota."
     },
     {
       "id": "o4",
       "text": "Crea otro regresor con learning rate 0.03 y entrénalo igual.",
       "prediction": {
         "prompt": "Con un paso 30 veces más grande, ¿qué pasará?",
-        "options": ["converge más rápido", "converge igual", "diverge"]
+        "options": [
+          "converge más rápido",
+          "converge igual",
+          "diverge"
+        ]
       },
-      "validator": { "type": "event", "event": "regress.trained", "where": { "diverged": true } },
+      "validator": {
+        "type": "event",
+        "event": "regress.trained",
+        "where": {
+          "diverged": true
+        }
+      },
       "hints": [
         "Mismo procedimiento, otro nombre y otro --lr.",
         "regress create r2 --lr 0.03 · regress train r2 temple --x minutos_enfriado --y dureza_hrc --epochs 100"
       ],
-      "on_complete": "Diverge: la pérdida se multiplica en cada época. El paso es tan grande que salta al otro lado del valle, más arriba que antes, y cada salto es peor. En redes reales esto aparece como pérdida NaN o infinita."
+      "on_complete": "Diverge: la pérdida se multiplica en cada época. El paso es tan grande que salta al otro lado del valle, más arriba que antes, y cada salto es peor. En redes reales esto aparece como pérdida NaN o infinita.",
+      "teach": "Un paso más grande\nUn learning rate mayor avanza más en cada época… si no se pasa de largo.\nPor qué: en redes reales, un learning rate demasiado alto es una de las causas más típicas de que la pérdida salga NaN (Not a Number) o infinita."
     },
     {
       "id": "o5",
       "text": "Sin normalizar nada, encuentra un learning rate que baje la pérdida por debajo de 1.5 en 500 épocas o menos.",
-      "validator": { "type": "event", "event": "regress.trained", "where": { "normalized": false, "diverged": false, "loss": { "lte": 1.5 }, "epochs": { "lte": 500 } } },
+      "validator": {
+        "type": "event",
+        "event": "regress.trained",
+        "where": {
+          "normalized": false,
+          "diverged": false,
+          "loss": {
+            "lte": 1.5
+          },
+          "epochs": {
+            "lte": 500
+          }
+        }
+      },
       "diagnostics": [
         {
           "id": "slow",
-          "when": { "type": "event", "event": "regress.trained", "where": { "diverged": false, "epochs": { "gte": 500 }, "loss": { "gt": 1.5 } } },
+          "when": {
+            "type": "event",
+            "event": "regress.trained",
+            "where": {
+              "diverged": false,
+              "epochs": {
+                "gte": 500
+              },
+              "loss": {
+                "gt": 1.5
+              }
+            }
+          },
           "message": "Converge, pero no llega. ¿Puedes dar pasos más grandes sin pasarte del límite que encontraste con 0.03?"
         },
         {
           "id": "too-many",
-          "when": { "type": "event", "event": "regress.trained", "where": { "epochs": { "gt": 500 } } },
+          "when": {
+            "type": "event",
+            "event": "regress.trained",
+            "where": {
+              "epochs": {
+                "gt": 500
+              }
+            }
+          },
           "message": "El reto es hacerlo en 500 épocas como máximo. Si sigues entrenando el mismo regresor, las épocas se acumulan: usa regress reset o crea otro."
         }
       ],
@@ -105,17 +194,35 @@
         "Busca el mayor lr que no diverja. Cada intento: regresor nuevo (o regress reset) y --epochs 500.",
         "Prueba 0.02: regress create r3 --lr 0.02 · regress train r3 temple --x minutos_enfriado --y dureza_hrc --epochs 500"
       ],
-      "on_complete": "Lo has conseguido, pero fíjate en lo estrecho que es el margen: 0.02 funciona, 0.025 ya diverge, y aun así hacen falta cientos de épocas. El problema está mal condicionado: x va de 0 a 10 y su escala hace que la pendiente sea mucho más empinada en la dirección de w que en la de b."
+      "on_complete": "Lo has conseguido, pero fíjate en lo estrecho que es el margen: 0.02 funciona, 0.025 ya diverge, y aun así hacen falta cientos de épocas. El problema está mal condicionado: x va de 0 a 10 y su escala hace que la pendiente sea mucho más empinada en la dirección de w que en la de b.",
+      "teach": "Buscar el learning rate\nNo hay fórmula: se prueba. Busca un valor entre el lento (0.001) y el que diverge (0.03).\nSi reutilizas un regresor, las épocas se acumulan: crea uno nuevo o usa regress reset.\nPor qué: elegir el learning rate es de las primeras tareas al entrenar cualquier modelo, y con un modelo grande cada intento fallido cuesta horas de cálculo."
     },
     {
       "id": "o6",
       "text": "Normaliza SOLO la feature minutos_enfriado con z-score y entrena un regresor nuevo con lr 0.5 y como mucho 20 épocas sobre el dataset normalizado.",
-      "teach": "Normalizar solo la entrada\nAquí queremos seguir prediciendo la dureza en HRC, así que solo normalizamos la entrada (minutos). Z-SCORE transforma así: (valor − media) / desviación típica, y deja la feature centrada en 0 con dispersión 1. La opción --only elige qué features se transforman.\nComando: dataset normalize temple --method zscore --only minutos_enfriado → crea temple_zscore (o el nombre que des con --as). Entrena el regresor NUEVO sobre ese dataset, con las mismas --x y --y.",
+      "teach": "Normalizar solo la entrada\nQueremos seguir prediciendo la dureza en HRC (la escala de dureza Rockwell C), así que solo normalizamos la entrada (los minutos).\nZ-SCORE transforma así: (valor − media) ÷ desviación típica. Deja la feature centrada en 0 y con dispersión 1.\nLa opción --only elige qué features se transforman: dataset normalize temple --method zscore --only minutos_enfriado (crea temple_zscore, o el nombre que des con --as).\nEntrena un regresor NUEVO sobre ese dataset, con las mismas --x y --y.\nPor qué: por la misma razón, las redes neuronales normalizan sus entradas y también los datos entre sus capas.",
       "prediction": {
         "prompt": "Con x normalizada y lr 0.5, ¿cuántas épocas crees que necesitará para converger?",
-        "options": ["menos de 10", "unas 100", "más de 500"]
+        "options": [
+          "menos de 10",
+          "unas 100",
+          "más de 500"
+        ]
       },
-      "validator": { "type": "event", "event": "regress.trained", "where": { "normalized": true, "diverged": false, "loss": { "lte": 1.0 }, "epochs": { "lte": 20 } } },
+      "validator": {
+        "type": "event",
+        "event": "regress.trained",
+        "where": {
+          "normalized": true,
+          "diverged": false,
+          "loss": {
+            "lte": 1.0
+          },
+          "epochs": {
+            "lte": 20
+          }
+        }
+      },
       "hints": [
         "dataset normalize tiene una opción para transformar solo algunas features. Mira dataset normalize --help",
         "dataset normalize temple --method zscore --only minutos_enfriado --as tz",
@@ -125,12 +232,94 @@
     },
     {
       "id": "o7",
-      "text": "Explica con tus palabras qué hace el learning rate, qué pasa si es demasiado pequeño o demasiado grande, y por qué normalizar ayudó tanto. (reflexion <texto>, mínimo 30 palabras)",
-      "validator": { "type": "reflection", "min_words": 30 },
+      "text": "¿Por qué con la x normalizada pudiste usar un learning rate 25 veces mayor sin que divergiera?",
+      "teach": "Repaso: la forma del valle\nImagina la pérdida como un valle. Sin normalizar, x va de 0 a 10 y el valle es mucho más empinado en la dirección de w que en la de b.\nPor qué: entender la forma del valle explica casi todos los trucos que se usan para entrenar redes grandes.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque normalizar quita el ruido de los datos",
+          "why": "Normalizar no quita ruido: los puntos siguen igual de dispersos alrededor de la recta. Lo que cambia es la escala de x."
+        },
+        {
+          "id": "b",
+          "text": "porque el valle queda igual de empinado en todas las direcciones y se puede bajar a pasos grandes"
+        },
+        {
+          "id": "c",
+          "text": "porque entrenaste menos épocas",
+          "why": "Menos épocas no evitan divergir: con lr 0.03 y x sin normalizar, la pérdida crecía desde las primeras épocas."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
       "hints": [
-        "Usa la metáfora de la montaña con niebla: tamaño del paso, pasarse de largo, forma del valle.",
-        "Tres partes: 1) lr pequeño → ..., 2) lr grande → ..., 3) con x en escalas distintas la «montaña» es ... y normalizar la vuelve ..."
-      ]
+        "Piensa en la metáfora de la montaña: ¿qué cambia en su forma al normalizar?",
+        "answer b"
+      ],
+      "on_complete": "Eso es. Con un valle «redondo», un mismo paso sirve en todas las direcciones. Por eso normalizar acelera y estabiliza el entrenamiento."
+    },
+    {
+      "id": "py1",
+      "text": "Escribe en Python un paso de descenso por gradiente: abre el editor con py, completa la función paso y compruébala con py check.",
+      "teach": "Un paso de descenso, con tus manos\nVas a escribir el paso que regress train repite en cada época, para un solo parámetro w.\nLa pérdida de ejemplo es (w − 3)²: es mínima cuando w = 3. Su gradiente es 2 · (w − 3), y ya viene calculado.\nEl gradiente señala cuesta ARRIBA; por eso se resta: w nuevo = w − lr · gradiente.\nPor qué: esta línea, repetida sobre miles de millones de parámetros, es como se entrena un LLM (Large Language Model).",
+      "py_exercise": {
+        "id": "T3-01-paso",
+        "title": "paso(w, lr): un paso cuesta abajo",
+        "function": "paso",
+        "starter": "# Ejercicio T3-01 · Un paso de descenso por gradiente\n# La pérdida es (w - 3) ** 2: vale 0 cuando w = 3, que es lo que buscamos.\n# Su gradiente (la pendiente) es 2 * (w - 3): ya está calculado.\n# Un paso: w nuevo = w - lr * gradiente.\n\ndef paso(w, lr):\n    gradiente = 2 * (w - 3)\n    return w   # ← cambia esta línea\n\n# Cinco pasos desde w = 0 con lr 0.1. Debería acercarse a 3 (0.6, 1.08, 1.464… o casi):\nw = 0\nfor i in range(5):\n    w = paso(w, 0.1)\n    print(w)\n",
+        "cases": [
+          {
+            "args": [
+              0,
+              0.1
+            ],
+            "expected": 0.6,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              5,
+              0.25
+            ],
+            "expected": 4.0,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              3,
+              0.5
+            ],
+            "expected": 3.0,
+            "tolerance": 1e-06
+          },
+          {
+            "args": [
+              0,
+              1.1
+            ],
+            "expected": 6.6,
+            "tolerance": 1e-06
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T3-01-paso",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Al w actual réstale el learning rate multiplicado por el gradiente.",
+        "La línea queda así: return w - lr * gradiente"
+      ],
+      "on_complete": "Ese es el motor del aprendizaje. Prueba en py run con lr 1.1 en lugar de 0.1: w salta de 0 a 6,6, luego a −1,32… cada vez más lejos de 3. Es la divergencia que viste con lr 0.03."
     }
   ],
   "mastery_trial": {
@@ -139,7 +328,11 @@
       {
         "id": "d1",
         "text": "En tu regresor con x normalizada, w está en «HRC por desviación típica de minutos». ¿Cuántos HRC aumenta la dureza por cada MINUTO de enfriado? (answer <número>, 2 decimales)",
-        "validator": { "type": "answer", "expected": 1.508, "tolerance": 0.02 },
+        "validator": {
+          "type": "answer",
+          "expected": 1.508,
+          "tolerance": 0.02
+        },
         "wrong_answer": "Si x normalizada = (minutos − media) / desviación, una unidad de x normalizada equivale a «desviación» minutos. ¿Cómo pasas de una a otra?",
         "hints": [
           "Necesitas w (regress info) y la desviación típica de minutos_enfriado (dataset stats temple).",
@@ -153,9 +346,20 @@
     "what_happened": "Has entrenado una regresión lineal con descenso por gradiente: con lr pequeño avanza a paso de tortuga, con lr grande diverge, y el margen bueno es estrecho cuando las features tienen escalas grandes. Normalizando, el mismo problema se resuelve en unas pocas épocas.",
     "why": "El descenso por gradiente es el motor del aprendizaje de casi todos los modelos modernos, incluidas las redes neuronales profundas y los LLM: sus miles de millones de parámetros se ajustan exactamente así, paso a paso, siguiendo el gradiente de una pérdida.",
     "in_production": "En la práctica se usa descenso por gradiente estocástico por mini-lotes (no todos los datos en cada paso), optimizadores adaptativos como Adam o AdamW, programación del learning rate (warmup y decaimiento) y normalización dentro de la red. La regresión lineal en concreto se puede resolver de forma exacta (mínimos cuadrados), pero aquí la usamos porque deja ver el descenso por gradiente con solo dos parámetros.",
-    "simplifications": ["Descenso por gradiente con el lote completo (batch)", "Un solo parámetro de entrada", "Datos sintéticos con relación lineal real"],
+    "simplifications": [
+      "Descenso por gradiente con el lote completo (batch)",
+      "Un solo parámetro de entrada",
+      "Datos sintéticos con relación lineal real"
+    ],
     "exercise": "forja/ejercicios/T3_01_descenso.py"
   },
-  "further_reading": ["ref.goodfellow-dl-ch4", "ref.google-mlcc-linreg"],
-  "xp": { "base": 150 }
+  "further_reading": [
+    "ref.goodfellow-dl-ch4",
+    "ref.google-mlcc-linreg"
+  ],
+  "xp": {
+    "base": 150
+  },
+  "purpose": "Casi todos los modelos de IA (Inteligencia Artificial) aprenden igual: ajustan sus parámetros, paso a paso, para que un error sea cada vez menor. Eso es el descenso por gradiente, y así se entrenan las redes neuronales y los LLM (Large Language Model), con miles de millones de parámetros en lugar de dos. Hoy lo ves con una recta y descubres el ajuste que más veces rompe un entrenamiento real: el tamaño del paso, o learning rate.",
+  "you_can_now": "Sabes qué hace el descenso por gradiente, reconocer en la tabla de pérdida un learning rate lento o uno que diverge, y explicar por qué normalizar acelera el entrenamiento. Siguiente: T3-02, cómo medir por separado cada tipo de error de un clasificador."
 }

@@ -7,9 +7,21 @@
   "plane": "dojo",
   "epistemic": "consolidado",
   "estimated_minutes": 40,
-  "requires_missions": ["T1-02"],
-  "competencies": { "requires": ["T1.distancia", "T1.normalizacion"], "trains": ["T2.knn", "T2.evaluacion", "T2.overfitting"] },
-  "briefing": "Ya sabes medir lo parecidas que son dos hojas. Ahora construirás tu primer clasificador: para decidir si una hoja nueva es apta, mira las k hojas más parecidas que ya conoces y vota. Es k-NN. El maestro quiere saber una cosa: ¿cuánto se puede confiar en él con hojas que nunca ha visto?",
+  "requires_missions": [
+    "T1-03"
+  ],
+  "competencies": {
+    "requires": [
+      "T1.distancia",
+      "T1.normalizacion"
+    ],
+    "trains": [
+      "T2.knn",
+      "T2.evaluacion",
+      "T2.overfitting"
+    ]
+  },
+  "briefing": "Ya sabes medir lo parecidas que son dos hojas. Ahora construirás tu primer clasificador: para decidir si una hoja nueva es apta, mira las k hojas más parecidas que ya conoces y vota. Es k-NN (k-Nearest Neighbors). El maestro quiere saber una cosa: ¿cuánto se puede confiar en él con hojas que nunca ha visto?",
   "learning_objectives": [
     "Entrenar y usar un clasificador k-NN",
     "Evaluar un modelo honestamente con un conjunto de test",
@@ -18,8 +30,18 @@
   ],
   "mentor_intro": "Hoy vas a equivocarte a propósito. No te preocupes: es el error más instructivo de todo el machine learning.",
   "lab": {
-    "datasets": [{ "file": "katanas.csv", "name": "katanas", "label": "calidad" }],
-    "viz": { "dataset": "katanas", "x": "dureza_hrc", "y": "flexibilidad" }
+    "datasets": [
+      {
+        "file": "katanas.csv",
+        "name": "katanas",
+        "label": "calidad"
+      }
+    ],
+    "viz": {
+      "dataset": "katanas",
+      "x": "dureza_hrc",
+      "y": "flexibilidad"
+    }
   },
   "theory_cards": [
     {
@@ -37,8 +59,15 @@
     {
       "id": "o1",
       "text": "Normaliza katanas con min-max, crea un modelo k-NN con k=1 y entrénalo con el dataset normalizado completo.",
-      "teach": "k vecinos más cercanos (k-NN)\nPara clasificar una hoja, k-NN busca las k hojas conocidas más cercanas (menor distancia) y hace que voten: gana la clase más repetida. Con k=1 decide solo el vecino más cercano.\n«Entrenar» un k-NN es simplemente guardar los ejemplos. Comandos: model create <nombre> --k <número> crea el modelo; model train <nombre> <dataset> lo entrena. Como mide distancias, entrénalo con datos normalizados (ya sabes por qué).",
-      "validator": { "type": "event", "event": "model.trained", "where": { "k": 1, "normalized": true } },
+      "teach": "k vecinos más cercanos (k-NN, k-Nearest Neighbors)\nPara clasificar una hoja, k-NN busca las k hojas conocidas más cercanas (las de menor distancia) y las hace votar: gana la clase más repetida.\nCon k=1 decide solo el vecino más cercano.\n«Entrenar» un k-NN es simplemente guardar los ejemplos.\nComandos: model create <nombre> --k <número> crea el modelo; model train <nombre> <dataset> lo entrena. Como mide distancias, entrénalo con datos normalizados (lo viste en T1-02).\nPor qué: un RAG (Retrieval-Augmented Generation) busca sus documentos con esta misma idea, y muchos detectores de seguridad comparan así un caso nuevo con casos conocidos.",
+      "validator": {
+        "type": "event",
+        "event": "model.trained",
+        "where": {
+          "k": 1,
+          "normalized": true
+        }
+      },
       "hints": [
         "Tres pasos: normalizar, crear y entrenar. Los comandos de modelos empiezan por model.",
         "dataset normalize ... · model create <nombre> --k 1 · model train <nombre> <dataset>",
@@ -49,12 +78,26 @@
     {
       "id": "o2",
       "text": "Evalúa el modelo con el mismo dataset con el que lo entrenaste.",
-      "teach": "Evaluar un modelo\nEvaluar es pedir al modelo que prediga ejemplos cuya respuesta real conoces y contar cuántas acierta. ACCURACY = aciertos / total. Comando: model evaluate <modelo> <dataset>. También verás la matriz de confusión: filas = clase real, columnas = clase predicha.",
+      "teach": "Evaluar un modelo\nEvaluar es pedirle que prediga ejemplos cuya respuesta real ya conoces y contar cuántos acierta.\nACCURACY (exactitud) = aciertos ÷ total.\nComando: model evaluate <modelo> <dataset>. También verás la matriz de confusión: cada fila es la clase real y cada columna, la que predijo el modelo.\nPor qué: antes de poner en producción un detector, un clasificador o un LLM (Large Language Model), hay que saber cuánto acierta.",
       "prediction": {
         "prompt": "¿Qué accuracy crees que sacará evaluado con sus propios datos de entrenamiento?",
-        "options": ["50%", "75%", "90%", "100%"]
+        "options": [
+          "50%",
+          "75%",
+          "90%",
+          "100%"
+        ]
       },
-      "validator": { "type": "event", "event": "model.evaluated", "where": { "overlap": { "gt": 0 }, "k": 1 } },
+      "validator": {
+        "type": "event",
+        "event": "model.evaluated",
+        "where": {
+          "overlap": {
+            "gt": 0
+          },
+          "k": 1
+        }
+      },
       "hints": [
         "Hay un subcomando de model para medir la accuracy.",
         "model evaluate <modelo> <dataset>"
@@ -64,8 +107,12 @@
     {
       "id": "o3",
       "text": "¿Por qué ha salido exactamente 100 %? Compruébalo: predice una hoja cualquiera del dataset de entrenamiento y mira la distancia de su primer vecino. ¿Cuál es? (answer <número>)",
-      "teach": "Mirar dentro de una predicción\nmodel predict <modelo> <dataset> <id> muestra los vecinos que han votado por una hoja concreta y a qué distancia están. Es la mejor forma de entender POR QUÉ el modelo decide lo que decide.",
-      "validator": { "type": "answer", "expected": 0, "tolerance": 0.0001 },
+      "teach": "Mirar dentro de una predicción\nmodel predict <modelo> <dataset> <id> muestra los vecinos que han votado por una hoja concreta y a qué distancia están.\nEs la mejor forma de entender POR QUÉ el modelo decide lo que decide.\nPor qué: explicar una decisión con los ejemplos que la causaron es como se audita un detector; en un RAG (Retrieval-Augmented Generation) equivale a mirar qué documentos ha recuperado.",
+      "validator": {
+        "type": "answer",
+        "expected": 0,
+        "tolerance": 0.0001
+      },
       "wrong_answer": "Mira la tabla de vecinos de model predict: columna distancia del vecino nº 1.",
       "hints": [
         "model predict te enseña los vecinos de una hoja.",
@@ -76,35 +123,107 @@
     {
       "id": "o4",
       "text": "Haz una evaluación honesta: separa train/test (test 0.3, seed 42), normaliza con min-max aprendiendo los parámetros SOLO del train, entrena un k-NN con k=1 en el train normalizado y evalúalo en el test normalizado.",
-      "teach": "Evaluación honesta: train y test\nLa pregunta real es cómo funcionará con hojas NUEVAS. Para estimarlo se aparta ANTES un conjunto de test que el modelo nunca ve: dataset split <dataset> --test 0.3 --seed 42 crea <dataset>_train (70 %) y <dataset>_test (30 %).\nNormalización sin trampas: la normalización también «aprende» algo (mínimos y máximos), y eso debe salir SOLO del train, igual que se haría con una hoja nueva en producción. Primero: dataset normalize katanas_train (crea katanas_train_minmax). Después: dataset normalize katanas_test --fit katanas_train (crea katanas_test_minmax con los parámetros del train ORIGINAL, nunca del ya normalizado). Con --as <nombre> eliges un nombre más corto, por ejemplo --as tr y --as te.",
+      "teach": "Evaluación honesta: train y test\nLa pregunta real es cómo funcionará con hojas NUEVAS. Para estimarlo se aparta ANTES un conjunto de test que el modelo nunca ve.\ndataset split katanas --test 0.3 --seed 42 crea katanas_train (70 %) y katanas_test (30 %).\nLa normalización también «aprende» algo (el mínimo y el máximo), y eso debe salir SOLO del train, como pasaría con una hoja nueva en producción.\nPrimero: dataset normalize katanas_train. Después: dataset normalize katanas_test --fit katanas_train (parámetros del train ORIGINAL, nunca del ya normalizado).\nCon --as <nombre> eliges un nombre corto, por ejemplo --as tr y --as te.\nPor qué: si el test se cuela en el entrenamiento (fuga de datos), el modelo parece mucho mejor de lo que es. Es uno de los errores más caros del ML (Machine Learning) real, también al evaluar un LLM (Large Language Model).",
       "validator": {
         "type": "sequence",
         "steps": [
-          { "type": "event", "event": "dataset.split", "where": { "seed": 42, "test_ratio": 0.3 } },
-          { "type": "event", "event": "dataset.normalized", "where": { "method": "minmax", "fit_on": { "ends_with": "_train" }, "source": { "ends_with": "_test" } } },
-          { "type": "event", "event": "model.evaluated", "where": { "overlap": 0, "normalized": true, "train_normalized": true, "k": 1 } }
+          {
+            "type": "event",
+            "event": "dataset.split",
+            "where": {
+              "seed": 42,
+              "test_ratio": 0.3
+            }
+          },
+          {
+            "type": "event",
+            "event": "dataset.normalized",
+            "where": {
+              "method": "minmax",
+              "fit_on": {
+                "ends_with": "_train"
+              },
+              "source": {
+                "ends_with": "_test"
+              }
+            }
+          },
+          {
+            "type": "event",
+            "event": "model.evaluated",
+            "where": {
+              "overlap": 0,
+              "normalized": true,
+              "train_normalized": true,
+              "k": 1
+            }
+          }
         ]
       },
       "diagnostics": [
-        { "id": "fit-normalized", "when": { "type": "event", "event": "dataset.normalized", "where": { "fit_on": { "ends_with": "_minmax" } } }, "message": "Has aprendido los parámetros de un dataset que YA estaba normalizado (su mínimo es 0 y su máximo 1), así que al aplicarlos no cambia nada útil. ¿De qué dataset deberían salir el mínimo y el máximo reales? Usa --fit con el train ORIGINAL (katanas_train)." },
+        {
+          "id": "fit-normalized",
+          "when": {
+            "type": "event",
+            "event": "dataset.normalized",
+            "where": {
+              "fit_on": {
+                "ends_with": "_minmax"
+              }
+            }
+          },
+          "message": "Has aprendido los parámetros de un dataset que YA estaba normalizado (su mínimo es 0 y su máximo 1), así que al aplicarlos no cambia nada útil. ¿De qué dataset deberían salir el mínimo y el máximo reales? Usa --fit con el train ORIGINAL (katanas_train)."
+        },
         {
           "id": "fit-test",
-          "when": { "type": "event", "event": "dataset.normalized", "where": { "fit_on": { "ends_with": "_test" } } },
+          "when": {
+            "type": "event",
+            "event": "dataset.normalized",
+            "where": {
+              "fit_on": {
+                "ends_with": "_test"
+              }
+            }
+          },
           "message": "Has aprendido los parámetros de normalización del TEST. Pregunta: en producción, cuando llegue una hoja nueva, ¿tendrás «el resto del test» para calcular su mínimo y su máximo? ¿De qué datos deberían salir esos parámetros?"
         },
         {
           "id": "fit-all",
-          "when": { "type": "event", "event": "dataset.normalized", "where": { "fit_on": "katanas", "source": { "ends_with": "_test" } } },
+          "when": {
+            "type": "event",
+            "event": "dataset.normalized",
+            "where": {
+              "fit_on": "katanas",
+              "source": {
+                "ends_with": "_test"
+              }
+            }
+          },
           "message": "Has normalizado el test con parámetros aprendidos de TODO el dataset, que incluye el propio test. Es una fuga sutil, pero fuga. ¿Qué conjunto contiene solo lo que el modelo puede conocer?"
         },
         {
           "id": "overlap",
-          "when": { "type": "event", "event": "model.evaluated", "where": { "overlap": { "gt": 0 } } },
+          "when": {
+            "type": "event",
+            "event": "model.evaluated",
+            "where": {
+              "overlap": {
+                "gt": 0
+              }
+            }
+          },
           "message": "Esa evaluación vuelve a mezclar ejemplos de entrenamiento. ¿El dataset que evalúas comparte hojas con el que entrenaste?"
         },
         {
           "id": "escala",
-          "when": { "type": "event", "event": "model.evaluated", "where": { "normalized": false, "train_normalized": true } },
+          "when": {
+            "type": "event",
+            "event": "model.evaluated",
+            "where": {
+              "normalized": false,
+              "train_normalized": true
+            }
+          },
           "message": "El modelo aprendió con datos normalizados (0-1) pero lo evalúas con datos en su escala original (cientos de grados). ¿Pueden compararse distancias entre puntos de mundos tan distintos?"
         }
       ],
@@ -120,12 +239,24 @@
     {
       "id": "o5",
       "text": "Compara la accuracy de train y test para varios valores de k con model sweep, usando tus datasets de train y test normalizados.",
-      "teach": "Elegir k\nk lo eliges tú: es un HIPERPARÁMETRO. model sweep --train <train> --test <test> entrena un modelo para varios valores de k y muestra la accuracy en train y en test. Si la de train es mucho mayor que la de test, el modelo está memorizando (overfitting).",
+      "teach": "Elegir k\nk lo eliges tú: es un HIPERPARÁMETRO, un ajuste que no sale de los datos.\nmodel sweep --train <train> --test <test> prueba varios k y muestra la accuracy en train y en test.\nSi la de train es mucho mayor que la de test, el modelo memoriza en lugar de aprender: eso es OVERFITTING (sobreajuste).\nPor qué: todo sistema de IA tiene hiperparámetros que se eligen comparando así; en un RAG (Retrieval-Augmented Generation), por ejemplo, cuántos documentos recuperar, que también se llama k.",
       "prediction": {
         "prompt": "¿Qué valor de k crees que generalizará MEJOR (más accuracy en test)?",
-        "options": ["1", "3", "9", "31"]
+        "options": [
+          "1",
+          "3",
+          "9",
+          "31"
+        ]
       },
-      "validator": { "type": "event", "event": "model.swept", "where": { "overlap": 0, "normalized": true } },
+      "validator": {
+        "type": "event",
+        "event": "model.swept",
+        "where": {
+          "overlap": 0,
+          "normalized": true
+        }
+      },
       "hints": [
         "model sweep compara varios k de golpe. Mira su ayuda: model sweep --help",
         "model sweep --train <train normalizado> --test <test normalizado>"
@@ -135,22 +266,119 @@
     {
       "id": "o6",
       "text": "Según tu barrido, ¿cuánto vale la diferencia (acc train − acc test) para k=1? (answer <número>)",
-      "validator": { "type": "answer", "expected": 0.25, "tolerance": 0.01 },
+      "validator": {
+        "type": "answer",
+        "expected": 0.25,
+        "tolerance": 0.01
+      },
       "wrong_answer": "Busca la fila k=1, columna «diferencia», en la salida de model sweep (con la división de semilla 42 y min-max aprendido del train).",
       "hints": [
         "Está en la tabla de model sweep.",
         "Fila k=1 → columna diferencia."
       ],
-      "on_complete": "0,25: el modelo es 25 puntos «mejor» con lo que ya ha visto que con lo nuevo. Esa brecha es la firma del overfitting."
+      "on_complete": "0,25: el modelo es 25 puntos «mejor» con lo que ya ha visto que con lo nuevo. Esa brecha es la firma del overfitting.",
+      "teach": "Leer la brecha\nLa columna «diferencia» es la accuracy de train menos la de test.\nPor qué: esa brecha es la señal de alarma del overfitting, en un k-NN y en una red neuronal."
     },
     {
       "id": "o7",
-      "text": "Explica con tus palabras por qué k=1 saca 100 % en entrenamiento, qué es la fuga de datos y cómo la evitaste. (reflexion <texto>, mínimo 30 palabras)",
-      "validator": { "type": "reflection", "min_words": 30 },
+      "text": "Para normalizar el test sin hacer trampa, ¿de qué datos deben salir el mínimo y el máximo?",
+      "teach": "Repaso: la fuga de datos\nFUGA DE DATOS: que información del test llegue al modelo de alguna forma, al entrenar o al preparar los datos.\nPor qué: es la trampa que convierte un 75 % real en un 100 % falso, y la que más veces engaña a los equipos que evalúan modelos.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "del propio test",
+          "why": "En producción cada caso nuevo llega solo: no tendrás «el resto del test» para calcularlos. Sacarlos del test es fuga de datos."
+        },
+        {
+          "id": "b",
+          "text": "de todo el dataset",
+          "why": "Todo el dataset incluye el test. Es una fuga sutil, pero fuga."
+        },
+        {
+          "id": "c",
+          "text": "solo del train"
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
       "hints": [
-        "Tres ideas: el vecino de cada hoja es ella misma; el test debe ser «nunca visto»; los parámetros de normalización también son «conocimiento».",
-        "Estructura: 1) qué pasa con k=1 en train, 2) qué es la fuga de datos con un ejemplo de esta misión, 3) qué pasos seguiste para evitarla."
-      ]
+        "Piensa en una hoja nueva que llega a la forja: ¿qué datos tendrías ya para normalizarla?",
+        "Solo del train: answer c"
+      ],
+      "on_complete": "Eso es. Todo lo que el modelo «aprende», incluidos el mínimo y el máximo de la normalización, sale del train. El test se queda intacto hasta el final."
+    },
+    {
+      "id": "py1",
+      "text": "Escribe en Python el voto de los vecinos: abre el editor con py, completa la función votar y compruébala con py check.",
+      "teach": "El voto, con tus manos\nk-NN decide por votación: cuenta cuántos vecinos hay de cada clase y gana la que más tenga.\nUn diccionario guarda un recuento por clave, por ejemplo {\"apta\": 2, \"defectuosa\": 1}. El código que lo llena ya está escrito.\nmax(conteo, key=...) devuelve la clave con el valor más alto según la regla que le das después de key=.\nPor qué: es la última línea de un k-NN real, y la misma votación que usan los sistemas que combinan varios modelos.",
+      "py_exercise": {
+        "id": "T2-01-votar",
+        "title": "votar(etiquetas): gana la clase más repetida",
+        "function": "votar",
+        "starter": "# Ejercicio T2-01 · El voto de los vecinos\n# etiquetas es la lista con la clase de cada uno de los k vecinos más cercanos,\n# por ejemplo [\"defectuosa\", \"apta\", \"apta\"]. Gana la clase que más se repite.\n\ndef votar(etiquetas):\n    conteo = {}\n    for e in etiquetas:\n        conteo[e] = conteo.get(e, 0) + 1   # suma un voto a la clase e\n    # conteo queda, por ejemplo, {\"defectuosa\": 1, \"apta\": 2}\n    return etiquetas[0]   # ← cambia esta línea: devuelve la clase con más votos\n\n# Pruébala con py run (o Ctrl+Enter). Debería imprimir apta:\nprint(votar([\"defectuosa\", \"apta\", \"apta\"]))\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "defectuosa",
+                "apta",
+                "apta"
+              ]
+            ],
+            "expected": "apta"
+          },
+          {
+            "args": [
+              [
+                "apta"
+              ]
+            ],
+            "expected": "apta"
+          },
+          {
+            "args": [
+              [
+                "apta",
+                "defectuosa",
+                "defectuosa",
+                "defectuosa",
+                "apta"
+              ]
+            ],
+            "expected": "defectuosa"
+          },
+          {
+            "args": [
+              [
+                "inyeccion",
+                "legitimo",
+                "inyeccion",
+                "legitimo",
+                "inyeccion"
+              ]
+            ],
+            "expected": "inyeccion"
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T2-01-votar",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Usa max sobre el diccionario conteo, y como regla, el número de votos de cada clase: conteo[e].",
+        "La línea queda así: return max(conteo, key=lambda e: conteo[e])"
+      ],
+      "on_complete": "Ya tienes el corazón de un k-NN: distancia (T1-02), los k más cercanos y el voto. lambda e: conteo[e] es una función de una línea: «dada una clase e, devuelve sus votos»."
     }
   ],
   "mastery_trial": {
@@ -159,7 +387,11 @@
       {
         "id": "d1",
         "text": "Con test 0.25 y semilla 7, normalización z-score aprendida SOLO del train, y k=9: ¿qué accuracy obtiene el modelo en el test? (answer <número>, 3 decimales)",
-        "validator": { "type": "answer", "expected": 0.883, "tolerance": 0.002 },
+        "validator": {
+          "type": "answer",
+          "expected": 0.883,
+          "tolerance": 0.002
+        },
         "wrong_answer": "No es ese valor. Revisa: semilla 7, test 0.25, método zscore, --fit con el train, k=9 y evaluación en el test normalizado.",
         "hints": [
           "Es el mismo procedimiento honesto de antes, con otros parámetros.",
@@ -172,10 +404,21 @@
   "debrief": {
     "what_happened": "Has construido un clasificador k-NN, has caído en la trampa de evaluarlo con sus propios datos (100 %), has hecho una evaluación honesta (75 % con k=1) y has visto cómo k controla el equilibrio entre memorizar (overfitting) y generalizar.",
     "why": "La fuga de datos es uno de los errores más frecuentes y caros en ML real: el modelo parece excelente en el laboratorio y falla en producción. La disciplina train/validación/test y aplicar las transformaciones aprendidas solo del train son la defensa.",
-    "in_production": "En scikit-learn: train_test_split, un Pipeline con StandardScaler y KNeighborsClassifier, y GridSearchCV con validación cruzada para elegir k sin tocar el test. Con millones de ejemplos, k-NN exacto es lento: se usan índices (KD-tree, Ball-tree) o búsqueda aproximada de vecinos (ANN), la misma tecnología que verás en las bases de datos vectoriales del arco RAG.",
-    "simplifications": ["Sin conjunto de validación separado (se elige k mirando el test, y se avisa)", "Dataset pequeño y sintético con un 8 % de ruido de etiqueta"],
+    "in_production": "En scikit-learn: train_test_split, un Pipeline con StandardScaler y KNeighborsClassifier, y GridSearchCV con validación cruzada para elegir k sin tocar el test. Con millones de ejemplos, k-NN exacto es lento: se usan índices (KD-tree, Ball-tree) o búsqueda aproximada de vecinos (ANN, Approximate Nearest Neighbors), la misma tecnología que verás en las bases de datos vectoriales del arco RAG (Retrieval-Augmented Generation).",
+    "simplifications": [
+      "Sin conjunto de validación separado (se elige k mirando el test, y se avisa)",
+      "Dataset pequeño y sintético con un 8 % de ruido de etiqueta"
+    ],
     "exercise": "forja/ejercicios/T2_01_knn.py"
   },
-  "further_reading": ["ref.cover-hart-1967", "ref.sklearn-neighbors", "ref.sklearn-pitfalls"],
-  "xp": { "base": 150 }
+  "further_reading": [
+    "ref.cover-hart-1967",
+    "ref.sklearn-neighbors",
+    "ref.sklearn-pitfalls"
+  ],
+  "xp": {
+    "base": 150
+  },
+  "purpose": "k-NN (k-Nearest Neighbors) es el clasificador más sencillo: decide mirando los ejemplos más parecidos que ya conoce. Es la misma idea con la que un RAG (Retrieval-Augmented Generation) busca los documentos más cercanos a tu pregunta. Hoy aprendes además lo más importante de cualquier modelo de IA (Inteligencia Artificial): medir honestamente si acierta con datos que nunca ha visto. Sin eso, un detector de ataques o un LLM (Large Language Model) parecen perfectos en el laboratorio y fallan en producción.",
+  "you_can_now": "Sabes entrenar un k-NN, evaluarlo sin trampas con train y test, y reconocer el overfitting en la brecha entre las dos accuracies. Siguiente: T2-02, donde aplicarás esto a un detector que aprende a reconocer a los clientes que abusan de un chatbot."
 }
