@@ -7,7 +7,7 @@
   "plane": "dojo",
   "epistemic": "consolidado",
   "estimated_minutes": 30,
-  "requires_missions": ["T4-01"],
+  "requires_missions": ["T4-03"],
   "competencies": { "requires": ["T4.neurona"], "trains": ["T5.tokenizacion"] },
   "briefing": "Una red neuronal solo entiende números. Para que un LLM lea «la katana del maestro», alguien tiene que convertir ese texto en una secuencia de números. Ese alguien es el tokenizador, y sus decisiones explican cosas que verás toda tu carrera: por qué los LLM cobran por tokens, por qué cuentan mal las letras de una palabra, por qué algunos idiomas cuestan más… y por qué ciertos ataques consiguen colarse disfrazando el texto.",
   "learning_objectives": [
