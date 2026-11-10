@@ -109,7 +109,7 @@
     },
     {
       "id": "o2",
-      "text": "Ejecuta experimento.py con SmolLM2-135M (README, sección 2). Anota: si tu bucle voraz coincide con generate(), los tokens por segundo de cada uno, cuántos tokens deja top-p 0.9 con cada temperatura y qué pasa con la misma semilla. (reflexion <texto>, mínimo 60 palabras)",
+      "text": "Ejecuta experimento.py con SmolLM2-135M (README, sección 2) y compara tu bucle con generate(). ¿Qué explica que generate() vaya más rápido?",
       "prediction": {
         "prompt": "¿Cuántas veces más rápido crees que irá generate() (con caché KV (key-value, claves y valores)) que tu bucle, generando 25 tokens?",
         "options": [
@@ -119,27 +119,68 @@
         ]
       },
       "validator": {
-        "type": "reflection",
-        "min_words": 60
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
       },
       "hints": [
-        "python experimento.py · la primera vez descarga unos 270 MB.",
-        "Para comparar velocidades, prueba también con --nuevos 60: ¿la diferencia crece con la longitud? Relaciónalo con la tarjeta de la caché KV."
+        "python experimento.py (la primera vez descarga unos 270 MB). Después, la tarjeta de la caché KV.",
+        "answer a"
       ],
-      "teach": "El experimento con SmolLM2\nexperimento.py (README, sección 2) descarga el modelo real la primera vez y compara tu bucle con generate(): mismo texto, velocidad, tokens que deja top-p y semillas.\nAnota los números: los usarás en las reflexiones.\nPor qué: medir la velocidad con y sin caché KV (key-value, claves y valores) es entender por qué un servidor de LLM (Large Language Model) gasta memoria por cada usuario conectado."
+      "teach": "El experimento con SmolLM2\nexperimento.py (README, sección 2) descarga el modelo real la primera vez y compara tu bucle con generate(): mismo texto, velocidad, tokens que deja top-p y semillas.\nAnota los números: los necesitarás para responder.\nPor qué: medir la velocidad con y sin caché KV (key-value, claves y valores) es entender por qué un servidor de LLM (Large Language Model) gasta memoria por cada usuario conectado.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "la caché KV (key-value, claves y valores): guarda las claves y los valores de los tokens anteriores y solo calcula los del nuevo",
+          "why": "Si en tu máquina la diferencia sale pequeña con 25 tokens, prueba --nuevos 60: crece con la longitud."
+        },
+        {
+          "id": "b",
+          "text": "que generate() usa un modelo más pequeño",
+          "why": "Es el mismo modelo: por eso, sin muestreo, tu bucle y generate() escriben lo mismo."
+        },
+        {
+          "id": "c",
+          "text": "que generate() se salta tokens",
+          "why": "Genera los mismos tokens, uno a uno; solo ahorra recalcular lo anterior."
+        }
+      ],
+      "on_complete": "Eso es. Por eso la memoria de un servidor de LLM (Large Language Model) crece con el contexto de cada usuario conectado."
     },
     {
       "id": "o3",
-      "text": "Explica por qué la temperatura 0 no necesita semilla, por qué top-p deja muchos más tokens cuando sube la temperatura y qué significa que el modelo dé una log-probabilidad más baja a «the sun rises in the west». ¿Es eso «saber» que es falso? (reflexion <texto>, mínimo 50 palabras)",
+      "text": "El modelo da una log-probabilidad más baja a «the sun rises in the west» que a «… in the east». ¿Qué significa?",
       "validator": {
-        "type": "reflection",
-        "min_words": 50
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
       },
       "hints": [
-        "Con t = 0 solo hay un candidato. Con t alta, la distribución se aplana: ¿cuántos tokens hacen falta para sumar 0.9?",
-        "El modelo puntúa lo frecuente en sus datos de entrenamiento, no lo verdadero (T6-01: memorización)."
+        "Recuerda T6-01: memorización y frecuencia.",
+        "answer b"
       ],
-      "teach": "Probabilidad no es verdad\nUna log-probabilidad es el logaritmo de la probabilidad que el modelo da a un texto: cuanto más negativa, menos probable le parece. log_probs_secuencia la calcula sumando la de cada token.\nPor qué: los LLM (Large Language Model) puntúan lo frecuente en sus datos de entrenamiento; confundir «probable» con «verdadero» es el origen de muchas alucinaciones."
+      "teach": "Probabilidad no es verdad\nUna log-probabilidad es el logaritmo de la probabilidad que el modelo da a un texto: cuanto más negativa, menos probable le parece. log_probs_secuencia la calcula sumando la de cada token.\nPor qué: los LLM (Large Language Model) puntúan lo frecuente en sus datos de entrenamiento; confundir «probable» con «verdadero» es el origen de muchas alucinaciones.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "que sabe que es falso",
+          "why": "El modelo no comprueba hechos: puntúa lo frecuente en sus datos de entrenamiento."
+        },
+        {
+          "id": "b",
+          "text": "que esa frase es menos frecuente en el tipo de textos con los que se entrenó"
+        },
+        {
+          "id": "c",
+          "text": "que el modelo está mal entrenado",
+          "why": "Es lo esperable. Un modelo bien entrenado también puede dar probabilidad alta a errores frecuentes."
+        }
+      ],
+      "on_complete": "Eso es: probable no es verdadero. Por eso un LLM (Large Language Model) puede afirmar con seguridad algo falso que aparecía a menudo en sus datos."
     }
   ],
   "you_can_now": "Sabes qué hace un LLM (Large Language Model) en cada paso de generación (logits, temperatura, top-p y muestreo), escribirlo en PyTorch y explicar por qué la caché KV (key-value, claves y valores) acelera y cuesta memoria. Siguiente: E1-02, cuantizar los pesos como hace Ollama.",

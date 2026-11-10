@@ -207,15 +207,35 @@
     },
     {
       "id": "o5",
-      "text": "Explica con tus palabras qué hay que registrar de un agente que no hacía falta en un chat, por qué, y qué haces con los datos personales. (reflexion <texto>, mínimo 40 palabras)",
+      "text": "Para cerrar: ¿qué hay que registrar de un agente que no hacía falta en un chat?",
       "validator": {
-        "type": "reflection",
-        "min_words": 40
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
       },
       "hints": [
         "Piensa en S04 con 2/6: veías la pregunta y la respuesta, y nada de lo que pasó en medio.",
-        "Documentos recuperados, argumentos y resultados de herramientas, identidad, versión… y redacción."
-      ]
+        "answer b"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "la pregunta y la respuesta, con más detalle",
+          "why": "Eso ya se guardaba, y en S04 parecían normales: lo peligroso pasó en medio."
+        },
+        {
+          "id": "b",
+          "text": "los documentos recuperados, los argumentos y resultados de las herramientas, la identidad y la versión, con los datos personales redactados"
+        },
+        {
+          "id": "c",
+          "text": "todo en claro, para no perder nada",
+          "why": "Un registro con correos y teléfonos en claro es otra base de datos sensible: otra fuga posible."
+        }
+      ],
+      "on_complete": "Eso es. En un agente se registra lo que pasa entre la pregunta y la respuesta, y se redacta lo personal."
     }
   ],
   "mastery_trial": {

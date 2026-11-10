@@ -155,15 +155,35 @@
     },
     {
       "id": "o4",
-      "text": "Decide y justifica: ¿activarías consent en producción para este host? Usa tus cifras (robustos con y sin consent, aprobaciones, lo que el usuario ve y lo que no). (reflexion <texto>, mínimo 60 palabras)",
+      "text": "Para cerrar: ¿activarías consent en producción para este host?",
       "validator": {
-        "type": "reflection",
-        "min_words": 60
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
       },
       "hints": [
         "Un robusto más a cambio de cuatro aprobaciones por cada cuatro tareas.",
-        "¿Para qué acciones concretas sí lo pondrías?"
-      ]
+        "answer c"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "sí, para todas las llamadas: da un robusto más",
+          "why": "Cuatro aprobaciones por cuatro tareas acaban en fatiga y en que alguien lo desactive."
+        },
+        {
+          "id": "b",
+          "text": "nunca: no aporta nada",
+          "why": "Añadido a las cinco defensas, dio una segunda cerradura a la salida inyectada."
+        },
+        {
+          "id": "c",
+          "text": "solo para acciones irreversibles o de alto impacto, con un resumen claro de su efecto"
+        }
+      ],
+      "on_complete": "Eso es: el consentimiento se reserva para lo que importa, y se enseña el efecto, no los argumentos crudos."
     }
   ],
   "mastery_trial": {

@@ -95,10 +95,6 @@ func test_cinco_activos_cerrados() -> void:
 	assert_true(_last("engagement.summary")["all_fixed"])
 
 
-const R40 := "reflexion la autorizacion y el alcance mandan antes que la tecnica porque un sistema de un tercero o de produccion no se toca aunque sea accesible y cada hallazgo necesita una evidencia reproducible y un retest que demuestre que el arreglo funciona sin romper las tareas legitimas del servicio"
-const R60 := R40 + " las defensas que funcionaron limitan en el codigo lo que el sistema puede hacer y con que datos y en produccion vigilaria las trazas con reglas medidas y cada version nueva"
-
-
 func test_mision_C5_01() -> void:
 	for m in ["A4-03", "A6-03", "O6-03", "C1-02", "C2-02", "C3-02"]:
 		game.progress.data["missions"][m] = {"completed": true}
@@ -114,7 +110,7 @@ func test_mision_C5_01() -> void:
 	lines = []
 	for id: String in CAT:
 		lines.append("engagement threat final %s %s" % [id, CAT[id]])
-	run(lines + ["answer b", R40])
+	run(lines + ["answer b", "answer a"])
 	assert_eq(game.runner.phase, "trial")
 	lines = ["engagement start t2"]
 	for id: String in OBJ:
@@ -141,7 +137,7 @@ func test_mision_C5_02() -> void:
 		"informe campo pasos 1) engagement start final 2) supply forja pipe 3) supply attack pipe",
 		"informe campo impacto ejecución de código en el servidor de modelos de la forja", "informe campo evidencia la batería A6 da 7 de 7 éxitos sobre la copia pipe",
 		"informe campo mitigacion safetensors firmas lockfile non-root segmentación y gestor de secretos", "informe campo verificacion hoy 7 de 7 ataques; tras corregir, retest con 0 de 7 y tareas a 1,0",
-		"informe revisar", R40])
+		"informe revisar", "answer b"])
 	assert_eq(game.runner.phase, "trial")
 	run(_setup("t2", ["A-01", "A-03", "A-05"]) + _findings("t2", ["A-01", "A-03", "A-05"]))
 	assert_eq(finished.size(), 1)
@@ -159,7 +155,7 @@ func test_mision_C5_03() -> void:
 	run(["answer b"])
 	run(FIX["A-01"] + FIX["A-03"] + ["supply convert pipe clasificador-acero", "supply attack pipe", "supply eval pipe", "engagement retest final"])
 	assert_eq(game.runner.index, 4)
-	run(["engagement summary final", R60])
+	run(["engagement summary final", "answer c"])
 	assert_eq(game.runner.phase, "trial")
 	run(_setup("t2", ["A-01", "A-03"]) + _findings("t2", ["A-01", "A-03"]) + FIX["A-01"] + FIX["A-03"] + ["engagement retest t2"])
 	assert_eq(finished.size(), 1)

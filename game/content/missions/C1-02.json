@@ -144,15 +144,35 @@
     },
     {
       "id": "o4",
-      "text": "Escribe el tratamiento de ese riesgo residual: por qué solo lo para un control, qué pasaría si ese control fallara y cómo lo vigilarías y probarías en producción. (reflexion <texto>, mínimo 40 palabras)",
+      "text": "Para cerrar: el confused deputy depende solo de user-authz. ¿Cómo tratas ese riesgo residual?",
       "validator": {
-        "type": "reflection",
-        "min_words": 40
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
       },
       "hints": [
-        "Petición legítima en apariencia, permisos de quién pide.",
-        "Trazas con identidad (O6), regla de detección, test de regresión en cada versión."
-      ]
+        "Trazas con identidad, regla de detección, test de regresión.",
+        "answer b"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "añadiendo spotlight como segunda capa",
+          "why": "spotlight no lo ve: no es una orden escondida en datos, sino una petición directa con los permisos equivocados."
+        },
+        {
+          "id": "b",
+          "text": "vigilándolo: identidad en las trazas (O6), una regla para acciones de impacto pedidas sin permiso y un test de regresión en cada versión"
+        },
+        {
+          "id": "c",
+          "text": "aceptándolo sin más",
+          "why": "Un riesgo residual se acepta documentado y vigilado: si user-authz falla, el ataque pasa."
+        }
+      ],
+      "on_complete": "Eso es: lo que no se puede duplicar se vigila y se prueba en cada versión."
     }
   ],
   "mastery_trial": {

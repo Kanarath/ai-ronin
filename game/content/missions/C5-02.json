@@ -187,14 +187,35 @@
     },
     {
       "id": "o6",
-      "text": "Explica con tus palabras qué hallazgo arreglarías primero y por qué, usando impacto, exposición y facilidad, no solo el número de ataques. (reflexion <texto>, mínimo 40 palabras)",
+      "text": "Para cerrar: el pipeline (A-05) tuvo menos éxitos que el chatbot. ¿Por qué puede ir primero?",
       "validator": {
-        "type": "reflection",
-        "min_words": 40
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
       },
       "hints": [
-        "Público sin autenticación frente a interno; ejecución de código o datos de clientes frente a fuga de un código de descuento."
-      ]
+        "Ejecución de código frente a fuga de un código de descuento.",
+        "answer b"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque es el que más ataques tuvo",
+          "why": "No: el que más tuvo fue A-01."
+        },
+        {
+          "id": "b",
+          "text": "porque su impacto es ejecutar código en el servidor de modelos, el peor efecto posible aunque tenga menos éxitos"
+        },
+        {
+          "id": "c",
+          "text": "porque es el más fácil de arreglar",
+          "why": "La facilidad de arreglo no es la severidad; se pesan el impacto, la exposición y la facilidad del ataque."
+        }
+      ],
+      "on_complete": "Eso es: la severidad la decide el impacto, no el recuento."
     }
   ],
   "mastery_trial": {

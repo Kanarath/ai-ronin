@@ -183,15 +183,35 @@
     },
     {
       "id": "o5",
-      "text": "Explica con tus palabras por qué A-06 y A-07 quedan fuera aunque estén a tu alcance técnico, y qué te aporta el modelo de amenazas antes de lanzar un solo ataque. (reflexion <texto>, mínimo 40 palabras)",
+      "text": "Para cerrar: ¿qué te aporta el modelo de amenazas antes de lanzar un solo ataque?",
       "validator": {
-        "type": "reflection",
-        "min_words": 40
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
       },
       "hints": [
-        "Autorización, dueño del sistema, daño a terceros.",
-        "Prioridad y cobertura: qué probar y por qué."
-      ]
+        "Prioridad y cobertura: qué probar y por qué.",
+        "answer a"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "un mapa: qué probar en cada activo y por qué, con un vocabulario común"
+        },
+        {
+          "id": "b",
+          "text": "la autorización para probar A-06",
+          "why": "Solo el dueño de un sistema puede autorizarlo; el modelo de amenazas no cambia el alcance."
+        },
+        {
+          "id": "c",
+          "text": "la lista de hallazgos",
+          "why": "Los hallazgos se demuestran con evidencia en C5-02; el modelo dice qué buscar."
+        }
+      ],
+      "on_complete": "Eso es: primero el permiso y el mapa; después, los ataques."
     }
   ],
   "mastery_trial": {

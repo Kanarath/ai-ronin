@@ -32,7 +32,6 @@ const DRAFTS := {
 	"H3": {"criterio": "A", "evidencia": "A", "riesgo": "C", "recomendacion": "A", "seguimiento": "B"},
 	"informe": {"alcance": "B", "conclusion": "C"},
 }
-const R40 := "reflexion la eipd mira el tratamiento de datos personales y la fria mira el uso del sistema sobre los derechos de las personas la hace quien despliega si es publico o presta servicios publicos y hacerlas juntas evita duplicar el analisis de riesgos que comparten las dos"
 
 
 func _impact(a: String) -> Array:
@@ -135,7 +134,7 @@ func test_mision_E3_01() -> void:
 	assert_eq(game.runner.index, 2)
 	run(["audit roles valle"] + _impact("valle").slice(14))
 	assert_eq(game.runner.index, 3)
-	run(["answer b", "audit timeline valle", "answer eipd", R40])
+	run(["answer b", "audit timeline valle", "answer eipd", "answer c"])
 	assert_eq(game.runner.phase, "trial")
 	run(["audit open t2"] + _impact("t2"))
 	assert_eq(finished.size(), 1)
@@ -154,7 +153,7 @@ func test_mision_E3_02() -> void:
 	assert_eq(game.runner.index, 3, "sin muestra de expedientes no se puede clasificar C10")
 	run(["audit records valle C10 10", "audit rate valle C10 nc-mayor"])
 	assert_eq(game.runner.index, 4)
-	run(_fieldwork("valle").slice(3) + [R40])
+	run(_fieldwork("valle").slice(3) + ["answer b"])
 	assert_eq(game.runner.phase, "trial")
 	run(["audit open t2"] + _fieldwork("t2"))
 	assert_eq(finished.size(), 1)
@@ -171,7 +170,7 @@ func test_mision_E3_03() -> void:
 	run(["answer b"])
 	run(_drafts("valle", ["informe"]) + ["audit report valle"])
 	assert_eq(game.runner.index, 4)
-	run(_closures("valle") + [R40])
+	run(_closures("valle") + ["answer c"])
 	assert_eq(game.runner.phase, "trial")
 	run(["audit open t2"] + _drafts("t2") + ["audit report t2"] + _closures("t2"))
 	assert_eq(finished.size(), 1)

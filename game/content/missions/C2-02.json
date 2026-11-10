@@ -150,15 +150,35 @@
     },
     {
       "id": "o4",
-      "text": "Propón para cada ataque frágil una segunda barrera que NO sea un interruptor del laboratorio (diseño del sistema, datos o vigilancia) y explica por qué. (reflexion <texto>, mínimo 60 palabras)",
+      "text": "Para cerrar: la inversión de vectores depende solo de vector-acl. ¿Qué segunda barrera, que no es un interruptor, la protege?",
       "validator": {
-        "type": "reflection",
-        "min_words": 60
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
       },
       "hints": [
-        "Fugas: ¿deberían estar los costes y los proveedores en el índice de clientes?",
-        "Foro: revisión de contenido subido antes de indexar. Vectores: la base vectorial no se expone fuera. Todo: trazas de recuperación y alertas (O6)."
-      ]
+        "¿Quién debería poder llegar siquiera a la base vectorial?",
+        "answer c"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "activar spotlight",
+          "why": "spotlight actúa en la presentación al modelo; la inversión ataca el almacén de vectores."
+        },
+        {
+          "id": "b",
+          "text": "subir min-score",
+          "why": "min-score actúa en la generación, no en quién puede leer los vectores."
+        },
+        {
+          "id": "c",
+          "text": "no exponer la base vectorial: red privada y credenciales propias"
+        }
+      ],
+      "on_complete": "Eso es. Y lo mismo para el resto: índices separados por público, revisión del contenido subido y trazas de recuperación con alertas (O6)."
     }
   ],
   "mastery_trial": {

@@ -239,15 +239,35 @@
     },
     {
       "id": "o5",
-      "text": "Explica con tus palabras cuándo se mitiga, cuándo se evita y cuándo se puede aceptar un riesgo, y qué papel tienen tus pruebas técnicas en las cifras del registro. (reflexion <texto>, mínimo 40 palabras)",
+      "text": "Para cerrar: ¿de dónde sale que la probabilidad de un riesgo baje después de mitigar?",
       "validator": {
-        "type": "reflection",
-        "min_words": 40
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
       },
       "hints": [
-        "Prohibido, apetito, coste de renunciar a un sistema.",
-        "¿De dónde sale que la probabilidad baje a 1 después de mitigar? Del retest."
-      ]
+        "¿Qué hiciste en los arcos después de activar cada defensa?",
+        "answer b"
+      ],
+      "choices": [
+        {
+          "id": "a",
+          "text": "de la opinión del responsable del sistema",
+          "why": "Sin medición, es una opinión, y en una auditoría no se sostiene."
+        },
+        {
+          "id": "b",
+          "text": "de tus retests: la medición demuestra que el control funciona"
+        },
+        {
+          "id": "c",
+          "text": "de la propia norma ISO/IEC 42001",
+          "why": "La norma pide decidir y documentar el tratamiento; no da las cifras de cada riesgo."
+        }
+      ],
+      "on_complete": "Eso es: las cifras del registro de riesgos salen del trabajo técnico. Sin retest, no hay cifra."
     }
   ],
   "mastery_trial": {
