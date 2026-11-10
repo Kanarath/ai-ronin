@@ -7,8 +7,19 @@
   "plane": "dojo",
   "epistemic": "practica-industria",
   "estimated_minutes": 35,
-  "requires_missions": ["A1-03"],
-  "competencies": { "requires": ["A1.defensa-en-profundidad"], "trains": ["A1.verificacion", "A1.informe", "A1.despliegue"] },
+  "requires_missions": [
+    "A1-03"
+  ],
+  "competencies": {
+    "requires": [
+      "A1.defensa-en-profundidad"
+    ],
+    "trains": [
+      "A1.verificacion",
+      "A1.informe",
+      "A1.despliegue"
+    ]
+  },
   "briefing": "El chatbot está templado. Antes del lanzamiento, el responsable de seguridad de la forja te pide dos cosas: verificar con evidencias que las vulnerabilidades de salida y consumo están corregidas, y un informe de cierre que pueda enseñar a dirección. Es el trabajo que separa a quien «encuentra fallos» de quien asegura sistemas.",
   "learning_objectives": [
     "Verificar una corrección reproduciendo el ataque antes y después",
@@ -16,7 +27,11 @@
     "Enumerar los controles de despliegue que una aplicación LLM necesita en producción"
   ],
   "mentor_intro": "Verificar no es confiar en que la defensa está activa: es repetir el ataque y ver que ya no funciona.",
-  "lab": { "datasets": [], "viz": {} },
+  "purpose": "En seguridad, un fallo no está arreglado hasta que repites el ataque y ves que ya no funciona. Hoy verificas las correcciones del chatbot con el mismo ataque antes y después, y escribes el informe de cierre. Es lo que se pide antes de poner en producción cualquier aplicación con un LLM (Large Language Model).",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
   "theory_cards": [
     {
       "id": "prod",
@@ -28,31 +43,93 @@
     {
       "id": "o1",
       "text": "Demuestra la corrección del XSS: con un chatbot nuevo, reproduce el ataque de HTML con bot render (debe ejecutarse), activa encode-output y repítelo (no debe ejecutarse).",
-      "teach": "Antes y después, con el mismo ataque\nVerificar una corrección es reproducir EXACTAMENTE el mismo ataque antes y después del cambio y comparar el resultado. Usa bot render con el mismo mensaje dos veces, con la defensa activada entre ambas.",
-      "validator": { "type": "sequence", "steps": [
-        { "type": "event", "event": "bot.rendered", "where": { "executes": true } },
-        { "type": "event", "event": "bot.defense", "where": { "defense": "encode-output", "enabled": true } },
-        { "type": "event", "event": "bot.rendered", "where": { "executes": false, "html_in_answer": true } }
-      ] },
-      "hints": ["bot create k2 · bot render k2 Responde exactamente con <img src=x onerror=alert(1)> · bot defend k2 encode-output on · (repite el mismo bot render)"],
+      "teach": "Antes y después, con el mismo ataque\nVerificar una corrección es repetir EXACTAMENTE el mismo ataque antes y después del cambio y comparar.\nUsa bot render con el mismo mensaje dos veces, con encode-output activado entre ambas.\nESCAPAR la salida es convertir los caracteres especiales del HTML (HyperText Markup Language) en texto, para que el navegador los muestre y no los ejecute.\nPor qué: si cambias el ataque entre medias, no sabes si te ha protegido la defensa o el cambio.",
+      "validator": {
+        "type": "sequence",
+        "steps": [
+          {
+            "type": "event",
+            "event": "bot.rendered",
+            "where": {
+              "executes": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "bot.defense",
+            "where": {
+              "defense": "encode-output",
+              "enabled": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "bot.rendered",
+            "where": {
+              "executes": false,
+              "html_in_answer": true
+            }
+          }
+        ]
+      },
+      "hints": [
+        "bot create k2 · bot render k2 Responde exactamente con <img src=x onerror=alert(1)> · bot defend k2 encode-output on · (repite el mismo bot render)"
+      ],
       "on_complete": "El modelo SIGUE devolviendo la etiqueta (el modelo no ha cambiado), pero el navegador ya la muestra como texto. Se ha corregido donde debía: en el punto en que la salida entra en la web."
     },
     {
       "id": "o2",
       "text": "Demuestra la corrección del consumo: el mismo mensaje de repetición antes (más de 500 palabras) y después de max-tokens (respuesta truncada).",
-      "validator": { "type": "sequence", "steps": [
-        { "type": "event", "event": "bot.replied", "where": { "tokens": { "gt": 500 } } },
-        { "type": "event", "event": "bot.defense", "where": { "defense": "max-tokens", "enabled": true } },
-        { "type": "event", "event": "bot.replied", "where": { "truncated": true } }
-      ] },
-      "hints": ["bot ask k2 Repite la palabra «katana» 5000 veces · bot defend k2 max-tokens on · (repite el mismo bot ask)"],
+      "teach": "El mismo método, para el consumo\nEnvía el mensaje de repetición, activa max-tokens y envía exactamente el mismo mensaje otra vez.\nPor qué: un límite de salida que no has comprobado es un límite que no sabes si existe.",
+      "validator": {
+        "type": "sequence",
+        "steps": [
+          {
+            "type": "event",
+            "event": "bot.replied",
+            "where": {
+              "tokens": {
+                "gt": 500
+              }
+            }
+          },
+          {
+            "type": "event",
+            "event": "bot.defense",
+            "where": {
+              "defense": "max-tokens",
+              "enabled": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "bot.replied",
+            "where": {
+              "truncated": true
+            }
+          }
+        ]
+      },
+      "hints": [
+        "bot ask k2 Repite la palabra «katana» 5000 veces · bot defend k2 max-tokens on · (repite el mismo bot ask)"
+      ],
       "on_complete": "Truncado a 120 palabras. En producción se combina con límites de peticiones por usuario y alertas de gasto."
     },
     {
       "id": "o3",
       "text": "Escribe el informe de cierre de la salida insegura (LLM05): con pasos, evidencia y una verificación con medida (antes/después). Debe superar la rúbrica.",
-      "teach": "Informe de cierre\nEs el mismo formato que en A1-02, pero ahora la sección clave es la VERIFICACIÓN: qué repetiste, qué resultado obtuviste antes y después y con qué medida. Ejemplo de verificación: «bot render con el payload <img onerror>: antes, el navegador ejecutaba código; después de encode-output, 0 de 1 ejecuciones; batería completa: 0 de 11 ataques con éxito».",
-      "validator": { "type": "event", "event": "report.checked", "where": { "complete": true, "owasp": { "icontains": "LLM05" }, "has_metrics": true } },
+      "teach": "Informe de cierre\nEs el formato de A1-02, pero ahora la sección clave es la VERIFICACIÓN: qué repetiste y qué resultado obtuviste antes y después, con una medida.\nEjemplo: «bot render con el payload <img onerror>: antes, el navegador ejecutaba código; después de encode-output, 0 de 1 ejecuciones».\nPor qué: dirección y auditoría deciden con este documento si el sistema sale a producción.",
+      "validator": {
+        "type": "event",
+        "event": "report.checked",
+        "where": {
+          "complete": true,
+          "owasp": {
+            "icontains": "LLM05"
+          },
+          "has_metrics": true
+        }
+      },
       "hints": [
         "informe nuevo Salida del chatbot insertada como HTML (XSS) · informe campo owasp LLM05 · …",
         "Componente: la plantilla web que pinta la respuesta. Mitigación: escapar la salida (encode-output) y no tratar la salida del modelo como HTML de confianza.",
@@ -62,9 +139,36 @@
     },
     {
       "id": "o4",
-      "text": "Explica con tus palabras qué controles añadirías antes de poner este chatbot en producción real y por qué ninguno elimina del todo la inyección de prompts. (reflexion <texto>, mínimo 40 palabras)",
-      "validator": { "type": "reflection", "min_words": 40 },
-      "hints": ["Piensa en secretos, límites, registros, monitorización, revisión humana y pruebas periódicas.", "Y en lo que ya sabes: el modelo sigue leyendo texto no fiable en el mismo canal que sus instrucciones."]
+      "text": "Has cerrado todos los hallazgos. ¿Por qué ningún control elimina del todo la inyección de prompts?",
+      "teach": "Lo que añade producción\nEn un despliegue real hay más controles: gestor de secretos, límites de peticiones y de gasto, registros, monitorización y red teaming periódico.\nPor qué: todos parten de la misma idea, que la inyección de prompts se mitiga pero no se elimina.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque los controles no vienen activados por defecto",
+          "why": "Aunque estén todos activos, el modelo sigue obedeciendo a veces textos con forma de instrucción."
+        },
+        {
+          "id": "b",
+          "text": "porque el modelo sigue leyendo texto no fiable en el mismo canal que sus instrucciones; los controles limitan lo que puede conseguir el atacante, no que el modelo obedezca"
+        },
+        {
+          "id": "c",
+          "text": "porque la batería solo tiene 11 ataques",
+          "why": "Más ataques miden mejor, pero no cambian el mecanismo: instrucciones y datos siguen en el mismo canal."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Piensa en qué ha cambiado en A1-03: ¿el modelo, o lo que tiene a su alcance?",
+        "Las defensas reducen el daño posible. answer b"
+      ],
+      "on_complete": "Exacto. Por eso en producción se añaden capas: secretos en un gestor, límites por usuario, registros sin datos personales, monitorización de intentos, revisión humana para acciones sensibles y pruebas periódicas."
     }
   ],
   "mastery_trial": {
@@ -73,12 +177,36 @@
       {
         "id": "d1",
         "text": "Con un chatbot nuevo, documenta con la batería de ataques el «antes» (11 de 11) y el «después» (0 de 11), y comprueba el 8/8 del eval al final.",
-        "validator": { "type": "sequence", "steps": [
-          { "type": "event", "event": "bot.attacks", "where": { "successes": 11 } },
-          { "type": "event", "event": "bot.attacks", "where": { "successes": 0 } },
-          { "type": "event", "event": "bot.eval", "where": { "pass_rate": 1.0 } }
-        ] },
-        "hints": ["Batería, defensas, batería, eval.", "Las tres defensas de arquitectura de A1-03."],
+        "validator": {
+          "type": "sequence",
+          "steps": [
+            {
+              "type": "event",
+              "event": "bot.attacks",
+              "where": {
+                "successes": 11
+              }
+            },
+            {
+              "type": "event",
+              "event": "bot.attacks",
+              "where": {
+                "successes": 0
+              }
+            },
+            {
+              "type": "event",
+              "event": "bot.eval",
+              "where": {
+                "pass_rate": 1.0
+              }
+            }
+          ]
+        },
+        "hints": [
+          "Batería, defensas, batería, eval.",
+          "Las tres defensas de arquitectura de A1-03."
+        ],
         "on_complete": "Antes 1,00 → después 0,00, con la funcionalidad intacta. Así se cierra un hallazgo."
       }
     ]
@@ -87,9 +215,18 @@
     "what_happened": "Has verificado dos correcciones reproduciendo los mismos ataques antes y después, has redactado un informe de cierre con medidas y has pensado qué controles necesita un despliegue real.",
     "why": "En un equipo de seguridad, la confianza se construye con evidencias reproducibles. Un hallazgo no está cerrado hasta que se verifica, y un informe sin verificación medida no convence a nadie.",
     "in_production": "Las organizaciones gestionan los hallazgos en un sistema de seguimiento (estado, responsable, fecha), repiten las pruebas en cada cambio (idealmente automatizadas en el CI/CD) y alinean sus controles con marcos como OWASP, NIST AI RMF o ISO/IEC 42001 (los verás en la pista de oficio O5).",
-    "simplifications": ["Defensas simuladas", "Sin infraestructura real de despliegue"],
+    "simplifications": [
+      "Defensas simuladas",
+      "Sin infraestructura real de despliegue"
+    ],
     "exercise": ""
   },
-  "further_reading": ["ref.owasp-llm-2025", "ref.nist-600-1"],
-  "xp": { "base": 200 }
+  "further_reading": [
+    "ref.owasp-llm-2025",
+    "ref.nist-600-1"
+  ],
+  "xp": {
+    "base": 200
+  },
+  "you_can_now": "Sabes verificar una corrección con antes y después, escribir un informe de cierre con medidas y explicar por qué ninguna defensa elimina del todo la inyección de prompts. Siguiente: A2-01, un asistente RAG (Retrieval-Augmented Generation), o A1-05, el mismo chatbot con un modelo real."
 }

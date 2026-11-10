@@ -8,8 +8,20 @@
   "plane": "forja",
   "epistemic": "consolidado",
   "estimated_minutes": 90,
-  "requires_missions": ["T4-02", "P0-02"],
-  "competencies": { "requires": ["T4.backprop", "P0.numpy"], "trains": ["P0.numpy-vectorizacion", "P0.clases"] },
+  "requires_missions": [
+    "T4-02",
+    "P0-02"
+  ],
+  "competencies": {
+    "requires": [
+      "T4.backprop",
+      "P0.numpy"
+    ],
+    "trains": [
+      "P0.numpy-vectorizacion",
+      "P0.clases"
+    ]
+  },
   "briefing": "En T4-02 escribiste backpropagation ejemplo a ejemplo, con un bucle dentro de otro. Funcionaba, y así se entiende. Pero ninguna red real se entrena así: un lote de 4 ejemplos o de 4 millones pasa por la red de una vez, como productos de matrices. Hoy reescribes el mismo MLP de XOR en NumPy, con forward y backward en matrices, y compruebas con un gradient check que no has cambiado ni una derivada. Ejercicio: forja/ejercicios/P0_03_mlp.py.",
   "learning_objectives": [
     "Escribir forward y backward de un MLP en forma matricial y razonar con las formas (n, d) · (d, H)",
@@ -18,7 +30,11 @@
     "Distinguir actualizar en el sitio de crear objetos nuevos"
   ],
   "mentor_intro": "La regla de la cadena no cambia. Cambia dónde vive el bucle: antes lo escribías tú; ahora está dentro de cada @.",
-  "lab": { "datasets": [], "viz": {} },
+  "purpose": "Toda red neuronal, desde tu MLP (Multi-Layer Perceptron) hasta un LLM (Large Language Model), se entrena así: un lote de ejemplos pasa por la red como productos de matrices, y el backward calcula los gradientes también en matrices. Hoy reescribes el MLP de XOR (exclusive OR) de T4-02 de esta forma y compruebas con un gradient check que no has cambiado ni una derivada.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
   "theory_cards": [
     {
       "id": "formas",
@@ -40,15 +56,31 @@
     {
       "id": "o1",
       "text": "Con el entorno .venv de P0-02, ejecuta ronin_check para P0-03 y trae la primera evidencia.",
-      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "P0-03" } },
-      "hints": [".\\.venv\\Scripts\\python.exe -m ronin_check P0-03 · y aquí: evidence import"],
+      "teach": "Arrancar el ejercicio\nUsas el mismo entorno .venv de P0-02: ya tiene NumPy.\nronin_check ejecuta los tests y escribe la evidencia; evidence import la trae al Dojo.\nPor qué: los tests son tu especificación; leerlos antes de programar te dice qué tiene que hacer cada función.",
+      "validator": {
+        "type": "event",
+        "event": "evidence.imported",
+        "where": {
+          "exercise": "P0-03"
+        }
+      },
+      "hints": [
+        ".\\.venv\\Scripts\\python.exe -m ronin_check P0-03 · y aquí: evidence import"
+      ],
       "on_complete": "7 tests esperando. El más importante es el gradient check."
     },
     {
       "id": "o2",
       "text": "Implementa la clase MLP de P0_03_mlp.py hasta que pasen los 7 tests y trae la evidencia.",
-      "teach": "Depurar formas\nSi algo falla, imprime las formas: print(A1.shape, D1.shape). El gradient check compara cada elemento de tus matrices de gradientes con el gradiente numérico; si solo falla W1, el error está en D1 o en X.T @ D1.",
-      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "P0-03", "all_passed": true } },
+      "teach": "Piensa en formas\nCon n ejemplos, d entradas y H neuronas ocultas: X es (n, d), W1 es (d, H) y X @ W1 es (n, H): una fila por ejemplo.\nSi algo falla, imprime las formas: print(A1.shape, D1.shape).\nEl GRADIENT CHECK compara tus gradientes con los que salen de mover un poco cada peso y medir el cambio de la pérdida. Si solo falla W1, el error está en D1 o en X.T @ D1.\nPor qué: un error de traspuesta puede dar formas correctas y números equivocados; el gradient check es la forma de cazarlo.",
+      "validator": {
+        "type": "event",
+        "event": "evidence.imported",
+        "where": {
+          "exercise": "P0-03",
+          "all_passed": true
+        }
+      },
       "hints": [
         "Escribe las formas de cada línea del docstring de gradientes antes de programarla.",
         "Si el gradiente de b1 tiene forma (n, H), te falta sumar por filas: .sum(axis=0).",
@@ -59,8 +91,12 @@
     {
       "id": "o3",
       "text": "Entrena MLP(2, 4, semilla=0) con XOR 3000 épocas y lr 1.0. ¿Cuál es la pérdida final? (answer <número>, 4 decimales)",
-      "teach": "Reproducibilidad\nnp.random.default_rng(semilla) con NumPy 2.5.4 da siempre los mismos pesos iniciales: con la misma versión, tu número coincidirá con el de cualquier otra persona. Con otra versión del generador, podría no coincidir. Por eso se fijan versiones.",
-      "validator": { "type": "answer", "expected": 0.0024, "tolerance": 0.0001 },
+      "teach": "Reproducibilidad\nnp.random.default_rng(semilla) con NumPy 2.5.4 da siempre los mismos pesos iniciales.\nCon la misma versión, tu número coincidirá con el de cualquier otra persona. Con otra versión del generador, podría no coincidir.\nPor qué: por eso se fijan versiones y semillas en cualquier experimento de IA (Inteligencia Artificial) que quieras comparar.",
+      "validator": {
+        "type": "answer",
+        "expected": 0.0024,
+        "tolerance": 0.0001
+      },
       "wrong_answer": "Es el último valor del historial que devuelve entrenar. Comprueba X (4, 2), Y (4, 1) y que W1 se crea antes que W2.",
       "hints": [
         "X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]], dtype=float) · Y = np.array([[0], [1], [1], [0]], dtype=float)",
@@ -69,18 +105,55 @@
     },
     {
       "id": "o4",
-      "text": "Compara tu backprop de T4-02 con el de hoy: qué bucles han desaparecido y dónde están ahora, qué papel tienen la forma (n, H) y sum(axis=0), y por qué el gradient check sigue siendo necesario. (reflexion <texto>, mínimo 50 palabras)",
-      "validator": { "type": "reflection", "min_words": 50 },
-      "hints": ["Busca en T4_02_backprop.py el «para cada ejemplo» y encuentra su equivalente en una línea de hoy.", "Un error de traspuesta puede dar formas correctas y números equivocados."]
+      "text": "Compara tu backprop de T4-02 con el de hoy. ¿Dónde está ahora el bucle «para cada ejemplo»?",
+      "teach": "El bucle escondido\nEn T4-02 sumabas, ejemplo a ejemplo, la contribución de cada uno al gradiente.\nHoy D2 tiene una fila por ejemplo, y A1.T @ D2 hace esa misma suma en una sola operación. Los sesgos se suman a cada fila, así que su gradiente es D.sum(axis=0).\nPor qué: entender dónde vive el bucle te permite leer el código de cualquier librería de redes.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "ha desaparecido porque ya no hace falta sumar la contribución de cada ejemplo",
+          "why": "Sigue sumándose la contribución de cada ejemplo: lo hace el producto de matrices."
+        },
+        {
+          "id": "b",
+          "text": "dentro de los productos de matrices como A1.T @ D2, y en sum(axis=0) para los sesgos"
+        },
+        {
+          "id": "c",
+          "text": "en la función entrenar, que recorre los ejemplos uno a uno",
+          "why": "entrenar recorre épocas, no ejemplos. Cada época procesa el lote entero de una vez."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Busca en T4_02_backprop.py el «para cada ejemplo» y su equivalente en una línea de hoy.",
+        "A1.T @ D2 suma, para cada peso, su contribución en todos los ejemplos. answer b"
+      ],
+      "on_complete": "Exacto. El bucle sigue existiendo, pero dentro de @ y de sum(axis=0), en código compilado. Y el gradient check sigue siendo necesario: una traspuesta equivocada no siempre da error de forma."
     }
   ],
   "debrief": {
     "what_happened": "Has reescrito el MLP de T4-02 en forma matricial: forward con X @ W1, backward con productos traspuestos y sumas por columnas, actualización en el sitio. El gradient check y la comparación lote frente a uno a uno demuestran que las matemáticas no han cambiado.",
     "why": "Las GPU y las bibliotecas de álgebra lineal están optimizadas para multiplicar matrices grandes. Escribir una red como productos de matrices es lo que la hace entrenable a escala. PyTorch o JAX calculan este mismo backward automáticamente (autodiferenciación): ahora sabes qué hacen.",
     "in_production": "Nadie escribe el backward a mano: se usa autodiferenciación (PyTorch, JAX), entrenamiento por mini-lotes, optimizadores como Adam, inicializaciones escaladas (Xavier o He) y precisión mixta en GPU. El gradient check se sigue usando para verificar capas personalizadas.",
-    "simplifications": ["Lote completo de 4 ejemplos", "Inicialización uniforme en [−1, 1]", "Sin GPU: NumPy en CPU basta para estas redes"],
+    "simplifications": [
+      "Lote completo de 4 ejemplos",
+      "Inicialización uniforme en [−1, 1]",
+      "Sin GPU: NumPy en CPU basta para estas redes"
+    ],
     "exercise": "forja/ejercicios/P0_03_mlp.py"
   },
-  "further_reading": ["ref.numpy-broadcasting", "ref.numpy-random"],
-  "xp": { "base": 200 }
+  "further_reading": [
+    "ref.numpy-broadcasting",
+    "ref.numpy-random"
+  ],
+  "xp": {
+    "base": 200
+  },
+  "you_can_now": "Sabes escribir forward y backward en matrices, razonar con las formas (n, H) y comprobar gradientes numéricamente. Es lo que hace por dentro PyTorch cuando llamas a backward()."
 }

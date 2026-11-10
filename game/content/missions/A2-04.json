@@ -7,8 +7,23 @@
   "plane": "forja",
   "epistemic": "practica-industria",
   "estimated_minutes": 210,
-  "requires_missions": ["A2-03", "A1-05"],
-  "competencies": { "requires": ["A2.defensa-rag", "A1.forja-medicion"], "trains": ["A2.forja-rag", "A2.busqueda-hibrida", "A2.evaluacion-recuperacion", "A2.firma-documentos", "A2.seguridad-base-vectorial"] },
+  "requires_missions": [
+    "A2-03",
+    "A1-05"
+  ],
+  "competencies": {
+    "requires": [
+      "A2.defensa-rag",
+      "A1.forja-medicion"
+    ],
+    "trains": [
+      "A2.forja-rag",
+      "A2.busqueda-hibrida",
+      "A2.evaluacion-recuperacion",
+      "A2.firma-documentos",
+      "A2.seguridad-base-vectorial"
+    ]
+  },
   "briefing": "En A2-01…03 construiste, atacaste y defendiste una biblioteca simulada. Hoy es la de verdad: embeddings reales con embeddinggemma, una base vectorial Qdrant y llama3.2:1b respondiendo con lo que recupera, todo en tu CPU. Entre los documentos hay una reseña con una instrucción escondida, un mensaje de foro con un dato falso y dos documentos internos. Medirás qué consigue cada defensa y cuánto cuesta. Instrucciones: forja/labs/A2-04_rag/README.md.",
   "learning_objectives": [
     "Implementar troceo con solape, búsqueda léxica BM25 y fusión de rankings (RRF) para una búsqueda híbrida",
@@ -18,7 +33,11 @@
     "Explicar por qué la base vectorial y sus embeddings se protegen como los propios documentos"
   ],
   "mentor_intro": "En la biblioteca simulada, cada defensa cerraba un ataque y punto. Con modelos reales, las capas que filtran qué entra en el contexto son deterministas; las que piden al modelo que no obedezca, no.",
-  "lab": { "datasets": [], "viz": {} },
+  "purpose": "Un RAG (Retrieval-Augmented Generation) real combina embeddings de una red neuronal, una base de datos vectorial y un LLM (Large Language Model). Hoy montas uno en tu CPU (Central Processing Unit) con embeddinggemma, Qdrant y llama3.2:1b, y mides qué hacen de verdad las defensas de A2-03: las que filtran qué entra en el contexto y las que solo le piden al modelo que no obedezca.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
   "theory_cards": [
     {
       "id": "hibrida",
@@ -35,8 +54,15 @@
     {
       "id": "o1",
       "text": "Implementa las ocho funciones de rag.py hasta que pasen los 20 tests y trae la evidencia.",
-      "teach": "Filtrar dentro de la búsqueda\nEl control de acceso y la procedencia se aplican como filtro DENTRO de la consulta a Qdrant y del ranking BM25, no quitando resultados después. Si filtraras después, un documento prohibido ocuparía un puesto del top-k y el cliente recibiría menos fragmentos útiles. Y la política es una sola: los dos índices deben decir lo mismo.",
-      "validator": { "type": "event", "event": "evidence.imported", "where": { "exercise": "A2-04", "all_passed": true } },
+      "teach": "Filtrar dentro de la búsqueda\nEl control de acceso y la procedencia se aplican como filtro DENTRO de la consulta a Qdrant (la base vectorial) y del ranking BM25 (Best Matching 25, una puntuación por palabras), no quitando resultados después.\nSi filtraras después, un documento prohibido ocuparía un puesto del top-k y el cliente recibiría menos fragmentos útiles.\nPor qué: así se aplican los permisos en los RAG (Retrieval-Augmented Generation) de empresa.",
+      "validator": {
+        "type": "event",
+        "event": "evidence.imported",
+        "where": {
+          "exercise": "A2-04",
+          "all_passed": true
+        }
+      },
       "hints": [
         "Orden: trocear → bm25 → fusion_rrf → recall_en_k → filtro_acceso → firmar → verificar_firma → ensamblar_contexto.",
         "Desde forja/labs/A2-04_rag: .\\.venv\\Scripts\\python.exe -m unittest -v test_rag (crea el entorno como en P0-01).",
@@ -47,8 +73,26 @@
     {
       "id": "o2",
       "text": "Con Ollama en marcha y embeddinggemma descargado, ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y trae la medición.",
-      "prediction": { "prompt": "Con spotlight como única defensa, ¿qué crees que pasará con el envenenamiento del foro?", "options": ["lo frena casi siempre", "lo frena a veces", "casi no lo frena"] },
-      "validator": { "type": "event", "event": "evidence.measured", "where": { "lab": "A2-04", "has_baseline": true, "configs": { "gte": 3 } } },
+      "teach": "La batería real\nbateria.py hace las preguntas legítimas y los ataques con cada configuración de defensas, varias veces, y mide también el recall@3: si el fragmento correcto está entre los 3 primeros.\nPor qué: con modelos reales, solo repitiendo y contando sabes qué protege cada defensa.",
+      "prediction": {
+        "prompt": "Con spotlight como única defensa, ¿qué crees que pasará con el envenenamiento del foro?",
+        "options": [
+          "lo frena casi siempre",
+          "lo frena a veces",
+          "casi no lo frena"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "evidence.measured",
+        "where": {
+          "lab": "A2-04",
+          "has_baseline": true,
+          "configs": {
+            "gte": 3
+          }
+        }
+      },
       "hints": [
         "ollama pull embeddinggemma · python bateria.py · tarda varios minutos en CPU (cada configuración son 33 preguntas con --n 3).",
         "Con poco tiempo: python bateria.py --n 2 --configs \"ninguna;acl;acl,procedencia,spotlight\""
@@ -57,25 +101,95 @@
     },
     {
       "id": "o3",
-      "text": "Analiza tus números: qué modo de búsqueda recuperó mejor y por qué; qué categoría de ataque frenó cada defensa; en qué configuraciones «en contexto» bajó a 0 y en cuáles el documento llegó al modelo pero el ataque falló a veces; y si alguna defensa rompió preguntas legítimas. (reflexion <texto>, mínimo 60 palabras)",
-      "teach": "Lo que vio frente a lo que obedeció\nacl y procedencia actúan antes del modelo: si funcionan, «en contexto» baja a 0 para su categoría y el ataque no tiene nada con qué trabajar. spotlight actúa dentro del modelo: el documento sigue llegando y solo cambia la probabilidad de que lo obedezca. Por eso sus resultados varían entre repeticiones y sus intervalos son anchos.",
-      "validator": { "type": "reflection", "min_words": 60 },
-      "hints": ["evidence list te recuerda los recuentos de cada configuración; el desglose por categoría está en la salida de bateria.py.", "Compara spotlight frente a procedencia en el envenenamiento: ¿qué parte del documento falso le dice al modelo que no lo use?"]
+      "text": "En tu medición, los resultados de spotlight varían entre repeticiones y los de acl no. ¿Por qué?",
+      "teach": "Lo que vio frente a lo que obedeció\nacl y procedencia actúan antes del modelo: si funcionan, «en contexto» baja a 0 y el ataque no tiene con qué trabajar.\nspotlight actúa dentro del modelo: el documento sigue llegando.\nPor qué: saber dónde actúa una defensa te dice cuánto puedes fiarte de ella.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque acl actúa antes del modelo (el documento no llega al contexto), y spotlight actúa dentro del modelo: el documento llega y solo cambia la probabilidad de que lo obedezca"
+        },
+        {
+          "id": "b",
+          "text": "porque Qdrant devuelve resultados al azar",
+          "why": "La búsqueda es la misma en cada repetición. Lo que varía es la respuesta del modelo."
+        },
+        {
+          "id": "c",
+          "text": "porque spotlight se desactiva solo en algunas preguntas",
+          "why": "Está activo siempre. Pero un LLM con temperatura no responde igual dos veces."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "Mira la columna «en contexto» de cada configuración.",
+        "Lo que vio frente a lo que obedeció. answer a"
+      ],
+      "on_complete": "Exacto. Las capas que deciden qué entra en el contexto son deterministas; las que piden al modelo que no obedezca, no. Por eso los intervalos de spotlight son más anchos."
     },
     {
       "id": "o4",
-      "text": "Explica por qué el rol tiene que salir del token y no de la petición, qué prueba y qué no prueba la firma de un documento, y por qué una base vectorial sin autenticación es una fuga de los documentos aunque nadie pueda leer su texto. (reflexion <texto>, mínimo 50 palabras)",
-      "validator": { "type": "reflection", "min_words": 50 },
-      "hints": ["En test_rag.py, la petición con «rol»: «empleado» en el cuerpo sigue siendo de un cliente.", "A2-02: inversión de embeddings. Y la documentación de seguridad de Qdrant: sin configurar, sin autenticación y en todas las interfaces."]
+      "text": "¿Por qué el rol del usuario tiene que salir del token de autenticación y no del cuerpo de la petición?",
+      "teach": "De dónde salen los permisos\nUn TOKEN de autenticación lo emite el sistema de identidad y el cliente no puede cambiarlo. El cuerpo de la petición lo escribe el cliente.\nPor qué: un control de acceso que se fía de lo que dice el cliente no controla nada.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque el cuerpo lo escribe el cliente: puede poner «rol»: «empleado» y leer documentos internos"
+        },
+        {
+          "id": "b",
+          "text": "porque leer el token es más rápido",
+          "why": "No es una cuestión de velocidad, sino de quién controla ese dato."
+        },
+        {
+          "id": "c",
+          "text": "porque Qdrant no acepta roles en el cuerpo",
+          "why": "Qdrant filtra con lo que le pases. El problema es fiarse de un dato que controla el cliente."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "Mira en test_rag.py la petición con «rol»: «empleado» en el cuerpo.",
+        "Lo que escribe el cliente no prueba quién es. answer a"
+      ],
+      "on_complete": "Exacto. Del mismo modo, una firma HMAC (Hash-based Message Authentication Code) prueba que un documento no ha cambiado desde que la forja lo firmó, pero no que sea verdad. Y una base vectorial sin autenticación filtra los documentos aunque nadie lea su texto: los vectores se pueden invertir (A2-02)."
     }
   ],
   "debrief": {
     "what_happened": "Has construido una biblioteca RAG real: troceo, embeddings, Qdrant, BM25 y fusión híbrida, con su recall medido. Después has medido contra modelos reales qué ataque frena cada defensa: el control de acceso y la firma impiden que el documento llegue al modelo; el marcado solo reduce la probabilidad de que el modelo lo obedezca.",
     "why": "En un RAG, lo que entra en el contexto lo decide la recuperación, y quien controla un documento indexado controla parte de lo que lee el modelo. Las defensas más fiables son las que deciden qué entra (quién puede ver qué y de dónde viene) porque no dependen del comportamiento del modelo.",
     "in_production": "El control de acceso se aplica en la propia consulta a la base vectorial con el rol del sistema de identidad, a menudo con una colección o un filtro por tenant. Los documentos se firman o se registra su procedencia en la ingesta. La base vectorial lleva autenticación, red privada y cifrado, porque los vectores revelan el texto. La recuperación se evalúa con conjuntos de preguntas etiquetadas en cada cambio de modelo de embeddings o de troceo.",
-    "simplifications": ["Seis ataques fijos y cinco preguntas legítimas", "Una firma HMAC con una clave de laboratorio en el código", "Tokens de rol fijos en lugar de un sistema de identidad", "BM25 en memoria en lugar de un índice léxico", "El Dojo no puede comprobar que la medición se hizo con los modelos reales: confía en tus datos"],
+    "simplifications": [
+      "Seis ataques fijos y cinco preguntas legítimas",
+      "Una firma HMAC con una clave de laboratorio en el código",
+      "Tokens de rol fijos en lugar de un sistema de identidad",
+      "BM25 en memoria en lugar de un índice léxico",
+      "El Dojo no puede comprobar que la medición se hizo con los modelos reales: confía en tus datos"
+    ],
     "exercise": "forja/labs/A2-04_rag/rag.py"
   },
-  "further_reading": ["ref.robertson-bm25-2009", "ref.cormack-rrf-2009", "ref.rfc-2104", "ref.qdrant-security", "ref.ollama-embed", "ref.hines-2024", "ref.owasp-llm-2025"],
-  "xp": { "base": 500 }
+  "further_reading": [
+    "ref.robertson-bm25-2009",
+    "ref.cormack-rrf-2009",
+    "ref.rfc-2104",
+    "ref.qdrant-security",
+    "ref.ollama-embed",
+    "ref.hines-2024",
+    "ref.owasp-llm-2025"
+  ],
+  "xp": {
+    "base": 500
+  },
+  "you_can_now": "Sabes montar una búsqueda híbrida con control de acceso dentro de la consulta, firmar documentos y medir qué defensas son deterministas y cuáles dependen del modelo. Siguientes: A2-05 (texto oculto en documentos) y A2-06 (reordenar resultados)."
 }
