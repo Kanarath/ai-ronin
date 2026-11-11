@@ -110,7 +110,7 @@ func test_mision_C5_01() -> void:
 	lines = []
 	for id: String in CAT:
 		lines.append("engagement threat final %s %s" % [id, CAT[id]])
-	run(lines + ["answer b", "answer a"])
+	run(lines + ["answer a", "answer b"])
 	assert_eq(game.runner.phase, "trial")
 	lines = ["engagement start t2"]
 	for id: String in OBJ:
@@ -131,7 +131,7 @@ func test_mision_C5_02() -> void:
 	run(["hipotesis no, LLM09 no encaja con un pipeline de entrenamiento y serving", "engagement finding final A-05 LLM09"])
 	run(_findings("final", ids))
 	assert_eq(game.runner.index, 3)
-	run(["engagement summary final", "answer A-01", "answer b"])
+	run(["engagement summary final", "answer A-01", "answer c"])
 	run(["informe nuevo Modelo pickle con código cargado sin control en el pipeline", "informe campo severidad crítica", "informe campo owasp LLM03",
 		"informe campo componente pipeline de modelos de inspección A-05", "informe campo descripcion el servidor carga un pickle de un hub público que ejecuta código",
 		"informe campo pasos 1) engagement start final 2) supply forja pipe 3) supply attack pipe",
@@ -152,10 +152,10 @@ func test_mision_C5_03() -> void:
 	assert_eq(game.runner.index, 1)
 	run(["hipotesis no, falta algo más"] + _pipeline_controls() + ["supply attack pipe", "supply eval pipe", "engagement retest final"])
 	assert_eq(game.runner.index, 2)
-	run(["answer b"])
+	run(["answer a"])
 	run(FIX["A-01"] + FIX["A-03"] + ["supply convert pipe clasificador-acero", "supply attack pipe", "supply eval pipe", "engagement retest final"])
 	assert_eq(game.runner.index, 4)
-	run(["engagement summary final", "answer c"])
+	run(["engagement summary final", "answer b"])
 	assert_eq(game.runner.phase, "trial")
 	run(_setup("t2", ["A-01", "A-03"]) + _findings("t2", ["A-01", "A-03"]) + FIX["A-01"] + FIX["A-03"] + ["engagement retest t2"])
 	assert_eq(finished.size(), 1)

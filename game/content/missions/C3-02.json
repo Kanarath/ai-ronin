@@ -36,7 +36,7 @@
     {
       "id": "interaccion",
       "title": "Las defensas interactúan",
-      "body": "La matriz mide cada defensa en solitario y suponer que se suman es cómodo, pero falso a veces: una defensa puede cambiar lo que otra ve. consent juzga las llamadas por sus ARGUMENTOS visibles. Si otra defensa limpia la descripción envenenada, la llamada parece inocente y el usuario la aprueba; el token, que viaja en la cabecera y no en los argumentos, sigue saliendo. Por eso lab resilience mide cada combinación de verdad.",
+      "body": "La matriz mide cada defensa en solitario, y suponer que se suman es cómodo pero a veces falso: una defensa puede cambiar lo que otra ve. consent juzga cada llamada por sus ARGUMENTOS visibles; si otra defensa le quita la pista, el usuario aprueba lo que no debería. Por eso lab resilience mide cada combinación de verdad.",
       "unlock_on": "objective:o3"
     }
   ],
@@ -62,7 +62,7 @@
         "mcp host erp · mcp defend erp namespacing on · mcp defend erp least-scope on · mcp defend erp output-isolation on · mcp defend erp pin-definitions on · mcp defend erp review-descriptions on · lab resilience mcp erp"
       ],
       "on_complete": "Dos robustos con cinco defensas. Suplantación, token y salida inyectada siguen dependiendo de una sola.",
-      "teach": "Robustez sin coste\nEn un host nuevo, activa solo defensas sin coste (todas menos consent) y mide con lab resilience mcp erp.\nPor qué: es la mejor configuración que puedes tener sin molestar al usuario; tu punto de partida."
+      "teach": "Robustez sin coste\nCrea un host nuevo (mcp host erp), activa solo defensas sin coste (todas menos consent) y mide con lab resilience mcp erp.\nPor qué: es la mejor configuración que puedes tener sin molestar al usuario; tu punto de partida."
     },
     {
       "id": "o2",
@@ -105,8 +105,8 @@
     },
     {
       "id": "o3",
-      "text": "¿Por qué consent ya no protege el token si quitas least-scope? Comprueba el ataque con la descripción saneada: ¿qué defensa hace que la llamada le parezca inocente al usuario? (answer <defensa>)",
-      "teach": "Mirar dentro\nconsent rechaza una llamada si ve el token en sus argumentos. Sin defensas, la descripción envenenada mete el token en el campo «notas», y el usuario lo ve.\nCon review-descriptions, la descripción se sanea, los argumentos quedan limpios… y el token sigue saliendo en la cabecera hacia el servidor de terceros, donde el usuario no mira.\nPor qué: dos defensas buenas pueden quitarse información la una a la otra; por eso se mide cada combinación.",
+      "text": "¿Qué defensa hace que la llamada que filtra el token le parezca inocente al usuario? (answer <defensa>)",
+      "teach": "Mirar dentro\nconsent rechaza una llamada si ve el token en sus argumentos. Sin defensas, la descripción envenenada mete el token en el campo «notas», y el usuario lo ve.\nCon una de tus cinco defensas, los argumentos quedan limpios… y el token sigue saliendo en la cabecera hacia el servidor de terceros, donde el usuario no mira.\nPor qué: dos defensas buenas pueden quitarse información la una a la otra; por eso se mide cada combinación.",
       "validator": {
         "type": "answer",
         "expected": "review-descriptions",
@@ -117,7 +117,8 @@
         ]
       },
       "hints": [
-        "Quita least-scope y review-descriptions por turnos y repite lab resilience; o lee la carta de teoría."
+        "Quita las defensas de una en una y repite lab resilience; o relee la tarjeta de teoría «Las defensas interactúan».",
+        "¿Cuál de tus defensas reescribe las descripciones de las herramientas?"
       ],
       "on_complete": "Una defensa buena (sanear descripciones) le quita a otra (consent) la pista con la que decidía. Ninguna está mal; juntas no suman lo que la matriz prometía."
     },
@@ -127,35 +128,19 @@
       "choices": [
         {
           "id": "a",
-          "text": "que review-descriptions es una mala defensa",
+          "text": "que review-descriptions es una mala defensa y conviene quitarla",
           "why": "Sanea bien las descripciones. El problema está en cómo cambia lo que ve consent."
         },
         {
           "id": "b",
-          "text": "que las defensas pueden interactuar, así que hay que medir cada combinación y no sumar la matriz"
+          "text": "que consent no sirve para nada y es mejor no activarlo nunca",
+          "why": "Añadido a las cinco, dio un robusto más: la salida inyectada. Sirve, pero menos de lo que prometía la matriz."
         },
         {
           "id": "c",
-          "text": "que consent no sirve para nada",
-          "why": "Añadido a las cinco, dio un robusto más: la salida inyectada. Sirve, pero menos de lo que prometía la matriz."
+          "text": "que una combinación hay que medirla, no deducirla de la matriz"
         }
       ],
-      "validator": {
-        "type": "answer",
-        "expected": "b",
-        "accept": [
-          "b"
-        ]
-      },
-      "hints": [
-        "La matriz era una hipótesis. ¿Qué la ha corregido?",
-        "answer b"
-      ],
-      "on_complete": "Eso es: la matriz es una hipótesis y la medición de la combinación, el resultado."
-    },
-    {
-      "id": "o4",
-      "text": "Para cerrar: ¿activarías consent en producción para este host?",
       "validator": {
         "type": "answer",
         "expected": "c",
@@ -164,23 +149,39 @@
         ]
       },
       "hints": [
-        "Un robusto más a cambio de cuatro aprobaciones por cada cuatro tareas.",
+        "La matriz era una hipótesis. ¿Qué la ha corregido?",
         "answer c"
+      ],
+      "on_complete": "Eso es: la matriz es una hipótesis y la medición de la combinación, el resultado."
+    },
+    {
+      "id": "o4",
+      "text": "Para cerrar: ¿activarías consent en producción para este host?",
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Un robusto más a cambio de cuatro aprobaciones por cada cuatro tareas.",
+        "answer b"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "sí, para todas las llamadas: da un robusto más",
+          "text": "sí, en todas las llamadas, porque da un ataque robusto más",
           "why": "Cuatro aprobaciones por cuatro tareas acaban en fatiga y en que alguien lo desactive."
         },
         {
           "id": "b",
-          "text": "nunca: no aporta nada",
-          "why": "Añadido a las cinco defensas, dio una segunda cerradura a la salida inyectada."
+          "text": "solo en acciones de alto impacto, enseñando qué efecto tendrán"
         },
         {
           "id": "c",
-          "text": "solo para acciones irreversibles o de alto impacto, con un resumen claro de su efecto"
+          "text": "nunca, porque junto a las otras cinco defensas no aporta nada",
+          "why": "Añadido a las cinco defensas, dio una segunda cerradura a la salida inyectada."
         }
       ],
       "on_complete": "Eso es: el consentimiento se reserva para lo que importa, y se enseña el efecto, no los argumentos crudos."

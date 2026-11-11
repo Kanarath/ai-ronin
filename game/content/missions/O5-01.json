@@ -20,7 +20,7 @@
       "O5.iso-42001"
     ]
   },
-  "briefing": "Tras el incidente del asistente, la dirección de la forja pregunta tres cosas: qué nos obliga, cómo nos organizamos para gestionar el riesgo y cómo demostramos a un cliente que lo hacemos bien. Cada pregunta tiene un marco distinto: el AI Act, el NIST AI RMF (AI Risk Management Framework) e ISO/IEC (International Organization for Standardization / International Electrotechnical Commission) 42001. Se confunden a menudo. Hoy aprenderás qué es cada uno, qué NO es, y llevarás los hallazgos de la forja a su lenguaje.",
+  "briefing": "Tras el incidente del asistente, la dirección de la forja pregunta tres cosas: qué nos obliga, cómo nos organizamos para gestionar el riesgo y cómo demostramos a un cliente que lo hacemos bien. Cada pregunta tiene un marco distinto: el AI Act, el marco NIST AI RMF (Artificial Intelligence Risk Management Framework, del National Institute of Standards and Technology de EE. UU.) y la norma ISO/IEC 42001 (International Organization for Standardization / International Electrotechnical Commission). Se confunden a menudo. Hoy aprenderás qué es cada uno, qué NO es, y llevarás los hallazgos de la forja a su lenguaje.",
   "learning_objectives": [
     "Distinguir una ley (AI Act), un marco voluntario (NIST AI RMF) y una norma certificable (ISO/IEC 42001)",
     "Asignar hallazgos de seguridad a las funciones del NIST AI RMF",
@@ -31,17 +31,18 @@
     "datasets": [],
     "viz": {}
   },
-  "purpose": "Los hallazgos técnicos (una inyección, una fuga, un agente sin límites) solo se arreglan si llegan a la dirección en su idioma: el de los marcos de gobernanza de la IA (Inteligencia Artificial). En Europa, una empresa que usa IA se cruza con tres: una ley (el AI Act), un marco voluntario de gestión de riesgos (el NIST AI RMF (AI Risk Management Framework)) y una norma certificable (ISO/IEC 42001). Hoy aprendes qué pregunta responde cada uno y a traducir los hallazgos de la forja a su lenguaje. Esto es formación, no asesoramiento jurídico.",
+  "purpose": "Los hallazgos técnicos (una inyección, una fuga, un agente sin límites) solo se arreglan si llegan a la dirección en su idioma: el de los marcos de gobernanza de la IA (Inteligencia Artificial). En Europa, una empresa que usa IA se cruza con tres: una ley, el AI Act; un marco voluntario de gestión de riesgos, el NIST AI RMF (Artificial Intelligence Risk Management Framework, del National Institute of Standards and Technology de EE. UU.); y una norma certificable, ISO/IEC 42001 (International Organization for Standardization / International Electrotechnical Commission). Hoy aprendes qué pregunta responde cada uno y a traducir los hallazgos de la forja a su lenguaje. Esto es formación, no asesoramiento jurídico.",
   "theory_cards": [
     {
       "id": "tres-marcos",
       "title": "Ley, marco y norma",
-      "body": "AI Act: el Reglamento (UE) 2024/1689, modificado en 2026 por el Reglamento (UE) 2026/1744 (Digital Omnibus). Obliga según el nivel de riesgo del sistema. NIST AI RMF (AI Risk Management Framework) 1.0 (NIST AI 100-1, 2023): marco voluntario de gestión de riesgos con cuatro funciones; tiene un perfil para IA (Inteligencia Artificial) generativa (NIST AI 600-1, 2024) y, según el NIST, se está revisando (consultado el 2026-11-11). ISO/IEC (International Organization for Standardization / International Electrotechnical Commission) 42001:2023: norma de sistema de gestión de la IA, certificable, con la estructura común de ISO 27001 o 9001 y un anexo A de controles de referencia. Comandos: gov open · gov frameworks · gov framework."
+      "body": "AI Act: el Reglamento (UE) 2024/1689, modificado en 2026 por el Reglamento (UE) 2026/1744 (Digital Omnibus). Obliga según el nivel de riesgo del sistema. NIST AI RMF 1.0 (NIST AI 100-1, 2023): marco voluntario de gestión de riesgos con cuatro funciones; tiene un perfil para IA generativa (NIST AI 600-1, 2024) y, según el propio NIST, se está revisando (consultado el 2026-11-11). ISO/IEC 42001:2023: norma de sistema de gestión de la IA, certificable, con la estructura común de ISO 27001 o 9001 y un anexo A de controles de referencia. Comandos: gov open · gov frameworks · gov framework.",
+      "unlock_on": "objective:o1"
     },
     {
       "id": "funciones-y-clausulas",
-      "title": "Funciones del NIST y cláusulas de ISO 42001",
-      "body": "NIST AI RMF (AI Risk Management Framework): GOVERN (cultura, roles, políticas), MAP (contexto, inventario y riesgos de cada sistema), MEASURE (medir y probar: evaluaciones, red team), MANAGE (priorizar, tratar y vigilar los riesgos). ISO/IEC (International Organization for Standardization / International Electrotechnical Commission) 42001, cláusulas con requisitos: 4 contexto de la organización, 5 liderazgo (política y roles), 6 planificación (evaluación y tratamiento de riesgos), 7 apoyo, 8 operación, 9 evaluación del desempeño (seguimiento, medición, auditoría interna), 10 mejora (no conformidades y acciones correctivas).",
+      "title": "Funciones y cláusulas",
+      "body": "NIST AI RMF (AI Risk Management Framework): GOVERN (cultura, roles, políticas), MAP (contexto, inventario y riesgos de cada sistema), MEASURE (medir y probar: evaluaciones, red team), MANAGE (priorizar, tratar y vigilar los riesgos). ISO/IEC 42001, cláusulas con requisitos: 4 contexto de la organización, 5 liderazgo (política y roles), 6 planificación (evaluación y tratamiento de riesgos), 7 apoyo, 8 operación, 9 evaluación del desempeño (seguimiento, medición, auditoría interna), 10 mejora (no conformidades y acciones correctivas).",
       "unlock_on": "objective:o3"
     }
   ],
@@ -72,38 +73,38 @@
       "hints": [
         "gov open forja · gov frameworks forja"
       ],
-      "on_complete": "ISO/IEC 42001. El AI Act obliga pero no certifica, y el NIST AI RMF (AI Risk Management Framework) ni obliga ni certifica.",
-      "teach": "Ley, marco y norma\nUna LEY obliga y se puede sancionar su incumplimiento. Un MARCO voluntario orienta: nadie te obliga a seguirlo ni te certifica. Una NORMA de sistema de gestión se puede CERTIFICAR: una entidad externa audita que la cumples.\ngov open forja abre la carpeta de gobernanza; gov frameworks forja compara los tres.\nPor qué: confundirlos lleva a frases como «estamos certificados, así que cumplimos la ley»."
+      "on_complete": "ISO/IEC 42001: es la única de las tres que una entidad externa audita y certifica.",
+      "teach": "Obliga, orienta o certifica\nUna LEY obliga y se puede sancionar su incumplimiento. Un MARCO voluntario orienta: nadie te obliga a seguirlo ni te certifica. Una NORMA de sistema de gestión se puede CERTIFICAR: una entidad externa audita que la cumples.\ngov open forja abre la carpeta de gobernanza; gov frameworks forja compara los tres.\nPor qué: confundirlos lleva a frases como «estamos certificados, así que cumplimos la ley»."
     },
     {
       "id": "c1",
-      "text": "Si la forja decide no seguir el NIST AI RMF (AI Risk Management Framework), ¿qué pasa?",
+      "text": "Si la forja decide no seguir el NIST AI RMF, ¿qué pasa?",
       "choices": [
         {
           "id": "a",
-          "text": "la sanciona la autoridad europea",
-          "why": "El NIST AI RMF (AI Risk Management Framework) es un marco voluntario publicado por una agencia de Estados Unidos: no obliga a nadie."
+          "text": "la sanciona la autoridad europea que supervisa el AI Act",
+          "why": "El NIST AI RMF es un marco voluntario publicado por una agencia de Estados Unidos: no obliga a nadie."
         },
         {
           "id": "b",
-          "text": "nada legal: es voluntario, aunque le ayudaría a organizar la gestión de sus riesgos"
+          "text": "pierde su certificación ISO/IEC 42001 en la siguiente auditoría",
+          "why": "Son documentos distintos: una certificación ISO/IEC 42001 se audita contra los requisitos de esa norma, no contra el NIST AI RMF."
         },
         {
           "id": "c",
-          "text": "pierde la certificación ISO/IEC 42001",
-          "why": "Son documentos distintos: una certificación ISO/IEC 42001 se audita contra los requisitos de esa norma, no contra el NIST AI RMF (AI Risk Management Framework)."
+          "text": "ninguna consecuencia legal, aunque pierde una buena guía de gestión"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
-        "Mira la columna que dice si cada marco obliga.",
-        "answer b"
+        "Vuelve a lanzar gov frameworks forja y mira la columna que dice si cada marco obliga.",
+        "answer c"
       ],
       "on_complete": "Eso es. Voluntario no es inútil: muchas organizaciones lo usan como vocabulario común de riesgos, como harás tú con los hallazgos."
     },
@@ -152,7 +153,7 @@
     },
     {
       "id": "o3",
-      "text": "Asigna cada uno de los cuatro hallazgos a su función del NIST AI RMF (AI Risk Management Framework).",
+      "text": "Asigna cada uno de los cuatro hallazgos a su función del NIST AI RMF.",
       "validator": {
         "type": "event",
         "event": "gov.mapped",
@@ -164,8 +165,8 @@
         "gov findings forja · gov map forja F1 nist <función>",
         "Responsable y política → GOVERN. Inventario y contexto → MAP. Probar y medir → MEASURE. Tratar y cerrar → MANAGE."
       ],
-      "on_complete": "Cuatro hallazgos, cuatro funciones. Fíjate: tus baterías de A1–A6 eran MEASURE, y el retest de C5 era MANAGE.",
-      "teach": "Hallazgos → funciones del NIST AI RMF (AI Risk Management Framework)\ngov findings forja lista los cuatro hallazgos; gov map forja <F#> nist <función> asigna uno.\nPregúntate de qué habla cada hallazgo: de quién decide y con qué política (GOVERN), de qué sistemas hay y en qué contexto (MAP), de probar y medir (MEASURE) o de tratar un riesgo ya conocido (MANAGE).\nPor qué: tus baterías de ataques de A1–A6 son MEASURE; con este vocabulario, la dirección sabe dónde encajan."
+      "on_complete": "Cuatro hallazgos, cuatro funciones. Fíjate: tus baterías de A1–A6 eran MEASURE, y un retest como los de C5 es MANAGE.",
+      "teach": "Hallazgos → funciones\ngov findings forja lista los cuatro hallazgos; gov map forja <F#> nist <función> asigna uno.\nPregúntate de qué habla cada hallazgo: de quién decide y con qué política (GOVERN), de qué sistemas hay y en qué contexto (MAP), de probar y medir (MEASURE) o de tratar un riesgo ya conocido (MANAGE).\nPor qué: tus baterías de ataques de A1–A6 son MEASURE; con este vocabulario, la dirección sabe dónde encajan."
     },
     {
       "id": "o4",
@@ -182,36 +183,36 @@
         "F1 liderazgo (5) · F2 contexto o planificación (4 o 6) · F3 evaluación del desempeño (9) · F4 tratamiento, operación o mejora (6, 8 o 10)"
       ],
       "on_complete": "Algunas admiten más de una cláusula: los marcos no son una tabla exacta, y en una auditoría se justifica la elección.",
-      "teach": "Hallazgos → cláusulas de ISO/IEC 42001\nLas cláusulas con requisitos van de la 4 a la 10 (la tarjeta de arriba las resume). gov map forja <F#> iso <número> asigna una.\nAlgunos hallazgos encajan en más de una cláusula; en una auditoría se justifica la elección.\nPor qué: es la misma estructura que ISO 27001 (seguridad de la información) o ISO 9001 (calidad), así que muchas empresas ya la conocen."
+      "teach": "Hallazgos → cláusulas\nLas cláusulas con requisitos de la norma van de la 4 a la 10 (la tarjeta «Funciones y cláusulas» las resume; repásala con Briefing). gov map forja <F#> iso <número> asigna una.\nAlgunos hallazgos encajan en más de una cláusula; en una auditoría se justifica la elección.\nPor qué: es la misma estructura que ISO 27001 (seguridad de la información) o ISO 9001 (calidad), así que muchas empresas ya la conocen."
     },
     {
       "id": "o5",
       "text": "Para cerrar: ¿qué pregunta responde cada marco?",
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "b",
         "accept": [
-          "a"
+          "b"
         ]
       },
       "hints": [
         "Ley, marco voluntario, norma certificable.",
-        "answer a"
+        "answer b"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "AI Act: qué te obliga; NIST AI RMF (AI Risk Management Framework): cómo organizar la gestión del riesgo; ISO/IEC 42001: cómo demostrarlo con una certificación"
+          "text": "los tres responden a la misma pregunta, cada uno con sus palabras",
+          "why": "Se complementan, no se sustituyen: uno obliga, otro orienta y otro se certifica."
         },
         {
           "id": "b",
-          "text": "los tres responden lo mismo con palabras distintas",
-          "why": "No se sustituyen: uno obliga, otro orienta y otro se certifica."
+          "text": "AI Act, qué es obligatorio; NIST AI RMF, cómo gestionar; ISO/IEC 42001, cómo acreditarlo"
         },
         {
           "id": "c",
-          "text": "AI Act: cómo demostrarlo; ISO/IEC 42001: qué te obliga",
-          "why": "Es al revés: la ley obliga y la norma se certifica."
+          "text": "AI Act, cómo acreditarlo; NIST AI RMF, qué es obligatorio; ISO/IEC 42001, cómo gestionar",
+          "why": "Está cambiado: la ley obliga, el marco orienta y la norma se certifica."
         }
       ],
       "on_complete": "Eso es: ley, marco y norma. Se usan juntos, pero ninguno sustituye a los otros."
@@ -222,7 +223,7 @@
     "objectives": [
       {
         "id": "d1",
-        "text": "Con una carpeta nueva, asigna los cuatro hallazgos a su función del NIST AI RMF (AI Risk Management Framework) y a una cláusula de ISO/IEC 42001.",
+        "text": "Con una carpeta nueva, asigna los cuatro hallazgos a su función del NIST AI RMF y a una cláusula de ISO/IEC 42001.",
         "validator": {
           "type": "sequence",
           "steps": [
@@ -247,7 +248,7 @@
       }
     ]
   },
-  "you_can_now": "Sabes distinguir una ley (el AI Act), un marco voluntario (el NIST AI RMF (AI Risk Management Framework)) y una norma certificable (ISO/IEC 42001), y traducir hallazgos técnicos a sus funciones y cláusulas. Siguiente: O5-02, qué dice el AI Act de cada sistema de la forja.",
+  "you_can_now": "Sabes distinguir una ley (el AI Act), un marco voluntario (el NIST AI RMF) y una norma certificable (ISO/IEC 42001), y traducir hallazgos técnicos a sus funciones y cláusulas. Siguiente: O5-02, qué dice el AI Act de cada sistema de la forja.",
   "debrief": {
     "what_happened": "Has comparado una ley, un marco voluntario y una norma certificable, has comprobado que certificarse no equivale a cumplir la ley y has llevado cuatro hallazgos de la forja a las funciones del NIST AI RMF (AI Risk Management Framework) y a las cláusulas de ISO/IEC 42001.",
     "why": "Cada marco responde a una pregunta distinta. Confundirlos lleva a errores caros: creer que una certificación cubre una obligación legal, o tratar un marco voluntario como un checklist que garantiza algo.",

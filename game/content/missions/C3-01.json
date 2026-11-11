@@ -36,13 +36,14 @@
     {
       "id": "coste",
       "title": "El coste de un control",
-      "body": "consent enseña cada llamada con sus argumentos y espera a que el usuario la acepte. Bloquea mucho, pero cada aprobación es fricción: con muchas, la gente aprueba sin leer (fatiga de consentimiento) o pide que se quite. Además el usuario solo puede juzgar lo que ve. Una cobertura buena minimiza a la vez ataques con éxito, tareas rotas y aprobaciones. Comandos: lab matrix mcp <host> · lab resilience mcp <host>."
+      "body": "consent enseña cada llamada con sus argumentos y espera a que el usuario la acepte. Bloquea mucho, pero cada aprobación es fricción: con muchas, la gente aprueba sin leer (fatiga de consentimiento) o pide que se quite. Además el usuario solo puede juzgar lo que ve. Una cobertura buena minimiza a la vez ataques con éxito, tareas rotas y aprobaciones. Comandos: lab matrix mcp <host> · lab resilience mcp <host>.",
+      "unlock_on": "objective:o3"
     }
   ],
   "objectives": [
     {
       "id": "o1",
-      "text": "Crea un host MCP (Model Context Protocol) nuevo y saca su matriz de defensas.",
+      "text": "Crea un host MCP nuevo y saca su matriz de defensas.",
       "validator": {
         "type": "event",
         "event": "lab.matrix",
@@ -108,7 +109,7 @@
         "mcp defend erp namespacing on · mcp defend erp consent on · lab resilience mcp erp",
         "Mira la última línea: «aprobaciones»."
       ],
-      "on_complete": "Cuatro aprobaciones para cuatro tareas, y una de ellas rota: el usuario simulado rechaza un reembolso legítimo que no reconoce. Dos controles, mucho coste.",
+      "on_complete": "Cuatro aprobaciones para cuatro tareas, y una de ellas rota. Dos controles, mucho coste.",
       "teach": "Medir el coste\nmcp defend erp <defensa> on activa una defensa; lab resilience mcp erp mide la configuración y, en la última línea, cuántas aprobaciones pidió al usuario.\nPor qué: cada aprobación es fricción: con muchas, la gente aprueba sin leer (fatiga de consentimiento)."
     },
     {
@@ -117,29 +118,29 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque consent tiene un error de programación",
-          "why": "Funciona como se diseñó: enseña la llamada y espera la decisión del usuario."
+          "text": "porque el usuario rechazó un reembolso legítimo que no reconocía"
         },
         {
           "id": "b",
-          "text": "porque el usuario rechazó un reembolso legítimo que no reconocía: solo puede juzgar lo que ve"
+          "text": "porque consent tiene un fallo de programación en los reembolsos",
+          "why": "Funciona como se diseñó: enseña la llamada y espera la decisión del usuario."
         },
         {
           "id": "c",
-          "text": "porque namespacing bloqueó la tarea",
+          "text": "porque namespacing bloqueó la llamada del reembolso legítimo",
           "why": "namespacing no pide aprobaciones; la tarea se rompió en la aprobación."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "Mira quién decide en cada llamada cuando consent está activo.",
-        "answer b"
+        "answer a"
       ],
       "on_complete": "Eso es. Un control que depende de una persona falla como fallan las personas: por cansancio o por falta de contexto."
     },
@@ -176,29 +177,29 @@
       "text": "Para cerrar: ¿por qué la cobertura de dos defensas con consent es peor que la de cuatro sin él?",
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
         "Fatiga de consentimiento, tareas rotas, lo que el usuario no ve.",
-        "answer b"
+        "answer c"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "porque consent bloquea menos ataques",
+          "text": "porque consent bloquea menos ataques que las otras cuatro",
           "why": "Bloquea cuatro de cinco. El problema es su coste."
         },
         {
           "id": "b",
-          "text": "porque pone la seguridad en una persona: 4 aprobaciones para 4 tareas, una tarea rota y un usuario que solo juzga lo que ve"
+          "text": "porque cuatro controles siempre protegen más que solo dos",
+          "why": "El número no importa: importan el coste y dónde vive el control."
         },
         {
           "id": "c",
-          "text": "porque cuatro controles siempre son mejores que dos",
-          "why": "El número no importa: importan el coste y dónde vive el control."
+          "text": "porque deja la seguridad en manos de un usuario que se cansa"
         }
       ],
       "on_complete": "Eso es: controles en el código y en los permisos frente a controles en la paciencia de una persona."

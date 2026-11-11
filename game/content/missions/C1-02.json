@@ -36,7 +36,8 @@
     {
       "id": "profundidad",
       "title": "Defensa en profundidad",
-      "body": "Un ataque es robusto si sigue bloqueado aunque quites cualquiera de los controles activos; frágil si hay un control del que depende él solo. El objetivo realista no es «todo robusto»: es que lo frágil sea poco, esté identificado y tenga vigilancia (O6) y pruebas de regresión. Comando: lab resilience agent <agente>."
+      "body": "Un ataque es robusto si sigue bloqueado aunque quites cualquiera de los controles activos; frágil si hay un control del que depende él solo. El objetivo realista no es «todo robusto»: es que lo frágil sea poco, esté identificado y tenga vigilancia (O6) y pruebas de regresión. Comando: lab resilience agent <agente>.",
+      "unlock_on": "objective:o1"
     }
   ],
   "objectives": [
@@ -57,7 +58,7 @@
         "agent create kage · agent defend kage least-privilege on · agent defend kage user-authz on · agent defend kage step-budget on · lab resilience agent kage"
       ],
       "on_complete": "0 robustos. Tres de los cinco cuelgan de least-privilege: el día que alguien añada «aplicar_reembolso» a la lista del triaje, vuelven.",
-      "teach": "Tres controles en el código\nleast-privilege limita las herramientas de cada rol; user-authz comprueba los permisos de quien pide; step-budget limita los pasos del agente. Son controles en el código, no instrucciones al modelo.\nActívalos con agent defend y mide con lab resilience agent kage.\nPor qué: es una configuración razonable de producción; hoy mides cuánto depende de que cada control no falle nunca."
+      "teach": "Tres controles en el código\nleast-privilege limita las herramientas de cada rol; user-authz comprueba los permisos de quien pide; step-budget limita los pasos del agente. Son controles en el código, no instrucciones al modelo.\nCrea un agente con agent create kage, actívalos con agent defend y mide con lab resilience agent kage.\nPor qué: es una configuración razonable de producción; hoy mides cuánto depende de que cada control no falle nunca."
     },
     {
       "id": "c1",
@@ -65,29 +66,29 @@
       "choices": [
         {
           "id": "a",
-          "text": "que ninguna defensa lo bloquea",
+          "text": "que ninguna de las defensas activas consigue bloquearlo",
           "why": "Eso es un ataque con éxito. Robusto se dice de un ataque BLOQUEADO."
         },
         {
           "id": "b",
-          "text": "que sigue bloqueado aunque quites cualquiera de las defensas activas"
+          "text": "que lo bloquean a la vez todas las defensas del laboratorio",
+          "why": "Basta con menos: es robusto si aguanta al quitar cualquiera de las activas, normalmente porque lo paran dos."
         },
         {
           "id": "c",
-          "text": "que lo bloquean todas las defensas del laboratorio",
-          "why": "No hacen falta todas: basta con que siga bloqueado al quitar cualquiera de las activas, normalmente porque lo paran dos."
+          "text": "que ninguna defensa activa es imprescindible para bloquearlo"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
-        "Vuelve a leer la tarjeta «Defensa en profundidad».",
-        "answer b"
+        "Vuelve a leer la tarjeta «Defensa en profundidad» (repásala con Briefing).",
+        "answer c"
       ],
       "on_complete": "Exacto. Ahora mismo tienes 0 robustos: cada ataque cuelga de un solo control. Vamos a por la segunda cerradura."
     },
@@ -147,28 +148,28 @@
       "text": "Para cerrar: el confused deputy depende solo de user-authz. ¿Cómo tratas ese riesgo residual?",
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "Trazas con identidad, regla de detección, test de regresión.",
-        "answer b"
+        "answer a"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "añadiendo spotlight como segunda capa",
-          "why": "spotlight no lo ve: no es una orden escondida en datos, sino una petición directa con los permisos equivocados."
+          "text": "vigilarlo: identidad en las trazas, una regla y un test de regresión"
         },
         {
           "id": "b",
-          "text": "vigilándolo: identidad en las trazas (O6), una regla para acciones de impacto pedidas sin permiso y un test de regresión en cada versión"
+          "text": "añadir spotlight como segunda capa por delante de user-authz",
+          "why": "spotlight no lo ve: no es una orden escondida en datos, sino una petición directa con los permisos equivocados."
         },
         {
           "id": "c",
-          "text": "aceptándolo sin más",
+          "text": "aceptarlo sin más: hoy está bloqueado y no hace falta nada",
           "why": "Un riesgo residual se acepta documentado y vigilado: si user-authz falla, el ataque pasa."
         }
       ],

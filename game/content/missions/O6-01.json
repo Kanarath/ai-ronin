@@ -32,17 +32,18 @@
     "datasets": [],
     "viz": {}
   },
-  "purpose": "Un agente es un LLM (Large Language Model) que, además de responder, lee documentos y llama a herramientas: consulta pedidos, envía correos, hace peticiones web. Lo peligroso ocurre entre la pregunta y la respuesta. Cuando algo sale mal, el equipo de seguridad (en una empresa, el SOC (Security Operations Center)) solo puede investigar lo que quedó registrado. Hoy aprendes qué hay que registrar de un agente y cómo hacerlo sin crear otra fuga de datos personales.",
+  "purpose": "Un agente es un LLM (Large Language Model) que, además de responder, lee documentos y llama a herramientas: consulta pedidos, envía correos, hace peticiones web. Lo peligroso ocurre entre la pregunta y la respuesta. Cuando algo sale mal, el equipo de seguridad (en una empresa, el SOC: Security Operations Center) solo puede investigar lo que quedó registrado. Hoy aprendes qué hay que registrar de un agente y cómo hacerlo sin crear otra fuga de datos personales.",
   "theory_cards": [
     {
       "id": "trazas-agente",
       "title": "Trazas de un agente",
-      "body": "Una traza es el registro estructurado de lo que pasó en una petición: quién la hizo, qué pidió, qué contenido recuperó el agente, qué herramientas llamó, con qué argumentos, qué devolvieron y qué respondió. En una app LLM (Large Language Model) clásica bastaba con la entrada y la salida; en un agente, las acciones ocurren en medio. OpenTelemetry está definiendo convenciones semánticas para IA (Inteligencia Artificial) generativa (spans como invoke_agent o execute_tool y atributos gen_ai.*), todavía en estado Development: es una práctica emergente. Comandos: soc trazas, soc coverage, soc show, soc log."
+      "body": "Una traza es el registro estructurado de lo que pasó en una petición: quién la hizo, qué pidió, qué contenido recuperó el agente, qué herramientas llamó, con qué argumentos, qué devolvieron y qué respondió. En una app LLM (Large Language Model) clásica bastaba con la entrada y la salida; en un agente, las acciones ocurren en medio. OpenTelemetry está definiendo convenciones semánticas para inteligencia artificial generativa: spans (cada tramo de una traza) como invoke_agent o execute_tool y atributos gen_ai.*. Siguen en estado Development: es una práctica emergente. Comandos: soc trazas, soc coverage, soc show, soc log.",
+      "unlock_on": "objective:o1"
     },
     {
       "id": "registro-y-privacidad",
       "title": "Registrar sin crear otro riesgo",
-      "body": "Los mensajes y los resultados de las herramientas suelen contener datos personales. Las convenciones de OpenTelemetry marcan el contenido de los mensajes como opt-in porque puede contener información sensible. Un registro con datos personales en claro es otra base de datos que proteger (y que cumple el RGPD (Reglamento General de Protección de Datos; en inglés, GDPR)). Opciones habituales: redactar (enmascarar) correos y teléfonos, guardar el contenido completo aparte con acceso restringido y retención corta, o no guardarlo.",
+      "body": "Los mensajes y los resultados de las herramientas suelen contener datos personales. Las convenciones de OpenTelemetry marcan el contenido de los mensajes como opt-in porque puede contener información sensible. Un registro con datos personales en claro es otra base de datos que proteger, y le aplica el RGPD (Reglamento General de Protección de Datos; en inglés, GDPR). Opciones habituales: redactar (enmascarar) correos y teléfonos, guardar el contenido completo aparte con acceso restringido y retención corta, o no guardarlo.",
       "unlock_on": "objective:o4"
     }
   ],
@@ -140,29 +141,29 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque la respuesta final de S04 era sospechosa",
-          "why": "La respuesta era un resumen correcto: por fuera, S04 parecía una sesión normal."
+          "text": "porque no se guardaba qué leyó el agente ni a dónde mandó los datos"
         },
         {
           "id": "b",
-          "text": "porque lo peligroso pasó en medio (el documento recuperado y los argumentos de la herramienta) y eso no se registraba"
+          "text": "porque la respuesta final de S04 ya delataba el ataque y nadie la leyó",
+          "why": "La respuesta era un resumen correcto: por fuera, S04 parecía una sesión normal."
         },
         {
           "id": "c",
-          "text": "porque el agente borró parte del registro",
+          "text": "porque el agente borró del registro las llamadas que hizo a herramientas",
           "why": "Nadie borró nada: esos campos sencillamente no se guardaban."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "Piensa en qué campos se guardan por defecto: prompts y nombres de herramientas.",
-        "answer b"
+        "answer a"
       ],
       "on_complete": "Eso es. En un chat basta con guardar la pregunta y la respuesta; en un agente, las acciones ocurren en medio y hay que registrarlas."
     },
@@ -170,7 +171,7 @@
       "id": "o4",
       "text": "Deja el registro respondiendo las seis preguntas forenses y sin datos personales en claro.",
       "prediction": {
-        "prompt": "Si registras todo (mensajes, documentos y argumentos), ¿qué problema nuevo aparece?",
+        "prompt": "Si registras todo (mensajes, documentos y argumentos), ¿qué problema se agrava?",
         "options": [
           "ninguno, más datos siempre es mejor",
           "el registro guarda datos personales de clientes",
@@ -210,29 +211,29 @@
       "text": "Para cerrar: ¿qué hay que registrar de un agente que no hacía falta en un chat?",
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
         "Piensa en S04 con 2/6: veías la pregunta y la respuesta, y nada de lo que pasó en medio.",
-        "answer b"
+        "answer c"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "la pregunta y la respuesta, con más detalle",
+          "text": "la pregunta y la respuesta, pero con mucho más detalle",
           "why": "Eso ya se guardaba, y en S04 parecían normales: lo peligroso pasó en medio."
         },
         {
           "id": "b",
-          "text": "los documentos recuperados, los argumentos y resultados de las herramientas, la identidad y la versión, con los datos personales redactados"
+          "text": "todo el contenido en claro, para no perder ningún dato",
+          "why": "Un registro con correos y teléfonos en claro es otra base de datos sensible: otra fuga posible."
         },
         {
           "id": "c",
-          "text": "todo en claro, para no perder nada",
-          "why": "Un registro con correos y teléfonos en claro es otra base de datos sensible: otra fuga posible."
+          "text": "lo que lee y hace el agente, con lo personal enmascarado"
         }
       ],
       "on_complete": "Eso es. En un agente se registra lo que pasa entre la pregunta y la respuesta, y se redacta lo personal."

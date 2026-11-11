@@ -43,7 +43,7 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Con un RAG (Retrieval-Augmented Generation) nuevo con la cobertura mínima de C2-01, mide la resiliencia. Después consigue el máximo de ataques robustos manteniendo 0 ataques y 7/7 respuestas.",
+      "text": "Con un RAG nuevo con la cobertura mínima de C2-01, mide la resiliencia. Después consigue el máximo de ataques robustos manteniendo 0 ataques y 7/7 respuestas.",
       "prediction": {
         "prompt": "Activando las cinco defensas, ¿cuántos ataques serán robustos?",
         "options": [
@@ -84,7 +84,7 @@
         "rag defend docs spotlight on · lab resilience rag docs"
       ],
       "on_complete": "Uno: la reseña inyectada, que tiene trusted-sources en la ingesta y spotlight en la presentación. Con las cinco defensas no hay más.",
-      "teach": "Del mínimo al máximo\nPrimero repite la cobertura mínima de C2-01 en un RAG (Retrieval-Augmented Generation) nuevo y mide la resiliencia. Después añade la defensa que falta y mide otra vez.\nPor qué: saber cuánto ganas encendiéndolo todo te dice si el problema se arregla con interruptores o con diseño."
+      "teach": "Del mínimo al máximo\nPrimero repite la cobertura mínima de C2-01 en un buscador nuevo (rag create docs y rag ingest docs) y mide la resiliencia. Después añade la defensa que falta y mide otra vez.\nPor qué: saber cuánto ganas encendiéndolo todo te dice si el problema se arregla con interruptores o con diseño."
     },
     {
       "id": "o2",
@@ -122,35 +122,19 @@
       "choices": [
         {
           "id": "a",
-          "text": "añadir al modelo la instrucción de no revelar costes",
+          "text": "añadir al modelo una instrucción de no revelar costes",
           "why": "Una instrucción al modelo se puede esquivar reformulando la pregunta, como viste en A1."
         },
         {
           "id": "b",
-          "text": "sacar los documentos internos del índice que consultan los clientes"
+          "text": "activar la acl dos veces, en serie, sobre el mismo índice",
+          "why": "El mismo control duplicado falla igual: dos cerraduras tienen que ser independientes."
         },
         {
           "id": "c",
-          "text": "activar acl dos veces",
-          "why": "El mismo control duplicado falla igual: dos cerraduras tienen que ser independientes."
+          "text": "dejar los documentos internos fuera del índice de clientes"
         }
       ],
-      "validator": {
-        "type": "answer",
-        "expected": "b",
-        "accept": [
-          "b"
-        ]
-      },
-      "hints": [
-        "Lee la tarjeta: ¿qué hace un ataque imposible en vez de improbable?",
-        "answer b"
-      ],
-      "on_complete": "Eso es: si el documento no está en el índice de clientes, ninguna fuga de ese índice puede revelarlo, falle o no la acl."
-    },
-    {
-      "id": "o4",
-      "text": "Para cerrar: la inversión de vectores depende solo de vector-acl. ¿Qué segunda barrera, que no es un interruptor, la protege?",
       "validator": {
         "type": "answer",
         "expected": "c",
@@ -159,23 +143,39 @@
         ]
       },
       "hints": [
-        "¿Quién debería poder llegar siquiera a la base vectorial?",
+        "Lee la tarjeta: ¿qué hace un ataque imposible en vez de improbable?",
         "answer c"
+      ],
+      "on_complete": "Eso es: si el documento no está en el índice de clientes, ninguna fuga de ese índice puede revelarlo, falle o no la acl."
+    },
+    {
+      "id": "o4",
+      "text": "Para cerrar: la inversión de vectores depende solo de vector-acl. ¿Qué segunda barrera, que no es un interruptor, la protege?",
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Quién debería poder llegar siquiera a la base vectorial?",
+        "answer b"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "activar spotlight",
+          "text": "activar spotlight para que el modelo trate el contexto como datos",
           "why": "spotlight actúa en la presentación al modelo; la inversión ataca el almacén de vectores."
         },
         {
           "id": "b",
-          "text": "subir min-score",
-          "why": "min-score actúa en la generación, no en quién puede leer los vectores."
+          "text": "dejar la base vectorial en una red privada, con credenciales propias"
         },
         {
           "id": "c",
-          "text": "no exponer la base vectorial: red privada y credenciales propias"
+          "text": "subir el umbral de min-score para filtrar más fragmentos dudosos",
+          "why": "min-score actúa en la generación, no en quién puede leer los vectores."
         }
       ],
       "on_complete": "Eso es. Y lo mismo para el resto: índices separados por público, revisión del contenido subido y trazas de recuperación con alertas (O6)."
@@ -186,7 +186,7 @@
     "objectives": [
       {
         "id": "d1",
-        "text": "Con un RAG (Retrieval-Augmented Generation) nuevo, demuestra primero la cobertura mínima (como máximo 4 defensas, 0 ataques, 7/7) y después el máximo de resiliencia (0 ataques, 7/7, al menos 1 robusto).",
+        "text": "Con un RAG nuevo, demuestra primero la cobertura mínima (como máximo 4 defensas, 0 ataques, 7/7) y después el máximo de resiliencia (0 ataques, 7/7, al menos 1 robusto).",
         "validator": {
           "type": "sequence",
           "steps": [

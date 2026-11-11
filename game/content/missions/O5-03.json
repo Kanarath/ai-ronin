@@ -31,12 +31,13 @@
     "datasets": [],
     "viz": {}
   },
-  "purpose": "Gestionar el riesgo de un sistema de IA (Inteligencia Artificial) no es eliminarlo todo: es decidir, con números y por escrito, qué haces con cada riesgo. Eso piden la cláusula 6 de ISO/IEC (International Organization for Standardization / International Electrotechnical Commission) 42001 y la función MANAGE del NIST AI RMF (AI Risk Management Framework). Hoy llevas un registro de riesgos en miniatura: puntúas cada riesgo, lo comparas con el apetito de la dirección y eliges mitigar, evitar o aceptar, usando los controles que practicaste en los arcos.",
+  "purpose": "Gestionar el riesgo de un sistema de IA (Inteligencia Artificial) no es eliminarlo todo: es decidir, con números y por escrito, qué haces con cada riesgo. Eso piden la cláusula 6 de ISO/IEC 42001 (International Organization for Standardization / International Electrotechnical Commission) y la función MANAGE del NIST AI RMF (AI Risk Management Framework). Hoy llevas un registro de riesgos en miniatura: puntúas cada riesgo, lo comparas con el apetito de la dirección y eliges mitigar, evitar o aceptar, usando los controles que practicaste en los arcos.",
   "theory_cards": [
     {
       "id": "registro-riesgos",
       "title": "Registro de riesgos",
-      "body": "Cada riesgo tiene una probabilidad y un impacto (aquí de 1 a 5) y su producto es el riesgo inherente. El tratamiento lo reduce: mitigar aplica un control que baja la probabilidad; evitar renuncia a la actividad (el riesgo desaparece, y también el beneficio); aceptar lo deja como está, y solo cabe si ya está dentro del apetito. Transferir (por ejemplo, un seguro) existe, pero no se trabaja aquí. Comandos: gov risks · gov treat <riesgo> <mitigar|evitar|aceptar>."
+      "body": "Cada riesgo tiene una probabilidad y un impacto (aquí de 1 a 5) y su producto es el riesgo inherente. El tratamiento lo reduce: mitigar aplica un control que baja la probabilidad; evitar renuncia a la actividad (el riesgo desaparece, y también el beneficio); aceptar lo deja como está, y solo cabe si ya está dentro del apetito. Transferir (por ejemplo, un seguro) existe, pero no se trabaja aquí. Comandos: gov risks · gov treat <riesgo> <mitigar|evitar|aceptar>.",
+      "unlock_on": "objective:o1"
     }
   ],
   "objectives": [
@@ -64,7 +65,7 @@
         "gov open forja · gov risks forja"
       ],
       "on_complete": "R6, con 25: las cámaras de emociones. Probabilidad máxima, porque el sistema existe para eso, e impacto máximo sobre los derechos de los operarios.",
-      "teach": "Puntuar un riesgo\nCada riesgo tiene una probabilidad y un impacto, de 1 a 5. Su producto es el riesgo inherente: el que hay antes de hacer nada. Por ejemplo, probabilidad 2 e impacto 4 dan 8.\ngov open forja abre la carpeta; gov risks forja enseña el registro.\nPor qué: con la misma escala puedes comparar riesgos muy distintos (una fuga de datos y una cámara prohibida) y decidir por dónde empezar."
+      "teach": "Puntuar un riesgo\nEjemplo: probabilidad 2 e impacto 4 dan un riesgo inherente de 2 × 4 = 8.\ngov open forja abre la carpeta; gov risks forja enseña el registro.\nPor qué: con la misma escala puedes comparar riesgos muy distintos (una fuga de datos y una cámara prohibida) y decidir por dónde empezar."
     },
     {
       "id": "py1",
@@ -74,7 +75,7 @@
         "id": "O5-03-apetito",
         "title": "dentro_del_apetito(probabilidad, impacto, apetito)",
         "function": "dentro_del_apetito",
-        "starter": "# Ejercicio O5-03 · ¿Está dentro del apetito?\n# El riesgo es probabilidad × impacto (cada uno de 1 a 5).\n# Está dentro del apetito si el riesgo es menor o igual que el apetito.\n\ndef dentro_del_apetito(probabilidad, impacto, apetito):\n    riesgo = 0   # ← cambia esta línea\n    return riesgo <= apetito\n\n# Probabilidad 5 e impacto 5 con apetito 6: debería imprimir False\nprint(dentro_del_apetito(5, 5, 6))\n",
+        "starter": "# O5-03 · Riesgo = probabilidad × impacto (de 1 a 5 cada uno).\n# Está dentro del apetito si el riesgo es menor o igual que el apetito.\n\ndef dentro_del_apetito(probabilidad, impacto, apetito):\n    riesgo = 0   # ← cambia esta línea\n    return riesgo <= apetito\n\n# Probabilidad 5 e impacto 5 con apetito 6: debería imprimir False\nprint(dentro_del_apetito(5, 5, 6))\n",
         "cases": [
           {
             "args": [
@@ -130,7 +131,7 @@
         "El riesgo es el producto de las dos cifras.",
         "La línea queda así: riesgo = probabilidad * impacto"
       ],
-      "on_complete": "Ya tienes la regla. Fíjate en el caso 3 × 2: da 6, justo el apetito, y queda dentro. Con ella, R6 (25) queda muy por encima."
+      "on_complete": "Ya tienes la regla. Con ella, R6 (25) queda muy por encima del apetito."
     },
     {
       "id": "o2",
@@ -193,36 +194,36 @@
       "choices": [
         {
           "id": "a",
-          "text": "solo mitigarlo",
+          "text": "solo mitigarlo, porque todo riesgo debe reducirse",
           "why": "3 × 2 = 6 no supera el apetito: también se puede aceptar."
         },
         {
           "id": "b",
-          "text": "aceptarlo si quieres, porque 3 × 2 = 6 no supera el apetito"
+          "text": "evitarlo, porque está justo en el límite del apetito",
+          "why": "Evitar es para lo que no se puede hacer con seguridad, como un uso prohibido. Este riesgo ya está dentro del apetito."
         },
         {
           "id": "c",
-          "text": "evitarlo obligatoriamente",
-          "why": "Evitar es para lo que no se puede hacer con seguridad, como un uso prohibido. Este riesgo ya está dentro del apetito."
+          "text": "aceptarlo o mitigarlo: el límite cuenta como dentro"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
         "Calcula el riesgo y compáralo con 6: ¿es mayor, o menor o igual?",
-        "answer b"
+        "answer c"
       ],
       "on_complete": "Eso es: «dentro del apetito» incluye el propio límite. Aceptar es legítimo aquí; mitigar también, si el control sale barato."
     },
     {
       "id": "o4",
       "text": "Deja los seis riesgos dentro del apetito sin evitar ningún sistema que se pueda usar con seguridad.",
-      "teach": "Mitigar con lo que ya sabes\nCada riesgo mitigable tiene un control que ya practicaste: A1 en el chatbot, A6 en el pipeline, A3 y O6 en el asistente, y los artículos 10 y 14 del AI Act en el cribado.\nEvitar un riesgo mitigable también lo saca del registro… y deja a la forja sin ese sistema.\nPor qué: la probabilidad «después del control» sale de tus retests; sin medición, es una opinión.",
+      "teach": "Mitigar con lo que ya sabes\nCada riesgo mitigable tiene un control que ya practicaste: A1 en el chatbot, A6 en el pipeline, A3 y O6 en el asistente, y los artículos 10 y 14 del AI Act en el cribado.\nEvitar un riesgo mitigable también lo saca del registro… y deja a la forja sin ese sistema.\nPor qué: evitar sin necesidad también tiene un coste: la forja pierde un sistema que podía usar con seguridad.",
       "validator": {
         "type": "event",
         "event": "gov.register",
@@ -242,28 +243,28 @@
       "text": "Para cerrar: ¿de dónde sale que la probabilidad de un riesgo baje después de mitigar?",
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "¿Qué hiciste en los arcos después de activar cada defensa?",
-        "answer b"
+        "answer a"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "de la opinión del responsable del sistema",
-          "why": "Sin medición, es una opinión, y en una auditoría no se sostiene."
+          "text": "de los retests: medir de nuevo tras activar el control"
         },
         {
           "id": "b",
-          "text": "de tus retests: la medición demuestra que el control funciona"
+          "text": "de la opinión experta del responsable del sistema",
+          "why": "Sin medición, es una opinión, y en una auditoría no se sostiene."
         },
         {
           "id": "c",
-          "text": "de la propia norma ISO/IEC 42001",
+          "text": "de las tablas de referencia de la norma ISO/IEC 42001",
           "why": "La norma pide decidir y documentar el tratamiento; no da las cifras de cada riesgo."
         }
       ],

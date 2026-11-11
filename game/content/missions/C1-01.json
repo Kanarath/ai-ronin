@@ -36,7 +36,8 @@
     {
       "id": "matriz",
       "title": "Matriz de defensas",
-      "body": "Filas: los ataques de la batería. Columnas: cada defensa activada EN SOLITARIO sobre una copia del sistema. Un ■ significa que esa defensa, sola, bloquea ese ataque. Las dos últimas filas dicen qué cuesta: tareas legítimas que siguen funcionando y aprobaciones humanas que pide. Un ataque que solo bloquea una columna es un punto único: si ese control falla, el ataque pasa. Comando: lab matrix <rag|agent|mcp> <sistema>."
+      "body": "Filas: los ataques de la batería. Columnas: cada defensa activada EN SOLITARIO sobre una copia del sistema. Un ■ significa que esa defensa, sola, bloquea ese ataque. Las dos últimas filas dicen qué cuesta: tareas legítimas que siguen funcionando y aprobaciones humanas que pide. Un ataque que solo bloquea una columna es un punto único: si ese control falla, el ataque pasa. Comando: lab matrix <rag|agent|mcp> <sistema>.",
+      "unlock_on": "objective:o1"
     },
     {
       "id": "resiliencia",
@@ -61,19 +62,19 @@
         "agent create kage · lab matrix agent kage"
       ],
       "on_complete": "Cinco ataques, siete controles. Cada ■ es una medición, no una opinión.",
-      "teach": "La matriz de defensas\nagent create kage crea un agente nuevo. lab matrix agent kage prueba cada defensa EN SOLITARIO contra los cinco ataques de la batería, sobre copias del agente.\nPor qué: medir cada control por separado es la única forma honesta de comparar defensas antes de elegir."
-    },
-    {
-      "id": "o2",
-      "text": "¿Qué ataque bloquea un único control? (answer <id del ataque>)",
+      "teach": "La matriz de defensas\nagent create kage crea un agente nuevo. lab matrix agent kage prueba cada defensa EN SOLITARIO contra los cinco ataques de la batería, sobre copias del agente.\nPor qué: medir cada control por separado es la única forma honesta de comparar defensas antes de elegir.",
       "prediction": {
-        "prompt": "Antes de mirar la columna «la bloquean»: ¿qué ataque crees que tiene menos defensas?",
+        "prompt": "Antes de sacar la matriz: ¿qué ataque crees que tendrá menos defensas?",
         "options": [
           "el que llega por correo",
           "el que pide un usuario directamente",
           "el bucle"
         ]
-      },
+      }
+    },
+    {
+      "id": "o2",
+      "text": "La matriz señala un punto único. ¿Qué ataque bloquea un único control? (answer <id del ataque>)",
       "validator": {
         "type": "answer",
         "expected": "diputado-confundido",
@@ -90,7 +91,7 @@
         "Es el ataque que no llega por correo."
       ],
       "on_complete": "El confused deputy solo lo para user-authz. No es una orden escondida en datos, sino una petición directa con los permisos equivocados, así que ni spotlight ni la supervisión humana lo ven.",
-      "teach": "Puntos únicos\nLa última columna, «la bloquean», cuenta cuántas defensas paran cada ataque por sí solas.\nUn ataque con un 1 es un punto único: si ese control falla, el ataque pasa.\nPor qué: los puntos únicos son lo primero que busca un atacante y lo primero que tienes que proteger."
+      "teach": "Puntos únicos\nLa última columna, «la bloquean», cuenta cuántas defensas paran cada ataque por sí solas.\nUn ataque con un 1 es un punto único: si ese control falla, el ataque pasa.\nSi la cabecera de la tabla se ha ido hacia arriba, vuelve a lanzar lab matrix agent kage.\nPor qué: los puntos únicos son lo primero que busca un atacante y lo primero que tienes que proteger."
     },
     {
       "id": "o3",
@@ -134,7 +135,7 @@
       "hints": [
         "Cuenta las filas con «· frágil»."
       ],
-      "on_complete": "Los cinco. Cuatro dependen solo de spotlight, que en A1-03 viste que se puede esquivar reformulando la instrucción. La cobertura mínima es elegante sobre el papel y quebradiza en producción.",
+      "on_complete": "Los cinco. Mira de qué control depende cada uno en la columna «depende solo de».",
       "teach": "Frágil o robusto\nlab resilience marca cada ataque bloqueado como «frágil» (vuelve a pasar si quitas UNA de las defensas activas) o «robusto» (aguanta).\nPor qué: un sistema donde todo es frágil depende de que ningún control falle nunca."
     },
     {
@@ -143,29 +144,29 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque cuatro ataques dependen solo de spotlight, una instrucción al modelo que se puede esquivar reformulando"
-        },
-        {
-          "id": "b",
-          "text": "porque spotlight rompe tareas legítimas",
+          "text": "porque spotlight rompe varias de las tareas legítimas del agente",
           "why": "En esta configuración las tareas están a 3/3 y sin aprobaciones. El problema no es el coste, es que spotlight se puede esquivar."
         },
         {
+          "id": "b",
+          "text": "porque casi todo cuelga de spotlight, que se esquiva reformulando"
+        },
+        {
           "id": "c",
-          "text": "porque dos controles son siempre demasiado pocos",
+          "text": "porque dos controles siempre son pocos para un agente con herramientas",
           "why": "El número no es el problema: en C1-02 verás tres controles en el código con todos los ataques frágiles igualmente."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "b",
         "accept": [
-          "a"
+          "b"
         ]
       },
       "hints": [
         "Mira de qué control depende cada ataque frágil y recuerda A1-03.",
-        "answer a"
+        "answer b"
       ],
       "on_complete": "Eso es. Un control que vive en el prompt es una capa útil, pero nunca debería ser la única barrera de una acción con impacto."
     },
@@ -174,29 +175,29 @@
       "text": "Para cerrar: ¿qué te dice la matriz que no te decía activar controles uno a uno?",
       "validator": {
         "type": "answer",
-        "expected": "c",
+        "expected": "a",
         "accept": [
-          "c"
+          "a"
         ]
       },
       "hints": [
         "Mira la columna «la bloquean» y las dos filas de coste.",
-        "answer c"
+        "answer a"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "qué control es el mejor en todos los casos",
-          "why": "La matriz mide cada defensa sola; la mejor combinación depende del coste y de la resiliencia."
+          "text": "qué ataques cuelgan de un único control y qué cuesta cada defensa"
         },
         {
           "id": "b",
-          "text": "que basta con activarlo todo",
+          "text": "que basta con activar todas las defensas para estar protegido",
           "why": "Activarlo todo trae coste: hitl pide aprobaciones, por ejemplo."
         },
         {
           "id": "c",
-          "text": "qué ataques dependen de un solo control (puntos únicos) y cuánto cuesta cada defensa"
+          "text": "qué control es el mejor de todos, sea cual sea el ataque",
+          "why": "La matriz mide cada defensa sola; la mejor combinación depende del coste y de la resiliencia."
         }
       ],
       "on_complete": "Eso es: la matriz es la tabla honesta que permite elegir con datos."
