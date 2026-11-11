@@ -36,15 +36,22 @@ var _history_index: int = -1
 var _busy := false
 var _pending_mentor: Array = []
 
-## Efecto de escritura: el texto aparece rápido, como si alguien lo tecleara al otro lado.
-## RONIN «escribe» más despacio que la salida de los comandos, pero siempre deprisa; Enter,
-## Esc o un clic en la consola lo muestran todo de golpe. «efectos off» lo desactiva.
-const MENTOR_CPS := 900.0
-const OUTPUT_CPS := 5000.0
+## Efecto de escritura, como en las películas de hackers: RONIN teclea letra a letra (un poco
+## más rápido de lo que se lee, con pausas breves tras comas y puntos) y la salida de los
+## comandos va apareciendo en cascada. Enter, Esc o un clic lo muestran todo de golpe.
+## «efectos lento|normal|rapido» cambia la velocidad y «efectos off» lo quita.
+## Velocidades en caracteres por segundo: [RONIN, salida de comandos].
+const SPEEDS := {"lento": [32.0, 450.0], "normal": [48.0, 800.0], "rapido": [110.0, 2000.0]}
 var effects := true
-var _shown: float = -1.0
-## Tramos pendientes de revelar: [carácter final, caracteres por segundo].
+var speed := "normal"
+var _shown: int = -1
+## Tiempo acumulado hacia el siguiente carácter.
+var _carry: float = 0.0
+## Tramos pendientes de revelar: [carácter final, "mentor" u "output"].
 var _reveal: Array = []
+## Texto visible (sin BBCode) para saber qué carácter toca y si merece pausa.
+var _parsed: String = ""
+var _rng := RandomNumberGenerator.new()
 
 
 func setup(p_shell: Shell) -> void:
@@ -126,28 +133,48 @@ func _align_lines() -> void:
 func _process(delta: float) -> void:
 	if _reveal.is_empty():
 		return
-	var budget: float = delta
-	while budget > 0.0 and not _reveal.is_empty():
+	_carry += minf(delta, 0.1)
+	var speeds: Array = SPEEDS.get(speed, SPEEDS["normal"])
+	while not _reveal.is_empty():
 		var end: int = _reveal[0][0]
-		var cps: float = _reveal[0][1]
-		var need := (end - _shown) / cps
-		if need <= budget:
-			_shown = end
-			budget -= need
+		if _shown >= end:
 			_reveal.pop_front()
-		else:
-			_shown += cps * budget
-			budget = 0.0
+			continue
+		var cost := _char_cost(_reveal[0][1], speeds)
+		if _carry < cost:
+			break
+		_carry -= cost
+		_shown += 1
 	if _reveal.is_empty():
 		finish_reveal()
 	else:
-		_output.visible_characters = int(_shown)
+		_output.visible_characters = _shown
+
+
+## Lo que cuesta mostrar el siguiente carácter. RONIN teclea con un ritmo algo irregular y
+## se para un instante tras la puntuación; la salida de los comandos fluye en cascada.
+func _char_cost(kind: String, speeds: Array) -> float:
+	var ch := _parsed[_shown] if _shown < _parsed.length() else ""
+	if kind == "mentor":
+		var c: float = (1.0 / speeds[0]) * _rng.randf_range(0.6, 1.4)
+		if ch == "," or ch == ";" or ch == ":":
+			c += 0.08
+		elif ch == "." or ch == "?" or ch == "!" or ch == "…":
+			c += 0.16
+		elif ch == "\n":
+			c += 0.12
+		return c
+	var o: float = 1.0 / speeds[1]
+	if ch == "\n":
+		o += 0.012
+	return o
 
 
 ## Enseña de golpe todo lo que estaba apareciendo.
 func finish_reveal() -> void:
 	_reveal.clear()
-	_shown = -1.0
+	_shown = -1
+	_carry = 0.0
 	if _output != null:
 		_output.visible_characters = -1
 
@@ -164,7 +191,7 @@ func focus_input() -> void:
 ## Ejecuta una línea como si la hubiera escrito el usuario (la usan los botones de la interfaz).
 func run_command(line: String) -> CommandResult:
 	finish_reveal()
-	_print_raw("[color=%s]%s[/color] %s" % [RoninPalette.TEAL.to_html(false), PROMPT, _escape(line)], 0.0)
+	_print_raw("[color=%s]%s[/color] %s" % [RoninPalette.TEAL.to_html(false), PROMPT, _escape(line)], "instant")
 	_busy = true
 	var result := shell.execute(line)
 	if result.action == "clear":
@@ -172,6 +199,9 @@ func run_command(line: String) -> CommandResult:
 		finish_reveal()
 	elif result.action == "effects_on":
 		effects = true
+	elif result.action.begins_with("effects_speed_"):
+		effects = true
+		speed = result.action.trim_prefix("effects_speed_")
 	elif result.action == "effects_off":
 		effects = false
 		finish_reveal()
@@ -196,18 +226,18 @@ func print_mentor(text: String, kind: String = "info") -> void:
 	var bar := "[color=%s]┃[/color] " % RoninPalette.CYAN.to_html(false)
 	if kind == "lesson":
 		var parts := text.split("\n")
-		_print_raw("", MENTOR_CPS)
-		_print_raw("%s[color=%s][b]◇ %s[/b][/color]" % [bar, RoninPalette.CYAN.to_html(false), _escape(parts[0])], MENTOR_CPS)
+		_print_raw("", "mentor")
+		_print_raw("%s[color=%s][b]◇ %s[/b][/color]" % [bar, RoninPalette.CYAN.to_html(false), _escape(parts[0])], "mentor")
 		for p in parts.slice(1):
-			_print_raw("%s[color=%s]%s[/color]" % [bar, col.to_html(false), _escape(p)], MENTOR_CPS)
+			_print_raw("%s[color=%s]%s[/color]" % [bar, col.to_html(false), _escape(p)], "mentor")
 		return
 	if kind == "task":
-		_print_raw("[color=%s][b]▶ %s[/b][/color]" % [col.to_html(false), _escape(text).replace("\n", "\n   ")], MENTOR_CPS)
-		_print_raw("", MENTOR_CPS)
+		_print_raw("[color=%s][b]▶ %s[/b][/color]" % [col.to_html(false), _escape(text).replace("\n", "\n   ")], "mentor")
+		_print_raw("", "mentor")
 		return
 	var who := "[color=%s]RONIN ›[/color] " % RoninPalette.GOLD.to_html(false)
 	var prefix := "◆ " if kind == "debrief" else ""
-	_print_raw("%s[color=%s]%s%s[/color]" % [who, col.to_html(false), prefix, _escape(text).replace("\n", "\n        ")], MENTOR_CPS)
+	_print_raw("%s[color=%s]%s%s[/color]" % [who, col.to_html(false), prefix, _escape(text).replace("\n", "\n        ")], "mentor")
 
 
 func print_line(text: String, style: String = "normal") -> void:
@@ -218,20 +248,23 @@ func print_line(text: String, style: String = "normal") -> void:
 	_print_raw("[color=%s]%s[/color]" % [color.to_html(false), body])
 
 
-## cps: velocidad del efecto de escritura (0 = aparece de golpe).
-func _print_raw(bbcode: String, cps: float = OUTPUT_CPS) -> void:
+## kind: "mentor" (RONIN teclea), "output" (salida en cascada) o "instant" (de golpe, como
+## lo que escribes tú; si aún hay texto apareciendo, se suma a la cascada).
+func _print_raw(bbcode: String, kind: String = "output") -> void:
 	var before := _output.get_total_character_count()
 	_output.append_text(bbcode + "\n")
 	if not effects or not is_inside_tree():
 		return
-	if cps <= 0.0:
+	if kind == "instant":
 		if _reveal.is_empty():
 			return
-		cps = OUTPUT_CPS * 4.0
+		kind = "output"
 	if _reveal.is_empty():
 		_shown = before
+		_carry = 0.0
 		_output.visible_characters = before
-	_reveal.append([_output.get_total_character_count(), cps])
+	_parsed = _output.get_parsed_text()
+	_reveal.append([_output.get_total_character_count(), kind])
 
 
 func _on_submitted(text: String) -> void:

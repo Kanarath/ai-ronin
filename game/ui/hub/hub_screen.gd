@@ -228,6 +228,7 @@ func _build_layout() -> void:
 	_terminal = TerminalView.new()
 	_terminal.setup(game.shell)
 	_terminal.effects = bool(game.progress.data.get("settings", {}).get("efectos", true))
+	_terminal.speed = str(game.progress.data.get("settings", {}).get("velocidad", "normal"))
 	_terminal.command_executed.connect(_on_command_action)
 	_terminal.custom_minimum_size = Vector2(0, 300)
 	_terminal.size_flags_vertical = Control.SIZE_EXPAND_FILL

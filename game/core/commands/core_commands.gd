@@ -67,12 +67,13 @@ static func register(reg: CommandRegistry) -> void:
 	reg.register(Command.new("clear", "Limpia la pantalla del terminal.",
 		func(_ctx: CommandContext, _a: Dictionary) -> CommandResult: return _clear(), "terminal"))
 
-	reg.register(Command.new("efectos", "Activa o quita el efecto de escritura de la consola (on u off).",
+	reg.register(Command.new("efectos", "Efecto de escritura de la consola: lento, normal, rapido, on u off.",
 		func(ctx: CommandContext, a: Dictionary) -> CommandResult: return _effects(ctx, a), "terminal")
 		.with_signature(CommandSignature.new()
-			.pos("estado", "on u off", "string", false)
-			.example("efectos off")
-			.example("efectos on")))
+			.pos("estado", "lento, normal, rapido, on u off", "string", false)
+			.example("efectos lento")
+			.example("efectos rapido")
+			.example("efectos off")))
 
 
 static func _clear() -> CommandResult:
@@ -85,26 +86,32 @@ static func _clear() -> CommandResult:
 static func _effects(ctx: CommandContext, a: Dictionary) -> CommandResult:
 	var g: Variant = ctx.shell.get_game()
 	var raw: Variant = a.get("estado")
-	var state := "" if raw == null else str(raw).to_lower()
-	var current := true
-	if g != null:
-		current = bool(g.progress.data.get("settings", {}).get("efectos", true))
-	var r := CommandResult.new()
-	if state.is_empty():
-		r.line("Efecto de escritura: %s. Cámbialo con efectos on o efectos off." % ("activado" if current else "desactivado"), "muted")
-		return r
-	if state != "on" and state != "off":
-		return CommandResult.error("Usa efectos on o efectos off.")
-	var on := state == "on"
+	var state := "" if raw == null else str(raw).to_lower().replace("á", "a")
+	var settings: Dictionary = {}
 	if g != null:
 		if not g.progress.data.has("settings"):
 			g.progress.data["settings"] = {}
-		g.progress.data["settings"]["efectos"] = on
+		settings = g.progress.data["settings"]
+	var on := bool(settings.get("efectos", true))
+	var vel := str(settings.get("velocidad", "normal"))
+	var r := CommandResult.new()
+	if state.is_empty():
+		r.line("Efecto de escritura: %s. Cámbialo con efectos lento, normal, rapido u off." % (vel if on else "desactivado"), "muted")
+		return r
+	if state in ["lento", "normal", "rapido"]:
+		settings["efectos"] = true
+		settings["velocidad"] = state
+		r.action = "effects_speed_" + state
+		r.line("Efecto de escritura: %s." % state, "muted")
+	elif state == "on" or state == "off":
+		settings["efectos"] = state == "on"
+		r.action = "effects_on" if state == "on" else "effects_off"
+		r.line("Efecto de escritura %s." % ("activado" if state == "on" else "desactivado: el texto aparecerá de golpe"), "muted")
+	else:
+		return CommandResult.error("Usa efectos lento, normal, rapido, on u off.")
+	if g != null:
 		g.save()
-	r.action = "effects_on" if on else "effects_off"
-	r.line("Efecto de escritura %s." % ("activado" if on else "desactivado: el texto aparecerá de golpe"), "muted")
 	return r
-
 
 static func _help(ctx: CommandContext, a: Dictionary) -> CommandResult:
 	var topic: Variant = a.get("tema")
