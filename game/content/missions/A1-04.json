@@ -32,18 +32,12 @@
     "datasets": [],
     "viz": {}
   },
-  "theory_cards": [
-    {
-      "id": "prod",
-      "title": "Lo que añade producción",
-      "body": "En un despliegue real, además de lo que has hecho: los secretos viven en un gestor de secretos (nunca en el código ni en el prompt); hay límites de peticiones por usuario y de gasto; se registra lo que pasa SIN guardar datos personales innecesarios; se monitorizan los intentos de ataque; y se repite el red teaming con cada cambio de modelo o de prompt. Más: man produccion"
-    }
-  ],
+  "theory_cards": [],
   "objectives": [
     {
       "id": "o1",
       "text": "Demuestra la corrección del XSS: con un chatbot nuevo, reproduce el ataque de HTML con bot render (debe ejecutarse), activa encode-output y repítelo (no debe ejecutarse).",
-      "teach": "Antes y después, con el mismo ataque\nVerificar una corrección es repetir EXACTAMENTE el mismo ataque antes y después del cambio y comparar.\nUsa bot render con el mismo mensaje dos veces, con encode-output activado entre ambas.\nESCAPAR la salida es convertir los caracteres especiales del HTML (HyperText Markup Language) en texto, para que el navegador los muestre y no los ejecute.\nPor qué: si cambias el ataque entre medias, no sabes si te ha protegido la defensa o el cambio.",
+      "teach": "Antes y después, con el mismo ataque\nVerificar una corrección es repetir EXACTAMENTE el mismo ataque antes y después del cambio y comparar.\nUsa bot render con el mismo mensaje dos veces, con encode-output activado entre ambas.\nESCAPAR la salida es convertir los caracteres especiales del HTML (HyperText Markup Language) en texto, para que el navegador los muestre y no los ejecute. Así se corrige un XSS (Cross-Site Scripting).\nPor qué: si cambias el ataque entre medias, no sabes si te ha protegido la defensa o el cambio.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -144,16 +138,16 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque los controles no vienen activados por defecto",
+          "text": "porque los controles no vienen activados por defecto en la aplicación",
           "why": "Aunque estén todos activos, el modelo sigue obedeciendo a veces textos con forma de instrucción."
         },
         {
           "id": "b",
-          "text": "porque el modelo sigue leyendo texto no fiable en el mismo canal que sus instrucciones; los controles limitan lo que puede conseguir el atacante, no que el modelo obedezca"
+          "text": "porque el modelo sigue leyendo texto no fiable junto a sus instrucciones"
         },
         {
           "id": "c",
-          "text": "porque la batería solo tiene 11 ataques",
+          "text": "porque la batería solo tiene 11 ataques y quedan casos sin probar",
           "why": "Más ataques miden mejor, pero no cambian el mecanismo: instrucciones y datos siguen en el mismo canal."
         }
       ],
@@ -168,7 +162,7 @@
         "Piensa en qué ha cambiado en A1-03: ¿el modelo, o lo que tiene a su alcance?",
         "Las defensas reducen el daño posible. answer b"
       ],
-      "on_complete": "Exacto. Por eso en producción se añaden capas: secretos en un gestor, límites por usuario, registros sin datos personales, monitorización de intentos, revisión humana para acciones sensibles y pruebas periódicas."
+      "on_complete": "Exacto. Los controles limitan lo que puede conseguir el atacante, no que el modelo obedezca. Por eso se apilan capas y se vuelven a probar en cada cambio."
     }
   ],
   "mastery_trial": {
@@ -214,7 +208,7 @@
   "debrief": {
     "what_happened": "Has verificado dos correcciones reproduciendo los mismos ataques antes y después, has redactado un informe de cierre con medidas y has pensado qué controles necesita un despliegue real.",
     "why": "En un equipo de seguridad, la confianza se construye con evidencias reproducibles. Un hallazgo no está cerrado hasta que se verifica, y un informe sin verificación medida no convence a nadie.",
-    "in_production": "Las organizaciones gestionan los hallazgos en un sistema de seguimiento (estado, responsable, fecha), repiten las pruebas en cada cambio (idealmente automatizadas en el CI/CD) y alinean sus controles con marcos como OWASP, NIST AI RMF o ISO/IEC 42001 (los verás en la pista de oficio O5).",
+    "in_production": "Las organizaciones gestionan los hallazgos en un sistema de seguimiento (estado, responsable, fecha). Repiten las pruebas en cada cambio, idealmente automatizadas en el CI/CD (Continuous Integration / Continuous Delivery). Y alinean sus controles con marcos como OWASP (Open Worldwide Application Security Project), el marco NIST AI RMF (AI Risk Management Framework) o la norma ISO/IEC 42001; los verás en la pista de oficio O5.",
     "simplifications": [
       "Defensas simuladas",
       "Sin infraestructura real de despliegue"
