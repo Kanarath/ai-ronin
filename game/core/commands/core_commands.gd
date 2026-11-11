@@ -23,6 +23,7 @@ const CATEGORY_NAMES := {
 	"laboratorio": "Laboratorios integradores (capstones)",
 	"mentor": "Mentor RONIN",
 	"python": "Python en el Dojo",
+	"vision": "Visión: imágenes y convoluciones",
 }
 
 
@@ -208,7 +209,7 @@ static func _help_overview(ctx: CommandContext) -> CommandResult:
 		if not by_cat.has(cmd.category):
 			by_cat[cmd.category] = []
 		by_cat[cmd.category].append(cmd)
-	for cat: String in ["misiones", "mentor", "python", "datos", "modelos", "optimizacion", "redes", "lenguaje", "seguridad", "rag", "agentes", "mcp", "multiagente", "supply", "deteccion", "gobernanza", "laboratorio", "encargo", "ayuda", "terminal"]:
+	for cat: String in ["misiones", "mentor", "python", "datos", "modelos", "vision", "optimizacion", "redes", "lenguaje", "seguridad", "rag", "agentes", "mcp", "multiagente", "supply", "deteccion", "gobernanza", "laboratorio", "encargo", "ayuda", "terminal"]:
 		if not by_cat.has(cat):
 			continue
 		r.line("")

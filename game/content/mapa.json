@@ -27,6 +27,10 @@
       "para_que": "Redes neuronales: la pieza con la que están hechos todos los LLM (Large Language Models). Aplicado: reconocer las llamadas peligrosas de un agente."
     },
     {
+      "unit": "T8",
+      "para_que": "Visión: una imagen son números y los filtros de convolución buscan patrones. Aplicado: una factura con una instrucción escondida para un modelo multimodal."
+    },
+    {
       "unit": "T5",
       "para_que": "Del texto al vector: tokens y embeddings, cómo un LLM (Large Language Model) convierte palabras en números. Aplicado: los disfraces de texto con los que se salta un filtro."
     },

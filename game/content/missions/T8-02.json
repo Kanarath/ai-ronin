@@ -1,0 +1,303 @@
+{
+  "id": "T8-02",
+  "schema_version": 1,
+  "title": "La factura que da órdenes",
+  "unit": "T8",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "T8-01"
+  ],
+  "competencies": {
+    "requires": [
+      "T8.imagen-numeros"
+    ],
+    "trains": [
+      "T8.inyeccion-imagen",
+      "T8.limpieza-imagen"
+    ]
+  },
+  "briefing": "El asistente de contabilidad de la forja lee facturas escaneadas para aprobar pagos. Una factura de un proveedor parece normal. Tu trabajo: descubrir qué lee el modelo que no ve nadie y cerrar el agujero.",
+  "learning_objectives": [
+    "Detectar una instrucción escondida en una imagen",
+    "Explicar por qué un modelo multimodal la lee",
+    "Defender con limpieza y tratando el texto como datos"
+  ],
+  "mentor_intro": "Una imagen inocente. O no.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "La inyección de instrucciones por imagen es un riesgo real de los modelos multimodales: texto casi invisible para una persona, pero legible para el modelo, dentro de una imagen o un PDF (Portable Document Format). Es la versión visual de lo que verás en A2-05 con documentos, y entra en la lista de OWASP (Open Worldwide Application Security Project) como inyección de prompt indirecta.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira la factura como la vería un contable: image show factura",
+      "teach": "Lo que ve una persona\nLa factura tiene tres líneas de texto oscuro sobre fondo blanco.\nPor qué: el revisor humano aprueba lo que ve; si la trampa no se ve, no la puede parar.",
+      "validator": {
+        "type": "event",
+        "event": "image.shown",
+        "where": {
+          "image": "factura",
+          "contrast": false
+        }
+      },
+      "hints": [
+        "image show factura"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Ahora deja que la lea el modelo: vision read factura",
+      "prediction": {
+        "prompt": "¿Leerá el modelo algo más que las tres líneas que se ven?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "Lo que lee el modelo\nvision read simula el lector de un modelo multimodal: saca todo el texto que hay en los píxeles.\nPor qué: el modelo no distingue entre lo que una persona vería y lo que no: todo son números.",
+      "validator": {
+        "type": "event",
+        "event": "vision.read",
+        "where": {
+          "image": "factura",
+          "hidden": true
+        }
+      },
+      "hints": [
+        "Pon tu hipótesis y lanza vision read factura."
+      ],
+      "on_complete": "Hay una cuarta línea: una instrucción para aprobar el pago sin revisión. En la imagen no se veía."
+    },
+    {
+      "id": "c1",
+      "text": "¿Por qué el modelo lee una línea que tú no ves?",
+      "teach": "0,98 no es 1,00\nLa línea escondida está pintada con 0,98 sobre un fondo de 1,00. Para el ojo, es el mismo blanco; para el modelo, son números distintos.\nPor qué: cualquier diferencia en los números puede llevar información, la veas o no.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque el modelo tiene mejor vista que las personas",
+          "why": "No es «vista»: el modelo compara números, y 0,98 es distinto de 1,00."
+        },
+        {
+          "id": "b",
+          "text": "porque la factura está dañada al escanearla",
+          "why": "No es un fallo del escáner: la línea está puesta a propósito."
+        },
+        {
+          "id": "c",
+          "text": "porque está pintada casi igual que el fondo, pero no igual",
+          "why": ""
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "Mira la última fila con image show factura --numeros.",
+        "answer c"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Revela lo escondido: image show factura --contraste",
+      "teach": "Modo contraste\n--contraste pinta todo píxel que se aparte del fondo, aunque sea muy poco.\nPor qué: es una herramienta de análisis forense: hacer visible lo que se ha intentado esconder.",
+      "validator": {
+        "type": "event",
+        "event": "image.shown",
+        "where": {
+          "image": "factura",
+          "contrast": true
+        }
+      },
+      "hints": [
+        "image show factura --contraste"
+      ],
+      "on_complete": "Ahí está: una cuarta fila que antes era invisible."
+    },
+    {
+      "id": "o4",
+      "text": "Limpia la imagen y vuelve a leerla: image clean factura --umbral 0.05 y vision read factura_limpia",
+      "teach": "Limpiar antes de leer\nimage clean iguala al fondo los píxeles que se diferencian muy poco de él: lo que nadie puede ver, tampoco lo lee el modelo.\nPor qué: es preprocesar la entrada para que modelo y persona vean lo mismo.",
+      "validator": {
+        "type": "event",
+        "event": "vision.read",
+        "where": {
+          "image": "factura_limpia",
+          "hidden": false
+        }
+      },
+      "hints": [
+        "Dos comandos: image clean factura --umbral 0.05 y vision read factura_limpia"
+      ],
+      "on_complete": "Solo quedan las tres líneas visibles. El texto escondido ha desaparecido."
+    },
+    {
+      "id": "c2",
+      "text": "Un atacante pinta la instrucción con 0,90 en vez de 0,98. ¿Qué pasa con la limpieza de umbral 0,05?",
+      "teach": "Los límites de una defensa\nEl umbral decide qué se borra: lo que se aparta del fondo menos que él.\nPor qué: toda limpieza tiene un punto ciego; por eso se combina con tratar el texto de las imágenes como datos no fiables, como en A1 y A2.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "que la limpieza ya no la borra, porque 0,10 supera el umbral",
+          "why": ""
+        },
+        {
+          "id": "b",
+          "text": "que la limpieza la borra igual, sea cual sea el valor",
+          "why": "Solo borra lo que está a menos de 0,05 del fondo; 0,90 está a 0,10."
+        },
+        {
+          "id": "c",
+          "text": "que el modelo ya no puede leerla",
+          "why": "El modelo lee cualquier diferencia: 0,90 la lee aún mejor."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "Calcula: ¿cuánto se aparta 0,90 de 1,00?",
+        "answer a"
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "¿Qué defensa en profundidad pondrías en el asistente de contabilidad?",
+      "teach": "Más de una capa\nLimpiar la imagen ayuda, pero lo decisivo es que una instrucción leída en un documento nunca valga como orden.\nPor qué: es la misma regla que en un RAG: el contenido de terceros son datos, no órdenes.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "subir el umbral de limpieza hasta borrar cualquier diferencia",
+          "why": "Un umbral muy alto borra también el texto legítimo de la factura."
+        },
+        {
+          "id": "b",
+          "text": "limpiar y tratar el texto de la imagen como datos, sin aprobar pagos sin una persona",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "pedir al modelo en el prompt que no haga caso a instrucciones escondidas",
+          "why": "Una regla en el prompt no impide la inyección: ya lo viste en A1."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué falla si el atacante cambia el valor? ¿Y si el modelo obedece?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la limpieza: abre el editor con py, completa limpiar y compruébala con py check.",
+      "teach": "La limpieza, en código\nCada píxel que se aparte del fondo menos que el umbral pasa a ser fondo.\nPor qué: es un preprocesado barato que se aplica antes de que el modelo vea la imagen.",
+      "py_exercise": {
+        "id": "T8-02-limpiar",
+        "title": "limpiar(fila, fondo, umbral): borra lo casi invisible",
+        "function": "limpiar",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef limpiar(fila, fondo, umbral):\n    salida = []\n    for p in fila:\n        salida.append(p)   # ← cambia esta línea: si abs(p - fondo) < umbral, guarda el fondo\n    return salida\n\nprint(limpiar([1.0, 0.98, 0.05, 1.0], 1.0, 0.05))   # [1.0, 1.0, 0.05, 1.0]\n",
+        "cases": [
+          {
+            "args": [
+              [
+                1.0,
+                0.98,
+                0.05,
+                1.0
+              ],
+              1.0,
+              0.05
+            ],
+            "expected": [
+              1.0,
+              1.0,
+              0.05,
+              1.0
+            ],
+            "tolerance": 1e-09
+          },
+          {
+            "args": [
+              [
+                0.9,
+                0.97
+              ],
+              1.0,
+              0.05
+            ],
+            "expected": [
+              0.9,
+              1.0
+            ],
+            "tolerance": 1e-09
+          },
+          {
+            "args": [
+              [
+                0.0,
+                0.02,
+                0.5
+              ],
+              0.0,
+              0.05
+            ],
+            "expected": [
+              0.0,
+              0.0,
+              0.5
+            ],
+            "tolerance": 1e-09
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T8-02-limpiar",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Compara abs(p - fondo) con el umbral.",
+        "La línea queda así: salida.append(fondo if abs(p - fondo) < umbral else p)"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes descubrir una instrucción escondida en una imagen, explicar por qué el modelo la lee y defenderte limpiando la entrada y tratando su texto como datos. Siguiente: T5, del texto al vector.",
+  "debrief": {
+    "what_happened": "Has encontrado una orden de pago escondida en píxeles de 0,98 sobre fondo blanco, la has revelado con contraste y la has borrado con una limpieza de umbral 0,05.",
+    "why": "Un modelo multimodal lee números, no lo que una persona ve; cualquier diferencia puede llevar instrucciones.",
+    "in_production": "Los equipos normalizan y limpian imágenes y PDF antes de pasarlos al modelo, tratan su texto como datos no fiables y no dejan que una instrucción leída en un documento dispare acciones sin supervisión.",
+    "simplifications": [
+      "El lector simula la extracción de texto: no hay OCR (Optical Character Recognition) real",
+      "Imagen en escala de grises"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-llm-2025",
+    "ref.goodfellow-dl-ch6"
+  ],
+  "xp": {
+    "base": 300
+  }
+}

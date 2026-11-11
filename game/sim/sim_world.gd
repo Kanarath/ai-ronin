@@ -40,6 +40,8 @@ var governances: Dictionary = {}
 var audits: Dictionary = {}
 ## nombre -> {"kind": "tree"|"forest", "model": ClassicML.DTree|Forest, "trained_on": String}
 var classics: Dictionary = {}
+## nombre -> imagen del laboratorio de visión (copias y versiones limpias)
+var images: Dictionary = {}
 ## Tabla de embeddings (se carga al usarla)
 var embeddings: EmbeddingTable = null
 
@@ -100,4 +102,5 @@ func load_dataset(file_name: String, ds_name: String, label_column: String) -> S
 func reset() -> void:
 	for kind in KINDS:
 		store_of(kind).clear()
+	images.clear()
 	embeddings = null

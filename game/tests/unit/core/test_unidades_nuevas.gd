@@ -7,6 +7,8 @@ const SOLUCIONES := {
 	"T7-02": "# Completa la línea marcada y compruébala con py check.\ndef gini(etiquetas):\n    cuenta = {}\n    for e in etiquetas:\n        cuenta[e] = cuenta.get(e, 0) + 1\n    n = len(etiquetas)\n    return 1 - sum((cuenta[c] / n) ** 2 for c in cuenta)\n\nprint(gini([\"abuso\", \"abuso\", \"normal\", \"normal\"]))   # 0.5\n",
 	"T7-03": "# Completa la línea marcada y compruébala con py check.\nimport math\n\ndef asignar(punto, centros):\n    mejor, mejor_d = 0, math.inf\n    for i, c in enumerate(centros):\n        d = math.sqrt(sum((x - y) ** 2 for x, y in zip(punto, c)))\n        if d < mejor_d:\n            mejor_d = d\n            mejor = i\n    return mejor\n\nprint(asignar([0.9, 0.8], [[0.1, 0.2], [0.8, 0.7]]))   # 1\n",
 	"T7-04": "# Completa la línea marcada y compruébala con py check.\ndef mas_raros(distancias, n):\n    # distancias: {id: distancia al centro}\n    orden = sorted(distancias, key=lambda c: distancias[c], reverse=True)\n    return orden[:n]\n\nprint(mas_raros({\"cli-001\": 0.1, \"cli-039\": 0.98, \"cli-041\": 0.2}, 1))   # ['cli-039']\n",
+	"T8-01": "# Completa la línea marcada y compruébala con py check.\ndef respuesta(parche, filtro):\n    total = 0\n    for i in range(3):\n        for j in range(3):\n            total += parche[i][j] * filtro[i][j]\n    return total\n\nborde_vertical = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]\nprint(respuesta([[0, 0, 1], [0, 0, 1], [0, 0, 1]], borde_vertical))   # 4\n",
+	"T8-02": "# Completa la línea marcada y compruébala con py check.\ndef limpiar(fila, fondo, umbral):\n    salida = []\n    for p in fila:\n        salida.append(fondo if abs(p - fondo) < umbral else p)\n    return salida\n\nprint(limpiar([1.0, 0.98, 0.05, 1.0], 1.0, 0.05))   # [1.0, 1.0, 0.05, 1.0]\n",
 }
 
 var game: DojoGame
@@ -51,6 +53,14 @@ func test_T7_03_completa() -> void:
 
 func test_T7_04_completa() -> void:
 	_walk("T7-04", ["T7-03"], ["dataset normalize peticiones --method minmax --as pn", "kmeans outliers pn --k 1 --top 10", "kmeans outliers pn --k 1 --top 30", "answer no", "answer b", "answer a", "PY"])
+
+
+func test_T8_01_completa() -> void:
+	_walk("T8-01", ["T4-03"], ["image list", "image show cruz", "image show cruz --numeros", "answer 1", "answer b", "hipotesis sí", "conv linea_v borde_vertical", "answer 4", "hipotesis no se", "conv linea_h borde_vertical", "answer a", "PY"])
+
+
+func test_T8_02_completa() -> void:
+	_walk("T8-02", ["T8-01"], ["image show factura", "hipotesis sí", "vision read factura", "answer c", "image show factura --contraste", "image clean factura --umbral 0.05", "vision read factura_limpia", "answer a", "answer b", "PY"])
 
 
 func test_ejercicios_inicio_falla_y_solucion_pasa() -> void:

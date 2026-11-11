@@ -8,7 +8,7 @@ extends Control
 const UNIT_TITLES := {
 	"T0": "T0 · Primeros pasos",
 	"T1": "T1 · Datos y vectores", "T2": "T2 · Aprender de datos", "T3": "T3 · Optimización y métricas", "T7": "T7 · Árboles, bosques y grupos",
-	"T4": "T4 · Redes neuronales", "T5": "T5 · Del texto al vector", "T6": "T6 · Transformers y LLM",
+	"T4": "T4 · Redes neuronales", "T8": "T8 · Cómo ve una máquina", "T5": "T5 · Del texto al vector", "T6": "T6 · Transformers y LLM",
 	"P0": "P0 · Python para IA (Forja)",
 	"A1": "A1 · Aplicación LLM", "A2": "A2 · RAG y embeddings", "A3": "A3 · Agentes", "A4": "A4 · MCP",
 	"A5": "A5 · Multiagente y A2A", "A6": "A6 · Supply chain e infra",

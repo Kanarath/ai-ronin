@@ -8,7 +8,7 @@
   "epistemic": "consolidado",
   "estimated_minutes": 30,
   "requires_missions": [
-    "T4-03"
+    "T8-02"
   ],
   "competencies": {
     "requires": [

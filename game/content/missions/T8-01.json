@@ -1,0 +1,364 @@
+{
+  "id": "T8-01",
+  "schema_version": 1,
+  "title": "Una imagen son números",
+  "unit": "T8",
+  "difficulty": 2,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "T4-03"
+  ],
+  "competencies": {
+    "requires": [
+      "T4.neurona"
+    ],
+    "trains": [
+      "T8.imagen-numeros",
+      "T8.convolucion"
+    ]
+  },
+  "briefing": "Los modelos que «ven» no ven: leen números. Hoy abres una imagen y la miras como la mira un modelo, píxel a píxel, y le pasas los filtros con los que una red neuronal convolucional detecta formas.",
+  "learning_objectives": [
+    "Representar una imagen como números",
+    "Aplicar un filtro de convolución",
+    "Explicar cómo aprende sus filtros una red convolucional"
+  ],
+  "mentor_intro": "Cierra los ojos de persona. Ábrelos de modelo.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Las redes convolucionales (CNN, Convolutional Neural Network) y los modelos multimodales que leen imágenes, como los que analizan documentos escaneados en un RAG (Retrieval-Augmented Generation), empiezan por aquí: una imagen es una cuadrícula de números y un filtro es una pequeña neurona que se repite por toda la imagen. Entenderlo te prepara para el ataque de T8-02.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira qué imágenes hay y dibuja la cruz: image list e image show cruz",
+      "teach": "Una imagen pequeña\nEl laboratorio tiene imágenes de 7×7 píxeles. Cada píxel es un número: 0 es negro y 1 es blanco.\nPor qué: una foto real es igual, solo que con millones de píxeles y tres números por píxel (rojo, verde y azul).",
+      "validator": {
+        "type": "event",
+        "event": "image.shown",
+        "where": {
+          "image": "cruz"
+        }
+      },
+      "hints": [
+        "image list y después image show cruz"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Mírala como la ve el modelo: image show cruz --numeros. ¿Qué valor tienen los píxeles de la cruz? (answer <número>)",
+      "teach": "Lo que de verdad llega al modelo\n--numeros enseña el valor de cada píxel en lugar del dibujo.\nPor qué: el modelo nunca ve «una cruz»; ve esta tabla, como veía las features de las katanas.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "image.shown",
+            "where": {
+              "image": "cruz",
+              "numbers": true
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 1,
+            "tolerance": 0.001
+          }
+        ]
+      },
+      "hints": [
+        "image show cruz --numeros",
+        "answer 1"
+      ]
+    },
+    {
+      "id": "c1",
+      "text": "Para un modelo, ¿qué es una imagen?",
+      "teach": "Imagen = vector\nSi pones en fila los 49 números de la cruz, tienes un vector de 49 features, como los de T1.\nPor qué: todo lo que aprendiste de distancias, normalización y neuronas vale también para imágenes.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "una forma que el modelo reconoce de un vistazo",
+          "why": "El modelo no tiene vista: recibe números y hace cuentas con ellos."
+        },
+        {
+          "id": "b",
+          "text": "una cuadrícula de números, como una tabla de features",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "un fichero que el modelo abre y describe con palabras",
+          "why": "Antes de cualquier palabra, la imagen se convierte en números."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Mira lo que enseñó --numeros.",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Pasa un detector de bordes verticales a la línea vertical: conv linea_v borde_vertical. ¿Cuál es su respuesta máxima? (answer <número>)",
+      "prediction": {
+        "prompt": "¿Se encenderá el filtro de bordes verticales con una línea vertical?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "Un filtro de convolución\nUn filtro 3×3 se desliza por la imagen: en cada posición multiplica sus 9 números por los 9 píxeles de debajo y los suma.\nPor qué: es una neurona pequeña que se repite por toda la imagen; donde encaja con lo que busca, «se enciende».",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "conv.applied",
+            "where": {
+              "image": "linea_v",
+              "filter": "borde_vertical"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 4,
+            "tolerance": 0.001
+          }
+        ]
+      },
+      "hints": [
+        "Pon tu hipótesis y lanza conv linea_v borde_vertical.",
+        "answer 4"
+      ],
+      "on_complete": "4: el filtro encaja con los dos lados de la línea, donde el negro cambia a blanco."
+    },
+    {
+      "id": "o4",
+      "text": "Pásale el mismo filtro a la línea horizontal: conv linea_h borde_vertical",
+      "prediction": {
+        "prompt": "¿Y con una línea horizontal?",
+        "options": [
+          "se enciende igual",
+          "se enciende menos",
+          "no se enciende"
+        ]
+      },
+      "teach": "Cada filtro busca una cosa\nEl filtro de bordes verticales mira cambios de izquierda a derecha. Una línea horizontal no tiene esos cambios.\nPor qué: una red convolucional usa muchos filtros a la vez, cada uno especializado en un patrón.",
+      "validator": {
+        "type": "event",
+        "event": "conv.applied",
+        "where": {
+          "image": "linea_h",
+          "filter": "borde_vertical"
+        }
+      },
+      "hints": [
+        "Pon tu hipótesis y lanza el comando."
+      ],
+      "on_complete": "0: no hay ningún borde vertical que detectar."
+    },
+    {
+      "id": "c2",
+      "text": "En una red convolucional de verdad, ¿de dónde salen los números de los filtros?",
+      "teach": "Filtros que se aprenden\nAquí los filtros los ha escrito una persona. En una CNN empiezan al azar y el descenso por gradiente de T3 los ajusta, como los pesos de una neurona.\nPor qué: la red aprende sola qué patrones le sirven (bordes, luego formas, luego objetos).",
+      "choices": [
+        {
+          "id": "a",
+          "text": "se aprenden con descenso por gradiente, como los pesos",
+          "why": ""
+        },
+        {
+          "id": "b",
+          "text": "los escribe a mano un ingeniero para cada tipo de imagen",
+          "why": "Se hacía así hace décadas; hoy la red los aprende de los datos."
+        },
+        {
+          "id": "c",
+          "text": "se copian de la propia imagen que se quiere reconocer",
+          "why": "Los filtros son pesos del modelo, no trozos de una imagen."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "Recuerda T4: ¿cómo aprende una neurona sus pesos?",
+        "answer a"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa un paso de la convolución: abre el editor con py, completa respuesta y compruébala con py check.",
+      "teach": "Un paso de la convolución, en código\nEn cada posición, el filtro multiplica cada número por el píxel de debajo y suma los 9 productos.\nPor qué: es la suma ponderada de una neurona, aplicada a un trozo de imagen.",
+      "py_exercise": {
+        "id": "T8-01-respuesta",
+        "title": "respuesta(parche, filtro): lo que da el filtro sobre un trozo 3×3",
+        "function": "respuesta",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef respuesta(parche, filtro):\n    total = 0\n    for i in range(3):\n        for j in range(3):\n            total += 0   # ← cambia esta línea: parche[i][j] por filtro[i][j]\n    return total\n\nborde_vertical = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]\nprint(respuesta([[0, 0, 1], [0, 0, 1], [0, 0, 1]], borde_vertical))   # 4\n",
+        "cases": [
+          {
+            "args": [
+              [
+                [
+                  0,
+                  0,
+                  1
+                ],
+                [
+                  0,
+                  0,
+                  1
+                ],
+                [
+                  0,
+                  0,
+                  1
+                ]
+              ],
+              [
+                [
+                  -1,
+                  0,
+                  1
+                ],
+                [
+                  -2,
+                  0,
+                  2
+                ],
+                [
+                  -1,
+                  0,
+                  1
+                ]
+              ]
+            ],
+            "expected": 4
+          },
+          {
+            "args": [
+              [
+                [
+                  1,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              [
+                [
+                  -1,
+                  0,
+                  1
+                ],
+                [
+                  -2,
+                  0,
+                  2
+                ],
+                [
+                  -1,
+                  0,
+                  1
+                ]
+              ]
+            ],
+            "expected": 0
+          },
+          {
+            "args": [
+              [
+                [
+                  1,
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1,
+                  1
+                ]
+              ],
+              [
+                [
+                  0.5,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0.5,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0.5
+                ]
+              ]
+            ],
+            "expected": 1.5,
+            "tolerance": 1e-09
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T8-01-respuesta",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Suma el producto del píxel por el número del filtro en la misma posición.",
+        "La línea queda así: total += parche[i][j] * filtro[i][j]"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes ver una imagen como la ve un modelo, aplicar un filtro de convolución y explicar de dónde salen los filtros de una red convolucional. Siguiente: T8-02, una imagen que da órdenes.",
+  "debrief": {
+    "what_happened": "Has mirado una imagen como tabla de números y has visto a un detector de bordes verticales encenderse con una línea vertical (4) y no con una horizontal (0).",
+    "why": "Para un modelo, una imagen es un vector de números; los filtros convolucionales son neuronas que buscan patrones locales.",
+    "in_production": "Las CNN y los transformers de visión aprenden millones de filtros o de pesos de atención a partir de imágenes etiquetadas, y los modelos multimodales las convierten en vectores que el LLM (Large Language Model) puede leer.",
+    "simplifications": [
+      "Imágenes de 7×7 en escala de grises",
+      "Filtros escritos a mano, no aprendidos"
+    ]
+  },
+  "further_reading": [
+    "ref.goodfellow-dl-ch6"
+  ],
+  "xp": {
+    "base": 250
+  }
+}
