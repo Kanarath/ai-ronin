@@ -36,7 +36,7 @@
     "datasets": [],
     "viz": {}
   },
-  "purpose": "En O6 leíste trazas que otro había registrado; en producción, las escribes tú. OpenTelemetry es el estándar abierto para trazas y métricas, y sus convenciones de GenAI (IA generativa) describen cada llamada a un LLM (Large Language Model). El problema: lo más útil para depurar, el contenido de los mensajes, es donde están los datos personales. Hoy instrumentas tu servicio, redactas antes de exportar y mides con el modelo real qué se escapa.",
+  "purpose": "En O6 leíste trazas que otro había registrado; en producción, las escribes tú. OpenTelemetry es el estándar abierto para trazas y métricas, y sus convenciones de GenAI (Generative AI, IA generativa) describen cada llamada a un LLM (Large Language Model). El problema: lo más útil para depurar, el contenido de los mensajes, es donde están los datos personales. Hoy instrumentas tu servicio, redactas antes de exportar y mides con el modelo real qué se escapa.",
   "theory_cards": [
     {
       "id": "genai-semconv",
@@ -52,14 +52,15 @@
     {
       "id": "redaccion",
       "title": "Redactar no es borrar",
-      "body": "Las expresiones regulares reconocen los formatos que conoces: un correo con @, un IBAN que empieza por ES. Un usuario que escribe «ana arroba example punto com» o un teléfono con puntos se escapa. La redacción reduce el riesgo; no registrar el contenido lo elimina. Entre medias: registrar el contenido solo en entornos de prueba, por muestreo, o guardarlo aparte con otro control de acceso y caducidad."
+      "body": "Tu redacción busca patrones con expresiones regulares: un correo tiene la forma «nombre@dominio», un IBAN español empieza por ES seguido de 22 dígitos, una tarjeta pasa la comprobación de Luhn. Lo que encaja con un patrón se sustituye; lo que no encaja se exporta tal cual. Entre redactar y no registrar nada hay términos medios: registrar el contenido solo en pruebas, por muestreo, o guardarlo aparte con otro control de acceso y caducidad.",
+      "unlock_on": "objective:o3"
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Implementa las siete funciones de trazas.py hasta que pasen los 17 tests y trae la evidencia.",
-      "teach": "record_exception=False\nEl trabajo de este paso es fuera del Dojo, en Python de verdad: abre forja/labs/E4-02_trazas/README.md, crea el entorno e implementa las funciones de trazas.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y aquí la traes con evidence import.\nPor defecto, OpenTelemetry añade al span un evento con el mensaje y la pila de cualquier excepción. Muchos mensajes de error incluyen lo que el programa estaba procesando: la pregunta del usuario, una URL (Uniform Resource Locator) con un token, una fila de la base de datos.\nEn una llamada a un LLM (Large Language Model), registra el tipo de error (error.type) y el estado, no el mensaje.\nPor qué: es una vía de fuga que casi nadie revisa, porque nadie piensa que un error sea un dato.",
+      "teach": "record_exception=False\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E4-02_trazas/README.md e implementa trazas.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nOpenTelemetry añade por defecto al span (el registro de una petición en la traza) un evento con el mensaje y la pila de cualquier excepción. Muchos mensajes de error incluyen lo que se estaba procesando: la pregunta, una URL (Uniform Resource Locator) con un token o una fila de la base de datos.\nRegistra el tipo de error (error.type) y el estado, no el mensaje.\nPor qué: es una vía de fuga que casi nadie revisa: nadie piensa que un error sea un dato.",
       "validator": {
         "type": "event",
         "event": "evidence.imported",
@@ -81,29 +82,29 @@
       "choices": [
         {
           "id": "a",
+          "text": "el identificador del usuario"
+        },
+        {
+          "id": "b",
           "text": "el modelo (gen_ai.request.model)",
           "why": "Tiene pocos valores y sirve para comparar modelos: es un buen atributo de métrica."
         },
         {
-          "id": "b",
-          "text": "el identificador del usuario"
-        },
-        {
           "id": "c",
-          "text": "el tipo de error",
+          "text": "el tipo de error (error.type)",
           "why": "Tiene pocos valores y es justo lo que quieres agrupar."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "Lee la tarjeta «Spans frente a métricas».",
-        "answer b"
+        "answer a"
       ],
       "on_complete": "Eso es: cada usuario distinto crea una serie nueva y, además, es un dato personal. En el span, de una petición concreta, sí puede ir."
     },
@@ -139,33 +140,33 @@
     {
       "id": "o3",
       "text": "Un dato escrito en un formato raro («ana arroba example punto com») acaba en el fichero de trazas. ¿Por qué?",
-      "teach": "El modelo también escribe datos personales\nRedactar la pregunta no basta: si el usuario pide «repíteme mi correo», el modelo lo escribe en la respuesta. Y un modelo puede producir datos personales que no estaban en la pregunta, sacados de su entrenamiento o de un documento recuperado.\nPor qué: en un sistema con LLM (Large Language Model), la salida se trata con el mismo cuidado que la entrada.",
+      "teach": "Lo que la expresión regular no conoce\nUna expresión regular solo reconoce el formato exacto para el que se escribió. Un teléfono escrito «seis cero cero, uno dos tres…» no contiene ni un dígito.\nPor qué: los usuarios escriben como quieren, no como espera tu expresión regular.",
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
         "Lee la tarjeta «Redactar no es borrar».",
-        "answer b"
+        "answer c"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "porque el modelo se inventó el dato",
+          "text": "porque el modelo se inventó el dato al responder",
           "why": "El dato venía en la pregunta: la redacción no lo reconoció."
         },
         {
           "id": "b",
-          "text": "porque la redacción usa expresiones regulares que solo reconocen los formatos que conoces",
-          "why": "Si en tu ejecución no se escapó ninguno, mira ataques.json: esos formatos están ahí a propósito."
+          "text": "porque el exportador estaba desactivado en esa prueba",
+          "why": "Aunque esté activo, si usa las mismas reglas tampoco lo reconoce."
         },
         {
           "id": "c",
-          "text": "porque el exportador estaba desactivado",
-          "why": "Aunque esté activo, si usa las mismas reglas tampoco lo reconoce."
+          "text": "porque no encaja con ningún patrón de la redacción",
+          "why": "Si en tu ejecución no se escapó ninguno, mira ataques.json: esos formatos están ahí a propósito."
         }
       ],
       "on_complete": "Eso es: redactar reduce el riesgo; no registrar el contenido lo elimina."
@@ -175,35 +176,36 @@
       "text": "¿Por qué conviene redactar también en el exportador, si tu código ya redacta?",
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "b",
         "accept": [
-          "a"
+          "b"
         ]
       },
       "hints": [
         "¿Quién redacta lo que escribe otra librería?",
-        "answer a"
+        "answer b"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "porque una librería de instrumentación que instales mañana puede registrar el contenido por su cuenta, sin pasar por tu código"
-        },
-        {
-          "id": "b",
-          "text": "porque el exportador redacta mejor",
+          "text": "porque el exportador redacta mejor que tu propio código",
           "why": "Con esta batería redactan lo mismo."
         },
         {
+          "id": "b",
+          "text": "porque otra librería puede registrar sin pasar por tu código"
+        },
+        {
           "id": "c",
-          "text": "porque así las métricas pueden llevar el usuario",
+          "text": "porque así ya se puede poner el usuario en las métricas",
           "why": "El usuario nunca va en una métrica."
         }
       ],
-      "on_complete": "Eso es: defensa en profundidad también en los registros. Y con convenciones en estado Development, fija la versión antes de construir paneles."
+      "on_complete": "Eso es: defensa en profundidad también en los registros. Y con convenciones en estado Development, fija la versión antes de construir paneles.",
+      "teach": "El modelo también escribe datos personales\nRedactar la pregunta no basta: si el usuario pide «repíteme mi correo», el modelo lo escribe en la respuesta. Y puede producir datos personales que no estaban en la pregunta, sacados de su entrenamiento o de un documento recuperado.\nPor qué: en un sistema con LLM (Large Language Model), la salida se trata con el mismo cuidado que la entrada."
     }
   ],
-  "you_can_now": "Sabes instrumentar llamadas a un LLM (Large Language Model) con las convenciones GenAI (Generative AI, IA generativa) de OpenTelemetry, separar lo que va en un span de lo que va en una métrica y medir qué datos personales se escapan con cada decisión de registro. Siguiente: E4-03, la puerta de despliegue.",
+  "you_can_now": "Sabes instrumentar llamadas a un LLM con las convenciones GenAI de OpenTelemetry, separar lo que va en un span de lo que va en una métrica y medir qué datos personales se escapan con cada decisión de registro. Siguiente: E4-03, la puerta de despliegue.",
   "debrief": {
     "what_happened": "Has instrumentado tu servicio con OpenTelemetry siguiendo las convenciones de GenAI (Generative AI, IA generativa): un span por llamada con el modelo, los tokens y el motivo de fin, y métricas de duración y de tokens. Después has medido con el modelo real qué datos personales llegan al fichero de trazas con el contenido crudo, redactado en el código, redactado en el exportador y sin contenido.",
     "why": "La observabilidad es una copia permanente de lo que pasa por el sistema y viaja a sitios con otros permisos. Sin contenido, las trazas siguen sirviendo para la latencia, los costes y los errores; con contenido, sirven para depurar y también son un almacén de datos personales. La minimización del RGPD (Reglamento General de Protección de Datos; en inglés, GDPR) empieza por no registrar lo que no necesitas.",

@@ -20,13 +20,13 @@
       "E3.independencia"
     ]
   },
-  "briefing": "El trabajo de campo ha dejado tres hallazgos: dos no conformidades mayores (sesgos sin medir y denegaciones sin revisión humana) y una menor (la FRIA (Fundamental Rights Impact Assessment) incompleta). Ahora hay que escribirlos para que el pleno los entienda y nadie los pueda tumbar: criterio, evidencia, riesgo, recomendación y seguimiento, más el alcance y una conclusión. Cada campo tiene tres redacciones posibles; la rúbrica corrige. Después llega noviembre y toca decidir qué hallazgos se pueden cerrar.",
+  "briefing": "El trabajo de campo ha dejado tres hallazgos: dos no conformidades mayores, por sesgos sin medir y por denegaciones sin revisión humana, y una menor: la FRIA (Fundamental Rights Impact Assessment) está incompleta. Ahora hay que escribirlos para que el pleno los entienda y nadie los pueda tumbar: criterio, evidencia, riesgo, recomendación y seguimiento, más el alcance y una conclusión. Cada campo tiene tres redacciones posibles; la rúbrica corrige. Después llega noviembre y toca decidir qué hallazgos se pueden cerrar.",
   "learning_objectives": [
     "Redactar hallazgos con criterio, evidencia, riesgo, recomendación y seguimiento que se sostengan",
     "Reconocer los errores típicos: criterios vagos o no verificados, evidencia solo de palabra, riesgos exagerados y recomendaciones que rompen la independencia",
     "Cerrar un hallazgo solo con evidencia de corrección, no con un plan"
   ],
-  "mentor_intro": "Un hallazgo bien escrito se defiende solo: dice qué se esperaba, qué se vio, por qué importa y qué hacer. Si falta una de las cuatro cosas, alguien lo discutirá en la reunión de cierre.",
+  "mentor_intro": "Un hallazgo bien escrito se defiende solo: dice qué se esperaba, qué se vio, por qué importa y qué hacer. Si falta una de ellas, alguien lo discutirá en la reunión de cierre.",
   "lab": {
     "datasets": [],
     "viz": {}
@@ -36,7 +36,7 @@
     {
       "id": "anatomia-hallazgo",
       "title": "Anatomía de un hallazgo",
-      "body": "Condición: lo que se ha visto. Criterio: lo que se esperaba (la política, la subcategoría del NIST (National Institute of Standards and Technology) adoptada, el artículo), dentro de los criterios acordados en el alcance. Evidencia: documentos y registros verificables, con fecha y muestra; una entrevista sola no basta. Riesgo o efecto: qué puede pasar a las personas y a la organización, proporcionado. Recomendación: concreta y dirigida a la causa; la implanta la organización, no el auditor. Seguimiento: responsable, fecha y evidencia de cierre. Las normas de auditoría interna y las guías de auditoría de sistemas de gestión piden elementos parecidos, con nombres distintos. Comandos: audit rubric · audit findings · audit draft · audit report."
+      "body": "Condición (lo que se ha visto; va dentro de la evidencia).\nCriterio: lo que se esperaba, dentro de los criterios acordados en el alcance: la política, la subcategoría adoptada del NIST (National Institute of Standards and Technology) o el artículo.\nEvidencia: documentos y registros verificables, con fecha y muestra; una entrevista sola no basta.\nRiesgo o efecto: qué puede pasar a las personas y a la organización, proporcionado.\nRecomendación: concreta y dirigida a la causa; la implanta la organización, no el auditor.\nSeguimiento: responsable, fecha y evidencia de cierre.\nLas normas de auditoría interna y las guías de auditoría de sistemas de gestión piden elementos parecidos, con nombres distintos. Comandos: audit rubric · audit findings · audit draft · audit report."
     }
   ],
   "objectives": [
@@ -64,7 +64,7 @@
         "El art. 14 son requisitos de diseño para el proveedor; el del responsable del despliegue es el 26.2. La evidencia buena dice qué muestra y cómo se eligió.",
         "H2: criterio C · evidencia A · riesgo B · recomendacion B · seguimiento A."
       ],
-      "on_complete": "H2 se sostiene: criterio de la política y de la ley, una muestra que otra persona puede repetir, un riesgo concreto (incluido el art. 22 del RGPD (Reglamento General de Protección de Datos; en inglés, GDPR)) y un cierre verificable.",
+      "on_complete": "H2 se sostiene: criterio de la política y de la ley, una muestra que otra persona puede repetir, un riesgo concreto, que incluye el art. 22 del RGPD (GDPR, General Data Protection Regulation), y un cierre verificable.",
       "teach": "Redactar con la rúbrica\naudit rubric valle enseña qué exige cada campo; audit findings valle H2 enseña las tres redacciones posibles de cada campo de H2; audit draft valle H2 <campo> <A|B|C> elige una.\nLos campos son criterio, evidencia, riesgo, recomendacion y seguimiento.\nPor qué: un hallazgo con el criterio mal citado o la evidencia vaga se cae en la reunión de cierre."
     },
     {
@@ -96,11 +96,11 @@
         },
         {
           "id": "b",
-          "text": "la organización auditada; el auditor verifica después si funciona"
+          "text": "la organización auditada, y el auditor lo comprueba"
         },
         {
           "id": "c",
-          "text": "el proveedor del sistema, siempre",
+          "text": "el proveedor del sistema, porque fue quien lo construyó",
           "why": "Puede participar, pero la responsable de que se haga es la organización auditada."
         }
       ],
@@ -176,29 +176,29 @@
       "text": "Para cerrar: ¿por qué no se puede cerrar H1 con un plan con fecha?",
       "validator": {
         "type": "answer",
-        "expected": "c",
+        "expected": "a",
         "accept": [
-          "c"
+          "a"
         ]
       },
       "hints": [
         "Un plan con fecha frente a una muestra nueva sin fallos.",
-        "answer c"
+        "answer a"
       ],
       "choices": [
         {
           "id": "a",
+          "text": "porque un plan dice lo que se hará, no lo que ya funciona"
+        },
+        {
+          "id": "b",
           "text": "porque el auditor tendría que medir los sesgos él mismo",
           "why": "Perdería la independencia: nadie audita su propio trabajo."
         },
         {
-          "id": "b",
-          "text": "porque la fecha del plan es demasiado lejana",
-          "why": "Aunque fuera mañana: un plan no es evidencia."
-        },
-        {
           "id": "c",
-          "text": "porque cerrar exige evidencia nueva de que el control funciona, y un plan solo dice lo que se hará"
+          "text": "porque la fecha del plan es demasiado lejana para el pleno",
+          "why": "Aunque fuera mañana: un plan no es evidencia."
         }
       ],
       "on_complete": "Eso es: se cierra con evidencia, no con promesas. H1 será lo primero en la próxima auditoría."

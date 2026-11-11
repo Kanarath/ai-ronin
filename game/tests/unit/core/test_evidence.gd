@@ -354,15 +354,15 @@ func _mision_E1(id: String, requisitos: Array, tests: int, hipotesis: String, re
 
 func test_mision_E1_01() -> void:
 	assert_false(game.start_mission("E1-01").is_empty(), "bloqueada sin T6-03 ni P0-01")
-	_mision_E1("E1-01", ["T6-03", "P0-01"], 17, "más de 3 veces", ["answer b"], ["answer a", "answer b"])
+	_mision_E1("E1-01", ["T6-03", "P0-01"], 17, "más de 3 veces", ["answer c"], ["answer a", "answer b"])
 
 
 func test_mision_E1_02() -> void:
-	_mision_E1("E1-02", ["E1-01"], 12, "menos de un 1 %", ["answer b"], ["answer b", "answer c"], PY_PERPLEJIDAD)
+	_mision_E1("E1-02", ["E1-01"], 12, "menos de un 1 %", ["answer a"], ["answer b", "answer c"], PY_PERPLEJIDAD)
 
 
 func test_mision_E1_03() -> void:
-	_mision_E1("E1-03", ["E1-02"], 15, "hacia la mitad", ["answer a"], ["answer a", "answer b"])
+	_mision_E1("E1-03", ["E1-02"], 15, "hacia la mitad", ["answer a"], ["answer c", "answer b"])
 
 
 
@@ -390,15 +390,15 @@ func _mision_E2(id: String, requires: Array, tests: int, prediction: String, res
 
 
 func test_mision_E2_01() -> void:
-	_mision_E2("E2-01", ["T4-02", "A2-03"], 16, "unos 20 puntos", ["answer b"], ["answer c", "answer a"])
+	_mision_E2("E2-01", ["T4-02", "A2-03"], 16, "unos 20 puntos", ["answer a"], ["answer c", "answer b"])
 
 
 func test_mision_E2_02() -> void:
-	_mision_E2("E2-02", ["E2-01"], 13, "una copia casi perfecta", ["answer a"], ["answer b", "answer b"])
+	_mision_E2("E2-02", ["E2-01"], 13, "una copia casi perfecta", ["answer c"], ["answer a", "answer b"])
 
 
 func test_mision_E2_03() -> void:
-	_mision_E2("E2-03", ["E2-01"], 14, "pequeña pero clara", ["answer b"], ["answer a", "answer c"], PY_VENTAJA)
+	_mision_E2("E2-03", ["E2-01"], 14, "pequeña pero clara", ["answer c"], ["answer a", "answer b"], PY_VENTAJA)
 
 
 
@@ -429,20 +429,20 @@ func _mision_E4(id: String, previas: Array, tests: int, prediccion: String, fina
 
 func test_mision_E4_01() -> void:
 	assert_eq(game.start_mission("E4-01"), "🔒 Antes completa: P0-01, O6-03")
-	var f := _mision_E4("E4-01", ["P0-01", "O6-03"], 25, "casi ninguna", ["answer b", "answer a"],
-		["answer b"], PY_PERCENTIL)
+	var f := _mision_E4("E4-01", ["P0-01", "O6-03"], 25, "casi ninguna", ["answer a", "answer b"],
+		["answer c"], PY_PERCENTIL)
 	assert_eq(f.size(), 1)
 
 
 func test_mision_E4_02() -> void:
-	var f := _mision_E4("E4-02", ["E4-01"], 17, "uno o dos", ["answer b", "answer a"],
-		["answer b"])
+	var f := _mision_E4("E4-02", ["E4-01"], 17, "uno o dos", ["answer c", "answer b"],
+		["answer a"])
 	assert_eq(f.size(), 1)
 
 
 func test_mision_E4_03() -> void:
-	var f := _mision_E4("E4-03", ["E4-02"], 18, "ninguno", ["answer c", "answer c"],
-		["answer b"])
+	var f := _mision_E4("E4-03", ["E4-02"], 18, "ninguno", ["answer b", "answer c"],
+		["answer a"])
 	assert_eq(f.size(), 1)
 
 

@@ -31,25 +31,26 @@
     "datasets": [],
     "viz": {}
   },
-  "purpose": "Un sistema de IA (Inteligencia Artificial) de alto riesgo que decide sobre personas no se pone en marcha sin documentos previos. En Europa hay dos que se confunden a menudo: la FRIA (Fundamental Rights Impact Assessment) del AI Act, art. 27, y la EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA) del RGPD (Reglamento General de Protección de Datos; en inglés, GDPR), art. 35. Hoy, sobre un caso ficticio de ayudas sociales, decides a quién le toca cada una, qué contiene, quién hace qué y desde cuándo. Esto es formación, no asesoramiento jurídico: el texto vigente está en EUR-Lex.",
+  "purpose": "Un sistema de IA (Inteligencia Artificial) de alto riesgo que decide sobre personas no se pone en marcha sin documentos previos. En Europa hay dos que se confunden a menudo: la FRIA (Fundamental Rights Impact Assessment) del AI Act, art. 27, y la EIPD, evaluación de impacto relativa a la protección de datos (DPIA, Data Protection Impact Assessment), del RGPD (GDPR, General Data Protection Regulation), art. 35. Hoy, sobre un caso ficticio de ayudas sociales, decides a quién le toca cada una, qué contiene, quién hace qué y desde cuándo.",
   "theory_cards": [
     {
       "id": "fria",
       "title": "FRIA: AI Act, art. 27",
-      "body": "Antes de desplegar un sistema de alto riesgo del art. 6.2 (anexo III), lo evalúan los responsables del despliegue que sean organismos de Derecho público o entidades privadas que prestan servicios públicos, y quienes desplieguen sistemas del anexo III, 5.b (solvencia) o 5.c (seguros de vida y salud). Se excluye el anexo III, punto 2 (infraestructuras críticas). Contenido (27.1): (a) los procesos en que se usará, (b) periodo y frecuencia de uso, (c) personas y colectivos afectados, (d) riesgos concretos de perjuicio, (e) supervisión humana, (f) medidas si los riesgos se materializan, con gobernanza interna y reclamaciones. Se hace para el primer uso y se actualiza si algo cambia (27.2); los resultados se notifican a la autoridad de vigilancia del mercado (27.3). Comandos: audit open · audit cases · audit duty."
+      "body": "Antes de desplegar un sistema de alto riesgo del art. 6.2 (anexo III), lo evalúan los responsables del despliegue que sean organismos de Derecho público o entidades privadas que prestan servicios públicos, y quienes desplieguen sistemas del anexo III, 5.b (solvencia) o 5.c (seguros de vida y salud). Se excluye el anexo III, punto 2 (infraestructuras críticas).\nContenido (27.1):\n(a) los procesos en que se usará\n(b) periodo y frecuencia de uso\n(c) personas y colectivos afectados\n(d) riesgos concretos de perjuicio\n(e) supervisión humana\n(f) medidas si los riesgos se materializan, con gobernanza interna y reclamaciones\nSe hace para el primer uso y se actualiza si algo cambia (27.2); los resultados se notifican a la autoridad de vigilancia del mercado (27.3). Comandos: audit open · audit cases · audit duty."
     },
     {
       "id": "eipd",
       "title": "EIPD: RGPD, art. 35",
-      "body": "La hace el responsable del tratamiento, antes de tratar los datos, cuando el tratamiento probablemente entrañe un alto riesgo para los derechos y libertades (35.1), con el asesoramiento del delegado de protección de datos (35.2). Siempre hace falta, entre otros casos, si hay una evaluación sistemática y exhaustiva de aspectos personales automatizada, con decisiones que producen efectos jurídicos o similares (35.3.a), o tratamiento a gran escala de categorías especiales, como la salud (35.3.b). Contenido mínimo (35.7): descripción del tratamiento y sus fines, necesidad y proporcionalidad, riesgos para los derechos y libertades, y medidas para afrontarlos. Si el riesgo sigue siendo alto, consulta previa a la autoridad de control (art. 36). Las autoridades publican listas de tratamientos que la exigen (35.4)."
+      "body": "La EIPD (DPIA, Data Protection Impact Assessment) la hace el responsable del tratamiento, antes de tratar los datos, cuando el tratamiento probablemente entrañe un alto riesgo para los derechos y libertades (35.1), con el asesoramiento del delegado de protección de datos (35.2). Siempre hace falta, entre otros casos, si hay una evaluación sistemática y exhaustiva de aspectos personales automatizada, con decisiones que producen efectos jurídicos o similares (35.3.a), o tratamiento a gran escala de categorías especiales, como la salud (35.3.b). Contenido mínimo (35.7): descripción del tratamiento y sus fines, necesidad y proporcionalidad, riesgos para los derechos y libertades, y medidas para afrontarlos. Si el riesgo sigue siendo alto, consulta previa a la autoridad de control (art. 36). Las autoridades publican listas de tratamientos que la exigen (35.4).",
+      "unlock_on": "objective:o2"
     }
   ],
   "objectives": [
     {
       "id": "o1",
-      "text": "Abre el expediente y decide, para los cuatro casos del valle, si exigen FRIA (Fundamental Rights Impact Assessment) y si exigen EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA).",
+      "text": "Abre el expediente y decide, para los cuatro casos del valle, si exigen FRIA y si exigen EIPD.",
       "prediction": {
-        "prompt": "La forja (empresa privada) usará el cribado de currículos de alto riesgo. ¿Le toca hacer una FRIA (Fundamental Rights Impact Assessment)?",
+        "prompt": "La forja (empresa privada) usará el cribado de currículos de alto riesgo. ¿Le toca hacer una FRIA?",
         "options": [
           "sí, todo sistema de alto riesgo la exige",
           "no, el art. 27 no obliga a una empresa privada con ese uso",
@@ -68,13 +69,13 @@
         "Para la FRIA importa quién despliega (público o servicio público) y qué punto del anexo III es; para la EIPD, si se tratan datos personales con alto riesgo.",
         "Ayuda-Valle sí/sí · cribado-cv no/sí · solvencia-caja sí/sí · agua-valle no/no."
       ],
-      "on_complete": "Alto riesgo no implica FRIA (Fundamental Rights Impact Assessment). La FRIA es para el sector público, los servicios públicos y dos usos concretos (crédito y seguros); la EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA) depende de los datos personales, no del AI Act.",
-      "teach": "¿A quién le toca?\nPara la FRIA (Fundamental Rights Impact Assessment) importa QUIÉN despliega el sistema y QUÉ uso del anexo III es (primera tarjeta). Para la EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA) importa si se tratan datos personales con alto riesgo (segunda tarjeta).\naudit open valle abre el expediente; audit cases valle lista los cuatro casos; audit duty valle <caso> <si|no> <si|no> decide FRIA y EIPD.\nPor qué: equivocarse aquí significa escribir un documento que nadie pide o no escribir el que hace falta."
+      "on_complete": "Alto riesgo no implica FRIA: cuenta quién despliega el sistema y para qué. La EIPD depende de los datos personales, no del AI Act.",
+      "teach": "¿A quién le toca?\nPara la FRIA importa QUIÉN despliega el sistema y QUÉ uso del anexo III es (la tarjeta de arriba).\nPara la EIPD importa otra cosa: si es probable que el tratamiento de datos personales entrañe un alto riesgo para los derechos y libertades (RGPD, art. 35.1). Su tarjeta llega en el paso siguiente.\naudit open valle abre el expediente; audit cases valle lista los cuatro casos; audit duty valle <caso> <si|no> <si|no> decide FRIA y EIPD.\nPor qué: equivocarse aquí significa escribir un documento que nadie pide o no escribir el que hace falta."
     },
     {
       "id": "o2",
-      "text": "Coloca los diez elementos del borrador de Ayuda-Valle en la FRIA (Fundamental Rights Impact Assessment), en la EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA) o en ambas.",
-      "teach": "No son el mismo documento\nLa EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA) mira el tratamiento de datos personales: si es necesario y proporcionado y cómo se protegen los datos. La FRIA (Fundamental Rights Impact Assessment) mira el uso del sistema sobre las personas: cuándo, a quién afecta, con qué supervisión y qué pasa si sale mal.\nSe solapan en los riesgos para los derechos, y por eso el art. 27.4 dice que, si la EIPD ya cubre algo, la FRIA la complementa. Según el texto consolidado tras el Digital Omnibus, además puede remitirse a ella o incluir sus partes (pendiente de confirmar en EUR-Lex).\naudit elements valle lista los elementos; audit place valle <E#> <fria|eipd|ambas> coloca uno.\nPor qué: el equipo técnico aporta piezas a las dos y tiene que saber en cuál va cada una.",
+      "text": "Coloca los diez elementos del borrador de Ayuda-Valle en la FRIA, en la EIPD o en ambas.",
+      "teach": "No son el mismo documento\nLa EIPD mira el tratamiento de datos personales: si es necesario y proporcionado y cómo se protegen. La FRIA mira el uso del sistema sobre las personas: cuándo, a quién, con qué supervisión y qué pasa si sale mal.\nSe solapan en los riesgos para los derechos, y por eso el art. 27.4 dice que, si la EIPD ya cubre algo, la FRIA la complementa. Según el texto consolidado tras el Digital Omnibus, además puede remitirse a la EIPD o incluir sus partes (pendiente de confirmar en EUR-Lex).\naudit elements valle los lista; audit place valle <E#> <fria|eipd|ambas> coloca uno.\nPor qué: el equipo técnico aporta piezas a las dos y tiene que saber en cuál va cada una.",
       "validator": {
         "type": "event",
         "event": "audit.placed",
@@ -87,7 +88,7 @@
         "Necesidad y proporcionalidad, medidas de protección de datos y consulta previa son del RGPD. Periodo, colectivos, supervisión humana, reclamaciones y notificación a la autoridad de vigilancia del mercado son del art. 27.",
         "E1 E2 E7 E10 eipd · E3 E4 E5 E6 E9 fria · E8 ambas."
       ],
-      "on_complete": "Solo un elemento es común: los riesgos para los derechos. Hacer una sola evaluación «de IA (Inteligencia Artificial)» y llamarla de las dos maneras deja huecos en las dos."
+      "on_complete": "Solo un elemento es común: los riesgos para los derechos. Hacer una sola evaluación «de IA» y llamarla de las dos maneras deja huecos en las dos."
     },
     {
       "id": "o3",
@@ -104,40 +105,40 @@
         "El proveedor no hace la FRIA: la hace quien usa el sistema. El DPD asesora; no firma la EIPD.",
         "T1 y T2 ayuntamiento · T3 dpd · T4 proveedor · T5 autoridad-mercado · T6 autoridad-control."
       ],
-      "on_complete": "El ayuntamiento hace las dos evaluaciones; el proveedor le da la información (art. 13 y 26.9); el DPD (delegado de protección de datos; en inglés, DPO) asesora; cada autoridad recibe lo suyo.",
-      "teach": "Quién hace qué\nEn estas evaluaciones intervienen el ayuntamiento (que despliega el sistema y trata los datos), el proveedor del sistema, el DPD (delegado de protección de datos; en inglés, DPO) y dos autoridades: la de vigilancia del mercado (AI Act) y la de control de protección de datos (RGPD).\naudit roles valle lista las tareas; audit assign valle <T#> <actor> asigna cada una.\nPor qué: cada documento tiene un responsable; si no está claro quién lo hace, no lo hace nadie."
+      "on_complete": "El ayuntamiento hace las dos evaluaciones; el proveedor le da la información (art. 13 y 26.9); cada autoridad recibe lo suyo.",
+      "teach": "Quién hace qué\nEn estas evaluaciones intervienen el ayuntamiento (que despliega el sistema y trata los datos), el proveedor del sistema, el DPD, delegado de protección de datos (DPO, Data Protection Officer), y dos autoridades: la de vigilancia del mercado (AI Act) y la de control de protección de datos (RGPD).\naudit roles valle lista las tareas; audit assign valle <T#> <actor> asigna cada una.\nPor qué: cada documento tiene un responsable; si no está claro quién lo hace, no lo hace nadie."
     },
     {
       "id": "c1",
-      "text": "En la EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA) de Ayuda-Valle, ¿qué papel tiene el DPD (delegado de protección de datos; en inglés, DPO)?",
+      "text": "En la EIPD de Ayuda-Valle, ¿qué papel tiene el DPD?",
       "choices": [
         {
           "id": "a",
-          "text": "la hace y la firma él",
-          "why": "La hace el responsable del tratamiento, aquí el ayuntamiento. El DPD (delegado de protección de datos; en inglés, DPO) asesora (art. 35.2)."
+          "text": "asesora al responsable, que es quien hace la EIPD"
         },
         {
           "id": "b",
-          "text": "asesora al responsable, que es quien hace la EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA)"
+          "text": "la hace y la firma él, porque es el experto en datos",
+          "why": "La hace el responsable del tratamiento, aquí el ayuntamiento. El DPD asesora (art. 35.2)."
         },
         {
           "id": "c",
           "text": "ninguno: solo interviene si hay una brecha de datos",
-          "why": "El art. 35.2 pide su asesoramiento al hacer la EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA), no solo ante una brecha."
+          "why": "El art. 35.2 pide su asesoramiento al hacer la EIPD, no solo ante una brecha."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "Mira la tarjeta de la EIPD: ¿qué dice el art. 35.2?",
-        "answer b"
+        "answer a"
       ],
-      "on_complete": "Eso es: el DPD (delegado de protección de datos; en inglés, DPO) asesora y supervisa; la decisión y la firma son del responsable del tratamiento."
+      "on_complete": "Eso es: el DPD asesora y supervisa; la decisión y la firma son del responsable del tratamiento."
     },
     {
       "id": "o4",
@@ -164,12 +165,12 @@
         "audit timeline valle",
         "¿Desde cuándo se aplica el RGPD? ¿Y la sección 3 del capítulo III del AI Act para el anexo III?"
       ],
-      "on_complete": "La EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA): el RGPD (Reglamento General de Protección de Datos; en inglés, GDPR) se aplica desde 2018 y pide la evaluación antes de tratar los datos, también en un piloto. La FRIA (Fundamental Rights Impact Assessment) es exigible desde el 2 de diciembre de 2027, y para marzo de 2028 tiene que estar hecha y notificada; empezarla con la EIPD ahorra trabajo.",
+      "on_complete": "La EIPD: el RGPD se aplica desde 2018 y pide la evaluación antes de tratar los datos, también en un piloto. La FRIA es exigible desde el 2 de diciembre de 2027, y para marzo de 2028 tiene que estar hecha y notificada; empezarla con la EIPD ahorra trabajo.",
       "teach": "El calendario\naudit timeline valle enseña desde cuándo se aplica cada obligación a este caso.\nPiensa que un piloto con expedientes reales ya trata datos personales de personas reales.\nPor qué: las obligaciones no esperan a la puesta en marcha oficial; empiezan cuando empieza el tratamiento o el uso."
     },
     {
       "id": "o5",
-      "text": "Para cerrar: ¿por qué la forja no hace FRIA (Fundamental Rights Impact Assessment) y el ayuntamiento sí?",
+      "text": "Para cerrar: ¿por qué la forja no hace FRIA y el ayuntamiento sí?",
       "validator": {
         "type": "answer",
         "expected": "c",
@@ -184,20 +185,20 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque el cribado de la forja no es de alto riesgo",
-          "why": "Sí lo es. Alto riesgo no implica FRIA (Fundamental Rights Impact Assessment)."
+          "text": "porque el cribado de currículos de la forja no es de alto riesgo",
+          "why": "Sí lo es. Alto riesgo no implica FRIA."
         },
         {
           "id": "b",
-          "text": "porque la forja ya hizo la EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA)",
-          "why": "La EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA) no sustituye a la FRIA (Fundamental Rights Impact Assessment): responden a preguntas distintas."
+          "text": "porque la forja ya hizo la EIPD, y eso basta para las dos",
+          "why": "La EIPD no sustituye a la FRIA: responden a preguntas distintas."
         },
         {
           "id": "c",
-          "text": "porque el art. 27 se dirige a organismos públicos, a quienes prestan servicios públicos y a dos usos concretos (solvencia y seguros), y la forja no es ninguno"
+          "text": "porque la FRIA depende de quién despliega y para qué uso"
         }
       ],
-      "on_complete": "Eso es. Y al ayuntamiento le conviene hacerlas juntas: la FRIA (Fundamental Rights Impact Assessment) complementa lo que la EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA) ya cubre (art. 27.4)."
+      "on_complete": "Eso es. Y al ayuntamiento le conviene hacerlas juntas: la FRIA complementa lo que la EIPD ya cubre (art. 27.4)."
     }
   ],
   "mastery_trial": {
@@ -262,15 +263,15 @@
         "hints": [
           "Cuatro casos, diez elementos y seis tareas."
         ],
-        "on_complete": "Mapa de evaluaciones de Ayuda-Valle listo para la secretaría y el DPD (delegado de protección de datos; en inglés, DPO)."
+        "on_complete": "Mapa de evaluaciones de Ayuda-Valle listo para la secretaría y el DPD."
       }
     ]
   },
-  "you_can_now": "Sabes distinguir la FRIA (Fundamental Rights Impact Assessment) del AI Act y la EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA) del RGPD (Reglamento General de Protección de Datos; en inglés, GDPR): a quién obliga cada una, qué contiene, quién la hace y desde cuándo, y por qué conviene hacerlas juntas. Siguiente: E3-02, auditar el sistema cuando ya está en marcha.",
+  "you_can_now": "Sabes distinguir la FRIA del AI Act y la EIPD del RGPD: a quién obliga cada una, qué contiene, quién la hace y desde cuándo, y por qué conviene hacerlas juntas. Siguiente: E3-02, auditar el sistema cuando ya está en marcha.",
   "debrief": {
-    "what_happened": "Has decidido qué sistemas exigen FRIA (Fundamental Rights Impact Assessment) y EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA), has separado el contenido de cada una y lo que comparten, has asignado cada tarea a su actor y has visto que la EIPD ya obliga mucho antes que la FRIA.",
+    "what_happened": "Has decidido qué sistemas exigen FRIA (Fundamental Rights Impact Assessment) y EIPD (DPIA, Data Protection Impact Assessment), has separado el contenido de cada una y lo que comparten, has asignado cada tarea a su actor y has visto que la EIPD ya obliga mucho antes que la FRIA.",
     "why": "Las dos evaluaciones nacen de normas distintas, con responsables, contenidos y destinatarios distintos. Confundirlas hace que falte lo que solo pide una (la proporcionalidad del tratamiento o la supervisión humana y las reclamaciones) o que se pida una FRIA (Fundamental Rights Impact Assessment) a quien no la necesita.",
-    "in_production": "Las organizaciones públicas preparan una plantilla conjunta que reutiliza la EIPD (evaluación de impacto relativa a la protección de datos; en inglés, DPIA) y añade lo del art. 27, con el cuestionario modelo que el art. 27.5 encarga a la Oficina de IA. El proveedor entrega instrucciones de uso y documentación (art. 13). El DPD (delegado de protección de datos; en inglés, DPO) revisa la EIPD, la asesoría jurídica valida los casos dudosos y las evaluaciones se revisan cuando cambia el sistema o su uso. Las listas de tratamientos que exigen EIPD de cada autoridad (en España, la de la AEPD (Agencia Española de Protección de Datos)) concretan el art. 35.",
+    "in_production": "Las organizaciones públicas preparan una plantilla conjunta que reutiliza la EIPD (DPIA, Data Protection Impact Assessment) y añade lo del art. 27, con el cuestionario modelo que el art. 27.5 encarga a la Oficina de IA. El proveedor entrega instrucciones de uso y documentación (art. 13). El DPD (DPO, Data Protection Officer) revisa la EIPD, la asesoría jurídica valida los casos dudosos y las evaluaciones se revisan cuando cambia el sistema o su uso. Las listas de tratamientos que exigen EIPD, que publica cada autoridad (en España, la Agencia Española de Protección de Datos, AEPD), concretan el art. 35.",
     "simplifications": [
       "Cuatro casos limpios; en la realidad hay dudas sobre qué es un «servicio público» o un tratamiento «a gran escala»",
       "No se trabajan otras obligaciones del responsable del despliegue (art. 26) ni el registro en la base de datos de la UE (art. 49)",
