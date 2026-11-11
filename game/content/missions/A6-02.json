@@ -37,7 +37,7 @@
     {
       "id": "eslabones",
       "title": "Siete eslabones",
-      "body": "Datos: un espejo con filas manipuladas instala una puerta trasera (backdoor) que se activa con una palabra. Artefacto: un pickle ejecuta código al cargarse. Adapter: alguien modifica los pesos después de que el autor los firmara. Dependencia: un asistente de código sugiere un paquete que no existía y alguien lo registra (slopsquatting). Serving: la API escucha sin autenticación. Contenedor: el proceso corre como root con el registro de modelos montado. Imagen: un token queda en una capa."
+      "body": "Datos: un espejo con filas manipuladas instala una puerta trasera (backdoor) que se activa con una palabra. Artefacto: un pickle ejecuta código al cargarse. Adapter: alguien modifica los pesos después de que el autor los firmara. Dependencia: un asistente de código sugiere un paquete que no existía y alguien lo registra (slopsquatting). Serving: la API (Application Programming Interface) escucha sin autenticación. Contenedor: el proceso corre como root con el registro de modelos montado. Imagen: un token queda en una capa."
     }
   ],
   "objectives": [
@@ -117,7 +117,7 @@
       "hints": [
         "supply load taller detector-grietas · supply inspect taller detector-grietas"
       ],
-      "on_complete": "Código del autor dentro de tu servidor, con sus permisos y su red. Y estaba firmado por visiontek, una clave de confianza: la firma dice quién lo publicó, no que sea inofensivo.",
+      "on_complete": "Código del autor dentro de tu servidor, con sus permisos y su red. Y fíjate: estaba firmado por visiontek, una clave de confianza.",
       "teach": "El escáner de artefactos\nsupply load <pipeline> <artefacto> carga un modelo en el servidor.\nsupply inspect <pipeline> <artefacto> enseña lo que encontró el escáner: las importaciones que el pickle pide al cargarse, con la forma módulo.función.\nbuiltins es el módulo de las funciones básicas de Python, y exec ejecuta el código que le pases.\nPor qué: los escáneres de artefactos reales buscan importaciones así para avisar de los pickles peligrosos."
     },
     {
@@ -255,33 +255,33 @@
     {
       "id": "o8",
       "text": "Comprueba que lo tienes claro: el detector de grietas estaba firmado por visiontek, una clave de confianza. ¿Qué te garantizaba esa firma?",
-      "teach": "Tres preguntas distintas\n¿Quién lo publicó? ¿Ha cambiado? ¿Se ejecuta al cargarlo?\nUna firma, una huella y un formato responden a preguntas distintas.\nPor qué: confundirlas es como acaba un pickle malicioso en producción con todas las comprobaciones «en verde».",
+      "teach": "Tres preguntas distintas\n¿Quién lo publicó? ¿Ha cambiado? ¿Se ejecuta al cargarlo?\nUna firma responde a quién lo publicó y a si ha cambiado desde entonces; un formato, a si se ejecuta al cargarlo.\nPor qué: confundirlas es como acaba un pickle malicioso en producción con todas las comprobaciones «en verde».",
       "choices": [
         {
           "id": "a",
-          "text": "que el fichero es el que publicó visiontek y no ha cambiado"
-        },
-        {
-          "id": "b",
-          "text": "que el fichero es inofensivo",
+          "text": "que el fichero es inofensivo porque lo respalda una clave de confianza",
           "why": "La firma dice QUIÉN lo publicó y que no ha cambiado, no QUÉ hace. Un pickle firmado sigue ejecutando su código al cargarse."
         },
         {
+          "id": "b",
+          "text": "que lo publicó visiontek y que nadie lo ha tocado desde entonces"
+        },
+        {
           "id": "c",
-          "text": "que está en un formato seguro",
+          "text": "que está guardado en un formato seguro que no ejecuta código",
           "why": "El formato es otra pregunta. El detector era un pickle: firmado o no, cargarlo ejecuta código."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "b",
         "accept": [
-          "a"
+          "b"
         ]
       },
       "hints": [
         "¿La firma mira lo que HACE el fichero o QUIÉN lo publicó?",
-        "answer a"
+        "answer b"
       ],
       "on_complete": "Exacto. La firma no hizo seguro el pickle, y el formato seguro no salvó el adapter: no ejecuta código, pero sus pesos estaban cambiados. Cada pregunta necesita su propio control."
     }
@@ -325,7 +325,7 @@
   "debrief": {
     "what_happened": "Has puesto una puerta trasera en el modelo con 30 filas, has ejecutado código simulado al cargar un pickle firmado, has cargado un adapter manipulado en formato seguro, has instalado un paquete inventado y has encontrado un servidor abierto con un token en su imagen.",
     "why": "Cada eslabón responde a una pregunta distinta: de dónde vienen los datos, qué hace el fichero al cargarse, si el contenido es el que firmó su autor, quién publicó el paquete y qué puede hacer el proceso si lo comprometen. Un control resuelve una pregunta, no todas.",
-    "in_production": "Pruebas de puertas traseras y procedencia de los datos, escáneres de artefactos (para detectar pickles peligrosos), verificación de firmas de modelos (por ejemplo con la especificación OpenSSF Model Signing, aún emergente), fijación de dependencias con huellas y revisión de paquetes nuevos, y auditorías de imágenes y redes.",
+    "in_production": "Pruebas de puertas traseras y procedencia de los datos, escáneres de artefactos (para detectar pickles peligrosos), verificación de firmas de modelos (por ejemplo con la especificación Model Signing de la OpenSSF, Open Source Security Foundation, aún emergente), fijación de dependencias con huellas y revisión de paquetes nuevos, y auditorías de imágenes y redes.",
     "simplifications": [
       "Siete fallos limpios, uno por eslabón",
       "Ningún fichero contiene código: la ejecución solo se marca",

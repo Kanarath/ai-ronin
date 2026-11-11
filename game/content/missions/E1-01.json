@@ -51,7 +51,7 @@
     {
       "id": "cache-kv",
       "title": "La caché de claves y valores",
-      "body": "Cada token nuevo necesita las claves y los valores de atención (T6-02) de todos los anteriores. Tu bucle los recalcula en cada paso: el coste crece con la longitud. generate() los guarda (la caché KV (key-value, claves y valores)) y solo calcula los del token nuevo. Por eso es más rápido, y por eso la memoria de un servidor de LLM (Large Language Model) crece con el contexto de cada usuario.",
+      "body": "Cada token nuevo necesita las claves y los valores de atención (T6-02) de todos los anteriores. Tu bucle los recalcula en cada paso: el coste crece con la longitud. generate() los guarda (es la caché KV, de key-value) y solo calcula los del token nuevo. Por eso es más rápido, y por eso la memoria de un servidor de LLM crece con el contexto de cada usuario.",
       "unlock_on": "objective:o2"
     }
   ],
@@ -59,7 +59,7 @@
     {
       "id": "o1",
       "text": "Implementa las cinco funciones de generacion.py hasta que pasen los 17 tests y trae la evidencia.",
-      "teach": "Un modelo diminuto en el test\nEl trabajo de este paso es fuera del Dojo, en Python de verdad: abre forja/labs/E1-01_generacion/README.md, crea el entorno e implementa las funciones de generacion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y aquí la traes con evidence import.\nLos tests no descargan nada: crean un LlamaForCausalLM de 2 capas y 16 dimensiones con pesos aleatorios. Dice tonterías, pero es la misma arquitectura que SmolLM2.\nPor qué: si tu bucle da lo mismo que generate() con el modelo diminuto, lo dará con el de verdad; así se prueban las piezas de un sistema de IA (Inteligencia Artificial) sin gastar horas de cálculo.",
+      "teach": "Un modelo diminuto en el test\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E1-01_generacion/README.md e implementa generacion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nLos tests no descargan nada: crean un LlamaForCausalLM de 2 capas y 16 dimensiones con pesos aleatorios. Dice tonterías, pero es la misma arquitectura que SmolLM2.\nPor qué: si tu bucle da lo mismo que generate() con el modelo diminuto, lo dará con el de verdad; así se prueban las piezas de un sistema de IA (Inteligencia Artificial) sin gastar horas de cálculo.",
       "validator": {
         "type": "event",
         "event": "evidence.imported",
@@ -81,29 +81,29 @@
       "choices": [
         {
           "id": "a",
-          "text": "se afilan: el token más probable gana todavía más y top-p deja menos tokens",
+          "text": "se afilan: el token favorito gana aún más y top-p se queda con menos tokens",
           "why": "Eso pasa con temperaturas menores que 1."
         },
         {
           "id": "b",
-          "text": "se aplanan: las probabilidades se parecen más entre sí y top-p necesita más tokens para sumar 0.9"
+          "text": "no cambian: la temperatura solo decide cuánto tarda el modelo en responder",
+          "why": "La temperatura divide los logits antes del softmax, así que cambia las probabilidades."
         },
         {
           "id": "c",
-          "text": "no cambian: la temperatura solo afecta a la velocidad",
-          "why": "La temperatura divide los logits antes del softmax, así que cambia las probabilidades."
+          "text": "se aplanan: se parecen más entre sí y top-p necesita más tokens para llegar a 0.9"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
         "Dividir los logits entre un número mayor que 1 acerca los valores entre sí.",
-        "answer b"
+        "answer c"
       ],
       "on_complete": "Eso es. Por eso una temperatura alta da textos más variados… y más raros: entran en el sorteo tokens que antes no tenían opción."
     },
@@ -111,7 +111,7 @@
       "id": "o2",
       "text": "Ejecuta experimento.py con SmolLM2-135M (README, sección 2) y compara tu bucle con generate(). ¿Qué explica que generate() vaya más rápido?",
       "prediction": {
-        "prompt": "¿Cuántas veces más rápido crees que irá generate() (con caché KV (key-value, claves y valores)) que tu bucle, generando 25 tokens?",
+        "prompt": "¿Cuántas veces más rápido crees que irá generate() (con caché KV) que tu bucle, generando 25 tokens?",
         "options": [
           "igual",
           "entre 1,5 y 3 veces",
@@ -129,25 +129,25 @@
         "python experimento.py (la primera vez descarga unos 270 MB). Después, la tarjeta de la caché KV.",
         "answer a"
       ],
-      "teach": "El experimento con SmolLM2\nexperimento.py (README, sección 2) descarga el modelo real la primera vez y compara tu bucle con generate(): mismo texto, velocidad, tokens que deja top-p y semillas.\nAnota los números: los necesitarás para responder.\nPor qué: medir la velocidad con y sin caché KV (key-value, claves y valores) es entender por qué un servidor de LLM (Large Language Model) gasta memoria por cada usuario conectado.",
+      "teach": "El experimento con SmolLM2\nexperimento.py (README, sección 2) descarga el modelo real la primera vez y compara tu bucle con generate(): mismo texto, velocidad, tokens que deja top-p y semillas.\nAnota los números: los necesitarás para responder.\nPor qué: medir la velocidad con y sin caché KV es entender por qué un servidor de LLM gasta memoria por cada usuario conectado.",
       "choices": [
         {
           "id": "a",
-          "text": "la caché KV (key-value, claves y valores): guarda las claves y los valores de los tokens anteriores y solo calcula los del nuevo",
+          "text": "la caché KV: reutiliza lo ya calculado para los tokens anteriores",
           "why": "Si en tu máquina la diferencia sale pequeña con 25 tokens, prueba --nuevos 60: crece con la longitud."
         },
         {
           "id": "b",
-          "text": "que generate() usa un modelo más pequeño",
+          "text": "que generate() carga en memoria una versión más pequeña del modelo",
           "why": "Es el mismo modelo: por eso, sin muestreo, tu bucle y generate() escriben lo mismo."
         },
         {
           "id": "c",
-          "text": "que generate() se salta tokens",
+          "text": "que generate() se salta tokens y después rellena los huecos",
           "why": "Genera los mismos tokens, uno a uno; solo ahorra recalcular lo anterior."
         }
       ],
-      "on_complete": "Eso es. Por eso la memoria de un servidor de LLM (Large Language Model) crece con el contexto de cada usuario conectado."
+      "on_complete": "Eso es. Por eso la memoria de un servidor de LLM crece con el contexto de cada usuario conectado."
     },
     {
       "id": "o3",
@@ -167,27 +167,27 @@
       "choices": [
         {
           "id": "a",
-          "text": "que sabe que es falso",
+          "text": "que el modelo ha comprobado que la frase es falsa",
           "why": "El modelo no comprueba hechos: puntúa lo frecuente en sus datos de entrenamiento."
         },
         {
           "id": "b",
-          "text": "que esa frase es menos frecuente en el tipo de textos con los que se entrenó"
+          "text": "que la ha visto menos en sus textos de entrenamiento"
         },
         {
           "id": "c",
-          "text": "que el modelo está mal entrenado",
+          "text": "que el modelo está mal entrenado y hay que repetirlo",
           "why": "Es lo esperable. Un modelo bien entrenado también puede dar probabilidad alta a errores frecuentes."
         }
       ],
-      "on_complete": "Eso es: probable no es verdadero. Por eso un LLM (Large Language Model) puede afirmar con seguridad algo falso que aparecía a menudo en sus datos."
+      "on_complete": "Eso es: probable no es verdadero. Por eso un LLM puede afirmar con seguridad algo falso que aparecía a menudo en sus datos."
     }
   ],
-  "you_can_now": "Sabes qué hace un LLM (Large Language Model) en cada paso de generación (logits, temperatura, top-p y muestreo), escribirlo en PyTorch y explicar por qué la caché KV (key-value, claves y valores) acelera y cuesta memoria. Siguiente: E1-02, cuantizar los pesos como hace Ollama.",
+  "you_can_now": "Sabes qué hace un LLM en cada paso de generación (logits, temperatura, top-p y muestreo), escribirlo en PyTorch y explicar por qué la caché KV acelera y cuesta memoria. Siguiente: E1-02, cuantizar los pesos como hace Ollama.",
   "debrief": {
     "what_happened": "Has cargado un transformer real con PyTorch y Transformers y has reescrito su bucle de generación: logits del último token, temperatura, top-p y muestreo con semilla. Has comprobado que tu bucle voraz coincide con model.generate() y has medido la log-probabilidad de un texto.",
     "why": "Toda la generación de texto de un LLM (Large Language Model), desde un chatbot hasta un agente, es este bucle. Los parámetros que ves en cualquier API (temperature, top_p, seed, max_tokens) son exactamente estas pocas líneas. Y la log-probabilidad de un texto es la base de la perplejidad, de la evaluación de modelos y de ataques como la extracción de datos memorizados.",
-    "in_production": "Los servidores de inferencia (vLLM, llama.cpp, el de Ollama) hacen este bucle en lotes de muchos usuarios a la vez, con la caché KV (key-value, claves y valores) gestionada por bloques, y muestrean en la GPU (Graphics Processing Unit). Añaden top-k, penalizaciones de repetición, gramáticas para salida estructurada y decodificación especulativa, en la que un modelo pequeño propone tokens y el grande los verifica.",
+    "in_production": "Los servidores de inferencia (vLLM, llama.cpp, el de Ollama) hacen este bucle en lotes de muchos usuarios a la vez, con la caché KV (key-value) gestionada por bloques, y muestrean en la GPU (Graphics Processing Unit). Añaden top-k, penalizaciones de repetición, gramáticas para salida estructurada y decodificación especulativa, en la que un modelo pequeño propone tokens y el grande los verifica.",
     "simplifications": [
       "Un prompt cada vez, sin lotes ni caché KV en tu bucle",
       "Un modelo de 135 M parámetros entrenado sobre todo en inglés",

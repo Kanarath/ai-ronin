@@ -37,7 +37,8 @@
     {
       "id": "defensas-rag",
       "title": "Defensas del RAG",
-      "body": "acl: la recuperación solo devuelve fragmentos que el usuario tiene permiso para ver. trusted-sources: solo se indexan documentos de fuentes de confianza (procedencia). spotlight: el contenido recuperado se marca como DATOS, no como instrucciones, y el modelo no obedece órdenes que lleguen dentro de él. vector-acl: la base vectorial aplica permisos a sus vectores. min-score: abstenerse si no hay contexto relevante. Comando: rag defend <rag> <defensa> on|off."
+      "body": "acl: la recuperación solo devuelve fragmentos que el usuario tiene permiso para ver. trusted-sources: solo se indexan documentos de fuentes de confianza (procedencia). spotlight: el contenido recuperado se marca como DATOS, no como instrucciones, y el modelo no obedece órdenes que lleguen dentro de él. vector-acl: la base vectorial aplica permisos a sus vectores. min-score: abstenerse si no hay contexto relevante. Comando: rag defend <rag> <defensa> on|off.",
+      "unlock_on": "objective:o2"
     }
   ],
   "objectives": [
@@ -90,7 +91,7 @@
     {
       "id": "o3",
       "text": "Activa spotlight y repite la batería. ¿Cuántos ataques siguen teniendo éxito? (answer <número>)",
-      "teach": "Spotlighting\nConsiste en separar y marcar el contenido recuperado para que el modelo lo trate como datos y no como órdenes.\nEs una mitigación de la investigación (Hines et al., 2024) que REDUCE la inyección indirecta; en modelos reales no la elimina del todo.\nPor qué: es la defensa contra las órdenes escondidas en documentos de A2-02.",
+      "teach": "Spotlighting\nConsiste en separar y marcar el contenido recuperado para que el modelo lo trate como datos y no como órdenes.\nEs una mitigación de la investigación (Hines et al., 2024) que REDUCE la inyección indirecta; en modelos reales no la elimina del todo.\nSe activa con rag defend <rag> spotlight on.\nPor qué: es la defensa contra las órdenes escondidas en documentos de A2-02.",
       "prediction": {
         "prompt": "Spotlight hace que el modelo no obedezca instrucciones que lleguen en los documentos. ¿Detendrá también el envenenamiento del foro?",
         "options": [
@@ -120,7 +121,7 @@
       "hints": [
         "rag defend biblio spotlight on · rag attack biblio"
       ],
-      "on_complete": "Quedan 2: la inversión y el ENVENENAMIENTO. El mensaje del foro no da ninguna orden; solo afirma algo falso. Spotlight protege contra órdenes, no contra mentiras."
+      "on_complete": "Quedan 2: la inversión y el ENVENENAMIENTO. Spotlight ha frenado la reseña con órdenes, pero el mensaje del foro sigue colándose."
     },
     {
       "id": "o4",
@@ -168,7 +169,7 @@
         "rag defend biblio vector-acl on · rag attack biblio",
         "Para el eval: rag defend biblio min-score on · rag eval biblio"
       ],
-      "on_complete": "0 ataques y 7 de 7 clientes bien atendidos. Cada defensa cubre un eslabón distinto: por eso la seguridad de un RAG (Retrieval-Augmented Generation) se diseña en capas."
+      "on_complete": "0 ataques y 7 de 7 clientes bien atendidos. Cada defensa cubre un eslabón distinto: por eso la seguridad de un RAG se diseña en capas."
     },
     {
       "id": "o6",
@@ -177,29 +178,29 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque spotlight impide que el modelo obedezca órdenes de los documentos, y el envenenamiento no da órdenes: solo afirma algo falso"
-        },
-        {
-          "id": "b",
-          "text": "porque spotlight está mal implementado en el Dojo",
+          "text": "porque spotlight está mal implementado en el Dojo y deja pasar algunos textos",
           "why": "Funciona: frena la inyección indirecta. Simplemente no está pensado para los datos falsos."
         },
         {
-          "id": "c",
-          "text": "porque el mensaje del foro se indexa después de activar spotlight",
+          "id": "b",
+          "text": "porque el mensaje del foro se indexó antes de activar spotlight y no quedó marcado",
           "why": "El orden no importa: spotlight marca todo lo recuperado, se indexara cuando se indexara."
+        },
+        {
+          "id": "c",
+          "text": "porque marcar el texto como datos frena las órdenes, y el foro no ordena nada: solo miente"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "c",
         "accept": [
-          "a"
+          "c"
         ]
       },
       "hints": [
         "Recuerda A2-02: órdenes escondidas frente a datos falsos.",
-        "Spotlight protege contra órdenes, no contra mentiras. answer a"
+        "Spotlight protege contra órdenes, no contra mentiras. answer c"
       ],
       "on_complete": "Exacto. Cada defensa cubre un eslabón: procedencia la ingesta, acl la recuperación, spotlight la presentación al modelo, vector-acl el almacenamiento y min-score la generación."
     }
@@ -245,7 +246,7 @@
   "debrief": {
     "what_happened": "Has cerrado los cinco ataques con cuatro defensas en capas (control de acceso en la recuperación, procedencia de fuentes, spotlight y permisos en la base vectorial), manteniendo la calidad del asistente.",
     "why": "Un RAG mueve datos entre fuentes, índices, modelos y usuarios con distintos permisos. La seguridad depende de controlar cada paso: quién escribe en las fuentes, qué se indexa, qué se recupera para quién, cómo se presenta al modelo y quién lee el índice.",
-    "in_production": "Filtros de metadatos y permisos en la base vectorial (multi-tenancy), pipelines de ingesta con validación y procedencia, detección de documentos anómalos (posible envenenamiento), registros de qué fragmentos se usaron en cada respuesta, y evals que miden recuperación y fidelidad. OWASP LLM08:2025 enumera estas prácticas.",
+    "in_production": "Filtros de metadatos y permisos en la base vectorial (multi-tenancy), pipelines de ingesta con validación y procedencia, detección de documentos anómalos (posible envenenamiento), registros de qué fragmentos se usaron en cada respuesta, y evals que miden recuperación y fidelidad. OWASP (Open Worldwide Application Security Project) LLM08:2025 enumera estas prácticas.",
     "simplifications": [
       "Defensas como interruptores",
       "Dos roles de usuario",
@@ -260,5 +261,5 @@
   "xp": {
     "base": 250
   },
-  "you_can_now": "Sabes qué eslabón protege cada defensa de un RAG (Retrieval-Augmented Generation): control de acceso, procedencia, spotlighting, permisos en los vectores y abstención, y por qué marcar el contenido como datos no frena los datos falsos. Siguiente: A2-04, la biblioteca con modelos reales."
+  "you_can_now": "Sabes qué eslabón protege cada defensa de un RAG: control de acceso, procedencia, spotlighting, permisos en los vectores y abstención, y por qué marcar el contenido como datos no frena los datos falsos. Siguiente: A2-04, la biblioteca con modelos reales."
 }

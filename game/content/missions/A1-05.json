@@ -23,7 +23,7 @@
       "A1.defensa-arquitectura"
     ]
   },
-  "briefing": "En A1-01…04 atacaste y defendiste un chatbot simulado. Hoy es el mismo mostrador de la forja ficticia, pero con un modelo real en tu CPU y el canario KUROGANE-77 en su prompt de sistema. Medirás cuántas veces se filtra con cada defensa, con intervalos de confianza, porque un modelo real no responde siempre igual. Instrucciones: forja/labs/A1-05_chatbot/README.md.",
+  "briefing": "En A1-01…04 atacaste y defendiste un chatbot simulado. Hoy es el mismo mostrador de la forja ficticia, pero con un modelo real en tu CPU (Central Processing Unit) y el canario KUROGANE-77 en su prompt de sistema. Medirás cuántas veces se filtra con cada defensa, con intervalos de confianza, porque un modelo real no responde siempre igual. Instrucciones: forja/labs/A1-05_chatbot/README.md.",
   "learning_objectives": [
     "Implementar detección del canario, filtros de entrada y salida y delimitado de la entrada",
     "Medir tasas de fuga con repeticiones e intervalos de confianza de Wilson",
@@ -40,12 +40,14 @@
     {
       "id": "tasas",
       "title": "Tasas e intervalos",
-      "body": "Si un ataque funciona 3 de 5 veces, la tasa observada es 0,6, pero con tan pocos intentos la tasa real podría estar entre 0,23 y 0,88. El intervalo de Wilson al 95 % da ese rango y se comporta bien con pocos datos y con 0 o n éxitos. Regla práctica: 0 fugas en 18 intentos significa «menos de un 18 % con un 95 % de confianza», no «imposible»."
+      "body": "Si un ataque funciona 3 de 5 veces, la tasa observada es 0,6, pero con tan pocos intentos la tasa real podría estar entre 0,23 y 0,88. El intervalo de Wilson al 95 % da ese rango y se comporta bien con pocos datos y con 0 o n éxitos. Regla práctica: 0 fugas en 18 intentos significa «menos de un 18 % con un 95 % de confianza», no «imposible».",
+      "unlock_on": "objective:o3"
     },
     {
       "id": "defensas",
-      "title": "Las cuatro configuraciones",
-      "body": "entrada: bloquea mensajes con frases típicas de inyección (barato y fácil de esquivar). delimitar: marca el mensaje del cliente como datos (spotlight, como en A1-03). salida: retiene la respuesta si contiene el canario, aunque venga deletreado. sin-secreto: el prompt de sistema ya no contiene el canario. La primera mide lo que se filtra; las demás, cuánto lo reducen y qué rompen."
+      "title": "Las configuraciones",
+      "body": "ninguna: sin defensas, la línea base. entrada: bloquea mensajes con frases típicas de inyección (barato y fácil de esquivar). delimitar: marca el mensaje del cliente como datos (técnica llamada spotlighting). salida: retiene la respuesta si contiene el canario, aunque venga deletreado. sin-secreto: el prompt de sistema ya no contiene el canario. ninguna mide lo que se filtra; las demás, cuánto lo reducen y qué rompen.",
+      "unlock_on": "objective:o2"
     }
   ],
   "objectives": [
@@ -95,26 +97,59 @@
         "python bateria.py · tarda varios minutos en CPU (cada configuración son 33 mensajes con --n 3).",
         "Con poco tiempo: python bateria.py --n 2 --configs \"ninguna;salida;sin-secreto\""
       ],
-      "on_complete": "Tienes datos reales. Mira las tres columnas: fugas que llegan al cliente, fugas que generó el modelo y preguntas legítimas bien respondidas."
+      "on_complete": "Tienes datos reales. En la salida de bateria.py mira las tres columnas: fugas que llegan al cliente, fugas que generó el modelo y preguntas legítimas bien respondidas."
     },
     {
       "id": "o3",
-      "text": "Los intervalos de Wilson de dos configuraciones se solapan mucho. ¿Qué puedes concluir?",
+      "text": "Imagina que, en la salida de bateria.py, los intervalos de Wilson de dos configuraciones se solapan mucho. ¿Qué puedes concluir?",
       "teach": "Leer una medición\nCada configuración tiene una tasa de fuga y su INTERVALO DE CONFIANZA: el rango donde probablemente está la tasa real.\nCon pocos intentos, el intervalo es ancho.\nPor qué: decidir qué defensa desplegar con una tasa sin intervalo es decidir casi a ciegas.",
       "choices": [
         {
           "id": "a",
-          "text": "que las dos defensas son igual de buenas",
+          "text": "que las dos defensas protegen exactamente igual de bien",
           "why": "Solaparse no prueba que sean iguales: solo que con estos datos no se pueden distinguir."
         },
         {
           "id": "b",
-          "text": "que con estos datos no puedes afirmar que una sea mejor que la otra; necesitas más repeticiones"
+          "text": "que es mejor la que tiene la tasa observada más baja",
+          "why": "Con pocos intentos, la tasa observada se mueve mucho por azar. Por eso existe el intervalo."
         },
         {
           "id": "c",
-          "text": "que es mejor la que tiene la tasa observada más baja",
-          "why": "Con pocos intentos, la tasa observada se mueve mucho por azar. Por eso existe el intervalo."
+          "text": "que estos datos no bastan para decir cuál de las dos es mejor"
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "Repasa la tarjeta «Tasas e intervalos» con mission brief.",
+        "Solape grande = no se puede decidir con estos datos. answer c"
+      ],
+      "on_complete": "Exacto. Y si con el filtro de salida las fugas que llegan al cliente bajan a 0 pero «el modelo filtró» sigue alto, el modelo sigue queriendo decir el secreto. Solo lo estás tapando a la salida."
+    },
+    {
+      "id": "o4",
+      "text": "¿Por qué sin-secreto es la única corrección real de la fuga?",
+      "teach": "La corrección de verdad\nsin-secreto quita el canario del system prompt. Las otras configuraciones intentan impedir que salga.\nPor qué: es la diferencia entre tapar un síntoma y quitar la causa, la misma que viste en A1-03.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque es la que da 0 fugas en tu batería de ataques",
+          "why": "El filtro de salida también puede dar 0 en tu batería y aun así dejar pasar una traducción o una paráfrasis. Lo que importa es el mecanismo, no solo la cifra."
+        },
+        {
+          "id": "b",
+          "text": "porque el modelo no puede revelar lo que no tiene en su contexto"
+        },
+        {
+          "id": "c",
+          "text": "porque es la defensa más barata y fácil de mantener",
+          "why": "Puede serlo, pero no es la razón: protege porque elimina la causa."
         }
       ],
       "validator": {
@@ -125,48 +160,15 @@
         ]
       },
       "hints": [
-        "Repasa la tarjeta «Tasas e intervalos» con mission brief.",
-        "Solape grande = no se puede decidir con estos datos. answer b"
-      ],
-      "on_complete": "Exacto. Y fíjate en otra cosa de tu medición: si con el filtro de salida las fugas que llegan al cliente bajan a 0 pero «el modelo filtró» sigue alto, el modelo sigue sabiendo el secreto y queriendo decirlo. Solo lo estás tapando a la salida."
-    },
-    {
-      "id": "o4",
-      "text": "¿Por qué sin-secreto es la única corrección real de la fuga?",
-      "teach": "La corrección de verdad\nsin-secreto quita el canario del system prompt. Las otras configuraciones intentan impedir que salga.\nPor qué: es la diferencia entre tapar un síntoma y quitar la causa, la misma que viste en A1-03.",
-      "choices": [
-        {
-          "id": "a",
-          "text": "porque lo que el modelo no tiene en su contexto no lo puede revelar, se lo pida quien se lo pida"
-        },
-        {
-          "id": "b",
-          "text": "porque es la que da 0 fugas en tu batería",
-          "why": "El filtro de salida también puede dar 0 en tu batería y aun así dejar pasar una traducción o una paráfrasis. Lo que importa es el mecanismo, no solo la cifra."
-        },
-        {
-          "id": "c",
-          "text": "porque es la más barata",
-          "why": "Puede serlo, pero no es la razón: protege porque elimina la causa."
-        }
-      ],
-      "validator": {
-        "type": "answer",
-        "expected": "a",
-        "accept": [
-          "a"
-        ]
-      },
-      "hints": [
-        "OWASP LLM07: el system prompt no es un lugar seguro para secretos.",
-        "Lo que no está, no se filtra. answer a"
+        "OWASP (Open Worldwide Application Security Project) LLM07: el system prompt no es un lugar seguro para secretos.",
+        "Lo que no está, no se filtra. answer b"
       ],
       "on_complete": "Exacto. Si el chatbot de verdad necesitara usar el código, lo haría a través de una herramienta en el servidor que compruebe la autorización del usuario (lo verás en A3), nunca dejándolo en el prompt."
     }
   ],
   "debrief": {
     "what_happened": "Has construido las defensas del mostrador y las has medido contra un modelo real, con repeticiones e intervalos de confianza. Has visto qué reduce las fugas, qué solo las tapa y qué las elimina.",
-    "why": "Es el núcleo de la evaluación de seguridad de sistemas con LLM: los resultados son probabilísticos, así que se miden tasas con su incertidumbre, junto con el coste en las tareas legítimas. Y la defensa más fuerte suele ser de arquitectura: si el modelo no tiene el secreto, no lo puede filtrar.",
+    "why": "Es el núcleo de la evaluación de seguridad de sistemas con un LLM (Large Language Model): los resultados son probabilísticos, así que se miden tasas con su incertidumbre, junto con el coste en las tareas legítimas. Y la defensa más fuerte suele ser de arquitectura: si el modelo no tiene el secreto, no lo puede filtrar.",
     "in_production": "Los secretos y credenciales nunca van en el prompt; las acciones privilegiadas pasan por herramientas con la autorización del usuario. Las evaluaciones de seguridad se automatizan con baterías mucho más grandes y variadas, se repiten en cada cambio de modelo o de prompt y se informan con su intervalo. Los filtros de entrada y salida se mantienen como capas extra, con sus falsos positivos medidos.",
     "simplifications": [
       "Seis ataques fijos y cinco preguntas: una batería real es mucho mayor",

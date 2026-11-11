@@ -51,14 +51,15 @@
     {
       "id": "canary",
       "title": "Canary y rollback",
-      "body": "Un canary envía una parte pequeña del tráfico a la versión nueva y compara sus métricas con las de la estable. El reparto es determinista (por un hash del usuario o de la petición), para que cada usuario vea siempre la misma versión. La decisión se toma con umbrales fijados ANTES: más errores que la estable más un margen, o un p95 demasiado alto, y se revierte. Con pocas muestras, no se decide. Un canary detecta lo que mide: si solo miras errores y latencia, una versión que responde mal pero rápido pasará."
+      "body": "Un canary envía una parte pequeña del tráfico a la versión nueva y compara sus métricas con las de la estable. El reparto es determinista (por un hash del usuario o de la petición), para que cada usuario vea siempre la misma versión. La decisión se toma con umbrales fijados ANTES: más errores que la estable más un margen, o un p95 demasiado alto, y se revierte. Con pocas muestras, no se decide.",
+      "unlock_on": "objective:o2"
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Implementa las nueve funciones de politica.py hasta que pasen los 18 tests y trae la evidencia.",
-      "teach": "Denegar por defecto\nEl trabajo de este paso es fuera del Dojo, en Python de verdad: abre forja/labs/E4-03_despliegue/README.md, crea el entorno e implementa las funciones de politica.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y aquí la traes con evidence import.\nUn servicio de compose sin user: no corre «con un usuario normal»: corre con el que diga la imagen, y muchas imágenes usan root. Un puerto sin IP (Internet Protocol) no está «en local»: escucha en todas las interfaces. Una IP que no sabes interpretar no es segura.\nEn cada duda, la regla dice no y explica por qué.\nPor qué: es más barato añadir una línea al compose que investigar un incidente.",
+      "teach": "Denegar por defecto\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E4-03_despliegue/README.md e implementa politica.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUn servicio de compose sin la clave «user:» no corre «con un usuario normal»: corre con el que diga la imagen, y muchas imágenes usan root. Un puerto sin IP (Internet Protocol) no está «en local»: escucha en todas las interfaces. Una IP que no sabes interpretar no es segura.\nEn cada duda, la regla dice no y explica por qué.\nPor qué: es más barato añadir una línea al compose que investigar un incidente.",
       "validator": {
         "type": "event",
         "event": "evidence.imported",
@@ -76,33 +77,33 @@
     },
     {
       "id": "c1",
-      "text": "La huella SHA-256 (Secure Hash Algorithm de 256 bits) del modelo coincide con la de la lista permitida. ¿Qué prueba eso?",
+      "text": "La huella SHA-256 del modelo coincide con la de la lista permitida. ¿Qué prueba eso?",
       "choices": [
         {
           "id": "a",
-          "text": "que el modelo es seguro",
-          "why": "Solo prueba que es el artefacto aprobado: si se aprobó uno malo, su huella también coincide."
+          "text": "que no ha cambiado ni un byte desde que se aprobó"
         },
         {
           "id": "b",
-          "text": "que es exactamente el artefacto aprobado, sin ningún cambio"
+          "text": "que el modelo es seguro y se puede desplegar",
+          "why": "Solo prueba que es el artefacto aprobado: si se aprobó uno malo, su huella también coincide."
         },
         {
           "id": "c",
-          "text": "quién aprobó el modelo",
+          "text": "quién aprobó el modelo y cuándo lo hizo",
           "why": "La huella no dice nada de quién lo aprobó; eso lo da una firma."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "Lee la tarjeta «La huella de un modelo».",
-        "answer b"
+        "answer a"
       ],
       "on_complete": "Eso es. Por eso la lista permitida se convierte en lo que hay que proteger: quien la edite decide qué entra."
     },
@@ -138,32 +139,32 @@
     {
       "id": "o3",
       "text": "El canary revierte en cuanto se supera un umbral, pero para promover espera a tener datos suficientes. ¿Por qué esa asimetría?",
-      "teach": "Revertir pronto\nEl canary evalúa después de cada petición. En cuanto los datos superan un umbral, revierte: cada petición más a una versión rota es un usuario más afectado. Para promover, en cambio, hace falta llegar al final con datos suficientes.\nPor qué: equivocarse revirtiendo una versión buena cuesta un despliegue; equivocarse promoviendo una mala cuesta un incidente.",
+      "teach": "Revertir pronto\nEl canary evalúa después de cada petición. Si los datos superan un umbral, revierte en ese momento; para promover, espera al final, con datos suficientes.\nPiensa en lo que cuesta cada error: revertir una versión buena, o dejar que una mala siga recibiendo usuarios.\nPor qué: los umbrales y esa asimetría se deciden antes de la prueba, no al ver los resultados.",
       "validator": {
         "type": "answer",
-        "expected": "c",
+        "expected": "b",
         "accept": [
-          "c"
+          "b"
         ]
       },
       "hints": [
         "Lee la lección «Revertir pronto».",
-        "answer c"
+        "answer b"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "es un error del canary",
+          "text": "es un error de diseño del canary que habría que corregir",
           "why": "Es deliberado."
         },
         {
           "id": "b",
-          "text": "porque los umbrales se ajustan durante la prueba",
-          "why": "Se fijan ANTES; si no, se ajustarían al resultado."
+          "text": "porque esperar con una versión rota afecta a más usuarios"
         },
         {
           "id": "c",
-          "text": "porque cada petición más a una versión rota es un usuario más afectado, y promover una mala cuesta un incidente"
+          "text": "porque los umbrales se van ajustando durante la prueba",
+          "why": "Se fijan ANTES; si no, se ajustarían al resultado."
         }
       ],
       "on_complete": "Eso es: equivocarse revirtiendo cuesta un despliegue; equivocarse promoviendo, un incidente."
@@ -185,7 +186,7 @@
       "choices": [
         {
           "id": "a",
-          "text": "una que tarda el doble",
+          "text": "una que tarda el doble en responder",
           "why": "El p95 lo detecta."
         },
         {
@@ -195,17 +196,17 @@
         },
         {
           "id": "c",
-          "text": "una que responde rápido y sin errores, pero con respuestas peores"
+          "text": "una que responde rápido, sin errores, pero peor"
         }
       ],
-      "on_complete": "Eso es: por eso los canary de modelos comparan también métricas de calidad. Y recuerda: la huella prueba que es el artefacto aprobado, no que sea seguro."
+      "on_complete": "Eso es: por eso los despliegues canary de modelos comparan también métricas de calidad. Y recuerda: la huella prueba que es el artefacto aprobado, no que sea seguro."
     }
   ],
   "you_can_now": "Sabes escribir reglas de despliegue como código que deniegan por defecto, comprobar la huella de un modelo frente a una lista permitida y decidir un canary con umbrales fijados antes. Con E4 completo, has llevado un servicio de LLM (Large Language Model) de la carga a la observabilidad y al despliegue.",
   "debrief": {
     "what_happened": "Has escrito una puerta de despliegue como código: lista permitida de modelos con su huella, contenedores sin root, con límites y sin puertos abiertos a la red, e imágenes fijadas. La has medido contra despliegues buenos y malos y contra los compose.yaml reales de la Forja. Después has lanzado un canary contra el modelo real que reparte el tráfico de forma determinista y revierte en cuanto las métricas lo justifican.",
     "why": "Un despliegue es el momento en que una decisión de seguridad se convierte en producción. Si la comprueban reglas en código, se comprueba siempre igual, con el motivo escrito y con tests. El canary limita el daño de lo que las reglas no pueden ver: una versión que cumple la política y aun así funciona peor.",
-    "in_production": "Las políticas se escriben en motores como Open Policy Agent (Rego) o Kyverno y se aplican en el pipeline de CI/CD (Continuous Integration / Continuous Delivery) y en la admisión del clúster, de modo que nadie se las salte desplegando a mano. Los modelos se firman (por ejemplo con el estándar de OpenSSF Model Signing) y se verifican igual que las imágenes. Los canary los automatizan herramientas de entrega progresiva sobre la malla de servicios o el balanceador, y comparan también métricas de calidad del modelo, no solo errores y latencia.",
+    "in_production": "Las políticas se escriben en motores como Open Policy Agent (Rego) o Kyverno y se aplican en el pipeline de CI/CD (Continuous Integration / Continuous Delivery) y en la admisión del clúster, de modo que nadie se las salte desplegando a mano. Los modelos se firman (por ejemplo con el estándar de OpenSSF Model Signing) y se verifican igual que las imágenes. Los despliegues canary los automatizan herramientas de entrega progresiva sobre la malla de servicios o el balanceador, y comparan también métricas de calidad del modelo, no solo errores y latencia.",
     "simplifications": [
       "Despliegues descritos con un diccionario en lugar del objeto completo de compose o de Kubernetes",
       "Una lista permitida en un JSON sin firmar",

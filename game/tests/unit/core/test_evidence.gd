@@ -146,7 +146,7 @@ func test_mision_P0_01() -> void:
 	assert_eq(game.runner.index, 1)
 	game.import_evidence(_write("P0-01.json", _evidence("P0-01", 17)))
 	assert_eq(game.runner.index, 2)
-	for l in ["hipotesis entre 2 y 4", "answer a", "answer b"]:
+	for l in ["hipotesis entre 2 y 4", "answer c", "answer a"]:
 		var res := game.shell.execute(l)
 		assert_true(res.ok, res.plain_text())
 	assert_eq(finished.size(), 1)
@@ -197,7 +197,7 @@ func test_mision_A1_05() -> void:
 	assert_eq(game.runner.index, 1, "hacen falta 3 configuraciones")
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("entrada", 6), _cfg("sin-secreto", 0)])))
 	assert_eq(game.runner.index, 2)
-	for l in ["answer b", "answer a"]:
+	for l in ["answer c", "answer b"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -216,7 +216,7 @@ func test_mision_A2_04() -> void:
 	assert_eq(game.runner.index, 1, "la medición de A1-05 no vale para A2-04")
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("acl", 6), _cfg("acl,procedencia,spotlight", 0)], "A2-04")))
 	assert_eq(game.runner.index, 2)
-	for l in ["answer a", "answer a"]:
+	for l in ["answer b", "answer c"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -226,7 +226,7 @@ func test_mision_A2_04() -> void:
 
 ## Misiones P0-02…P0-05 (ejercicios de clases, NumPy, Unicode y generadores): bloqueadas sin
 ## sus requisitos; después, evidencia, evidencia completa y las órdenes del terminal `lineas`.
-func _run_p0(id: String, previas: Array, lineas: Array) -> void:
+func _run_p0(id: String, previas: Array, lineas: Array, py_tras_primera: String = "") -> void:
 	var finished: Array = []
 	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
 	assert_ne(game.start_mission(id), "", "%s bloqueada sin sus requisitos" % id)
@@ -236,8 +236,13 @@ func _run_p0(id: String, previas: Array, lineas: Array) -> void:
 	assert_eq(game.evidence.exercise_of_mission(game.catalog.get_mission(id)), id)
 	assert_true(game.import_evidence(_write("p.json", _evidence(id, 0)))["ok"])
 	assert_eq(game.runner.index, 1)
+	var extra := 0
+	if not py_tras_primera.is_empty():
+		_solve_py(py_tras_primera)
+		extra = 1
+		assert_eq(game.runner.index, 2)
 	game.import_evidence(_write("p.json", _evidence(id, game.evidence.exercises[id]["total_tests"])))
-	assert_eq(game.runner.index, 2)
+	assert_eq(game.runner.index, 2 + extra)
 	for l: String in lineas:
 		if l.begins_with("PY:"):
 			_solve_py(l.substr(3))
@@ -248,19 +253,19 @@ func _run_p0(id: String, previas: Array, lineas: Array) -> void:
 
 
 func test_mision_P0_02() -> void:
-	_run_p0("P0-02", ["T4-01"], ["answer 0.871", "hipotesis más de 50 veces", "answer b"])
+	_run_p0("P0-02", ["T4-01"], ["answer 0.871", "hipotesis más de 50 veces", "answer c"])
 
 
 func test_mision_P0_03() -> void:
-	_run_p0("P0-03", ["T4-02", "P0-02"], ["answer 0.0024", "answer b"])
+	_run_p0("P0-03", ["T4-02", "P0-02"], ["answer 0.0024", "answer a"])
 
 
 func test_mision_P0_04() -> void:
-	_run_p0("P0-04", ["T5-01"], ["hipotesis 8", "answer 17", "answer b"])
+	_run_p0("P0-04", ["T5-01"], ["hipotesis 8", "answer 17", "answer c"])
 
 
 func test_mision_P0_05() -> void:
-	_run_p0("P0-05", ["T6-01", "P0-04"], ["PY:" + PY_ELEGIR, "hipotesis no", "answer paciencia", "answer b"])
+	_run_p0("P0-05", ["T6-01", "P0-04"], ["hipotesis no", "answer paciencia", "answer b"], PY_ELEGIR)
 
 
 
@@ -280,7 +285,7 @@ func test_mision_A3_04() -> void:
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("permisos", 6),
 		_cfg("aprobacion,exfiltracion,limites,permisos,spotlight", 0, 13)], "A3-04")))
 	assert_eq(game.runner.index, 2)
-	for l in ["answer b", "answer a"]:
+	for l in ["answer b", "answer b"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -295,12 +300,12 @@ func test_mision_A4_04() -> void:
 	assert_eq(game.start_mission("A4-04"), "")
 	game.import_evidence(_write("a.json", _evidence("A4-04", 28)))
 	assert_eq(game.runner.index, 1)
-	assert_true(game.shell.execute("hipotesis la revision en el host").ok)
+	assert_true(game.shell.execute("hipotesis la revisión en el host").ok)
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 6), _cfg("scopes", 3), _cfg("scopes,validacion,rutas,audiencia,pinning,revision", 0)], "A2-04")))
 	assert_eq(game.runner.index, 1, "la medición de A2-04 no vale para A4-04")
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 6), _cfg("scopes", 3), _cfg("scopes,validacion,rutas,audiencia,pinning,revision", 0)], "A4-04")))
 	assert_eq(game.runner.index, 2)
-	for l in ["answer b", "answer a"]:
+	for l in ["answer a", "answer c"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -330,7 +335,7 @@ func test_mision_A6_04() -> void:
 	assert_eq(game.runner.index, 2, "con todos los controles se escapa uno")
 	assert_true(game.shell.execute("answer 1").ok)
 	assert_eq(game.runner.index, 3)
-	for l in ["answer a", "answer b"]:
+	for l in ["answer c", "answer a"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -357,15 +362,15 @@ func _mision_E1(id: String, requisitos: Array, tests: int, hipotesis: String, re
 
 func test_mision_E1_01() -> void:
 	assert_false(game.start_mission("E1-01").is_empty(), "bloqueada sin T6-03 ni P0-01")
-	_mision_E1("E1-01", ["T6-03", "P0-01"], 17, "más de 3 veces", ["answer b"], ["answer a", "answer b"])
+	_mision_E1("E1-01", ["T6-03", "P0-01"], 17, "más de 3 veces", ["answer c"], ["answer a", "answer b"])
 
 
 func test_mision_E1_02() -> void:
-	_mision_E1("E1-02", ["E1-01"], 12, "menos de un 1 %", ["answer b"], ["answer b", "answer c"], PY_PERPLEJIDAD)
+	_mision_E1("E1-02", ["E1-01"], 12, "menos de un 1 %", ["answer a"], ["answer b", "answer c"], PY_PERPLEJIDAD)
 
 
 func test_mision_E1_03() -> void:
-	_mision_E1("E1-03", ["E1-02"], 15, "hacia la mitad", ["answer a"], ["answer a", "answer b"])
+	_mision_E1("E1-03", ["E1-02"], 15, "hacia la mitad", ["answer a"], ["answer c", "answer b"])
 
 
 
@@ -393,15 +398,15 @@ func _mision_E2(id: String, requires: Array, tests: int, prediction: String, res
 
 
 func test_mision_E2_01() -> void:
-	_mision_E2("E2-01", ["T4-02", "A2-03"], 16, "unos 20 puntos", ["answer b"], ["answer c", "answer a"])
+	_mision_E2("E2-01", ["T4-02", "A2-03"], 16, "unos 20 puntos", ["answer a"], ["answer c", "answer b"])
 
 
 func test_mision_E2_02() -> void:
-	_mision_E2("E2-02", ["E2-01"], 13, "una copia casi perfecta", ["answer a"], ["answer b", "answer b"])
+	_mision_E2("E2-02", ["E2-01"], 13, "una copia casi perfecta", ["answer c"], ["answer a", "answer b"])
 
 
 func test_mision_E2_03() -> void:
-	_mision_E2("E2-03", ["E2-01"], 14, "pequeña pero clara", ["answer b"], ["answer a", "answer c"], PY_VENTAJA)
+	_mision_E2("E2-03", ["E2-01"], 14, "pequeña pero clara", ["answer c"], ["answer a", "answer b"], PY_VENTAJA)
 
 
 
@@ -432,20 +437,20 @@ func _mision_E4(id: String, previas: Array, tests: int, prediccion: String, fina
 
 func test_mision_E4_01() -> void:
 	assert_eq(game.start_mission("E4-01"), "🔒 Antes completa: P0-01, O6-03")
-	var f := _mision_E4("E4-01", ["P0-01", "O6-03"], 25, "casi ninguna", ["answer b", "answer a"],
-		["answer b"], PY_PERCENTIL)
+	var f := _mision_E4("E4-01", ["P0-01", "O6-03"], 25, "casi ninguna", ["answer a", "answer b"],
+		["answer c"], PY_PERCENTIL)
 	assert_eq(f.size(), 1)
 
 
 func test_mision_E4_02() -> void:
-	var f := _mision_E4("E4-02", ["E4-01"], 17, "uno o dos", ["answer b", "answer a"],
-		["answer b"])
+	var f := _mision_E4("E4-02", ["E4-01"], 17, "uno o dos", ["answer c", "answer b"],
+		["answer a"])
 	assert_eq(f.size(), 1)
 
 
 func test_mision_E4_03() -> void:
-	var f := _mision_E4("E4-03", ["E4-02"], 18, "ninguno", ["answer c", "answer c"],
-		["answer b"])
+	var f := _mision_E4("E4-03", ["E4-02"], 18, "ninguno", ["answer b", "answer c"],
+		["answer a"])
 	assert_eq(f.size(), 1)
 
 
@@ -466,7 +471,7 @@ func test_mision_A1_06() -> void:
 	assert_eq(game.runner.index, 1, "falta la configuración ninguna")
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("rubrica", 6), _cfg("intercambio,rubrica", 2)], "A1-06")))
 	assert_eq(game.runner.index, 2)
-	for l in ["answer b", "answer b"]:
+	for l in ["answer a", "answer c"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -485,7 +490,7 @@ func test_mision_A1_07() -> void:
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 18, 15), _cfg("patrones", 12, 14), _cfg("clasificador", 5, 12)], "A1-07")))
 	assert_eq(game.runner.index, 2)
 	assert_true(game.shell.execute("evidence list").plain_text().contains("clasificador 5/18"))
-	for l in ["answer a", "answer b"]:
+	for l in ["answer b", "answer a"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -513,7 +518,7 @@ func test_mision_A2_05() -> void:
 		c["legitimas_ok"] = mini(c["legitimas_ok"], 6)
 	game.import_evidence(_write("m.json", _measurement(cfgs, "A2-05")))
 	assert_eq(game.runner.index, 2)
-	for l in ["answer a", "answer a"]:
+	for l in ["answer c", "answer b"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -524,8 +529,10 @@ func test_mision_A2_06() -> void:
 	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
 	game.progress.data["missions"]["A2-04"] = {"completed": true}
 	assert_eq(game.start_mission("A2-06"), "")
+	assert_eq(game.runner.current_objective()["id"], "py1", "recall@k se programa antes de usarlo")
+	_solve_py(PY_RECALL)
 	game.import_evidence(_write("a.json", _evidence("A2-06", 13)))
-	assert_eq(game.runner.index, 1)
+	assert_eq(game.runner.index, 2)
 	assert_true(game.shell.execute("hipotesis unos los baja y otros los sube").ok)
 	var cfgs := [_cfg("ninguna", 3, 11), _cfg("cross-encoder", 2, 15)]
 	for c: Dictionary in cfgs:
@@ -533,15 +540,14 @@ func test_mision_A2_06() -> void:
 		c["fugas_crudas"] = c["ataques_exitos"]
 		c["legitimas_n"] = 18
 	game.import_evidence(_write("m.json", _measurement(cfgs, "A2-06")))
-	assert_eq(game.runner.index, 1, "hacen falta 3 configuraciones")
+	assert_eq(game.runner.index, 2, "hacen falta 3 configuraciones")
 	var proc := _cfg("procedencia", 0, 13)
 	proc["ataques_n"] = 5
 	proc["legitimas_n"] = 18
 	cfgs.append(proc)
 	game.import_evidence(_write("m.json", _measurement(cfgs, "A2-06")))
-	assert_eq(game.runner.index, 2)
+	assert_eq(game.runner.index, 3)
 	assert_almost_eq(game.shell.events_named("evidence.measured")[-1]["data"]["baseline_rate"], 3.0 / 5.0, 0.0001)
-	_solve_py(PY_RECALL)
 	for l in ["answer a", "answer b"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())

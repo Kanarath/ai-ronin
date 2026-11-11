@@ -37,19 +37,16 @@
   },
   "theory_cards": [
     {
-      "id": "formas",
-      "title": "Piensa en formas",
-      "body": "Con n ejemplos, d entradas y H ocultas: X es (n, d), W1 es (d, H) y X @ W1 es (n, H): una fila por ejemplo, una columna por neurona oculta. Antes de escribir una línea, escribe las formas al lado. Si un producto no cuadra, NumPy lanza un error; si cuadra por casualidad con la forma equivocada, no lo lanza y el error es silencioso. Por eso los tests comprueban formas."
-    },
-    {
       "id": "backward",
       "title": "Backward en matrices",
-      "body": "D2 = (P − Y)/n tiene una fila por ejemplo. A1.T @ D2 suma, para cada peso, su contribución en TODOS los ejemplos: es el «∂w2[j] += d2·a1[j]» de T4-02 con el bucle dentro. Los sesgos se suman a cada fila (broadcasting), así que su gradiente es la suma por columnas: D.sum(axis=0). D1 = (D2 @ W2.T) · A1 · (1 − A1) es la regla de la cadena, con un producto elemento a elemento."
+      "body": "D2 = (P − Y)/n tiene una fila por ejemplo. A1.T @ D2 suma, para cada peso, su contribución en TODOS los ejemplos: es el «∂w2[j] += d2·a1[j]» de T4-02 con el bucle dentro. Los sesgos se suman a cada fila (broadcasting), así que su gradiente es la suma por columnas: D.sum(axis=0). D1 = (D2 @ W2.T) · A1 · (1 − A1) es la regla de la cadena, con un producto elemento a elemento.",
+      "unlock_on": "objective:o2"
     },
     {
       "id": "en-el-sitio",
       "title": "En el sitio o nuevo",
-      "body": "self.W1 -= lr * g modifica el mismo array (en el sitio); self.W1 = self.W1 - lr * g crea uno nuevo. Con matrices de millones de pesos, crear copias en cada paso cuesta memoria y tiempo, por eso los optimizadores trabajan en el sitio. El precio: quien guarde una referencia al array verá cómo cambia. En T4-02 devolvías una red nueva; aquí, a propósito, no."
+      "body": "self.W1 -= lr * g modifica el mismo array (en el sitio); self.W1 = self.W1 - lr * g crea uno nuevo. Con matrices de millones de pesos, crear copias en cada paso cuesta memoria y tiempo, por eso los optimizadores trabajan en el sitio. El precio: quien guarde una referencia al array verá cómo cambia. En T4-02 devolvías una red nueva; aquí, a propósito, no.",
+      "unlock_on": "objective:o2"
     }
   ],
   "objectives": [
@@ -101,45 +98,46 @@
       "hints": [
         "X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]], dtype=float) · Y = np.array([[0], [1], [1], [0]], dtype=float)",
         "h = MLP(2, 4, semilla=0).entrenar(X, Y, 1.0, 3000) · round(h[-1], 4)"
-      ]
+      ],
+      "on_complete": "0,0024: la misma cifra que cualquiera con NumPy 2.5.4 y semilla 0. Así se comparan experimentos."
     },
     {
       "id": "o4",
       "text": "Compara tu backprop de T4-02 con el de hoy. ¿Dónde está ahora el bucle «para cada ejemplo»?",
-      "teach": "El bucle escondido\nEn T4-02 sumabas, ejemplo a ejemplo, la contribución de cada uno al gradiente.\nHoy D2 tiene una fila por ejemplo, y A1.T @ D2 hace esa misma suma en una sola operación. Los sesgos se suman a cada fila, así que su gradiente es D.sum(axis=0).\nPor qué: entender dónde vive el bucle te permite leer el código de cualquier librería de redes.",
+      "teach": "El bucle escondido\nEn T4-02 sumabas, ejemplo a ejemplo, la contribución de cada uno al gradiente.\nHoy, en gradientes, no queda ningún for que recorra los ejemplos, y el resultado es el mismo.\nPor qué: entender dónde vive el bucle te permite leer el código de cualquier librería de redes.",
       "choices": [
         {
           "id": "a",
-          "text": "ha desaparecido porque ya no hace falta sumar la contribución de cada ejemplo",
-          "why": "Sigue sumándose la contribución de cada ejemplo: lo hace el producto de matrices."
+          "text": "dentro de las operaciones de NumPy: cada producto de matrices recorre las filas"
         },
         {
           "id": "b",
-          "text": "dentro de los productos de matrices como A1.T @ D2, y en sum(axis=0) para los sesgos"
+          "text": "ha desaparecido: con matrices ya no hace falta sumar ejemplo a ejemplo",
+          "why": "Sigue sumándose la contribución de cada ejemplo: lo hace el producto de matrices."
         },
         {
           "id": "c",
-          "text": "en la función entrenar, que recorre los ejemplos uno a uno",
+          "text": "en la función entrenar, que va pasando los ejemplos de uno en uno",
           "why": "entrenar recorre épocas, no ejemplos. Cada época procesa el lote entero de una vez."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "Busca en T4_02_backprop.py el «para cada ejemplo» y su equivalente en una línea de hoy.",
-        "A1.T @ D2 suma, para cada peso, su contribución en todos los ejemplos. answer b"
+        "A1.T @ D2 suma, para cada peso, su contribución en todos los ejemplos. answer a"
       ],
       "on_complete": "Exacto. El bucle sigue existiendo, pero dentro de @ y de sum(axis=0), en código compilado. Y el gradient check sigue siendo necesario: una traspuesta equivocada no siempre da error de forma."
     }
   ],
   "debrief": {
     "what_happened": "Has reescrito el MLP de T4-02 en forma matricial: forward con X @ W1, backward con productos traspuestos y sumas por columnas, actualización en el sitio. El gradient check y la comparación lote frente a uno a uno demuestran que las matemáticas no han cambiado.",
-    "why": "Las GPU y las bibliotecas de álgebra lineal están optimizadas para multiplicar matrices grandes. Escribir una red como productos de matrices es lo que la hace entrenable a escala. PyTorch o JAX calculan este mismo backward automáticamente (autodiferenciación): ahora sabes qué hacen.",
+    "why": "Las GPU (Graphics Processing Unit) y las bibliotecas de álgebra lineal están optimizadas para multiplicar matrices grandes. Escribir una red como productos de matrices es lo que la hace entrenable a escala. PyTorch o JAX calculan este mismo backward automáticamente (autodiferenciación): ahora sabes qué hacen.",
     "in_production": "Nadie escribe el backward a mano: se usa autodiferenciación (PyTorch, JAX), entrenamiento por mini-lotes, optimizadores como Adam, inicializaciones escaladas (Xavier o He) y precisión mixta en GPU. El gradient check se sigue usando para verificar capas personalizadas.",
     "simplifications": [
       "Lote completo de 4 ejemplos",

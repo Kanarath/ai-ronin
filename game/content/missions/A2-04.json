@@ -24,7 +24,7 @@
       "A2.seguridad-base-vectorial"
     ]
   },
-  "briefing": "En A2-01…03 construiste, atacaste y defendiste una biblioteca simulada. Hoy es la de verdad: embeddings reales con embeddinggemma, una base vectorial Qdrant y llama3.2:1b respondiendo con lo que recupera, todo en tu CPU. Entre los documentos hay una reseña con una instrucción escondida, un mensaje de foro con un dato falso y dos documentos internos. Medirás qué consigue cada defensa y cuánto cuesta. Instrucciones: forja/labs/A2-04_rag/README.md.",
+  "briefing": "En A2-01…03 construiste, atacaste y defendiste una biblioteca simulada. Hoy es la de verdad: embeddings reales con embeddinggemma, una base vectorial Qdrant y llama3.2:1b respondiendo con lo que recupera, todo en tu CPU (Central Processing Unit). Entre los documentos hay una reseña con una instrucción escondida, un mensaje de foro con un dato falso y dos documentos internos. Medirás qué consigue cada defensa y cuánto cuesta. Instrucciones: forja/labs/A2-04_rag/README.md.",
   "learning_objectives": [
     "Implementar troceo con solape, búsqueda léxica BM25 y fusión de rankings (RRF) para una búsqueda híbrida",
     "Medir la calidad de la recuperación con recall@k y compararla entre búsqueda vectorial, léxica e híbrida",
@@ -42,19 +42,20 @@
     {
       "id": "hibrida",
       "title": "Búsqueda híbrida",
-      "body": "La búsqueda vectorial encuentra paráfrasis («quién nos vende el acero» → proveedores) pero falla con códigos, cifras y nombres raros. BM25 hace lo contrario: puntúa coincidencias de palabras, dando más peso a las palabras raras y menos a los documentos largos. La fusión RRF combina los dos rankings solo con las posiciones, sin comparar puntuaciones de escalas distintas: cada documento suma 1/(60 + posición) en cada lista."
+      "body": "La búsqueda vectorial encuentra paráfrasis («quién nos vende el acero» → proveedores) pero falla con códigos, cifras y nombres raros. BM25 (Best Matching 25) hace lo contrario: puntúa coincidencias de palabras, dando más peso a las palabras raras y menos a los documentos largos. La fusión RRF (Reciprocal Rank Fusion) combina los dos rankings solo con las posiciones, sin comparar puntuaciones de escalas distintas: cada documento suma 1/(60 + posición) en cada lista."
     },
     {
       "id": "procedencia",
       "title": "Firma y procedencia",
-      "body": "El campo «origen» de un documento lo escribe quien lo sube: el mensaje del foro dice venir de la forja. Una firma HMAC con una clave que solo tiene la forja sí prueba que el texto no ha cambiado desde que la forja lo publicó. No prueba que sea verdad: un documento firmado y equivocado sigue siendo un problema. Y si la clave se filtra, la firma ya no prueba nada."
+      "body": "El campo «origen» de un documento lo escribe quien lo sube: el mensaje del foro dice venir de la forja. Una firma HMAC (Hash-based Message Authentication Code) con una clave que solo tiene la forja sí prueba que el texto no ha cambiado desde que la forja lo publicó. No prueba que sea verdad: un documento firmado y equivocado sigue siendo un problema. Y si la clave se filtra, la firma ya no prueba nada.",
+      "unlock_on": "objective:o2"
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Implementa las ocho funciones de rag.py hasta que pasen los 20 tests y trae la evidencia.",
-      "teach": "Filtrar dentro de la búsqueda\nEl control de acceso y la procedencia se aplican como filtro DENTRO de la consulta a Qdrant (la base vectorial) y del ranking BM25 (Best Matching 25, una puntuación por palabras), no quitando resultados después.\nSi filtraras después, un documento prohibido ocuparía un puesto del top-k y el cliente recibiría menos fragmentos útiles.\nPor qué: así se aplican los permisos en los RAG (Retrieval-Augmented Generation) de empresa.",
+      "teach": "Filtrar dentro de la búsqueda\nEl control de acceso y la procedencia se aplican como filtro DENTRO de la consulta a Qdrant (la base vectorial) y del ranking BM25 (Best Matching 25, una puntuación por palabras), no quitando resultados después.\nSi filtraras después, un documento prohibido ocuparía un puesto del top-k y el cliente recibiría menos fragmentos útiles.\nPor qué: así se aplican los permisos en los asistentes de empresa.",
       "validator": {
         "type": "event",
         "event": "evidence.imported",
@@ -106,29 +107,29 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque acl actúa antes del modelo (el documento no llega al contexto), y spotlight actúa dentro del modelo: el documento llega y solo cambia la probabilidad de que lo obedezca"
-        },
-        {
-          "id": "b",
-          "text": "porque Qdrant devuelve resultados al azar",
+          "text": "porque Qdrant devuelve los resultados en otro orden en cada una de las repeticiones",
           "why": "La búsqueda es la misma en cada repetición. Lo que varía es la respuesta del modelo."
         },
         {
+          "id": "b",
+          "text": "porque acl quita el documento antes del modelo; con spotlight, el modelo lo sigue leyendo"
+        },
+        {
           "id": "c",
-          "text": "porque spotlight se desactiva solo en algunas preguntas",
+          "text": "porque spotlight se desactiva solo en algunas preguntas de la batería",
           "why": "Está activo siempre. Pero un LLM con temperatura no responde igual dos veces."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "b",
         "accept": [
-          "a"
+          "b"
         ]
       },
       "hints": [
         "Mira la columna «en contexto» de cada configuración.",
-        "Lo que vio frente a lo que obedeció. answer a"
+        "Lo que vio frente a lo que obedeció. answer b"
       ],
       "on_complete": "Exacto. Las capas que deciden qué entra en el contexto son deterministas; las que piden al modelo que no obedezca, no. Por eso los intervalos de spotlight son más anchos."
     },
@@ -139,35 +140,35 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque el cuerpo lo escribe el cliente: puede poner «rol»: «empleado» y leer documentos internos"
+          "text": "porque leer el token es más rápido que analizar el cuerpo de la petición",
+          "why": "La velocidad no tiene nada que ver: importa quién controla ese dato."
         },
         {
           "id": "b",
-          "text": "porque leer el token es más rápido",
-          "why": "No es una cuestión de velocidad, sino de quién controla ese dato."
+          "text": "porque Qdrant no acepta roles que lleguen en el cuerpo de la petición",
+          "why": "Qdrant filtra con lo que le pases. El problema es fiarse de un dato que controla el cliente."
         },
         {
           "id": "c",
-          "text": "porque Qdrant no acepta roles en el cuerpo",
-          "why": "Qdrant filtra con lo que le pases. El problema es fiarse de un dato que controla el cliente."
+          "text": "porque el cuerpo lo escribe el cliente: le basta con poner «rol»: «empleado»"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "c",
         "accept": [
-          "a"
+          "c"
         ]
       },
       "hints": [
         "Mira en test_rag.py la petición con «rol»: «empleado» en el cuerpo.",
-        "Lo que escribe el cliente no prueba quién es. answer a"
+        "Lo que escribe el cliente no prueba quién es. answer c"
       ],
-      "on_complete": "Exacto. Del mismo modo, una firma HMAC (Hash-based Message Authentication Code) prueba que un documento no ha cambiado desde que la forja lo firmó, pero no que sea verdad. Y una base vectorial sin autenticación filtra los documentos aunque nadie lea su texto: los vectores se pueden invertir (A2-02)."
+      "on_complete": "Exacto. Del mismo modo, una firma HMAC prueba que un documento no ha cambiado desde que la forja lo firmó, pero no que sea verdad. Y una base vectorial sin autenticación filtra los documentos aunque nadie lea su texto: los vectores se pueden invertir (A2-02)."
     }
   ],
   "debrief": {
-    "what_happened": "Has construido una biblioteca RAG real: troceo, embeddings, Qdrant, BM25 y fusión híbrida, con su recall medido. Después has medido contra modelos reales qué ataque frena cada defensa: el control de acceso y la firma impiden que el documento llegue al modelo; el marcado solo reduce la probabilidad de que el modelo lo obedezca.",
+    "what_happened": "Has construido una biblioteca RAG (Retrieval-Augmented Generation) real: troceo, embeddings, Qdrant, BM25 (Best Matching 25) y fusión híbrida, con su recall medido. Después has medido contra modelos reales qué ataque frena cada defensa: el control de acceso y la firma impiden que el documento llegue al modelo; el marcado solo reduce la probabilidad de que el modelo lo obedezca.",
     "why": "En un RAG, lo que entra en el contexto lo decide la recuperación, y quien controla un documento indexado controla parte de lo que lee el modelo. Las defensas más fiables son las que deciden qué entra (quién puede ver qué y de dónde viene) porque no dependen del comportamiento del modelo.",
     "in_production": "El control de acceso se aplica en la propia consulta a la base vectorial con el rol del sistema de identidad, a menudo con una colección o un filtro por tenant. Los documentos se firman o se registra su procedencia en la ingesta. La base vectorial lleva autenticación, red privada y cifrado, porque los vectores revelan el texto. La recuperación se evalúa con conjuntos de preguntas etiquetadas en cada cambio de modelo de embeddings o de troceo.",
     "simplifications": [

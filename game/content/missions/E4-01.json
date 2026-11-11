@@ -38,18 +38,18 @@
     "datasets": [],
     "viz": {}
   },
-  "purpose": "Un servicio de LLM (Large Language Model) en producción atiende a muchas personas a la vez, y un solo cliente abusivo puede dejar a los demás esperando: OWASP (Open Worldwide Application Security Project) lo recoge como LLM10, consumo sin límite. El daño no es un secreto filtrado, es tiempo, y se mide en percentiles de latencia. Hoy pones límite por cliente, caché, cola acotada y plazo con respuesta degradada a tu servicio de P0-01, y lo mides con carga real.",
+  "purpose": "Un servicio de LLM (Large Language Model) en producción atiende a muchas personas a la vez, y un solo cliente abusivo puede dejar a los demás esperando: OWASP (Open Worldwide Application Security Project) lo recoge en LLM10, el décimo riesgo de su lista para LLM: consumo sin límite. El daño no es un secreto filtrado, es tiempo, y se mide en percentiles de latencia. Hoy pones límite por cliente, caché, cola acotada y plazo con respuesta degradada a tu servicio de P0-01, y lo mides con carga real.",
   "theory_cards": [
     {
       "id": "percentiles",
       "title": "p50, p95 y throughput",
-      "body": "La media de la latencia esconde a los que esperan mucho: si 19 peticiones tardan 1 s y una tarda 60 s, la media es 4 s y nadie tarda 4 s. El p50 (mediana) dice lo que espera la petición típica; el p95, lo que espera la peor de cada veinte. Los objetivos de servicio (SLO) se escriben con percentiles altos. El throughput es cuántas peticiones se atienden por segundo: con un modelo en CPU (Central Processing Unit), apenas cambia al añadir carga; lo que crece es la cola, y con ella la latencia.",
+      "body": "La media de la latencia esconde a los que esperan mucho: si 19 peticiones tardan 1 s y una tarda 60 s, la media es 4 s y nadie tarda 4 s. El p50 (mediana) dice lo que espera la petición típica; el p95, lo que espera la peor de cada veinte. Los objetivos de servicio (SLO, Service Level Objective) se escriben con percentiles altos. El throughput es cuántas peticiones se atienden por segundo: con un modelo en CPU (Central Processing Unit), apenas cambia al añadir carga; lo que crece es la cola, y con ella la latencia.",
       "unlock_on": "objective:py1"
     },
     {
       "id": "cubo",
       "title": "El cubo de tokens",
-      "body": "Cada cliente tiene un cubo con capacidad para N tokens que se rellena a un ritmo fijo. Cada petición gasta uno; si el cubo está vacío, se responde 429 Too Many Requests con la cabecera Retry-After. Permite ráfagas cortas (hasta N) y limita el ritmo sostenido. El cliente sale de su token, nunca de algo que escriba en la petición: si no, el abusador cambiaría de nombre en cada petición.",
+      "body": "Cada cliente tiene un cubo con capacidad para N tokens que se rellena a un ritmo fijo. Cada petición gasta uno; si el cubo está vacío, se responde 429 Too Many Requests con la cabecera Retry-After. Permite ráfagas cortas (hasta N) y limita el ritmo sostenido. La identidad del cliente sale de su token de acceso (con el que se autentica), nunca de algo que escriba en la petición: si no, el abusador cambiaría de nombre en cada petición.",
       "unlock_on": "objective:o1"
     },
     {
@@ -68,7 +68,7 @@
         "id": "E4-01-percentil",
         "title": "percentil(valores, p): con interpolación lineal",
         "function": "percentil",
-        "starter": "# Ejercicio E4-01 · El percentil de las latencias\n# valores: segundos que tardó cada petición. p: de 0 a 100 (50 = mediana, 95 = p95).\n# Interpolación lineal, el método que usa NumPy por defecto.\n\ndef percentil(valores, p):\n    v = sorted(valores)\n    posicion = (len(v) - 1) * p / 100\n    i = int(posicion)\n    f = posicion - i          # parte decimal: cuánto avanzar hacia v[i + 1]\n    if i + 1 < len(v):\n        return v[i]   # ← cambia esta línea: v[i] más f veces la distancia hasta v[i + 1]\n    return v[i]\n\n# La mediana de cuatro valores cae entre el 2 y el 3: debería imprimir 2.5\nprint(percentil([4, 1, 3, 2], 50))\n",
+        "starter": "# E4-01 · Percentil con interpolación lineal (p de 0 a 100)\n\ndef percentil(valores, p):\n    v = sorted(valores)\n    posicion = (len(v) - 1) * p / 100\n    i = int(posicion)\n    f = posicion - i          # parte decimal: cuánto avanzar hacia v[i + 1]\n    if i + 1 < len(v):\n        return v[i]   # ← cambia esta línea: v[i] más f veces la distancia hasta v[i + 1]\n    return v[i]\n\n# La mediana de cuatro valores cae entre el 2 y el 3: debería imprimir 2.5\nprint(percentil([4, 1, 3, 2], 50))\n",
         "cases": [
           {
             "args": [
@@ -213,7 +213,7 @@
     {
       "id": "o1",
       "text": "Implementa las siete piezas de carga.py hasta que pasen los 25 tests y trae la evidencia.",
-      "teach": "La caché también es una frontera\nEl trabajo de este paso es fuera del Dojo, en Python de verdad: abre forja/labs/E4-01_carga/README.md, crea el entorno e implementa las funciones de carga.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y aquí la traes con evidence import.\nUna respuesta en caché se sirve a quien haga la misma pregunta. Si es pública (el horario de la forja), compartirla es eficiente. Si depende del usuario (el estado de su pedido), compartirla es una fuga entre clientes. Por eso clave_cache lleva un ámbito: el usuario cuando la respuesta es suya y \"publico\" cuando no.\nPor qué: es un fallo real de servicios con caché: un cliente recibe la respuesta de otro.",
+      "teach": "La caché también es una frontera\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E4-01_carga/README.md e implementa carga.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUna respuesta en caché se sirve a quien haga la misma pregunta. Si es pública (el horario de la forja), compartirla ahorra trabajo; si es del usuario (su pedido), es una fuga entre clientes. Por eso clave_cache lleva un ámbito: el usuario cuando la respuesta es suya y \"publico\" cuando no.\nPor qué: es un fallo real de servicios con caché: un cliente recibe la respuesta de otro.",
       "validator": {
         "type": "event",
         "event": "evidence.imported",
@@ -227,7 +227,7 @@
         "Desde forja/labs/E4-01_carga: .\\.venv\\Scripts\\python.exe -m unittest -v test_carga (crea el entorno como en P0-01).",
         ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py E4-01 · y aquí: evidence import"
       ],
-      "on_complete": "Tu tubería funciona con un modelo simulado que tarda lo que dice el test. Ahora, con uno que tarda lo que tarda tu CPU (Central Processing Unit)."
+      "on_complete": "Tu tubería funciona con un modelo simulado que tarda lo que dice el test. Ahora, con uno que tarda lo que tarda tu CPU."
     },
     {
       "id": "c1",
@@ -240,24 +240,24 @@
         },
         {
           "id": "b",
-          "text": "del token de acceso con el que se autentica"
+          "text": "de la pregunta que hace, porque cada uno pregunta lo suyo",
+          "why": "Dos clientes pueden preguntar lo mismo, y uno puede preguntar cosas distintas."
         },
         {
           "id": "c",
-          "text": "de la pregunta que hace",
-          "why": "Dos clientes pueden preguntar lo mismo, y uno puede preguntar cosas distintas."
+          "text": "de la credencial con la que se identifica al conectarse"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
         "Lee la última frase de la tarjeta «El cubo de tokens».",
-        "answer b"
+        "answer c"
       ],
       "on_complete": "Eso es: la identidad sale de lo que el cliente no puede inventar. Es la misma idea que la identidad en las trazas de O6."
     },
@@ -292,34 +292,34 @@
     },
     {
       "id": "o3",
-      "text": "Compara la fila sin defensas con la de límite y cola. ¿Qué pasa con el throughput y con el p95 de las legítimas?",
-      "teach": "El throughput no es la defensa\nCon un solo modelo en CPU (Central Processing Unit), la forja produce más o menos las mismas respuestas por minuto con o sin defensas.\nLo que cambian las defensas es a quién se dedica ese tiempo: el límite y la cola se lo quitan al abusador; la caché crea capacidad nueva, porque una respuesta guardada no gasta CPU.\nPor qué: mirar solo el throughput (peticiones por segundo) esconde quién está esperando.",
+      "text": "Compara la fila sin defensas con la de solo límite. ¿Qué pasa con el throughput y con el p95 de las legítimas?",
+      "teach": "El throughput no es la defensa\nCon un solo modelo en CPU (Central Processing Unit), la forja genera una respuesta cada vez, a su ritmo, haya o no defensas.\nEl límite no hace el modelo más rápido: rechaza con 429 las peticiones del abusador antes de que lleguen a él. La caché sí crea capacidad nueva, porque una respuesta guardada no gasta CPU.\nPor qué: mirar solo el throughput (peticiones por segundo) esconde quién está esperando.",
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "Lee la lección «El throughput no es la defensa».",
-        "answer b"
+        "answer a"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "el throughput se duplica",
-          "why": "Con un modelo en CPU (Central Processing Unit) produce más o menos lo mismo; solo la caché crea capacidad nueva."
+          "text": "el throughput apenas cambia y el p95 de las legítimas baja",
+          "why": "En CPU las cifras varían entre rondas: mira la tendencia, no el decimal."
         },
         {
           "id": "b",
-          "text": "el throughput apenas cambia, pero el p95 de las legítimas baja: el tiempo del modelo deja de ir al abusador",
-          "why": "En CPU (Central Processing Unit) las cifras varían entre rondas: mira la tendencia, no el decimal."
+          "text": "el throughput se duplica, porque el modelo trabaja menos",
+          "why": "Con un modelo en CPU produce más o menos lo mismo; solo la caché crea capacidad nueva."
         },
         {
           "id": "c",
-          "text": "el p95 de las legítimas sube",
-          "why": "El abusador recibe 429 o 503 antes de llegar al modelo: esos segundos los recuperan los demás."
+          "text": "el throughput se mantiene, pero el p95 de las legítimas sube",
+          "why": "El abusador recibe 429 antes de llegar al modelo: esos segundos los recuperan los demás."
         }
       ],
       "on_complete": "Eso es: las defensas no fabrican más tiempo de modelo; deciden a quién se le da."
@@ -329,35 +329,35 @@
       "text": "El servicio pasa a correr en tres réplicas, cada una con su cubo y su caché en memoria. ¿Qué pasa?",
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "b",
         "accept": [
-          "a"
+          "b"
         ]
       },
       "hints": [
         "Con tres réplicas, ¿cuántos cubos tiene el abusador?",
-        "answer a"
+        "answer b"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "cada réplica tiene su propio cubo: el abusador puede hacer hasta tres veces más peticiones antes de que lo frenen"
-        },
-        {
-          "id": "b",
-          "text": "nada: el límite sigue igual",
+          "text": "nada: el límite por cliente sigue siendo el mismo",
           "why": "El estado en memoria no se comparte entre réplicas."
         },
         {
+          "id": "b",
+          "text": "el abusador puede hacer hasta el triple de peticiones"
+        },
+        {
           "id": "c",
-          "text": "la caché pasa a ser común a las tres",
+          "text": "la caché pasa a ser una sola, común a las tres",
           "why": "Cada réplica tiene la suya: una respuesta guardada en una no la ve otra."
         }
       ],
       "on_complete": "Eso es: en producción, cubos y caché viven en un almacén compartido entre réplicas."
     }
   ],
-  "you_can_now": "Sabes medir un servicio de LLM (Large Language Model) con percentiles, proteger a los clientes legítimos con límite por cliente, caché con ámbito, cola acotada y plazo, y explicar por qué el throughput no es la defensa. También has escrito el percentil en Python. Siguiente: E4-02, trazas de OpenTelemetry sin datos personales.",
+  "you_can_now": "Sabes medir un servicio de LLM con percentiles, proteger a los clientes legítimos con límite por cliente, caché con ámbito, cola acotada y plazo, y explicar por qué el throughput no es la defensa. También has escrito el percentil en Python. Siguiente: E4-02, trazas de OpenTelemetry sin datos personales.",
   "debrief": {
     "what_happened": "Has construido la tubería clásica del serving: límite por cliente con un cubo de tokens, caché con clave normalizada y ámbito, cola acotada que rechaza pronto y un plazo con respuesta degradada. Con un generador de carga has medido contra el modelo real cuánto esperan los clientes legítimos cuando alguien abusa, y qué les devuelve cada defensa.",
     "why": "Un LLM (Large Language Model) en CPU (Central Processing Unit) es un recurso escaso que atiende de uno en uno: el consumo sin límite (LLM10) no necesita tumbar el servicio para dejarlo inservible. Las defensas que funcionan actúan antes del modelo y deciden a quién se dedica la capacidad; la caché es la única que la aumenta.",

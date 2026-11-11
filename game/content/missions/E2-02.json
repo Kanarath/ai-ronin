@@ -28,12 +28,12 @@
     "Medir el acuerdo frente al número de consultas con cada defensa y su coste para un cliente legítimo",
     "Explicar por qué las defensas de una API de predicción encarecen el robo pero no lo impiden"
   ],
-  "mentor_intro": "Una API (Application Programming Interface) de predicción responde a cualquiera que tenga una clave. Cada respuesta es un poco del modelo. Hoy cuentas cuántas respuestas hacen falta para tenerlo entero.",
+  "mentor_intro": "Una API de predicción responde a cualquiera que tenga una clave. Cada respuesta es un poco del modelo. Hoy cuentas cuántas respuestas hacen falta para tenerlo entero.",
   "lab": {
     "datasets": [],
     "viz": {}
   },
-  "purpose": "Muchas empresas exponen sus modelos como una API (Application Programming Interface) de predicción. Cada respuesta revela un poco del modelo, y con suficientes respuestas se puede construir una copia: es la extracción de modelos. En los LLM (Large Language Model) se parece a la destilación, que OWASP (Open Worldwide Application Security Project) recoge en LLM10. Hoy robas un clasificador por HTTP (HyperText Transfer Protocol) en 127.0.0.1 y mides tres defensas de la API.",
+  "purpose": "Muchas empresas exponen sus modelos como una API (Application Programming Interface) de predicción. Cada respuesta revela un poco del modelo, y con suficientes respuestas se puede construir una copia: es la extracción de modelos. En los LLM (Large Language Model) se parece a la destilación, que OWASP (Open Worldwide Application Security Project) recoge en LLM10, el décimo riesgo de su lista para LLM. Hoy robas un clasificador por HTTP (HyperText Transfer Protocol) en 127.0.0.1 y mides tres defensas de la API.",
   "theory_cards": [
     {
       "id": "ecuaciones",
@@ -43,14 +43,14 @@
     {
       "id": "sustituto",
       "title": "Robar por etiquetas",
-      "body": "Si la API (Application Programming Interface) solo dice la clase, el atacante etiqueta sus propias imágenes con ella y entrena un modelo sustituto. Necesita más consultas y la copia no es exacta, pero suele parecerse mucho. Ese sustituto sirve para algo más que ahorrarse la licencia: con él se preparan ejemplos adversarios (E2-01) que a menudo también engañan al original."
+      "body": "Si la API solo dice la clase, el atacante etiqueta sus propias imágenes con ella y entrena un modelo sustituto. Necesita más consultas y la copia no es exacta, pero suele parecerse mucho. Ese sustituto sirve para algo más que ahorrarse la licencia: con él se preparan ejemplos adversarios (E2-01) que a menudo también engañan al original."
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Implementa las cinco funciones de extraccion.py hasta que pasen los 13 tests y trae la evidencia.",
-      "teach": "Mínimos cuadrados\nEl trabajo de este paso es fuera del Dojo, en Python de verdad: abre forja/labs/E2-02_extraccion/README.md, crea el entorno e implementa las funciones de extraccion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y aquí la traes con evidence import.\nnp.linalg.lstsq(A, R) busca la matriz S que hace A·S lo más parecido posible a R. Con tantas ecuaciones independientes como incógnitas, la solución es exacta; con más, es la mejor aproximación; con menos, es una de muchas. Añadir una columna de unos a las consultas permite estimar el sesgo b.\nPor qué: es el robo por ecuaciones de la tarjeta, escrito con una sola función de NumPy.",
+      "teach": "Mínimos cuadrados\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E2-02_extraccion/README.md e implementa extraccion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nnp.linalg.lstsq(A, R) busca la matriz S que hace A·S lo más parecido posible a R. Con tantas ecuaciones independientes como incógnitas, la solución es exacta; con más, es la mejor aproximación; con menos, es una de muchas. Añadir una columna de unos a las consultas permite estimar el sesgo b.\nPor qué: es el robo por ecuaciones de la tarjeta, escrito con una sola función de NumPy.",
       "validator": {
         "type": "event",
         "event": "evidence.imported",
@@ -64,7 +64,7 @@
         "Desde forja/labs/E2-02_extraccion: crea el entorno (README, sección 1) y ejecuta .\\.venv\\Scripts\\python.exe -m unittest -v test_extraccion",
         ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py E2-02 · y aquí: evidence import"
       ],
-      "on_complete": "Tu ataque funciona contra la API (Application Programming Interface) de los tests. Ahora, por HTTP (HyperText Transfer Protocol) de verdad."
+      "on_complete": "Tu ataque funciona contra la API de los tests. Ahora, por HTTP de verdad."
     },
     {
       "id": "c1",
@@ -72,29 +72,29 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque las ecuaciones necesitan probabilidades exactas, y el sustituto solo necesita la clase"
+          "text": "porque el redondeo bloquea las claves que parecen sospechosas",
+          "why": "Redondear no bloquea a nadie: solo cambia lo que devuelve la API."
         },
         {
           "id": "b",
-          "text": "porque el redondeo bloquea las claves sospechosas",
-          "why": "Redondear no bloquea a nadie: solo cambia lo que devuelve la API (Application Programming Interface)."
+          "text": "porque el robo por etiquetas necesita menos consultas",
+          "why": "Suele necesitar más consultas, no menos; su ventaja es que le basta con la clase."
         },
         {
           "id": "c",
-          "text": "porque el robo por etiquetas usa menos consultas",
-          "why": "Suele necesitar más consultas, no menos; su ventaja es que le basta con la clase."
+          "text": "porque al sustituto le basta con la clase ganadora"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "c",
         "accept": [
-          "a"
+          "c"
         ]
       },
       "hints": [
         "Compara las dos tarjetas: ¿qué necesita cada método de cada respuesta?",
-        "answer a"
+        "answer c"
       ],
       "on_complete": "Eso es. Cada defensa frena a un tipo de atacante; por eso se miden combinadas."
     },
@@ -102,7 +102,7 @@
       "id": "o2",
       "text": "Ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y trae la medición.",
       "prediction": {
-        "prompt": "Con un límite de 50 consultas por clave (menos de las 65 que pide la teoría para una copia exacta), ¿qué crees que conseguirá el atacante si la API (Application Programming Interface) da las probabilidades exactas?",
+        "prompt": "Con un límite de 50 consultas por clave (menos de las 65 que pide la teoría para una copia exacta), ¿qué crees que conseguirá el atacante si la API da las probabilidades exactas?",
         "options": [
           "una copia mala",
           "una copia bastante buena",
@@ -130,36 +130,36 @@
     {
       "id": "o3",
       "text": "Con el límite de 50 consultas y probabilidades exactas, el atacante aún saca una copia bastante parecida. ¿Por qué, si la teoría pide 65?",
-      "teach": "Menos consultas de las que dice la teoría\n65 consultas garantizan la copia exacta para CUALQUIER entrada. Pero las imágenes de dígitos no ocupan todo el espacio de 64 dimensiones: muchos píxeles del borde son casi siempre 0.\nCon menos consultas, el atacante no recupera todos los pesos, pero sí los que importan para las imágenes reales.\nPor qué: la garantía teórica es el peor caso; un ataque real suele necesitar menos.",
+      "teach": "Menos consultas de las que dice la teoría\n65 consultas garantizan la copia exacta para CUALQUIER entrada posible, incluidas imágenes que nadie enviará nunca.\nMira un dígito de 8×8: ¿qué valor tienen casi siempre los píxeles del borde? ¿Importa entonces cuánto pesan?\nPor qué: la garantía teórica es el peor caso; un ataque real suele necesitar menos.",
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "Lee la lección «Menos consultas de las que dice la teoría».",
-        "answer b"
+        "answer a"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "porque el límite no se aplica",
-          "why": "Se aplica por clave: el atacante se quedó en 50 consultas."
-        },
-        {
-          "id": "b",
-          "text": "porque las imágenes reales no usan todo el espacio de 64 píxeles: con menos consultas recupera los pesos que importan",
+          "text": "porque las imágenes reales solo usan una parte de los 64 píxeles",
           "why": "Si tu acuerdo con el límite salió más bajo, mira cuánto: la idea es que no hace falta llegar a 65."
         },
         {
+          "id": "b",
+          "text": "porque el límite de consultas no se aplica a esa clave",
+          "why": "Se aplica por clave: el atacante se quedó en 50 consultas."
+        },
+        {
           "id": "c",
-          "text": "porque adivina los pesos al azar",
-          "why": "Los obtiene resolviendo ecuaciones con las respuestas de la API (Application Programming Interface)."
+          "text": "porque el atacante adivina al azar los pesos que le faltan",
+          "why": "Los obtiene resolviendo ecuaciones con las respuestas de la API."
         }
       ],
-      "on_complete": "Eso es: la garantía teórica es el peor caso; el ataque real suele necesitar menos."
+      "on_complete": "Eso es: los píxeles que casi siempre valen 0 apenas influyen en la predicción. Basta con recuperar los pesos de los píxeles que cambian."
     },
     {
       "id": "o4",
@@ -178,20 +178,20 @@
       "choices": [
         {
           "id": "a",
-          "text": "enviando imágenes más pequeñas",
+          "text": "enviando imágenes más pequeñas, que cuentan menos",
           "why": "El tamaño no cambia nada: el límite cuenta consultas."
         },
         {
           "id": "b",
-          "text": "consiguiendo más claves: el límite cuenta por clave, y cada clave nueva le da más consultas"
+          "text": "consiguiendo más claves, porque el límite va por clave"
         },
         {
           "id": "c",
-          "text": "no puede",
+          "text": "no puede: el límite lo deja sin consultas para siempre",
           "why": "Si conseguir otra clave es barato, el límite solo lo retrasa."
         }
       ],
-      "on_complete": "Eso es. Por eso una API (Application Programming Interface) de predicción pública es, en la práctica, una forma de publicar el modelo, y se limita por cuenta y se vigilan los patrones de consulta."
+      "on_complete": "Eso es. Por eso una API de predicción pública es, en la práctica, una forma de publicar el modelo, y se limita por cuenta y se vigilan los patrones de consulta."
     }
   ],
   "you_can_now": "Sabes extraer un modelo por ecuaciones y por etiquetas, medir el acuerdo de la copia y valorar el límite de consultas, el redondeo y devolver solo la clase como defensas. Siguiente: E2-03, la privacidad de los datos de entrenamiento.",

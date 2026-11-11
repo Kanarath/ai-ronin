@@ -23,7 +23,7 @@
       "P0.no-determinismo"
     ]
   },
-  "briefing": "Primer laboratorio real de la Forja. Hasta ahora todo pasaba dentro del Dojo, simulado. Hoy enciendes el horno de verdad: un modelo de lenguaje en tu propia CPU y un servicio web que habla con él. El Dojo no puede ver tu Forja (está aislado a propósito), así que te seguirá por tus evidencias y tus mediciones. Instrucciones completas en forja/labs/P0-01_servicio_llm/README.md.",
+  "briefing": "Primer laboratorio real de la Forja. Hasta ahora todo pasaba dentro del Dojo, simulado. Hoy enciendes el horno de verdad: un modelo de lenguaje en tu propia CPU (Central Processing Unit) y un servicio web que habla con él. El Dojo no puede ver tu Forja (está aislado a propósito), así que te seguirá por tus evidencias y tus mediciones. Instrucciones completas en forja/labs/P0-01_servicio_llm/README.md.",
   "learning_objectives": [
     "Montar un entorno virtual de Python con dependencias fijadas",
     "Hablar con un LLM local por HTTP (API de chat de Ollama) desde código asíncrono",
@@ -40,17 +40,20 @@
     {
       "id": "piezas",
       "title": "Las piezas",
-      "body": "Ollama sirve el modelo en http://127.0.0.1:11434 y ofrece una API HTTP: POST /api/chat con {model, messages, stream, options}. Tu servicio FastAPI escucha en 127.0.0.1:8000, valida la pregunta, llama a Ollama con un cliente HTTP asíncrono (httpx2) y devuelve la respuesta con sus métricas (tokens y segundos). Es la arquitectura mínima de cualquier aplicación con LLM: el chatbot de A1 era esto, simulado."
+      "body": "Ollama sirve el modelo en http://127.0.0.1:11434 y ofrece una API (Application Programming Interface) HTTP (HyperText Transfer Protocol): POST /api/chat con {model, messages, stream, options}. Tu servicio FastAPI escucha en 127.0.0.1:8000, valida la pregunta, llama a Ollama con un cliente HTTP asíncrono (httpx2) y devuelve la respuesta con sus métricas (tokens y segundos). Es la arquitectura mínima de cualquier aplicación con un LLM (Large Language Model): el chatbot de A1 era esto, simulado.",
+      "unlock_on": "objective:o2"
     },
     {
       "id": "async",
       "title": "¿Por qué async?",
-      "body": "Una respuesta del modelo en CPU tarda segundos. Con código síncrono, el servidor se quedaría bloqueado esperando. Con async/await, mientras una petición espera a Ollama, el servidor puede atender otras. await marca los puntos donde se espera: await cliente.post(...)."
+      "body": "Una respuesta del modelo en CPU tarda segundos. Con código síncrono, el servidor se quedaría bloqueado esperando. Con async/await, mientras una petición espera a Ollama, el servidor puede atender otras. await marca los puntos donde se espera: await cliente.post(...).",
+      "unlock_on": "objective:o2"
     },
     {
       "id": "localhost",
       "title": "127.0.0.1 frente a 0.0.0.0",
-      "body": "127.0.0.1 solo acepta conexiones de tu propia máquina; 0.0.0.0 acepta de cualquier interfaz, también de tu red local. Un modelo o una API sin autenticación escuchando en 0.0.0.0 es uno de los fallos más comunes (lo viste en A6). Dentro de un contenedor el servicio escucha en 0.0.0.0, pero compose.yaml solo publica el puerto en 127.0.0.1 del anfitrión."
+      "body": "127.0.0.1 solo acepta conexiones de tu propia máquina; 0.0.0.0 acepta de cualquier interfaz, también de tu red local. Dentro de un contenedor el servicio escucha en 0.0.0.0, pero compose.yaml solo publica el puerto en 127.0.0.1 del anfitrión. Un modelo o una API (Application Programming Interface) sin autenticación escuchando en 0.0.0.0 es uno de los fallos más comunes (lo verás en A6).",
+      "unlock_on": "objective:o4"
     }
   ],
   "objectives": [
@@ -74,7 +77,7 @@
     {
       "id": "o2",
       "text": "Implementa las cuatro funciones de servicio.py hasta que pasen los 17 tests, y trae la evidencia.",
-      "teach": "El contrato con Ollama\nOllama es el programa que sirve el modelo en tu ordenador. Tu servicio le habla por una API (Application Programming Interface) HTTP (HyperText Transfer Protocol): le envía un JSON y recibe otro.\nLee ollama_simulado() en los tests: es exactamente lo que envía y recibe Ollama.\nTres detalles: los tiempos llegan en nanosegundos; stream debe ser False para recibir una sola respuesta; y un error HTTP (por ejemplo, el modelo no está descargado) se convierte en excepción con raise_for_status().\nPor qué: cualquier API de LLM (Large Language Model), local o en la nube, funciona con este mismo contrato de petición y respuesta.",
+      "teach": "El contrato con Ollama\nOllama es el programa que sirve el modelo en tu ordenador. Tu servicio le habla por HTTP (HyperText Transfer Protocol): le envía un JSON y recibe otro.\nLee ollama_simulado() en los tests: es exactamente lo que envía y recibe Ollama.\nTres detalles: los tiempos llegan en nanosegundos; stream debe ser False para recibir una sola respuesta; y un error HTTP (por ejemplo, el modelo no está descargado) se convierte en excepción con raise_for_status().\nPor qué: cualquier API de un LLM, local o en la nube, usa este mismo contrato de petición y respuesta.",
       "validator": {
         "type": "event",
         "event": "evidence.imported",
@@ -105,17 +108,50 @@
       "choices": [
         {
           "id": "a",
-          "text": "con temperatura 0.8 el modelo elige al azar entre los tokens probables, y con temperatura 0 y semilla fija repite siempre la misma respuesta"
-        },
-        {
-          "id": "b",
-          "text": "con temperatura 0.8 el modelo es más inteligente y por eso cambia de opinión",
+          "text": "con temperatura 0.8 el modelo razona mejor y por eso cambia de opinión",
           "why": "La temperatura no cambia lo que sabe el modelo: solo reparte la probabilidad entre los tokens candidatos antes de elegir."
         },
         {
-          "id": "c",
-          "text": "las respuestas cambian porque Ollama vuelve a cargar el modelo cada vez",
+          "id": "b",
+          "text": "Ollama vuelve a cargar el modelo en cada petición y eso cambia el resultado",
           "why": "El modelo se carga una vez. Lo que cambia entre respuestas es el sorteo del siguiente token."
+        },
+        {
+          "id": "c",
+          "text": "cada token se sortea; con temperatura 0 y semilla fija, el sorteo se repite"
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "python medir.py --n 5 --temperatura 0.8 · python medir.py --n 5 --temperatura 0 --semilla 42",
+        "Recuerda T6-01: la temperatura reparte la probabilidad y la semilla fija el azar del sorteo. answer c"
+      ],
+      "on_complete": "Eso es. Un LLM no tiene «una» respuesta: tiene una distribución de la que sortea. Para probar un servicio, fija temperatura 0 y semilla; para conversar, se deja algo de azar."
+    },
+    {
+      "id": "o4",
+      "text": "Tu servicio escucha en 127.0.0.1 y no tiene autenticación. ¿Qué pasaría si lo pusieras a escuchar en 0.0.0.0?",
+      "teach": "Quién puede llamar a tu servicio\nUn modelo generando texto ocupa la CPU (Central Processing Unit) durante segundos por petición.\nSin autenticación, el servicio no sabe quién le pide cada respuesta.\nPor qué: en seguridad de IA (Inteligencia Artificial), lo primero es saber quién puede llegar hasta el modelo; lo verás en A6.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "cualquier equipo de tu red podría pedirle respuestas y ocupar tu CPU"
+        },
+        {
+          "id": "b",
+          "text": "nada: si no lo anuncias, nadie sabrá que ese puerto está abierto",
+          "why": "Cualquier equipo de tu red puede encontrar un puerto abierto en segundos. Esconderlo no es protegerlo."
+        },
+        {
+          "id": "c",
+          "text": "el modelo respondería peor porque le llegaría mucho más tráfico",
+          "why": "La calidad de las respuestas no cambia. El problema es quién puede pedirlas y cuántas."
         }
       ],
       "validator": {
@@ -126,53 +162,20 @@
         ]
       },
       "hints": [
-        "python medir.py --n 5 --temperatura 0.8 · python medir.py --n 5 --temperatura 0 --semilla 42",
-        "Recuerda T6-01: la temperatura reparte la probabilidad y la semilla fija el azar del sorteo. answer a"
-      ],
-      "on_complete": "Eso es. Un LLM (Large Language Model) no tiene «una» respuesta: tiene una distribución de la que sortea. Para probar un servicio, fija temperatura 0 y semilla; para conversar, se deja algo de azar."
-    },
-    {
-      "id": "o4",
-      "text": "Tu servicio escucha en 127.0.0.1 y no tiene autenticación. ¿Qué pasaría si lo pusieras a escuchar en 0.0.0.0?",
-      "teach": "Quién puede llamar a tu servicio\n127.0.0.1 solo acepta conexiones de tu propia máquina. 0.0.0.0 acepta de cualquier interfaz, también de tu red local.\nUn modelo generando texto ocupa la CPU (Central Processing Unit) durante segundos por petición.\nPor qué: dejar un modelo o una API (Application Programming Interface) sin autenticación abierta a la red es uno de los fallos más comunes en despliegues de IA (Inteligencia Artificial) (lo verás en A6).",
-      "choices": [
-        {
-          "id": "a",
-          "text": "nada: sin autenticación nadie sabe que existe",
-          "why": "Cualquier equipo de tu red puede encontrar un puerto abierto en segundos. Esconderlo no es protegerlo."
-        },
-        {
-          "id": "b",
-          "text": "cualquier equipo de tu red podría usar el modelo y gastar tu CPU sin límite"
-        },
-        {
-          "id": "c",
-          "text": "el modelo respondería peor porque recibe más tráfico",
-          "why": "La calidad de las respuestas no cambia. El problema es quién puede pedirlas y cuántas."
-        }
-      ],
-      "validator": {
-        "type": "answer",
-        "expected": "b",
-        "accept": [
-          "b"
-        ]
-      },
-      "hints": [
         "Repasa la tarjeta «127.0.0.1 frente a 0.0.0.0» con mission brief",
-        "0.0.0.0 acepta conexiones de cualquier interfaz. answer b"
+        "0.0.0.0 acepta conexiones de cualquier interfaz. answer a"
       ],
-      "on_complete": "Exacto: es OWASP (Open Worldwide Application Security Project) LLM10, consumo sin límites. Por lo mismo, los errores 502 no devuelven el mensaje interno de Ollama (revelaría rutas y nombres internos) y validar_pregunta limita la longitud (una pregunta enorme también gasta CPU, Central Processing Unit)."
+      "on_complete": "Exacto: es OWASP (Open Worldwide Application Security Project) LLM10, consumo sin límites. Por eso los errores 502 no devuelven el mensaje interno de Ollama, que revelaría rutas internas. Y validar_pregunta limita la longitud, porque una pregunta enorme también gasta CPU."
     }
   ],
   "debrief": {
-    "what_happened": "Has montado un entorno con dependencias fijadas, has implementado el cliente de un LLM local y lo has expuesto con un servicio FastAPI que valida la entrada y oculta los errores internos. Después has medido un modelo real en tu CPU.",
+    "what_happened": "Has montado un entorno con dependencias fijadas, has implementado el cliente de un LLM (Large Language Model) local y lo has expuesto con un servicio FastAPI que valida la entrada y oculta los errores internos. Después has medido un modelo real en tu CPU (Central Processing Unit).",
     "why": "Toda aplicación con LLM empieza así: un servicio que recibe texto, llama a un modelo y devuelve otro texto. Los riesgos de los arcos A1–A6 se colocan sobre esta pieza, y la variabilidad que has medido es la razón por la que en seguridad de IA se habla de tasas de éxito y no de «funciona / no funciona».",
-    "in_production": "Autenticación y límite de peticiones por cliente, timeouts y reintentos con espera, streaming para respuestas largas, colas cuando el modelo es lento, métricas (latencia, tokens, errores) y trazas sin datos personales (O6). El modelo se sirve con un motor preparado para carga (por ejemplo vLLM o llama.cpp en servidor) y con GPU cuando hace falta.",
+    "in_production": "Autenticación y límite de peticiones por cliente, timeouts y reintentos con espera, streaming para respuestas largas, colas cuando el modelo es lento, métricas (latencia, tokens, errores) y trazas sin datos personales (O6). El modelo se sirve con un motor preparado para carga (por ejemplo vLLM o llama.cpp en servidor) y con GPU (Graphics Processing Unit) cuando hace falta.",
     "simplifications": [
       "Sin autenticación ni límites por cliente",
       "Sin streaming ni historial de conversación",
-      "El Dojo no puede comprobar tus mediciones: confía en tu reflexión"
+      "El Dojo no puede comprobar tus mediciones: confía en tus datos"
     ],
     "exercise": "forja/labs/P0-01_servicio_llm/servicio.py"
   },

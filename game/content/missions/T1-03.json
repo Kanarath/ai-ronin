@@ -65,12 +65,12 @@
       "choices": [
         {
           "id": "a",
-          "text": "una feature"
+          "text": "la etiqueta",
+          "why": "La etiqueta es lo que queremos predecir: aquí, la columna tipo (inyeccion o legitimo). imperativos se calcula a partir del texto."
         },
         {
           "id": "b",
-          "text": "la etiqueta",
-          "why": "La etiqueta es lo que queremos predecir: aquí, la columna tipo (inyeccion o legitimo). imperativos se calcula a partir del texto."
+          "text": "una feature"
         },
         {
           "id": "c",
@@ -80,14 +80,14 @@
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "b",
         "accept": [
-          "a"
+          "b"
         ]
       },
       "hints": [
         "Es algo que se MIDE en cada mensaje, como la dureza de una katana.",
-        "answer a"
+        "answer b"
       ],
       "on_complete": "Eso es: una feature, algo que se mide en cada mensaje. Lo mismo que la dureza de una katana, pero sacado de un texto."
     },
@@ -151,7 +151,7 @@
         "Son dos comandos: uno con msg-001 y otro con msg-002.",
         "distance mensajes msg-080 msg-001  y después  distance mensajes msg-080 msg-002"
       ],
-      "on_complete": "Mira las dos distancias: 250 hasta el ataque y menos de 11 hasta el mensaje legítimo. Para el detector, msg-080 es «legítimo». Mira la columna peso: la longitud decide casi todo. El atacante solo ha tenido que rellenar el mensaje para parecerse en longitud a uno legítimo."
+      "on_complete": "Mira las dos distancias: 250 hasta el ataque y menos de 11 hasta el mensaje legítimo. Para el detector, msg-080 es «legítimo». Fíjate también en la columna «peso»."
     },
     {
       "id": "o5",
@@ -164,26 +164,26 @@
         },
         {
           "id": "b",
-          "text": "porque la longitud tiene números mucho más grandes y domina la distancia, aunque no sirve para distinguir ataques"
+          "text": "porque la distancia euclídea está mal calculada",
+          "why": "El cálculo es correcto. El problema es el que viste en T1-02: comparar features en escalas muy distintas."
         },
         {
           "id": "c",
-          "text": "porque la distancia euclídea está mal calculada",
-          "why": "El cálculo es correcto. El problema es el que viste en T1-02: comparar features en escalas muy distintas."
+          "text": "porque manda la longitud, que no distingue ataques"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
         "Mira la columna «peso» de la última distancia.",
-        "answer b"
+        "answer c"
       ],
-      "on_complete": "Exacto. Es el problema de T1-02, ahora explotado por un atacante: la feature con números grandes manda, y además es justo la que el atacante controla sin esfuerzo. Rellenar un ataque con texto inocente es una técnica real de evasión; la verás otra vez en A1-07."
+      "on_complete": "Exacto: los números grandes de la longitud dominan la distancia, y es justo la feature que el atacante controla sin esfuerzo. Es el problema de T1-02, ahora explotado por un atacante. Rellenar un ataque con texto inocente es una técnica real de evasión; la verás otra vez en A1-07."
     },
     {
       "id": "o6",
@@ -210,7 +210,7 @@
         "Primero dataset normalize mensajes --method minmax; después las dos distancias sobre mensajes_minmax.",
         "distance mensajes_minmax msg-080 msg-001  y  distance mensajes_minmax msg-080 msg-002"
       ],
-      "on_complete": "Ahora msg-080 queda más cerca del ataque (0,625) que del legítimo (0,708): el detector ya lo marcaría. Pero mira el desglose: toda la distancia hasta el ataque viene de la longitud, una feature que no sirve para distinguir. Por eso gana tan justo."
+      "on_complete": "Ahora msg-080 queda más cerca del ataque (0,625) que del legítimo (0,708): el detector ya lo marcaría. Pero gana muy justo: mira en el desglose de dónde sale la distancia."
     },
     {
       "id": "o7",
@@ -218,7 +218,7 @@
       "choices": [
         {
           "id": "a",
-          "text": "normalizar y, además, dejar de usar la longitud, que no distingue ataques y el atacante controla"
+          "text": "normalizar y dejar de usar la longitud"
         },
         {
           "id": "b",
@@ -242,7 +242,7 @@
         "Piensa en lo que viste en los gráficos: ¿qué feature no sirve?",
         "answer a"
       ],
-      "on_complete": "Eso es. Elegir bien las features es tan importante como normalizar, y es lo primero que mira un atacante: qué medidas puede manipular sin que cambie su ataque."
+      "on_complete": "Eso es: toda la distancia hasta el ataque venía de la longitud, que no distingue ataques y el atacante controla. Elegir bien las features es tan importante como normalizar, y es lo primero que mira un atacante."
     },
     {
       "id": "py1",
@@ -307,11 +307,11 @@
       "on_complete": "Ya tienes la defensa en código. Con estas tres funciones (rango, distancia y normalizar) has escrito por dentro lo que hace el detector de mensajes."
     }
   ],
-  "you_can_now": "Sabes leer las features de un detector de mensajes, comprobar cuáles delatan un ataque y explicar cómo un atacante engaña a un detector que mide distancias sin normalizar. Siguiente: T2, donde un modelo aprenderá solo a clasificar a partir de los datos, y verás cómo saber si de verdad acierta.",
+  "you_can_now": "Sabes leer las features de un detector de mensajes, comprobar cuáles delatan un ataque y explicar cómo un atacante engaña a un detector que mide distancias sin normalizar. Siguiente: T2-01, donde un modelo aprenderá solo a clasificar a partir de los datos, y verás cómo saber si de verdad acierta.",
   "debrief": {
     "what_happened": "Has analizado un detector de prompt injection basado en distancias: qué features usa, cuáles separan las clases y cómo un mensaje rellenado lo engaña si no se normaliza.",
     "why": "Los detectores por parecido heredan todos los problemas de la distancia. Un atacante busca justo las features que puede cambiar sin alterar su ataque.",
-    "in_production": "Los detectores reales de prompt injection usan clasificadores entrenados sobre el texto completo (por ejemplo, modelos pequeños tipo BERT) en lugar de tres features, pero comparten el problema: los atacantes prueban variaciones (relleno, sinónimos, otros idiomas) hasta encontrar una que pase. Por eso se miden con baterías de ataques variados.",
+    "in_production": "Los detectores reales de prompt injection usan clasificadores entrenados sobre el texto completo (por ejemplo, modelos pequeños tipo BERT, Bidirectional Encoder Representations from Transformers) en lugar de tres features, pero comparten el problema: los atacantes prueban variaciones (relleno, sinónimos, otros idiomas) hasta encontrar una que pase. Por eso se miden con baterías de ataques variados.",
     "simplifications": [
       "Tres features calculadas a mano en lugar de un modelo de texto",
       "Dataset sintético de 82 mensajes"
