@@ -87,7 +87,7 @@
     {
       "id": "o2",
       "text": "Averigua qué ha aprendido la neurona oculta 1: pasa las cuatro entradas (0,0 · 0,1 · 1,0 · 1,1) con nn forward y mira cuándo se «enciende» (activación > 0,5). ¿A qué puerta lógica corresponde? (answer <puerta>)",
-      "teach": "Leer una neurona oculta\nCada neurona oculta es una neurona como las de T4-01: traza su propia recta.\nMira su activación, el valor sigmoid(z), en la línea «oculta 1» de nn forward para cada una de las cuatro entradas.\nSi solo se enciende en un caso, o en tres, reconocerás una puerta conocida.\nPor qué: leer qué detecta cada neurona es lo que intenta la interpretabilidad, la rama que estudia qué ha aprendido un modelo.",
+      "teach": "Leer una neurona oculta\nCada neurona oculta es una neurona como las de T4-01: traza su propia recta.\nMira su activación, el valor sigmoide(z), en la línea «oculta 1» de nn forward para cada una de las cuatro entradas.\nSi solo se enciende en un caso, o en tres, reconocerás una puerta conocida.\nPor qué: leer qué detecta cada neurona es lo que intenta la interpretabilidad, la rama que estudia qué ha aprendido un modelo.",
       "validator": {
         "type": "all",
         "of": [

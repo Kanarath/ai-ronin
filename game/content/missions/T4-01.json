@@ -80,12 +80,12 @@
         "Los comandos de redes empiezan por nn. Prueba: help nn",
         "nn create neurona --hidden 0"
       ],
-      "on_complete": "Mírala por dentro con nn weights <nombre>: w2_0 es el peso de la entrada a (x0 en el diagrama), w2_1 el de b (x1) y b2 el sesgo."
+      "on_complete": "Mírala por dentro con nn weights <nombre>: w2_0 es el peso de la entrada a, w2_1 el de b y b2 el sesgo."
     },
     {
       "id": "o2",
       "text": "Calcula la salida de la neurona SIN entrenar para la entrada a=1, b=1. ¿Qué probabilidad da? (answer <número>, 3 decimales)",
-      "teach": "Pasada hacia delante (forward pass)\nLa neurona calcula z = w₁·a + w₂·b + bias: cada entrada por su peso, más el sesgo.\nDespués aplica la sigmoide σ(z) = 1 / (1 + e^(−z)), que convierte z en un número entre 0 y 1: la probabilidad de «1».\nnn forward <red> 1,1 enseña las dos cuentas; en su salida, σ(z) aparece como sigmoid(z).\nPor qué: cada vez que un LLM (Large Language Model) genera una palabra hace millones de estas cuentas.",
+      "teach": "Pasada hacia delante (forward pass)\nLa neurona calcula z = w₁·a + w₂·b + bias: cada entrada por su peso, más el sesgo.\nDespués aplica la sigmoide σ(z) = 1 / (1 + e^(−z)), que convierte z en un número entre 0 y 1: la probabilidad de «1».\nnn forward <red> 1,1 enseña las dos cuentas; en su salida, σ(z) aparece como sigmoide(z).\nPor qué: cada vez que un LLM (Large Language Model) genera una palabra hace millones de estas cuentas.",
       "validator": {
         "type": "all",
         "of": [
