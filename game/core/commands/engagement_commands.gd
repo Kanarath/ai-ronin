@@ -47,11 +47,18 @@ static func _start(c: CommandContext, a: Dictionary) -> CommandResult:
 static func _recon(c: CommandContext, a: Dictionary) -> CommandResult:
 	var e: MockEngagement = c.world.engagements[a["encargo"]]
 	var rows: Array = []
+	var copies := PackedStringArray()
 	for x: Dictionary in e.data["assets"]:
-		rows.append([x["id"], x["name"], x["exposure"], "sí" if x["in_scope"] else "NO", x["lab"] if x["lab"] != "" else "—"])
+		# La exposición (el texto más largo) va al final para que la tabla no se descuadre.
+		rows.append([x["id"], x["name"], "sí" if x["in_scope"] else "NO", x["exposure"]])
+		if x["lab"] != "":
+			copies.append("  %s → %s" % [x["id"], x["lab"]])
 	var r := CommandResult.new()
 	r.line("Activos de IA de %s:" % e.data["client"], "accent")
-	r.table(PackedStringArray(["id", "activo", "exposición", "en alcance", "copia en el laboratorio"]), rows)
+	r.table(PackedStringArray(["id", "activo", "en alcance", "exposición"]), rows)
+	if not copies.is_empty():
+		r.line("Copia en el laboratorio de cada activo en alcance:", "muted")
+		r.lines_from(copies, "data")
 	r.line("En alcance: %d de %d. Antes de tocar nada: engagement scope %s <activo>" % [e.in_scope_count(), rows.size(), a["encargo"]], "muted")
 	c.emit("engagement.recon", {"engagement": a["encargo"], "assets": rows.size(), "in_scope": e.in_scope_count()})
 	return r
@@ -163,7 +170,12 @@ static func _summary(c: CommandContext, a: Dictionary) -> CommandResult:
 	for id: String in e.threats:
 		n_threats += e.threats[id].size()
 	r.line("Alcance: %d activos de IA probados en laboratorio; %d fuera de alcance por contrato." % [e.in_scope_count(), e.data["assets"].size() - e.in_scope_count()], "data")
-	r.line("Modelo de amenazas: %d amenazas; %d de %d activos cubiertos." % [n_threats, e.covered_assets(), e.in_scope_count()], "data")
+	# Cada misión empieza con un laboratorio nuevo: en C5-02 y C5-03 el modelo de amenazas de
+	# C5-01 no está en este encargo. Con 0 amenazas no se presenta como un fallo.
+	if n_threats > 0:
+		r.line("Modelo de amenazas: %d amenazas; %d de %d activos cubiertos." % [n_threats, e.covered_assets(), e.in_scope_count()], "data")
+	else:
+		r.line("Modelo de amenazas: no registrado en este encargo (se construye con engagement threat, como en C5-01).", "muted")
 	var fixed := 0
 	var total_baseline := 0
 	var worst := ""

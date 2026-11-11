@@ -150,12 +150,15 @@ static func _ds_stats(c: CommandContext, a: Dictionary) -> CommandResult:
 	for s in ds.stats():
 		data.append([s["feature"], _num(s["mean"]), _num(s["std"]), _num(s["min"]), _num(s["max"]), _num(s["max"] - s["min"])])
 	r.table(PackedStringArray(["feature", "media", "desv.típica", "mín", "máx", "rango"]), data)
-	r.line("")
-	var counts := ds.class_counts()
-	var cdata: Array = []
-	for cls in ds.classes():
-		cdata.append([cls, counts[cls], "%.1f %%" % (100.0 * counts[cls] / ds.size())])
-	r.table(PackedStringArray([ds.label_name, "ejemplos", "proporción"]), cdata)
+	# Un dataset de regresión (sin etiqueta de clase, como temple) no tiene tabla de clases.
+	var classes := ds.classes()
+	if not (classes.size() == 1 and classes[0] == "") and not classes.is_empty():
+		r.line("")
+		var counts := ds.class_counts()
+		var cdata: Array = []
+		for cls in classes:
+			cdata.append([cls, counts[cls], "%.1f %%" % (100.0 * counts[cls] / ds.size())])
+		r.table(PackedStringArray([ds.label_name, "ejemplos", "proporción"]), cdata)
 	c.emit("dataset.stats", {"dataset": ds.name})
 	return r
 
@@ -264,7 +267,7 @@ static func _model_create(c: CommandContext, a: Dictionary) -> CommandResult:
 	if c.world.models.has(model_name):
 		r.line("Aviso: el modelo '%s' ya existía y se ha reemplazado." % model_name, "warn")
 	c.world.models[model_name] = {"model": KNNClassifier.new(k, a["metric"]), "trained_on": ""}
-	r.line("✓ modelo %s creado: k-NN con k=%d, métrica %s · sin entrenar" % [model_name, k, a["metric"]], "ok")
+	r.line("✓ modelo %s creado: k-NN con k=%d, métrica %s · sin entrenar" % [model_name, k, metric_name(a["metric"])], "ok")
 	c.emit("model.created", {"model": model_name, "k": k, "metric": a["metric"]})
 	return r
 
@@ -278,7 +281,7 @@ static func _model_list(c: CommandContext, _a: Dictionary) -> CommandResult:
 	for n in names:
 		var entry := c.world.get_model(n)
 		var m: KNNClassifier = entry["model"]
-		data.append([n, "k-NN", m.k, m.metric, entry["trained_on"] if entry["trained_on"] != "" else "(sin entrenar)"])
+		data.append([n, "k-NN", m.k, metric_name(m.metric), entry["trained_on"] if entry["trained_on"] != "" else "(sin entrenar)"])
 	return r.table(PackedStringArray(["modelo", "tipo", "k", "métrica", "entrenado con"]), data)
 
 
@@ -287,7 +290,7 @@ static func _model_info(c: CommandContext, a: Dictionary) -> CommandResult:
 	var m: KNNClassifier = entry["model"]
 	var r := CommandResult.new()
 	r.line("%s · k-NN" % a["modelo"], "accent")
-	r.line("k = %d · métrica = %s" % [m.k, m.metric])
+	r.line("k = %d · métrica = %s" % [m.k, metric_name(m.metric)])
 	if m.is_trained():
 		r.line("entrenado con %s (%d ejemplos memorizados)" % [entry["trained_on"], m.train_set.size()])
 	else:
@@ -406,7 +409,12 @@ static func _model_sweep(c: CommandContext, a: Dictionary) -> CommandResult:
 
 ## Número con hasta 3 decimales y sin ceros sobrantes (59.7, 0.833, 812).
 static func _num(v: float) -> String:
-	return String.num(v, 3)
+	return String.num(v, 3) if absf(v) < 1e6 else TextUtils.num(v)
+
+
+## Nombre en castellano de la métrica de distancia (el parámetro sigue siendo euclidean).
+static func metric_name(metric: String) -> String:
+	return {"euclidean": "euclídea", "manhattan": "Manhattan"}.get(metric, metric)
 
 
 static func _bar(v: float) -> String:

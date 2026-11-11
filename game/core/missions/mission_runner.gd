@@ -110,7 +110,9 @@ func _check_current() -> void:
 	if passed and needs_hypothesis and not hypotheses.has(key):
 		if not _hypothesis_reminded.has(key):
 			_hypothesis_reminded[key] = true
-			mentor_message.emit("Alto. Antes de ejecutar, registra tu predicción: %s\nUsa: hipotesis <tu respuesta>. Después repite el experimento." % obj["prediction"]["prompt"], "warn")
+			var last_name: String = events[-1]["name"] if not events.is_empty() else ""
+			var again := "Después vuelve a importar la medición con evidence import." if last_name.begins_with("evidence.") else "Después repite el experimento."
+			mentor_message.emit("Alto. Antes de ejecutar, registra tu predicción: %s\nUsa: hipotesis <tu respuesta>. %s" % [obj["prediction"]["prompt"], again], "warn")
 		return
 
 	if passed:
@@ -127,11 +129,12 @@ func _check_current() -> void:
 			if str(c["id"]).to_lower() == str(last["data"].get("value", "")).strip_edges().to_lower():
 				why = str(c.get("why", ""))
 		if not why.is_empty():
-			mentor_message.emit("No. %s Prueba otra vez." % why, "warn")
+			mentor_message.emit("%s Prueba otra vez." % wrong_choice_text(why), "warn")
 		else:
 			mentor_message.emit(obj.get("wrong_answer", "No es correcto. Revisa el resultado y vuelve a intentarlo. Si te atascas: hint"), "warn")
 	elif validator.get("type") == "reflection" and last["name"] == "reflection.submitted":
-		mentor_message.emit("Desarrolla un poco más tu explicación (mínimo %d palabras). Escribe como si se lo explicaras a un compañero." % int(validator.get("min_words", 10)), "warn")
+		var mw := int(validator.get("min_words", 10))
+		mentor_message.emit("Desarrolla un poco más tu explicación (mínimo %d %s). Escribe como si se lo explicaras a un compañero." % [mw, "palabra" if mw == 1 else "palabras"], "warn")
 
 
 func _check_diagnostics(obj: Dictionary, min_seq: int) -> void:
@@ -255,16 +258,32 @@ func _announce_current() -> void:
 			mentor_message.emit(obj["teach"], "lesson")
 	var task: String = "%sTu turno (%d/%d): %s" % [label, index + 1, objectives.size(), obj["text"]]
 	# Pregunta de comprobación: opciones a), b), c)… que se responden con answer <letra>.
+	var choices := ""
 	for c: Dictionary in obj.get("choices", []):
-		task += "\n%s) %s" % [c["id"], c["text"]]
-	if not obj.get("choices", []).is_empty():
-		task += "\nResponde con answer <letra>, por ejemplo answer a."
+		choices += "\n%s) %s" % [c["id"], c["text"]]
+	if not choices.is_empty():
+		choices += "\nResponde con answer <letra>, por ejemplo answer a."
+	if not obj.has("prediction"):
+		mentor_message.emit(task + choices, "task")
+		return
+	# Con predicción: primero se predice y después se ven las opciones de la pregunta.
 	mentor_message.emit(task, "task")
-	if obj.has("prediction"):
-		var p: Dictionary = obj["prediction"]
-		var opts: Array = p.get("options", [])
-		var opt_text := "\nOpciones: " + " · ".join(PackedStringArray(opts)) if not opts.is_empty() else ""
-		mentor_message.emit("Predice antes de ejecutar: %s%s\nUsa: hipotesis <tu respuesta>" % [p["prompt"], opt_text], "question")
+	var p: Dictionary = obj["prediction"]
+	var opts: Array = p.get("options", [])
+	var opt_text := "\nOpciones: " + " · ".join(PackedStringArray(opts)) if not opts.is_empty() else ""
+	mentor_message.emit("Predice antes de ejecutar: %s%s\nUsa: hipotesis <tu respuesta>" % [p["prompt"], opt_text], "question")
+	if not choices.is_empty():
+		mentor_message.emit("Después, la pregunta:" + choices, "task")
+
+
+## Texto ante una opción equivocada: «No. <por qué>», sin repetir el «No» si el porqué ya
+## empieza así.
+static func wrong_choice_text(why: String) -> String:
+	var w := why.strip_edges()
+	var low := w.to_lower()
+	if low == "no" or low.begins_with("no.") or low.begins_with("no,") or low.begins_with("no:") or low.begins_with("no ") or low.begins_with("no;"):
+		return w
+	return "No. " + w
 
 
 func _xp(amount: int, reason: String) -> void:

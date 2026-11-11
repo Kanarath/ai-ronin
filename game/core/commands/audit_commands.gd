@@ -77,8 +77,15 @@ static func _open(c: CommandContext, a: Dictionary) -> CommandResult:
 	var r := CommandResult.new().line("✓ expediente %s abierto: %s, de %s (proveedor: %s)." % [a["nombre"], s["name"], s["deployer"], s["provider"]], "ok")
 	r.line(s["text"], "data")
 	r.line("Clasificación: " + s["classification"], "data")
-	r.line("⚗ Organización, documentos y cifras ficticios; artículos, fechas y subcategorías del NIST reales (consultados el 2026-11-10). No es asesoramiento jurídico.", "muted")
-	r.line("Siguiente: audit cases %s" % a["nombre"], "muted")
+	# Solo E3-02 audita contra subcategorías del NIST AI RMF; E3-01 y E3-03 no lo usan.
+	var mission := MissionCommands.active_mission_id(c)
+	var real := "artículos, fechas y subcategorías del NIST AI RMF reales" if mission == "E3-02" else "artículos y fechas reales"
+	r.line("⚗ Organización, documentos y cifras ficticios; %s (consultados el 2026-11-10). No es asesoramiento jurídico." % real, "muted")
+	var next := {"E3-01": "audit cases", "E3-02": "audit controls", "E3-03": "audit rubric"}
+	if next.has(mission):
+		r.line("Siguiente: %s %s" % [next[mission], a["nombre"]], "muted")
+	else:
+		r.line("Para empezar: audit cases %s · audit controls %s · audit rubric %s" % [a["nombre"], a["nombre"], a["nombre"]], "muted")
 	return r
 
 

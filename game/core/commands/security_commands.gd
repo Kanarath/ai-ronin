@@ -143,8 +143,8 @@ static func _render(c: CommandContext, a: Dictionary) -> CommandResult:
 	var res := bot.reply(a["mensaje"])
 	var rendered := bot.render(res["text"])
 	var r := CommandResult.new()
-	r.line("Respuesta del modelo: " + String(res["text"]).substr(0, 300), "data")
-	r.line("HTML que recibe el navegador: " + String(rendered["html"]).substr(0, 300), "data")
+	r.line("Respuesta del modelo: " + TextUtils.clip(String(res["text"]), 300), "data")
+	r.line("HTML que recibe el navegador: " + TextUtils.clip(String(rendered["html"]), 300), "data")
 	if rendered["executes"]:
 		r.line("⚠ El navegador EJECUTARÍA código: la salida del modelo se trata como HTML de confianza (XSS).", "error")
 	else:
@@ -211,7 +211,7 @@ static func _eval(c: CommandContext, a: Dictionary) -> CommandResult:
 			false_pos += 1
 		if ok:
 			passed += 1
-		data.append([q["id"], "✓" if ok else "✗", "BLOQUEADA (falso positivo)" if res["blocked"] else String(res["text"]).substr(0, 60)])
+		data.append([q["id"], "✓" if ok else "✗", "BLOQUEADA (falso positivo)" if res["blocked"] else TextUtils.clip(String(res["text"]), 60)])
 	r.table(PackedStringArray(["pregunta", "", "respuesta"]), data)
 	var rate: float = float(passed) / suite["questions"].size()
 	r.line("Respuestas correctas: %d / %d = %s · falsos positivos: %d" % [passed, suite["questions"].size(), "%.2f" % rate, false_pos], "ok" if passed == suite["questions"].size() else "warn")

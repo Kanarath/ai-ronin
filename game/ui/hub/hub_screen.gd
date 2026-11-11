@@ -21,6 +21,8 @@ const UNIT_TITLES := {
 	"E3": "E3 · Gobernanza y auditoría",
 	"E4": "E4 · AI Ops avanzado",
 }
+## Parte de la altura de la ventana que ocupa el laboratorio (el resto es de la consola).
+const LAB_FRACTION := 0.38
 const SERIES_COLORS: Array[Color] = [RoninPalette.CYAN, RoninPalette.GOLD, RoninPalette.TEAL, RoninPalette.VIOLET, RoninPalette.TEXT]
 
 var game: DojoGame
@@ -37,6 +39,8 @@ var _left_toggle: Button
 var _xp_label: Label
 var _xp_bar: ProgressBar
 var _toaster: Toaster
+var _lab: PanelContainer
+var _lab_content: VBoxContainer
 var _mission_label: Label
 var _pending_xp: int = 0
 ## Historial de rondas de seguridad (A1): tasa de éxito de ataques y de eval.
@@ -64,8 +68,19 @@ func _ready() -> void:
 		_pending_xp = 0
 		_refresh_top())
 	_refresh_all()
+	_fit_lab()
 	_welcome()
 	_terminal.focus_input()
+
+
+## Altura fija del laboratorio y notificaciones en su esquina superior derecha.
+func _fit_lab() -> void:
+	if _lab == null:
+		return
+	var h := floorf(get_viewport_rect().size.y * LAB_FRACTION)
+	_lab.custom_minimum_size.y = h
+	_toaster.max_height = h - 40.0
+	_toaster.position = Vector2(get_viewport_rect().size.x - 360.0 - 16.0, 60.0)
 
 
 # ── Construcción de la interfaz ──────────────────────────────────────────────
@@ -117,13 +132,10 @@ func _build_layout() -> void:
 	_xp_bar.add_theme_stylebox_override("fill", fill)
 	top.add_child(_xp_bar)
 
-	# Capa de notificaciones (encima de todo, esquina superior derecha)
+	# Capa de notificaciones: encima de todo, en la esquina superior derecha del LABORATORIO
+	# (nunca sobre la consola). _fit_lab la recoloca cuando cambia el tamaño de la ventana.
 	_toaster = Toaster.new()
-	# Esquina superior derecha, sobre el laboratorio.
-	_toaster.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	_toaster.position = Vector2(-360, 60)
 	_toaster.custom_minimum_size = Vector2(340, 0)
-	_toaster.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	add_child(_toaster)
 
 	# Cuerpo: [misiones plegables] | laboratorio arriba · objetivo actual · consola grande.
@@ -143,34 +155,47 @@ func _build_layout() -> void:
 	_curriculum_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(_curriculum_box)
 
-	var center := VSplitContainer.new()
+	var center := VBoxContainer.new()
 	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	center.split_offset = -40
+	center.add_theme_constant_override("separation", 6)
 	body.add_child(center)
 
-	var lab := _panel("LABORATORIO")
-	lab.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	center.add_child(lab)
+	# El laboratorio tiene una altura FIJA (LAB_FRACTION de la ventana) y desplazamiento
+	# interno: por muchos gráficos que enseñe, la consola conserva su sitio y su línea de entrada.
+	_lab = _panel("LABORATORIO")
+	center.add_child(_lab)
+	var lab_scroll := ScrollContainer.new()
+	lab_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	lab_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_lab.get_child(0).add_child(lab_scroll)
+	_lab_content = VBoxContainer.new()
+	_lab_content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_lab_content.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_lab_content.add_theme_constant_override("separation", 6)
+	lab_scroll.add_child(_lab_content)
 	_plot = ScatterPlot.new()
 	_plot.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_plot.custom_minimum_size = Vector2(380, 220)
-	lab.get_child(0).add_child(_plot)
+	_plot.custom_minimum_size = Vector2(380, 140)
+	_lab_content.add_child(_plot)
 	_net_view = NetworkGraph.new()
 	_net_view.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_net_view.custom_minimum_size = Vector2(380, 220)
+	_net_view.custom_minimum_size = Vector2(380, 140)
 	_net_view.visible = false
-	lab.get_child(0).add_child(_net_view)
+	_lab_content.add_child(_net_view)
 	_heatmap = AttentionHeatmap.new()
 	_heatmap.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_heatmap.custom_minimum_size = Vector2(380, 220)
+	_heatmap.custom_minimum_size = Vector2(380, 160)
 	_heatmap.visible = false
-	lab.get_child(0).add_child(_heatmap)
+	_lab_content.add_child(_heatmap)
 	_chart = LineChart.new()
-	_chart.custom_minimum_size = Vector2(380, 170)
+	_chart.custom_minimum_size = Vector2(380, 130)
+	_chart.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_chart.size_flags_stretch_ratio = 0.8
 	_chart.visible = false
-	lab.get_child(0).add_child(_chart)
+	_lab_content.add_child(_chart)
 	_code = _make_code_editor()
-	lab.get_child(0).add_child(_code)
+	_lab_content.add_child(_code)
+	resized.connect(_fit_lab)
 
 	var lower := VBoxContainer.new()
 	lower.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -402,8 +427,19 @@ func _show_code(v: bool) -> void:
 		if _code.text != game.py_code:
 			_code.text = game.py_code
 		_code.grab_focus()
+		_scroll_code_to_mark.call_deferred()
 	else:
 		_show_plot()
+
+
+## Al abrir el editor, la línea marcada con «←» (la que hay que cambiar) queda a la vista.
+func _scroll_code_to_mark() -> void:
+	for i in _code.get_line_count():
+		if _code.get_line(i).contains("←"):
+			_code.set_caret_line(i)
+			_code.set_caret_column(_code.get_line(i).length() - _code.get_line(i).strip_edges(true, false).length())
+			_code.set_line_as_center_visible(i)
+			return
 
 
 func _on_command_action(_line: String, result: CommandResult) -> void:
@@ -452,9 +488,7 @@ func _on_mission_started(m: Dictionary) -> void:
 func _on_mission_completed(m: Dictionary, result: Dictionary, xp_gained: int) -> void:
 	var trial := "Prueba de dominio superada: competencias dominadas." if result["trial_passed"] else "Sin prueba de dominio."
 	_on_mentor("◆ Misión %s completada · +%d XP · maestría %d/100. %s" % [m["id"], xp_gained, result["score"], trial], "praise")
-	var exercise: String = m.get("debrief", {}).get("exercise", "")
-	if not exercise.is_empty():
-		_on_mentor("🛠 Ahora, con tus manos: abre %s y haz que pasen sus tests. ¿No tienes Python? Escribe forja setup." % exercise, "info")
+	# El aviso del ejercicio de la Forja lo da DojoGame (forja_message), solo si sigue pendiente.
 	_refresh_all()
 
 
@@ -484,6 +518,7 @@ func _on_sim_event(e: Dictionary) -> void:
 			_plot.visible = false
 			_net_view.visible = false
 			_code.visible = false
+			_chart.visible = false
 			_heatmap.visible = true
 			_heatmap.show_weights(String(d["words"]).split(" "), d["weights"], d["causal"])
 		"viz.scatter":
@@ -521,7 +556,7 @@ func _show_security(event_name: String, d: Dictionary) -> void:
 	_plot.visible = false
 	_net_view.visible = false
 	_heatmap.visible = false
-	_chart.custom_minimum_size = Vector2(380, 300)
+	_code.visible = false
 	_chart.x_label = "ronda"
 	_chart.set_series("Seguridad: tasa por ronda (0 = nada, 1 = todo)", series, false)
 	_chart.visible = true
@@ -543,7 +578,15 @@ func _show_net(net_name: String, input: PackedFloat64Array) -> void:
 	_heatmap.visible = false
 	_code.visible = false
 	_net_view.visible = true
-	_net_view.show_network(net, net_name, input)
+	# Las entradas se llaman como las features del dataset de entrenamiento; sin él, con dos
+	# entradas, a y b (como en las lecciones de puertas lógicas).
+	var names := PackedStringArray()
+	var ds: Dataset = game.shell.world.get_dataset(net.trained_on) if net.trained_on != "" else null
+	if ds != null and ds.feature_names.size() == net.inputs:
+		names = ds.feature_names
+	elif net.inputs == 2:
+		names = PackedStringArray(["a", "b"])
+	_net_view.show_network(net, net_name, input, names)
 
 
 func _show_nn_losses() -> void:

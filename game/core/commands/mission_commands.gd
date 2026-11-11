@@ -55,6 +55,12 @@ static func _game(c: CommandContext) -> DojoGame:
 	return c.shell.get_game() as DojoGame
 
 
+## Id de la misión activa ("" sin partida o sin misión): para adaptar los «Siguiente: …».
+static func active_mission_id(c: CommandContext) -> String:
+	var g := _game(c)
+	return "" if g == null else str(g.active_mission.get("id", ""))
+
+
 static func _no_game() -> CommandResult:
 	return CommandResult.error("El sistema de misiones no está disponible en este contexto.")
 
@@ -150,14 +156,14 @@ static func _hypothesis(c: CommandContext, a: Dictionary) -> CommandResult:
 	if not options.is_empty():
 		var match_opt := ""
 		for o: String in options:
-			if o.to_lower() == value.to_lower():
+			if TextUtils.fold(o) == TextUtils.fold(value):
 				match_opt = o
 		# También vale el principio de la opción («hipotesis msg-001» por «msg-001 (ataque)»),
 		# siempre que solo encaje con una.
 		if match_opt.is_empty() and not value.strip_edges().is_empty():
 			var starts: Array[String] = []
 			for o: String in options:
-				if o.to_lower().begins_with(value.strip_edges().to_lower()):
+				if TextUtils.fold(o).begins_with(TextUtils.fold(value)):
 					starts.append(o)
 			if starts.size() == 1:
 				match_opt = starts[0]

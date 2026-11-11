@@ -141,7 +141,7 @@ static func _forward(c: CommandContext, a: Dictionary) -> CommandResult:
 			var terms := PackedStringArray()
 			for k in net.inputs:
 				terms.append("%s·%s" % [_n(net.W1[j][k]), _n(x[k])])
-			r.line("oculta %d: z = %s + %s = %s  →  %s(z) = %s" % [j, " + ".join(terms), _n(net.b1[j]), _n(f["z1"][j]), net.activation, _n(f["a1"][j])], "data")
+			r.line("oculta %d: z = %s + %s = %s  →  %s(z) = %s" % [j, " + ".join(terms), _n(net.b1[j]), _n(f["z1"][j]), "sigmoide" if net.activation == "sigmoid" else net.activation, _n(f["a1"][j])], "data")
 	var a1: PackedFloat64Array = f["a1"]
 	var terms2 := PackedStringArray()
 	for j in a1.size():

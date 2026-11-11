@@ -99,13 +99,20 @@ static func _check(c: CommandContext, _a: Dictionary) -> CommandResult:
 	var rows: Array = []
 	for t: Dictionary in res.get("results", []):
 		var got := _show(t.get("got")) if t.get("error", {}).is_empty() else "error: " + str(t["error"].get("message", ""))
-		rows.append(["✓" if t.get("ok", false) else "✗", "%s(%s)" % [ex["function"], _args(t.get("args", []))], _show(t.get("expected")), got])
+		# ✓ y × ocupan una celda de la fuente monoespaciada (✗ es más ancho y descuadra la fila).
+		rows.append(["✓" if t.get("ok", false) else "×", "%s(%s)" % [ex["function"], _args(t.get("args", []))], _show(t.get("expected")), got])
 	r.line("Comprobando %s() con %d casos" % [ex["function"], int(res.get("total", 0))], "accent")
 	r.table(PackedStringArray(["", "llamada", "esperado", "tu resultado"]), rows)
 	var passed := int(res.get("passed", 0))
 	var total := int(res.get("total", 0))
 	var all_ok := passed == total and total > 0
 	r.line("%d de %d casos correctos." % [passed, total], "ok" if all_ok else "warn")
+	if all_ok:
+		# El editor se cierra solo para dejar sitio a la consola; py lo vuelve a abrir.
+		r.action = "py_close"
+		r.line("Editor cerrado: tu código está guardado y py lo vuelve a abrir.", "muted")
+	else:
+		r.line("Cambia la línea marcada con ← y vuelve a probar con py check." if g.py_code.contains("←") else "Corrige tu función y vuelve a probar con py check.", "muted")
 	c.emit("py.checked", {"exercise": ex["id"], "passed": passed, "total": total, "all_passed": all_ok})
 	return r
 

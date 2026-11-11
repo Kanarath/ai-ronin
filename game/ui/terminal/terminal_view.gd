@@ -271,4 +271,33 @@ static func _common_prefix(items: PackedStringArray) -> String:
 
 
 static func _escape(text: String) -> String:
-	return text.replace("[", "[lb]")
+	return display_text(text).replace("[", "[lb]")
+
+
+const _SUPERSCRIPTS := {"⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁻": "-", "⁺": "+"}
+
+
+## Ajustes de presentación para la fuente de la consola:
+##   - «60 %» lleva un espacio que no se parte: el «%» nunca queda solo en la línea siguiente.
+##   - Los superíndices que la fuente monoespaciada no tiene (⁰, ⁴…⁹, ⁻) se dibujaban con
+##     otra fuente y parecían «°»: «10⁻²⁰⁰» se escribe 10^-200. ¹ ² ³ sí están y se dejan.
+static func display_text(text: String) -> String:
+	var out := text.replace(" %", " %")
+	if not RegEx.create_from_string("[⁰⁴-⁹⁻⁺]").search(out):
+		return out
+	var res := ""
+	var run := ""
+	for ch in out + " ":
+		if _SUPERSCRIPTS.has(ch):
+			run += ch
+			continue
+		if not run.is_empty():
+			if RegEx.create_from_string("[⁰⁴-⁹⁻⁺]").search(run):
+				res += "^"
+				for r in run:
+					res += _SUPERSCRIPTS[r]
+			else:
+				res += run
+			run = ""
+		res += ch
+	return res.substr(0, res.length() - 1)

@@ -39,24 +39,64 @@ static func _import(c: CommandContext, a: Dictionary) -> CommandResult:
 	var r := CommandResult.new()
 	r.line("Importando %d evidencia(s) de %s" % [files.size(), ruta.get_base_dir() if files.size() == 1 else ruta], "accent")
 	var data: Array = []
+	var meas: Array = []
 	var bonus := 0
 	for f in files:
 		var res := g.import_evidence(f)
 		if res["ok"] and res["kind"] == "medicion":
-			data.append([res["exercise"] + " medición", "%d configuraciones · %s" % [res["configs"], res["modelo"]], "éxito de los ataques: sin defensas %s · mejor %.0f %%" % [
-				"%.0f %%" % (res["baseline_rate"] * 100) if res["has_baseline"] else "—", res["best_rate"] * 100]])
+			meas.append([res["exercise"], "%d configuraciones · %s" % [res["configs"], res["modelo"]], measurement_summary(res)])
 		elif res["ok"]:
 			var state := "✓ verificado" if res["all_passed"] else "%d / %d tests" % [res["passed"], res["total"]]
 			if res["first_verified"]:
 				state += "  +%d XP" % EvidenceImporter.VERIFIED_XP
 				bonus += EvidenceImporter.VERIFIED_XP
 			data.append([res["exercise"], state, ", ".join(_missions_of(g, res["exercise"]))])
+			if not res["all_passed"]:
+				var missing := int(res["total"]) - int(res["passed"])
+				g.runner.mentor_message.emit("%s %d %s de %s: el objetivo pide los %d/%d." % ["Falta" if missing == 1 else "Faltan", missing,
+					"test" if missing == 1 else "tests", res["exercise"], int(res["total"]), int(res["total"])], "warn")
 		else:
 			data.append([f.get_file(), "✗ rechazada", "; ".join(res["errors"])])
-	r.table(PackedStringArray(["ejercicio", "estado", "misiones / motivo"]), data)
+	if not data.is_empty():
+		r.table(PackedStringArray(["ejercicio", "estado", "misiones / motivo"]), data)
+	if not meas.is_empty():
+		r.table(PackedStringArray(["medición", "configuraciones · modelo", "resultado"]), meas)
 	if bonus > 0:
 		r.line("Ejercicios verificados: buen trabajo. El código es tuyo; el Dojo solo ha leído el resultado de los tests.", "ok")
 	return r
+
+
+## Qué cuenta «ataques_exitos» en cada laboratorio y cómo se llama su configuración base
+## («ninguna»): no todas las mediciones son ataques contra defensas (A1-06 mide un juez,
+## E4-01 el abuso que llega al modelo…).
+const MEASURE_LABELS := {
+	"A1-05": ["fugas del secreto", "sin defensas"],
+	"A1-06": ["juez engañado", "sin mitigaciones"],
+	"A1-07": ["ataques que pasan", "sin guardianes"],
+	"A2-06": ["documento del tercero en primer lugar", "sin reranking"],
+	"A6-04": ["artefactos maliciosos aceptados", "sin controles"],
+	"E2-01": ["ataques con éxito sin detectar", "sin defensas"],
+	"E2-02": ["acuerdo del modelo extraído", "sin defensas"],
+	"E2-03": ["aciertos del ataque de pertenencia", "sin defensas"],
+	"E4-01": ["abuso que llega al modelo", "sin defensas"],
+	"E4-02": ["fugas al fichero de trazas", "sin defensas"],
+	"E4-03": ["ataques admitidos por la política", "sin reglas"],
+}
+
+
+## Resumen de una medición importada con la etiqueta de su laboratorio.
+static func measurement_summary(res: Dictionary) -> String:
+	var lab: Array = MEASURE_LABELS.get(res["exercise"], ["éxito de los ataques", "sin defensas"])
+	var best := "mejor %s" % _pct(res["best_rate"])
+	if str(res.get("best_config", "")) != "":
+		best += " (%s)" % res["best_config"]
+	if not res["has_baseline"]:
+		return "%s: %s" % [lab[0], best]
+	return "%s: %s %s · %s" % [lab[0], lab[1], _pct(res["baseline_rate"]), best]
+
+
+static func _pct(rate: float) -> String:
+	return "%.0f\u00a0%%" % (rate * 100.0)
 
 
 static func _list(c: CommandContext, _a: Dictionary) -> CommandResult:

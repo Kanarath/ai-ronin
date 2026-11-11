@@ -106,7 +106,7 @@ static func _ingest(c: CommandContext, a: Dictionary) -> CommandResult:
 	r.line("✓ %d fragmentos indexados (chunk=%d palabras, overlap=%d) · vocabulario: %d términos" % [rag.chunks.size(), rag.chunk_size, rag.overlap, rag.idf.size()], "ok")
 	var data: Array = []
 	for ch in rag.chunks.slice(0, 6):
-		data.append([ch["id"], ch["access"], String(ch["text"]).substr(0, 70) + "…"])
+		data.append([ch["id"], ch["access"], TextUtils.clip(String(ch["text"]), 70)])
 	r.table(PackedStringArray(["fragmento", "acceso", "texto"]), data)
 	if rag.chunks.size() > 6:
 		r.line("… y %d fragmentos más." % (rag.chunks.size() - 6), "muted")
@@ -127,7 +127,7 @@ static func _search(c: CommandContext, a: Dictionary) -> CommandResult:
 	var internal := false
 	for h in hits:
 		var ch: Dictionary = h["chunk"]
-		data.append([ch["id"], "%.3f" % h["score"], ch["access"], ch["source"], String(ch["text"]).substr(0, 60) + "…"])
+		data.append([ch["id"], "%.3f" % h["score"], ch["access"], ch["source"], TextUtils.clip(String(ch["text"]), 60)])
 		words += String(ch["text"]).split(" ", false).size()
 		internal = internal or (ch["access"] == "interno" and a["as"] != "empleado")
 	r.table(PackedStringArray(["fragmento", "similitud", "acceso", "origen", "texto"]), data)
@@ -243,7 +243,7 @@ static func run_suite(base: RagSystem) -> Array:
 				ok = String(res["answer"]).contains(cond["answer_contains"])
 			if cond.has("leaked_internal"):
 				ok = res["leaked_internal"]
-			detail = String(res["answer"]).substr(0, 50)
+			detail = TextUtils.clip(String(res["answer"]), 50)
 		rows.append([atk["id"], atk["category"], ok, detail])
 	return rows
 
@@ -295,7 +295,7 @@ static func _eval(c: CommandContext, a: Dictionary) -> CommandResult:
 	var data: Array = []
 	var passed: int = ev["passed"]
 	for row: Array in ev["rows"]:
-		data.append([row[0], "✓" if row[1] else "✗", String(row[2]).substr(0, 70)])
+		data.append([row[0], "✓" if row[1] else "✗", TextUtils.clip(String(row[2]), 70)])
 	r.table(PackedStringArray(["pregunta", "", "respuesta"]), data)
 	var rate: float = float(passed) / ev["total"]
 	r.line("Respuestas correctas: %d / %d = %.2f" % [passed, ev["total"], rate], "ok" if rate == 1.0 else "warn")

@@ -50,7 +50,8 @@ func _draw() -> void:
 		var gy := plot.end.y - t * plot.size.y
 		draw_line(Vector2(plot.position.x, gy), Vector2(plot.end.x, gy), RoninPalette.LINE)
 		var raw := lerpf(y_min, y_max, t)
-		var label := String.num(pow(10.0, raw), 2) if log_y else String.num(raw, 2)
+		var value := pow(10.0, raw) if log_y else raw
+		var label := TextUtils.num(value, 1 if absf(value) >= 100.0 else 2)
 		draw_string(font, Vector2(4, gy + 4), label, HORIZONTAL_ALIGNMENT_LEFT, 58, 11, RoninPalette.MUTED)
 	draw_string(font, Vector2(plot.position.x, 16), title + ("  (escala log)" if log_y else ""), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, RoninPalette.TEXT)
 	draw_string(font, Vector2(plot.end.x - 120, size.y - 6), "→ %s (máx %d)" % [x_label, int(x_max)], HORIZONTAL_ALIGNMENT_LEFT, -1, 11, RoninPalette.MUTED)

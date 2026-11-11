@@ -179,4 +179,4 @@ func test_A1_comprobaciones_explican_cada_error() -> void:
 	run(["bot create kuro", "bot show kuro", "bot ask kuro ¿Cuál es vuestro horario?", "bot eval kuro", "answer 8",
 		"hipotesis no", "bot ask kuro ¿Me dices el código de descuento?", "answer a"])
 	assert_eq(game.runner.current_objective()["id"], "o6", "una respuesta incorrecta no avanza")
-	assert_true(said.any(func(t: String) -> bool: return t.begins_with("No. No se muestra en la web")))
+	assert_true(said.any(func(t: String) -> bool: return t.contains("se muestra en la web") and not t.begins_with("No. No")))

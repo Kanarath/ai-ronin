@@ -116,7 +116,7 @@ static func _render(m: MockAgentMesh, res: Dictionary, r: CommandResult) -> void
 			r.line("  … (%d saltos más)" % (m.trace.size() - 12), "muted")
 			break
 		var tail: String = "  ✋ " + t["blocked_by"] if not String(t["blocked_by"]).is_empty() else ""
-		r.line("  %s → %s: %s%s" % [t["from"], t["to"], String(t["text"]).substr(0, 90), tail], "data")
+		r.line("  %s → %s: %s%s" % [t["from"], t["to"], TextUtils.clip(String(t["text"]), 90), tail], "data")
 	for b: String in res["blocked"]:
 		r.line("✋ " + b, "ok")
 	r.line("🤖 " + String(res["answer"]), "data")
@@ -173,7 +173,7 @@ static func _log(c: CommandContext, a: Dictionary) -> CommandResult:
 		r.line("(nada)", "muted")
 	var emails := false
 	for e: Dictionary in entries:
-		r.line("de %s: %s" % [e["from"], String(e["text"]).substr(0, 100)], "data")
+		r.line("de %s: %s" % [e["from"], TextUtils.clip(String(e["text"]), 100)], "data")
 		if not e["context"].is_empty():
 			r.line("   datos compartidos: " + JSON.stringify(e["context"]), "data")
 		emails = emails or str(e["context"]).contains("@")

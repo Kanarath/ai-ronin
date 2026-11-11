@@ -222,7 +222,7 @@ static func _fmt(v: float) -> String:
 	if is_nan(v) or is_inf(v):
 		return "∞"
 	if absf(v) >= 1e6:
-		return String.num_scientific(v)
+		return TextUtils.num(v)
 	return String.num(v, 4)
 
 

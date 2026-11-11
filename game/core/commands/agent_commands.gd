@@ -106,11 +106,11 @@ static func _print_trace(r: CommandResult, ag: MockAgent) -> void:
 	for s in ag.trace:
 		var args := PackedStringArray()
 		for k: String in s["args"]:
-			args.append("%s=%s" % [k, str(s["args"][k]).substr(0, 40)])
+			args.append("%s=%s" % [k, TextUtils.clip(str(s["args"][k]), 40)])
 		var who: String = s["source"]
 		var origin := "  ⟵ instrucción de " + who if who.begins_with("correo") else ""
 		if s["blocked_by"].is_empty():
-			r.line("%2d · %s(%s) → %s%s" % [s["n"], s["tool"], ", ".join(args), String(s["output"]).substr(0, 50), origin], "warn" if who.begins_with("correo") else "data")
+			r.line("%2d · %s(%s) → %s%s" % [s["n"], s["tool"], ", ".join(args), TextUtils.clip(String(s["output"]), 50), origin], "warn" if who.begins_with("correo") else "data")
 		else:
 			r.line("%2d · %s(%s) ✋ BLOQUEADO por %s%s" % [s["n"], s["tool"], ", ".join(args), s["blocked_by"], origin], "ok")
 
@@ -188,7 +188,7 @@ static func _memory(c: CommandContext, a: Dictionary) -> CommandResult:
 		r.line("La memoria está vacía.", "muted")
 	var data: Array = []
 	for m in ag.memory:
-		data.append([m["text"].substr(0, 70), m["source"]])
+		data.append([TextUtils.clip(str(m["text"]), 70), m["source"]])
 	if not data.is_empty():
 		r.table(PackedStringArray(["nota", "origen"]), data)
 	c.emit("agent.memory", {"agent": a["agente"], "notes": ag.memory.size(),

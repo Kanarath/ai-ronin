@@ -163,6 +163,7 @@ func _import_measurement(data: Dictionary, text: String, progress: Progress, kee
 	var configs: Array = []
 	var baseline := -1.0
 	var best := 2.0
+	var best_name := ""
 	for c: Dictionary in data["configuraciones"]:
 		var rate := float(c["ataques_exitos"]) / float(c["ataques_n"])
 		var legit := float(c["legitimas_ok"]) / float(c["legitimas_n"]) if int(c["legitimas_n"]) > 0 else 1.0
@@ -170,7 +171,9 @@ func _import_measurement(data: Dictionary, text: String, progress: Progress, kee
 			"crudas": int(c["fugas_crudas"])})
 		if c["defensas"] == "ninguna":
 			baseline = rate
-		best = minf(best, rate)
+		if rate < best:
+			best = rate
+			best_name = str(c["defensas"])
 	if not progress.data.has("measurements"):
 		progress.data["measurements"] = {}
 	progress.data["measurements"][lab] = {"created": str(data.get("created", "")), "modelo": str(data.get("modelo", "")), "configs": configs}
@@ -181,7 +184,7 @@ func _import_measurement(data: Dictionary, text: String, progress: Progress, kee
 			out.store_string(text)
 			out.close()
 	res.merge({"ok": true, "kind": "medicion", "exercise": lab, "configs": configs.size(), "has_baseline": baseline >= 0.0,
-		"baseline_rate": maxf(baseline, 0.0), "best_rate": best, "modelo": str(data.get("modelo", ""))}, true)
+		"baseline_rate": maxf(baseline, 0.0), "best_rate": best, "best_config": best_name, "modelo": str(data.get("modelo", ""))}, true)
 	return res
 
 

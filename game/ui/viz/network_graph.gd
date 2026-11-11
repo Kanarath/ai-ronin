@@ -7,12 +7,15 @@ extends Control
 var net: MLP
 var net_name: String = ""
 var last_input := PackedFloat64Array()
+## Nombres de las entradas (las features del dataset con que se entrenó; a y b en las puertas).
+var input_names := PackedStringArray()
 
 
-func show_network(p_net: MLP, p_name: String, p_input: PackedFloat64Array = PackedFloat64Array()) -> void:
+func show_network(p_net: MLP, p_name: String, p_input: PackedFloat64Array = PackedFloat64Array(), p_input_names: PackedStringArray = PackedStringArray()) -> void:
 	net = p_net
 	net_name = p_name
 	last_input = p_input
+	input_names = p_input_names
 	queue_redraw()
 
 
@@ -63,7 +66,7 @@ func _draw() -> void:
 			var activation := -1.0
 			var label := ""
 			if li == 0:
-				label = "x%d" % i
+				label = input_names[i] if i < input_names.size() else "x%d" % i
 				if has_input:
 					activation = clampf(last_input[i], 0.0, 1.0)
 			elif li == positions.size() - 1:

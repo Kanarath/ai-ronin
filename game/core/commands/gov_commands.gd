@@ -44,7 +44,14 @@ static func _open(c: CommandContext, a: Dictionary) -> CommandResult:
 	c.emit("gov.opened", {"gov": a["nombre"]})
 	var r := CommandResult.new().line("✓ carpeta de gobernanza %s abierta: 3 marcos, 4 hallazgos, 4 sistemas y 6 riesgos." % a["nombre"], "ok")
 	r.line("⚗ Empresa y cifras ficticias; artículos y fechas reales (consultados el 2026-11-09). No es asesoramiento jurídico.", "muted")
-	r.line("Siguiente: gov frameworks %s" % a["nombre"], "muted")
+	# El siguiente paso depende de la misión: O5-01 compara marcos, O5-02 clasifica sistemas
+	# y O5-03 trabaja el registro de riesgos.
+	var mission := MissionCommands.active_mission_id(c)
+	var next := {"O5-01": "gov frameworks", "O5-02": "gov systems", "O5-03": "gov risks"}
+	if next.has(mission):
+		r.line("Siguiente: %s %s" % [next[mission], a["nombre"]], "muted")
+	else:
+		r.line("Para empezar: gov frameworks %s · gov systems %s · gov risks %s" % [a["nombre"], a["nombre"], a["nombre"]], "muted")
 	return r
 
 

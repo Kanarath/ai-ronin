@@ -154,11 +154,12 @@ func _on_mission_finished(result: Dictionary) -> void:
 	var before := progress.level()
 	var first_time := not progress.is_mission_completed(active_mission["id"])
 	var gained := progress.apply_result(active_mission, result)
-	_announce_readings(active_mission, first_time)
 	achievements.on_mission_result(result)
 	_after_xp(before)
 	save()
 	mission_completed.emit(active_mission, result, gained)
+	# Después del «misión completada»: lecturas, ejercicio de la Forja pendiente y desbloqueos.
+	_announce_readings(active_mission, first_time)
 	progress_changed.emit()
 
 
@@ -187,13 +188,27 @@ func _announce_readings(m: Dictionary, first_time: bool) -> void:
 			titles.append(String(study.refs[id]["title"]))
 	if not titles.is_empty():
 		runner.mentor_message.emit("Para profundizar (enlaces: lecturas %s): %s." % [m["id"], " · ".join(titles)], "info")
-	var ex := evidence.exercise_of_mission(m)
-	if not ex.is_empty() and not EvidenceImporter.is_verified(progress, ex):
-		runner.mentor_message.emit("Tu ejercicio de Python: %s. Cuando pase sus tests, en forja/ejercicios ejecuta py -m ronin_check %s y aquí evidence import." % [evidence.exercises[ex]["file"], ex], "hint")
+	var msg := forja_message(m)
+	if not msg.is_empty():
+		runner.mentor_message.emit(msg, "info")
 	if not first_time:
 		return
 	for u: Dictionary in study.unlocked_by(progress, m["id"]):
 		runner.mentor_message.emit("Desbloqueado en la ruta de estudio externo: %s. Esta parte del temario no tiene misión: se estudia con lecturas. Escribe lecturas %s." % [u["title"], u["id"]], "lesson")
+
+
+## Aviso de fin de misión sobre su ejercicio de la Forja, o "" si no tiene o ya está verificado
+## (en ese caso los tests ya pasan: no tiene sentido pedirlos otra vez). Si el ejercicio es de
+## otra misión del arco (A4-02 y A4-03 comparten el de A4-01), lo dice.
+func forja_message(m: Dictionary) -> String:
+	var ex := evidence.exercise_of_mission(m)
+	if ex.is_empty() or EvidenceImporter.is_verified(progress, ex):
+		return ""
+	var info: Dictionary = evidence.exercises[ex]
+	var dir := String(info.get("test_path", "")).get_base_dir()
+	var path := dir.path_join(String(info["file"])) if not dir.is_empty() else String(m.get("debrief", {}).get("exercise", info["file"]))
+	var whose := "" if ex == str(m.get("id", "")) else " (el ejercicio de %s, que también cubre esta misión)" % ex
+	return "🛠 Ahora, con tus manos: abre %s%s y haz que pasen sus tests. Después genera la evidencia con ronin_check %s y tráela aquí con evidence import. ¿No tienes Python? Escribe forja setup." % [path, whose, ex]
 
 
 func _after_xp(level_before: int) -> void:
