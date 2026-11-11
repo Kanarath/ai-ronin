@@ -28,7 +28,7 @@
     "Medir cómo afecta el tamaño de fragmento a la calidad y al coste",
     "Reducir las alucinaciones con un umbral de relevancia (abstenerse cuando no hay información)"
   ],
-  "mentor_intro": "Lo que es real aquí: el troceo, el índice vectorial TF-IDF y la búsqueda por similitud coseno se calculan de verdad. Lo simulado: el modelo que redacta la respuesta, que sigue reglas.",
+  "mentor_intro": "Lo que es real aquí: el troceo, el índice vectorial TF-IDF (Term Frequency–Inverse Document Frequency) y la búsqueda por similitud coseno se calculan de verdad. Lo simulado: el modelo que redacta la respuesta, que sigue reglas.",
   "purpose": "Un RAG (Retrieval-Augmented Generation) es la forma más común de que un LLM (Large Language Model) responda con los documentos de una empresa: antes de responder, busca los fragmentos más parecidos a la pregunta y se los da al modelo. Lo usan los asistentes de atención al cliente, los buscadores internos y muchos agentes. Hoy montas uno pieza a pieza (trocear, indexar, buscar, responder) y mides cómo cambia con el tamaño de los fragmentos.",
   "lab": {
     "datasets": [],
@@ -45,7 +45,7 @@
     {
       "id": "o1",
       "text": "Crea el sistema RAG y revisa sus documentos. ¿Cuántos documentos son de acceso interno? (answer <número>)",
-      "teach": "La base de conocimiento\nrag create <nombre> carga la documentación de la forja.\nrag docs <nombre> lista cada documento con su origen (quién lo escribió) y su nivel de acceso: público o interno.\nPor qué: en una auditoría de un RAG (Retrieval-Augmented Generation), lo primero es saber QUÉ datos puede llegar a leer el asistente.",
+      "teach": "La base de conocimiento\nrag create <nombre> carga la documentación de la forja.\nrag docs <nombre> lista cada documento con su origen (quién lo redactó) y su nivel de acceso: público o interno.\nPor qué: en una auditoría, lo primero es saber QUÉ datos puede llegar a leer el asistente.",
       "validator": {
         "type": "all",
         "of": [
@@ -67,27 +67,14 @@
       "on_complete": "2 documentos confidenciales (costes y proveedores) conviven con los públicos en la MISMA base de conocimiento. Apúntalo: es una decisión de diseño que tendrá consecuencias."
     },
     {
-      "id": "o2",
-      "text": "Trocea e indexa los documentos con la configuración por defecto.",
-      "teach": "Trocear e indexar\nrag ingest <nombre> parte cada documento en fragmentos de 40 palabras que se solapan 10, para no cortar una idea justo en la frontera.\nDespués convierte cada fragmento en un vector. Aquí los vectores son TF-IDF (Term Frequency–Inverse Document Frequency): cada dimensión es una palabra, con más peso si es frecuente en el fragmento y rara en el resto.\nLos RAG (Retrieval-Augmented Generation) modernos usan embeddings densos de una red neuronal, pero la búsqueda es la misma: similitud coseno (T5).\nPor qué: lo que no está bien troceado e indexado, el asistente no lo puede encontrar.",
-      "validator": {
-        "type": "event",
-        "event": "rag.ingested"
-      },
-      "hints": [
-        "rag ingest biblio"
-      ],
-      "on_complete": "13 fragmentos con ids como cuidados#0, cuidados#1… (documento#número). El vocabulario tiene 151 términos: cada vector tiene 151 dimensiones posibles."
-    },
-    {
       "id": "py1",
-      "text": "Escribe tú el troceo en Python: abre el editor con py, completa la función trocear y compruébala con py check.",
-      "teach": "Trocear con solape\nPara trocear, se parte el texto en palabras y se van cogiendo grupos de tam palabras.\nCon solape, cada fragmento empieza solape palabras antes de donde acabó el anterior: avanza tam − solape.\nEn Python, lista[a:b] coge los elementos desde la posición a hasta la b, sin incluirla.\nPor qué: es el primer paso de cualquier RAG (Retrieval-Augmented Generation); el tamaño que elijas decide qué puede encontrar el asistente.",
+      "text": "Programa tú el troceo en Python: abre el editor con py, completa la función trocear y compruébala con py check.",
+      "teach": "Trocear con solape\nPara trocear, se parte el texto en palabras y se van cogiendo grupos de tam palabras.\nCon solape, cada fragmento empieza solape palabras antes de donde acabó el anterior: avanza tam − solape. El solape evita cortar una idea justo en la frontera.\nEn Python, lista[a:b] coge los elementos desde la posición a hasta la b, sin incluirla.\nPor qué: es el primer paso de cualquier RAG (Retrieval-Augmented Generation); el tamaño que elijas decide qué puede encontrar el asistente.",
       "py_exercise": {
         "id": "A2-01-trocear",
         "title": "trocear(texto, tam, solape): fragmentos de tam palabras",
         "function": "trocear",
-        "starter": "# Ejercicio A2-01 · Trocear un documento\n# texto es un documento; tam, las palabras de cada fragmento; solape, las que repite\n# cada fragmento del anterior. La función devuelve la lista de fragmentos.\n# El bucle ya avanza bien; falta coger las palabras de cada fragmento:\n# las que van desde la posición inicio hasta inicio + tam.\n\ndef trocear(texto, tam, solape):\n    palabras = texto.split()\n    paso = tam - solape\n    trozos = []\n    for inicio in range(0, len(palabras), paso):\n        trozo = palabras[inicio:inicio + 1]   # ← cambia esta línea\n        trozos.append(\" \".join(trozo))\n        if inicio + tam >= len(palabras):\n            break\n    return trozos\n\n# Pruébala con py run. Debería imprimir ['a b c d', 'd e f g', 'g h']:\nprint(trocear(\"a b c d e f g h\", 4, 1))\n",
+        "starter": "# A2-01 · Fragmentos de tam palabras; cada uno repite solape palabras del anterior.\n# El bucle ya avanza bien: falta coger las palabras desde inicio hasta inicio + tam.\n\ndef trocear(texto, tam, solape):\n    palabras = texto.split()\n    paso = tam - solape\n    trozos = []\n    for inicio in range(0, len(palabras), paso):\n        trozo = palabras[inicio:inicio + 1]   # ← cambia esta línea\n        trozos.append(\" \".join(trozo))\n        if inicio + tam >= len(palabras):\n            break\n    return trozos\n\n# Pruébala con py run. Debería imprimir ['a b c d', 'd e f g', 'g h']:\nprint(trocear(\"a b c d e f g h\", 4, 1))\n",
         "cases": [
           {
             "args": [
@@ -147,12 +134,25 @@
         "Cada fragmento son las palabras desde inicio hasta inicio + tam.",
         "La línea queda así: trozo = palabras[inicio:inicio + tam]"
       ],
-      "on_complete": "Es lo que ha hecho rag ingest con 40 y 10. Fíjate en el primer caso: la «d» y la «g» salen dos veces. Ese solape evita que una frase quede partida justo entre dos fragmentos."
+      "on_complete": "Es lo que hará rag ingest en el paso siguiente, con 40 y 10. En el primer caso, la «d» y la «g» salen dos veces: ese solape evita que una frase quede partida entre dos fragmentos."
+    },
+    {
+      "id": "o2",
+      "text": "Trocea e indexa los documentos con la configuración por defecto.",
+      "teach": "Trocear e indexar\nrag ingest <nombre> parte cada documento en fragmentos de 40 palabras que se solapan 10, como tu función trocear.\nDespués convierte cada fragmento en un vector. Aquí los vectores son TF-IDF (Term Frequency–Inverse Document Frequency): cada dimensión es una palabra, con más peso si es frecuente en el fragmento y rara en el resto.\nLos sistemas modernos usan embeddings densos de una red neuronal, pero la búsqueda es la misma: similitud coseno (T5).\nPor qué: lo que no está bien troceado e indexado, el asistente no lo puede encontrar.",
+      "validator": {
+        "type": "event",
+        "event": "rag.ingested"
+      },
+      "hints": [
+        "rag ingest biblio"
+      ],
+      "on_complete": "13 fragmentos con ids como cuidados#0, cuidados#1… (documento#número). El vocabulario tiene 151 términos: cada vector tiene 151 dimensiones posibles."
     },
     {
       "id": "o3",
       "text": "Busca los fragmentos más parecidos a «aceite para proteger la hoja». ¿De qué documento sale el más parecido? (answer <id del documento>)",
-      "teach": "Recuperación\nrag search <nombre> <consulta> convierte la consulta en vector y devuelve los k fragmentos con mayor similitud coseno, sin generar ninguna respuesta. Es la «R» de RAG (Retrieval-Augmented Generation).\nFíjate en la línea final: cuántas palabras de contexto recibiría el modelo.\nPor qué: si la recuperación trae el fragmento equivocado, ni el mejor LLM (Large Language Model) dará la respuesta correcta.",
+      "teach": "Recuperación\nrag search <nombre> <consulta> convierte la consulta en vector y devuelve los k fragmentos con mayor similitud coseno, sin generar ninguna respuesta. Es la «R» de RAG (Retrieval-Augmented Generation).\nFíjate en la línea final: cuántas palabras de contexto recibiría el modelo.\nPor qué: si la recuperación trae el fragmento equivocado, ni el mejor modelo dará la respuesta correcta.",
       "validator": {
         "type": "all",
         "of": [
@@ -175,7 +175,7 @@
         "rag search biblio aceite para proteger la hoja",
         "La primera fila de la tabla es el fragmento más parecido; el documento es lo que va antes de «#»."
       ],
-      "on_complete": "Del manual de cuidados. La búsqueda no «entiende» nada: compara vectores. Funciona porque la consulta y el fragmento comparten palabras importantes (aceite, proteger, hoja)."
+      "on_complete": "Del manual de cuidados. La búsqueda no «entiende» nada: compara vectores, y acierta porque consulta y fragmento comparten palabras importantes (aceite, proteger, hoja)."
     },
     {
       "id": "o4",
@@ -196,7 +196,7 @@
     {
       "id": "o5",
       "text": "Pasa el eval de preguntas de clientes. ¿Cuántas de las 7 responde correctamente? (answer <número>)",
-      "teach": "Evaluar un RAG (Retrieval-Augmented Generation)\nrag eval <nombre> lanza 7 preguntas reales con la respuesta esperada. Como en A1, es tu línea base.\nMira qué pregunta falla y POR QUÉ.\nPor qué: medir antes de cambiar es lo que te permite saber si un cambio mejora o empeora el asistente.",
+      "teach": "Evaluar el asistente\nrag eval <nombre> lanza 7 preguntas reales con la respuesta esperada. Como en A1, es tu línea base.\nMira qué pregunta falla y POR QUÉ.\nPor qué: medir antes de cambiar es lo que te permite saber si un cambio mejora o empeora el asistente.",
       "validator": {
         "type": "all",
         "of": [
@@ -215,7 +215,7 @@
         "rag eval biblio",
         "Cuenta los ✓ o mira la línea final."
       ],
-      "on_complete": "6 de 7. Falla «¿Vendéis armaduras de samurái?»: la documentación no dice nada de armaduras, pero el asistente responde igualmente con una frase del catálogo que no tiene nada que ver. Es una ALUCINACIÓN: mejor reconocer que no se sabe."
+      "on_complete": "6 de 7. Falla «¿Vendéis armaduras de samurái?»: la documentación no habla de armaduras, pero el asistente responde con una frase del catálogo que no viene a cuento. Es una ALUCINACIÓN: mejor reconocer que no se sabe."
     },
     {
       "id": "o6",
@@ -234,12 +234,12 @@
       "hints": [
         "rag defend biblio min-score on · rag eval biblio"
       ],
-      "on_complete": "7 de 7. Un buen RAG (Retrieval-Augmented Generation) sabe decir «no lo sé». El umbral exacto es un compromiso: si es muy alto, también se abstiene en preguntas que sí tienen respuesta."
+      "on_complete": "7 de 7. Un buen RAG sabe decir «no lo sé». El umbral exacto es un compromiso: si es muy alto, también se abstiene en preguntas que sí tienen respuesta."
     },
     {
       "id": "o7",
       "text": "Experimenta con el troceo: reindexa con fragmentos de 6 palabras sin solapamiento (con min-score activo) y repite el eval. ¿Cuántas acierta ahora? (answer <número>)",
-      "teach": "El tamaño del fragmento\nrag ingest admite --chunk (palabras por fragmento) y --overlap (solape).\nPrueba con fragmentos diminutos, de 6 palabras y sin solape, con min-score activo.\nPor qué: elegir el troceo es una decisión real de ingeniería en todo RAG (Retrieval-Augmented Generation).",
+      "teach": "El tamaño del fragmento\nrag ingest admite --chunk (palabras por fragmento) y --overlap (solape).\nPrueba con fragmentos diminutos, de 6 palabras y sin solape, con min-score activo.\nPor qué: elegir el troceo es una decisión real de ingeniería en todo sistema de recuperación.",
       "prediction": {
         "prompt": "Con fragmentos diminutos de 6 palabras, ¿cómo crees que responderá?",
         "options": [
@@ -268,40 +268,40 @@
       "hints": [
         "rag ingest biblio --chunk 6 --overlap 0 · rag eval biblio"
       ],
-      "on_complete": "3 de 7: los fragmentos cortan las frases por la mitad («…años frente a defectos de forja»), así que la respuesta se queda sin el dato. Con fragmentos enormes (prueba --chunk 200) se acierta, pero el modelo recibe casi el doble de texto: más coste, más ruido y más superficie para que se cuele contenido malicioso. Elegir el troceo es un compromiso real de ingeniería. Vuelve a dejarlo en 40/10 con rag ingest biblio."
+      "on_complete": "3 de 7: los fragmentos de 6 palabras cortan las frases por la mitad («…años frente a defectos de forja») y la respuesta se queda sin el dato. Vuelve a dejarlo en 40/10 con rag ingest biblio."
     },
     {
       "id": "o8",
-      "text": "Con fragmentos de 6 palabras acertaste 3 de 7, y con 200 palabras el modelo recibe casi el doble de texto. ¿Qué compromiso hay al elegir el tamaño del fragmento?",
-      "teach": "Recapitular el RAG (Retrieval-Augmented Generation)\nLos cinco pasos: ingesta, troceo, índice, recuperación y generación.\nPor qué: cada uno es una decisión de ingeniería, y en A2-02 verás que cada uno es también una superficie de ataque.",
+      "text": "Con fragmentos de 6 palabras acertaste 3 de 7; con 40/10, 7 de 7. ¿Qué compromiso hay al elegir el tamaño del fragmento?",
+      "teach": "El compromiso del troceo\nTodo fragmento recuperado entra entero en el contexto del modelo.\nEl modelo cobra por token (cada trozo de palabra que procesa) y lee todo lo que le llega, venga o no a cuento.\nPor qué: cada paso del sistema es una decisión de ingeniería, y en A2-02 verás que cada uno es también una superficie de ataque.",
       "choices": [
         {
           "id": "a",
-          "text": "cuanto más pequeño, mejor: así la búsqueda es más precisa",
-          "why": "Con 6 palabras se cortan las frases y la respuesta se queda sin el dato: 3 de 7."
+          "text": "cuanto más pequeño, mejor: la búsqueda es más precisa y el modelo lee menos texto de relleno",
+          "why": "Con 6 palabras se cortan las frases y la respuesta se queda sin el dato: bajaste a 3 de 7."
         },
         {
           "id": "b",
-          "text": "fragmentos pequeños cortan las ideas; fragmentos grandes cuestan más tokens, meten ruido y dan más sitio para que se cuele contenido malicioso"
+          "text": "da igual el tamaño mientras min-score esté activo, porque ya aparta lo que no es relevante",
+          "why": "min-score solo decide si abstenerse. Con fragmentos de 6 palabras estaba activo y aun así bajaste a 3 de 7."
         },
         {
           "id": "c",
-          "text": "da igual el tamaño si min-score está activo",
-          "why": "min-score solo decide si abstenerse. Con fragmentos de 6 palabras estaba activo y aun así bajaste a 3 de 7."
+          "text": "lo pequeño parte las ideas; lo grande encarece cada consulta, mete ruido y abre hueco a texto malicioso"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
-        "Usa tus cifras: 6 de 7, 7 de 7 y 3 de 7.",
-        "Ni muy pequeño ni muy grande. answer b"
+        "Usa tus cifras: 6 de 7, 7 de 7 y 3 de 7. ¿Y qué pasaría con fragmentos enormes?",
+        "Ni muy pequeño ni muy grande. answer c"
       ],
-      "on_complete": "Exacto. Y abstenerse es mejor que inventar porque una respuesta falsa con tono seguro engaña al cliente; un «no lo sé» le manda a otra fuente. Antes de seguir, vuelve a dejar el troceo en 40/10: rag ingest biblio."
+      "on_complete": "Exacto: ni muy pequeño ni muy grande. Y abstenerse es mejor que inventar: una respuesta falsa con tono seguro engaña al cliente; un «no lo sé» le manda a otra fuente."
     }
   ],
   "mastery_trial": {
@@ -337,8 +337,8 @@
   },
   "debrief": {
     "what_happened": "Has construido un RAG completo: ingesta, troceo, índice vectorial, recuperación y generación con fuentes; has medido su calidad con un eval, has reducido las alucinaciones con un umbral de relevancia y has comprobado el compromiso del tamaño de fragmento.",
-    "why": "RAG es la arquitectura más usada para conectar LLM con datos de una empresa. Entender cada pieza es imprescindible para construirlo bien… y para auditarlo: cada paso (ingesta, índice, recuperación, contexto) es una superficie de ataque que explotarás en A2-02.",
-    "in_production": "Embeddings densos de un modelo (APIs de embeddings o modelos abiertos), bases de datos vectoriales con búsqueda aproximada (ANN), búsqueda híbrida (vectorial + BM25 por palabras), reordenación (reranking) de los resultados, troceo por estructura del documento (secciones, párrafos) y evals específicos de RAG que miden por separado la recuperación (¿trajo el fragmento correcto?) y la fidelidad (¿la respuesta se ciñe a él?).",
+    "why": "RAG (Retrieval-Augmented Generation) es la arquitectura más usada para conectar un LLM (Large Language Model) con los datos de una empresa. Entender cada pieza es imprescindible para construirlo bien… y para auditarlo: cada paso (ingesta, índice, recuperación, contexto) es una superficie de ataque que explotarás en A2-02.",
+    "in_production": "Embeddings densos de un modelo (servicios de embeddings o modelos abiertos), bases de datos vectoriales con búsqueda aproximada de vecinos, búsqueda híbrida (vectorial + BM25, una puntuación clásica por palabras), reordenación (reranking) de los resultados, troceo por estructura del documento (secciones, párrafos) y evals de RAG que miden por separado la recuperación (¿trajo el fragmento correcto?) y la fidelidad (¿la respuesta se ciñe a él?).",
     "simplifications": [
       "Embeddings dispersos TF-IDF en lugar de densos",
       "Generador simulado que cita la frase más relevante",
@@ -353,5 +353,5 @@
   "xp": {
     "base": 250
   },
-  "you_can_now": "Sabes construir y medir un RAG (Retrieval-Augmented Generation): trocear, indexar con vectores, recuperar por similitud coseno, responder con fuentes y abstenerse cuando no hay información. Siguiente: A2-02, qué puede hacer un atacante que escribe en los documentos."
+  "you_can_now": "Sabes construir y medir un RAG: trocear, indexar con vectores, recuperar por similitud coseno, responder con fuentes y abstenerse cuando no hay información. Siguiente: A2-02, qué puede hacer un atacante que escribe en los documentos."
 }

@@ -102,7 +102,7 @@ func test_mision_A6_01() -> void:
 	run(["supply train taller", "answer 0,94"])
 	assert_eq(game.runner.index, 3)
 	run(["supply load taller clasificador-acero", "supply install taller forja-metrics", "supply deploy taller", "answer root"])
-	run(["answer b"])
+	run(["answer c"])
 	assert_eq(game.runner.phase, "trial")
 	run(["supply forja t2", "supply sbom t2", "supply train t2", "supply load t2 clasificador-acero", "supply deploy t2"])
 	assert_eq(finished.size(), 1)
@@ -125,7 +125,7 @@ func test_mision_A6_02() -> void:
 		"informe campo pasos 1) supply forja taller 2) supply inspect taller adaptador-estilo 3) supply load taller adaptador-estilo",
 		"informe campo impacto el modelo da por buenas piezas con grietas de temple", "informe campo evidencia la huella actual difiere de la firmada por lora-labs",
 		"informe campo mitigacion verificar firma y huella de cada artefacto antes de cargarlo", "informe campo verificacion la batería A6 tiene 7 de 7 éxitos sin controles",
-		"informe revisar", "answer a"])
+		"informe revisar", "answer b"])
 	assert_eq(game.runner.phase, "trial")
 	run(["supply forja t2", "supply load t2 adaptador-estilo", "supply load t2 detector-grietas"])
 	assert_eq(finished.size(), 1)
@@ -145,7 +145,7 @@ func test_mision_A6_03() -> void:
 	var lines: Array = []
 	for d in MockMlPipeline.DEFENSES:
 		lines.append("supply defend taller %s on" % d)
-	run(lines + ["supply attack taller", "supply eval taller", "answer b"])
+	run(lines + ["supply attack taller", "supply eval taller", "answer a"])
 	assert_eq(game.runner.phase, "trial")
 	lines = ["supply forja z", "supply convert z clasificador-acero"]
 	for d in MockMlPipeline.DEFENSES:

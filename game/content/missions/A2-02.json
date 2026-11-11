@@ -23,7 +23,7 @@
       "A2.inversion-embeddings"
     ]
   },
-  "briefing": "La forja va a permitir que los clientes publiquen reseñas y que el asistente las use como fuente («así responde con opiniones reales»). Te han pedido una evaluación de seguridad autorizada del RAG antes de activarlo. En A1 el atacante tenía que escribir en el chat. Aquí ni siquiera necesita hablar con el asistente: le basta con dejar un texto donde el RAG lo vaya a leer.",
+  "briefing": "La forja va a permitir que los clientes publiquen reseñas y que el asistente las use como fuente («así responde con opiniones reales»). Te han pedido una evaluación de seguridad autorizada del RAG (Retrieval-Augmented Generation) antes de activarlo. En A1 el atacante tenía que escribir en el chat. Aquí ni siquiera necesita hablar con el asistente: le basta con dejar un texto donde el RAG lo vaya a leer.",
   "learning_objectives": [
     "Explotar y explicar la inyección de prompts INDIRECTA a través de documentos (OWASP LLM01)",
     "Envenenar la base de conocimiento manipulando la recuperación (LLM04 / LLM08)",
@@ -46,7 +46,7 @@
     {
       "id": "o1",
       "text": "Inyección indirecta: crea el RAG, sube como cliente una reseña con una instrucción escondida para el asistente, reindexa y consigue que, cuando OTRO cliente pregunte por descuentos, el asistente siga tu instrucción.",
-      "teach": "Inyección indirecta (LLM01:2025)\nEn A1 el atacante escribía en el chat. Aquí escribe en un documento: la víctima pregunta algo normal, el RAG (Retrieval-Augmented Generation) recupera ese documento porque habla del mismo tema y el modelo lee la instrucción como parte de sus órdenes.\nGreshake et al. (2023) lo demostraron en aplicaciones reales.\nPasos: rag create, rag ingest, rag upload <rag> <id> <texto>, de nuevo rag ingest, y rag ask con la pregunta de la víctima.\nPor qué: es OWASP (Open Worldwide Application Security Project) LLM01, el mismo fallo de A1-02 (instrucciones y datos en un solo canal), pero el atacante ya no necesita acceso al chat.",
+      "teach": "Inyección indirecta (LLM01:2025)\nEn A1 el atacante escribía en el chat. Aquí escribe en un documento: la víctima pregunta algo normal, el RAG (Retrieval-Augmented Generation) recupera ese documento porque habla del mismo tema y el modelo lee la instrucción como una orden más.\nGreshake et al. (2023) lo demostraron en aplicaciones reales.\nPasos: rag create, rag ingest, rag upload <rag> <id> <texto>, otra vez rag ingest y rag ask con la pregunta de la víctima.\nPor qué: es OWASP (Open Worldwide Application Security Project) LLM01, el fallo de A1-02: órdenes y datos en un solo canal.",
       "prediction": {
         "prompt": "¿Obedecerá el asistente una instrucción que no escribe el usuario, sino que está dentro de un documento?",
         "options": [
@@ -150,7 +150,7 @@
         "rag attack biblio (sin defensas activas)",
         "Si activaste min-score en otro momento, desactívalo: rag defend biblio min-score off"
       ],
-      "on_complete": "1,00: los cinco ataques funcionan. Este RAG (Retrieval-Augmented Generation) no puede abrirse a reseñas de clientes."
+      "on_complete": "1,00: los cinco ataques funcionan. Este RAG no puede abrirse a reseñas de clientes."
     },
     {
       "id": "o6",
@@ -176,29 +176,29 @@
       "choices": [
         {
           "id": "a",
-          "text": "inyección indirecta",
-          "why": "La inyección indirecta esconde ÓRDENES para el modelo. Este mensaje no ordena nada: solo afirma algo falso."
+          "text": "envenenamiento: un dato falso colocado para que la búsqueda lo traiga"
         },
         {
           "id": "b",
-          "text": "envenenamiento: un dato falso que se recupera antes que el verdadero"
+          "text": "inyección indirecta: el mensaje esconde una orden para el asistente",
+          "why": "La inyección indirecta esconde ÓRDENES para el modelo. Este mensaje no ordena nada: solo afirma algo falso."
         },
         {
           "id": "c",
-          "text": "fuga por falta de control de acceso",
+          "text": "fuga por falta de control de acceso: el cliente lee un documento interno",
           "why": "La fuga revela documentos internos a quien no debe verlos. Aquí el dato es falso, no confidencial."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "¿El mensaje da órdenes o planta datos?",
-        "Planta un dato falso. answer b"
+        "Planta un dato falso. answer a"
       ],
       "on_complete": "Exacto. La diferencia importa porque cada uno necesita una defensa distinta: contra las órdenes escondidas sirve marcar el contenido como datos; contra los datos falsos, controlar de dónde vienen los documentos. Y el índice necesita control de acceso, para fragmentos y para vectores."
     }
@@ -224,7 +224,9 @@
               "type": "answer",
               "expected": "compras@tamagawa.example",
               "accept": [
-                "compras@tamagawa.example"
+                "compras@tamagawa.example",
+                "compras@tamagawa",
+                "compras@tamagawa."
               ]
             }
           ]
@@ -239,7 +241,7 @@
   },
   "debrief": {
     "what_happened": "Has comprometido un RAG por cuatro vías: instrucciones escondidas en una reseña, un dato falso que gana en la recuperación, documentos internos sin control de acceso y vectores que revelan el texto original.",
-    "why": "Son los riesgos característicos de los RAG (OWASP LLM08:2025, «Vector and Embedding Weaknesses», junto con LLM01, LLM02 y LLM04) y forman el núcleo de los bloques «Exploiting RAG Pipelines» y «Attacking Embeddings» de los programas profesionales de AI Red Teaming.",
+    "why": "Son los riesgos característicos de los RAG (OWASP, Open Worldwide Application Security Project: LLM08:2025, «Vector and Embedding Weaknesses», junto con LLM01, LLM02 y LLM04) y forman el núcleo de los bloques «Exploiting RAG Pipelines» y «Attacking Embeddings» de los programas profesionales de AI Red Teaming.",
     "in_production": "Las fuentes reales son mucho más variadas (correos, webs, tickets, PDFs con texto oculto en blanco o en metadatos) y la inyección indirecta se ha demostrado contra asistentes de correo, navegadores con IA y asistentes de programación. La inversión de embeddings densos requiere modelos específicos (como vec2text), pero es un riesgo reconocido.",
     "simplifications": [
       "Generador simulado por reglas",
@@ -257,5 +259,5 @@
   "xp": {
     "base": 300
   },
-  "you_can_now": "Sabes distinguir inyección indirecta, envenenamiento, fuga por falta de control de acceso e inversión de embeddings, demostrarlos con evidencias y documentarlos. Siguiente: A2-03, defender cada eslabón del RAG (Retrieval-Augmented Generation)."
+  "you_can_now": "Sabes distinguir inyección indirecta, envenenamiento, fuga por falta de control de acceso e inversión de embeddings, demostrarlos con evidencias y documentarlos. Siguiente: A2-03, defender cada eslabón del RAG."
 }

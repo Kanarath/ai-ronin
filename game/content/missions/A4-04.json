@@ -26,7 +26,7 @@
       "A4.audiencia-token"
     ]
   },
-  "briefing": "En A4-01…03 el host y los servidores MCP eran una simulación. Hoy son de verdad: el almacén de la forja es un servidor MCP hecho con el SDK oficial de Python (paquete mcp), con transporte Streamable HTTP, que escucha solo en 127.0.0.1 y pide un token en cada petición. A su lado, un servidor de terceros con una descripción envenenada y una actualización que cambia su definición. Escribirás las defensas (validación de argumentos, scopes, saneado de rutas, huella de las definiciones y audiencia del token) y medirás qué frena cada una. Instrucciones: forja/labs/A4-04_mcp/README.md.",
+  "briefing": "En A4-01…03 el host y los servidores MCP eran una simulación. Hoy son de verdad: el almacén de la forja es un servidor MCP hecho con el SDK (Software Development Kit) oficial de Python (paquete mcp), con transporte Streamable HTTP (HyperText Transfer Protocol), que escucha solo en 127.0.0.1 y pide un token en cada petición. A su lado, un servidor de terceros con una descripción envenenada y una actualización que cambia su definición. Programarás las defensas (validación de argumentos, scopes, saneado de rutas, huella de las definiciones y audiencia del token) y medirás qué frena cada una. Instrucciones: forja/labs/A4-04_mcp/README.md.",
   "learning_objectives": [
     "Montar un servidor MCP real con el SDK oficial, con herramientas, recursos y autorización por token y scopes",
     "Validar los argumentos de cada herramienta contra un esquema y comprobar los scopes del token antes de ejecutarla",
@@ -34,7 +34,7 @@
     "Detectar un rug pull fijando la huella de las definiciones y revisar las descripciones antes de dárselas al modelo",
     "Comprobar la audiencia del token (RFC 8707) y distinguir qué defensas paran el ataque antes del servidor y cuáles después"
   ],
-  "mentor_intro": "En el Dojo activabas los controles con interruptores. Aquí los escribes tú, y los pones donde de verdad mandan: en el host, que decide qué ve el modelo, y en el servidor, que decide qué deja hacer a cada token. El modelo no es una frontera de seguridad.",
+  "mentor_intro": "En el Dojo activabas los controles con interruptores. Aquí los programas tú, y los pones donde de verdad mandan: en el host, que decide qué ve el modelo, y en el servidor, que decide qué deja hacer a cada token. El modelo no es una frontera de seguridad.",
   "lab": {
     "datasets": [],
     "viz": {}
@@ -48,19 +48,21 @@
     {
       "id": "audiencia-token",
       "title": "Audiencia y scopes del token",
-      "body": "Un token de acceso se emite PARA un servidor concreto (su audiencia, el parámetro resource de RFC 8707) y con unos permisos (scopes). La especificación MCP exige que el servidor acepte solo tokens emitidos para él y nunca reenvíe un token a otro servidor (token passthrough). Si el almacén no mira la audiencia, acepta un token emitido para clima-samurai (confused deputy). Si no mira los scopes, un token de solo lectura aplica reembolsos. Los scopes son solo cadenas: que dos servidores usen el mismo nombre no significa que concedan lo mismo."
+      "body": "Un token de acceso se emite PARA un servidor concreto (su audiencia: el parámetro resource de la RFC 8707; una RFC, Request for Comments, es un documento que define un estándar de Internet) y con unos permisos (scopes). La especificación MCP exige que el servidor acepte solo tokens emitidos para él y nunca reenvíe un token a otro servidor (token passthrough). Si el almacén no mira la audiencia, acepta un token emitido para clima-samurai (confused deputy). Si no mira los scopes, un token de solo lectura aplica reembolsos. Los scopes son solo cadenas: que dos servidores usen el mismo nombre no significa que concedan lo mismo.",
+      "unlock_on": "objective:o4"
     },
     {
       "id": "rug-pull-hash",
       "title": "Huella de las definiciones (rug pull)",
-      "body": "La descripción y el esquema de una herramienta pueden cambiar DESPUÉS de que la apruebes: un servidor sirve una versión buena, ganas confianza y luego la cambia (rug pull). Fijar un hash de las definiciones aprobadas detecta el cambio y pone la herramienta en cuarentena hasta que una persona la revise y la apruebe de nuevo. Es un detector, no una revisión: si se aprueba la nueva versión sin leerla, el ataque vuelve. Revisar la descripción con una expresión regular ayuda, pero es frágil: un atacante la reformula."
+      "body": "La descripción y el esquema de una herramienta pueden cambiar DESPUÉS de que la apruebes: un servidor sirve una versión buena, ganas confianza y luego la cambia (rug pull). Fijar un hash de las definiciones aprobadas detecta el cambio y pone la herramienta en cuarentena hasta que una persona la revise y la apruebe de nuevo. Es un detector, no una revisión: si se aprueba la nueva versión sin leerla, el ataque vuelve. Revisar la descripción con una expresión regular ayuda, pero es frágil: un atacante la reformula.",
+      "unlock_on": "objective:o2"
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Implementa las siete funciones de servidor.py hasta que pasen los 28 tests y trae la evidencia.",
-      "teach": "Antes del servidor o dentro de él\nTrabajas fuera del Dojo, en forja/labs/A4-04_mcp: el README lo explica todo.\nLa revisión de descripciones y la huella (pinning) viven en el HOST: si funcionan, el modelo no llega a ver la instrucción envenenada.\nLa validación de argumentos, los scopes, el saneado de rutas y la audiencia viven en el SERVIDOR: la llamada llega, pero el servidor la rechaza.\nSanear rutas es impedir que un argumento como «../../secretos» saque a la herramienta de su carpeta (path traversal).\nCuando pasen los tests, ronin_check genera la evidencia y aquí la traes con evidence import.\nPor qué: un servidor MCP real necesita las dos capas, porque cada una corta el mismo ataque en un punto distinto.",
+      "teach": "Antes del servidor o dentro de él\nTrabajas fuera del Dojo, en forja/labs/A4-04_mcp: el README lo explica todo.\nLa revisión de descripciones y la huella (pinning) viven en el HOST: si funcionan, el modelo no llega a ver la instrucción envenenada.\nLa validación de argumentos, los scopes, el saneado de rutas y la audiencia viven en el SERVIDOR: la llamada llega, pero el servidor la rechaza.\nSanear rutas es impedir que un argumento como «../../secretos» saque a la herramienta de su carpeta (path traversal).\nPor qué: un servidor MCP real necesita las dos capas.",
       "validator": {
         "type": "event",
         "event": "evidence.imported",
@@ -82,9 +84,9 @@
       "prediction": {
         "prompt": "¿Qué defensa crees que impedirá que la llamada maliciosa llegue siquiera al servidor?",
         "options": [
-          "la revision en el host",
+          "la revisión en el host",
           "los scopes del servidor",
-          "la validacion de argumentos"
+          "la validación de argumentos"
         ]
       },
       "teach": "Ni Ollama ni Docker\nLa batería levanta los servidores MCP reales dentro del propio proceso (por HTTP, sin red) y los ataca con un host determinista.\nNo usa un modelo de lenguaje: llama3.2:1b no llama a herramientas de forma fiable.\nPor eso el «modelo» es el peor caso: uno que obedece al pie de la letra lo que el host le deja ver.\nPor qué: lo real aquí es el protocolo (SDK MCP, Streamable HTTP, token), y es lo que quieres medir sin el ruido de un modelo pequeño.",
@@ -112,50 +114,17 @@
       "choices": [
         {
           "id": "a",
-          "text": "que el servidor rechazó la llamada",
+          "text": "que el modelo no vio la instrucción, así que nunca pidió esa llamada"
+        },
+        {
+          "id": "b",
+          "text": "que el servidor recibió la llamada y la rechazó al validarla",
           "why": "Si el servidor la rechazara, la llamada habría llegado y «llegó al servidor» no bajaría. Eso es lo que hacen scopes, validación, rutas y audiencia."
         },
         {
-          "id": "b",
-          "text": "que el host quitó la instrucción, el modelo no la vio y no llegó a pedir la llamada"
-        },
-        {
           "id": "c",
-          "text": "que el modelo se negó a obedecer",
+          "text": "que el modelo leyó la instrucción y se negó a obedecerla",
           "why": "El «modelo» de la batería es el peor caso: obedece todo lo que el host le deja ver. No se negó: no lo vio."
-        }
-      ],
-      "validator": {
-        "type": "answer",
-        "expected": "b",
-        "accept": [
-          "b"
-        ]
-      },
-      "hints": [
-        "Compara revision con scopes en la salida de bateria.py: ¿en cuál baja «llegó al servidor»?",
-        "answer b"
-      ],
-      "on_complete": "Exacto. revision y pinning paran el ataque antes del modelo; scopes, validacion, rutas y audiencia, antes del efecto. Ojo: pinning solo frena el rug pull, y revision es una expresión regular que un atacante puede esquivar."
-    },
-    {
-      "id": "o4",
-      "text": "¿Por qué el servidor debe comprobar la audiencia del token, y no le basta con que el token sea válido?",
-      "teach": "Audiencia y scopes\nRepasa la tarjeta «Audiencia y scopes del token».\nLa audiencia dice PARA qué servidor se emitió un token: es el parámetro resource de la RFC 8707 (RFC: Request for Comments, los documentos que definen los estándares de Internet).\nPor qué: en sistemas reales con OAuth (Open Authorization), aceptar tokens de otra audiencia convierte tu servidor en un diputado confundido.",
-      "choices": [
-        {
-          "id": "a",
-          "text": "porque un token válido emitido para clima-samurai no debe servir en el almacén"
-        },
-        {
-          "id": "b",
-          "text": "porque así el token caduca antes",
-          "why": "La audiencia no tiene que ver con la caducidad. Dice para qué servidor se emitió el token."
-        },
-        {
-          "id": "c",
-          "text": "porque el modelo podría leer el token",
-          "why": "Eso se evita no metiendo el token en el contexto del modelo. La audiencia es otra cosa: qué servidor puede aceptar ese token."
         }
       ],
       "validator": {
@@ -166,16 +135,49 @@
         ]
       },
       "hints": [
-        "En la batería hay un token emitido para clima-samurai. ¿Debería abrir el almacén?",
+        "Compara revision con scopes en la salida de bateria.py: ¿en cuál baja «llegó al servidor»?",
         "answer a"
       ],
-      "on_complete": "Exacto. Un token válido para otro servidor no es un token para ti. Lo mismo con los scopes: cada herramienta exige los suyos, y uno de solo lectura no aplica reembolsos. Y la huella de una definición detecta el rug pull, pero no lo impide: alguien tiene que revisar el cambio antes de aprobarlo."
+      "on_complete": "Exacto. revision y pinning paran el ataque antes del modelo; scopes, validacion, rutas y audiencia, antes del efecto. Ojo: pinning solo frena el rug pull, y revision es una expresión regular que un atacante puede esquivar."
+    },
+    {
+      "id": "o4",
+      "text": "¿Por qué el servidor debe comprobar la audiencia del token, y no le basta con que el token sea válido?",
+      "teach": "Audiencia y scopes\nRepasa la tarjeta «Audiencia y scopes del token».\nLa audiencia dice PARA qué servidor se emitió un token: es el parámetro resource de la RFC 8707.\nPor qué: en sistemas reales con OAuth (Open Authorization), aceptar tokens de otra audiencia convierte tu servidor en un diputado confundido.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque así el token caduca antes y se reduce el riesgo",
+          "why": "La audiencia no tiene que ver con la caducidad. Dice para qué servidor se emitió el token."
+        },
+        {
+          "id": "b",
+          "text": "porque el modelo podría leer el token si no se comprueba",
+          "why": "Eso se evita no metiendo el token en el contexto del modelo. La audiencia es otra cosa: qué servidor puede aceptar ese token."
+        },
+        {
+          "id": "c",
+          "text": "porque un token válido para clima-samurai no debe abrir el almacén"
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "En la batería hay un token emitido para clima-samurai. ¿Debería abrir el almacén?",
+        "answer c"
+      ],
+      "on_complete": "Exacto: un token válido para otro servidor no es un token para ti. Lo mismo con los scopes: uno de solo lectura no aplica reembolsos. Y la huella de una definición detecta el rug pull, pero alguien tiene que revisar el cambio antes de aprobarlo."
     }
   ],
   "debrief": {
-    "what_happened": "Has construido un servidor MCP real con el SDK oficial: herramientas, recursos y autorización por token y scopes, escuchando solo en 127.0.0.1. Has escrito sus defensas y medido qué frena cada una: la revisión de descripciones y la huella de las definiciones paran el ataque en el host, antes de que el modelo lo vea; la validación de argumentos, los scopes, el saneado de rutas y la audiencia del token lo paran en el servidor, antes de que tenga efecto. Con todas, 0 de 6 ataques y las tareas legítimas intactas.",
-    "why": "Como en A3, el modelo no es una frontera de seguridad, y en MCP el host y el servidor son quienes deciden qué textos llegan al modelo, con qué credenciales se llama a cada servidor y qué argumentos se aceptan. La defensa más robusta no pide buena voluntad al modelo: quita el poder (tokens mínimos ligados a su servidor), valida la entrada y sanea las rutas.",
-    "in_production": "El servidor es un recurso OAuth 2.1: valida que el token se emitió para él (audiencia, RFC 8707), expone sus metadatos (RFC 9728) y responde 401/403 con WWW-Authenticate. Cada herramienta exige sus scopes mínimos; los argumentos se validan contra su esquema; las rutas y los identificadores se sanean siempre. Las definiciones de los servidores de terceros se fijan y sus cambios se revisan antes de aprobarlos. Los servidores locales corren aislados y cada llamada se registra.",
+    "what_happened": "Has construido un servidor MCP (Model Context Protocol) real con el SDK (Software Development Kit) oficial: herramientas, recursos y autorización por token y scopes, escuchando solo en 127.0.0.1. Has programado sus defensas y medido qué frena cada una: la revisión de descripciones y la huella de las definiciones paran el ataque en el host, antes de que el modelo lo vea; la validación de argumentos, los scopes, el saneado de rutas y la audiencia del token lo paran en el servidor, antes de que tenga efecto. Con todas, 0 de 6 ataques y las tareas legítimas intactas.",
+    "why": "Como en A3, el modelo no es una frontera de seguridad, y en MCP (Model Context Protocol) el host y el servidor son quienes deciden qué textos llegan al modelo, con qué credenciales se llama a cada servidor y qué argumentos se aceptan. La defensa más robusta no pide buena voluntad al modelo: quita el poder (tokens mínimos ligados a su servidor), valida la entrada y sanea las rutas.",
+    "in_production": "El servidor es un recurso OAuth 2.1 (Open Authorization): valida que el token se emitió para él (audiencia, según la RFC 8707, Request for Comments), expone sus metadatos (RFC 9728) y responde 401/403 con WWW-Authenticate. Cada herramienta exige sus scopes mínimos; los argumentos se validan contra su esquema; las rutas y los identificadores se sanean siempre. Las definiciones de los servidores de terceros se fijan y sus cambios se revisan antes de aprobarlos. Los servidores locales corren aislados y cada llamada se registra.",
     "simplifications": [
       "Seis ataques fijos y cuatro tareas legítimas",
       "El servidor de autorización es ficticio: los tokens ya están emitidos y el verificador los mira en una tabla, en vez de validar un JWT o introspeccionarlos",
@@ -196,6 +198,6 @@
   "xp": {
     "base": 500
   },
-  "purpose": "Hoy el servidor MCP (Model Context Protocol) es de verdad: el SDK (Software Development Kit) oficial de Python, con transporte Streamable HTTP (HyperText Transfer Protocol) y un token en cada petición. Escribes las defensas que llevan los servidores reales —validar argumentos, exigir scopes, sanear rutas, fijar huellas y comprobar la audiencia del token— y mides cuáles paran el ataque en el host y cuáles en el servidor.",
+  "purpose": "Hoy el servidor MCP (Model Context Protocol) es de verdad: el SDK (Software Development Kit) oficial de Python, con transporte Streamable HTTP (HyperText Transfer Protocol) y un token en cada petición. Programas las defensas que llevan los servidores reales —validar argumentos, exigir scopes, sanear rutas, fijar huellas y comprobar la audiencia del token— y mides cuáles paran el ataque en el host y cuáles en el servidor.",
   "you_can_now": "Sabes montar y defender un servidor MCP real y explicar qué defensas actúan antes de que el modelo vea el ataque (en el host) y cuáles antes de que tenga efecto (en el servidor). Con esto cierras el arco A4."
 }

@@ -118,53 +118,17 @@
         "agent defend kage spotlight off · agent defend kage hitl on · agent attack kage",
         "Mira la línea «Aprobaciones humanas pedidas durante la batería»."
       ],
-      "on_complete": "17 aprobaciones para 5 escenarios, y el confused deputy sigue pasando: el revisor ve «reembolso de 2400 al cliente de P-102, pedido por el cliente» y lo aprueba. La supervisión humana es útil para acciones irreversibles concretas, pero no sustituye a la autorización y genera fatiga."
-    },
-    {
-      "id": "o4",
-      "text": "Diseña los controles en el código: desactiva hitl, activa least-privilege, arg-validation, user-authz, memory-hygiene y step-budget. Consigue 0 ataques con éxito y, después, 3/3 en el eval.",
-      "teach": "Defensa en el código, no en el prompt\nCada control corta un ataque en un punto distinto:\n· least-privilege quita las herramientas que la tarea no necesita (el triaje no puede reembolsar).\n· arg-validation rechaza pedidos inexistentes, importes absurdos y destinatarios externos.\n· user-authz comprueba los permisos de quien pide.\n· memory-hygiene impide que un correo escriba en la memoria.\n· step-budget corta los bucles.\nPor qué: en un agente real estos controles van en el código de cada herramienta; el modelo puede ser engañado, el código no se deja convencer.",
-      "validator": {
-        "type": "sequence",
-        "steps": [
-          {
-            "type": "event",
-            "event": "agent.attacks",
-            "where": {
-              "success_rate": 0.0,
-              "defenses": {
-                "not_contains_any": [
-                  "hitl",
-                  "spotlight"
-                ]
-              }
-            }
-          },
-          {
-            "type": "event",
-            "event": "agent.eval",
-            "where": {
-              "pass_rate": 1.0,
-              "approvals": 0
-            }
-          }
-        ]
-      },
-      "hints": [
-        "Activa los cinco controles con agent defend kage <control> on (y desactiva hitl).",
-        "Después: agent attack kage · agent eval kage"
-      ],
-      "on_complete": "0 de 5, 3 de 3 tareas y 0 aprobaciones humanas. Mira en la batería QUÉ control bloquea cada ataque: varios están cubiertos por dos controles a la vez. Eso es defensa en profundidad."
+      "on_complete": "17 aprobaciones para 5 escenarios, y el confused deputy sigue pasando: el revisor ve «reembolso de 2400 al cliente de P-102, pedido por el cliente» y lo aprueba. La supervisión humana tiene sentido en acciones irreversibles concretas, pero cansa: con tantas peticiones, se aprueba sin leer."
     },
     {
       "id": "py1",
-      "text": "Escribe en Python la lista permitida: abre el editor con py, completa la función permitido y compruébala con py check.",
-      "teach": "La lista permitida, con tus manos\nleast-privilege es, por dentro, una tabla: para cada tarea, las herramientas que puede usar.\nVas a escribir la función que lo comprueba. Abre el editor con py.\nUn dict guarda pares clave → valor. Aquí la clave es la tarea y el valor, su lista de herramientas.\nPor qué: esta comprobación es la que pone el código de un agente real entre lo que pide el modelo y lo que se ejecuta.",
+      "text": "Programa en Python la lista permitida: abre el editor con py, completa la función permitido y compruébala con py check.",
+      "teach": "La lista permitida, con tus manos\nleast-privilege, que activarás en el paso siguiente, es por dentro una tabla: para cada tarea, las herramientas que puede usar.\nVas a programar la función que lo comprueba. Abre el editor con py.\nUn dict guarda pares clave → valor. Aquí la clave es la tarea y el valor, su lista de herramientas.\nPor qué: esta comprobación es la que pone el código de un agente real entre lo que pide el modelo y lo que se ejecuta.",
       "py_exercise": {
         "id": "A3-03-permitido",
         "title": "permitido(tarea, herramienta): la lista permitida",
         "function": "permitido",
-        "starter": "# Ejercicio A3-03 · Mínimo privilegio: la lista permitida\n# Cada tarea solo puede usar las herramientas de su lista. Es lo que hace least-privilege.\n# La función devuelve True si la herramienta está en la lista de esa tarea, y False si no.\n# PERMISOS.get(tarea, []) da la lista de la tarea, o una lista vacía si la tarea no existe.\n# «x in lista» vale True si x está en la lista.\n\nPERMISOS = {\n    \"triaje\": [\"leer_correo\", \"buscar_pedido\", \"enviar_correo\"],\n    \"presupuesto\": [\"buscar_pedido\", \"leer_memoria\"],\n}\n\ndef permitido(tarea, herramienta):\n    return True   # ← cambia esta línea\n\n# El triaje NO puede reembolsar: debería imprimir False\nprint(permitido(\"triaje\", \"aplicar_reembolso\"))\n",
+        "starter": "# A3-03 · True si la herramienta está en la lista de su tarea. PERMISOS.get(tarea, [])\n# da esa lista (vacía si la tarea no existe) y «x in lista» dice si x está dentro.\n\nPERMISOS = {\n    \"triaje\": [\"leer_correo\", \"buscar_pedido\", \"enviar_correo\"],\n    \"presupuesto\": [\"buscar_pedido\", \"leer_memoria\"],\n}\n\ndef permitido(tarea, herramienta):\n    return True   # ← cambia esta línea\n\n# El triaje NO puede reembolsar: debería imprimir False\nprint(permitido(\"triaje\", \"aplicar_reembolso\"))\n",
         "cases": [
           {
             "args": [
@@ -215,7 +179,43 @@
         "Busca la lista de la tarea con PERMISOS.get(tarea, []) y mira si la herramienta está dentro con in.",
         "La línea queda así: return herramienta in PERMISOS.get(tarea, [])"
       ],
-      "on_complete": "Esa línea es least-privilege. Fíjate en que no lee el correo ni el prompt: solo mira la tarea y la herramienta. Por eso ninguna inyección la convence. Y una tarea desconocida no puede usar nada: denegar por defecto."
+      "on_complete": "Esa línea es least-privilege: no lee el correo ni el prompt, solo la tarea y la herramienta, y por eso ninguna inyección la convence. Y una tarea desconocida no puede usar nada: denegar por defecto."
+    },
+    {
+      "id": "o4",
+      "text": "Diseña los controles en el código: desactiva hitl, activa least-privilege, arg-validation, user-authz, memory-hygiene y step-budget. Consigue 0 ataques con éxito y, después, 3/3 en el eval.",
+      "teach": "Defensa en el código, no en el prompt\nCada control corta un ataque en un punto distinto:\n· least-privilege quita las herramientas que la tarea no necesita (el triaje no puede reembolsar).\n· arg-validation rechaza pedidos inexistentes, importes absurdos y destinatarios externos.\n· user-authz comprueba los permisos de quien pide.\n· memory-hygiene impide que un correo escriba en la memoria.\n· step-budget corta los bucles.\nPor qué: en un agente real estos controles van en el código de cada herramienta; el modelo puede ser engañado, el código no se deja convencer.",
+      "validator": {
+        "type": "sequence",
+        "steps": [
+          {
+            "type": "event",
+            "event": "agent.attacks",
+            "where": {
+              "success_rate": 0.0,
+              "defenses": {
+                "not_contains_any": [
+                  "hitl",
+                  "spotlight"
+                ]
+              }
+            }
+          },
+          {
+            "type": "event",
+            "event": "agent.eval",
+            "where": {
+              "pass_rate": 1.0,
+              "approvals": 0
+            }
+          }
+        ]
+      },
+      "hints": [
+        "Activa los cinco controles con agent defend kage <control> on (y desactiva hitl).",
+        "Después: agent attack kage · agent eval kage"
+      ],
+      "on_complete": "0 de 5, 3 de 3 tareas y 0 aprobaciones humanas. Mira en la batería QUÉ control bloquea cada ataque: varios están cubiertos por dos controles a la vez. Eso es defensa en profundidad."
     },
     {
       "id": "o5",
@@ -224,29 +224,29 @@
       "choices": [
         {
           "id": "a",
+          "text": "user-authz"
+        },
+        {
+          "id": "b",
           "text": "spotlight",
           "why": "Spotlight trata los correos como datos. El diputado confundido no llega por correo: es una petición directa del cliente."
         },
         {
-          "id": "b",
+          "id": "c",
           "text": "hitl",
           "why": "El revisor humano vio «reembolso pedido por el cliente» y lo aprobó, porque parecía legítimo. Lo has medido: 17 aprobaciones y el ataque pasó."
-        },
-        {
-          "id": "c",
-          "text": "user-authz"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "c",
+        "expected": "a",
         "accept": [
-          "c"
+          "a"
         ]
       },
       "hints": [
         "El fallo era de permisos: ¿qué control mira los permisos de quien pide?",
-        "answer c"
+        "answer a"
       ],
       "on_complete": "Exacto: user-authz autoriza con los permisos de QUIEN pide, no con los del agente. Está en el código, así que no depende de que el modelo o el revisor se den cuenta. Y la supervisión humana tiene un coste real: 17 aprobaciones para 5 escenarios."
     }
@@ -256,7 +256,7 @@
     "objectives": [
       {
         "id": "d1",
-        "text": "Con un agente nuevo, consigue 0 ataques con éxito usando como MÁXIMO 4 controles, sin spotlight ni hitl, y con el eval a 3/3.",
+        "text": "Con un agente nuevo, consigue 0 ataques con éxito usando como MÁXIMO 4 controles, sin spotlight, ni hitl, ni arg-validation, y con el eval a 3/3.",
         "validator": {
           "type": "sequence",
           "steps": [
@@ -293,8 +293,8 @@
   },
   "debrief": {
     "what_happened": "Has comprobado que spotlight deja pasar el confused deputy, que la supervisión humana aprueba ese mismo ataque tras 17 peticiones, y que los controles en el código (mínimo privilegio, validación, autorización por usuario, higiene de memoria y límite de pasos) lo cierran todo sin coste para las tareas legítimas.",
-    "why": "Es el principio que recogen OWASP Agentic 2026 y las guías de los proveedores: el modelo no es una frontera de seguridad. Los permisos, la validación y los límites se imponen en el código de las herramientas y en la infraestructura, y la supervisión humana se reserva para acciones de alto impacto bien escogidas.",
-    "in_production": "Identidades y credenciales propias para cada agente con permisos mínimos y de corta duración, autorización delegada (el agente actúa con los permisos del usuario, por ejemplo con OAuth), listas de herramientas por tarea, validación estricta de argumentos con esquemas, memoria con procedencia y revisión, límites de pasos y de gasto, trazas completas y monitorización. En el arco A4 verás cómo MCP organiza estas herramientas y sus permisos.",
+    "why": "Es el principio que recogen la lista agéntica de 2026 de OWASP (Open Worldwide Application Security Project) y las guías de los proveedores: el modelo no es una frontera de seguridad. Los permisos, la validación y los límites se imponen en el código de las herramientas y en la infraestructura, y la supervisión humana se reserva para acciones de alto impacto bien escogidas.",
+    "in_production": "Identidades y credenciales propias para cada agente con permisos mínimos y de corta duración, autorización delegada (el agente actúa con los permisos del usuario, por ejemplo con OAuth), listas de herramientas por tarea, validación estricta de argumentos con esquemas, memoria con procedencia y revisión, límites de pasos y de gasto, trazas completas y monitorización. En el arco A4 verás cómo MCP (Model Context Protocol) organiza estas herramientas y sus permisos.",
     "simplifications": [
       "Controles como interruptores",
       "Un revisor humano simulado con un criterio fijo"
@@ -307,6 +307,6 @@
   "xp": {
     "base": 300
   },
-  "purpose": "Los agentes reales llevan controles para que, aunque el modelo se deje engañar, no pueda hacer daño: listas de herramientas por tarea, validación de argumentos, permisos del usuario y límites de pasos. Hoy los activas uno a uno, mides qué frena cada uno y cuánto cuesta, y escribes en Python la lista permitida. Es el principio de las guías de seguridad de agentes: el modelo no es una frontera de seguridad.",
-  "you_can_now": "Sabes medir qué ataque frena cada control, explicar por qué spotlight y la supervisión humana dejan pasar el diputado confundido y escribir en Python una lista permitida de herramientas por tarea. Siguiente: A3-04, donde escribirás estos controles para un agente con un modelo real."
+  "purpose": "Los agentes reales llevan controles para que, aunque el modelo se deje engañar, no pueda hacer daño: listas de herramientas por tarea, validación de argumentos, permisos del usuario y límites de pasos. Hoy los activas uno a uno, mides qué frena cada uno y cuánto cuesta, y programas en Python la lista permitida. Es el principio de las guías de seguridad de agentes: el modelo no es una frontera de seguridad.",
+  "you_can_now": "Sabes medir qué ataque frena cada control, explicar por qué spotlight y la supervisión humana dejan pasar el diputado confundido y programar en Python una lista permitida de herramientas por tarea. Siguiente: A3-04, donde programarás estos controles para un agente con un modelo real."
 }

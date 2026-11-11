@@ -25,7 +25,7 @@
       "A3.deteccion-exfiltracion"
     ]
   },
-  "briefing": "En A3-01…03 el agente de la trastienda era una simulación. Hoy es de verdad: un modelo local recibe las herramientas en el campo tools de Ollama y decide él solo a cuál llamar. Consulta pedidos, deja correos en un buzón local y aplica reembolsos. Algunos clientes han escrito notas en sus pedidos, y esas notas le llegan al modelo como salida de una herramienta. Escribirás los controles que actúan fuera del modelo y medirás qué frena cada uno y cuánto cuesta. Instrucciones: forja/labs/A3-04_agente/README.md.",
+  "briefing": "En A3-01…03 el agente de la trastienda era una simulación. Hoy es de verdad: un modelo local recibe las herramientas en el campo tools de Ollama y decide él solo a cuál llamar. Consulta pedidos, deja correos en un buzón local y aplica reembolsos. Algunos clientes han escrito notas en sus pedidos, y esas notas le llegan al modelo como salida de una herramienta. Programarás los controles que actúan fuera del modelo y medirás qué frena cada uno y cuánto cuesta. Instrucciones: forja/labs/A3-04_agente/README.md.",
   "learning_objectives": [
     "Implementar la validación de los argumentos de una herramienta contra su esquema JSON",
     "Implementar una política de permisos por rol y herramienta y una puerta de aprobación humana que el modelo no puede saltarse",
@@ -42,19 +42,20 @@
     {
       "id": "tool-calling",
       "title": "Tool calling de verdad",
-      "body": "En /api/chat de Ollama, el campo tools describe cada herramienta con un nombre, una descripción y un esquema JSON de sus argumentos. El modelo no ejecuta nada: responde con tool_calls, es decir, qué herramienta quiere y con qué argumentos. Tu código decide si la ejecuta, la ejecuta y le devuelve el resultado en un mensaje con role tool. Después vuelve a llamar al modelo. Ese bucle es el agente, y cada vuelta es un sitio donde puedes poner un control."
+      "body": "En /api/chat de Ollama, el campo tools describe cada herramienta con un nombre, una descripción y un esquema JSON (JavaScript Object Notation) de sus argumentos. El modelo no ejecuta nada: responde con tool_calls, es decir, qué herramienta quiere y con qué argumentos. Tu código decide si la ejecuta, la ejecuta y le devuelve el resultado en un mensaje con role tool. Después vuelve a llamar al modelo. Ese bucle es el agente, y cada vuelta es un sitio donde puedes poner un control."
     },
     {
       "id": "pedir-frente-a-ejecutar",
       "title": "Pedir no es ejecutar",
-      "body": "El esquema que recibe el modelo es una sugerencia: un modelo pequeño puede inventarse una herramienta, mandar el importe como texto o pedir algo que su rol no permite. Por eso los argumentos se validan otra vez antes de ejecutar, y el permiso se comprueba con el rol del token, no con lo que diga la conversación. Cuando un humano aprueba, la acción la ejecuta el servicio, sin volver a pasar por el modelo."
+      "body": "El esquema que recibe el modelo es una sugerencia: un modelo pequeño puede inventarse una herramienta, mandar el importe como texto o pedir algo que su rol no permite. Por eso los argumentos se validan otra vez antes de ejecutar, y el permiso se comprueba con el rol del token, no con lo que diga la conversación. Cuando un humano aprueba, la acción la ejecuta el servicio, sin volver a pasar por el modelo.",
+      "unlock_on": "objective:o4"
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Implementa las ocho funciones de agente.py hasta que pasen los 28 tests y trae la evidencia.",
-      "teach": "La puerta fuera del modelo\nTrabajas fuera del Dojo, en forja/labs/A3-04_agente: el README lo explica todo.\nautorizar se ejecuta entre lo que el modelo pide y lo que la trastienda hace.\nComprueba, en orden: que la herramienta existe, que el rol puede usarla, que los argumentos cumplen el esquema JSON (JavaScript Object Notation) y, si hace falta, que un humano lo aprueba.\nNada de eso depende de lo que el modelo haya leído en la nota del cliente.\nCuando pasen los tests, ronin_check genera la evidencia y aquí la traes con evidence import.\nPor qué: es la misma puerta que lleva un agente en producción, en el código que ejecuta las llamadas.",
+      "teach": "La puerta fuera del modelo\nTrabajas fuera del Dojo, en forja/labs/A3-04_agente: el README lo explica todo.\nautorizar se ejecuta entre lo que el modelo pide y lo que la trastienda hace.\nComprueba, en orden: que la herramienta existe, que el rol puede usarla, que los argumentos cumplen el esquema JSON y, si hace falta, que un humano lo aprueba.\nNada de eso depende de lo que el modelo haya leído en la nota del cliente.\nPor qué: es la misma puerta que lleva un agente en producción, en el código que ejecuta las llamadas.",
       "validator": {
         "type": "event",
         "event": "evidence.imported",
@@ -66,7 +67,7 @@
       "hints": [
         "Orden: validar_argumentos → permitido → necesita_aprobacion → autorizar → marcar_no_confiable → comprobar_limites → detectar_exfiltracion → recortar_memoria.",
         "Desde forja/labs/A3-04_agente: .\\.venv\\Scripts\\python.exe -m unittest -v test_agente (crea el entorno como en P0-01).",
-        ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py A3-04 · y aquí: evidence import"
+        ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py A3-04 · y aquí: evidence import (ronin_check genera la evidencia cuando pasan los tests)."
       ],
       "on_complete": "Tus controles funcionan con un modelo que sigue un guion. Ahora, con uno que decide solo."
     },
@@ -93,7 +94,7 @@
         }
       },
       "hints": [
-        "ollama pull llama3.2:3b · python bateria.py · con --n 3 y las 5 configuraciones son 150 tareas: más de una hora en CPU.",
+        "ollama pull llama3.2:3b · python bateria.py · con --n 3 y las 5 configuraciones son 150 tareas: más de una hora en CPU (Central Processing Unit).",
         "Con poco tiempo: python bateria.py --n 2 --configs \"ninguna;permisos;permisos,aprobacion,spotlight,exfiltracion,limites\""
       ],
       "on_complete": "Tienes datos reales. Compara, en cada configuración, la línea de «privilegiadas»: pedidas frente a ejecutadas.",
@@ -107,7 +108,7 @@
         {
           "id": "a",
           "text": "el modelo ha dejado de pedir acciones privilegiadas",
-          "why": "No: el modelo las sigue pidiendo cuando una nota se lo dice. Los permisos y la aprobación no cambian lo que pide."
+          "why": "El modelo las sigue pidiendo cuando una nota se lo dice. Los permisos y la aprobación no cambian lo que pide."
         },
         {
           "id": "b",
@@ -139,31 +140,31 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque el modelo podría cambiar la acción después del sí, y se ejecutaría algo que nadie aprobó"
-        },
-        {
-          "id": "b",
-          "text": "porque así se ahorra una llamada al modelo",
+          "text": "porque así se ahorra una llamada al modelo y la respuesta llega antes",
           "why": "Se ahorra, sí, pero no es el motivo. El motivo es de seguridad: lo aprobado tiene que ser exactamente lo ejecutado."
         },
         {
+          "id": "b",
+          "text": "porque si el modelo interviene de nuevo, podría ejecutarse algo que nadie aprobó"
+        },
+        {
           "id": "c",
-          "text": "porque el modelo no sabe usar herramientas",
+          "text": "porque el modelo no sabe usar herramientas una vez que se ha aprobado",
           "why": "El modelo sí pide herramientas: lo has medido. El problema es que lo que lee puede hacerle cambiar la petición."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "b",
         "accept": [
-          "a"
+          "b"
         ]
       },
       "hints": [
         "¿Qué pasaría si, tras aprobar, el modelo leyera otra nota del cliente?",
-        "answer a"
+        "answer b"
       ],
-      "on_complete": "Exacto. Por lo mismo, un humano no puede aprobar lo que el rol no permite: la aprobación es un control más, no un atajo que se salta los permisos (míralo en TestApp, en test_agente.py). Y el laboratorio usa llama3.2:3b y no el 1B porque, si el modelo no sabe llamar a funciones, medirías sus fallos y no tus defensas."
+      "on_complete": "Exacto. Por lo mismo, un humano no puede aprobar lo que el rol no permite: la aprobación es un control más, no un atajo que se salta los permisos (míralo en TestApp, en test_agente.py). Y el laboratorio usa llama3.2:3b y no llama3.2:1b porque, si el modelo no sabe llamar a funciones, medirías sus fallos y no tus defensas."
     }
   ],
   "debrief": {
@@ -192,6 +193,6 @@
   "xp": {
     "base": 500
   },
-  "purpose": "Hasta ahora el agente era una simulación. Los agentes reales usan tool calling: el LLM (Large Language Model) recibe la lista de herramientas y responde a cuál quiere llamar y con qué argumentos; tu código decide si se ejecuta. Hoy escribes ese código en Python con un modelo local de Ollama, y mides con datos reales cuántas acciones peligrosas pide el modelo y cuántas llegan a ejecutarse.",
-  "you_can_now": "Sabes escribir la puerta que hay entre lo que pide un modelo y lo que hace un agente: validar argumentos, comprobar permisos por rol, pedir aprobación y limitar pasos. Y sabes medir que el modelo sigue pidiendo lo que no debe, pero tus controles deciden. Con esto cierras el arco A3."
+  "purpose": "Hasta ahora el agente era una simulación. Los agentes reales usan tool calling: el LLM (Large Language Model) recibe la lista de herramientas y responde a cuál quiere llamar y con qué argumentos; tu código decide si se ejecuta. Hoy programas ese código en Python con un modelo local de Ollama, y mides con datos reales cuántas acciones peligrosas pide el modelo y cuántas llegan a ejecutarse.",
+  "you_can_now": "Sabes programar la puerta que hay entre lo que pide un modelo y lo que hace un agente: validar argumentos, comprobar permisos por rol, pedir aprobación y limitar pasos. Y sabes medir que el modelo sigue pidiendo lo que no debe, pero tus controles deciden. Con esto cierras el arco A3."
 }

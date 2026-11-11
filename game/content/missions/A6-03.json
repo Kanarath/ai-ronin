@@ -95,41 +95,41 @@
       "hints": [
         "supply defend taller artifact-signing on · supply load taller detector-grietas"
       ],
-      "on_complete": "Sí. La firma es válida y la huella coincide: el fichero es exactamente el que publicó visiontek. Pero sigue siendo un pickle con código. La firma frena el adapter manipulado, no esto.",
+      "on_complete": "Sí. La firma es válida y la huella coincide: el fichero es exactamente el que publicó visiontek. Pero sigue siendo un pickle con código, y eso la firma no lo mira.",
       "teach": "Verificar firmas\nartifact-signing solo carga artefactos firmados por una clave de confianza y cuya huella coincide con la firmada.\nsupply defend <pipeline> artifact-signing on lo activa.\nPor qué: verificar firmas de modelos es una práctica emergente en la industria (por ejemplo, OpenSSF Model Signing; OpenSSF es la Open Source Security Foundation), y hay que saber qué responde y qué no."
     },
     {
       "id": "py1",
-      "text": "Escribe en Python la comparación de huellas: abre el editor con py, completa la función cambiados y compruébala con py check.",
-      "teach": "Comparar huellas, con tus manos\nartifact-signing y dependency-scan hacen por dentro la misma cuenta: comparar la huella actual con la aprobada.\nVas a escribirla. Abre el editor con py.\nEl for recorre los nombres de actuales; actuales[nombre] es la huella de ese fichero.\nPor qué: es lo que hacen pip --require-hashes o un verificador de firmas antes de instalar o cargar algo.",
+      "text": "Programa en Python la comparación de huellas: abre el editor con py, completa la función cambiados y compruébala con py check.",
+      "teach": "Comparar huellas, con tus manos\nartifact-signing y dependency-scan hacen por dentro la misma cuenta: comparar la huella actual con la aprobada.\nVas a programarla. Abre el editor con py.\nEl for recorre los nombres de actuales; actuales[nombre] es la huella de ese fichero.\nPor qué: es lo que hacen pip --require-hashes o un verificador de firmas antes de instalar o cargar algo.",
       "py_exercise": {
         "id": "A6-03-huellas",
         "title": "cambiados(actuales, aprobadas): huellas que no coinciden",
         "function": "cambiados",
-        "starter": "# Ejercicio A6-03 · Comparar huellas con las aprobadas\n# aprobadas: dict nombre → huella aprobada (la que firmó su autor o la del lockfile).\n# actuales: dict nombre → huella del fichero que vas a cargar o instalar.\n# Devuelve la lista de nombres de actuales cuya huella no coincide con la aprobada\n# o que no están aprobados.\n# aprobadas.get(nombre) da la huella aprobada, o None si ese nombre no está.\n# != significa «distinto de».\n\ndef cambiados(actuales, aprobadas):\n    malos = []\n    for nombre in actuales:\n        if False:   # ← cambia esta línea\n            malos.append(nombre)\n    return malos\n\n# El adapter tiene una huella distinta de la firmada: debería imprimir ['adaptador-estilo']\nprint(cambiados({\"clasificador-acero\": \"3f9a1c2b7d10\", \"adaptador-estilo\": \"77e0b4c1aa02\"},\n                {\"clasificador-acero\": \"3f9a1c2b7d10\", \"adaptador-estilo\": \"5d21f0e9c3b8\"}))\n",
+        "starter": "# A6-03 · Nombres de actuales cuya huella no es la de aprobadas (o que no están aprobados).\n# aprobadas.get(nombre) da la huella aprobada, o None si no está; != es «distinto de».\n\ndef cambiados(actuales, aprobadas):\n    malos = []\n    for nombre in actuales:\n        if False:   # ← cambia esta línea\n            malos.append(nombre)\n    return malos\n\n# El adapter «estilo» no tiene la huella firmada: debería imprimir ['estilo']\nprint(cambiados({\"acero\": \"3f9a1c\", \"estilo\": \"77e0b4\"}, {\"acero\": \"3f9a1c\", \"estilo\": \"5d21f0\"}))\n",
         "cases": [
           {
             "args": [
               {
-                "clasificador-acero": "3f9a1c2b7d10",
-                "adaptador-estilo": "77e0b4c1aa02"
+                "acero": "3f9a1c",
+                "estilo": "77e0b4"
               },
               {
-                "clasificador-acero": "3f9a1c2b7d10",
-                "adaptador-estilo": "5d21f0e9c3b8"
+                "acero": "3f9a1c",
+                "estilo": "5d21f0"
               }
             ],
             "expected": [
-              "adaptador-estilo"
+              "estilo"
             ]
           },
           {
             "args": [
               {
-                "clasificador-acero": "3f9a1c2b7d10"
+                "acero": "3f9a1c"
               },
               {
-                "clasificador-acero": "3f9a1c2b7d10"
+                "acero": "3f9a1c"
               }
             ],
             "expected": []
@@ -137,22 +137,22 @@
           {
             "args": [
               {
-                "forja-metrics": "6b7c8d9e0f11",
-                "forja-metricas-pro": "0aa1b2c3d4e5"
+                "metrics": "6b7c8d",
+                "metricas-pro": "0aa1b2"
               },
               {
-                "forja-metrics": "6b7c8d9e0f11"
+                "metrics": "6b7c8d"
               }
             ],
             "expected": [
-              "forja-metricas-pro"
+              "metricas-pro"
             ]
           },
           {
             "args": [
               {},
               {
-                "forja-metrics": "6b7c8d9e0f11"
+                "metrics": "6b7c8d"
               }
             ],
             "expected": []
@@ -197,7 +197,7 @@
       "hints": [
         "supply defend taller artifact-signing off · supply defend taller safe-formats on · supply eval taller"
       ],
-      "on_complete": "0,75: no se carga clasificador-acero. Un control que rompe el trabajo diario acaba desactivado. Hay que arreglar la causa."
+      "on_complete": "0,75: no se carga clasificador-acero, el modelo propio guardado en pickle. Toca arreglar la causa, no apagar el control."
     },
     {
       "id": "o4",
@@ -268,12 +268,12 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque uno basta y el otro es por si acaso",
-          "why": "No: cada uno frenó un ataque que el otro dejó pasar. El pickle firmado pasó la firma; el adapter manipulado era safetensors."
+          "text": "porque uno mira si el fichero ejecuta código y el otro si es el que publicó su autor"
         },
         {
           "id": "b",
-          "text": "porque safe-formats responde «¿se ejecuta?» y artifact-signing «¿ha cambiado y quién lo publicó?»"
+          "text": "porque uno basta y el otro se añade por si acaso falla el primero",
+          "why": "Cada uno frenó un ataque que el otro dejó pasar. El pickle firmado pasó la firma; el adapter manipulado era safetensors."
         },
         {
           "id": "c",
@@ -283,16 +283,16 @@
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "¿Qué frenó cada uno en tus pruebas?",
-        "answer b"
+        "answer a"
       ],
-      "on_complete": "Exacto. safe-formats: ¿se ejecuta? artifact-signing: ¿ha cambiado y quién lo publicó? data-provenance: ¿de dónde vienen los datos? Tres preguntas, tres controles."
+      "on_complete": "Exacto: safe-formats responde a «¿se ejecuta?», artifact-signing a «¿ha cambiado y quién lo publicó?» y data-provenance a «¿de dónde vienen los datos?». Tres preguntas, tres controles."
     }
   ],
   "mastery_trial": {
@@ -334,7 +334,7 @@
   "debrief": {
     "what_happened": "Has comprobado que la firma no frena un pickle de un autor de confianza, que exigir safetensors rompe el modelo propio hasta convertirlo, y que un control por eslabón deja el pipeline a 0 ataques con todas las tareas funcionando.",
     "why": "Las defensas de supply chain responden a preguntas distintas: procedencia (de dónde viene), integridad (si ha cambiado), seguridad del formato (si se ejecuta) y contención (qué puede hacer si falla todo lo anterior). Non-root, segmentation y secret-scan no evitan el compromiso: limitan su alcance.",
-    "in_production": "Modelos en safetensors, firmas de artefactos verificadas en el despliegue, SBOM o AI-BOM en cada build, dependencias fijadas con huellas (por ejemplo, pip --require-hashes) y escaneadas, imágenes mínimas que corren con un usuario sin privilegios, secretos de build montados y no copiados en capas, y servidores de modelos en redes internas detrás de un gateway con autenticación. SLSA describe niveles de garantía para la procedencia de los builds.",
+    "in_production": "Modelos en safetensors, firmas de artefactos verificadas en el despliegue, SBOM (Software Bill of Materials) o AI-BOM en cada build, dependencias fijadas con huellas (por ejemplo, pip --require-hashes) y escaneadas, imágenes mínimas que corren con un usuario sin privilegios, secretos de build montados y no copiados en capas, y servidores de modelos en redes internas detrás de un gateway con autenticación. SLSA (Supply-chain Levels for Software Artifacts) describe niveles de garantía para la procedencia de los builds.",
     "simplifications": [
       "Controles como interruptores",
       "Siete ataques limpios, uno por control",
@@ -351,6 +351,6 @@
   "xp": {
     "base": 300
   },
-  "purpose": "Los equipos que llevan modelos a producción ponen un control en cada eslabón de la cadena: formatos sin código, firmas y huellas, ficheros de bloqueo para los paquetes, contenedores sin privilegios y redes internas. Hoy los activas uno a uno, mides qué frena cada uno y qué rompe, y escribes en Python la comparación de huellas que hay dentro de la verificación de firmas y del lockfile.",
-  "you_can_now": "Sabes emparejar cada eslabón con su control, resolver el coste de exigir safetensors y comparar en Python huellas con una lista aprobada. Siguiente: A6-04, donde escribirás un verificador real de pickles, safetensors y AI-BOM (AI Bill of Materials)."
+  "purpose": "Los equipos que llevan modelos a producción ponen un control en cada eslabón de la cadena: formatos sin código, firmas y huellas, ficheros de bloqueo para los paquetes, contenedores sin privilegios y redes internas. Hoy los activas uno a uno, mides qué frena cada uno y qué rompe, y programas en Python la comparación de huellas que hay dentro de la verificación de firmas y del lockfile.",
+  "you_can_now": "Sabes emparejar cada eslabón con su control, resolver el coste de exigir safetensors y comparar en Python huellas con una lista aprobada. Siguiente: A6-04, donde programarás un verificador real de pickles, safetensors y AI-BOM (AI Bill of Materials)."
 }

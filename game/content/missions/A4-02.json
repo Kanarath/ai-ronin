@@ -200,7 +200,7 @@
         "mcp attack forja"
       ],
       "on_complete": "1,00. Cada escenario se prueba sobre un host nuevo, así que no influye lo que hayas hecho antes.",
-      "teach": "La batería A4\nmcp attack <host> lanza los cinco ataques, cada uno sobre un host nuevo.\nLa tasa de éxito es ataques que funcionan ÷ ataques probados.\nPor qué: medir antes de defender te deja demostrar después cuánto protege cada sello."
+      "teach": "La batería A4\nmcp attack <host> lanza los cinco ataques, cada uno sobre un host nuevo.\nLa tasa de éxito es ataques que funcionan ÷ ataques probados.\nPor qué: medir antes de defender te deja demostrar después cuánto protege cada defensa."
     },
     {
       "id": "o7",
@@ -224,35 +224,35 @@
     {
       "id": "o8",
       "text": "Comprueba que lo tienes claro: ¿en qué se diferencian el rug pull y el shadowing?",
-      "teach": "Dos ataques que se confunden\nRecuerda el traductor v1.1 y el impostor utilidades-plus.\nPor qué: cada uno se cierra con un sello distinto en A4-03, así que conviene no confundirlos.",
+      "teach": "Dos ataques que se confunden\nRecuerda el traductor v1.1 y el impostor utilidades-plus.\nPor qué: cada uno se cierra con una defensa distinta en A4-03, así que conviene no confundirlos.",
       "choices": [
         {
           "id": "a",
-          "text": "el rug pull cambia una herramienta DESPUÉS de aprobarla; el shadowing usa OTRO servidor con el mismo nombre"
+          "text": "el rug pull usa otro servidor con el mismo nombre; el shadowing cambia una versión",
+          "why": "Es al revés: en el rug pull es el mismo servidor el que cambia; en el shadowing aparece otro que se hace pasar por él."
         },
         {
           "id": "b",
-          "text": "son lo mismo con distinto nombre",
-          "why": "No. En el rug pull es el mismo servidor el que cambia; en el shadowing aparece un servidor distinto que se hace pasar por otro."
+          "text": "el rug pull roba el token de la sesión y el shadowing provoca reembolsos",
+          "why": "Al revés de lo que viste: el rug pull del traductor disparó el reembolso, y el impostor se quedó con los datos de un pedido. Los distingue cómo entran, no qué roban."
         },
         {
           "id": "c",
-          "text": "el rug pull roba el token y el shadowing hace reembolsos",
-          "why": "Al revés de lo que viste: el rug pull del traductor disparó el reembolso, y el impostor se quedó con los datos de un pedido. Los distingue cómo entran, no qué roban."
+          "text": "el rug pull altera algo ya aprobado; el shadowing suplanta su nombre desde otro servidor"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "c",
         "accept": [
-          "a"
+          "c"
         ]
       },
       "hints": [
         "Uno cambia CUÁNDO (después de aprobar); el otro cambia QUIÉN.",
-        "answer a"
+        "answer c"
       ],
-      "on_complete": "Exacto. El rug pull cambia el CUÁNDO: lo aprobado ya no es lo ejecutado. El shadowing cambia el QUIÉN: el nombre de una herramienta no es una identidad. Y en los dos, la descripción es superficie de ataque porque la escribe un tercero y la lee tu modelo."
+      "on_complete": "Exacto: el rug pull cambia el CUÁNDO (lo aprobado ya no es lo ejecutado) y el shadowing, el QUIÉN (un nombre no es una identidad). En los dos, la descripción es superficie de ataque porque la escribe un tercero y la lee tu modelo."
     }
   ],
   "mastery_trial": {
@@ -296,7 +296,7 @@
   },
   "debrief": {
     "what_happened": "Has robado el token de la sesión con una descripción envenenada, has visto que el host reparte su token de administrador, has disparado reembolsos con un rug pull y con el resultado de una consulta del tiempo, y has desviado una búsqueda de pedidos a un servidor impostor.",
-    "why": "En MCP, textos escritos por terceros (descripciones, resultados y actualizaciones) entran en el contexto del modelo, y el host decide con qué credenciales llama a cada servidor. Si el host confía en todo lo que conecta, cualquier servidor puede manipular el comportamiento del asistente con los permisos del usuario.",
+    "why": "En MCP (Model Context Protocol), textos escritos por terceros (descripciones, resultados y actualizaciones) entran en el contexto del modelo, y el host decide con qué credenciales llama a cada servidor. Si el host confía en todo lo que conecta, cualquier servidor puede manipular el comportamiento del asistente con los permisos del usuario.",
     "in_production": "En 2025 se publicaron demostraciones de envenenamiento de herramientas, rug pulls y shadowing contra clientes MCP reales, además de incidentes con servidores maliciosos en catálogos públicos. La especificación incluye una página de buenas prácticas de seguridad (confused deputy, token passthrough, minimización de scopes) y los catálogos y clientes están añadiendo revisión y verificación de servidores. Es un área en evolución: revisa las fechas de las referencias.",
     "simplifications": [
       "Modelo determinista que obedece las instrucciones reconocibles",
@@ -314,5 +314,5 @@
     "base": 300
   },
   "purpose": "Cuando un asistente real se conecta a servidores MCP (Model Context Protocol) de terceros, textos que no has escrito tú entran en su contexto: descripciones, resultados y actualizaciones. En 2025 se publicaron demostraciones de estos ataques contra clientes MCP reales. Hoy los reproduces uno a uno y aprendes a reconocerlos en el registro del servidor, para saber qué defender en A4-03.",
-  "you_can_now": "Sabes reproducir y explicar el envenenamiento de herramientas, el token passthrough, el rug pull, el shadowing y la inyección por la salida, y clasificarlos con la lista OWASP agéntica. Siguiente: A4-03, donde pondrás sellos en el host para cerrarlos sin depender del usuario."
+  "you_can_now": "Sabes reproducir y explicar el envenenamiento de herramientas, el token passthrough, el rug pull, el shadowing y la inyección por la salida, y clasificarlos con la lista OWASP agéntica. Siguiente: A4-03, donde pondrás controles en el host para cerrarlos sin depender del usuario."
 }
