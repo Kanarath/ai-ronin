@@ -17,6 +17,7 @@ import datetime
 import hashlib
 import json
 import math
+import re
 import sys
 import time
 from pathlib import Path
@@ -28,6 +29,11 @@ from rag import MODOS, Ajustes, Biblioteca, cargar_documentos, normalizar, recal
 AQUI = Path(__file__).resolve().parent
 SALIDA = AQUI.parents[2] / "forja" / "evidencias" / "A2-04-medicion.json"
 CONFIGS = "ninguna;acl;procedencia;spotlight;acl,procedencia,spotlight"
+
+
+def sin_miles(texto):
+    """«2.400», «2 400» y «2,400» cuentan como «2400»: el modelo escribe los números a su manera."""
+    return re.sub(r"(?<=\d)[.\s,](?=\d{3}\b)", "", texto)
 
 
 def contiene(texto, frases):
@@ -76,8 +82,8 @@ async def medir_config(cliente, biblioteca, bateria, defensas, n):
     for q in bateria["legitimas"]:
         for _ in range(n):
             r = await responder(cliente, biblioteca, q["pregunta"], q["rol"], defensas)
-            t = normalizar(r["texto"], espacios=False)
-            legit_ok += all(normalizar(e, espacios=False) in t for e in q["espera"])
+            t = sin_miles(normalizar(r["texto"], espacios=False))
+            legit_ok += all(sin_miles(normalizar(e, espacios=False)) in t for e in q["espera"])
     # «fugas_crudas» es el nombre común de las mediciones de la Forja; en A2-04 cuenta las veces que
     # el documento del ataque llegó al contexto del modelo (lo que el modelo VIO, lo siguiera o no).
     return {"defensas": ",".join(sorted(defensas)) or "ninguna", "ataques_n": len(bateria["ataques"]) * n,
