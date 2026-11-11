@@ -77,31 +77,31 @@
         },
         {
           "id": "b",
-          "text": "la etiqueta"
+          "text": "un ejemplo",
+          "why": "Un ejemplo es una fila entera, una katana concreta como hoja-065. «calidad» es una columna."
         },
         {
           "id": "c",
-          "text": "un ejemplo",
-          "why": "Un ejemplo es una fila entera, una katana concreta como hoja-065. «calidad» es una columna."
+          "text": "la etiqueta"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
         "Piensa en qué columna es la que el modelo tendrá que adivinar.",
-        "Es la etiqueta: answer b"
+        "Es la etiqueta: answer c"
       ],
       "on_complete": "Exacto: calidad es la etiqueta, lo que queremos predecir. Si alguna vez dudas: explain feature o explain label."
     },
     {
       "id": "o4",
       "text": "Resume las 240 katanas con estadísticas: dataset stats katanas",
-      "teach": "Resumir muchos datos\n240 filas no se pueden mirar una a una: se resumen con unos pocos números por columna.\nMEDIA: el valor típico. MÍNIMO y MÁXIMO: el valor más bajo y el más alto. RANGO: máximo menos mínimo, es decir, cuánto se mueve esa medida.\nComando: dataset stats katanas\nPor qué: estas cifras te avisan de problemas antes de entrenar: escalas muy distintas o clases desequilibradas engañan a muchos modelos.",
+      "teach": "Resumir muchos datos\n240 filas no se pueden mirar una a una: se resumen con unos pocos números por columna.\nMEDIA: el valor típico. MÍNIMO y MÁXIMO: el más bajo y el más alto. RANGO: máximo menos mínimo, cuánto se mueve esa medida.\nDESVIACIÓN TÍPICA: cuánto se alejan los valores de la media, de media.\nComando: dataset stats katanas\nPor qué: estas cifras avisan de problemas antes de entrenar: escalas muy distintas o clases desequilibradas engañan a muchos modelos.",
       "validator": {
         "type": "event",
         "event": "dataset.stats",
@@ -112,7 +112,7 @@
       "hints": [
         "Escribe exactamente: dataset stats katanas"
       ],
-      "on_complete": "Mira la última columna, «rango»: la dureza se mueve 13,6 unidades, la flexibilidad 7,37 y la temperatura ¡119! Cada feature se mide en su propia unidad (HRC, una escala de 0 a 10, grados). Abajo ves también cuántas katanas hay de cada clase: casi mitad y mitad."
+      "on_complete": "Mira la última columna, «rango»: la dureza se mueve 13,6 unidades, la flexibilidad 7,37 y la temperatura ¡119! Cada feature tiene su unidad: la dureza en HRC (la escala Rockwell C), la flexibilidad de 0 a 10 y la temperatura en grados. Abajo ves cuántas katanas hay de cada clase: casi mitad y mitad."
     },
     {
       "id": "o5",
@@ -157,7 +157,7 @@
         "plot katanas --x <feature> --y <feature>. Compara un gráfico con temperatura y otro sin ella.",
         "1) plot katanas --x dureza_hrc --y flexibilidad  2) plot katanas --x temperatura_temple --y dureza_hrc"
       ],
-      "on_complete": "Compara lo que predijiste con lo que ves: con dureza y flexibilidad las clases forman grupos; a lo largo de la temperatura están mezcladas. En este dataset la temperatura no aporta información sobre la calidad. Ojo: eso es una propiedad de ESTOS datos, no una ley de la metalurgia."
+      "on_complete": "Compara lo que predijiste con lo que ves en los dos gráficos."
     },
     {
       "id": "o7",
@@ -165,41 +165,41 @@
       "choices": [
         {
           "id": "a",
+          "text": "porque sus dos colores salen mezclados en su eje"
+        },
+        {
+          "id": "b",
           "text": "porque sus números son mucho más grandes",
           "why": "El tamaño de los números depende de la unidad (grados). Una feature con números grandes puede ser muy útil; lo que importa es si separa las clases."
         },
         {
-          "id": "b",
-          "text": "porque las aptas y las defectuosas aparecen mezcladas a lo largo de su eje"
-        },
-        {
           "id": "c",
-          "text": "porque hay pocas katanas con temperatura",
+          "text": "porque a muchas katanas les falta la temperatura",
           "why": "Las 240 katanas tienen temperatura. El problema está en cómo se reparten los colores en el gráfico."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "Vuelve a mirar el gráfico con temperatura_temple en el eje horizontal: ¿los colores están separados o mezclados?",
-        "answer b"
+        "answer a"
       ],
-      "on_complete": "Eso es. Una feature sirve para clasificar si toma valores distintos en cada clase. Acabas de hacer lo que hace un ingeniero antes de modelar: mirar los datos y descubrir qué medidas importan."
+      "on_complete": "Eso es: con dureza y flexibilidad las clases forman grupos, pero a lo largo de la temperatura aptas y defectuosas se mezclan, así que no aporta información sobre la calidad. Ojo: es una propiedad de ESTOS datos, no una ley de la metalurgia."
     },
     {
       "id": "py1",
       "text": "Escribe en Python la cuenta del rango: abre el editor con py, completa la función rango y compruébala con py check.",
-      "teach": "Ahora, con tus manos: Python\nPython es el idioma en el que se programa casi toda la IA (Inteligencia Artificial). Vas a escribir la cuenta que hace dataset stats para el rango.\nEscribe py y se abre un editor arriba, en el laboratorio, con el código ya empezado. Haz clic en él para escribir.\nUna función se escribe así: def nombre(parámetros): y debajo, con 4 espacios delante, lo que hace. return devuelve el resultado.\npy run (o Ctrl+Enter en el editor) ejecuta tu código; py check lo comprueba con varios casos.\nPor qué: en un proyecto real estas cuentas no las hace un comando del Dojo, las escribes tú en Python.",
+      "teach": "Ahora, con tus manos: Python\nPython es el idioma de casi toda la IA (Inteligencia Artificial). Vas a escribir la cuenta del rango que hace dataset stats.\nEscribe py y se abre un editor arriba, con el código ya empezado. Haz clic en él para escribir.\nUna función: def nombre(parámetros): y debajo, con 4 espacios delante, lo que hace. return devuelve el resultado.\npy run (o Ctrl+Enter) ejecuta tu código; py check lo comprueba con varios casos.\nPor qué: en un proyecto real estas cuentas no las hace un comando del Dojo: las escribes tú en Python.",
       "py_exercise": {
         "id": "T1-01-rango",
         "title": "rango(valores): el máximo menos el mínimo",
         "function": "rango",
-        "starter": "# Ejercicio T1-01 · El rango de una feature\n# valores es una lista de números, por ejemplo [52.4, 60.1, 66.0].\n# La función tiene que devolver el valor más alto menos el más bajo.\n# Python ya trae max(lista), que da el más alto, y min(lista), que da el más bajo.\n\ndef rango(valores):\n    return 0   # ← cambia esta línea\n\n# Pruébala con py run (o Ctrl+Enter). Debería imprimir 13.6 (o casi):\nprint(rango([52.4, 60.1, 66.0]))\n",
+        "starter": "# T1-01 · rango(valores): el valor más alto de la lista menos el más bajo.\n# Python ya trae max(lista), que da el más alto, y min(lista), que da el más bajo.\n\ndef rango(valores):\n    return 0   # ← cambia esta línea\n\n# Pruébala con py run (o Ctrl+Enter). Debería imprimir 13.6 (o casi):\nprint(rango([52.4, 60.1, 66.0]))\n",
         "cases": [
           {
             "args": [
@@ -279,7 +279,7 @@
   "debrief": {
     "what_happened": "Has explorado un dataset antes de modelar: estructura, estadísticas y visualización. Has visto que una feature (la temperatura) no ayuda a separar las clases y que las escalas son muy distintas.",
     "why": "Mirar los datos primero evita construir modelos sobre supuestos falsos. Las estadísticas descriptivas y los gráficos son la herramienta más barata para detectar problemas: features inútiles, escalas, desequilibrio de clases y errores.",
-    "in_production": "En un proyecto real esto es el análisis exploratorio de datos (EDA), normalmente con pandas y matplotlib o seaborn en Python. Con más de dos dimensiones no se puede dibujar todo a la vez: se usan matrices de gráficos por pares, correlaciones o técnicas de reducción de dimensionalidad (PCA, t-SNE).",
+    "in_production": "En un proyecto real esto es el EDA (Exploratory Data Analysis), el análisis exploratorio de datos, normalmente con pandas y matplotlib o seaborn en Python. Con más de dos dimensiones no se puede dibujar todo a la vez: se usan matrices de gráficos por pares, correlaciones o técnicas de reducción de dimensionalidad, como PCA (Principal Component Analysis) o t-SNE (t-distributed Stochastic Neighbor Embedding).",
     "simplifications": [
       "Dataset sintético de 3 features diseñado para enseñar",
       "Solo dos features por gráfico"

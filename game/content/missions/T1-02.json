@@ -45,7 +45,7 @@
     {
       "id": "o1",
       "text": "Mide la distancia entre hoja-001 y hoja-002: distance katanas hoja-001 hoja-002",
-      "teach": "Parecido = cerca\nCada katana es un punto con 3 coordenadas (sus 3 features). Dos katanas parecidas son dos puntos cercanos.\nLa DISTANCIA EUCLÍDEA mide esa cercanía: resta las features una a una, eleva cada resta al cuadrado, súmalas y saca la raíz.\ndistance te la calcula y te enseña cuánto aporta cada feature (columna «peso»).\nPor qué: esta misma cuenta, con cientos de números por vector en lugar de 3, es la que hace un RAG al buscar documentos.",
+      "teach": "Parecido = cerca\nCada katana es un punto con 3 coordenadas (sus 3 features). Dos katanas parecidas son dos puntos cercanos.\nLa DISTANCIA EUCLÍDEA mide esa cercanía: resta las features una a una, eleva cada resta al cuadrado, súmalas y saca la raíz.\ndistance te la calcula y te enseña cuánto aporta cada feature (columna «peso»).\nPor qué: esta misma cuenta, con cientos de números por vector en lugar de 3, es la que hace un RAG (Retrieval-Augmented Generation) al buscar documentos.",
       "prediction": {
         "prompt": "¿Qué feature crees que aportará MÁS a la distancia entre esas dos hojas?",
         "options": [
@@ -78,7 +78,7 @@
         "distance <dataset> <id_a> <id_b>",
         "distance katanas hoja-001 hoja-002"
       ],
-      "on_complete": "Mira la columna «peso»: la temperatura aporta el 99,8 % de la distancia. La dureza difiere 2,3 y la flexibilidad 2,03, pero la temperatura difiere 69. Al elevar al cuadrado: 4761 frente a 5,29 y 4,12."
+      "on_complete": "Mira la columna «peso»: la temperatura aporta el 99,8 % de la distancia. Compara también la columna «diferencia» de cada feature."
     },
     {
       "id": "o2",
@@ -91,31 +91,31 @@
         },
         {
           "id": "b",
-          "text": "porque sus números son mucho más grandes, y al elevar al cuadrado la diferencia crece todavía más"
+          "text": "porque hay un error en el cálculo de la distancia",
+          "why": "El cálculo es correcto: 69² = 4761 y 2,3² = 5,29. Lo que falla es comparar medidas en unidades distintas."
         },
         {
           "id": "c",
-          "text": "porque es un error del cálculo",
-          "why": "El cálculo es correcto: 69² = 4761 y 2,3² = 5,29. Lo que falla es comparar medidas en unidades distintas."
+          "text": "porque sus números son mayores y al cuadrado pesan más"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
         "Compara la columna «diferencia» de la temperatura con la de la dureza.",
-        "answer b"
+        "answer c"
       ],
-      "on_complete": "Eso es. La distancia trata igual 1 grado que 1 punto de dureza, así que la feature con números más grandes «grita» más. Un modelo que use esta distancia decidiría casi solo por la temperatura, que no sirve. Hay que poner las features en la misma escala."
+      "on_complete": "Eso es: la temperatura difiere 69 grados y la dureza solo 2,3; al cuadrado, 4761 frente a 5,29. La distancia trata igual 1 grado que 1 punto de dureza, así que manda la feature de números más grandes, aunque no sirva. Hay que poner las features en la misma escala."
     },
     {
       "id": "o3",
       "text": "Pon todas las features en la misma escala: dataset normalize katanas --method minmax",
-      "teach": "Normalizar con min-max\nNormalizar es pasar cada feature a una escala común. MIN-MAX transforma cada valor así: (valor − mínimo) ÷ (máximo − mínimo).\nEjemplo con la temperatura (mínimo 760, máximo 879): 779 pasa a (779 − 760) ÷ 119 = 0,16. El mínimo queda en 0 y el máximo en 1.\nEl comando crea un dataset NUEVO, katanas_minmax; el original no se toca.\nHay otro método, Z-SCORE: (valor − media) ÷ desviación típica. Se usa igual: dataset normalize katanas --method zscore\nPor qué: en un sistema real se normaliza siempre antes de medir distancias; si no, una sola feature decide por todas.",
+      "teach": "Normalizar con min-max\nNormalizar es pasar cada feature a una escala común. MIN-MAX hace (valor − mínimo) ÷ (máximo − mínimo): el mínimo queda en 0 y el máximo en 1.\nEjemplo con la temperatura (760 a 879): 779 pasa a (779 − 760) ÷ 119 = 0,16.\nEl comando crea un dataset NUEVO, katanas_minmax; el original no se toca.\nOtro método, Z-SCORE, hace (valor − media) ÷ desviación típica. Se usa con --method zscore.\nPor qué: en un sistema real se normaliza antes de medir distancias; si no, una sola feature decide por todas.",
       "validator": {
         "type": "event",
         "event": "dataset.normalized",
@@ -163,7 +163,7 @@
         "Usa el mismo comando de antes, pero con el nuevo dataset.",
         "distance katanas_minmax hoja-001 hoja-002"
       ],
-      "on_complete": "Sorpresa: la temperatura sigue pesando un 76 %. ¿Por qué? Porque ESTAS dos hojas se templaron a temperaturas muy distintas (779 frente a 848 °C: casi la mitad del rango). Normalizar arregla el problema de las UNIDADES, pero no el de la RELEVANCIA: una feature que no predice nada sigue metiendo ruido en la distancia. Eso se resuelve con selección de features, que verás más adelante."
+      "on_complete": "Sorpresa: la temperatura sigue pesando un 76 %. ¿Por qué? ESTAS dos hojas se templaron a temperaturas muy distintas: 779 frente a 848 °C, casi la mitad del rango."
     },
     {
       "id": "o5",
@@ -171,31 +171,31 @@
       "choices": [
         {
           "id": "a",
-          "text": "arregla las unidades, pero no que una feature que no sirve siga metiendo ruido en la distancia"
-        },
-        {
-          "id": "b",
-          "text": "arregla las dos cosas",
+          "text": "arregla las unidades y también el ruido",
           "why": "Tras normalizar, la temperatura sigue pesando un 76 % en estas dos hojas porque de verdad se templaron muy distinto, y aun así eso no dice nada de su calidad."
         },
         {
+          "id": "b",
+          "text": "arregla las unidades, no las features inútiles"
+        },
+        {
           "id": "c",
-          "text": "no arregla nada",
+          "text": "no arregla nada: la temperatura sigue mandando",
           "why": "Sí arregla algo: antes la temperatura pesaba el 99,8 % solo por su unidad; ahora la dureza y la flexibilidad cuentan."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "b",
         "accept": [
-          "a"
+          "b"
         ]
       },
       "hints": [
         "Compara el peso de la temperatura antes (99,8 %) y después (76 %). ¿Por qué sigue siendo alto?",
-        "answer a"
+        "answer b"
       ],
-      "on_complete": "Exacto. Normalizar resuelve el problema de las UNIDADES. El de la RELEVANCIA (features que no predicen nada) se resuelve eligiendo bien las features, y lo verás en T2."
+      "on_complete": "Exacto. Normalizar resuelve el problema de las UNIDADES, pero no el de la RELEVANCIA: una feature que no predice nada sigue metiendo ruido en la distancia. Eso se resuelve eligiendo bien las features, y lo harás en T1-03."
     },
     {
       "id": "py1",
@@ -205,7 +205,7 @@
         "id": "T1-02-distancia",
         "title": "distancia(a, b): la distancia euclídea",
         "function": "distancia",
-        "starter": "# Ejercicio T1-02 · La distancia euclídea\n# a y b son dos katanas como listas de features, por ejemplo [62.6, 7.73, 848.0].\n# Resta feature a feature, eleva cada resta al cuadrado, súmalas y saca la raíz.\nimport math\n\ndef distancia(a, b):\n    suma = 0\n    for x, y in zip(a, b):\n        pass   # ← cambia esta línea: suma la diferencia al cuadrado\n    return math.sqrt(suma)\n\n# hoja-001 y hoja-002: debería imprimir unos 69.068\nprint(distancia([62.6, 7.73, 848.0], [60.3, 5.7, 779.0]))\n",
+        "starter": "# T1-02 · distancia(a, b): a y b son dos katanas, por ejemplo [62.6, 7.73, 848.0].\n# Resta feature a feature, eleva cada resta al cuadrado, súmalas y saca la raíz.\nimport math\n\ndef distancia(a, b):\n    suma = 0\n    for x, y in zip(a, b):\n        pass   # ← cambia esta línea: suma la diferencia al cuadrado\n    return math.sqrt(suma)\n\n# hoja-001 y hoja-002: debería imprimir unos 69.068\nprint(distancia([62.6, 7.73, 848.0], [60.3, 5.7, 779.0]))\n",
         "cases": [
           {
             "args": [
@@ -267,7 +267,7 @@
         "Dentro del bucle tienes que sumar a suma la diferencia al cuadrado: suma += ...",
         "La línea queda así: suma += (x - y) ** 2"
       ],
-      "on_complete": "Ya sabes calcular la distancia que usan los modelos por parecido. Fíjate en que tu función no sabe nada de katanas: funciona igual con 3 features que con 768, que es el tamaño de un embedding típico."
+      "on_complete": "Ya sabes calcular la distancia que usan los modelos por parecido. Tu función no sabe nada de katanas: funciona igual con 3 features que con 768, el tamaño típico de un embedding (el vector de números con el que un modelo representa un texto)."
     }
   ],
   "mastery_trial": {
@@ -292,11 +292,11 @@
   },
   "debrief": {
     "what_happened": "Has medido distancias entre ejemplos y has visto que, sin normalizar, la feature de mayor escala decide casi toda la distancia. Normalizando, las escalas se igualan, pero una feature irrelevante sigue influyendo.",
-    "why": "Cualquier método basado en distancias (k-NN, k-means, búsqueda de vectores) es tan bueno como su definición de «parecido». Las unidades y las features irrelevantes la deforman.",
+    "why": "Cualquier método basado en distancias, como k-NN (k-Nearest Neighbors), k-means o la búsqueda de vectores, es tan bueno como su definición de «parecido». Las unidades y las features irrelevantes la deforman.",
     "in_production": "En scikit-learn se usan MinMaxScaler o StandardScaler dentro de un Pipeline, para que los parámetros se aprendan solo del entrenamiento y se apliquen igual al predecir. Los parámetros del escalado se guardan junto al modelo: olvidarlos en producción es un fallo frecuente.",
     "simplifications": [
       "Solo distancia euclídea y Manhattan",
-      "Normalización aprendida del dataset completo (en la próxima misión verás por qué eso es un problema)"
+      "Normalización aprendida del dataset completo (en T2-01 verás por qué eso es un problema)"
     ],
     "exercise": "forja/ejercicios/T1_02_distancia.py"
   },

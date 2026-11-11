@@ -14,9 +14,9 @@
       "T0.dojo"
     ]
   },
-  "briefing": "Antes de forjar nada, conoce tu taller. En 8 minutos aprenderás a moverte por el Dojo: dar órdenes al terminal, pedir ayuda sin miedo, consultar el glosario, ver datos dibujados y practicar con retos rápidos. Aquí no se puede romper nada: experimenta.",
+  "briefing": "Antes de forjar nada, conoce tu taller. En 8 minutos aprenderás a moverte por el Dojo: dar órdenes en la consola, pedir ayuda sin miedo, consultar el glosario, ver datos dibujados y practicar con retos rápidos. Aquí no se puede romper nada: experimenta.",
   "learning_objectives": [
-    "Usar el terminal: escribir un comando y leer su respuesta",
+    "Usar la consola: escribir un comando y leer su respuesta",
     "Saber dónde está la ayuda: pistas, glosario, manual y chuleta",
     "Responder preguntas y practicar con retos rápidos"
   ],
@@ -35,7 +35,7 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Escribe help en el terminal y pulsa Enter.",
+      "text": "Escribe help en la consola y pulsa Enter.",
       "teach": "La consola\nEsta línea de abajo es la consola: escribes una orden (un «comando») y pulsas Enter.\nEmpieza por el más útil, el que lista todo lo que puedes hacer: escribe help y pulsa Enter.",
       "validator": {
         "type": "event",
@@ -76,7 +76,7 @@
       "hints": [
         "Escribe exactamente: explain dataset"
       ],
-      "on_complete": "Un dataset es una colección de ejemplos. El de este curso son 240 katanas que los maestros de la forja ya inspeccionaron."
+      "on_complete": "Un dataset es una colección de ejemplos. El de este curso son katanas que los maestros de la forja ya inspeccionaron."
     },
     {
       "id": "o4",
@@ -92,7 +92,7 @@
       "hints": [
         "Escribe: plot katanas"
       ],
-      "on_complete": "Cada punto del laboratorio es una katana: su posición son dos de sus medidas y su color, si salió apta (verde azulado) o defectuosa (dorado). En T1 aprenderás a leer este gráfico."
+      "on_complete": "Cada punto del laboratorio es una katana: su posición son dos de sus medidas y su color, si salió apta (verde azulado) o defectuosa (dorado). En T1-01 aprenderás a leer este gráfico."
     },
     {
       "id": "o5",
@@ -113,14 +113,14 @@
     {
       "id": "o6",
       "text": "Resuelve un reto rápido: escribe reto y responde con reto responder <valor>.",
-      "teach": "Los retos rápidos\nreto te propone un problema corto con números nuevos cada vez. Respondes con reto responder <valor> y ves la solución paso a paso.\nPruébalo: escribe reto.",
+      "teach": "Los retos rápidos\nreto te propone un problema corto con números nuevos cada vez. Respondes con reto responder <valor> y ves la solución paso a paso.\nPruébalo: escribe reto. Si te sale algo que aún no has visto (una distancia o una normalización, por ejemplo), escribe reto saltar y después reto otra vez.",
       "validator": {
         "type": "event",
         "event": "challenge.solved"
       },
       "hints": [
         "Escribe reto, lee la pregunta y responde con reto responder <número>.",
-        "Si es una media: suma los números y divide entre cuántos hay. Si te bloqueas: reto saltar y después reto otra vez."
+        "Si es una media: suma los números y divide entre cuántos hay. Si es una distancia o una normalización, aún no la has visto: reto saltar y después reto otra vez."
       ],
       "on_complete": "+XP. Los retos dan experiencia y algunos sellos."
     },
@@ -139,7 +139,7 @@
     }
   ],
   "debrief": {
-    "what_happened": "Has usado el terminal, has pedido una pista, has consultado el glosario, has visto datos dibujados, has respondido una pregunta y has resuelto un reto.",
+    "what_happened": "Has usado la consola, has pedido una pista, has consultado el glosario, has visto datos dibujados, has respondido una pregunta y has resuelto un reto.",
     "why": "Son las herramientas que usarás en todas las misiones. Lo más importante: en el Dojo, equivocarse y pedir ayuda forma parte del aprendizaje.",
     "in_production": "Los ingenieros de IA trabajan a diario en terminales, notebooks y documentación. La habilidad clave no es memorizar comandos, sino saber dónde buscar ayuda y comprobar las cosas por uno mismo.",
     "simplifications": []

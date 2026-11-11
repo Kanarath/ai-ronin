@@ -45,21 +45,17 @@
   },
   "theory_cards": [
     {
-      "id": "knn",
-      "title": "k-NN en tres pasos",
-      "body": "1) Distancia a todos los ejemplos de entrenamiento. 2) Quédate con los k más cercanos. 3) Gana la clase más votada. «Entrenar» k-NN es solo guardar los ejemplos. Más: man knn"
-    },
-    {
       "id": "evaluar",
       "title": "Evaluar honestamente",
-      "body": "La pregunta es cómo funcionará con datos NUEVOS. Para estimarlo se aparta un conjunto de test antes de entrenar y no se usa para nada más. Más: man evaluacion"
+      "body": "La pregunta real es cómo funcionará el modelo con hojas NUEVAS. Para estimarlo se aparta ANTES un conjunto de test que el modelo nunca ve, ni al entrenar ni al preparar los datos. Si el test se cuela (fuga de datos), el modelo parece mucho mejor de lo que es. Más: man evaluacion",
+      "unlock_on": "objective:o4"
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Normaliza katanas con min-max, crea un modelo k-NN con k=1 y entrénalo con el dataset normalizado completo.",
-      "teach": "k vecinos más cercanos (k-NN, k-Nearest Neighbors)\nPara clasificar una hoja, k-NN busca las k hojas conocidas más cercanas (las de menor distancia) y las hace votar: gana la clase más repetida.\nCon k=1 decide solo el vecino más cercano.\n«Entrenar» un k-NN es simplemente guardar los ejemplos.\nComandos: model create <nombre> --k <número> crea el modelo; model train <nombre> <dataset> lo entrena. Como mide distancias, entrénalo con datos normalizados (lo viste en T1-02).\nPor qué: un RAG (Retrieval-Augmented Generation) busca sus documentos con esta misma idea, y muchos detectores de seguridad comparan así un caso nuevo con casos conocidos.",
+      "teach": "k vecinos más cercanos\nPara clasificar una hoja, un k-NN (k-Nearest Neighbors) busca las k hojas conocidas más cercanas y las hace votar: gana la clase más repetida. Con k=1 decide solo el vecino más cercano.\n«Entrenar» un k-NN es simplemente guardar los ejemplos.\nComandos: model create <nombre> --k <número> · model train <nombre> <dataset>. Como mide distancias, entrénalo con datos normalizados.\nPor qué: un RAG (Retrieval-Augmented Generation) busca sus documentos con esta idea, y muchos detectores comparan así un caso nuevo con casos conocidos.",
       "validator": {
         "type": "event",
         "event": "model.trained",
@@ -102,7 +98,7 @@
         "Hay un subcomando de model para medir la accuracy.",
         "model evaluate <modelo> <dataset>"
       ],
-      "on_complete": "100 %. Perfecto… y completamente inútil como estimación. Piensa: ¿a qué distancia está cada hoja de sí misma? ¿Quién es su vecino más cercano?"
+      "on_complete": "100 %: perfecto… e inútil como estimación. Piensa: ¿a qué distancia está cada hoja de sí misma, y quién es su vecino más cercano?"
     },
     {
       "id": "o3",
@@ -118,12 +114,12 @@
         "model predict te enseña los vecinos de una hoja.",
         "model predict m1 katanas_minmax hoja-001 → mira el vecino nº 1."
       ],
-      "on_complete": "Distancia 0: el vecino más cercano de cada hoja es ELLA MISMA. Con k=1 cada hoja vota por su propia etiqueta, incluidas las ~8 % mal etiquetadas. Evaluar con datos de entrenamiento mide memoria, no aprendizaje. Esto es una forma de fuga de datos (explain fuga de datos)."
+      "on_complete": "Distancia 0: el vecino más cercano de cada hoja es ELLA MISMA, así que con k=1 cada hoja vota por su propia etiqueta, incluidas algunas hojas que los inspectores etiquetaron mal (un ~8 %). Evaluar con datos de entrenamiento mide memoria, no aprendizaje. Es una forma de fuga de datos (explain fuga de datos)."
     },
     {
       "id": "o4",
       "text": "Haz una evaluación honesta: separa train/test (test 0.3, seed 42), normaliza con min-max aprendiendo los parámetros SOLO del train, entrena un k-NN con k=1 en el train normalizado y evalúalo en el test normalizado.",
-      "teach": "Evaluación honesta: train y test\nLa pregunta real es cómo funcionará con hojas NUEVAS. Para estimarlo se aparta ANTES un conjunto de test que el modelo nunca ve.\ndataset split katanas --test 0.3 --seed 42 crea katanas_train (70 %) y katanas_test (30 %).\nLa normalización también «aprende» algo (el mínimo y el máximo), y eso debe salir SOLO del train, como pasaría con una hoja nueva en producción.\nPrimero: dataset normalize katanas_train. Después: dataset normalize katanas_test --fit katanas_train (parámetros del train ORIGINAL, nunca del ya normalizado).\nCon --as <nombre> eliges un nombre corto, por ejemplo --as tr y --as te.\nPor qué: si el test se cuela en el entrenamiento (fuga de datos), el modelo parece mucho mejor de lo que es. Es uno de los errores más caros del ML (Machine Learning) real, también al evaluar un LLM (Large Language Model).",
+      "teach": "Evaluación honesta, paso a paso\ndataset split katanas --test 0.3 --seed 42 crea katanas_train (70 %) y katanas_test (30 %).\nLa normalización también «aprende» (el mínimo y el máximo), y eso debe salir SOLO del train.\nPrimero: dataset normalize katanas_train. Después: dataset normalize katanas_test --fit katanas_train (el train ORIGINAL, nunca el ya normalizado).\nCon --as <nombre> eliges un nombre corto, por ejemplo --as tr y --as te.\nPor qué: la fuga de datos es uno de los errores más caros del ML (Machine Learning) real, también al evaluar un LLM (Large Language Model).",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -239,7 +235,7 @@
     {
       "id": "o5",
       "text": "Compara la accuracy de train y test para varios valores de k con model sweep, usando tus datasets de train y test normalizados.",
-      "teach": "Elegir k\nk lo eliges tú: es un HIPERPARÁMETRO, un ajuste que no sale de los datos.\nmodel sweep --train <train> --test <test> prueba varios k y muestra la accuracy en train y en test.\nSi la de train es mucho mayor que la de test, el modelo memoriza en lugar de aprender: eso es OVERFITTING (sobreajuste).\nPor qué: todo sistema de IA tiene hiperparámetros que se eligen comparando así; en un RAG (Retrieval-Augmented Generation), por ejemplo, cuántos documentos recuperar, que también se llama k.",
+      "teach": "Elegir k\nk lo eliges tú: es un HIPERPARÁMETRO, un ajuste que no sale de los datos.\nmodel sweep --train <train> --test <test> prueba varios k y muestra la accuracy en train y en test.\nSi la de train es mucho mayor que la de test, el modelo memoriza en lugar de aprender: eso es OVERFITTING (sobreajuste).\nPor qué: todo sistema de IA (Inteligencia Artificial) tiene hiperparámetros que se eligen comparando así; en un RAG (Retrieval-Augmented Generation), por ejemplo, cuántos documentos recuperar, que también se llama k.",
       "prediction": {
         "prompt": "¿Qué valor de k crees que generalizará MEJOR (más accuracy en test)?",
         "options": [
@@ -261,7 +257,7 @@
         "model sweep compara varios k de golpe. Mira su ayuda: model sweep --help",
         "model sweep --train <train normalizado> --test <test normalizado>"
       ],
-      "on_complete": "Mira la columna «diferencia». Con k=1, la diferencia entre train y test es la mayor: overfitting. Con k=31 bajan las dos: underfitting. Advertencia de ingeniero: has elegido k mirando el TEST, así que ese test ya no es imparcial. En un proyecto real se elige k con un conjunto de validación (explain conjunto de validación)."
+      "on_complete": "Compara con tu predicción: con k=1 la brecha entre train y test es la mayor (overfitting), y al subir k se cierra; con k=31 el test incluso supera al train. Si subieras k muchísimo, bajarían las dos: eso es underfitting (subajuste), un modelo demasiado simple para los datos."
     },
     {
       "id": "o6",
@@ -276,7 +272,7 @@
         "Está en la tabla de model sweep.",
         "Fila k=1 → columna diferencia."
       ],
-      "on_complete": "0,25: el modelo es 25 puntos «mejor» con lo que ya ha visto que con lo nuevo. Esa brecha es la firma del overfitting.",
+      "on_complete": "0,25: el modelo es 25 puntos «mejor» con lo que ya ha visto que con lo nuevo; esa brecha es la firma del overfitting. Advertencia de ingeniero: has elegido k mirando el TEST, así que ya no es imparcial; en un proyecto real se elige con un conjunto de validación (explain conjunto de validación).",
       "teach": "Leer la brecha\nLa columna «diferencia» es la accuracy de train menos la de test.\nPor qué: esa brecha es la señal de alarma del overfitting, en un k-NN y en una red neuronal."
     },
     {
@@ -315,12 +311,12 @@
     {
       "id": "py1",
       "text": "Escribe en Python el voto de los vecinos: abre el editor con py, completa la función votar y compruébala con py check.",
-      "teach": "El voto, con tus manos\nk-NN decide por votación: cuenta cuántos vecinos hay de cada clase y gana la que más tenga.\nUn diccionario guarda un recuento por clave, por ejemplo {\"apta\": 2, \"defectuosa\": 1}. El código que lo llena ya está escrito.\nmax(conteo, key=...) devuelve la clave con el valor más alto según la regla que le das después de key=.\nPor qué: es la última línea de un k-NN real, y la misma votación que usan los sistemas que combinan varios modelos.",
+      "teach": "El voto, con tus manos\nUn k-NN (k-Nearest Neighbors) decide por votación: gana la clase con más vecinos.\nUn diccionario guarda un recuento por clave, por ejemplo {\"apta\": 2, \"defectuosa\": 1}. El código que lo llena ya está escrito.\nmax(conteo, key=...) devuelve la clave con el valor más alto según la regla que va después de key=.\nLa regla se escribe con lambda: key=lambda e: conteo[e] significa «para cada clase e, usa sus votos».\nPor qué: es la última línea de un k-NN real, y la misma votación que usan los sistemas que combinan varios modelos.",
       "py_exercise": {
         "id": "T2-01-votar",
         "title": "votar(etiquetas): gana la clase más repetida",
         "function": "votar",
-        "starter": "# Ejercicio T2-01 · El voto de los vecinos\n# etiquetas es la lista con la clase de cada uno de los k vecinos más cercanos,\n# por ejemplo [\"defectuosa\", \"apta\", \"apta\"]. Gana la clase que más se repite.\n\ndef votar(etiquetas):\n    conteo = {}\n    for e in etiquetas:\n        conteo[e] = conteo.get(e, 0) + 1   # suma un voto a la clase e\n    # conteo queda, por ejemplo, {\"defectuosa\": 1, \"apta\": 2}\n    return etiquetas[0]   # ← cambia esta línea: devuelve la clase con más votos\n\n# Pruébala con py run (o Ctrl+Enter). Debería imprimir apta:\nprint(votar([\"defectuosa\", \"apta\", \"apta\"]))\n",
+        "starter": "# T2-01 · votar(etiquetas): etiquetas es la clase de cada vecino, por ejemplo\n# [\"defectuosa\", \"apta\", \"apta\"]. Gana la clase que más se repite.\n\ndef votar(etiquetas):\n    conteo = {}\n    for e in etiquetas:\n        conteo[e] = conteo.get(e, 0) + 1   # suma un voto a la clase e\n    # conteo queda, por ejemplo, {\"defectuosa\": 1, \"apta\": 2}\n    return etiquetas[0]   # ← cambia esta línea: devuelve la clase con más votos\n\n# Pruébala con py run (o Ctrl+Enter). Debería imprimir apta:\nprint(votar([\"defectuosa\", \"apta\", \"apta\"]))\n",
         "cases": [
           {
             "args": [
@@ -375,10 +371,10 @@
         }
       },
       "hints": [
-        "Usa max sobre el diccionario conteo, y como regla, el número de votos de cada clase: conteo[e].",
+        "Usa max sobre el diccionario conteo, y como regla, el número de votos de cada clase: key=lambda e: conteo[e].",
         "La línea queda así: return max(conteo, key=lambda e: conteo[e])"
       ],
-      "on_complete": "Ya tienes el corazón de un k-NN: distancia (T1-02), los k más cercanos y el voto. lambda e: conteo[e] es una función de una línea: «dada una clase e, devuelve sus votos»."
+      "on_complete": "Ya tienes el corazón de un k-NN: la distancia (T1-02), los k más cercanos y el voto. max(conteo, key=conteo.get) hace lo mismo sin lambda, por si lo ves en código real."
     }
   ],
   "mastery_trial": {
@@ -402,8 +398,8 @@
     ]
   },
   "debrief": {
-    "what_happened": "Has construido un clasificador k-NN, has caído en la trampa de evaluarlo con sus propios datos (100 %), has hecho una evaluación honesta (75 % con k=1) y has visto cómo k controla el equilibrio entre memorizar (overfitting) y generalizar.",
-    "why": "La fuga de datos es uno de los errores más frecuentes y caros en ML real: el modelo parece excelente en el laboratorio y falla en producción. La disciplina train/validación/test y aplicar las transformaciones aprendidas solo del train son la defensa.",
+    "what_happened": "Has construido un clasificador k-NN (k-Nearest Neighbors), has caído en la trampa de evaluarlo con sus propios datos (100 %), has hecho una evaluación honesta (75 % con k=1) y has visto cómo k controla el equilibrio entre memorizar (overfitting) y generalizar.",
+    "why": "La fuga de datos es uno de los errores más frecuentes y caros en ML (Machine Learning) real: el modelo parece excelente en el laboratorio y falla en producción. La disciplina train/validación/test y aplicar las transformaciones aprendidas solo del train son la defensa.",
     "in_production": "En scikit-learn: train_test_split, un Pipeline con StandardScaler y KNeighborsClassifier, y GridSearchCV con validación cruzada para elegir k sin tocar el test. Con millones de ejemplos, k-NN exacto es lento: se usan índices (KD-tree, Ball-tree) o búsqueda aproximada de vecinos (ANN, Approximate Nearest Neighbors), la misma tecnología que verás en las bases de datos vectoriales del arco RAG (Retrieval-Augmented Generation).",
     "simplifications": [
       "Sin conjunto de validación separado (se elige k mirando el test, y se avisa)",
