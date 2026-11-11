@@ -435,7 +435,7 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 
 **O5-01 · Tres marcos, tres preguntas**
 
-- [NIST AI 100-1: Artificial Intelligence Risk Management Framework (AI RMF 1.0), enero de 2023; en revisión](https://www.nist.gov/itl/ai-risk-management-framework) — NIST · consultada 2026-11-09
+- [NIST AI 100-1: Artificial Intelligence Risk Management Framework (AI RMF 1.0), 26 de enero de 2023; NIST indica que se está revisando dentro del Plan de Acción de IA de la Casa Blanca](https://www.nist.gov/itl/ai-risk-management-framework) — NIST · consultada 2026-11-11
 - [NIST AI 600-1: Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile](https://doi.org/10.6028/NIST.AI.600-1) — NIST, julio de 2024 · consultada 2026-11-06
 - [ISO/IEC 42001:2023 Information technology — Artificial intelligence — Management system](https://www.iso.org/standard/42001) — ISO/IEC JTC 1/SC 42 · consultada 2026-11-09
 - [Reglamento (UE) 2024/1689 (Reglamento de Inteligencia Artificial, AI Act)](https://eur-lex.europa.eu/eli/reg/2024/1689/oj) — EUR-Lex · consultada 2026-11-09
@@ -443,11 +443,12 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 **O5-02 · El AI Act en el taller**
 
 - [Reglamento (UE) 2024/1689 (Reglamento de Inteligencia Artificial, AI Act)](https://eur-lex.europa.eu/eli/reg/2024/1689/oj) — EUR-Lex · consultada 2026-11-09
-- [Reglamento (UE) 2026/1744 (Digital Omnibus sobre IA): aplaza el alto riesgo del anexo III al 2 de diciembre de 2027 y del anexo I al 2 de agosto de 2028; en vigor desde el 27 de julio de 2026](https://artificialintelligenceact.eu/ai-act-explorer/digital-omnibus/) — EUR-Lex; resumen en artificialintelligenceact.eu · consultada 2026-11-09
+- [Reglamento (UE) 2026/1744 (Digital Omnibus sobre IA), de 8 de julio de 2026, publicado en el DOUE el 24 de julio y en vigor desde el 27 de julio de 2026: aplaza el alto riesgo del anexo III al 2 de diciembre de 2027 y del anexo I al 2 de agosto de 2028; nuevas prohibiciones y plazo transitorio del art. 50.2 hasta el 2 de diciembre de 2026 (procedimiento 2025/0359(COD))](https://eur-lex.europa.eu/eli/reg/2026/1744/oj) — EUR-Lex; fechas del procedimiento en el Observatorio Legislativo del Parlamento Europeo (OEIL) · consultada 2026-11-11
+- [Comisión Europea · AI Act Service Desk: calendario de aplicación del AI Act (incluye los cambios del Digital Omnibus)](https://ai-act-service-desk.ec.europa.eu/en/ai-act/timeline/timeline-implementation-eu-ai-act) — Comisión Europea · consultada 2026-11-11
 
 **O5-03 · El registro de riesgos**
 
-- [NIST AI 100-1: Artificial Intelligence Risk Management Framework (AI RMF 1.0), enero de 2023; en revisión](https://www.nist.gov/itl/ai-risk-management-framework) — NIST · consultada 2026-11-09
+- [NIST AI 100-1: Artificial Intelligence Risk Management Framework (AI RMF 1.0), 26 de enero de 2023; NIST indica que se está revisando dentro del Plan de Acción de IA de la Casa Blanca](https://www.nist.gov/itl/ai-risk-management-framework) — NIST · consultada 2026-11-11
 - [ISO/IEC 42001:2023 Information technology — Artificial intelligence — Management system](https://www.iso.org/standard/42001) — ISO/IEC JTC 1/SC 42 · consultada 2026-11-09
 - [Reglamento (UE) 2024/1689 (Reglamento de Inteligencia Artificial, AI Act)](https://eur-lex.europa.eu/eli/reg/2024/1689/oj) — EUR-Lex · consultada 2026-11-09
 
@@ -468,6 +469,7 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 
 - [NIST SP 800-61 Rev. 3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile (abril de 2025)](https://csrc.nist.gov/pubs/sp/800/61/r3/final) — NIST · consultada 2026-11-09
 - [Reglamento (UE) 2016/679 (RGPD), artículo 33: notificación de una violación de la seguridad de los datos personales a la autoridad de control](https://eur-lex.europa.eu/eli/reg/2016/679/oj) — EUR-Lex · consultada 2026-11-09
+- [Propuesta de Reglamento «Digital Omnibus» (COM(2025) 837, procedimiento 2025/0360(COD)): propone, entre otras cosas, cambiar la notificación de violaciones del art. 33 del RGPD. En tramitación, no aprobada a 2026-11-11](https://oeil.europarl.europa.eu/oeil/en/procedure-file?reference=2025/0360(COD)) — Observatorio Legislativo del Parlamento Europeo (OEIL) · consultada 2026-11-11
 - [Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection](https://arxiv.org/abs/2302.12173) — arXiv:2302.12173 (AISec 2023) · consultada 2026-11-06
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
 
@@ -521,7 +523,7 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [The Algorithmic Foundations of Differential Privacy](https://doi.org/10.1561/0400000042) — Foundations and Trends in Theoretical Computer Science 9(3-4) · consultada 2026-11-10
 - [Deep Learning with Differential Privacy (DP-SGD)](https://arxiv.org/abs/1607.00133) — ACM CCS 2016, 308-318 · arXiv:1607.00133 · consultada 2026-11-10
 - [OWASP LLM02:2025 Sensitive Information Disclosure (mitigaciones: privacidad diferencial; enlaza MITRE ATLAS AML.T0024.000 Infer Training Data Membership)](https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/) — OWASP GenAI Security Project · consultada 2026-11-10
-- [CEPD (EDPB) · Dictamen 28/2024 sobre determinados aspectos de protección de datos relacionados con el tratamiento de datos personales en el contexto de los modelos de IA (adoptado el 17 de diciembre de 2024; §43 sobre el anonimato de los modelos)](https://www.edpb.europa.eu/our-work-tools/our-documents/opinion-board-art-64/opinion-282024-certain-data-protection-aspects_en) — Comité Europeo de Protección de Datos · consultada 2026-11-10
+- [CEPD (EDPB) · Dictamen 28/2024 sobre determinados aspectos de protección de datos relacionados con el tratamiento de datos personales en el contexto de los modelos de IA (adoptado el 17 de diciembre de 2024; §43 sobre el anonimato de los modelos)](https://www.edpb.europa.eu/our-work-tools/our-documents/opinion-board-art-64/opinion-282024-certain-data-protection-aspects_en) — Comité Europeo de Protección de Datos · consultada 2026-11-11
 - [Extracting Training Data from Large Language Models](https://arxiv.org/abs/2012.07805) — USENIX Security 2021 · arXiv:2012.07805 · consultada 2026-11-06
 
 ## E3
@@ -529,12 +531,12 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 **E3-01 · Dos evaluaciones, un sistema**
 
 - [Reglamento (UE) 2024/1689 (Reglamento de Inteligencia Artificial, AI Act)](https://eur-lex.europa.eu/eli/reg/2024/1689/oj) — EUR-Lex · consultada 2026-11-09
-- [Reglamento (UE) 2026/1744 (Digital Omnibus sobre IA): aplaza el alto riesgo del anexo III al 2 de diciembre de 2027 y del anexo I al 2 de agosto de 2028; en vigor desde el 27 de julio de 2026](https://artificialintelligenceact.eu/ai-act-explorer/digital-omnibus/) — EUR-Lex; resumen en artificialintelligenceact.eu · consultada 2026-11-09
+- [Reglamento (UE) 2026/1744 (Digital Omnibus sobre IA), de 8 de julio de 2026, publicado en el DOUE el 24 de julio y en vigor desde el 27 de julio de 2026: aplaza el alto riesgo del anexo III al 2 de diciembre de 2027 y del anexo I al 2 de agosto de 2028; nuevas prohibiciones y plazo transitorio del art. 50.2 hasta el 2 de diciembre de 2026 (procedimiento 2025/0359(COD))](https://eur-lex.europa.eu/eli/reg/2026/1744/oj) — EUR-Lex; fechas del procedimiento en el Observatorio Legislativo del Parlamento Europeo (OEIL) · consultada 2026-11-11
 - [Reglamento (UE) 2016/679 (RGPD), artículos 35 (evaluación de impacto relativa a la protección de datos) y 36 (consulta previa)](https://eur-lex.europa.eu/eli/reg/2016/679/oj) — EUR-Lex · consultada 2026-11-10
 
 **E3-02 · Muestra y evidencia**
 
-- [NIST AI 100-1: Artificial Intelligence Risk Management Framework (AI RMF 1.0), enero de 2023; en revisión](https://www.nist.gov/itl/ai-risk-management-framework) — NIST · consultada 2026-11-09
+- [NIST AI 100-1: Artificial Intelligence Risk Management Framework (AI RMF 1.0), 26 de enero de 2023; NIST indica que se está revisando dentro del Plan de Acción de IA de la Casa Blanca](https://www.nist.gov/itl/ai-risk-management-framework) — NIST · consultada 2026-11-11
 - [ISO 19011:2026 Guidelines for auditing management systems (4.ª edición, mayo de 2026; sustituye a la de 2018). Norma de pago: solo se usa su descripción pública](https://www.iso.org/standard/88984.html) — ISO · consultada 2026-11-10
 - [ISO/IEC 42001:2023 Information technology — Artificial intelligence — Management system](https://www.iso.org/standard/42001) — ISO/IEC JTC 1/SC 42 · consultada 2026-11-09
 
