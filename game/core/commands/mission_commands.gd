@@ -132,7 +132,9 @@ static func _hint(c: CommandContext, a: Dictionary) -> CommandResult:
 	if res["ok"]:
 		c.emit("hint.used", {"level": res["level"]})
 	var r := CommandResult.new()
-	r.line(res["text"], "mentor" if res["ok"] else "warn")
+	# Lo dice RONIN (mensaje del mentor), tanto la pista como el aviso de que no hay más.
+	if not res["ok"]:
+		g.runner.mentor_message.emit(res["text"], "warn")
 	return r
 
 

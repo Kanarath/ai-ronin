@@ -66,10 +66,42 @@ static func register(reg: CommandRegistry) -> void:
 	reg.register(Command.new("clear", "Limpia la pantalla del terminal.",
 		func(_ctx: CommandContext, _a: Dictionary) -> CommandResult: return _clear(), "terminal"))
 
+	reg.register(Command.new("efectos", "Activa o quita el efecto de escritura de la consola (on u off).",
+		func(ctx: CommandContext, a: Dictionary) -> CommandResult: return _effects(ctx, a), "terminal")
+		.with_signature(CommandSignature.new()
+			.pos("estado", "on u off", "string", false)
+			.example("efectos off")
+			.example("efectos on")))
+
 
 static func _clear() -> CommandResult:
 	var r := CommandResult.new()
 	r.action = "clear"
+	return r
+
+
+## Preferencia del efecto de escritura; se guarda con el progreso (settings.efectos).
+static func _effects(ctx: CommandContext, a: Dictionary) -> CommandResult:
+	var g: Variant = ctx.shell.get_game()
+	var raw: Variant = a.get("estado")
+	var state := "" if raw == null else str(raw).to_lower()
+	var current := true
+	if g != null:
+		current = bool(g.progress.data.get("settings", {}).get("efectos", true))
+	var r := CommandResult.new()
+	if state.is_empty():
+		r.line("Efecto de escritura: %s. Cámbialo con efectos on o efectos off." % ("activado" if current else "desactivado"), "muted")
+		return r
+	if state != "on" and state != "off":
+		return CommandResult.error("Usa efectos on o efectos off.")
+	var on := state == "on"
+	if g != null:
+		if not g.progress.data.has("settings"):
+			g.progress.data["settings"] = {}
+		g.progress.data["settings"]["efectos"] = on
+		g.save()
+	r.action = "effects_on" if on else "effects_off"
+	r.line("Efecto de escritura %s." % ("activado" if on else "desactivado: el texto aparecerá de golpe"), "muted")
 	return r
 
 

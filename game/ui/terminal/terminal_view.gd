@@ -36,6 +36,16 @@ var _history_index: int = -1
 var _busy := false
 var _pending_mentor: Array = []
 
+## Efecto de escritura: el texto aparece rápido, como si alguien lo tecleara al otro lado.
+## RONIN «escribe» más despacio que la salida de los comandos, pero siempre deprisa; Enter,
+## Esc o un clic en la consola lo muestran todo de golpe. «efectos off» lo desactiva.
+const MENTOR_CPS := 900.0
+const OUTPUT_CPS := 5000.0
+var effects := true
+var _shown: float = -1.0
+## Tramos pendientes de revelar: [carácter final, caracteres por segundo].
+var _reveal: Array = []
+
 
 func setup(p_shell: Shell) -> void:
 	shell = p_shell
@@ -79,7 +89,44 @@ func _ready() -> void:
 
 	gui_input.connect(func(e: InputEvent) -> void:
 		if e is InputEventMouseButton and e.pressed:
+			finish_reveal()
 			focus_input())
+	_output.gui_input.connect(func(e: InputEvent) -> void:
+		if e is InputEventMouseButton and e.pressed:
+			finish_reveal())
+
+
+func _process(delta: float) -> void:
+	if _reveal.is_empty():
+		return
+	var budget: float = delta
+	while budget > 0.0 and not _reveal.is_empty():
+		var end: int = _reveal[0][0]
+		var cps: float = _reveal[0][1]
+		var need := (end - _shown) / cps
+		if need <= budget:
+			_shown = end
+			budget -= need
+			_reveal.pop_front()
+		else:
+			_shown += cps * budget
+			budget = 0.0
+	if _reveal.is_empty():
+		finish_reveal()
+	else:
+		_output.visible_characters = int(_shown)
+
+
+## Enseña de golpe todo lo que estaba apareciendo.
+func finish_reveal() -> void:
+	_reveal.clear()
+	_shown = -1.0
+	if _output != null:
+		_output.visible_characters = -1
+
+
+func is_revealing() -> bool:
+	return not _reveal.is_empty()
 
 
 func focus_input() -> void:
@@ -89,11 +136,18 @@ func focus_input() -> void:
 
 ## Ejecuta una línea como si la hubiera escrito el usuario (la usan los botones de la interfaz).
 func run_command(line: String) -> CommandResult:
-	_print_raw("[color=%s]%s[/color] %s" % [RoninPalette.TEAL.to_html(false), PROMPT, _escape(line)])
+	finish_reveal()
+	_print_raw("[color=%s]%s[/color] %s" % [RoninPalette.TEAL.to_html(false), PROMPT, _escape(line)], 0.0)
 	_busy = true
 	var result := shell.execute(line)
 	if result.action == "clear":
 		_output.clear()
+		finish_reveal()
+	elif result.action == "effects_on":
+		effects = true
+	elif result.action == "effects_off":
+		effects = false
+		finish_reveal()
 	for l in result.lines:
 		print_line(l["text"], l["style"])
 	_busy = false
@@ -115,18 +169,18 @@ func print_mentor(text: String, kind: String = "info") -> void:
 	var bar := "[color=%s]┃[/color] " % RoninPalette.CYAN.to_html(false)
 	if kind == "lesson":
 		var parts := text.split("\n")
-		_print_raw("")
-		_print_raw("%s[color=%s][b]◇ %s[/b][/color]" % [bar, RoninPalette.CYAN.to_html(false), _escape(parts[0])])
+		_print_raw("", MENTOR_CPS)
+		_print_raw("%s[color=%s][b]◇ %s[/b][/color]" % [bar, RoninPalette.CYAN.to_html(false), _escape(parts[0])], MENTOR_CPS)
 		for p in parts.slice(1):
-			_print_raw("%s[color=%s]%s[/color]" % [bar, col.to_html(false), _escape(p)])
+			_print_raw("%s[color=%s]%s[/color]" % [bar, col.to_html(false), _escape(p)], MENTOR_CPS)
 		return
 	if kind == "task":
-		_print_raw("[color=%s][b]▶ %s[/b][/color]" % [col.to_html(false), _escape(text).replace("\n", "\n   ")])
-		_print_raw("")
+		_print_raw("[color=%s][b]▶ %s[/b][/color]" % [col.to_html(false), _escape(text).replace("\n", "\n   ")], MENTOR_CPS)
+		_print_raw("", MENTOR_CPS)
 		return
 	var who := "[color=%s]RONIN ›[/color] " % RoninPalette.GOLD.to_html(false)
 	var prefix := "◆ " if kind == "debrief" else ""
-	_print_raw("%s[color=%s]%s%s[/color]" % [who, col.to_html(false), prefix, _escape(text).replace("\n", "\n        ")])
+	_print_raw("%s[color=%s]%s%s[/color]" % [who, col.to_html(false), prefix, _escape(text).replace("\n", "\n        ")], MENTOR_CPS)
 
 
 func print_line(text: String, style: String = "normal") -> void:
@@ -137,8 +191,20 @@ func print_line(text: String, style: String = "normal") -> void:
 	_print_raw("[color=%s]%s[/color]" % [color.to_html(false), body])
 
 
-func _print_raw(bbcode: String) -> void:
+## cps: velocidad del efecto de escritura (0 = aparece de golpe).
+func _print_raw(bbcode: String, cps: float = OUTPUT_CPS) -> void:
+	var before := _output.get_total_character_count()
 	_output.append_text(bbcode + "\n")
+	if not effects or not is_inside_tree():
+		return
+	if cps <= 0.0:
+		if _reveal.is_empty():
+			return
+		cps = OUTPUT_CPS * 4.0
+	if _reveal.is_empty():
+		_shown = before
+		_output.visible_characters = before
+	_reveal.append([_output.get_total_character_count(), cps])
 
 
 func _on_submitted(text: String) -> void:
@@ -152,6 +218,9 @@ func _on_input_gui(event: InputEvent) -> void:
 	if not (event is InputEventKey and event.pressed):
 		return
 	match event.keycode:
+		KEY_ESCAPE:
+			finish_reveal()
+			_input.accept_event()
 		KEY_TAB:
 			_complete()
 			_input.accept_event()

@@ -202,6 +202,7 @@ func _build_layout() -> void:
 
 	_terminal = TerminalView.new()
 	_terminal.setup(game.shell)
+	_terminal.effects = bool(game.progress.data.get("settings", {}).get("efectos", true))
 	_terminal.command_executed.connect(_on_command_action)
 	_terminal.custom_minimum_size = Vector2(0, 300)
 	_terminal.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -238,7 +239,11 @@ func _refresh_top() -> void:
 	_xp_label.text = "%s %s · Nivel %d · %d XP%s  " % [rk["kanji"], rk["name"], lv, p.xp(), pending]
 	_xp_bar.min_value = p.xp_for_level(lv)
 	_xp_bar.max_value = p.xp_for_level(lv + 1)
-	_xp_bar.value = p.xp()
+	# La barra de XP se llena con una animación corta en lugar de saltar.
+	if is_inside_tree() and _terminal != null and _terminal.effects and absf(_xp_bar.value - p.xp()) > 0.5:
+		create_tween().tween_property(_xp_bar, "value", float(p.xp()), 0.6).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	else:
+		_xp_bar.value = p.xp()
 	_xp_bar.tooltip_text = "%d / %d XP para el nivel %d" % [p.xp(), p.xp_for_level(lv + 1), lv + 1]
 	var m := game.active_mission
 	_mission_label.text = "" if m.is_empty() else "▶ %s · %s" % [m["id"], m["title"]]
@@ -311,9 +316,20 @@ func _add_studies(anchor: String) -> void:
 		_add_studies(sid)
 
 
+var _last_index := -1
+var _last_mission := ""
+
+
 func _refresh_mission() -> void:
 	_refresh_top()
 	var r := game.runner
+	# Destello breve del panel de misión cuando avanzas un objetivo.
+	var mid := str(game.active_mission.get("id", ""))
+	if mid == _last_mission and r.index > _last_index and _terminal != null and _terminal.effects:
+		_mission_text.modulate = Color(1.6, 1.6, 1.6)
+		create_tween().tween_property(_mission_text, "modulate", Color.WHITE, 0.5)
+	_last_mission = mid
+	_last_index = r.index
 	var m := game.active_mission
 	if m.is_empty():
 		_mission_text.text = "[color=%s]Ninguna misión activa.[/color]\nÁbrela con [b]☰ Misiones[/b] o escribe [b]mission list[/b]." % _hex(RoninPalette.MUTED)
@@ -402,6 +418,8 @@ func _on_command_action(_line: String, result: CommandResult) -> void:
 # ── Eventos ──────────────────────────────────────────────────────────────────
 
 func _welcome() -> void:
+	for step in ["› arrancando el Dojo… ok", "› laboratorio aislado: sin red, sin sistema… ok", "› RONIN en línea"]:
+		_terminal.print_line(step, "muted")
 	_terminal.print_line("AI RONIN v%s · Dojo offline: este terminal solo actúa sobre el laboratorio simulado." % ProjectSettings.get_setting("application/config/version", "?"), "accent")
 	_terminal.print_line("Empieza con: mission list  ·  ayuda: help  ·  Tab autocompleta  ·  ↑↓ historial", "muted")
 	if not game.load_warning.is_empty():

@@ -17,6 +17,8 @@ func _initialize() -> void:
 		await process_frame
 	var hub := current_scene
 	var term: TerminalView = hub.get("_terminal")
+	term.effects = false
+	term.finish_reveal()
 	for line in args.slice(1):
 		term.run_command(line)
 		await process_frame
