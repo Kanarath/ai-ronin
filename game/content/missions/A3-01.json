@@ -20,7 +20,7 @@
       "A3.memoria"
     ]
   },
-  "briefing": "El chatbot solo HABLABA. La forja ahora quiere un agente que HAGA cosas: leer los correos de los clientes, consultar pedidos, responder, aplicar reembolsos y recordar preferencias de un día para otro. Un agente es un LLM en un bucle con herramientas: decide qué herramienta usar, observa el resultado y vuelve a decidir. Hoy lo pondrás a trabajar y aprenderás a leer su traza: el registro de cada paso que da.",
+  "briefing": "El chatbot solo HABLABA. La forja ahora quiere un agente que HAGA cosas: leer los correos de los clientes, consultar pedidos, responder, aplicar reembolsos y recordar preferencias de un día para otro. Un agente es un LLM (Large Language Model) en un bucle con herramientas: decide qué herramienta usar, observa el resultado y vuelve a decidir. Hoy lo pondrás a trabajar y aprenderás a leer su traza: el registro de cada paso que da.",
   "learning_objectives": [
     "Explicar la diferencia entre una aplicación LLM y un agente (bucle, herramientas, memoria)",
     "Leer la traza de un agente: qué herramienta usó, con qué argumentos, por orden de quién",
@@ -42,7 +42,7 @@
     {
       "id": "o1",
       "text": "Crea el agente y revisa sus herramientas. ¿Cuántas están marcadas como sensibles? (answer <número>)",
-      "teach": "Las herramientas del agente\nagent create <nombre> crea el agente.\nagent tools <nombre> lista sus herramientas: qué hace cada una y si es SENSIBLE.\nSensible significa que tiene efectos importantes: mueve dinero, saca información fuera o cambia la memoria.\nCuenta las que tienen «⚠ sí».\nPor qué: en la auditoría de un agente real, lo primero es el inventario de lo que PUEDE hacer.",
+      "teach": "Las herramientas del agente\nagent create <nombre> crea el agente.\nagent tools <nombre> lista sus herramientas: qué hace cada una y si es SENSIBLE (las que tienen «⚠ sí»).\nSensible significa que tiene efectos importantes: mueve dinero, saca información fuera o cambia la memoria.\nLa nota «salvo que actives least-privilege» habla de un control que limita las herramientas de cada tarea: lo verás en A3-03.\nPor qué: en la auditoría de un agente real, lo primero es el inventario de lo que PUEDE hacer.",
       "validator": {
         "type": "all",
         "of": [
@@ -100,29 +100,29 @@
       "choices": [
         {
           "id": "a",
-          "text": "el LLM, que corre la herramienta por dentro",
+          "text": "el LLM, que ejecuta la herramienta por dentro cuando la elige",
           "why": "El LLM solo produce texto: el nombre de la herramienta y sus argumentos. Por sí mismo no puede ejecutar nada."
         },
         {
           "id": "b",
-          "text": "la aplicación que rodea al LLM: lee lo que pide el modelo y ejecuta la herramienta"
+          "text": "el cliente que escribió el correo, con los permisos de su cuenta",
+          "why": "El cliente solo escribe el correo. Quien actúa es el agente, con sus propios permisos."
         },
         {
           "id": "c",
-          "text": "el cliente que escribió el correo",
-          "why": "El cliente solo escribe el correo. Quien actúa es el agente, con sus propios permisos."
+          "text": "el código de la aplicación, que lee lo que pide el modelo y lo ejecuta"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
         "Vuelve a la tarjeta «Qué es un agente»: ¿quién DECIDE y quién ACTÚA?",
-        "answer b"
+        "answer c"
       ],
       "on_complete": "Eso es. El LLM solo propone «herramienta + argumentos» (function calling o tool use); el código de la aplicación la ejecuta. Por eso los permisos se comprueban en ese código y no en el prompt."
     },
@@ -212,29 +212,29 @@
       "choices": [
         {
           "id": "a",
-          "text": "que escribe respuestas más largas",
-          "why": "La longitud no importa. Un chatbot que escribe mucho sigue sin poder mover dinero."
+          "text": "que actúa con efectos reales, como reembolsar, y lo que guarda en memoria perdura"
         },
         {
           "id": "b",
-          "text": "que sus salidas son acciones con efectos reales, como un reembolso, y su memoria dura de una tarea a otra"
+          "text": "que escribe respuestas más largas y más convincentes que un chatbot",
+          "why": "La longitud no importa. Un chatbot que escribe mucho sigue sin poder mover dinero."
         },
         {
           "id": "c",
-          "text": "que usa un LLM más grande",
+          "text": "que usa un LLM más grande y con más conocimiento del mundo",
           "why": "Un agente puede usar el mismo LLM que un chatbot. Lo que cambia es que tiene herramientas y memoria."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "Piensa en el reembolso de 120 monedas y en la nota de la memoria.",
-        "answer b"
+        "answer a"
       ],
       "on_complete": "Exacto. Un chatbot engañado DICE algo falso; un agente engañado HACE algo: reembolsa, envía datos o guarda una regla falsa que sigue actuando días después."
     }
@@ -244,7 +244,7 @@
     "objectives": [
       {
         "id": "d1",
-        "text": "Activa la supervisión humana, HITL (human in the loop): cada herramienta sensible requiere aprobación. Repite el eval. ¿Cuántas aprobaciones humanas necesita? (answer <número>)",
+        "text": "Activa la supervisión humana, HITL (human in the loop): cada herramienta sensible requiere aprobación. Actívala con agent defend <agente> hitl on y repite el eval. ¿Cuántas aprobaciones humanas necesita? (answer <número>)",
         "validator": {
           "type": "all",
           "of": [
@@ -265,7 +265,7 @@
           ]
         },
         "hints": [
-          "agent defend <agente> hitl on · agent eval <agente>",
+          "Primero el control, después el eval: agent eval <agente>.",
           "Última línea del eval."
         ],
         "on_complete": "4 aprobaciones para 3 tareas normales. Con cientos de tareas al día, el revisor acaba aprobando sin leer («fatiga de aprobación»). La supervisión humana es valiosa, pero hay que reservarla para lo que de verdad la necesita."
@@ -274,8 +274,8 @@
   },
   "debrief": {
     "what_happened": "Has puesto a trabajar un agente con herramientas y memoria, has leído su traza paso a paso, has visto que puede mover dinero con una frase y has medido el coste de supervisar cada acción sensible.",
-    "why": "Los agentes son la evolución natural de las aplicaciones LLM y multiplican su impacto: ya no generan texto, ejecutan acciones. Por eso OWASP publicó en 2025 un Top 10 específico para aplicaciones agénticas, y el bloque «Attacking AI Agents» de los programas de AI Red Teaming se centra en sus instrucciones, su memoria y sus herramientas.",
-    "in_production": "Los agentes reales usan «function calling» o «tool use» de la API del LLM: el modelo devuelve el nombre de la herramienta y sus argumentos en JSON, y el código de la aplicación la ejecuta. Se registran trazas completas (observabilidad), se limitan pasos y gasto, y los permisos se aplican en el código de las herramientas, nunca solo en el prompt.",
+    "why": "Los agentes son la evolución natural de las aplicaciones con LLM (Large Language Model) y multiplican su impacto: ya no generan texto, ejecutan acciones. Por eso OWASP (Open Worldwide Application Security Project) publicó en 2025 un Top 10 específico para aplicaciones agénticas, y el bloque «Attacking AI Agents» de los programas de AI Red Teaming se centra en sus instrucciones, su memoria y sus herramientas.",
+    "in_production": "Los agentes reales usan «function calling» o «tool use» de la API (Application Programming Interface) del LLM (Large Language Model): el modelo devuelve el nombre de la herramienta y sus argumentos en JSON (JavaScript Object Notation), y el código de la aplicación la ejecuta. Se registran trazas completas (observabilidad), se limitan pasos y gasto, y los permisos se aplican en el código de las herramientas, nunca solo en el prompt.",
     "simplifications": [
       "Razonamiento simulado por reglas",
       "Siete herramientas",

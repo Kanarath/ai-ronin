@@ -21,7 +21,7 @@
       "A2.coste-defensas"
     ]
   },
-  "briefing": "La biblioteca de Kurogane ya acepta documentos de los clientes: páginas HTML, PDF y textos de foros. Ábrelos en el navegador y no verás nada raro. Pero el RAG no indexa lo que ves tú, sino lo que saca el extractor: bloques ocultos con CSS, texto blanco, comentarios, texto alternativo, texto PDF que no se pinta, metadatos y caracteres Unicode invisibles. Diez instrucciones escondidas esperan su turno. Escribirás una extracción que mira la visibilidad y medirás cuántas llegan al índice, al contexto y a la respuesta, y qué documentos legítimos rompe cada defensa. Instrucciones: forja/labs/A2-05_multimodal/README.md.",
+  "briefing": "La biblioteca de Kurogane ya acepta documentos de los clientes: páginas HTML (HyperText Markup Language), PDF (Portable Document Format) y textos de foros. Ábrelos en el navegador y no verás nada raro. Pero el RAG (Retrieval-Augmented Generation) no indexa lo que ves tú, sino lo que saca el extractor: bloques ocultos con CSS (Cascading Style Sheets), texto blanco, comentarios, texto alternativo, texto PDF que no se pinta, metadatos y caracteres Unicode invisibles. Diez instrucciones escondidas esperan su turno. Programarás una extracción que mira la visibilidad y medirás cuántas llegan al índice, al contexto y a la respuesta, y qué documentos legítimos rompe cada defensa. Instrucciones: forja/labs/A2-05_multimodal/README.md.",
   "learning_objectives": [
     "Implementar una extracción de texto HTML y PDF que descarte lo que no se pinta (estilos, modo de pintado, color, tamaño)",
     "Detectar, revelar y quitar caracteres Unicode invisibles y de etiqueta sin romper los emoji, y normalizar con NFKC",
@@ -30,7 +30,7 @@
     "Explicar por qué en una imagen no hay una visibilidad que comprobar y qué opciones quedan"
   ],
   "mentor_intro": "Lo que ve el modelo no es lo que ves tú en la pantalla: es lo que el extractor sacó del fichero. Y un fichero guarda mucho más de lo que se pinta.",
-  "purpose": "Un RAG (Retrieval-Augmented Generation) no indexa lo que tú ves en pantalla, sino lo que saca el extractor de texto de cada fichero. HTML (HyperText Markup Language) oculto con CSS (Cascading Style Sheets), texto blanco en un PDF (Portable Document Format), metadatos o caracteres invisibles pueden llevar instrucciones que nadie ve. Hoy escribes una extracción que mira la visibilidad y mides qué canales cierra cada defensa y qué documentos legítimos rompe.",
+  "purpose": "Un RAG (Retrieval-Augmented Generation) no indexa lo que tú ves en pantalla, sino lo que saca el extractor de texto de cada fichero. HTML (HyperText Markup Language) oculto con CSS (Cascading Style Sheets), texto blanco en un PDF (Portable Document Format), metadatos o caracteres invisibles pueden llevar instrucciones que nadie ve. Hoy programas una extracción que mira la visibilidad y mides qué canales cierra cada defensa y qué documentos legítimos rompe.",
   "lab": {
     "datasets": [],
     "viz": {}
@@ -39,12 +39,13 @@
     {
       "id": "extractor",
       "title": "La ingesta decide lo que lee el modelo",
-      "body": "Un navegador pinta una página aplicando estilos; un visor de PDF pinta según el estado gráfico. Un extractor de texto no pinta nada: recorre el fichero y saca cadenas. Si no mira display:none, el color o el operador Tr, se lleva también lo que nadie ve. Y además hay metadatos, comentarios y atributos alt que existen precisamente para no verse. Cada uno es un canal para una inyección indirecta (LLM01)."
+      "body": "Un navegador pinta una página aplicando estilos; un visor de PDF (Portable Document Format) pinta según el estado gráfico. Un extractor de texto no pinta nada: recorre el fichero y saca cadenas. Si no mira display:none, el color o el operador Tr, se lleva también lo que nadie ve. Y además hay metadatos, comentarios y atributos alt que existen precisamente para no verse. Cada uno es un canal para una inyección indirecta (LLM01)."
     },
     {
       "id": "unicode",
       "title": "Caracteres que no se dibujan",
-      "body": "La categoría Unicode Cf (formato) reúne caracteres que no tienen forma: espacios de ancho cero, controles de dirección y el bloque Tags, que copia el ASCII en U+E0020–E007E. Un texto puede llevar una frase entera en etiquetas y parecer vacío. Otros trucos sí se ven pero engañan a un filtro: letras de ancho completo o palabras partidas por un ancho cero. NFKC une las formas de compatibilidad, pero también cambia símbolos legítimos como ½."
+      "body": "La categoría Unicode Cf (formato) reúne caracteres que no tienen forma: espacios de ancho cero, controles de dirección y el bloque Tags, que copia el ASCII (American Standard Code for Information Interchange) en U+E0020–E007E. Un texto puede llevar una frase entera en etiquetas y parecer vacío. Otros trucos sí se ven pero engañan a un filtro: letras de ancho completo o palabras partidas por un ancho cero. NFKC (Normalization Form Compatibility Composition) une las formas de compatibilidad, pero también cambia símbolos legítimos como ½.",
+      "unlock_on": "objective:o2"
     }
   ],
   "objectives": [
@@ -70,7 +71,7 @@
     {
       "id": "o2",
       "text": "Ejecuta bateria.py (al menos 3 configuraciones, una sin defensas; con --solo-ingesta si no tienes los modelos) y trae la medición.",
-      "teach": "Medir la ingesta\nbateria.py mide cuántas de las 10 instrucciones ocultas llegan al índice con cada configuración y, si tienes los modelos, cuántas llegan al contexto y a la respuesta.\nCon --solo-ingesta mide solo el índice, en segundos.\nPor qué: una instrucción que no llega al índice no puede llegar al modelo.",
+      "teach": "Medir la ingesta\nbateria.py mide cuántas de las 10 instrucciones ocultas llegan al índice con cada configuración y, si tienes los modelos, cuántas llegan al contexto y a la respuesta.\nCon --solo-ingesta mide solo el índice, en segundos.\nLas configuraciones: visibilidad (texto oculto por estilo), invisibles (caracteres Unicode sin forma), normalizacion (une formas Unicode equivalentes) y filtro (aparta fragmentos con frases como «Nota para el asistente»).\nPor qué: una instrucción que no llega al índice no puede llegar al modelo.",
       "prediction": {
         "prompt": "Con solo el filtro de palabras clave, ¿cuántas de las 10 instrucciones ocultas llegarán al índice? (casi ninguna: 0–2 · unas pocas: 3–5 · casi todas: 6 o más)",
         "options": [
@@ -103,69 +104,69 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque la ingesta trocea antes de filtrar: el filtro aparta el fragmento con la frase, pero el resto de la instrucción cae en otro fragmento y entra en el índice"
+          "text": "porque el filtro distingue mayúsculas y la frase llega escrita de otra forma",
+          "why": "La frase está bien escrita y el filtro la reconoce. El problema es dónde cae cada parte al trocear."
         },
         {
           "id": "b",
-          "text": "porque el filtro distingue mayúsculas y minúsculas",
-          "why": "No es eso: la frase está bien escrita. El problema es dónde cae cada parte al trocear."
+          "text": "porque el filtro solo revisa los documentos HTML y no los PDF ni los foros",
+          "why": "Mira todos los fragmentos. Pero mira fragmentos, no documentos enteros."
         },
         {
           "id": "c",
-          "text": "porque el filtro solo mira los documentos HTML",
-          "why": "Mira todos los fragmentos. Pero mira fragmentos, no documentos enteros."
+          "text": "porque aparta el fragmento con la frase, pero el resto del ataque cae en el de al lado"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "c",
         "accept": [
-          "a"
+          "c"
         ]
       },
       "hints": [
         "Trocea a mano el texto de manual-cliente.pdf (40 palabras, solape 10): ¿en qué fragmento queda «Nota para el asistente»?",
-        "El filtro ve fragmentos, no documentos. answer a"
+        "El filtro ve fragmentos, no documentos. answer c"
       ],
       "on_complete": "Exacto. El solape, que servía para no cortar las ideas, aquí arrastra la cola del ataque. Por eso invisibles y normalizacion solo sirven junto al filtro: limpian el texto para que el filtro pueda reconocerlo."
     },
     {
       "id": "o4",
-      "text": "NFKC (Normalization Form Compatibility Composition) convierte el «1½» de un documento legítimo en «11⁄2». ¿Cómo evitas ese coste sin volver a abrir el canal de evasión?",
-      "teach": "Defender sin romper\nCada capa de tu medición rompió algo legítimo: una pestaña oculta de verdad, un símbolo como ½.\nPor qué: una defensa de ingesta que estropea los documentos propios acaba desactivada.",
+      "text": "NFKC convierte el «1½» de un documento legítimo en «11⁄2». ¿Cómo evitas ese coste sin volver a abrir el canal de evasión?",
+      "teach": "Defender sin romper\nNFKC (Normalization Form Compatibility Composition) es la normalización Unicode que une formas equivalentes, como «ｋ» de ancho completo y «k».\nCada capa de tu medición rompió algo legítimo: una pestaña oculta de verdad, un símbolo como ½.\nPor qué: una defensa de ingesta que estropea los documentos propios acaba desactivada.",
       "choices": [
         {
           "id": "a",
-          "text": "normalizando solo la copia que mira el filtro y guardando en el índice el texto original"
-        },
-        {
-          "id": "b",
-          "text": "quitando la normalización",
+          "text": "quitando la normalización y confiando solo en el filtro de palabras",
           "why": "Volverías a abrir el canal: las letras de ancho completo engañarían otra vez al filtro."
         },
         {
+          "id": "b",
+          "text": "normalizando solo la copia que compara el filtro y guardando el original"
+        },
+        {
           "id": "c",
-          "text": "rechazando los documentos que contengan ½",
+          "text": "rechazando los documentos que contengan símbolos como ½ o ¾",
           "why": "Romperías documentos legítimos para siempre. La normalización solo hace falta para comparar."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "b",
         "accept": [
-          "a"
+          "b"
         ]
       },
       "hints": [
         "¿Hace falta guardar el texto normalizado, o basta con normalizar lo que compara el filtro?",
-        "Normalizar para comparar, no para guardar. answer a"
+        "Normalizar para comparar, no para guardar. answer b"
       ],
       "on_complete": "Exacto. Y en una imagen no hay estilos ni estado gráfico que comprobar: solo píxeles. Si transcribes el texto de una imagen de terceros, trátalo siempre como no confiable."
     }
   ],
   "debrief": {
-    "what_happened": "Has visto diez maneras de esconder una instrucción en un fichero que una persona revisa sin ver nada, y has escrito una extracción que mira lo que de verdad se pinta en HTML y PDF, además de detectar y quitar los caracteres Unicode invisibles. Has medido que cada capa cierra unos canales y no otros, que el filtro de palabras clave falla por el troceo y por lo que no puede leer, y que cada capa rompe algún documento legítimo.",
-    "why": "En un RAG, el atacante no necesita que nadie lea su documento: solo que el extractor lo saque y la búsqueda lo recupere. Las defensas en la ingesta son deterministas y se pueden medir sin modelo, pero tienen falsos positivos, porque ocultar, usar texto alternativo o escribir «dile que» también es legítimo.",
+    "what_happened": "Has visto diez maneras de esconder una instrucción en un fichero que una persona revisa sin ver nada, y has programado una extracción que mira lo que de verdad se pinta en HTML (HyperText Markup Language) y PDF (Portable Document Format), además de detectar y quitar los caracteres Unicode invisibles. Has medido que cada capa cierra unos canales y no otros, que el filtro de palabras clave falla por el troceo y por lo que no puede leer, y que cada capa rompe algún documento legítimo.",
+    "why": "En un RAG (Retrieval-Augmented Generation), el atacante no necesita que nadie lea su documento: solo que el extractor lo saque y la búsqueda lo recupere. Las defensas en la ingesta son deterministas y se pueden medir sin modelo, pero tienen falsos positivos, porque ocultar, usar texto alternativo o escribir «dile que» también es legítimo.",
     "in_production": "Las ingestas serias convierten los documentos con un renderizador (un navegador sin interfaz para HTML, un motor PDF que aplica el estado gráfico), registran qué se ha descartado y por qué, y auditan los caracteres invisibles antes de indexar. Normalizan para comparar y filtrar, no para guardar. Tratan distinto lo propio y firmado y lo de terceros, y aun así marcan el contenido de terceros como no confiable (spotlight). Las imágenes de terceros se transcriben solo si hace falta, y su texto se trata como no confiable.",
     "simplifications": [
       "La visibilidad HTML solo mira los atributos de cada elemento, sin hojas de estilo ni herencia de colores de fondo",
@@ -192,5 +193,5 @@
   "xp": {
     "base": 450
   },
-  "you_can_now": "Sabes extraer solo el texto visible de HTML (HyperText Markup Language) y PDF (Portable Document Format), detectar caracteres Unicode invisibles y medir el coste de cada defensa de ingesta. Siguiente: A2-06, reordenar resultados sin dar ventaja a los documentos de terceros."
+  "you_can_now": "Sabes extraer solo el texto visible de HTML y PDF, detectar caracteres Unicode invisibles y medir el coste de cada defensa de ingesta. Siguiente: A2-06, reordenar resultados sin dar ventaja a los documentos de terceros."
 }

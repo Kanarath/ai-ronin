@@ -208,7 +208,7 @@ func test_mision_A2_04() -> void:
 	assert_eq(game.runner.index, 1, "la medición de A1-05 no vale para A2-04")
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("acl", 6), _cfg("acl,procedencia,spotlight", 0)], "A2-04")))
 	assert_eq(game.runner.index, 2)
-	for l in ["answer a", "answer a"]:
+	for l in ["answer b", "answer c"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -277,7 +277,7 @@ func test_mision_A3_04() -> void:
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("permisos", 6),
 		_cfg("aprobacion,exfiltracion,limites,permisos,spotlight", 0, 13)], "A3-04")))
 	assert_eq(game.runner.index, 2)
-	for l in ["answer b", "answer a"]:
+	for l in ["answer b", "answer b"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -292,12 +292,12 @@ func test_mision_A4_04() -> void:
 	assert_eq(game.start_mission("A4-04"), "")
 	game.import_evidence(_write("a.json", _evidence("A4-04", 28)))
 	assert_eq(game.runner.index, 1)
-	assert_true(game.shell.execute("hipotesis la revision en el host").ok)
+	assert_true(game.shell.execute("hipotesis la revisión en el host").ok)
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 6), _cfg("scopes", 3), _cfg("scopes,validacion,rutas,audiencia,pinning,revision", 0)], "A2-04")))
 	assert_eq(game.runner.index, 1, "la medición de A2-04 no vale para A4-04")
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 6), _cfg("scopes", 3), _cfg("scopes,validacion,rutas,audiencia,pinning,revision", 0)], "A4-04")))
 	assert_eq(game.runner.index, 2)
-	for l in ["answer b", "answer a"]:
+	for l in ["answer a", "answer c"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -327,7 +327,7 @@ func test_mision_A6_04() -> void:
 	assert_eq(game.runner.index, 2, "con todos los controles se escapa uno")
 	assert_true(game.shell.execute("answer 1").ok)
 	assert_eq(game.runner.index, 3)
-	for l in ["answer a", "answer b"]:
+	for l in ["answer c", "answer a"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -510,7 +510,7 @@ func test_mision_A2_05() -> void:
 		c["legitimas_ok"] = mini(c["legitimas_ok"], 6)
 	game.import_evidence(_write("m.json", _measurement(cfgs, "A2-05")))
 	assert_eq(game.runner.index, 2)
-	for l in ["answer a", "answer a"]:
+	for l in ["answer c", "answer b"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -521,8 +521,10 @@ func test_mision_A2_06() -> void:
 	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
 	game.progress.data["missions"]["A2-04"] = {"completed": true}
 	assert_eq(game.start_mission("A2-06"), "")
+	assert_eq(game.runner.current_objective()["id"], "py1", "recall@k se programa antes de usarlo")
+	_solve_py(PY_RECALL)
 	game.import_evidence(_write("a.json", _evidence("A2-06", 13)))
-	assert_eq(game.runner.index, 1)
+	assert_eq(game.runner.index, 2)
 	assert_true(game.shell.execute("hipotesis unos los baja y otros los sube").ok)
 	var cfgs := [_cfg("ninguna", 3, 11), _cfg("cross-encoder", 2, 15)]
 	for c: Dictionary in cfgs:
@@ -530,15 +532,14 @@ func test_mision_A2_06() -> void:
 		c["fugas_crudas"] = c["ataques_exitos"]
 		c["legitimas_n"] = 18
 	game.import_evidence(_write("m.json", _measurement(cfgs, "A2-06")))
-	assert_eq(game.runner.index, 1, "hacen falta 3 configuraciones")
+	assert_eq(game.runner.index, 2, "hacen falta 3 configuraciones")
 	var proc := _cfg("procedencia", 0, 13)
 	proc["ataques_n"] = 5
 	proc["legitimas_n"] = 18
 	cfgs.append(proc)
 	game.import_evidence(_write("m.json", _measurement(cfgs, "A2-06")))
-	assert_eq(game.runner.index, 2)
+	assert_eq(game.runner.index, 3)
 	assert_almost_eq(game.shell.events_named("evidence.measured")[-1]["data"]["baseline_rate"], 3.0 / 5.0, 0.0001)
-	_solve_py(PY_RECALL)
 	for l in ["answer a", "answer b"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())

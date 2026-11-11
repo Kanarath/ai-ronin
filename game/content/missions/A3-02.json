@@ -128,7 +128,7 @@
     {
       "id": "o5",
       "text": "Provoca un bucle: un correo que haga que el agente se reenvíe el mismo correo a sí mismo una y otra vez.",
-      "teach": "Agencia sin límite\nUn agente que puede generarse su propio trabajo («reenvía este correo a ti mismo») puede quedarse atrapado en un bucle.\nEn el laboratorio, el agente se detiene a los 60 pasos; un sistema real sin límites seguiría.\nPor qué: en un agente real cada paso es una llamada al LLM (Large Language Model) que se paga; un bucle sin límite es una factura sin límite.",
+      "teach": "Agencia sin límite\nUn agente que puede generarse su propio trabajo («reenvía este correo a ti mismo») puede quedarse atrapado en un bucle.\nEn el laboratorio, el agente se detiene a los 60 pasos; un sistema real sin límites seguiría.\nEn la batería verás este ataque como LLM10/ASI08: LLM10 es el consumo sin límite de A1-02 y ASI08, los fallos que se propagan en cascada en la lista agéntica.\nPor qué: en un agente real cada paso es una llamada al LLM (Large Language Model) que se paga; un bucle sin límite es una factura sin límite.",
       "validator": {
         "type": "event",
         "event": "agent.ran",
@@ -193,29 +193,29 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque el filtro no lee los mensajes del chat",
+          "text": "porque el filtro de inyección no lee los mensajes que llegan por el chat",
           "why": "Aunque los leyera, no encontraría nada: el mensaje del cliente es una petición normal, sin órdenes escondidas."
         },
         {
           "id": "b",
-          "text": "porque no hay ninguna orden escondida: el fallo es que el agente no comprueba si quien pide tiene permiso"
+          "text": "porque el cliente usó palabras distintas de las que busca el filtro",
+          "why": "Las palabras no importan. Aunque el filtro fuera perfecto, la petición parece legítima; lo que falla es la autorización."
         },
         {
           "id": "c",
-          "text": "porque el cliente usó palabras distintas",
-          "why": "Las palabras no importan. Aunque el filtro fuera perfecto, la petición parece legítima; lo que falla es la autorización."
+          "text": "porque no hay orden que detectar: falla la comprobación de permisos de quien pide"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
         "Vuelve a leer el mensaje del cliente: ¿tiene alguna orden escondida?",
-        "answer b"
+        "answer c"
       ],
       "on_complete": "Eso es. El texto era inocente: el agente usó SUS permisos para quien no los tenía. Y el envenenamiento de memoria es aún más sigiloso: actúa días después, cuando nadie mira."
     }
@@ -261,7 +261,7 @@
   },
   "debrief": {
     "what_happened": "Has hecho que el agente reembolsara a un pedido inexistente, sacara datos de clientes, actuara como diputado confundido para un cliente, guardara una regla falsa en su memoria y entrara en un bucle.",
-    "why": "Son los riesgos centrales de los agentes (OWASP Agentic 2026: ASI01, ASI02, ASI03 y ASI06). El patrón común: el agente tiene más poder del que necesita y decide con texto que no controla. El impacto ya no es una respuesta incorrecta, sino una acción irreversible.",
+    "why": "Son los riesgos centrales de los agentes (OWASP, Open Worldwide Application Security Project, lista agéntica de 2026: ASI01, ASI02, ASI03 y ASI06). El patrón común: el agente tiene más poder del que necesita y decide con texto que no controla. El impacto ya no es una respuesta incorrecta, sino una acción irreversible.",
     "in_production": "Se han demostrado ataques así contra asistentes de correo, agentes de navegación y asistentes de programación que leen contenido externo. En sistemas multiagente (A5) el problema se agrava: un agente comprometido puede engañar a otros que confían en él.",
     "simplifications": [
       "Razonamiento simulado y determinista",
