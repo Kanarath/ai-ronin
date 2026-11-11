@@ -54,7 +54,7 @@
     {
       "id": "o1",
       "text": "Implementa las ocho funciones de evasion.py hasta que pasen los 16 tests y trae la evidencia.",
-      "teach": "Gradiente respecto a la entrada\nEl trabajo de este paso es fuera del Dojo, en Python de verdad: abre forja/labs/E2-01_evasion/README.md, crea el entorno e implementa las funciones de evasion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y aquí la traes con evidence import.\nCon P = softmax(XW + b), el gradiente de la entropía cruzada respecto a los logits es P − onehot(y). Por la regla de la cadena, respecto a la entrada es (P − onehot(y)) · Wᵀ: la cuenta de T4-02 para los pesos, pero multiplicando por los pesos en lugar de por la entrada.\nPor qué: el atacante usa la misma herramienta que el entrenamiento, solo que la apunta a la entrada.",
+      "teach": "Gradiente respecto a la entrada\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E2-01_evasion/README.md e implementa evasion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nCon P = softmax(XW + b), el gradiente de la entropía cruzada respecto a los logits es P − onehot(y). Por la regla de la cadena, respecto a la entrada es (P − onehot(y)) · Wᵀ: la cuenta de T4-02 para los pesos, pero multiplicando por los pesos en lugar de por la entrada.\nPor qué: el atacante usa la misma herramienta que el entrenamiento, solo que la apunta a la entrada.",
       "validator": {
         "type": "event",
         "event": "evidence.imported",
@@ -72,33 +72,33 @@
     },
     {
       "id": "c1",
-      "text": "En FGSM (Fast Gradient Sign Method), ¿qué se hace con el gradiente de la pérdida respecto a la entrada?",
+      "text": "En FGSM, ¿qué se hace con el gradiente de la pérdida respecto a la entrada?",
       "choices": [
         {
           "id": "a",
-          "text": "se resta a los pesos para entrenar",
-          "why": "Eso es el descenso por gradiente de T4. FGSM (Fast Gradient Sign Method) no toca los pesos: cambia la imagen."
+          "text": "se suma su signo, por epsilon, a cada píxel: la pérdida sube"
         },
         {
           "id": "b",
-          "text": "se mueve cada píxel epsilon en la dirección del signo del gradiente, para que la pérdida suba"
+          "text": "se resta a los pesos, como en el descenso por gradiente de T4",
+          "why": "Eso es el descenso por gradiente de T4. FGSM no toca los pesos: cambia la imagen."
         },
         {
           "id": "c",
-          "text": "se mueve cada píxel en contra del gradiente, para que la pérdida baje",
+          "text": "se resta a cada píxel, en contra del gradiente, para que la pérdida baje",
           "why": "Así el modelo acertaría más. El atacante quiere que se equivoque: sube la pérdida."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "Lee la tarjeta FGSM: ¿el atacante quiere que la pérdida suba o que baje?",
-        "answer b"
+        "answer a"
       ],
       "on_complete": "Eso es. La misma derivada que usaste para aprender, mirada desde el otro lado."
     },
@@ -134,7 +134,7 @@
     {
       "id": "o3",
       "text": "Compara las configuraciones de tu batería. ¿Qué cifra baja el detector y cuál no?",
-      "teach": "Lo que falla frente a lo que pasa\n«El modelo falla» cuenta los ejemplos atacados mal clasificados; «éxito», los que además no marca el detector. El entrenamiento adversario baja la primera cifra; el detector, solo la segunda.\nY el detector paga en «limpias bien»: cada imagen normal marcada es un albarán rechazado.\nPor qué: cada defensa se mide con la cifra que de verdad cambia y con lo que le cuesta al uso normal.",
+      "teach": "Lo que falla frente a lo que pasa\n«El modelo falla» cuenta los ejemplos atacados que el modelo clasifica mal; «éxito», los que además el detector no marca.\nPiensa qué toca cada defensa: el entrenamiento adversario cambia el modelo; el detector no lo cambia, solo rechaza entradas.\nY el detector paga en «limpias bien»: cada imagen normal marcada es un albarán legítimo rechazado.\nPor qué: cada defensa se mide con la cifra que de verdad cambia y con lo que le cuesta al uso normal.",
       "validator": {
         "type": "answer",
         "expected": "c",
@@ -149,56 +149,56 @@
       "choices": [
         {
           "id": "a",
-          "text": "baja las dos",
+          "text": "baja las dos cifras, porque el modelo se equivoca menos",
           "why": "El detector no cambia el modelo: solo rechaza entradas."
         },
         {
           "id": "b",
-          "text": "baja «el modelo falla»",
-          "why": "Eso lo baja el entrenamiento adversario, que cambia el modelo."
+          "text": "baja «el modelo falla», pero no «éxito»",
+          "why": "Eso lo hace el entrenamiento adversario, que cambia el modelo. El detector solo rechaza entradas."
         },
         {
           "id": "c",
-          "text": "baja «éxito» (los que engañan y no se marcan), pero no «el modelo falla»"
+          "text": "baja «éxito», pero no «el modelo falla»"
         }
       ],
       "on_complete": "Eso es. Y cada defensa tiene su precio: el adversario, algo de precisión limpia y el doble de cálculo; el detector, imágenes normales rechazadas."
     },
     {
       "id": "o4",
-      "text": "¿Por qué la robustez se mide contra el ataque más fuerte y no contra FGSM (Fast Gradient Sign Method)?",
+      "text": "¿Por qué la robustez se mide contra el ataque más fuerte y no contra FGSM?",
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "b",
         "accept": [
-          "a"
+          "b"
         ]
       },
       "hints": [
         "Carlini y Wagner (2017) rompieron diez detectores incorporándolos a la pérdida del atacante.",
-        "answer a"
+        "answer b"
       ],
       "teach": "Quién conoce la defensa\nUn atacante adaptativo conoce la defensa y la incluye en su ataque.\nUn atacante sin los pesos puede entrenar su propia copia y atacarla: los ejemplos adversarios a menudo engañan también al original (transferencia).\nPor qué: la robustez de un modelo en producción se mide contra el atacante más fuerte razonable, no contra el más fácil.",
       "choices": [
         {
           "id": "a",
-          "text": "porque FGSM (Fast Gradient Sign Method) da un solo paso, y un atacante adaptativo que conoce la defensa la incorpora a su ataque"
-        },
-        {
-          "id": "b",
-          "text": "porque FGSM (Fast Gradient Sign Method) no funciona contra modelos lineales",
+          "text": "porque FGSM no funciona contra modelos lineales como este",
           "why": "Funciona muy bien: lo acabas de medir."
         },
         {
+          "id": "b",
+          "text": "porque un atacante real puede adaptar su ataque a la defensa"
+        },
+        {
           "id": "c",
-          "text": "porque los atacantes reales nunca tienen el modelo",
+          "text": "porque los atacantes reales nunca tienen acceso al modelo",
           "why": "Sin los pesos pueden entrenar una copia y atacarla: los ejemplos se transfieren (E2-02)."
         }
       ],
       "on_complete": "Eso es: una defensa que solo aguanta al atacante más fácil no está demostrada."
     }
   ],
-  "you_can_now": "Sabes calcular el gradiente respecto a la entrada, construir ejemplos adversarios con FGSM (Fast Gradient Sign Method) y medir el precio de dos defensas. Siguiente: E2-02, robar el modelo a través de su API (Application Programming Interface), o E2-03, saber quién estaba en sus datos.",
+  "you_can_now": "Sabes calcular el gradiente respecto a la entrada, construir ejemplos adversarios con FGSM y medir el precio de dos defensas. Siguiente: E2-02, robar el modelo a través de su API (Application Programming Interface), o E2-03, saber quién estaba en sus datos.",
   "debrief": {
     "what_happened": "Has entrenado un clasificador, lo has engañado con FGSM (Fast Gradient Sign Method) y has medido la caída de la precisión frente a epsilon. Después has medido dos defensas: el entrenamiento adversario mejora algo la precisión bajo ataque y el detector rechaza parte de los ejemplos atacados, y las dos cuestan precisión limpia, rechazos o tiempo.",
     "why": "Un clasificador decide con una combinación de miles de píxeles. Si cada píxel se mueve un poco en la dirección que más empeora la decisión, los efectos se suman. La vulnerabilidad no es un fallo de implementación: es una propiedad de cómo generalizan estos modelos. Por eso ninguna defensa barata la elimina.",

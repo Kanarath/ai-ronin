@@ -45,7 +45,7 @@
     {
       "id": "atipicos",
       "title": "Un peso grande lo estropea todo",
-      "body": "Con una sola escala por matriz, un peso atípico de 4.0 entre pesos de 0.02 obliga a escalones de 0.016: casi todos los pesos normales caen en 2 o 3 escalones y pierden casi toda su información. Los modelos grandes tienen estos atípicos (LLM.int8(), 2022). La solución de GGUF: bloques de 32 pesos, cada uno con su escala. El atípico solo estropea su bloque.",
+      "body": "Con una sola escala por matriz, un peso atípico de 4.0 entre pesos de 0.02 obliga a escalones de 0.016: casi todos los pesos normales caen en 2 o 3 escalones y pierden casi toda su información. Los modelos grandes tienen estos atípicos (LLM.int8(), 2022). La solución de GGUF: bloques de 32 pesos, cada uno con su escala de 16 bits (así guarda el formato Q8_0 sus enteros de 8 bits). El atípico solo estropea su bloque.",
       "unlock_on": "objective:o1"
     },
     {
@@ -59,12 +59,12 @@
     {
       "id": "py1",
       "text": "Antes del laboratorio, la idea en pequeño: abre el editor con py, completa la función perplejidad y compruébala con py check.",
-      "teach": "La perplejidad, con tus manos\nUn modelo da a cada token de un texto una probabilidad; su logaritmo es la log-probabilidad (siempre ≤ 0).\nPerplejidad = exp(−media de las log-probabilidades). Si el modelo diera 1/4 a cada token, valdría 4: «duda entre 4 opciones».\nEn el Dojo, math.exp(x) calcula e elevado a x (después de import math).\nPor qué: es el número con el que compararás el modelo cuantizado con el original; si apenas sube, la cuantización conserva lo que el modelo sabe.",
+      "teach": "La perplejidad, con tus manos\nUn modelo da a cada token de un texto una probabilidad; su logaritmo es la log-probabilidad (siempre ≤ 0).\nPerplejidad = exp(−media de las log-probabilidades), como en la tarjeta.\nEn el Dojo, math.exp(x) calcula e elevado a x (después de import math).\nPor qué: es el número con el que compararás el modelo cuantizado con el original; si apenas sube, la cuantización conserva lo que el modelo sabe.",
       "py_exercise": {
         "id": "E1-02-perplejidad",
         "title": "perplejidad(log_probs): exp(-media)",
         "function": "perplejidad",
-        "starter": "# Ejercicio E1-02 · La perplejidad\n# log_probs es una lista de log-probabilidades (logaritmo natural), una por token.\n# La perplejidad es exp(-media). La media ya está calculada: falta la última línea.\nimport math\n\ndef perplejidad(log_probs):\n    media = sum(log_probs) / len(log_probs)\n    return media   # ← cambia esta línea\n\n# Tres tokens con probabilidad 1/4 cada uno: debería imprimir 4.0 (o casi)\nprint(perplejidad([math.log(0.25), math.log(0.25), math.log(0.25)]))\n",
+        "starter": "# E1-02 · Perplejidad = exp(-media de log_probs), una log-probabilidad por token.\n# La media ya está calculada: falta la última línea.\nimport math\n\ndef perplejidad(log_probs):\n    media = sum(log_probs) / len(log_probs)\n    return media   # ← cambia esta línea\n\n# Tres tokens con probabilidad 1/4 cada uno: debería imprimir 4.0 (o casi)\nprint(perplejidad([math.log(0.25), math.log(0.25), math.log(0.25)]))\n",
         "cases": [
           {
             "args": [
@@ -125,7 +125,7 @@
     {
       "id": "o1",
       "text": "Implementa las siete funciones de cuantizacion.py hasta que pasen los 12 tests y trae la evidencia.",
-      "teach": "Cuidado con los tipos\nEl trabajo de este paso es fuera del Dojo, en Python de verdad: abre forja/labs/E1-02_cuantizacion/README.md, crea el entorno e implementa las funciones de cuantizacion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y aquí la traes con evidence import.\nUn int8 solo llega a 127: si restas el punto cero sin pasar antes a float32, la resta se desborda y da basura sin ningún error. Y torch.round redondea los .5 al par (2.5 → 2), como el redondeo bancario: los tests lo tienen en cuenta.\nPor qué: estos errores silenciosos son los que estropean un modelo cuantizado sin que nada avise.",
+      "teach": "Cuidado con los tipos\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E1-02_cuantizacion/README.md e implementa cuantizacion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUn int8 solo llega a 127: si restas el punto cero sin pasar antes a float32, la resta se desborda y da basura sin ningún error. Y torch.round redondea los .5 al par (2.5 → 2), como el redondeo bancario: los tests lo tienen en cuenta.\nPor qué: estos errores silenciosos son los que estropean un modelo cuantizado sin que nada avise.",
       "validator": {
         "type": "event",
         "event": "evidence.imported",
@@ -147,35 +147,35 @@
       "choices": [
         {
           "id": "a",
-          "text": "para que el fichero ocupe menos",
-          "why": "Cada bloque guarda su propia escala, así que ocupa un poco MÁS que una sola escala por matriz."
+          "text": "para que un valor extremo solo afecte a sus 32 vecinos"
         },
         {
           "id": "b",
-          "text": "para que un peso atípico solo estropee su bloque y no toda la matriz"
+          "text": "para que el fichero ocupe menos que con una escala por matriz",
+          "why": "Cada bloque guarda su propia escala, así que ocupa un poco MÁS que una sola escala por matriz."
         },
         {
           "id": "c",
-          "text": "porque los enteros de 8 bits solo admiten 32 valores",
+          "text": "porque los enteros de 8 bits solo admiten 32 valores distintos",
           "why": "Un entero de 8 bits tiene 256 valores, de −128 a 127."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "Lee la tarjeta «Un peso grande lo estropea todo».",
-        "answer b"
+        "answer a"
       ],
       "on_complete": "Eso es: se paga un poco de tamaño a cambio de que un atípico no arruine miles de pesos normales."
     },
     {
       "id": "o2",
-      "text": "Ejecuta experimento.py (README, sección 2). Tu q8_0 debería salir cerca de los 145 MB que publica Ollama. ¿De dónde sale ese tamaño?",
+      "text": "Ejecuta experimento.py (README, sección 2). Tu Q8_0 debería salir cerca de los 145 MB que publica Ollama. ¿De dónde sale ese tamaño?",
       "prediction": {
         "prompt": "Con Q8_0, ¿cuánto crees que subirá la perplejidad respecto a fp32?",
         "options": [
@@ -192,24 +192,24 @@
         ]
       },
       "hints": [
-        "python experimento.py · y la cuenta: 135 millones × 8,5 bits / 8.",
+        "python experimento.py · y la cuenta: cada peso ocupa sus 8 bits más su parte de la escala de 16 bits del bloque (16 / 32).",
         "answer b"
       ],
       "teach": "Medir el modelo entero\nexperimento.py cuantiza SmolLM2 con cada esquema y mide el tamaño, los bits por peso, el error, la perplejidad y cuántos tokens de una generación coinciden con fp32 (32 bits por número).\nSi tienes Ollama, ollama show te dice qué publica él.\nPor qué: comparar tu cuenta con la de Ollama es comprobar que entiendes de dónde sale el tamaño de un modelo descargado.",
       "choices": [
         {
           "id": "a",
-          "text": "135 millones de pesos × 32 bits ÷ 8",
+          "text": "135 millones × 32 bits ÷ 8: un número en float32 por peso",
           "why": "Eso es fp32: unos 540 MB."
         },
         {
           "id": "b",
-          "text": "135 millones de pesos × unos 8,5 bits (el entero de 8 más la escala de cada bloque de 32) ÷ 8 ≈ 143 MB, más las normas en float32",
+          "text": "135 millones × unos 8,5 bits ÷ 8, más las normas en float32",
           "why": "Si tu cifra difiere unos pocos MB, es normal: depende de cómo se cuenten las normas y los metadatos."
         },
         {
           "id": "c",
-          "text": "Ollama comprime el fichero como un zip",
+          "text": "Ollama comprime el fichero como un zip, igual que cualquier descarga",
           "why": "El ahorro viene de guardar enteros de 8 bits en lugar de números de 32."
         }
       ],
@@ -217,7 +217,7 @@
     },
     {
       "id": "o3",
-      "text": "¿Por qué tu cuantización simulada no ahorra RAM (Random Access Memory) ni tiempo, aunque el modelo «pese» menos?",
+      "text": "¿Por qué tu cuantización simulada no ahorra RAM ni tiempo, aunque el modelo «pese» menos?",
       "validator": {
         "type": "answer",
         "expected": "c",
@@ -229,21 +229,21 @@
         "En la simulación, ¿en qué tipo están los pesos cuando se multiplican?",
         "answer c"
       ],
-      "teach": "Simular no es ahorrar\nEn tu simulación, los pesos se cuantizan y se vuelven a pasar a float32 antes de multiplicar.\nPor qué: el ahorro real de memoria y de tiempo exige multiplicar directamente con los enteros, que es lo que hacen los kernels de llama.cpp.",
+      "teach": "Simular no es ahorrar\nUn número ocupa según su tipo: un int8, 1 byte; un float32, 4. Y el tiempo se va en las multiplicaciones, en el tipo en que se hagan.\nPregúntate en qué tipo están tus pesos justo cuando el modelo multiplica.\nPor qué: el ahorro real de memoria y de tiempo exige que el cálculo use los enteros, que es lo que hacen los kernels (las rutinas de cálculo) de llama.cpp.",
       "choices": [
         {
           "id": "a",
-          "text": "porque Q8_0 no reduce el tamaño",
+          "text": "porque Q8_0 no reduce de verdad el tamaño del fichero",
           "why": "El fichero sí ocupa unas cuatro veces menos; lo que no cambia es cómo calcula tu simulación."
         },
         {
           "id": "b",
-          "text": "porque PyTorch no admite enteros",
+          "text": "porque PyTorch no sabe trabajar con tensores de enteros",
           "why": "Los admite; tu código no los usa para multiplicar."
         },
         {
           "id": "c",
-          "text": "porque los pesos se vuelven a pasar a float32 y se multiplica en float32: hace falta multiplicar con los enteros"
+          "text": "porque al multiplicar, tus pesos vuelven a ser float32"
         }
       ],
       "on_complete": "Eso es: el ahorro real lo dan los kernels que multiplican con enteros, como los de llama.cpp."

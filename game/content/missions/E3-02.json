@@ -31,17 +31,17 @@
     "datasets": [],
     "viz": {}
   },
-  "purpose": "Una vez en marcha, un sistema de IA (Inteligencia Artificial) se audita: alguien independiente pide pruebas de que los controles prometidos funcionan. Lo hace una auditoría interna, una entidad que certifica ISO/IEC (International Organization for Standardization / International Electrotechnical Commission) 42001 o una autoridad. Hoy auditas Ayuda-Valle contra su política, que adopta resultados del NIST AI RMF (AI Risk Management Framework): eliges una muestra basada en el riesgo, miras la evidencia y clasificas lo que encuentras.",
+  "purpose": "Una vez en marcha, un sistema de IA (Inteligencia Artificial) se audita: alguien independiente pide pruebas de que los controles prometidos funcionan. Lo hace una auditoría interna, una entidad que certifica la norma ISO/IEC 42001 o una autoridad. ISO e IEC son la International Organization for Standardization y la International Electrotechnical Commission. Hoy auditas Ayuda-Valle contra su política, que adopta resultados del marco NIST AI RMF (AI Risk Management Framework): eliges una muestra basada en el riesgo, miras la evidencia y clasificas lo que encuentras.",
   "theory_cards": [
     {
       "id": "muestreo",
       "title": "Muestreo en una auditoría",
-      "body": "Casi nunca se audita todo: se elige una muestra. La guía de auditoría de sistemas de gestión ISO (International Organization for Standardization) 19011 (edición de 2026) distingue el muestreo por juicio, basado en el riesgo y la experiencia, del muestreo estadístico; los dos se documentan y tienen límites. Aquí: todos los controles de riesgo alto, al menos uno por función del NIST AI RMF (AI Risk Management Framework) y no más de seis. Para un control que se aplica caso a caso (firmar cada denegación), la muestra es de expedientes, elegidos al azar para que no los escoja quien los gestiona. Comandos: audit controls · audit sample · audit plan."
+      "body": "Casi nunca se audita todo: se elige una muestra. La guía de auditoría de sistemas de gestión ISO 19011 (edición de 2026) distingue el muestreo por juicio, basado en el riesgo y la experiencia, del muestreo estadístico; los dos se documentan y tienen límites. Aquí: todos los controles de riesgo alto, al menos uno por función del NIST AI RMF y no más de seis. Para un control que se aplica caso a caso (firmar cada denegación), la muestra es de expedientes, elegidos al azar para que no los escoja quien los gestiona. Comandos: audit controls · audit sample · audit plan."
     },
     {
       "id": "criterios-nist",
       "title": "¿Auditar contra un marco voluntario?",
-      "body": "El NIST AI RMF (AI Risk Management Framework) no obliga ni se certifica (O5-01). Pero una organización puede adoptar sus resultados en su política, y entonces la política es el criterio de auditoría. Los textos de las subcategorías que ves (GOVERN 1.1, MEASURE 2.11…) son los de NIST AI 100-1, traducidos. Si la organización estuviera certificada en ISO/IEC (International Organization for Standardization / International Electrotechnical Commission) 42001, sus requisitos serían criterio; aquí no se usan porque el texto de la norma es de pago y no se reproduce.",
+      "body": "El marco NIST AI RMF no obliga ni se certifica (O5-01). Pero una organización puede adoptar sus resultados en su política, y entonces la política es el criterio de auditoría. Los textos de las subcategorías que ves (GOVERN 1.1, MEASURE 2.11…) son los de NIST AI 100-1, traducidos. Si la organización estuviera certificada en ISO/IEC 42001, sus requisitos serían criterio; aquí no se usan porque el texto de la norma es de pago y no se reproduce.",
       "unlock_on": "objective:o2"
     }
   ],
@@ -79,8 +79,8 @@
       "hints": [
         "audit open valle · audit controls valle · audit sample valle --random 6 · audit plan valle"
       ],
-      "on_complete": "El azar dejó fuera tres de los cuatro controles de riesgo alto y toda la función MEASURE. Al azar se eligen expedientes, no qué mirar.",
-      "teach": "Planificar la muestra\naudit controls valle lista los doce controles de la política con su riesgo y su función del NIST AI RMF (AI Risk Management Framework).\naudit sample valle --random 6 elige seis al azar; audit plan valle comprueba si el plan cumple las reglas de la tarjeta.\nPor qué: casi nunca hay tiempo de auditarlo todo, así que la muestra decide qué se llega a ver."
+      "on_complete": "El azar dejó fuera tres de los cuatro controles de riesgo alto y toda la función MEASURE: así no se decide qué mirar.",
+      "teach": "Planificar la muestra\naudit controls valle lista los doce controles de la política con su riesgo y su función del NIST AI RMF.\naudit sample valle --random 6 elige seis al azar; audit plan valle comprueba si el plan cumple las reglas de la tarjeta.\nPor qué: casi nunca hay tiempo de auditarlo todo, así que la muestra decide qué se llega a ver."
     },
     {
       "id": "o2",
@@ -106,36 +106,36 @@
       "choices": [
         {
           "id": "a",
-          "text": "para elegir qué controles auditar",
+          "text": "para elegir qué controles de la política se auditan",
           "why": "Acabas de ver que el azar no mira el riesgo: dejó fuera controles de riesgo alto."
         },
         {
           "id": "b",
-          "text": "para elegir qué expedientes revisar dentro de un control, sin que los escoja quien los gestiona"
+          "text": "para nada: en una auditoría todo se elige por juicio",
+          "why": "La muestra de expedientes se elige al azar precisamente para que nadie la escoja a su favor."
         },
         {
           "id": "c",
-          "text": "para nada: en una auditoría todo se elige por juicio",
-          "why": "La muestra de expedientes se elige al azar precisamente para que nadie la escoja a su favor."
+          "text": "para escoger qué expedientes de un control se revisan"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
         "Lee la última frase de la tarjeta «Muestreo en una auditoría».",
-        "answer b"
+        "answer c"
       ],
       "on_complete": "Eso es: juicio para decidir QUÉ mirar; azar para elegir QUÉ casos concretos mirar dentro de un control."
     },
     {
       "id": "o3",
       "text": "Audita C10 (apelación y anulación): mira su evidencia, revisa una muestra de al menos 10 expedientes y clasifícalo.",
-      "teach": "Mayor, menor u observación\nEs práctica habitual en las auditorías de sistemas de gestión. No conformidad mayor: el requisito no se cumple en absoluto, o el fallo es sistemático y pone en duda que se logre el resultado. No conformidad menor: un fallo puntual o parcial en un control que en general funciona. Observación: todavía no hay incumplimiento, pero hay riesgo de que lo haya, o una mejora posible. Conforme: hay evidencia suficiente de que se cumple.\naudit evidence valle C10 enseña la evidencia; audit records valle C10 10 saca 10 expedientes al azar; audit rate valle C10 <clase> clasifica.\nPor qué: que exista un procedimiento no prueba que se aplique; por eso se miran expedientes.",
+      "teach": "Mayor, menor u observación\nEs la práctica habitual en las auditorías de sistemas de gestión:\n· Mayor: el requisito no se cumple, o el fallo es sistemático (aquí, 2 o más fallos en la muestra, o el 20 % o más).\n· Menor: un fallo puntual o parcial en un control que en general funciona.\n· Observación: aún no hay incumplimiento, pero hay riesgo de que lo haya, o una mejora posible.\n· Conforme: hay evidencia suficiente de que se cumple.\naudit evidence valle C10 · audit records valle C10 10 · audit rate valle C10 <clase>\nPor qué: que exista un procedimiento no prueba que se aplique; por eso se miran expedientes.",
       "validator": {
         "type": "event",
         "event": "audit.rated",
@@ -184,27 +184,27 @@
     },
     {
       "id": "o5",
-      "text": "Para cerrar: un control que en general funciona tiene un fallo puntual. ¿Cómo se clasifica?",
+      "text": "Para cerrar: en 1 de 20 expedientes falta la firma; en los otros 19, el control se aplicó bien. ¿Cómo se clasifica?",
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
-        "Repasa la lección «Mayor, menor u observación».",
-        "answer b"
+        "Repasa la lección «Mayor, menor u observación» y su regla de fallo sistemático.",
+        "answer a"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "no conformidad mayor",
-          "why": "Mayor es un requisito que no se cumple en absoluto o un fallo sistemático, como C10."
+          "text": "no conformidad menor"
         },
         {
           "id": "b",
-          "text": "no conformidad menor"
+          "text": "no conformidad mayor",
+          "why": "Mayor es un requisito que no se cumple o un fallo sistemático, como C10. Un fallo en 20 no llega a la regla."
         },
         {
           "id": "c",

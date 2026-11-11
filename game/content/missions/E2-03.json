@@ -34,23 +34,23 @@
     "datasets": [],
     "viz": {}
   },
-  "purpose": "Un modelo entrenado con datos de personas puede revelar quién estaba en sus datos sin devolver un solo dato: es la inferencia de pertenencia. Es la base técnica del riesgo OWASP (Open Worldwide Application Security Project) LLM02 (divulgación de información sensible) y de la discusión sobre cuándo un modelo puede considerarse anónimo. Hoy atacas un modelo con un umbral sobre la pérdida, mides la ventaja del atacante y pruebas DP-SGD (Differentially Private Stochastic Gradient Descent) y la privacidad diferencial.",
+  "purpose": "Un modelo entrenado con datos de personas puede revelar quién estaba en sus datos sin devolver un solo dato: es la inferencia de pertenencia. Es la base técnica de la divulgación de información sensible, el riesgo LLM02 de la lista de OWASP (Open Worldwide Application Security Project) para LLM, y de la discusión sobre cuándo un modelo puede considerarse anónimo. Hoy atacas un modelo con un umbral sobre la pérdida, mides la ventaja del atacante y pruebas DP-SGD (Differentially Private Stochastic Gradient Descent) y la privacidad diferencial.",
   "theory_cards": [
     {
       "id": "pertenencia",
       "title": "Inferencia de pertenencia",
-      "body": "Un modelo sobreajustado tiene pérdida casi 0 con los ejemplos que ha visto y más alta con los demás. El atacante dice «miembro» si la pérdida está por debajo de un umbral. Para elegir el umbral sin saber quién es miembro, entrena un modelo sombra con la misma receta y datos suyos (Shokri et al. 2017), y usa el umbral que mejor separa en la sombra. La ventaja TPR (True Positive Rate) − FPR (False Positive Rate) mide cuánto mejor que el azar acierta: 0 es adivinar."
+      "body": "Un modelo sobreajustado tiene pérdida casi 0 con los ejemplos que ha visto y más alta con los demás. El atacante dice «miembro» si la pérdida está por debajo de un umbral. Para elegir el umbral sin saber quién es miembro, entrena un modelo sombra con la misma receta y datos suyos (Shokri et al. 2017), y usa el umbral que mejor separa en la sombra. La ventaja del atacante (TPR − FPR, que explica el primer paso) mide cuánto mejor que el azar acierta: 0 es adivinar."
     },
     {
       "id": "dp",
       "title": "Privacidad diferencial",
-      "body": "Un mecanismo es ε-diferencialmente privado si su salida cambia muy poco (como mucho un factor e^ε en probabilidad) al añadir o quitar a una persona de los datos (Dwork y Roth 2014). Para una media de valores entre 18 y 90 de n personas, una sola persona la mueve como mucho (90 − 18)/n: la sensibilidad. El mecanismo de Laplace suma ruido de escala sensibilidad/ε. ε pequeño: más privacidad y más ruido.",
+      "body": "Un mecanismo es ε-diferencialmente privado si su salida cambia muy poco (como mucho un factor e^ε en probabilidad) al añadir o quitar a una persona de los datos (Dwork y Roth 2014). Para una media de valores entre 18 y 90 de n personas, una sola persona la mueve como mucho (90 − 18)/n: la sensibilidad. El mecanismo de Laplace suma ruido de escala sensibilidad/ε.",
       "unlock_on": "objective:o1"
     },
     {
       "id": "dp-sgd",
       "title": "DP-SGD",
-      "body": "En DP-SGD (Abadi et al. 2016) se calcula el gradiente de cada ejemplo por separado, se recorta su norma a un máximo C para que nadie aporte más que C, se suman y se añade ruido gaussiano de desviación ruido·C. El ε final depende del ruido, del lote, del número de pasos y del muestreo, y se calcula con un contador de privacidad. Este laboratorio no lo calcula: aquí DP-SGD es una técnica medida, no una garantía.",
+      "body": "En DP-SGD (Differentially Private Stochastic Gradient Descent; Abadi et al. 2016) se calcula el gradiente de cada ejemplo por separado, se recorta su norma a un máximo C para que nadie aporte más que C, se suman y se añade ruido gaussiano de desviación ruido·C. El ε final depende del ruido, del lote, del número de pasos y del muestreo, y se calcula con un contador de privacidad. Este laboratorio no lo calcula: aquí DP-SGD es una técnica medida, no una garantía.",
       "unlock_on": "objective:o1"
     }
   ],
@@ -63,7 +63,7 @@
         "id": "E2-03-ventaja",
         "title": "ventaja(perdidas_miembros, perdidas_otros, umbral): TPR − FPR",
         "function": "ventaja",
-        "starter": "# Ejercicio E2-03 · La ventaja de un ataque de pertenencia\n# perdidas_miembros: pérdidas de ejemplos que SÍ estaban en el entrenamiento.\n# perdidas_otros: pérdidas de ejemplos que NO estaban.\n# El atacante dice «miembro» si la pérdida es menor que el umbral.\n\ndef ventaja(perdidas_miembros, perdidas_otros, umbral):\n    tpr = len([p for p in perdidas_miembros if p < umbral]) / len(perdidas_miembros)\n    fpr = 0   # ← cambia esta línea: igual que tpr, pero con perdidas_otros\n    return tpr - fpr\n\n# Marca 3 de 4 miembros y 1 de 4 no miembros: debería imprimir 0.5\nprint(ventaja([0.01, 0.02, 0.5, 0.03], [0.9, 0.04, 1.2, 0.8], 0.1))\n",
+        "starter": "# E2-03 · Ventaja = TPR − FPR. «Miembro» si la pérdida es menor que el umbral.\n# perdidas_miembros SÍ estaban en el entrenamiento; perdidas_otros, NO.\n\ndef ventaja(perdidas_miembros, perdidas_otros, umbral):\n    tpr = len([p for p in perdidas_miembros if p < umbral]) / len(perdidas_miembros)\n    fpr = 0   # ← cambia esta línea: igual que tpr, pero con perdidas_otros\n    return tpr - fpr\n\n# Marca 3 de 4 miembros y 1 de 4 no miembros: debería imprimir 0.5\nprint(ventaja([0.01, 0.02, 0.5, 0.03], [0.9, 0.04, 1.2, 0.8], 0.1))\n",
         "cases": [
           {
             "args": [
@@ -143,12 +143,12 @@
         "fpr se calcula como tpr, cambiando perdidas_miembros por perdidas_otros.",
         "La línea queda así: fpr = len([p for p in perdidas_otros if p < umbral]) / len(perdidas_otros)"
       ],
-      "on_complete": "Esa es la ventaja TPR (True Positive Rate) − FPR (False Positive Rate). Fíjate en el caso con umbral 1.0: marcar a todos da TPR 1 y ventaja 0. Un ataque se juzga por la diferencia, no por cuántos miembros encuentra."
+      "on_complete": "Esa es la ventaja TPR − FPR. Fíjate en el caso con umbral 1: marcar a todos da TPR 1 y ventaja 0. Un ataque se juzga por la diferencia, no por cuántos miembros encuentra."
     },
     {
       "id": "o1",
       "text": "Implementa las siete funciones de privacidad.py hasta que pasen los 14 tests y trae la evidencia.",
-      "teach": "Una curva, no un número\nEl trabajo de este paso es fuera del Dojo, en Python de verdad: abre forja/labs/E2-03_privacidad/README.md, crea el entorno e implementa las funciones de privacidad.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y aquí la traes con evidence import.\nUn ataque con umbral es una familia de ataques: con un umbral bajo marca a pocos y casi siempre acierta; con uno alto marca a casi todos. La curva ROC (Receiver Operating Characteristic) recorre todos los umbrales y muestra cada compromiso entre aciertos (TPR) y falsas alarmas (FPR).\nPor qué: por eso se informa de la curva y de la TPR con FPR baja, y no de una sola precisión.",
+      "teach": "Una curva, no un número\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E2-03_privacidad/README.md e implementa privacidad.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUn ataque con umbral es una familia de ataques: con un umbral bajo marca a pocos y casi siempre acierta; con uno alto marca a casi todos. La curva ROC (Receiver Operating Characteristic) recorre todos los umbrales y muestra cada compromiso entre aciertos (TPR) y falsas alarmas (FPR).\nPor qué: por eso se informa de la curva y de la TPR con FPR baja, y no de una sola precisión.",
       "validator": {
         "type": "event",
         "event": "evidence.imported",
@@ -176,26 +176,26 @@
         },
         {
           "id": "b",
-          "text": "más ruido y más privacidad"
+          "text": "que el modelo se entrena más rápido",
+          "why": "ε no mide la velocidad: mide cuánto puede cambiar la salida al añadir o quitar a una persona."
         },
         {
           "id": "c",
-          "text": "que el modelo se entrena más rápido",
-          "why": "ε no mide la velocidad: mide cuánto puede cambiar la salida al añadir o quitar a una persona."
+          "text": "más ruido y más privacidad"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
         "Mira la fórmula del ruido de Laplace en la tarjeta: sensibilidad/ε.",
-        "answer b"
+        "answer c"
       ],
-      "on_complete": "Eso es. Y ojo: no es el epsilon de FGSM (Fast Gradient Sign Method) de E2-01. Se llaman igual, pero aquí mide privacidad y allí, el tamaño del cambio por píxel."
+      "on_complete": "Eso es: con ε pequeño, la salida apenas depende de una persona, y el precio es más ruido. Y no es el epsilon de FGSM (Fast Gradient Sign Method) de E2-01, aunque se llame igual."
     },
     {
       "id": "o2",
@@ -224,12 +224,12 @@
         "Con menos: python bateria.py --configs \"ninguna;regularizado;dp-sgd-fuerte\""
       ],
       "on_complete": "Tienes los datos. Mira juntas la ventaja y la precisión en test de cada receta.",
-      "teach": "La batería\nbateria.py entrena cada receta (sobreajustada, regularizada y dos con DP-SGD (Differentially Private Stochastic Gradient Descent)) con 3 semillas, la ataca y publica una media con privacidad diferencial. Después trae la medición con evidence import.\nPor qué: la privacidad de un modelo no se supone: se mide con el ataque."
+      "teach": "La batería\nbateria.py entrena cuatro recetas con 3 semillas: sobreajustada, regularizada y dos con DP-SGD (Differentially Private Stochastic Gradient Descent). Las ataca y publica una media con privacidad diferencial. Después trae la medición con evidence import.\nPor qué: la privacidad de un modelo no se supone: se mide con el ataque."
     },
     {
       "id": "o3",
       "text": "Si multiplicas ε por 10, ¿qué pasa con el error de la media publicada con Laplace?",
-      "teach": "La media esconde a los más expuestos\nUna ventaja del 18 % puede venir de acertar un poco con muchos o mucho con unos pocos. Para una persona concreta importa lo segundo: si el atacante puede señalarla con pocas falsas alarmas.\nPor eso Carlini et al. (2022) piden medir la TPR (True Positive Rate) con FPR (False Positive Rate) muy bajas. En este laboratorio, con dígitos fáciles, el ataque es débil ahí; con datos reales y modelos grandes, no siempre.\nPor qué: es la cifra que importa a la persona que estaba en los datos.",
+      "teach": "Error de la media con Laplace\nEl error de la media publicada es el ruido que se le suma, y su tamaño típico es la escala del ruido: sensibilidad/ε (tarjeta «Privacidad diferencial»).\nEjemplo: con sensibilidad 0,24, ε = 1 da escala 0,24; ε = 0,5 da escala 0,48.\nPor qué: elegir ε es elegir cuánto error aceptas a cambio de cuánta privacidad.",
       "validator": {
         "type": "answer",
         "expected": "a",
@@ -244,18 +244,18 @@
       "choices": [
         {
           "id": "a",
-          "text": "se divide más o menos entre 10: la escala del ruido es sensibilidad/ε",
+          "text": "se divide más o menos entre 10",
           "why": "El ruido es aleatorio: con pocas repeticiones tus cifras pueden no dar exactamente 10."
         },
         {
           "id": "b",
-          "text": "se multiplica por 10",
+          "text": "se multiplica más o menos por 10",
           "why": "Es al revés: ε está dividiendo en la escala del ruido."
         },
         {
           "id": "c",
-          "text": "no cambia",
-          "why": "La escala del ruido depende de ε."
+          "text": "no cambia: el error solo depende de cuántas personas hay",
+          "why": "La escala del ruido es sensibilidad/ε: depende de ε, no solo de n."
         }
       ],
       "on_complete": "Eso es: más ε, menos ruido y menos privacidad. Elegir ε es elegir ese compromiso."
@@ -265,40 +265,40 @@
       "text": "¿Por qué tu ataque es una evidencia técnica y no una certificación de que el modelo es anónimo?",
       "validator": {
         "type": "answer",
-        "expected": "c",
+        "expected": "b",
         "accept": [
-          "c"
+          "b"
         ]
       },
       "hints": [
         "README, sección «Relación con LLM02 y con el RGPD».",
-        "answer c"
+        "answer b"
       ],
-      "teach": "Técnica y norma\nAntes de escribir, lee la sección «Relación con LLM02 y con el RGPD (Reglamento General de Protección de Datos; en inglés, GDPR)» del README: resume lo que dice el Dictamen 28/2024 del CEPD (Comité Europeo de Protección de Datos; en inglés, EDPB) sobre modelos entrenados con datos personales. (Esto es formación, no asesoramiento jurídico.)\nPor qué: tu medición es una evidencia técnica que alimenta esa evaluación, no una conclusión jurídica.",
+      "teach": "Técnica y norma\nAntes de responder, lee la sección «Relación con LLM02 y con el RGPD» del README. El RGPD es el Reglamento General de Protección de Datos (en inglés, GDPR: General Data Protection Regulation). La sección resume lo que dice el Dictamen 28/2024 del CEPD, el Comité Europeo de Protección de Datos (en inglés, EDPB: European Data Protection Board), sobre modelos entrenados con datos personales. (Esto es formación, no asesoramiento jurídico.)\nPor qué: tu medición es una evidencia técnica que alimenta esa evaluación, no una conclusión jurídica.",
       "choices": [
         {
           "id": "a",
-          "text": "porque DP-SGD (Differentially Private Stochastic Gradient Descent) ya garantiza el anonimato",
-          "why": "Sin calcular su ε, DP-SGD (Differentially Private Stochastic Gradient Descent) es una técnica medida, no una garantía."
+          "text": "porque con DP-SGD el modelo ya es anónimo, lo diga o no el ataque",
+          "why": "Sin calcular su ε, DP-SGD es una técnica medida, no una garantía."
         },
         {
           "id": "b",
-          "text": "porque el ataque fue débil",
-          "why": "Fuerte o débil, sigue siendo una medición, no una conclusión jurídica."
+          "text": "porque mide un solo ataque, y el anonimato se valora caso por caso"
         },
         {
           "id": "c",
-          "text": "porque mide un ataque concreto con unos datos concretos, y la valoración de si un modelo es anónimo se hace caso por caso"
+          "text": "porque el ataque fue tan débil que su resultado no demuestra nada",
+          "why": "Fuerte o débil, sigue siendo una medición, no una conclusión jurídica."
         }
       ],
       "on_complete": "Eso es: tu medición alimenta esa evaluación; no la sustituye. (Esto es formación, no asesoramiento jurídico.)"
     }
   ],
-  "you_can_now": "Sabes medir la ventaja de un ataque de pertenencia, leer una curva ROC (Receiver Operating Characteristic) por su zona de FPR (False Positive Rate) baja y explicar qué aportan, y qué no garantizan, la regularización, DP-SGD (Differentially Private Stochastic Gradient Descent) y la privacidad diferencial. También has escrito la ventaja TPR (True Positive Rate) − FPR en Python.",
+  "you_can_now": "Sabes medir la ventaja de un ataque de pertenencia, leer una curva ROC por su zona de FPR baja y explicar qué aportan, y qué no garantizan, la regularización, DP-SGD y la privacidad diferencial. También has escrito la ventaja TPR − FPR en Python.",
   "debrief": {
     "what_happened": "Has adivinado qué registros estaban en el entrenamiento de un modelo solo con su pérdida, con un umbral elegido en tu propio modelo sombra. La ventaja fue mayor con el modelo sobreajustado y bajó al regularizar y con DP-SGD (Differentially Private Stochastic Gradient Descent), a cambio de precisión. Y has publicado una media con ruido calibrado: con ε pequeño protege más y se equivoca más.",
     "why": "Un modelo aprende de sus ejemplos de entrenamiento, y lo que aprende de cada uno deja huella. Cuanto más se ajusta a sus ejemplos concretos y menos al patrón general, más fácil es reconocerlos. La privacidad diferencial limita cuánto puede influir una sola persona en el resultado. Por eso protege también frente a ataques que todavía no se conocen, y por eso cuesta utilidad.",
-    "in_production": "Los modelos entrenados con datos personales se evalúan con ataques de pertenencia y de extracción antes de publicarse, y el resultado se documenta en la evaluación de impacto. DP-SGD (Differentially Private Stochastic Gradient Descent) se usa con bibliotecas que calculan el ε. Para publicar estadísticas, la privacidad diferencial ya se aplica en algunos censos y servicios a gran escala. En los LLM (Large Language Model), el riesgo se mide sobre todo como extracción de texto memorizado.",
+    "in_production": "Los modelos entrenados con datos personales se evalúan con ataques de pertenencia y de extracción antes de publicarse, y el resultado se documenta en la evaluación de impacto. DP-SGD (Differentially Private Stochastic Gradient Descent) se usa con bibliotecas que calculan el ε. Para publicar estadísticas, la privacidad diferencial ya se aplica en algunos censos y servicios a gran escala. Para una persona concreta importa si el atacante puede señalarla con pocas falsas alarmas: por eso se informa de la TPR con FPR muy baja (Carlini et al. 2022). En los LLM (Large Language Model), el riesgo se mide sobre todo como extracción de texto memorizado.",
     "simplifications": [
       "Dígitos en lugar de datos personales",
       "Un atacante con un solo modelo sombra y un umbral global",
