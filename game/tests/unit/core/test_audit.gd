@@ -27,10 +27,10 @@ const PLACES := {"E1": "eipd", "E2": "eipd", "E3": "fria", "E4": "fria", "E5": "
 const ROLES := {"T1": "ayuntamiento", "T2": "ayuntamiento", "T3": "dpd", "T4": "proveedor", "T5": "autoridad-mercado", "T6": "autoridad-control"}
 const RATES := {"C01": "conforme", "C05": "nc-menor", "C07": "conforme", "C08": "nc-mayor", "C10": "nc-mayor"}
 const DRAFTS := {
-	"H1": {"criterio": "B", "evidencia": "B", "riesgo": "B", "recomendacion": "A", "seguimiento": "C"},
-	"H2": {"criterio": "C", "evidencia": "A", "riesgo": "B", "recomendacion": "B", "seguimiento": "A"},
-	"H3": {"criterio": "A", "evidencia": "A", "riesgo": "C", "recomendacion": "A", "seguimiento": "B"},
-	"informe": {"alcance": "B", "conclusion": "C"},
+	"H1": {"criterio": "C", "evidencia": "A", "riesgo": "B", "recomendacion": "C", "seguimiento": "A"},
+	"H2": {"criterio": "B", "evidencia": "C", "riesgo": "A", "recomendacion": "B", "seguimiento": "C"},
+	"H3": {"criterio": "A", "evidencia": "B", "riesgo": "C", "recomendacion": "A", "seguimiento": "B"},
+	"informe": {"alcance": "A", "conclusion": "C"},
 }
 
 
