@@ -77,6 +77,44 @@ Antes de abrir una pista, ejecuta el test y lee el mensaje de error: suele decir
 <details><summary>🟡 pesos_atencion</summary>d = <code>len(vectores[0])</code>. Puntuación (i, j) = producto escalar / <code>math.sqrt(d)</code> (si escalar). Con causal y j &gt; i: <code>float("-inf")</code>. Softmax a cada fila.</details>
 <details><summary>🔴 salida_atencion</summary>Para cada i: <code>[sum(pesos[i][j] * vectores[j][k] for j in range(n)) for k in range(d)]</code>.</details>
 
+## T2_02 · detector de abuso
+
+<details><summary>🟢 cargar_peticiones</summary>Dentro del <code>with open(...)</code>: <code>filas = list(csv.DictReader(f))</code>. Después, tres comprensiones: <code>[f["id"] for f in filas]</code>, <code>[[float(f[c]) for c in FEATURES] for f in filas]</code> y <code>[f["tipo"] for f in filas]</code> (PYTHON.md §10).</details>
+<details><summary>🟡 dividir_estratificado</summary>Crea <code>rng</code> una sola vez, fuera del bucle de clases. Para cada clase: <code>idx = [i for i, e in enumerate(y) if e == clase]</code>, <code>rng.shuffle(idx)</code>, <code>n = round(len(idx) * proporcion_test)</code>, y suma <code>idx[:n]</code> al test e <code>idx[n:]</code> al train.</details>
+<details><summary>🟢 __init__ y normalizar</summary>Primero el <code>if k &lt; 1: raise ValueError(...)</code>; después los cinco atributos. En normalizar: <code>[0.0 if hi == lo else (v - lo) / (hi - lo) for v, lo, hi in zip(x, self.minimos, self.maximos)]</code> (PYTHON.md §15).</details>
+<details><summary>🟡 entrenar</summary><code>columnas = list(zip(*X))</code>; <code>self.minimos = [min(c) for c in columnas]</code> y lo mismo con max. Después <code>self.X = [self.normalizar(x) for x in X]</code>, <code>self.y = list(y)</code> y <code>return self</code>.</details>
+<details><summary>🔴 vecinos, predecir y puntuacion</summary>Son los de T2-01 con <code>self.X</code> y <code>self.y</code>, normalizando antes <code>x</code>. La puntuación: <code>sum(1 for t in vecinos if t[2] == positiva) / len(vecinos)</code>.</details>
+<details><summary>🟡 linea_base</summary>Cuenta las clases del train en un diccionario y elige con <code>min(cuenta, key=lambda c: (-cuenta[c], c))</code>: la más frecuente y, si empatan, la primera alfabéticamente.</details>
+
+## T3_03 · umbral por coste
+
+<details><summary>🟢 errores</summary>Recorre <code>zip(puntuaciones, y_true)</code>. En cada pareja: <code>bloquea = s &gt;= umbral</code>. Si bloquea y no era positiva, suma un FP; si no bloquea y era positiva, suma un FN.</details>
+<details><summary>🟢 umbrales_candidatos</summary><code>sorted(set(puntuaciones)) + [float("inf")]</code>. Ninguna puntuación es ≥ infinito: con ese umbral no se bloquea a nadie.</details>
+<details><summary>🟡 mejor_umbral</summary>Recorre <code>tabla_costes(...)</code>, que ya va de menor a mayor umbral, y quédate con la fila si su coste es <code>&lt;=</code> que el mejor hasta ahora. Con <code>&lt;=</code>, en un empate gana la última, es decir, el umbral mayor.</details>
+<details><summary>🔴 triaje</summary>Un diccionario con los cinco contadores a 0 y, para cada caso, <code>if s &gt;= alto</code> / <code>elif s &gt;= bajo</code> / <code>else</code>. Solo hay FP en la primera rama y solo hay FN en la última.</details>
+
+## T4_03 · llamadas del agente
+
+<details><summary>🟢 motivo</summary>Dos <code>if</code> con la diferencia CON signo: <code>origen - destino &gt; margen</code> es una fuga y <code>destino - origen &gt; margen</code>, una entrada no fiable. Si no, <code>return ""</code>.</details>
+<details><summary>🟢 con_cruce</summary><code>[[o, d, abs(o - d)] for o, d in X]</code>: una lista nueva, sin tocar X.</details>
+<details><summary>🟡 entrenar_logistica</summary>En cada época, <code>gw = [0.0] * d</code> y <code>gb = 0.0</code>. Para cada (x, t): <code>err = sigmoide(sum(w*xi for w, xi in zip(pesos, x)) + sesgo) - t</code>, <code>gw[j] += err * x[j]</code> y <code>gb += err</code>. Al final: <code>pesos = [w - lr * g / n for w, g in zip(pesos, gw)]</code>.</details>
+<details><summary>🔴 explicar</summary><code>c = [(nom, w * xi) for nom, w, xi in zip(nombres, pesos, x)] + [("sesgo", sesgo)]</code> y <code>sorted(c, key=lambda t: (-abs(t[1]), t[0]))</code>.</details>
+
+## T5_03 · disfraces de texto
+
+<details><summary>🟢 quitar_invisibles</summary><code>"".join(c for c in texto if unicodedata.category(c) != "Cf")</code> (PYTHON.md §17).</details>
+<details><summary>🟡 juntar_letras_sueltas</summary>Recorre las palabras guardando una <code>racha</code> de palabras de una letra. Cuando llega una palabra larga (o se acaba la lista): si la racha tiene 3 o más, añade <code>"".join(racha)</code>; si no, añade sus letras tal cual. Vacía la racha y añade la palabra larga. Truco: recorre <code>palabras + [None]</code> para no olvidar la última racha.</details>
+<details><summary>🟡 normalizar</summary>Ve paso a paso guardando el resultado en la misma variable. Homoglifos: <code>"".join(HOMOGLIFOS.get(c, c) for c in t)</code>. Tildes: <code>nfd = unicodedata.normalize("NFD", t)</code> y quita las <code>"Mn"</code>. Al final, <code>" ".join(juntar_letras_sueltas(re.findall(r"\w+", t)))</code>.</details>
+<details><summary>🔴 filtro_significado</summary>Para cada palabra de <code>normalizar(texto).split()</code> que esté en la tabla, y para cada prohibida que esté en la tabla: si <code>coseno(tabla[palabra], tabla[p]) &gt;= umbral</code>, <code>return True</code>. Después de los dos bucles, <code>return False</code>.</details>
+<details><summary>🟢 evaluar</summary><code>filtro</code> es una función: llámala con <code>filtro(t)</code>. <code>sum(1 for t in ataques if filtro(t))</code> y lo mismo con los legítimos.</details>
+
+## T6_03 · instrucción escondida
+
+<details><summary>🟢 peso_oculto</summary><code>1.0 / (1.0 + n * math.exp(s_relleno - s_oculta))</code>. Con la resta, el exponente es pequeño aunque las dos puntuaciones sean enormes.</details>
+<details><summary>🟡 relleno_para_ahogar</summary>Primero <code>if not 0 &lt; objetivo &lt; 1: raise ValueError(...)</code>. Después <code>n = 0</code> y <code>while peso_oculto(s_oculta, s_relleno, n) &gt;= objetivo: n += 1</code>.</details>
+<details><summary>🟢 parecido_necesario</summary>Las comprobaciones y después <code>s_relleno + math.log(objetivo * n / (1 - objetivo))</code>.</details>
+<details><summary>🔴 fila_atencion</summary><code>q = tabla[palabras[i]]</code>. Para cada j: <code>float("-inf")</code> si <code>causal and j &gt; i</code>; si no, <code>sum(a * b for a, b in zip(q, tabla[palabras[j]])) / math.sqrt(len(q))</code>. Después, el softmax estable de T6-02.</details>
+
 ## A2_01 · RAG
 
 <details><summary>🟢 trocear</summary><code>palabras = texto.split()</code>; un <code>while</code> con un índice <code>inicio</code> que avanza <code>tam - solape</code>; añade <code>" ".join(palabras[inicio:inicio + tam])</code> y para (<code>break</code>) cuando <code>inicio + tam &gt;= len(palabras)</code>.</details>

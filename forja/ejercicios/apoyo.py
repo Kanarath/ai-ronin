@@ -18,6 +18,10 @@ def cargar_temple():
     return [float(f["minutos_enfriado"]) for f in filas], [float(f["dureza_hrc"]) for f in filas]
 
 
+RUTA_PETICIONES = RAIZ_REPO / "game" / "content" / "datasets" / "peticiones.csv"
+RUTA_LLAMADAS = RAIZ_REPO / "game" / "content" / "datasets" / "llamadas.csv"
+
+
 RUTA_CORPUS = RAIZ_REPO / "game" / "content" / "corpus" / "forja.txt"
 RUTA_EMBEDDINGS = RAIZ_REPO / "game" / "content" / "embeddings" / "forja_emb.json"
 

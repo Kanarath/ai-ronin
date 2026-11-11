@@ -162,6 +162,15 @@ for linea in lineas[1:]:                         # el resto: los datos
     dureza = float(fila["dureza"])               # el texto "59.7" → el número 59.7
 ```
 
+**El módulo csv** hace lo mismo y además entiende las comillas (un campo `"a, b"` con una coma dentro). Es lo que usarás a partir de T2-02:
+
+```python
+import csv
+with open("datos.csv", encoding="utf-8", newline="") as f:   # newline="": lo pide el módulo csv
+    filas = list(csv.DictReader(f))          # una lista de diccionarios; la cabecera da las claves
+filas[0]["dureza"]                           # "59.7": sigue siendo texto, conviértelo con float()
+```
+
 ## 11. Módulos que usarás
 
 ```python
@@ -379,6 +388,15 @@ unicodedata.is_normalized("NFC", "é")            # False
 "Straße".casefold()                                    # "strasse": minúsculas «fuertes» para comparar
 ```
 
+**NFKC y categorías (T5-03).** NFKC va más allá que NFC: también convierte variantes «de compatibilidad», como las letras de anchura completa, en la letra normal. Y cada carácter tiene una **categoría**: `"Cf"` son los de formato invisibles (como el espacio de anchura cero, `"​"`) y `"Mn"`, las marcas que se combinan con la letra anterior (como la tilde en NFD):
+
+```python
+unicodedata.normalize("NFKC", "ｋａ")          # "ka" (eran «ｋａ», de anchura completa)
+unicodedata.category("​"), unicodedata.category("a")   # ("Cf", "Ll")
+nfd = unicodedata.normalize("NFD", "katána")            # la «á» pasa a «a» + tilde combinante
+"".join(c for c in nfd if unicodedata.category(c) != "Mn")  # "katana"
+```
+
 **Emojis compuestos:** 👍🏽 son 2 puntos de código (pulgar + tono de piel) y 👩‍🔧 son 3 (mujer + `"‍"`, la unión ZWJ, + llave inglesa). `len()` no cuenta lo que ves.
 
 **Decodificar por trozos:** si los bytes llegan a pedazos, un pedazo puede cortar un carácter. Un decodificador incremental guarda los bytes a medias para el siguiente:
@@ -451,6 +469,11 @@ list(itertools.islice(cuadrados(numeros()), 4))   # [0, 1, 4, 9]: toma los 4 pri
 | T5_02 embeddings | 5, 6, 7, 8 |
 | T6_01 muestreo | 6, 7, 8 (anidados), 11 (`re`) |
 | T6_02 atención | 5, 6, 11 (`math.exp`, `float("-inf")`) |
+| T2_02 abuso | 7, 8, 10 (módulo `csv`), 11 (`random`), 12 (`ValueError`, `RuntimeError`), 15 (clases) |
+| T3_03 umbral | 3 (contadores), 4 (devolver tuplas), 6, 8 (dict como ficha), 11 (`float("inf")`), 12 |
+| T4_03 llamadas | 5, 6, 7 (`sorted` con clave tupla), 10 (módulo `csv`), 11 (`math.exp`), 12 |
+| T5_03 disfraces | 3, 4 (funciones como parámetro), 5, 11 (`re.findall`, `math.sqrt`), 17 (NFKC, NFD, categorías, `casefold`) |
+| T6_03 dilución | 3 (`while`), 5, 11 (`math.exp`, `math.log`, `float("-inf")`), 12 (`OverflowError`, `ValueError`) |
 | A3_01 agente | 3 (contadores, `continue`), 4 (devolver tuplas), 8, 9 (`in` sobre conjuntos) |
 | A2_01 RAG | 2 (rebanadas), 3 (`while`, `break`), 5, 7, 8 (dict como vector), 9, 11 (`re`, `math.log`) |
 | P0-01 servicio LLM (forja/labs) | 8 (`.get` con valor por defecto), 12, 14 |
