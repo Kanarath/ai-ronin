@@ -854,3 +854,18 @@ func test_efectos_velocidad_se_guarda() -> void:
 	assert_eq(game.shell.execute("efectos lento").action, "effects_speed_lento")
 	assert_eq(game.progress.data["settings"]["velocidad"], "lento")
 	assert_eq(game.shell.execute("efectos rápido").action, "effects_speed_rapido")
+
+
+func test_aka_explica_una_sigla() -> void:
+	var r := game.shell.execute("aka rag")
+	assert_true(r.ok)
+	assert_true(r.plain_text().contains("Retrieval-Augmented Generation"), r.plain_text())
+	assert_true(game.shell.execute("aka knn").plain_text().contains("k-Nearest Neighbors"), "sin distinguir guiones ni mayúsculas")
+	assert_true(game.shell.execute("aka").plain_text().contains("MCP"), "aka sin nada lista todas")
+	assert_false(game.shell.execute("aka ZZZ").ok)
+
+
+## Toda sigla desarrollada en el contenido con «SIGLA (…)» y en mayúsculas está en siglas.json.
+func test_las_siglas_principales_estan_en_aka() -> void:
+	for s in ["API", "LLM", "RAG", "MCP", "OWASP", "NIST", "RGPD", "FRIA", "EIPD", "SOC", "CPU", "GPU", "ML", "IA", "JSON", "HTTP", "BPE", "LoRA", "XSS", "SHA-256"]:
+		assert_false(AkaCommands.find(s).is_empty(), s)

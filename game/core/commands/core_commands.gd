@@ -249,7 +249,7 @@ static func _cheatsheet(ctx: CommandContext, a: Dictionary) -> CommandResult:
 		if not cmd.signature.examples.is_empty():
 			r.line("    p. ej.: " + cmd.signature.examples[0], "muted")
 	r.line("")
-	r.line("Ayuda: help <cmd> · <cmd> --help · man <tema> · explain <término> · línea terminada en « ?»", "muted")
+	r.line("Ayuda: help <cmd> · <cmd> --help · man <tema> · explain <término> · aka <SIGLA> · línea terminada en « ?»", "muted")
 	r.line("✓ = ya lo has usado", "muted")
 	return r
 
