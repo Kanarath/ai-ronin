@@ -19,14 +19,14 @@
       "T2.aplicar-knn-seguridad"
     ]
   },
-  "briefing": "El chatbot de la forja recibe tráfico raro y la factura se ha disparado. El equipo de seguridad ha revisado 120 clientes de la API y ha marcado cuáles abusaban. Tu encargo: un detector que aprenda de esos ejemplos a reconocer a los siguientes. Y una pregunta incómoda: ¿cuánto se puede fiar el equipo de él?",
+  "briefing": "El chatbot de la forja recibe tráfico raro y la factura se ha disparado. El equipo de seguridad ha revisado 120 clientes de la API (Application Programming Interface) y ha marcado cuáles abusaban. Tu encargo: un detector que aprenda de esos ejemplos a reconocer a los siguientes. Y una pregunta incómoda: ¿cuánto se puede fiar el equipo de él?",
   "learning_objectives": [
     "Aplicar el procedimiento honesto train/test a un detector de seguridad",
     "Explicar un fallo del detector mirando sus vecinos",
     "Comparar un modelo con una línea base"
   ],
   "mentor_intro": "Misión aplicada: el k-NN de las katanas, ahora contra bots que abusan de un chatbot. Vamos paso a paso.",
-  "purpose": "Un chatbot hecho con un LLM (Large Language Model) se paga por cada token que procesa. Algunos clientes abusan: bots que lanzan miles de peticiones para copiar las respuestas del modelo o para disparar la factura. OWASP (Open Worldwide Application Security Project) lo llama consumo sin límite. Nadie puede escribir a mano una regla para cada abusador: por eso se entrena un detector con casos que el equipo de seguridad ya revisó. Hoy construyes ese detector con el k-NN (k-Nearest Neighbors) de T2-01 y aprendes a desconfiar de su nota.",
+  "purpose": "Un chatbot hecho con un LLM (Large Language Model) se paga por cada token (trozo de texto) que procesa. Algunos clientes abusan: bots que lanzan miles de peticiones para copiar las respuestas del modelo o para disparar la factura. OWASP (Open Worldwide Application Security Project) lo llama consumo sin límite. Nadie puede escribir a mano una regla para cada abusador: por eso se entrena un detector con casos que el equipo de seguridad ya revisó. Hoy construyes ese detector con el k-NN (k-Nearest Neighbors) de T2-01 y aprendes a desconfiar de su nota.",
   "lab": {
     "datasets": [
       {
@@ -66,12 +66,12 @@
       "choices": [
         {
           "id": "a",
-          "text": "entrenar con todos los clientes y evaluar con todos",
-          "why": "Es la trampa de T2-01: con k=1 sacarías 100 %, pero eso mide memoria, no aprendizaje."
+          "text": "apartar un test que el modelo no vea al entrenar"
         },
         {
           "id": "b",
-          "text": "apartar un conjunto de test que el modelo no vea al entrenar"
+          "text": "entrenar con todos los clientes y evaluar con todos",
+          "why": "Es la trampa de T2-01: con k=1 sacarías 100 %, pero eso mide memoria, no aprendizaje."
         },
         {
           "id": "c",
@@ -81,14 +81,14 @@
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "¿Qué hiciste en T2-01 justo antes de normalizar?",
-        "Apartar el test: answer b"
+        "Apartar el test: answer a"
       ],
       "on_complete": "Eso es: primero se aparta el test. Ahora hazlo de verdad."
     },
@@ -219,45 +219,45 @@
         "Usa el nombre de tu modelo y el de tu test normalizado.",
         "model predict d te cli-041"
       ],
-      "on_complete": "Predice normal: 4 de sus 5 vecinos son clientes normales. Sus números (dataset inspect peticiones_test --rows 20) son 70 peticiones por hora y un 11 % de rechazos, como un cliente normal con prisa. Es un abusador «lento»: va despacio para no llamar la atención."
+      "on_complete": "Predice normal: 4 de sus 5 vecinos son clientes normales. Tiene 70 peticiones por hora y un 11 % de rechazos (lo puedes ver con dataset inspect peticiones_test --rows 20). Es un abusador «lento»: va despacio para no llamar la atención."
     },
     {
       "id": "o6",
       "text": "¿Por qué el detector no ha reconocido a cli-041?",
-      "teach": "Lo que el modelo puede ver\nk-NN no entiende qué es un abuso: solo compara números con los de sus ejemplos.\nPor qué: saber qué no puede ver tu modelo es la primera pregunta que se hace un atacante, y debería ser también la tuya.",
+      "teach": "Lo que el modelo puede ver\nUn k-NN (k-Nearest Neighbors) no entiende qué es un abuso: solo compara números con los de sus ejemplos.\nPor qué: saber qué no puede ver tu modelo es la primera pregunta que se hace un atacante, y debería ser también la tuya.",
       "choices": [
         {
           "id": "a",
-          "text": "porque k-NN está mal programado",
+          "text": "porque el k-NN tiene un fallo de programación",
           "why": "El cálculo es correcto: ha votado con sus 5 vecinos más cercanos, como debe."
         },
         {
           "id": "b",
-          "text": "porque en sus tres features se parece a clientes normales, y el modelo solo sabe lo que hay en sus ejemplos"
+          "text": "porque olvidaste normalizar el test con el train",
+          "why": "Sí lo normalizaste, con los parámetros del train. El problema es que, medido así, cli-041 se parece a los clientes normales."
         },
         {
           "id": "c",
-          "text": "porque no se normalizó el test",
-          "why": "Sí lo normalizaste, con los parámetros del train. El problema es que, medido así, cli-041 se parece a los clientes normales."
+          "text": "porque sus números se parecen a los de los normales"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
         "Mira de qué clase son sus vecinos y qué valores tiene él.",
-        "answer b"
+        "answer c"
       ],
-      "on_complete": "Exacto. Un modelo que aprende de datos solo distingue lo que sus features pueden ver. Un atacante que sabe qué se mide se adapta para parecer normal: lo viste con el relleno de T1-03 y lo verás en A1."
+      "on_complete": "Exacto. Un modelo que aprende de datos solo distingue lo que sus features pueden ver, y cli-041 en esas tres medidas parece un cliente normal con prisa. Un atacante que sabe qué se mide se adapta para parecer normal: lo viste con el relleno de T1-03 y lo verás en A1."
     },
     {
       "id": "o7",
       "text": "Imagina un «detector» que no mira nada y dice siempre «normal». ¿Qué accuracy sacaría en este test? (answer <número>, en tanto por uno con 3 decimales, por ejemplo answer 0.500)",
-      "teach": "Comparar con lo más tonto\nUna LÍNEA BASE es el resultado de la estrategia más simple posible.\nEse detector acertaría todos los clientes normales del test y fallaría todos los abusadores. Los normales son la suma de la fila normal de la matriz de confusión.\nAccuracy = aciertos ÷ total.\nPor qué: si tu modelo no gana con claridad a la línea base, no aporta nada. Es lo primero que se comprueba al evaluar cualquier sistema de IA.",
+      "teach": "Comparar con lo más tonto\nUna LÍNEA BASE es el resultado de la estrategia más simple posible.\nEse detector acertaría todos los clientes normales del test y fallaría todos los abusadores. Los normales son la suma de la fila normal de la matriz de confusión.\nAccuracy = aciertos ÷ total.\nPor qué: si tu modelo no gana con claridad a la línea base, no aporta nada. Es lo primero que se comprueba al evaluar cualquier sistema de IA (Inteligencia Artificial).",
       "validator": {
         "type": "answer",
         "expected": 0.722,
@@ -268,7 +268,7 @@
         "En el test hay 36 clientes. ¿Cuántos son normales?",
         "26 normales ÷ 36 clientes. Responde con 3 decimales."
       ],
-      "on_complete": "0,722. ¡Sin mirar nada saca un 72 %! Y no detecta ni un solo abusador. Tu k-NN saca 0,889: mejor, pero la accuracy sola esconde lo que importa. En T3-02 aprenderás a medir cada tipo de error por separado."
+      "on_complete": "0,722: sin mirar nada saca un 72 %, y no detecta ni un solo abusador. Tu k-NN saca 0,889: mejor, pero la accuracy sola esconde lo que importa. En T3-02 aprenderás a medir cada tipo de error por separado."
     },
     {
       "id": "py1",
@@ -359,9 +359,9 @@
   ],
   "you_can_now": "Sabes construir un detector que aprende de ejemplos etiquetados, evaluarlo honestamente, explicar un fallo mirando sus vecinos y compararlo con una línea base. Siguiente: T3, donde verás cómo aprenden los modelos que no memorizan, el motor de los LLM (Large Language Model), y cómo medir cada tipo de error.",
   "debrief": {
-    "what_happened": "Has entrenado un k-NN para detectar clientes que abusan de un chatbot, lo has evaluado con un test apartado, has explicado por qué se le escapa un abusador «lento» y has visto que un detector que no mira nada ya saca un 72 % de accuracy.",
+    "what_happened": "Has entrenado un k-NN (k-Nearest Neighbors) para detectar clientes que abusan de un chatbot, lo has evaluado con un test apartado, has explicado por qué se le escapa un abusador «lento» y has visto que un detector que no mira nada ya saca un 72 % de accuracy.",
     "why": "Los detectores que aprenden de datos sustituyen a las reglas escritas a mano, pero heredan los límites de sus features y de sus ejemplos. La línea base y el análisis de los fallos evitan fiarse de una nota que no significa nada.",
-    "in_production": "En las plataformas de LLM el abuso se frena combinando límites de peticiones (rate limiting), cuotas de gasto y detectores entrenados con casos que revisan analistas, con muchas más features (horarios, cuentas, patrones de los prompts). OWASP recoge este riesgo como LLM10:2025, consumo sin límite.",
+    "in_production": "En las plataformas de LLM (Large Language Model) el abuso se frena combinando límites de peticiones (rate limiting), cuotas de gasto y detectores entrenados con casos que revisan analistas, con muchas más features: horarios, cuentas, patrones de los prompts… OWASP (Open Worldwide Application Security Project) recoge este riesgo como LLM10:2025, consumo sin límite.",
     "simplifications": [
       "Dataset sintético de 120 clientes con tres features",
       "Un solo reparto train/test, sin conjunto de validación"
