@@ -261,7 +261,7 @@ func test_mision_T4_02_completa() -> void:
 
 
 func test_mision_T5_01_completa() -> void:
-	game.progress.data["missions"]["T8-02"] = {"completed": true}
+	game.progress.data["missions"]["T8-03"] = {"completed": true}
 	assert_eq(game.start_mission("T5-01"), "")
 	run(["tokenizer train t0 --merges 0", "tokenize t0 la katana del maestro", "answer 22"])
 	run(["hipotesis unos 4", "tokenizer train t200 --merges 200", "tokenize t200 la katana del maestro", "answer 4"])
@@ -694,7 +694,7 @@ func test_T4_03_bloquea_T5_01() -> void:
 	assert_eq(game.mission_status("T5-01"), "bloqueada", "T5-01 exige la misión aplicada")
 	game.progress.data["missions"]["T4-03"] = {"completed": true}
 	assert_eq(game.mission_status("T5-01"), "bloqueada", "después de T4 va T8 (visión)")
-	game.progress.data["missions"]["T8-02"] = {"completed": true}
+	game.progress.data["missions"]["T8-03"] = {"completed": true}
 	assert_ne(game.mission_status("T5-01"), "bloqueada")
 
 

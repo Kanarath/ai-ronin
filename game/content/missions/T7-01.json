@@ -303,7 +303,8 @@
     "simplifications": [
       "Árbol CART con impureza de Gini y cortes binarios",
       "Sin poda posterior"
-    ]
+    ],
+    "exercise": "forja/ejercicios/T7_01_arboles.py"
   },
   "further_reading": [
     "ref.sklearn-trees",
@@ -311,5 +312,25 @@
   ],
   "xp": {
     "base": 250
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: otra profundidad. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con los mismos katanas_train y katanas_test, entrena un árbol de profundidad 3 y mídelo en test. ¿Qué accuracy da? (answer <número>, 3 decimales)",
+        "validator": {
+          "type": "answer",
+          "expected": 0.792,
+          "tolerance": 0.001
+        },
+        "wrong_answer": "Revisa: tree train <nombre> katanas_train --depth 3 y classic evaluate <nombre> katanas_test.",
+        "hints": [
+          "Mismo procedimiento que con t2, con --depth 3.",
+          "tree train t3 katanas_train --depth 3"
+        ],
+        "on_complete": "Correcto: 0,792. Ni la profundidad 2 ni la 8: más preguntas no siempre ayudan."
+      }
+    ]
   }
 }

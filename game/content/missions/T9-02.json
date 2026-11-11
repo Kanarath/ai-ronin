@@ -262,5 +262,25 @@
   ],
   "xp": {
     "base": 250
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: la recompensa con trampa. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con el modelo v (preferencias de longitud), pregúntale temple. ¿Qué probabilidad (en %) tiene la respuesta larga? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 72,
+          "tolerance": 0.5
+        },
+        "wrong_answer": "Revisa: llm ask v temple (si no tienes v, repite llm pretrain v, llm sft v y llm prefs v longitud).",
+        "hints": [
+          "llm ask v temple",
+          "Busca la fila de tipo «larga»."
+        ],
+        "on_complete": "Correcto: 72 %. El atajo de la longitud se nota también en preguntas normales."
+      }
+    ]
   }
 }

@@ -398,3 +398,32 @@ Antes de abrir una pista, ejecuta el test y lee el mensaje de error: suele decir
 <details><summary>🟡 ndcg_en_k</summary>Ideal: <code>sorted((g for g in relevancia.values() if g &gt; 0), reverse=True)[:k]</code>. Para el DCG, un conjunto <code>vistos</code>: el grado de un documento ya visto es 0. Ganancia <code>(2 ** g - 1) / math.log2(i + 1)</code> con <code>i</code> desde 1.</details>
 <details><summary>🟢 percentil</summary><code>v = sorted(valores)</code> (una lista nueva) y <code>v[math.ceil(p / 100 * len(v)) - 1]</code>: el <code>- 1</code> pasa de posición a índice.</details>
 <details><summary>🟡 puntuacion_llm</summary><code>m = re.search(r"-?\d+(?:[.,]\d+)?", texto)</code>. Si hay coincidencia, <code>float(m.group().replace(",", "."))</code> y recórtalo con <code>min(10.0, max(0.0, x))</code>.</details>
+
+## T7_01 · árboles, bosques y k-means
+
+<details><summary>🟢 gini</summary>Cuenta cada clase con un diccionario; con n = len(etiquetas), resta a 1 la suma de <code>(veces / n) ** 2</code>. Lista vacía: 0.0 antes de dividir.</details>
+<details><summary>🟡 mejor_corte</summary><code>d = sorted(set(valores))</code>; los umbrales son <code>(a + b) / 2</code> para <code>a, b in zip(d, d[1:])</code>. Para cada uno, separa las etiquetas en izq (valor &lt;= umbral) y der, y calcula el gini ponderado. Quédate con el primero que mejore <em>estrictamente</em>: así ganan los umbrales pequeños en un empate.</details>
+<details><summary>🟢 predecir</summary>Un <code>while "hoja" not in nodo</code> que baja a <code>nodo["izq"]</code> o <code>nodo["der"]</code>.</details>
+<details><summary>🟢 muestra_bootstrap</summary>Crea UN solo <code>r = random.Random(semilla)</code> y llama n veces a <code>r.randrange(n)</code>.</details>
+<details><summary>🟡 votar</summary>Cuenta votos y ordena las clases con <code>key=lambda c: (-votos[c], c)</code>: más votos primero y, en empate, orden alfabético.</details>
+<details><summary>🟡 asignar</summary><code>d = [math.dist(p, c) for c in centros]</code> y <code>d.index(min(d))</code>: index devuelve el primero, que es el de índice menor.</details>
+<details><summary>🔴 mover_centros</summary>Para cada k: <code>mios = [p for p, a in zip(puntos, asignacion) if a == k]</code>; si hay puntos, <code>[sum(col) / len(mios) for col in zip(*mios)]</code>; si no, <code>list(centros[k])</code> (una copia).</details>
+<details><summary>🟡 mas_raros</summary><code>sorted(range(len(puntos)), key=lambda i: (-math.dist(puntos[i], centro), i))[:n]</code></details>
+
+## T10_01 · equidad
+
+<details><summary>🟢 cargar</summary><code>with open(ruta, encoding="utf-8", newline="") as f: return list(csv.DictReader(f))</code> (PYTHON.md §10).</details>
+<details><summary>🟢 tasa_seleccion</summary>Filtra con <code>zip(decisiones, grupos)</code> las del grupo g; si la lista queda vacía, <code>return None</code>; si no, <code>.count(favorable) / len(...)</code>.</details>
+<details><summary>🟢 ratio_80</summary><code>min(tasas.values()) / max(tasas.values())</code>, con cuidado si el máximo es 0.</details>
+<details><summary>🟡 aprobar</summary>Para cada pareja (p, g): el umbral es <code>umbral1</code> si <code>umbral1 is not None and g == "1"</code>; si no, <code>umbral</code>. Compara con <code>&gt;=</code>.</details>
+<details><summary>🟡 de_los_que_devuelven / precision</summary>Son la misma cuenta con el filtro al revés: en una te quedas con las posiciones con <code>real_bueno</code> y cuentas los aprobados; en la otra, con las aprobadas y cuentas los buenos.</details>
+<details><summary>🔴 informe_umbral</summary>Convierte primero: <code>p = [float(f[puntuacion]) …]</code>, <code>g = [f[grupo] …]</code>, <code>r = [f[real] == bueno …]</code>, y <code>ap = aprobar(p, g, umbral, umbral1)</code>. Para cada grupo de <code>sorted(set(g))</code>, filtra ap y r y rellena las cinco claves reutilizando tus funciones.</details>
+
+## P1_01 · extractor
+
+<details><summary>🟢 extraer_json</summary>Un <code>try: d = json.loads(texto) except json.JSONDecodeError:</code>; en el except, el trozo es <code>texto[texto.find("{"):texto.rfind("}") + 1]</code> (comprueba antes que haya llaves). Al final, <code>isinstance(d, dict)</code>.</details>
+<details><summary>🟡 valida</summary>Cuatro condiciones con <code>and</code>: es un dict, <code>set(salida) == set(CAMPOS)</code>, todos los valores <code>isinstance(..., str)</code> y la urgencia está en URGENCIAS. Comprueba primero que es un dict: si es None, lo demás fallaría.</details>
+<details><summary>🟡 con_reintentos</summary><code>for i in range(intentos):</code> llama, extrae y, si <code>valida</code>, <code>return s, i + 1</code>. Después del bucle, <code>return None, intentos</code>.</details>
+<details><summary>🔴 delimitar</summary><code>"&lt;correo&gt;\n" + correo.replace("&lt;/correo&gt;", "[/correo]") + "\n&lt;/correo&gt;"</code></details>
+<details><summary>🔴 id_valido</summary><code>texto.startswith("P-") and len(texto) == 5 and texto[2:].isdigit()</code></details>
+<details><summary>🔴 exactitud</summary>Para cada campo: cuántas parejas (s, o) tienen <code>s is not None and s.get(campo) == o[campo]</code>, dividido entre <code>len(oro)</code>. El total es la media de los tres campos.</details>

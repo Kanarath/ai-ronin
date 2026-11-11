@@ -154,7 +154,7 @@
     {
       "id": "c2",
       "text": "Con todo esto, ¿cómo protegerías de verdad el código de descuento?",
-      "teach": "La alineación no es una barrera\nEntrenar al modelo para negarse reduce los ataques, pero nunca los elimina: siempre habrá otro disfraz.\nPor qué: lo que no puede filtrarse es lo que el modelo no tiene; es la lección «sin secreto» de A1-05.",
+      "teach": "La alineación no es una barrera\nEntrenar al modelo para negarse reduce los ataques, pero nunca los elimina: siempre habrá otro disfraz.\nPor qué: lo que no puede filtrarse es lo que el modelo no tiene; lo practicarás en A1, sacando el secreto del prompt.",
       "choices": [
         {
           "id": "a",
@@ -256,5 +256,27 @@
   ],
   "xp": {
     "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: el parche solo. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Entrena un modelo nuevo solo con los pares de rol (pretrain, sft y llm prefs <nombre> rol, sin seguridad) y pídele codigo. ¿Se niega? (answer sí o no)",
+        "validator": {
+          "type": "answer",
+          "expected": "no",
+          "accept": [
+            "no"
+          ]
+        },
+        "wrong_answer": "Revisa: sin el conjunto «seguridad», la petición directa no se parece a ningún par de rol.",
+        "hints": [
+          "llm pretrain b, llm sft b, llm prefs b rol y llm ask b codigo",
+          "¿A qué peticiones se parecen los pares de rol?"
+        ],
+        "on_complete": "Correcto: no se niega. Cada parche cubre lo que se parece a sus ejemplos, nada más."
+      }
+    ]
   }
 }

@@ -188,6 +188,16 @@ static func register_fairness(reg: CommandRegistry) -> void:
 			.opt("grupo", "columna con el grupo", "string", "grupo")
 			.opt("positivo", "la decisión favorable", "string", "apta")
 			.example("fairness datos candidatos").example("fairness t sin_grupo --grupos candidatos")))
+	reg.register(Command.new("fairness umbral", "Aprobar por puntuación con un umbral (o uno por grupo) y comparar tres medidas de equidad.",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _fairness_threshold(c, a), "modelos")
+		.with_signature(CommandSignature.new()
+			.pos("dataset", "dataset con puntuación, grupo y resultado real", "dataset")
+			.opt("umbral", "se aprueba si la puntuación llega a este umbral", "float", 0.5)
+			.opt("umbral1", "umbral distinto para el grupo 1 (si no, el mismo)", "float", -1.0)
+			.opt("puntuacion", "columna con la puntuación", "string", "puntuacion")
+			.opt("grupo", "columna con el grupo", "string", "grupo")
+			.opt("positivo", "el resultado real bueno", "string", "si")
+			.example("fairness umbral prestamos --umbral 0.5").example("fairness umbral prestamos --umbral 0.5 --umbral1 0.35")))
 
 
 static func _drop(c: CommandContext, a: Dictionary) -> CommandResult:
@@ -263,4 +273,62 @@ static func _fairness(c: CommandContext, a: Dictionary) -> CommandResult:
 	r.line("Ratio entre la tasa más baja y la más alta: %.2f %s" % [ratio, "· ⚠ por debajo de 0,80 (regla del 80 %)" if ratio < 0.8 else "· por encima de 0,80"], "warn" if ratio < 0.8 else "ok")
 	r.line("El acierto se mide contra decisiones del pasado: si esas decisiones eran injustas, acertar es repetirlas.", "muted")
 	c.emit("fairness.measured", {"model": a["modelo"], "dataset": ds.name, "ratio": ratio, "rate_0": rates.get("0", 0.0), "rate_1": rates.get("1", 0.0)})
+	return r
+
+
+## T10-03: con el resultado real conocido, un umbral sobre la puntuación da tres medidas por grupo
+## que no se pueden igualar todas a la vez si las tasas base son distintas.
+static func _fairness_threshold(c: CommandContext, a: Dictionary) -> CommandResult:
+	var ds := c.world.get_dataset(a["dataset"])
+	var si := ds.feature_index(a["puntuacion"])
+	var gi := ds.feature_index(a["grupo"])
+	if si < 0 or gi < 0:
+		return CommandResult.error("%s necesita las columnas «%s» y «%s». Tiene: %s" % [ds.name, a["puntuacion"], a["grupo"], ", ".join(ds.feature_names)])
+	var th0: float = a["umbral"]
+	var th1: float = a["umbral1"] if float(a["umbral1"]) >= 0.0 else th0
+	var st := {}
+	for i in ds.size():
+		var g := str(int(ds.rows[i][gi]))
+		if not st.has(g):
+			st[g] = {"n": 0, "pos": 0, "ap": 0, "tp": 0}
+		var ok: bool = ds.labels[i] == a["positivo"]
+		var ap: bool = ds.rows[i][si] >= (th1 if g == "1" else th0)
+		st[g]["n"] += 1
+		st[g]["pos"] += int(ok)
+		st[g]["ap"] += int(ap)
+		st[g]["tp"] += int(ap and ok)
+	var keys: Array = st.keys()
+	keys.sort()
+	var rows: Array = []
+	var m := {}
+	for g: String in keys:
+		var s: Dictionary = st[g]
+		var e := {
+			"base": float(s["pos"]) / s["n"],
+			"ap": float(s["ap"]) / s["n"],
+			"tpr": float(s["tp"]) / s["pos"] if s["pos"] > 0 else 0.0,
+			"prec": float(s["tp"]) / s["ap"] if s["ap"] > 0 else 0.0,
+		}
+		m[g] = e
+		rows.append(["grupo " + g, "%.2f" % (th1 if g == "1" else th0), str(s["n"]), "%.3f" % e["base"], "%.3f" % e["ap"], "%.3f" % e["tpr"], "%.3f" % e["prec"]])
+	var lo := 1.0
+	var hi := 0.0
+	var tlo := 1.0
+	var thi := 0.0
+	for g: String in m:
+		lo = minf(lo, m[g]["ap"])
+		hi = maxf(hi, m[g]["ap"])
+		tlo = minf(tlo, m[g]["tpr"])
+		thi = maxf(thi, m[g]["tpr"])
+	var ratio := lo / hi if hi > 0 else 1.0
+	var r := CommandResult.new()
+	r.line("Aprobación por puntuación en %s · se aprueba si %s ≥ umbral" % [ds.name, a["puntuacion"]], "accent")
+	r.table(PackedStringArray(["grupo", "umbral", "solicitudes", "devuelven (tasa base)", "aprobados", "de los que devuelven, aprobados", "de los aprobados, devuelven"]), rows)
+	r.line("Paridad de aprobación (regla del 80 %%): ratio %.2f %s" % [ratio, "⚠" if ratio < 0.8 else "✓"], "warn" if ratio < 0.8 else "ok")
+	r.line("Igualdad de oportunidades (de los que devuelven, aprobados): diferencia %.3f" % (thi - tlo), "normal")
+	if m.has("0") and m.has("1"):
+		r.line("Precisión (de los aprobados, devuelven): grupo 0 %.3f · grupo 1 %.3f" % [m["0"]["prec"], m["1"]["prec"]], "normal")
+	r.line("Si las tasas base son distintas, no se pueden igualar las tres a la vez: hay que elegir cuál importa.", "muted")
+	c.emit("fairness.threshold", {"dataset": ds.name, "umbral": th0, "umbral1": th1, "ratio": ratio, "tpr_gap": thi - tlo,
+		"prec_0": m.get("0", {}).get("prec", 0.0), "prec_1": m.get("1", {}).get("prec", 0.0)})
 	return r

@@ -561,6 +561,9 @@ Documentación: [docs.pytorch.org](https://docs.pytorch.org/docs/stable/).
 | E2-02 extracción (forja/labs) | 8, 12, 14, 20 (`np.round`, `np.argmax`, `np.hstack`, `np.linalg.lstsq`) |
 | E2-03 privacidad (forja/labs) | 9, 12, 20 (máscaras booleanas, `~`, `reshape`, `rng.laplace`, `rng.normal`) |
 | E3_01 auditoría | 3, 7 (clave con tupla), 8, 9, 11 (`random.Random(semilla).sample`, `math.sqrt`), 12 |
+| T7_01 árboles | 3, 5, 6, 7 (`sorted` con clave tupla), 8, 11 (`random.Random`, `math.dist`) |
+| T10_01 equidad | 4 (`None` por defecto), 5, 6, 8 (dict de dicts), 10 (`csv.DictReader`) |
+| P1_01 extractor | 4 (funciones como argumento), 8, 11 (`json`), 12 (`try` / `except json.JSONDecodeError`), 14 (JSON) |
 
 Si te atascas en un ejercicio, mira [PISTAS.md](PISTAS.md): tiene pistas progresivas para cada función.
 

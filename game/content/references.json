@@ -1367,6 +1367,24 @@
       "url": "https://arxiv.org/abs/2305.18290",
       "consulted": "2026-11-11",
       "review_by": "2028-11-11"
+    },
+    {
+      "id": "ref.kleinberg-2016",
+      "title": "Kleinberg, Mullainathan y Raghavan (2016). Inherent Trade-Offs in the Fair Determination of Risk Scores",
+      "source": "ITCS 2017 · arXiv:1609.05807",
+      "type": "articulo",
+      "url": "https://arxiv.org/abs/1609.05807",
+      "consulted": "2026-11-11",
+      "review_by": "2028-11-11"
+    },
+    {
+      "id": "ref.chouldechova-2016",
+      "title": "Chouldechova (2016). Fair prediction with disparate impact: A study of bias in recidivism prediction instruments",
+      "source": "FATML 2016 · arXiv:1610.07524",
+      "type": "articulo",
+      "url": "https://arxiv.org/abs/1610.07524",
+      "consulted": "2026-11-11",
+      "review_by": "2028-11-11"
     }
   ]
 }

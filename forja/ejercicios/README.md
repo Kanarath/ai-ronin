@@ -33,6 +33,13 @@ Cada misión del Dojo tiene un ejercicio en Python. Implementas tú las funcione
 | `P0_04_unicode.py` | P0-04 | Texto en streaming: bytes frente a caracteres, NFC frente a NFD, emojis compuestos y una tubería de generadores |
 | `P0_05_generacion.py` | P0-05 | Generador de tokens con muestreo por suma acumulada, texto en streaming y límite de salida en bytes |
 | `E3_01_auditoria.py` | E3-01…03 | Auditoría en código: muestra de controles basada en el riesgo, cobertura por función, clasificación de hallazgos, intervalo de Wilson de una muestra de expedientes y resumen por severidad |
+| `T7_01_arboles.py` | T7-01…04 | ML clásico en Python puro: Gini, mejor corte, recorrer un árbol, muestra bootstrap, votación, k-means (asignar y mover) y ranking de anomalías |
+| `T10_01_equidad.py` | T10-01…03 | Equidad con los datos reales del Dojo: tasa de selección, regla del 80 %, aprobación por umbral, igualdad de oportunidades, precisión por grupo e informe completo |
+| `P1_01_extractor.py` | P1-01…03 | Lo que hace fiable un extractor con LLM: sacar el JSON de una respuesta, validarlo, reintentar, delimitar el correo, validar el id y medir la exactitud por campo |
+
+**Extras opcionales con herramientas reales** (en `extras/`, después de completar el ejercicio):
+- `sklearn_T7_T10.py`: árboles, bosques, k-means y el filtro de candidatos con scikit-learn de verdad, comparados con tus funciones. Necesita `extras/requirements.txt`.
+- `extractor_ollama.py`: el extractor de P1 con `llama3.2:1b` en tu equipo (Ollama), medido con tus funciones. Solo Python estándar.
 
 **Ayudas:**
 - [PYTHON.md](PYTHON.md) explica, con ejemplos, todo el Python que usan los ejercicios, y tiene una tabla con las secciones que necesita cada uno. Léela antes de cada ejercicio.

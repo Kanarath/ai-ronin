@@ -32,7 +32,7 @@ AQUI = Path(__file__).resolve().parent
 RAIZ = AQUI.parents[1]
 SALIDA = RAIZ / "forja" / "evidencias"
 MANIFIESTO = RAIZ / "game" / "content" / "exercises.json"
-PATRON_ID = re.compile(r"^([A-Z])(\d)-(\d{2})$")
+PATRON_ID = re.compile(r"^([A-Z])(\d{1,2})-(\d{2})$")
 
 
 def huella(ruta):
@@ -55,7 +55,7 @@ def ejercicios():
             out[ej_id] = (fichero, test)
     # Laboratorios: forja/labs/P0-01_servicio_llm/{servicio.py, test_servicio.py}
     for carpeta in sorted(p for p in LABS.glob("*") if p.is_dir()):
-        ej_id = carpeta.name[:5]
+        ej_id = carpeta.name.split("_")[0]
         tests = sorted(carpeta.glob("test_*.py"))
         if PATRON_ID.match(ej_id) and len(tests) == 1:
             fichero = carpeta / tests[0].name[len("test_"):]

@@ -1,0 +1,366 @@
+{
+  "id": "T10-03",
+  "schema_version": 1,
+  "title": "Métricas que chocan",
+  "unit": "T10",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 35,
+  "requires_missions": [
+    "T10-02"
+  ],
+  "competencies": {
+    "requires": [
+      "T10.metricas-equidad"
+    ],
+    "trains": [
+      "T10.medidas-incompatibles",
+      "T10.decision-documentada"
+    ]
+  },
+  "briefing": "El banco de la forja presta dinero a artesanos con un modelo que da a cada solicitud una puntuación. Esta vez sí sabes qué pasó: quién devolvió el préstamo y quién no. Te piden que la aprobación sea «justa». Vas a descubrir que hay más de una forma de serlo, y que no caben todas a la vez.",
+  "learning_objectives": [
+    "Medir paridad de aprobación, igualdad de oportunidades y precisión por grupo",
+    "Explicar por qué no se pueden igualar a la vez si las tasas base son distintas",
+    "Saber quién y cómo decide qué medida usar"
+  ],
+  "mentor_intro": "«Justo» tiene varias definiciones. Hoy las pones una al lado de otra.",
+  "lab": {
+    "datasets": [
+      {
+        "file": "prestamos.csv",
+        "name": "prestamos",
+        "label": "devuelve"
+      }
+    ],
+    "viz": {}
+  },
+  "purpose": "Los equipos que auditan modelos de crédito, contratación o justicia se encuentran siempre el mismo problema: varias medidas de equidad razonables que se contradicen. Está demostrado matemáticamente que, si los grupos tienen tasas base distintas, no se pueden cumplir todas a la vez. Elegir cuál importa es una decisión de la organización, que hay que documentar; la evaluación de solvencia es un sistema de alto riesgo en el AI Act europeo.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira las solicitudes: dataset inspect prestamos",
+      "teach": "Las solicitudes\nCada fila es una solicitud: ingresos (miles al mes), deuda (fracción de los ingresos), la puntuación del modelo del banco, el grupo (0 o 1) y si devolvió el préstamo.\nLa puntuación no usa el grupo: sale de ingresos y deuda.\nPor qué: para medir la equidad de verdad hace falta saber qué pasó después, no solo qué se decidió.",
+      "validator": {
+        "type": "event",
+        "event": "dataset.inspected",
+        "where": {
+          "dataset": "prestamos"
+        }
+      },
+      "hints": [
+        "dataset inspect prestamos"
+      ],
+      "on_complete": "200 solicitudes: 140 del grupo 0 y 60 del grupo 1."
+    },
+    {
+      "id": "o2",
+      "text": "Aprueba con el mismo umbral para todos: fairness umbral prestamos --umbral 0.5. ¿Qué ratio de aprobación da? (answer <número>, 2 decimales)",
+      "teach": "Tres medidas de equidad\nParidad de aprobación: la regla del 80 % de T10-01, con la fracción de solicitudes aprobadas.\nIgualdad de oportunidades: de las personas que sí devuelven, qué fracción se aprueba en cada grupo.\nPrecisión: de los aprobados, qué fracción devuelve.\nPor qué: cada una protege de un daño distinto; hay que mirarlas juntas.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "fairness.threshold",
+            "where": {
+              "dataset": "prestamos",
+              "umbral": 0.5,
+              "umbral1": 0.5
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.59,
+            "tolerance": 0.005
+          }
+        ]
+      },
+      "hints": [
+        "fairness umbral prestamos --umbral 0.5",
+        "answer 0.59"
+      ],
+      "on_complete": "Correcto: 0,59, muy por debajo de 0,80. Pero de los que devuelven, se aprueba casi a la misma fracción en los dos grupos."
+    },
+    {
+      "id": "c1",
+      "text": "Con el mismo umbral, el grupo 1 recibe muchos menos préstamos. ¿Por qué?",
+      "teach": "Tasas base\nLa tasa base es la fracción de un grupo que tiene el resultado bueno: aquí, 0,77 del grupo 0 devuelve y solo 0,43 del grupo 1, porque en estos datos tiene menos ingresos.\nQue una diferencia sea real no la hace justa (puede venir de desigualdades anteriores), pero cambia lo que se puede igualar.\nPor qué: casi todos los choques entre medidas de equidad nacen de tasas base distintas.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque el modelo usa la columna grupo",
+          "why": "La puntuación no usa el grupo: sale de los ingresos y la deuda."
+        },
+        {
+          "id": "b",
+          "text": "porque en estos datos el grupo 1 devuelve menos, y la puntuación lo refleja"
+        },
+        {
+          "id": "c",
+          "text": "porque el umbral de 0,5 está mal calculado",
+          "why": "El umbral es el mismo para todos; la diferencia está en los datos de cada grupo."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Mira la columna «devuelven (tasa base)».",
+        "answer b"
+      ],
+      "on_complete": "Eso es: las tasas base son muy distintas."
+    },
+    {
+      "id": "o3",
+      "text": "Iguala las oportunidades con otro umbral para el grupo 1: fairness umbral prestamos --umbral 0.5 --umbral1 0.45. ¿Qué diferencia de igualdad de oportunidades queda? (answer <número>, 3 decimales)",
+      "teach": "Un umbral por grupo\n--umbral1 pone un umbral distinto al grupo 1. Bajarlo aprueba a más personas de ese grupo.\nPor qué: es la forma más directa de mover una medida de equidad después de entrenar el modelo (postprocesado).",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "fairness.threshold",
+            "where": {
+              "dataset": "prestamos",
+              "umbral": 0.5,
+              "umbral1": 0.45
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.003,
+            "tolerance": 0.0005
+          }
+        ]
+      },
+      "hints": [
+        "Lanza el comando y mira la línea «Igualdad de oportunidades».",
+        "answer 0.003"
+      ],
+      "on_complete": "Correcto: 0,003, casi iguales. Pero mira la ratio de aprobación: 0,65, sigue por debajo de 0,80."
+    },
+    {
+      "id": "o4",
+      "text": "Ahora iguala las aprobaciones: fairness umbral prestamos --umbral 0.5 --umbral1 0.35. ¿Qué precisión tiene el grupo 1? (answer <número>, 2 decimales)",
+      "prediction": {
+        "prompt": "Si apruebas a muchas más personas del grupo 1, ¿qué pasará con la fracción de sus aprobados que devuelve?",
+        "options": [
+          "sube",
+          "igual",
+          "baja"
+        ]
+      },
+      "teach": "Paridad a cualquier precio\nCon 0,35 el grupo 1 pasa la regla del 80 %. Para conseguirlo se aprueban solicitudes con puntuación baja.\nPor qué: un préstamo que no se puede devolver también es un daño, para el banco y para la persona endeudada.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "fairness.threshold",
+            "where": {
+              "dataset": "prestamos",
+              "umbral": 0.5,
+              "umbral1": 0.35
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.64,
+            "tolerance": 0.005
+          }
+        ]
+      },
+      "hints": [
+        "Pon tu hipótesis, lanza el comando y mira la línea «Precisión».",
+        "answer 0.64"
+      ],
+      "on_complete": "Correcto: 0,64 frente a 0,90 del grupo 0. Ahora la igualdad de oportunidades vuelve a separarse."
+    },
+    {
+      "id": "c2",
+      "text": "Has probado tres reglas. ¿Qué conclusión sacas?",
+      "teach": "El teorema de imposibilidad\nKleinberg y otros (2016) y Chouldechova (2016) demostraron que, si las tasas base son distintas, un clasificador que no sea perfecto no puede igualar a la vez la paridad, la igualdad de oportunidades y la precisión entre grupos.\nPor qué: no es un fallo de tu umbral ni del modelo; es matemática.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "con tasas base distintas no se pueden igualar las tres a la vez: hay que elegir"
+        },
+        {
+          "id": "b",
+          "text": "la regla 0,35 es la justa, porque cumple el 80 %",
+          "why": "Cumple la paridad, pero un 36 % de los aprobados del grupo 1 no podrá devolver: también es un daño."
+        },
+        {
+          "id": "c",
+          "text": "la de un único umbral, porque trata a todos igual",
+          "why": "La misma regla no da el mismo efecto: su ratio de aprobación es 0,59."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "¿Alguna de las tres reglas ha igualado las tres medidas?",
+        "answer a"
+      ],
+      "on_complete": "Exacto: hay que elegir qué medida importa, y explicarlo."
+    },
+    {
+      "id": "c3",
+      "text": "¿Quién debería decidir qué medida de equidad usa el banco?",
+      "teach": "Una decisión documentada\nQué error duele más (negar un préstamo a quien lo devolvería o dárselo a quien no puede) depende del contexto: lo deciden la organización y sus responsables legales, escuchando a las personas afectadas, y queda escrito.\nLa evaluación de solvencia de personas está en la lista de alto riesgo del anexo III del AI Act. Además, usar el grupo para poner umbrales distintos puede ser discriminación directa en muchos países: se consulta antes con legal.\nFormación, no asesoramiento jurídico: lo verás a fondo en O5.\nPor qué: tu trabajo como ingeniero es medir y explicar las opciones; la elección es de quien responde de ella.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "el ingeniero que entrena el modelo, porque es quien entiende los números",
+          "why": "Él mide y explica; elegir qué daño se acepta es una decisión de la organización, con legal."
+        },
+        {
+          "id": "b",
+          "text": "nadie: se usa la regla que dé más acierto",
+          "why": "El acierto no dice nada de cómo se reparten los errores entre grupos."
+        },
+        {
+          "id": "c",
+          "text": "la organización, con legal y los afectados, y dejándolo documentado"
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "Relee la lección: ¿es una decisión técnica o de valores?",
+        "answer c"
+      ],
+      "on_complete": "Correcto: decide quien responde de ello, y queda escrito."
+    },
+    {
+      "id": "py1",
+      "text": "Programa la igualdad de oportunidades: abre el editor con py, completa de_los_que_devuelven y compruébala con py check.",
+      "teach": "La medida, en código\nDe las solicitudes que sí devolvieron, la fracción que se aprobó. En inglés se llama true positive rate o recall, como en T3-02.\nPor qué: es la misma cuenta de T3, ahora separada por grupo.",
+      "py_exercise": {
+        "id": "T10-03-oportunidad",
+        "title": "de_los_que_devuelven(aprobado, devuelve): igualdad de oportunidades",
+        "function": "de_los_que_devuelven",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef de_los_que_devuelven(aprobado, devuelve):\n    # aprobado y devuelve: listas de True o False, una posición por solicitud\n    buenos = [a for a, d in zip(aprobado, devuelve) if d]\n    aprobados = 0   # ← cambia esta línea: cuántos de buenos son True\n    return aprobados / len(buenos)\n\nprint(de_los_que_devuelven([True, False, True, True], [True, True, False, True]))   # unos 0.667\n",
+        "cases": [
+          {
+            "args": [
+              [
+                true,
+                false,
+                true,
+                true
+              ],
+              [
+                true,
+                true,
+                false,
+                true
+              ]
+            ],
+            "expected": 0.6667,
+            "tolerance": 0.001
+          },
+          {
+            "args": [
+              [
+                true,
+                true
+              ],
+              [
+                true,
+                true
+              ]
+            ],
+            "expected": 1.0,
+            "tolerance": 1e-09
+          },
+          {
+            "args": [
+              [
+                false,
+                true,
+                false
+              ],
+              [
+                true,
+                false,
+                true
+              ]
+            ],
+            "expected": 0.0,
+            "tolerance": 1e-09
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T10-03-oportunidad",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "buenos.count(True) cuenta los aprobados entre los que devuelven.",
+        "La línea queda así: aprobados = buenos.count(True)"
+      ]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: otro umbral. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con el umbral 0.5 para el grupo 0, prueba para el grupo 1 los umbrales 0.4 y 0.3. ¿Cuál de los dos es el más alto que cumple la regla del 80 %? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 0.3,
+          "tolerance": 0.001
+        },
+        "wrong_answer": "Mira la línea «Paridad de aprobación» de cada uno: tiene que llegar a 0,80.",
+        "hints": [
+          "fairness umbral prestamos --umbral 0.5 --umbral1 <valor>",
+          "Con 0,4 la ratio es 0,74."
+        ],
+        "on_complete": "Correcto: 0,3 (ratio 0,90); con 0,4 se queda en 0,74."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has aprobado préstamos con tres reglas: un umbral único (ratio 0,59), otro para igualar oportunidades (diferencia 0,003, ratio 0,65) y otro para igualar aprobaciones (ratio 0,82, pero precisión 0,64 en el grupo 1).",
+    "why": "Con tasas base distintas, las medidas de equidad se contradicen: igualar una separa otra. Es un resultado demostrado, no un fallo del modelo.",
+    "in_production": "Las auditorías de equidad informan de varias medidas a la vez (con librerías como Fairlearn o AIF360), y la organización elige y documenta cuál prioriza y por qué, normalmente con su equipo legal y de riesgos.",
+    "simplifications": [
+      "Se conoce el resultado de todas las solicitudes; en la realidad solo se sabe si devuelven las aprobadas",
+      "Solo dos grupos",
+      "La puntuación ya viene dada"
+    ],
+    "exercise": "forja/ejercicios/T10_01_equidad.py"
+  },
+  "further_reading": [
+    "ref.kleinberg-2016",
+    "ref.chouldechova-2016",
+    "ref.eu-ai-act"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "you_can_now": "Sabes medir paridad de aprobación, igualdad de oportunidades y precisión por grupo, explicar por qué no se pueden igualar todas con tasas base distintas y quién debe decidir cuál importa. Siguiente: A1, la seguridad de las aplicaciones con LLM (Large Language Model)."
+}

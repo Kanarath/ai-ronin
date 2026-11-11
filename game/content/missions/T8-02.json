@@ -143,7 +143,7 @@
     {
       "id": "c2",
       "text": "Un atacante pinta la instrucción con 0,90 en vez de 0,98. ¿Qué pasa con la limpieza de umbral 0,05?",
-      "teach": "Los límites de una defensa\nEl umbral decide qué se borra: lo que se aparta del fondo menos que él.\nPor qué: toda limpieza tiene un punto ciego; por eso se combina con tratar el texto de las imágenes como datos no fiables, como en A1 y A2.",
+      "teach": "Los límites de una defensa\nEl umbral decide qué se borra: lo que se aparta del fondo menos que él.\nPor qué: toda limpieza tiene un punto ciego; por eso se combina con tratar el texto de las imágenes como datos no fiables, como verás en A1 y A2.",
       "choices": [
         {
           "id": "a",
@@ -191,7 +191,7 @@
         {
           "id": "c",
           "text": "pedir al modelo en el prompt que no haga caso a instrucciones escondidas",
-          "why": "Una regla en el prompt no impide la inyección: ya lo viste en A1."
+          "why": "Una regla en el prompt no impide la inyección: lo comprobarás en A1."
         }
       ],
       "validator": {
@@ -283,7 +283,7 @@
       ]
     }
   ],
-  "you_can_now": "Sabes descubrir una instrucción escondida en una imagen, explicar por qué el modelo la lee y defenderte limpiando la entrada y tratando su texto como datos. Siguiente: T5, del texto al vector.",
+  "you_can_now": "Sabes descubrir una instrucción escondida en una imagen, explicar por qué el modelo la lee y defenderte limpiando la entrada y tratando su texto como datos. Siguiente: T8-03, engañar a una cámara.",
   "debrief": {
     "what_happened": "Has encontrado una orden de pago escondida en píxeles de 0,98 sobre fondo blanco, la has revelado con contraste y la has borrado con una limpieza de umbral 0,05.",
     "why": "Un modelo multimodal lee números, no lo que una persona ve; cualquier diferencia puede llevar instrucciones.",
@@ -299,5 +299,27 @@
   ],
   "xp": {
     "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: un umbral más fino. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Limpia la factura con umbral 0.01 y léela con el modelo. ¿Sigue leyendo la línea escondida? (answer sí o no)",
+        "validator": {
+          "type": "answer",
+          "expected": "sí",
+          "accept": [
+            "sí"
+          ]
+        },
+        "wrong_answer": "Revisa: image clean factura --umbral 0.01 --as <nombre> y vision read <nombre>.",
+        "hints": [
+          "¿Cuánto se aparta 0,98 de 1,00? ¿Es menos que 0,01?",
+          "image clean factura --umbral 0.01 --as f1"
+        ],
+        "on_complete": "Correcto: sí. 0,98 se aparta 0,02, más que el umbral: la limpieza no la borra."
+      }
+    ]
   }
 }

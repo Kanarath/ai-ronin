@@ -36,6 +36,24 @@ static func register(reg: CommandRegistry) -> void:
 			.opt("umbral", "diferencia mínima con el fondo para conservar un píxel", "float", 0.05)
 			.opt("as", "nombre de la imagen limpia", "string", "")
 			.example("image clean factura --umbral 0.05 --as factura_limpia")))
+	reg.register(Command.new("vision classify", "La cámara de la puerta: ¿tarjeta autorizada o no? (modelo entrenado con fotos de 14×14).",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _classify(c, a), "vision")
+		.with_signature(CommandSignature.new().pos("imagen", "foto de la cámara").example("vision classify foto_cruz")))
+	reg.register(Command.new("vision pesos", "Dibuja los pesos del modelo de la cámara: en qué píxeles se fija.",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _weights(c, a), "vision"))
+	reg.register(Command.new("image attack", "Ataque FGSM: mueve cada píxel ±eps en la dirección que más sube «autorizado».",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _attack(c, a), "vision")
+		.with_signature(CommandSignature.new()
+			.pos("imagen", "foto de la cámara")
+			.opt("eps", "cuánto puede cambiar cada píxel", "float", 0.1)
+			.opt("as", "nombre de la imagen atacada", "string", "")
+			.example("image attack foto_cruz --eps 0.1 --as foto_adv")))
+	reg.register(Command.new("image binarize", "Defensa: devuelve cada píxel al nivel de fondo o de tinta de la cámara, el más cercano.",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _binarize(c, a), "vision")
+		.with_signature(CommandSignature.new()
+			.pos("imagen", "foto de la cámara")
+			.opt("as", "nombre de la imagen binarizada", "string", "")
+			.example("image binarize foto_adv --as foto_bin")))
 
 
 static func data() -> Dictionary:
@@ -224,4 +242,112 @@ static func _clean(c: CommandContext, a: Dictionary) -> CommandResult:
 	r.line("✓ %s creada: %d píxeles casi iguales al fondo pasan a ser fondo." % [dest, changed], "ok")
 	r.line("Compruébala con vision read %s" % dest, "muted")
 	c.emit("image.cleaned", {"image": a["imagen"], "dest": dest, "umbral": u, "changed": changed})
+	return r
+
+
+## T8-03 · La cámara de la puerta: regresión logística de verdad (content/vision.json → camara).
+static func camera() -> Dictionary:
+	return data().get("camara", {})
+
+
+static func _camera_image(c: CommandContext, n: String) -> Variant:
+	var img := image(c, n)
+	if img.is_empty():
+		return _missing(c, n)
+	var w: Array = camera().get("pesos", [])
+	var px: Array = img["pixeles"]
+	if w.is_empty() or px.size() != w.size() or (px[0] as Array).size() != (w[0] as Array).size():
+		return CommandResult.error("La cámara solo entiende sus fotos de %d×%d (foto_cruz, foto_cuadrado o las que crees a partir de ellas)." % [w.size(), w.size()])
+	return img
+
+
+static func p_authorized(px: Array) -> float:
+	var cam := camera()
+	var z: float = float(cam.get("sesgo", 0.0))
+	for i in px.size():
+		for j in (px[i] as Array).size():
+			z += float(px[i][j]) * float(cam["pesos"][i][j])
+	return 1.0 / (1.0 + exp(-z))
+
+
+static func _classify(c: CommandContext, a: Dictionary) -> CommandResult:
+	var img: Variant = _camera_image(c, a["imagen"])
+	if img is CommandResult:
+		return img
+	var p := p_authorized(img["pixeles"])
+	var ok := p >= 0.5
+	var r := CommandResult.new()
+	r.line("Cámara de la puerta · %s" % a["imagen"], "accent")
+	r.table(PackedStringArray(["clase", "probabilidad"]), [["autorizado", "%.3f" % p], ["no_autorizado", "%.3f" % (1.0 - p)]])
+	r.line("🚪 %s" % ("Puerta ABIERTA: tarjeta autorizada." if ok else "Puerta cerrada: tarjeta no autorizada."), "warn" if ok else "ok")
+	c.emit("vision.classified", {"image": a["imagen"], "p_autorizado": p, "decision": "autorizado" if ok else "no_autorizado"})
+	return r
+
+
+static func _weights(c: CommandContext, _a: Dictionary) -> CommandResult:
+	var w: Array = camera().get("pesos", [])
+	var lo := 0.0
+	var hi := 0.0
+	for row: Array in w:
+		for v: float in row:
+			lo = minf(lo, v)
+			hi = maxf(hi, v)
+	var r := CommandResult.new()
+	r.line("Pesos del modelo de la cámara (%d×%d) · claro = empuja a «autorizado», oscuro = a «no autorizado»" % [w.size(), w.size()], "accent")
+	for row: Array in w:
+		var line := ""
+		for v: float in row:
+			line += _char((v - lo) / (hi - lo) if hi > lo else 0.5)
+		r.line(line, "data")
+	r.line("Pesos entre %.1f y %.1f. El modelo no ha aprendido «cruz» o «cuadrado»: usa cada píxel, también los del fondo." % [lo, hi], "muted")
+	c.emit("vision.weights", {})
+	return r
+
+
+static func _attack(c: CommandContext, a: Dictionary) -> CommandResult:
+	var img: Variant = _camera_image(c, a["imagen"])
+	if img is CommandResult:
+		return img
+	var eps := clampf(float(a["eps"]), 0.0, 1.0)
+	var out: Dictionary = (img as Dictionary).duplicate(true)
+	var w: Array = camera()["pesos"]
+	var changed := 0
+	for i in (out["pixeles"] as Array).size():
+		for j in (out["pixeles"][i] as Array).size():
+			var v: float = out["pixeles"][i][j]
+			var s := signf(float(w[i][j]))
+			var nv := snappedf(clampf(v + eps * s, 0.0, 1.0), 0.01)
+			if nv != v:
+				changed += 1
+			out["pixeles"][i][j] = nv
+	var dest: String = a["as"] if not str(a["as"]).is_empty() else a["imagen"] + "_adv"
+	out["titulo"] = "%s (atacada, eps %.2f)" % [img.get("titulo", a["imagen"]), eps]
+	c.world.images[dest] = out
+	var p0 := p_authorized(img["pixeles"])
+	var p1 := p_authorized(out["pixeles"])
+	var r := CommandResult.new()
+	r.line("✓ %s creada: %d píxeles movidos como mucho %.2f, cada uno hacia donde su peso sube «autorizado»." % [dest, changed, eps], "ok")
+	r.line("Probabilidad de «autorizado»: %.3f → %.3f · compruébalo con vision classify %s" % [p0, p1, dest], "normal")
+	c.emit("image.attacked", {"image": a["imagen"], "dest": dest, "eps": eps, "p_before": p0, "p_after": p1})
+	return r
+
+
+static func _binarize(c: CommandContext, a: Dictionary) -> CommandResult:
+	var img: Variant = _camera_image(c, a["imagen"])
+	if img is CommandResult:
+		return img
+	var bg: float = float(camera().get("fondo", 0.0))
+	var ink: float = float(camera().get("tinta", 1.0))
+	var thr := (bg + ink) / 2.0
+	var out: Dictionary = (img as Dictionary).duplicate(true)
+	for i in (out["pixeles"] as Array).size():
+		for j in (out["pixeles"][i] as Array).size():
+			out["pixeles"][i][j] = ink if float(out["pixeles"][i][j]) >= thr else bg
+	var dest: String = a["as"] if not str(a["as"]).is_empty() else a["imagen"] + "_bin"
+	out["titulo"] = "%s (binarizada)" % img.get("titulo", a["imagen"])
+	c.world.images[dest] = out
+	var r := CommandResult.new()
+	r.line("✓ %s creada: cada píxel vuelve a %.2f (fondo) o %.2f (tinta), el más cercano." % [dest, bg, ink], "ok")
+	r.line("Compruébala con vision classify %s" % dest, "muted")
+	c.emit("image.binarized", {"image": a["imagen"], "dest": dest})
 	return r

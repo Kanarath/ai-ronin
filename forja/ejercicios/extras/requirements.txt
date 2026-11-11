@@ -1,0 +1,4 @@
+# Extras opcionales de la Forja. Versiones fijadas y comprobadas en PyPI el 2026-11-11
+# (scikit-learn 1.9.1, publicada el 2026-09-10; numpy 2.5.4, publicada el 2026-10-10).
+numpy==2.5.4
+scikit-learn==1.9.1

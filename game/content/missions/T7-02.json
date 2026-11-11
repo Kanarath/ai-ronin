@@ -156,7 +156,7 @@
     },
     {
       "id": "c2",
-      "text": "El bosque corta mucho por peticiones_hora. ¿Qué puedes concluir?",
+      "text": "peticiones_hora es una de las features en las que más corta el bosque. ¿Qué puedes concluir?",
       "teach": "Importancia no es causa\nQue una feature se use mucho significa que separa bien en estos datos, no que cause el abuso.\nPor qué: confundir correlación con causa lleva a decisiones injustas o fáciles de esquivar.",
       "choices": [
         {
@@ -267,7 +267,8 @@
     "simplifications": [
       "Importancia contada por número de cortes, no por mejora de impureza",
       "Bosques pequeños"
-    ]
+    ],
+    "exercise": "forja/ejercicios/T7_01_arboles.py"
   },
   "further_reading": [
     "ref.sklearn-ensemble",
@@ -275,5 +276,25 @@
   ],
   "xp": {
     "base": 250
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: un bosque más pequeño. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con los mismos peticiones_train y peticiones_test, entrena un bosque de 20 árboles de profundidad 4 y mídelo en test. ¿Qué accuracy da? (answer <número>, 3 decimales)",
+        "validator": {
+          "type": "answer",
+          "expected": 0.889,
+          "tolerance": 0.001
+        },
+        "wrong_answer": "Revisa: forest train <nombre> peticiones_train --trees 20 --depth 4 y classic evaluate sobre peticiones_test.",
+        "hints": [
+          "forest train con --trees 20 --depth 4.",
+          "Después, classic evaluate <nombre> peticiones_test"
+        ],
+        "on_complete": "Correcto: 0,889, igual que el árbol solo. Con pocos árboles poco profundos, el bosque no gana."
+      }
+    ]
   }
 }

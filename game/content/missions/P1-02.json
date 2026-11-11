@@ -289,12 +289,33 @@
     "simplifications": [
       "Diez correos con respuesta conocida",
       "Coste medido solo en tokens"
-    ]
+    ],
+    "exercise": "forja/ejercicios/P1_01_extractor.py"
   },
   "further_reading": [
     "ref.owasp-llm-2025"
   ],
   "xp": {
     "base": 250
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: sin ejemplos. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Crea una aplicación nueva con formato_json, esquema, instrucciones y delimitar, pero sin ejemplos. ¿Qué fracción de campos acierta? (answer <número>, 3 decimales)",
+        "validator": {
+          "type": "answer",
+          "expected": 0.867,
+          "tolerance": 0.002
+        },
+        "wrong_answer": "Revisa: cuatro app set … on (sin ejemplos) y app eval.",
+        "hints": [
+          "Cuatro técnicas activadas y app eval.",
+          "Mira «campos correctos»."
+        ],
+        "on_complete": "Correcto: 0,867, con un tercio de los tokens que con ejemplos. A veces compensa."
+      }
+    ]
   }
 }

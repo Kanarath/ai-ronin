@@ -28,7 +28,7 @@
     },
     {
       "unit": "T8",
-      "para_que": "Visión: una imagen son números y los filtros de convolución buscan patrones. Aplicado: una factura con una instrucción escondida para un modelo multimodal."
+      "para_que": "Visión: una imagen son números y los filtros de convolución buscan patrones. Aplicado: una factura con una instrucción escondida para un modelo multimodal y una cámara de acceso engañada con un ejemplo adversario."
     },
     {
       "unit": "T5",
@@ -44,7 +44,7 @@
     },
     {
       "unit": "T10",
-      "para_que": "Datos justos: un modelo hereda los sesgos de sus datos; tasas de selección por grupo, regla del 80 % y proxies. Aplicado: un filtro de CV sesgado y por qué quitar la columna sensible no basta."
+      "para_que": "Datos justos: un modelo hereda los sesgos de sus datos; tasas de selección por grupo, regla del 80 % y proxies. Aplicado: un filtro de CV sesgado, por qué quitar la columna sensible no basta y préstamos donde las medidas de equidad chocan."
     },
     {
       "unit": "P0",

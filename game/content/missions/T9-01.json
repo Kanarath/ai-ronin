@@ -237,5 +237,25 @@
   ],
   "xp": {
     "base": 250
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: otra pregunta. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con un modelo nuevo preentrenado y ajustado con SFT, pregúntale resumen. ¿Qué probabilidad (en %) tiene la respuesta que elige? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 84,
+          "tolerance": 0.5
+        },
+        "wrong_answer": "Revisa: llm pretrain <nombre>, llm sft <nombre> y llm ask <nombre> resumen; mira el ▶.",
+        "hints": [
+          "Tres comandos: pretrain, sft y ask.",
+          "La elegida es la marcada con ▶."
+        ],
+        "on_complete": "Correcto: 84 %. Tras el SFT, contestar es lo más probable."
+      }
+    ]
   }
 }

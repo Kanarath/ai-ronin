@@ -360,5 +360,25 @@
   ],
   "xp": {
     "base": 250
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: otro filtro. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Pasa el filtro de bordes horizontales a la cruz. ¿Cuál es su respuesta máxima? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 4,
+          "tolerance": 0.001
+        },
+        "wrong_answer": "Revisa: conv cruz borde_horizontal y mira «Respuesta máxima».",
+        "hints": [
+          "conv <imagen> <filtro>",
+          "conv cruz borde_horizontal"
+        ],
+        "on_complete": "Correcto: 4. La cruz tiene una barra horizontal, así que este filtro también se enciende."
+      }
+    ]
   }
 }

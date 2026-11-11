@@ -270,12 +270,33 @@
     "simplifications": [
       "Modelo simulado con reglas",
       "Diez correos"
-    ]
+    ],
+    "exercise": "forja/ejercicios/P1_01_extractor.py"
   },
   "further_reading": [
     "ref.owasp-llm-2025"
   ],
   "xp": {
     "base": 250
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: sin esquema. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Crea una aplicación nueva y activa solo formato_json, sin esquema. ¿Cuántos campos acierta en el banco de evals? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 21,
+          "tolerance": 0
+        },
+        "wrong_answer": "Revisa: app create <nombre>, app set <nombre> formato_json on y app eval <nombre>; mira «campos correctos».",
+        "hints": [
+          "Tres comandos: create, set y eval.",
+          "Busca «campos correctos: N/30»."
+        ],
+        "on_complete": "Correcto: 21 de 30. Sin esquema, el correo con JSON roto pierde sus tres campos."
+      }
+    ]
   }
 }

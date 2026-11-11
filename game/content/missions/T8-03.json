@@ -1,0 +1,405 @@
+{
+  "id": "T8-03",
+  "schema_version": 1,
+  "title": "La puerta que se deja engañar",
+  "unit": "T8",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 35,
+  "requires_missions": [
+    "T8-02"
+  ],
+  "competencies": {
+    "requires": [
+      "T8.imagen-numeros"
+    ],
+    "trains": [
+      "T8.ejemplos-adversarios",
+      "T8.defensa-adversaria"
+    ]
+  },
+  "briefing": "La puerta del almacén de la forja se abre con una cámara: enseñas tu tarjeta y un modelo decide si estás autorizado. Un aprendiz sin permiso dice que puede entrar con su tarjeta de siempre, «retocada». Hoy compruebas si tiene razón y cómo cerrar el agujero.",
+  "learning_objectives": [
+    "Crear un ejemplo adversario con el método FGSM",
+    "Explicar por qué muchos cambios pequeños engañan a un modelo",
+    "Defender con binarización y en profundidad, y conocer sus límites"
+  ],
+  "mentor_intro": "Un modelo que acierta el 100 % de sus fotos puede fallar con una que alguien ha preparado.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Los ejemplos adversarios son imágenes retocadas para que un modelo se equivoque sin que una persona note nada. Afectan a cámaras de acceso, coches autónomos, filtros de contenido y modelos multimodales, y son la base de los ataques de evasión de E2. El método FGSM (Fast Gradient Sign Method) es el más sencillo y el primero que se estudia.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Prueba la cámara con las dos tarjetas: vision classify foto_cruz y vision classify foto_cuadrado",
+      "teach": "La cámara de la puerta\nEl modelo es una regresión logística, como la neurona de T4, entrenada con 300 fotos de 14×14 píxeles: cruz = no autorizado, cuadrado = autorizado.\nAcierta todas sus fotos de entrenamiento.\nPor qué: antes de atacar un sistema, se comprueba cómo se comporta con entradas normales.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "vision.classified",
+            "where": {
+              "image": "foto_cruz"
+            }
+          },
+          {
+            "type": "event",
+            "event": "vision.classified",
+            "where": {
+              "image": "foto_cuadrado"
+            }
+          }
+        ]
+      },
+      "hints": [
+        "Dos comandos: vision classify foto_cruz y vision classify foto_cuadrado"
+      ],
+      "on_complete": "Cruz: puerta cerrada. Cuadrado: puerta abierta. Seguro que funciona... con fotos normales."
+    },
+    {
+      "id": "o2",
+      "text": "Mira en qué se fija el modelo: vision pesos",
+      "teach": "Los pesos de la cámara\nCada píxel tiene un peso: si es positivo, ese píxel más claro empuja hacia «autorizado»; si es negativo, hacia «no autorizado».\nPor qué: los pesos dicen lo que de verdad usa el modelo, que no siempre es lo que usaría una persona.",
+      "validator": {
+        "type": "event",
+        "event": "vision.weights"
+      },
+      "hints": [
+        "vision pesos"
+      ],
+      "on_complete": "Un mapa de manchas: no se parece a una cruz ni a un cuadrado."
+    },
+    {
+      "id": "c1",
+      "text": "¿En qué se fija el modelo de la cámara?",
+      "teach": "Lo que aprende un modelo\nUn modelo aprende cualquier cosa que le ayude a separar sus fotos de entrenamiento, también el ruido y detalles que nadie mira.\nPor qué: esos pesos repartidos por todo el fondo son la puerta de entrada del ataque.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "solo en los píxeles de la cruz y del cuadrado",
+          "why": "Mira el fondo en vision pesos: también tiene pesos grandes, positivos y negativos."
+        },
+        {
+          "id": "b",
+          "text": "en todos los píxeles, también en el fondo, de formas que una persona no usaría"
+        },
+        {
+          "id": "c",
+          "text": "en el color de la tarjeta",
+          "why": "Las fotos son en escala de grises: solo hay un número por píxel."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Los pesos del fondo son cero?",
+        "answer b"
+      ],
+      "on_complete": "Exacto: el modelo usa cada píxel, aunque una persona solo mire la forma."
+    },
+    {
+      "id": "o3",
+      "text": "Ataca la foto de la cruz y pásala por la cámara: image attack foto_cruz --eps 0.1 --as foto_adv y vision classify foto_adv. ¿Qué probabilidad de «autorizado» da? (answer <número>, 2 decimales)",
+      "prediction": {
+        "prompt": "Si cada píxel cambia como mucho 0,1, ¿abrirá la puerta?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "El ataque FGSM\nimage attack mueve cada píxel una cantidad pequeña (eps) en la dirección de su peso: un poco más claro si el peso es positivo y un poco más oscuro si es negativo.\nEs el método FGSM: seguir el signo del gradiente, igual que en el descenso por gradiente de T3, pero para subir la puntuación que quiere el atacante.\nPor qué: es el ataque adversario más sencillo y el punto de partida de todos los demás.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "vision.classified",
+            "where": {
+              "image": "foto_adv"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.99,
+            "tolerance": 0.005
+          }
+        ]
+      },
+      "hints": [
+        "Pon tu hipótesis y lanza los dos comandos del enunciado.",
+        "answer 0.99"
+      ],
+      "on_complete": "Correcto: 0,99. La misma tarjeta de la cruz abre la puerta."
+    },
+    {
+      "id": "c2",
+      "text": "¿Por qué cambios tan pequeños en cada píxel cambian la decisión?",
+      "teach": "Muchos poquitos\nLa puntuación es una suma de 196 productos (píxel por peso). El ataque mueve los 196 a la vez en la dirección que más la sube: cada cambio es pequeño, pero todos suman en el mismo sentido.\nEn esta foto de 14×14 aún se nota un grano si lo buscas (image show foto_adv). En una foto real de 224×224 en color hay 150 528 números: basta con cambios de unas pocas centésimas, que nadie ve.\nPor qué: cuantos más números tiene la entrada, más pequeño puede ser cada cambio.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque todos los cambios pequeños empujan a la vez hacia «autorizado» y se suman"
+        },
+        {
+          "id": "b",
+          "text": "porque el modelo está mal entrenado",
+          "why": "Acierta todas sus fotos de entrenamiento. Los modelos bien entrenados también caen."
+        },
+        {
+          "id": "c",
+          "text": "porque 0,1 es un cambio enorme para un píxel",
+          "why": "Es menos de la mitad de la diferencia entre fondo y tinta: lo que pesa es que son 194 cambios en la misma dirección."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "La puntuación es una suma: ¿qué pasa si todos sus términos suben un poco?",
+        "answer a"
+      ],
+      "on_complete": "Eso es: muchos cambios pequeños en la misma dirección."
+    },
+    {
+      "id": "o4",
+      "text": "Defiéndete binarizando la foto antes de clasificarla: image binarize foto_adv --as foto_bin y vision classify foto_bin",
+      "prediction": {
+        "prompt": "Si cada píxel vuelve al nivel de fondo o de tinta, ¿se cerrará la puerta?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "Binarizar\nLa tarjeta solo tiene dos niveles: fondo (0,20) y tinta (0,44). image binarize devuelve cada píxel al nivel más cercano.\nUn cambio menor que la mitad de la distancia entre los dos niveles desaparece.\nPor qué: es una defensa sencilla (reducir la precisión de la entrada, en inglés feature squeezing) que borra perturbaciones pequeñas.",
+      "validator": {
+        "type": "event",
+        "event": "vision.classified",
+        "where": {
+          "image": "foto_bin",
+          "decision": "no_autorizado"
+        }
+      },
+      "hints": [
+        "Pon tu hipótesis y lanza los dos comandos."
+      ],
+      "on_complete": "Puerta cerrada: la binarización ha borrado el ataque."
+    },
+    {
+      "id": "o5",
+      "text": "El aprendiz sube el eps: image attack foto_cruz --eps 0.15 --as foto_fuerte, image binarize foto_fuerte --as foto_fuerte_bin y vision classify foto_fuerte_bin",
+      "teach": "El atacante se adapta\nUna defensa que conoce el atacante se puede rodear: basta con que cada cambio supere la mitad de la distancia entre fondo y tinta.\nPor qué: una defensa se mide contra un atacante que la conoce, no contra el ataque de ayer.",
+      "validator": {
+        "type": "event",
+        "event": "vision.classified",
+        "where": {
+          "image": "foto_fuerte_bin",
+          "decision": "autorizado"
+        }
+      },
+      "hints": [
+        "Tres comandos: el attack, el binarize y el classify del enunciado."
+      ],
+      "on_complete": "La puerta se abre otra vez. Mira cómo ha quedado la foto: image show foto_fuerte_bin."
+    },
+    {
+      "id": "c3",
+      "text": "Para saltarse la binarización, ¿qué ha tenido que hacer el aprendiz?",
+      "teach": "Subir el coste del ataque\nCon eps 0,15, la foto binarizada ya no parece una cruz: está llena de manchas.\nPor qué: una buena defensa no tiene por qué ser perfecta; basta con que obligue al atacante a hacer algo que se note.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "cambios tan grandes que la tarjeta ya se ve manipulada"
+        },
+        {
+          "id": "b",
+          "text": "nada especial: la binarización no sirve para nada",
+          "why": "Con eps 0,1 la binarización paró el ataque. Lo que hace es obligar a cambios visibles."
+        },
+        {
+          "id": "c",
+          "text": "conocer la contraseña de la cámara",
+          "why": "No ha necesitado ninguna contraseña: solo una tarjeta preparada."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "image show foto_fuerte_bin",
+        "answer a"
+      ],
+      "on_complete": "Correcto: ahora el ataque se ve. Lo puede parar una persona o un segundo control."
+    },
+    {
+      "id": "c4",
+      "text": "¿Qué defensa pondrías en la puerta del almacén?",
+      "teach": "Defensa en profundidad\nSe combina limpiar la entrada (binarizar), entrenar el modelo también con fotos atacadas (entrenamiento adversario) y no dejar una decisión de seguridad solo en manos de un modelo: un segundo factor, como un código o una persona.\nPor qué: ningún modelo de visión es inmune; el sistema tiene que seguir siendo seguro cuando el modelo se equivoque.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "esconder los pesos del modelo para que nadie pueda calcular el ataque",
+          "why": "Los ataques se pueden hacer sin ver los pesos, probando muchas veces o con otro modelo parecido: es seguridad por oscuridad."
+        },
+        {
+          "id": "b",
+          "text": "binarizar, entrenar con fotos atacadas y pedir un segundo factor"
+        },
+        {
+          "id": "c",
+          "text": "subir el eps de la binarización hasta borrar cualquier cambio",
+          "why": "Si borras demasiado, también borras la forma de la tarjeta legítima."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué pasa cuando, aun así, el modelo se equivoca?",
+        "answer b"
+      ],
+      "on_complete": "Eso es: varias capas, y la decisión final no depende solo del modelo."
+    },
+    {
+      "id": "py1",
+      "text": "Programa el ataque: abre el editor con py, completa atacar y compruébala con py check.",
+      "teach": "FGSM, en código\nCada píxel se mueve eps en la dirección de su signo (+1 o -1) y se recorta para que siga entre 0 y 1.\nPor qué: son tres líneas; por eso los ejemplos adversarios son un riesgo tan práctico.",
+      "py_exercise": {
+        "id": "T8-03-atacar",
+        "title": "atacar(pixeles, signos, eps): el paso de FGSM",
+        "function": "atacar",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef atacar(pixeles, signos, eps):\n    salida = []\n    for p, s in zip(pixeles, signos):\n        nuevo = p   # ← cambia esta línea: p + eps * s, sin bajar de 0 ni pasar de 1\n        salida.append(nuevo)\n    return salida\n\nprint([round(x, 2) for x in atacar([0.2, 0.44, 0.95], [1, -1, 1], 0.1)])   # [0.3, 0.34, 1.0]\n",
+        "cases": [
+          {
+            "args": [
+              [
+                0.2,
+                0.44,
+                0.95
+              ],
+              [
+                1,
+                -1,
+                1
+              ],
+              0.1
+            ],
+            "expected": [
+              0.3,
+              0.34,
+              1.0
+            ],
+            "tolerance": 1e-09
+          },
+          {
+            "args": [
+              [
+                0.05,
+                0.5
+              ],
+              [
+                -1,
+                1
+              ],
+              0.1
+            ],
+            "expected": [
+              0.0,
+              0.6
+            ],
+            "tolerance": 1e-09
+          },
+          {
+            "args": [
+              [
+                0.2,
+                0.2
+              ],
+              [
+                1,
+                -1
+              ],
+              0.0
+            ],
+            "expected": [
+              0.2,
+              0.2
+            ],
+            "tolerance": 1e-09
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T8-03-atacar",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Calcula p + eps * s y recórtalo con min(1.0, ...) y max(0.0, ...).",
+        "La línea queda así: nuevo = min(1.0, max(0.0, p + eps * s))"
+      ]
+    }
+  ],
+  "mastery_trial": {
+    "intro": "Prueba de dominio: el eps mínimo. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Prueba image attack foto_cruz con eps 0.06, 0.08 y 0.1 y pasa cada foto por la cámara. ¿Cuál es el eps más pequeño de los tres que abre la puerta? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 0.08,
+          "tolerance": 0.001
+        },
+        "wrong_answer": "Usa un nombre distinto para cada foto (--as) y clasifica las tres: la puerta se abre si «autorizado» llega a 0,5.",
+        "hints": [
+          "Tres ataques y tres vision classify.",
+          "Mira cuál es el primero que pasa de 0,5."
+        ],
+        "on_complete": "Correcto: con 0,08 ya abre (0,76); con 0,06 todavía no (0,12)."
+      }
+    ]
+  },
+  "debrief": {
+    "what_happened": "Has abierto una puerta con una tarjeta no autorizada moviendo cada píxel 0,1 con FGSM, has parado el ataque binarizando la foto y has visto que el atacante puede rodear la defensa a cambio de que el retoque se vea.",
+    "why": "Un modelo usa todos los números de su entrada; un atacante que conoce su gradiente (o lo estima) puede mover todos a la vez en su contra.",
+    "in_production": "Los sistemas de visión críticos combinan preprocesado, entrenamiento adversario, detección de entradas anómalas y, sobre todo, controles que no dependen solo del modelo. Las librerías como Adversarial Robustness Toolbox o Foolbox automatizan estos ataques para evaluarlos.",
+    "simplifications": [
+      "Modelo lineal (regresión logística) en lugar de una red convolucional",
+      "Fotos de 14×14 en escala de grises: el ataque necesita cambios más visibles que en una foto real",
+      "El atacante conoce los pesos (ataque de caja blanca)"
+    ]
+  },
+  "further_reading": [
+    "ref.goodfellow-2014",
+    "ref.xu-squeezing-2018"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "you_can_now": "Sabes crear un ejemplo adversario con FGSM, explicar por qué muchos cambios pequeños engañan a un modelo, defenderte binarizando la entrada y por qué una decisión de seguridad no puede depender solo de un modelo. Siguiente: T5, del texto al vector."
+}

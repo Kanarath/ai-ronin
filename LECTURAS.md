@@ -100,6 +100,11 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
 - [Deep Learning, capítulo 6: Deep Feedforward Networks (incluye XOR y backpropagation)](https://www.deeplearningbook.org/contents/mlp.html) — MIT Press, 2016 · consultada 2026-11-06
 
+**T8-03 · La puerta que se deja engañar**
+
+- [Explaining and Harnessing Adversarial Examples (FGSM)](https://arxiv.org/abs/1412.6572) — ICLR 2015 · arXiv:1412.6572 · consultada 2026-11-10
+- [Feature Squeezing: Detecting Adversarial Examples in Deep Neural Networks](https://arxiv.org/abs/1704.01155) — NDSS 2018 · arXiv:1704.01155 · consultada 2026-11-10
+
 ## T5
 
 **T5-01 · Cortar el texto**
@@ -162,6 +167,12 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 
 - [Reglamento (UE) 2026/1744 (Digital Omnibus sobre IA), de 8 de julio de 2026, publicado en el DOUE el 24 de julio y en vigor desde el 27 de julio de 2026: aplaza el alto riesgo del anexo III al 2 de diciembre de 2027 y del anexo I al 2 de agosto de 2028; nuevas prohibiciones y plazo transitorio del art. 50.2 hasta el 2 de diciembre de 2026 (procedimiento 2025/0359(COD))](https://eur-lex.europa.eu/eli/reg/2026/1744/oj) — EUR-Lex; fechas del procedimiento en el Observatorio Legislativo del Parlamento Europeo (OEIL) · consultada 2026-11-11
 - [NIST AI 100-1: Artificial Intelligence Risk Management Framework (AI RMF 1.0), 26 de enero de 2023; NIST indica que se está revisando dentro del Plan de Acción de IA de la Casa Blanca](https://www.nist.gov/itl/ai-risk-management-framework) — NIST · consultada 2026-11-11
+
+**T10-03 · Métricas que chocan**
+
+- [Kleinberg, Mullainathan y Raghavan (2016). Inherent Trade-Offs in the Fair Determination of Risk Scores](https://arxiv.org/abs/1609.05807) — ITCS 2017 · arXiv:1609.05807 · consultada 2026-11-11
+- [Chouldechova (2016). Fair prediction with disparate impact: A study of bias in recidivism prediction instruments](https://arxiv.org/abs/1610.07524) — FATML 2016 · arXiv:1610.07524 · consultada 2026-11-11
+- [Reglamento (UE) 2024/1689 (Reglamento de Inteligencia Artificial, AI Act)](https://eur-lex.europa.eu/eli/reg/2024/1689/oj) — EUR-Lex · consultada 2026-11-09
 
 ## P0
 

@@ -259,7 +259,8 @@
     "simplifications": [
       "Dos grupos y datos sintéticos",
       "La ratio es solo una de varias métricas de equidad"
-    ]
+    ],
+    "exercise": "forja/ejercicios/T10_01_equidad.py"
   },
   "further_reading": [
     "ref.eu-ai-act-omnibus",
@@ -267,5 +268,25 @@
   ],
   "xp": {
     "base": 250
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: el otro grupo. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "En las decisiones históricas de candidatos, ¿qué tasa de selección tiene el grupo 1? (answer <número>, 2 decimales)",
+        "validator": {
+          "type": "answer",
+          "expected": 0.12,
+          "tolerance": 0.005
+        },
+        "wrong_answer": "Revisa: fairness datos candidatos y mira la fila del grupo 1.",
+        "hints": [
+          "fairness datos candidatos",
+          "Columna «tasa de selección», fila «grupo 1»."
+        ],
+        "on_complete": "Correcto: 0,12 frente a 0,38 del grupo 0."
+      }
+    ]
   }
 }

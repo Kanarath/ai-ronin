@@ -256,12 +256,33 @@
     "simplifications": [
       "k-means++ con una sola inicialización",
       "Pureza calculada con las etiquetas reales, que en un caso real no tendrías"
-    ]
+    ],
+    "exercise": "forja/ejercicios/T7_01_arboles.py"
   },
   "further_reading": [
     "ref.sklearn-clustering"
   ],
   "xp": {
     "base": 250
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: otro número de grupos. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con pn, agrupa los clientes en 3 grupos. ¿Qué pureza da? (answer <número>, 2 decimales)",
+        "validator": {
+          "type": "answer",
+          "expected": 0.86,
+          "tolerance": 0.005
+        },
+        "wrong_answer": "Revisa: kmeans pn --k 3 (pn es peticiones normalizado con minmax).",
+        "hints": [
+          "kmeans con --k 3.",
+          "Mira la línea «Pureza»."
+        ],
+        "on_complete": "Correcto: 0,86. Más grupos no siempre separan mejor lo que te interesa."
+      }
+    ]
   }
 }

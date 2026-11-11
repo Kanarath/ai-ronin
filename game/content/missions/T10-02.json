@@ -263,7 +263,7 @@
       ]
     }
   ],
-  "you_can_now": "Sabes por qué quitar la columna sensible no basta, cómo encontrar un proxy leyendo un modelo, cómo mitigarlo y por qué un filtro justo puede «acertar» menos frente a un pasado sesgado. Siguiente: A1, la seguridad de las aplicaciones con LLM (Large Language Model).",
+  "you_can_now": "Sabes por qué quitar la columna sensible no basta, cómo encontrar un proxy leyendo un modelo, cómo mitigarlo y por qué un filtro justo puede «acertar» menos frente a un pasado sesgado. Siguiente: T10-03, cuando las medidas de equidad chocan.",
   "debrief": {
     "what_happened": "Has visto que sin la columna del grupo el filtro sigue igual de desigual (0,30) porque usa la zona, y que sin la zona sube a 0,98 con algo menos de acierto frente al pasado.",
     "why": "El sesgo se cuela por las variables relacionadas con la sensible; hay que medir, buscar los proxies y decidir con criterio.",
@@ -271,7 +271,8 @@
     "simplifications": [
       "Un único proxy y muy evidente",
       "Datos sintéticos de dos grupos"
-    ]
+    ],
+    "exercise": "forja/ejercicios/T10_01_equidad.py"
   },
   "further_reading": [
     "ref.eu-ai-act-omnibus",
@@ -279,5 +280,25 @@
   ],
   "xp": {
     "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: un árbol más simple. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con sin_zona, entrena un árbol de profundidad 2 y mide su equidad con los grupos de candidatos. ¿Qué ratio da? (answer <número>, 2 decimales)",
+        "validator": {
+          "type": "answer",
+          "expected": 0.87,
+          "tolerance": 0.005
+        },
+        "wrong_answer": "Revisa: tree train <nombre> sin_zona --depth 2 y fairness <nombre> sin_zona --grupos candidatos.",
+        "hints": [
+          "tree train con --depth 2.",
+          "fairness <nombre> sin_zona --grupos candidatos"
+        ],
+        "on_complete": "Correcto: 0,87. Sin el proxy, también un árbol sencillo queda por encima de 0,80."
+      }
+    ]
   }
 }
