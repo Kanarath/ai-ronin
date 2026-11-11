@@ -334,7 +334,8 @@
     "simplifications": [
       "Tokenizador entrenado con un corpus diminuto",
       "Filtro por significado palabra a palabra, con embeddings de 6 dimensiones diseñados a mano"
-    ]
+    ],
+    "exercise": "forja/ejercicios/T5_03_disfraces.py"
   },
   "further_reading": [
     "ref.owasp-llm-2025",

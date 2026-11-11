@@ -15,6 +15,11 @@ Cada misión del Dojo tiene un ejercicio en Python. Implementas tú las funcione
 | `T5_02_embeddings.py` | T5-02 | Similitud coseno, vecinos y analogías |
 | `T6_01_sampling.py` | T6-01 | Modelo de bigramas, temperatura y top-p |
 | `T6_02_atencion.py` | T6-02 | Softmax estable, self-attention y máscara causal |
+| `T2_02_abuso.py` | T2-02 | Detector de abuso de una API: CSV con `csv`, reparto estratificado, k-NN como clase, línea base y abusadores que se escapan |
+| `T3_03_umbral.py` | T3-03 | Umbral por coste: errores de cada umbral, tabla de costes, umbral más barato y triaje con revisión humana |
+| `T4_03_llamadas.py` | T4-03 | Llamadas de un agente: regla de frontera de confianza, feature de cruce, regresión logística que acierta el XOR y explicación de cada decisión |
+| `T5_03_disfraces.py` | T5-03 | Filtro de entrada por capas: invisibles, homoglifos, tildes, letras sueltas, filtro por significado y falsos positivos |
+| `T6_03_dilucion.py` | T6-03 | Inyección indirecta: peso estable de una instrucción escondida, relleno para ahogarla, parecido para salvarla y atención con embeddings |
 | `A2_01_rag.py` | A2-01 | Troceo con solapamiento, TF-IDF, coseno y búsqueda con control de acceso |
 | `A3_01_agente.py` | A3-01 | Capa de autorización de herramientas: mínimo privilegio, validación, permisos por usuario y presupuesto de pasos |
 | `A4_01_mcp.py` | A4-01…03 | Sellos de un host MCP: revisión de descripciones, huellas (pinning), espacios de nombres y tokens con destinatario |

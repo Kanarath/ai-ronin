@@ -358,7 +358,8 @@
     "simplifications": [
       "Dos features de confianza puestas a mano en lugar de analizar el contenido real de la llamada",
       "Dataset sintético de 60 llamadas sin casos dudosos"
-    ]
+    ],
+    "exercise": "forja/ejercicios/T4_03_llamadas.py"
   },
   "further_reading": [
     "ref.owasp-llm-2025",

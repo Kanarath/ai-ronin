@@ -365,7 +365,8 @@
     "simplifications": [
       "Dataset sintético de 120 clientes con tres features",
       "Un solo reparto train/test, sin conjunto de validación"
-    ]
+    ],
+    "exercise": "forja/ejercicios/T2_02_abuso.py"
   },
   "further_reading": [
     "ref.owasp-llm-2025",

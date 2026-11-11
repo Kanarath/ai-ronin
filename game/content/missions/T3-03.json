@@ -337,7 +337,8 @@
       "Umbral elegido sobre el test (en un proyecto real, sobre validación)",
       "Costes inventados para el ejemplo",
       "Dataset sintético de 120 clientes"
-    ]
+    ],
+    "exercise": "forja/ejercicios/T3_03_umbral.py"
   },
   "further_reading": [
     "ref.sklearn-precision-recall",

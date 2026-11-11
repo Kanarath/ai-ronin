@@ -298,6 +298,14 @@
       "tests_sha256": "0cd4b313fed60d59d643dc607e09b6117faa5027d48f1bbeeb11d757190c7526"
     },
     {
+      "id": "T2-02",
+      "file": "T2_02_abuso.py",
+      "test_file": "test_T2_02_abuso.py",
+      "test_path": "forja/ejercicios/test_T2_02_abuso.py",
+      "total_tests": 13,
+      "tests_sha256": "48c33d13f26849e52665dd8779f9ddacd5fa5045c8c044ee33fb6a130c576554"
+    },
+    {
       "id": "T3-01",
       "file": "T3_01_descenso.py",
       "test_file": "test_T3_01_descenso.py",
@@ -312,6 +320,14 @@
       "test_path": "forja/ejercicios/test_T3_02_metricas.py",
       "total_tests": 6,
       "tests_sha256": "5c264acb8d90b1b522cedd18100b496336c82450781223de5e747cc29942e829"
+    },
+    {
+      "id": "T3-03",
+      "file": "T3_03_umbral.py",
+      "test_file": "test_T3_03_umbral.py",
+      "test_path": "forja/ejercicios/test_T3_03_umbral.py",
+      "total_tests": 13,
+      "tests_sha256": "efea09f592c2b759e37c5d85c3cfcf984b4ca35a764c0cee9e081aa2ec790bae"
     },
     {
       "id": "T4-01",
@@ -330,6 +346,14 @@
       "tests_sha256": "62ed5d522060e81acc0e058e286b48c1020496c3cd7d2d3d6d3af3d4f25ae07a"
     },
     {
+      "id": "T4-03",
+      "file": "T4_03_llamadas.py",
+      "test_file": "test_T4_03_llamadas.py",
+      "test_path": "forja/ejercicios/test_T4_03_llamadas.py",
+      "total_tests": 12,
+      "tests_sha256": "03fce2c7189e0ea338f5c7afbaa019caba0c9f0562c46d5ce7787d27e14fda2a"
+    },
+    {
       "id": "T5-01",
       "file": "T5_01_bpe.py",
       "test_file": "test_T5_01_bpe.py",
@@ -346,6 +370,14 @@
       "tests_sha256": "7a0cc2062ed843245f6e247fc2db6e967eee1e81619f25c7422acaf96a8060ef"
     },
     {
+      "id": "T5-03",
+      "file": "T5_03_disfraces.py",
+      "test_file": "test_T5_03_disfraces.py",
+      "test_path": "forja/ejercicios/test_T5_03_disfraces.py",
+      "total_tests": 11,
+      "tests_sha256": "fbf7b3f1d39a1ca7f616218c1c173e0f6d0480f705f61b09023d6a88cd839be8"
+    },
+    {
       "id": "T6-01",
       "file": "T6_01_sampling.py",
       "test_file": "test_T6_01_sampling.py",
@@ -360,6 +392,14 @@
       "test_path": "forja/ejercicios/test_T6_02_atencion.py",
       "total_tests": 5,
       "tests_sha256": "e31f920f7877729fd473854a3b9b2f2f7cb29a5b559be143ab5d2717c8a693b4"
+    },
+    {
+      "id": "T6-03",
+      "file": "T6_03_dilucion.py",
+      "test_file": "test_T6_03_dilucion.py",
+      "test_path": "forja/ejercicios/test_T6_03_dilucion.py",
+      "total_tests": 9,
+      "tests_sha256": "720e34a3115e63e5ad6f72deb9f91c14f1acab812b2fca2694c11f839b7d9b08"
     }
   ]
 }

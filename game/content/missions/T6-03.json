@@ -303,7 +303,8 @@
     "simplifications": [
       "Atención sin codificación posicional: en un transformer real la posición influye algo",
       "Una palabra hace de instrucción entera; Q = K = V = embeddings diseñados a mano"
-    ]
+    ],
+    "exercise": "forja/ejercicios/T6_03_dilucion.py"
   },
   "further_reading": [
     "ref.greshake-2023",
