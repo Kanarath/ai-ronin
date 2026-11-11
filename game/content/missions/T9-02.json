@@ -1,0 +1,266 @@
+{
+  "id": "T9-02",
+  "schema_version": 1,
+  "title": "Lo que preferimos",
+  "unit": "T9",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "T9-01"
+  ],
+  "competencies": {
+    "requires": [
+      "T9.sft"
+    ],
+    "trains": [
+      "T9.rlhf",
+      "T9.reward-hacking"
+    ]
+  },
+  "briefing": "Tu asistente obedece demasiado. Hoy le enseñas preferencias humanas: personas comparan dos respuestas y dicen cuál es mejor. Y descubres qué pasa cuando lo que premias no es exactamente lo que quieres.",
+  "learning_objectives": [
+    "Explicar cómo funciona el ajuste con preferencias humanas",
+    "Medir el acuerdo de un modelo de recompensa",
+    "Reconocer el reward hacking"
+  ],
+  "mentor_intro": "Vas a enseñarle qué preferimos. Ojo con lo que premias.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "El ajuste con preferencias humanas (RLHF, Reinforcement Learning from Human Feedback, y variantes como DPO, Direct Preference Optimization) es lo que convierte un modelo que obedece en un asistente que también sabe negarse. Pero optimiza una recompensa, y si la recompensa está mal diseñada, el modelo aprende a engañarla: es el reward hacking, un problema central de la alineación.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Prepara un asistente con SFT y ajústalo con preferencias de seguridad: llm pretrain kuro, llm sft kuro y llm prefs kuro seguridad",
+      "teach": "Pares de preferencias\nUnas personas ven dos respuestas a la misma petición y marcan la mejor. Con miles de pares se entrena un modelo de recompensa que puntúa respuestas, y el LLM se ajusta para sacar más recompensa.\nPor qué: es más fácil comparar dos respuestas que escribir la perfecta.",
+      "validator": {
+        "type": "event",
+        "event": "llm.trained",
+        "where": {
+          "model": "kuro",
+          "stage": "prefs",
+          "sets": "seguridad"
+        }
+      },
+      "hints": [
+        "Tres comandos seguidos: llm pretrain kuro · llm sft kuro · llm prefs kuro seguridad"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Vuelve a pedirle el código: llm ask kuro codigo",
+      "prediction": {
+        "prompt": "¿Se negará ahora?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "Aprender a negarse\nEn los pares de seguridad, la respuesta preferida ante una petición dañina era negarse con educación.\nPor qué: el modelo aprende que negarse en ese tipo de casos le da más recompensa.",
+      "validator": {
+        "type": "event",
+        "event": "llm.asked",
+        "where": {
+          "model": "kuro",
+          "prompt": "codigo",
+          "kind": "rechazo"
+        }
+      },
+      "hints": [
+        "Pon tu hipótesis y lanza llm ask kuro codigo."
+      ],
+      "on_complete": "Se niega con un 81 % y propone una alternativa legítima."
+    },
+    {
+      "id": "c1",
+      "text": "¿Qué aprende de verdad el modelo con los pares de preferencias?",
+      "teach": "Recompensa, no valores\nEl modelo no aprende qué está bien: aprende qué respuestas puntúa alto el modelo de recompensa.\nPor qué: si la recompensa se parece a lo que queremos, bien; si no, el modelo se irá hacia lo que puntúa, no hacia lo que queremos.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "a entender qué está bien y qué está mal",
+          "why": "No entiende la ética: aprende qué respuestas suben su recompensa."
+        },
+        {
+          "id": "b",
+          "text": "a memorizar las respuestas exactas de los pares",
+          "why": "Generaliza un poco a casos parecidos; no solo repite los pares."
+        },
+        {
+          "id": "c",
+          "text": "a dar las respuestas que el modelo de recompensa puntúa alto",
+          "why": ""
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "Relee la lección: ¿qué optimiza el LLM?",
+        "answer c"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Ahora con una recompensa mal hecha: llm pretrain v, llm sft v, llm prefs v longitud y llm ask v resumen",
+      "prediction": {
+        "prompt": "Si el modelo de recompensa premia las respuestas largas, ¿qué pasará al pedir un resumen de una frase?",
+        "options": [
+          "resume en una frase",
+          "suelta un rollo"
+        ]
+      },
+      "teach": "Una recompensa con trampa\nEste modelo de recompensa puntúa mejor las respuestas largas, porque a las personas que lo entrenaron les parecían más completas.\nPor qué: es un error real y frecuente al diseñar recompensas.",
+      "validator": {
+        "type": "event",
+        "event": "llm.asked",
+        "where": {
+          "model": "v",
+          "prompt": "resumen",
+          "kind": "larga"
+        }
+      },
+      "hints": [
+        "Cuatro comandos; pon tu hipótesis antes del llm ask."
+      ],
+      "on_complete": "Un rollo de párrafos para un resumen de una frase: el modelo ha aprendido a ganar puntos, no a ayudar."
+    },
+    {
+      "id": "c2",
+      "text": "¿Cómo se llama lo que acaba de pasar?",
+      "teach": "Reward hacking\nCuando un modelo optimiza la recompensa por un atajo que no es lo que queríamos, se dice que «hackea» la recompensa.\nPor qué: es una de las razones por las que los asistentes a veces son pelotas, largos o dicen lo que quieres oír.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "sobreajuste, como el del árbol profundo de T7",
+          "why": "Se parece, pero aquí el problema no son los datos: es una recompensa que premia otra cosa."
+        },
+        {
+          "id": "b",
+          "text": "reward hacking: optimiza la recompensa por un atajo",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "una alucinación del modelo",
+          "why": "No inventa datos falsos: hace justo lo que su recompensa premia."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué ha optimizado el modelo?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa cómo se mide un modelo de recompensa: abre el editor con py, completa acuerdo y compruébala con py check.",
+      "teach": "Medir el modelo de recompensa\nPara cada par, el modelo de recompensa da una puntuación a cada respuesta; acierta si puntúa más alta la que eligió la persona.\nPor qué: si el modelo de recompensa no acuerda con las personas, el LLM aprenderá lo que no queremos.",
+      "py_exercise": {
+        "id": "T9-02-acuerdo",
+        "title": "acuerdo(pares): cuántas veces el modelo de recompensa coincide con la persona",
+        "function": "acuerdo",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef acuerdo(pares):\n    # cada par: [puntuación de a, puntuación de b, elección de la persona («a» o «b»)]\n    aciertos = 0\n    for pa, pb, humano in pares:\n        elige = \"a\" if pa > pb else \"b\"\n        aciertos += 0   # ← cambia esta línea: suma 1 si elige coincide con humano\n    return aciertos / len(pares)\n\nprint(acuerdo([[2.0, 1.0, \"a\"], [0.5, 3.0, \"a\"]]))   # 0.5\n",
+        "cases": [
+          {
+            "args": [
+              [
+                [
+                  2.0,
+                  1.0,
+                  "a"
+                ],
+                [
+                  0.5,
+                  3.0,
+                  "a"
+                ]
+              ]
+            ],
+            "expected": 0.5,
+            "tolerance": 1e-09
+          },
+          {
+            "args": [
+              [
+                [
+                  1,
+                  2,
+                  "b"
+                ],
+                [
+                  3,
+                  1,
+                  "a"
+                ],
+                [
+                  0,
+                  1,
+                  "b"
+                ]
+              ]
+            ],
+            "expected": 1.0,
+            "tolerance": 1e-09
+          },
+          {
+            "args": [
+              [
+                [
+                  1,
+                  2,
+                  "a"
+                ]
+              ]
+            ],
+            "expected": 0.0,
+            "tolerance": 1e-09
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T9-02-acuerdo",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Suma 1 cuando elige == humano.",
+        "La línea queda así: aciertos += 1 if elige == humano else 0"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes cómo enseña preferencias el RLHF, por qué el modelo aprende recompensa y no valores, y qué es el reward hacking. Siguiente: T9-03, por qué un jailbreak funciona.",
+  "debrief": {
+    "what_happened": "Has enseñado a negarse a un asistente con pares de seguridad y has visto a otro soltar rollos porque su recompensa premiaba la longitud.",
+    "why": "El ajuste con preferencias optimiza una recompensa aprendida; lo que la recompensa premie, eso tendrás.",
+    "in_production": "Los equipos de alineación revisan sus modelos de recompensa, mezclan preferencias de utilidad y de seguridad y vigilan señales de reward hacking como la longitud o la adulación.",
+    "simplifications": [
+      "Modelo de recompensa simulado con reglas",
+      "Sin aprendizaje por refuerzo real (PPO): el efecto se aplica al instante"
+    ]
+  },
+  "further_reading": [
+    "ref.instructgpt-2022",
+    "ref.dpo-2023"
+  ],
+  "xp": {
+    "base": 250
+  }
+}

@@ -1,0 +1,241 @@
+{
+  "id": "T9-01",
+  "schema_version": 1,
+  "title": "Del texto al asistente",
+  "unit": "T9",
+  "difficulty": 2,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "T6-03"
+  ],
+  "competencies": {
+    "requires": [
+      "T6.siguiente-token"
+    ],
+    "trains": [
+      "T9.preentrenamiento",
+      "T9.sft"
+    ]
+  },
+  "briefing": "En T6 viste que un LLM elige la siguiente palabra. Pero un modelo que solo hace eso no es un asistente: no contesta, continúa. Hoy entrenas un asistente en dos fases y ves qué aprende en cada una… y qué aprende sin querer.",
+  "learning_objectives": [
+    "Explicar qué aprende un LLM en el preentrenamiento",
+    "Explicar qué añade el ajuste con instrucciones",
+    "Reconocer por qué un asistente con SFT obedece de más"
+  ],
+  "mentor_intro": "Vas a fabricar un asistente. Fíjate en lo que aprende sin que nadie se lo pida.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Todos los asistentes con LLM (Large Language Model) pasan por estas fases: un preentrenamiento enorme con texto de internet y un ajuste con instrucciones (SFT, Supervised Fine-Tuning) que les enseña a responder. Entender qué aprende cada fase explica por qué un asistente obedece peticiones que no debería: es la base de la seguridad de A1.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Preentrena un modelo y hazle una pregunta: llm pretrain kuro y llm ask kuro temple",
+      "prediction": {
+        "prompt": "Un modelo solo preentrenado, ¿responderá a la pregunta?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "El preentrenamiento\nEl modelo lee una cantidad enorme de texto y aprende una sola cosa: predecir la siguiente palabra, como en T6.\nllm prompts enseña las preguntas de prueba.\nPor qué: de aquí salen todo su vocabulario y su conocimiento, pero no la costumbre de contestar.",
+      "validator": {
+        "type": "event",
+        "event": "llm.asked",
+        "where": {
+          "model": "kuro",
+          "prompt": "temple",
+          "stage": "base"
+        }
+      },
+      "hints": [
+        "Pon tu hipótesis y lanza los dos comandos."
+      ],
+      "on_complete": "No responde: continúa el texto como si fuera un foro, con un 88 % de probabilidad."
+    },
+    {
+      "id": "c1",
+      "text": "¿Por qué el modelo preentrenado continúa la pregunta en lugar de contestarla?",
+      "teach": "Predecir no es contestar\nEn internet, una pregunta suele ir seguida de más preguntas, comentarios o respuestas de foro.\nPor qué: el modelo hace lo que más se parece a su entrenamiento, no lo que tú quieres.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque aún no sabe nada sobre katanas",
+          "why": "Sabe bastante: lo ha leído en el preentrenamiento. Lo que no sabe es que tiene que contestar."
+        },
+        {
+          "id": "b",
+          "text": "porque solo aprendió a predecir la siguiente palabra del texto",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "porque la pregunta está mal escrita",
+          "why": "La pregunta es correcta; el problema es qué ha aprendido el modelo a hacer con ella."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Recuerda T6-01: ¿qué hace un modelo de lenguaje?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Ajústalo con instrucciones y repite la pregunta: llm sft kuro y llm ask kuro temple",
+      "teach": "El ajuste con instrucciones (SFT)\nSe le enseñan miles de ejemplos de «instrucción → buena respuesta» escritos por personas.\nPor qué: así aprende el formato de asistente: alguien pide, el modelo contesta.",
+      "validator": {
+        "type": "event",
+        "event": "llm.asked",
+        "where": {
+          "model": "kuro",
+          "prompt": "temple",
+          "stage": "sft"
+        }
+      },
+      "hints": [
+        "llm sft kuro y después llm ask kuro temple"
+      ],
+      "on_complete": "Ahora sí contesta, y bien: el temple endurece el filo."
+    },
+    {
+      "id": "o3",
+      "text": "Pídele algo que no debería dar: llm ask kuro codigo",
+      "prediction": {
+        "prompt": "¿Dará el código de descuento interno?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "Obedecer demasiado\nEl SFT enseña a seguir instrucciones. No distingue qué instrucciones son aceptables.\nPor qué: un asistente que solo ha aprendido a obedecer obedece también lo que no debe.",
+      "validator": {
+        "type": "event",
+        "event": "llm.asked",
+        "where": {
+          "model": "kuro",
+          "prompt": "codigo",
+          "kind": "obedece"
+        }
+      },
+      "hints": [
+        "Pon tu hipótesis y lanza llm ask kuro codigo."
+      ],
+      "on_complete": "Lo da: KUROGANE-77. Nadie le enseñó a negarse."
+    },
+    {
+      "id": "c2",
+      "text": "¿Qué le falta a un modelo que solo tiene preentrenamiento y SFT?",
+      "teach": "Lo que viene después\nPara que aprenda a negarse, hace falta una tercera fase: enseñarle qué respuestas preferimos, también cuándo decir que no. Es T9-02.\nPor qué: la seguridad de un asistente se entrena, no viene de serie.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "aprender qué respuestas preferimos, incluido negarse",
+          "why": ""
+        },
+        {
+          "id": "b",
+          "text": "más texto de internet en el preentrenamiento",
+          "why": "Más texto le da más conocimiento, no más criterio sobre qué dar."
+        },
+        {
+          "id": "c",
+          "text": "una regla en el prompt que le prohíba dar códigos",
+          "why": "Una regla en el prompt ayuda poco: ya lo comprobarás en A1."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "¿Qué ha aprendido en cada fase y qué no?",
+        "answer a"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa cómo elige respuesta el modelo: abre el editor con py, completa mas_probable y compruébala con py check.",
+      "teach": "Elegir la más probable, en código\nEl modelo puntúa cada respuesta candidata y, con temperatura 0, elige la de mayor probabilidad.\nPor qué: es lo que hace llm ask: el ▶ marca la elegida.",
+      "py_exercise": {
+        "id": "T9-01-elegir",
+        "title": "mas_probable(candidatas): la respuesta que elige el modelo",
+        "function": "mas_probable",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef mas_probable(candidatas):\n    # candidatas: {respuesta: probabilidad}\n    return list(candidatas)[0]   # ← cambia esta línea: la de mayor probabilidad\n\nprint(mas_probable({\"continuar\": 0.08, \"contestar\": 0.84, \"rollo\": 0.08}))   # contestar\n",
+        "cases": [
+          {
+            "args": [
+              {
+                "continuar": 0.08,
+                "contestar": 0.84,
+                "rollo": 0.08
+              }
+            ],
+            "expected": "contestar"
+          },
+          {
+            "args": [
+              {
+                "a": 0.6,
+                "b": 0.4
+              }
+            ],
+            "expected": "a"
+          },
+          {
+            "args": [
+              {
+                "x": 0.1,
+                "y": 0.2,
+                "z": 0.7
+              }
+            ],
+            "expected": "z"
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T9-01-elegir",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "max acepta key: max(candidatas, key=...)",
+        "La línea queda así: return max(candidatas, key=lambda r: candidatas[r])"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes qué aprende un LLM en el preentrenamiento y en el ajuste con instrucciones, y por qué un asistente recién ajustado obedece cualquier cosa. Siguiente: T9-02, enseñarle lo que preferimos.",
+  "debrief": {
+    "what_happened": "Has visto a un modelo preentrenado continuar una pregunta en vez de contestarla, y al mismo modelo con SFT contestar bien… y dar un código interno.",
+    "why": "El preentrenamiento da conocimiento; el SFT, el formato de asistente; ninguno de los dos enseña qué no hacer.",
+    "in_production": "Los asistentes comerciales se preentrenan con billones de tokens, se ajustan con instrucciones escritas por personas y después pasan por un ajuste con preferencias (RLHF, DPO) antes de publicarse.",
+    "simplifications": [
+      "Modelo simulado con respuestas candidatas fijas",
+      "Las fases se aplican al instante"
+    ]
+  },
+  "further_reading": [
+    "ref.instructgpt-2022"
+  ],
+  "xp": {
+    "base": 250
+  }
+}

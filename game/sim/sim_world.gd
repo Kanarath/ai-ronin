@@ -42,6 +42,8 @@ var audits: Dictionary = {}
 var classics: Dictionary = {}
 ## nombre -> imagen del laboratorio de visión (copias y versiones limpias)
 var images: Dictionary = {}
+## nombre -> {"stage": "base"|"sft"|"prefs", "sets": [...]} (T9)
+var aligned: Dictionary = {}
 ## Tabla de embeddings (se carga al usarla)
 var embeddings: EmbeddingTable = null
 
@@ -103,4 +105,5 @@ func reset() -> void:
 	for kind in KINDS:
 		store_of(kind).clear()
 	images.clear()
+	aligned.clear()
 	embeddings = null

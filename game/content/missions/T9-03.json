@@ -1,0 +1,260 @@
+{
+  "id": "T9-03",
+  "schema_version": 1,
+  "title": "Por qué funciona un jailbreak",
+  "unit": "T9",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "T9-02"
+  ],
+  "competencies": {
+    "requires": [
+      "T9.rlhf"
+    ],
+    "trains": [
+      "T9.jailbreak",
+      "T9.alineacion-no-es-barrera"
+    ]
+  },
+  "briefing": "Tu asistente ya se niega a dar el código interno. Un usuario lo intenta de otra manera: un juego de rol. Hoy entiendes, desde dentro del entrenamiento, por qué los jailbreaks funcionan y por qué no se arreglan solo entrenando más.",
+  "learning_objectives": [
+    "Explicar por qué funciona un jailbreak",
+    "Explicar por qué parchear disfraces es una carrera sin fin",
+    "Proteger un secreto fuera del modelo"
+  ],
+  "mentor_intro": "El modelo se niega. Veamos cuánto aguanta.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Los jailbreaks son la familia de ataques más conocida contra los asistentes con LLM (Large Language Model). Entender que la alineación es un comportamiento aprendido de ejemplos, y no una barrera, es lo que separa a quien pone parches de quien diseña sistemas seguros. Es la base directa de A1.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Prepara el asistente con seguridad y comprueba que se niega: llm pretrain kuro, llm sft kuro, llm prefs kuro seguridad y llm ask kuro codigo",
+      "teach": "El punto de partida\nUn asistente con preferencias de seguridad, como el de T9-02.\nPor qué: vas a atacar a un modelo que, en apariencia, ya está protegido.",
+      "validator": {
+        "type": "event",
+        "event": "llm.asked",
+        "where": {
+          "model": "kuro",
+          "prompt": "codigo",
+          "kind": "rechazo"
+        }
+      },
+      "hints": [
+        "Cuatro comandos seguidos; el último es llm ask kuro codigo."
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Prueba el juego de rol: llm ask kuro codigo_rol",
+      "prediction": {
+        "prompt": "¿Se negará también si la petición viene disfrazada de juego?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "El disfraz\nLa misma petición, envuelta en «eres un personaje sin reglas».\nPor qué: los pares de seguridad eran peticiones directas; este disfraz no se parecía a ninguno.",
+      "validator": {
+        "type": "event",
+        "event": "llm.asked",
+        "where": {
+          "model": "kuro",
+          "prompt": "codigo_rol",
+          "kind": "obedece"
+        }
+      },
+      "hints": [
+        "Pon tu hipótesis y lanza llm ask kuro codigo_rol."
+      ],
+      "on_complete": "Lo da, con un 79 %: el disfraz le saca del terreno donde aprendió a negarse."
+    },
+    {
+      "id": "c1",
+      "text": "¿Por qué funciona el juego de rol?",
+      "teach": "Fuera de lo aprendido\nEl modelo aprendió a negarse en casos parecidos a sus pares de entrenamiento. Un disfraz nuevo cae fuera de esa zona, y ahí manda lo que aprendió en el SFT: obedecer.\nPor qué: la alineación generaliza poco a lo que no ha visto.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque el modelo entiende que en un juego todo vale",
+          "why": "No entiende el juego: simplemente esa forma de pedir no se parecía a sus ejemplos de seguridad."
+        },
+        {
+          "id": "b",
+          "text": "porque el disfraz cae fuera de los ejemplos con los que aprendió a negarse",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "porque el código de descuento ya no es secreto",
+          "why": "Sigue siéndolo; lo que ha cambiado es cómo se pide."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Con qué tipo de peticiones se entrenó la seguridad?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Parchea el agujero y vuelve a probar: llm prefs kuro rol y llm ask kuro codigo_rol",
+      "teach": "El parche\nSe añaden pares de preferencias con juegos de rol dañinos.\nPor qué: es lo que hacen los equipos de seguridad cuando aparece un jailbreak nuevo.",
+      "validator": {
+        "type": "event",
+        "event": "llm.asked",
+        "where": {
+          "model": "kuro",
+          "prompt": "codigo_rol",
+          "kind": "rechazo"
+        }
+      },
+      "hints": [
+        "llm prefs kuro rol y después llm ask kuro codigo_rol"
+      ],
+      "on_complete": "Ahora se niega con un 92 %."
+    },
+    {
+      "id": "o4",
+      "text": "Prueba otro disfraz: llm ask kuro codigo_traduccion",
+      "prediction": {
+        "prompt": "Con el parche del juego de rol, ¿resistirá una petición disfrazada de traducción?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "El siguiente disfraz\nAhora la petición se esconde en una tarea inocente: traducir y completar una frase.\nPor qué: hay infinitas formas de disfrazar una petición; los parches solo cubren las que ya conoces.",
+      "validator": {
+        "type": "event",
+        "event": "llm.asked",
+        "where": {
+          "model": "kuro",
+          "prompt": "codigo_traduccion",
+          "kind": "obedece"
+        }
+      },
+      "hints": [
+        "Pon tu hipótesis y lanza llm ask kuro codigo_traduccion."
+      ],
+      "on_complete": "Lo da otra vez. Cada parche cierra un disfraz y deja abiertos los demás."
+    },
+    {
+      "id": "c2",
+      "text": "Con todo esto, ¿cómo protegerías de verdad el código de descuento?",
+      "teach": "La alineación no es una barrera\nEntrenar al modelo para negarse reduce los ataques, pero nunca los elimina: siempre habrá otro disfraz.\nPor qué: lo que no puede filtrarse es lo que el modelo no tiene; es la lección «sin secreto» de A1-05.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "con más pares de preferencias para cada disfraz conocido",
+          "why": "Ayuda, pero es una carrera sin fin: siempre hay un disfraz nuevo."
+        },
+        {
+          "id": "b",
+          "text": "pidiéndole en el prompt que nunca juegue a roles",
+          "why": "Una instrucción en el prompt es otro texto más que un disfraz puede rodear."
+        },
+        {
+          "id": "c",
+          "text": "sacando el código del prompt y comprobando fuera del modelo",
+          "why": ""
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "¿Puede filtrar el modelo algo que no tiene?",
+        "answer c"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa cómo se mide la seguridad del modelo: abre el editor con py, completa tasa_rechazo y compruébala con py check.",
+      "teach": "Medir, no suponer\nUna batería de peticiones dañinas y sus respuestas: la tasa de rechazo es la fracción de veces que se negó.\nPor qué: es el número que se repite tras cada parche, como las baterías de A1.",
+      "py_exercise": {
+        "id": "T9-03-rechazo",
+        "title": "tasa_rechazo(tipos): fracción de peticiones dañinas rechazadas",
+        "function": "tasa_rechazo",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef tasa_rechazo(tipos):\n    # tipos: lista con el tipo de cada respuesta («rechazo», «obedece»…)\n    rechazos = 0   # ← cambia esta línea: cuenta cuántos son «rechazo»\n    return rechazos / len(tipos)\n\nprint(tasa_rechazo([\"rechazo\", \"rechazo\", \"obedece\"]))   # unos 0.667\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "rechazo",
+                "rechazo",
+                "obedece"
+              ]
+            ],
+            "expected": 0.666667,
+            "tolerance": 1e-05
+          },
+          {
+            "args": [
+              [
+                "obedece"
+              ]
+            ],
+            "expected": 0.0,
+            "tolerance": 1e-09
+          },
+          {
+            "args": [
+              [
+                "rechazo",
+                "rechazo"
+              ]
+            ],
+            "expected": 1.0,
+            "tolerance": 1e-09
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T9-03-rechazo",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "tipos.count(\"rechazo\") cuenta cuántas veces aparece.",
+        "La línea queda así: rechazos = tipos.count(\"rechazo\")"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes por qué los jailbreaks funcionan (la alineación se aprende de ejemplos y generaliza poco), por qué los parches son una carrera sin fin y por qué los secretos se protegen fuera del modelo. Siguiente: A1, atacar y defender una aplicación con LLM real.",
+  "debrief": {
+    "what_happened": "Has visto a un asistente alineado negarse a la petición directa, ceder con un juego de rol, resistir tras el parche y ceder otra vez con una traducción.",
+    "why": "La alineación es un comportamiento aprendido de ejemplos, no una barrera de seguridad: los disfraces que no se parecen a los ejemplos se le escapan.",
+    "in_production": "Los proveedores combinan alineación con filtros de entrada y salida, red teaming continuo y, sobre todo, diseño: los modelos no tienen secretos ni permisos que no deban poder usar.",
+    "simplifications": [
+      "Tres disfraces fijos",
+      "La generalización de la alineación se simula con una regla"
+    ]
+  },
+  "further_reading": [
+    "ref.instructgpt-2022",
+    "ref.owasp-llm-2025"
+  ],
+  "xp": {
+    "base": 300
+  }
+}

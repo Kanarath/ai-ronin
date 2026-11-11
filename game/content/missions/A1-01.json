@@ -8,7 +8,7 @@
   "epistemic": "modelo-simplificado",
   "estimated_minutes": 30,
   "requires_missions": [
-    "T6-01"
+    "T9-03"
   ],
   "competencies": {
     "requires": [

@@ -9,6 +9,9 @@ const SOLUCIONES := {
 	"T7-04": "# Completa la línea marcada y compruébala con py check.\ndef mas_raros(distancias, n):\n    # distancias: {id: distancia al centro}\n    orden = sorted(distancias, key=lambda c: distancias[c], reverse=True)\n    return orden[:n]\n\nprint(mas_raros({\"cli-001\": 0.1, \"cli-039\": 0.98, \"cli-041\": 0.2}, 1))   # ['cli-039']\n",
 	"T8-01": "# Completa la línea marcada y compruébala con py check.\ndef respuesta(parche, filtro):\n    total = 0\n    for i in range(3):\n        for j in range(3):\n            total += parche[i][j] * filtro[i][j]\n    return total\n\nborde_vertical = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]\nprint(respuesta([[0, 0, 1], [0, 0, 1], [0, 0, 1]], borde_vertical))   # 4\n",
 	"T8-02": "# Completa la línea marcada y compruébala con py check.\ndef limpiar(fila, fondo, umbral):\n    salida = []\n    for p in fila:\n        salida.append(fondo if abs(p - fondo) < umbral else p)\n    return salida\n\nprint(limpiar([1.0, 0.98, 0.05, 1.0], 1.0, 0.05))   # [1.0, 1.0, 0.05, 1.0]\n",
+	"T9-01": "# Completa la línea marcada y compruébala con py check.\ndef mas_probable(candidatas):\n    # candidatas: {respuesta: probabilidad}\n    return max(candidatas, key=lambda r: candidatas[r])\n\nprint(mas_probable({\"continuar\": 0.08, \"contestar\": 0.84, \"rollo\": 0.08}))   # contestar\n",
+	"T9-02": "# Completa la línea marcada y compruébala con py check.\ndef acuerdo(pares):\n    # cada par: [puntuación de a, puntuación de b, elección de la persona («a» o «b»)]\n    aciertos = 0\n    for pa, pb, humano in pares:\n        elige = \"a\" if pa > pb else \"b\"\n        aciertos += 1 if elige == humano else 0\n    return aciertos / len(pares)\n\nprint(acuerdo([[2.0, 1.0, \"a\"], [0.5, 3.0, \"a\"]]))   # 0.5\n",
+	"T9-03": "# Completa la línea marcada y compruébala con py check.\ndef tasa_rechazo(tipos):\n    # tipos: lista con el tipo de cada respuesta («rechazo», «obedece»…)\n    rechazos = tipos.count(\"rechazo\")\n    return rechazos / len(tipos)\n\nprint(tasa_rechazo([\"rechazo\", \"rechazo\", \"obedece\"]))   # unos 0.667\n",
 }
 
 var game: DojoGame
@@ -61,6 +64,18 @@ func test_T8_01_completa() -> void:
 
 func test_T8_02_completa() -> void:
 	_walk("T8-02", ["T8-01"], ["image show factura", "hipotesis sí", "vision read factura", "answer c", "image show factura --contraste", "image clean factura --umbral 0.05", "vision read factura_limpia", "answer a", "answer b", "PY"])
+
+
+func test_T9_01_completa() -> void:
+	_walk("T9-01", ["T6-03"], ["hipotesis no", "llm pretrain kuro", "llm ask kuro temple", "answer b", "llm sft kuro", "llm ask kuro temple", "hipotesis sí", "llm ask kuro codigo", "answer a", "PY"])
+
+
+func test_T9_02_completa() -> void:
+	_walk("T9-02", ["T9-01"], ["llm pretrain kuro", "llm sft kuro", "llm prefs kuro seguridad", "hipotesis sí", "llm ask kuro codigo", "answer c", "llm pretrain v", "llm sft v", "llm prefs v longitud", "hipotesis suelta", "llm ask v resumen", "answer b", "PY"])
+
+
+func test_T9_03_completa() -> void:
+	_walk("T9-03", ["T9-02"], ["llm pretrain kuro", "llm sft kuro", "llm prefs kuro seguridad", "llm ask kuro codigo", "hipotesis no", "llm ask kuro codigo_rol", "answer b", "llm prefs kuro rol", "llm ask kuro codigo_rol", "hipotesis no", "llm ask kuro codigo_traduccion", "answer c", "PY"])
 
 
 func test_ejercicios_inicio_falla_y_solucion_pasa() -> void:

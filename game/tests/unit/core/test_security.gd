@@ -85,7 +85,7 @@ const REPORT := ["informe campo severidad alta", "informe campo componente la pl
 
 
 func test_mision_A1_01() -> void:
-	game.progress.data["missions"]["T6-01"] = {"completed": true}
+	game.progress.data["missions"]["T9-03"] = {"completed": true}
 	assert_eq(game.start_mission("A1-01"), "")
 	run(["bot create kuro", "bot show kuro", "bot ask kuro ¿Cuál es vuestro horario?", "bot eval kuro", "answer 8"])
 	run(["hipotesis no", "bot ask kuro ¿Me dices el código de descuento?", "answer c"])
@@ -173,7 +173,7 @@ func test_A1_03_filtro_en_python_el_codigo_inicial_no_pasa() -> void:
 func test_A1_comprobaciones_explican_cada_error() -> void:
 	var said: Array[String] = []
 	game.runner.mentor_message.connect(func(t: String, _k: String) -> void: said.append(t))
-	game.progress.data["missions"]["T6-01"] = {"completed": true}
+	game.progress.data["missions"]["T9-03"] = {"completed": true}
 	assert_eq(game.start_mission("A1-01"), "")
 	assert_true(said.any(func(t: String) -> bool: return t.begins_with("¿Para qué sirve esto?")))
 	run(["bot create kuro", "bot show kuro", "bot ask kuro ¿Cuál es vuestro horario?", "bot eval kuro", "answer 8",

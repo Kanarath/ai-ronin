@@ -1349,6 +1349,24 @@
       "url": "https://doi.org/10.1023/A:1010933404324",
       "consulted": "2026-11-11",
       "review_by": "2028-11-11"
+    },
+    {
+      "id": "ref.instructgpt-2022",
+      "title": "Ouyang et al. (2022). Training language models to follow instructions with human feedback (InstructGPT)",
+      "source": "arXiv",
+      "type": "articulo",
+      "url": "https://arxiv.org/abs/2203.02155",
+      "consulted": "2026-11-11",
+      "review_by": "2028-11-11"
+    },
+    {
+      "id": "ref.dpo-2023",
+      "title": "Rafailov et al. (2023). Direct Preference Optimization: Your Language Model is Secretly a Reward Model",
+      "source": "arXiv",
+      "type": "articulo",
+      "url": "https://arxiv.org/abs/2305.18290",
+      "consulted": "2026-11-11",
+      "review_by": "2028-11-11"
     }
   ]
 }
