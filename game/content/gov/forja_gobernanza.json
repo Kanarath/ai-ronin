@@ -1,5 +1,5 @@
 {
-  "_nota": "Laboratorio O5 (ficticio). Las fechas y artículos del AI Act son reales: Reglamento (UE) 2024/1689, modificado por el Reglamento (UE) 2026/1744 (Digital Omnibus), consultados el 2026-11-09. No es asesoramiento jurídico.",
+  "_nota": "Laboratorio O5 (ficticio). Las fechas y artículos del AI Act son reales: Reglamento (UE) 2024/1689, modificado por el Reglamento (UE) 2026/1744 (Digital Omnibus), consultados el 2026-11-09 y revisados el 2026-11-11 con el calendario oficial de la Comisión. No es asesoramiento jurídico.",
   "frameworks": [
     { "id": "ai-act", "name": "Reglamento europeo de IA (AI Act)", "ref": "Reglamento (UE) 2024/1689, modificado por el Reglamento (UE) 2026/1744",
       "kind": "ley", "mandatory": true, "certifiable": false,

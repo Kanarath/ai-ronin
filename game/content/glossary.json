@@ -854,7 +854,7 @@
       "term": "notificación de una violación de datos",
       "aliases": ["notificación", "brecha", "violación de datos", "72 horas", "artículo 33", "dpd", "dpo"],
       "short": "Aviso a la autoridad de control cuando se ven afectados datos personales (RGPD, art. 33).",
-      "body": "El responsable debe notificar sin dilación indebida y, si es posible, en 72 horas desde que tiene constancia, salvo que sea improbable que suponga un riesgo para los derechos y libertades de las personas. La evaluación la hace la organización con su delegado de protección de datos (DPD).",
+      "body": "El responsable debe notificar sin dilación indebida y, si es posible, en 72 horas desde que tiene constancia, salvo que sea improbable que suponga un riesgo para los derechos y libertades de las personas. La evaluación la hace la organización con su delegado de protección de datos (DPD). La propuesta Digital Omnibus (COM(2025) 837) plantea cambiar este plazo y qué violaciones se notifican; a 2026-11-11 sigue en tramitación y no se aplica.",
       "epistemic": "consolidado"
     },
     {
@@ -886,7 +886,7 @@
       "term": "AI Act (Reglamento europeo de IA)",
       "aliases": ["ai act","reglamento de ia","rgia","2024/1689","ley de ia"],
       "short": "Reglamento (UE) 2024/1689: obligaciones según el nivel de riesgo del uso de la IA.",
-      "body": "Prohíbe algunas prácticas (art. 5), impone requisitos a los sistemas de alto riesgo (arts. 6 a 15 y anexos I y III), obligaciones de transparencia (art. 50) y reglas para modelos de uso general. El Digital Omnibus (Reglamento (UE) 2026/1744) aplazó el alto riesgo del anexo III al 2 de diciembre de 2027. Regula usos, no tecnologías.",
+      "body": "Prohíbe algunas prácticas (art. 5), impone requisitos a los sistemas de alto riesgo (arts. 6 a 15 y anexos I y III), obligaciones de transparencia (art. 50) y reglas para modelos de uso general. El Digital Omnibus (Reglamento (UE) 2026/1744) aplazó el alto riesgo del anexo III al 2 de diciembre de 2027 y el del anexo I al 2 de agosto de 2028. Regula usos, no tecnologías.",
       "epistemic": "consolidado"
     },
     {
@@ -894,7 +894,7 @@
       "term": "NIST AI RMF",
       "aliases": ["nist ai rmf","ai rmf","ai 100-1","govern map measure manage"],
       "short": "Marco voluntario del NIST para gestionar riesgos de IA, con cuatro funciones: GOVERN, MAP, MEASURE y MANAGE.",
-      "body": "Publicado en enero de 2023 (NIST AI 100-1), con un perfil para IA generativa (NIST AI 600-1, 2024) y en revisión. No es obligatorio ni certificable: da un vocabulario y unos resultados que perseguir.",
+      "body": "Publicado en enero de 2023 (NIST AI 100-1), con un perfil para IA generativa (NIST AI 600-1, 2024). Según el NIST, se está revisando (consultado el 2026-11-11). No es obligatorio ni certificable: da un vocabulario y unos resultados que perseguir.",
       "epistemic": "consolidado"
     },
     {
