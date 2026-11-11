@@ -108,8 +108,16 @@ func mission_status(id: String) -> String:
 	return "disponible"
 
 
-## Unidades con alguna misión completada (T1 siempre disponible para retos).
+## Unidades con alguna misión completada (T1 siempre disponible para retos). Mientras no hay
+## ninguna misión de T1 completada (el tutorial T0-01, o un jugador nuevo), solo «T0»: la
+## media, lo único que se ha enseñado; distancias y min-max llegan con T1.
 func unlocked_units() -> PackedStringArray:
+	var t1_done := false
+	for m in catalog.missions:
+		if m["unit"] == "T1" and progress.is_mission_completed(m["id"]):
+			t1_done = true
+	if not t1_done or str(active_mission.get("id", "")) == "T0-01":
+		return PackedStringArray(["T0"])
 	var out := PackedStringArray(["T1"])
 	for m in catalog.missions:
 		if progress.is_mission_completed(m["id"]) and not m["unit"] in out:
@@ -208,7 +216,8 @@ func forja_message(m: Dictionary) -> String:
 	var dir := String(info.get("test_path", "")).get_base_dir()
 	var path := dir.path_join(String(info["file"])) if not dir.is_empty() else String(m.get("debrief", {}).get("exercise", info["file"]))
 	var whose := "" if ex == str(m.get("id", "")) else " (el ejercicio de %s, que también cubre esta misión)" % ex
-	return "🛠 Ahora, con tus manos: abre %s%s y haz que pasen sus tests. Después genera la evidencia con ronin_check %s y tráela aquí con evidence import. ¿No tienes Python? Escribe forja setup." % [path, whose, ex]
+	var check := "en forja/ejercicios ejecuta py -m ronin_check %s" % ex if dir == "forja/ejercicios" else "genera la evidencia con ronin_check %s (pasos en el README de %s)" % [ex, dir]
+	return "🛠 Ahora, con tus manos: abre %s%s y haz que pasen sus tests. Después, %s y aquí evidence import. ¿No tienes Python? Escribe forja setup." % [path, whose, check]
 
 
 func _after_xp(level_before: int) -> void:

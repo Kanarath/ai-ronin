@@ -192,11 +192,11 @@ static func _controls(c: CommandContext, a: Dictionary) -> CommandResult:
 	var x := _x(c, a)
 	var rows: Array = []
 	for k: Dictionary in x.data["controls"]:
-		rows.append([k["id"], k["function"], k["ref"], k["risk"], k["text"], "✓" if k["id"] in x.sample else "", x.ratings.get(k["id"], "—")])
+		rows.append([k["id"], k["function"], k["ref"], k["risk"], "✓" if k["id"] in x.sample else "", x.ratings.get(k["id"], "—"), k["text"]])
 	var r := CommandResult.new()
 	var au: Dictionary = x.data["audit"]
 	r.line("Auditoría interna de Ayuda-Valle · periodo %s · criterios: %s" % [au["period"], au["criteria"]], "accent")
-	r.table(PackedStringArray(["id", "función", "NIST AI RMF", "riesgo", "resultado esperado", "muestra", "clase"]), rows)
+	r.lines_from(TextUtils.table_wrapped(PackedStringArray(["id", "función", "NIST AI RMF", "riesgo", "muestra", "clase", "resultado esperado"]), rows, 90), "data")
 	r.line("Tiempo para %d controles como máximo. Muestra: audit sample %s <C## …> · o --random <n>" % [au["max_sample"], a["auditoria"]], "muted")
 	return r
 

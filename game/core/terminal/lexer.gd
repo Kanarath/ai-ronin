@@ -24,11 +24,13 @@ static func tokenize(line: String) -> Dictionary:
 	var in_word := false
 	while i < text.length():
 		var c := text[i]
+		# Las comillas abren un texto solo al principio de una palabra. Dentro de una palabra
+		# son literales: «alert('kurogane')» llega tal cual, con sus comillas.
+		if (c == "\"" or c == "'") and in_word:
+			current += c
+			i += 1
+			continue
 		if c == "\"" or c == "'":
-			if in_word:
-				tokens.append({"type": WORD, "value": current})
-				current = ""
-				in_word = false
 			var end := text.find(c, i + 1)
 			if end == -1:
 				return {"tokens": tokens, "error": "comillas sin cerrar (%s)" % c}

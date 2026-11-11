@@ -658,7 +658,7 @@ func test_mision_T4_03_aplicada_completa() -> void:
 	run(["nn create red --hidden 4 --lr 1 --seed 1", "nn train red llamadas --epochs 3000 --positive peligrosa"])
 	assert_eq(game.runner.index, 5, "la red con capa oculta acierta todas las llamadas")
 	run(["nn forward red 0.9,0.1", "nn forward red 0.1,0.9"])
-	assert_true(game.shell.execute("nn forward red 0.9,0.1").plain_text().contains("oculta 2: z = 4.81·0.9 + -8.379·0.1 + -0.621 = 2.87  →  sigmoid(z) = 0.946"), "los números citados en la misión")
+	assert_true(game.shell.execute("nn forward red 0.9,0.1").plain_text().contains("oculta 2: z = 4.81·0.9 + -8.379·0.1 + -0.621 = 2.87  →  sigmoide(z) = 0.946"), "los números citados en la misión")
 	run(["answer a", "nn weights red", "answer b"])
 	solve_py(PY_PELIGROSA)
 	run(["answer b"])

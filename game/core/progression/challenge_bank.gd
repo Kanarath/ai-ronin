@@ -6,6 +6,7 @@ extends RefCounted
 ## Solo se proponen retos de unidades con alguna misión completada.
 
 const UNIT_GENERATORS := {
+	"T0": ["_mean"],
 	"T1": ["_distance", "_minmax", "_mean"],
 	"T2": ["_knn_vote", "_accuracy"],
 	"T3": ["_gd_step", "_precision_recall"],

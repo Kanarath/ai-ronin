@@ -262,7 +262,7 @@ func _announce_current() -> void:
 	for c: Dictionary in obj.get("choices", []):
 		choices += "\n%s) %s" % [c["id"], c["text"]]
 	if not choices.is_empty():
-		choices += "\nResponde con answer <letra>, por ejemplo answer a."
+		choices += "\nResponde con answer seguido de la letra."
 	if not obj.has("prediction"):
 		mentor_message.emit(task + choices, "task")
 		return

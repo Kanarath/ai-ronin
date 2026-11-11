@@ -85,7 +85,10 @@ static func _log(c: CommandContext, a: Dictionary) -> CommandResult:
 		s.logging[a["campo"]] = on
 	c.emit("soc.logging", {"store": a["registro"], "field": a["campo"], "enabled": on, "logging": _logging(s)})
 	var r := CommandResult.new().line("✓ %s → %s" % [a["campo"], "activado" if on else "desactivado"], "ok")
-	r.line("⚗ En el laboratorio el cambio se aplica también a las sesiones pasadas; en la realidad, lo que no se registró se ha perdido.", "muted")
+	# El aviso se da una vez por sesión de juego: repetido en cada soc log solo es ruido.
+	if not c.shell.has_meta("soc_log_notice"):
+		c.shell.set_meta("soc_log_notice", true)
+		r.line("⚗ En el laboratorio el cambio se aplica también a las sesiones pasadas; en la realidad, lo que no se registró se ha perdido.", "muted")
 	return r
 
 

@@ -49,8 +49,9 @@ static func register(reg: CommandRegistry) -> void:
 			.example("explain overfitting")
 			.example("explain fuga de datos")))
 
-	reg.register(Command.new("cheatsheet", "Chuleta: comandos disponibles con ejemplos y conceptos.",
-		func(ctx: CommandContext, a: Dictionary) -> CommandResult: return _cheatsheet(ctx, a), "ayuda"))
+	reg.register(Command.new("cheatsheet", "Chuleta: los comandos de la misión activa (o todos, con --all), con ejemplos.",
+		func(ctx: CommandContext, a: Dictionary) -> CommandResult: return _cheatsheet(ctx, a), "ayuda")
+		.with_signature(CommandSignature.new().opt("all", "todos los comandos, no solo los de la misión", "bool", false).example("cheatsheet").example("cheatsheet --all")))
 
 	reg.register(Command.new("forja setup", "Cómo preparar tu equipo para los ejercicios en Python (instalar Python).",
 		func(c: CommandContext, a: Dictionary) -> CommandResult: return _forja_setup(c, a), "ayuda")
@@ -216,12 +217,25 @@ static func _explain(ctx: CommandContext, a: Dictionary) -> CommandResult:
 	return r
 
 
-static func _cheatsheet(ctx: CommandContext, _a: Dictionary) -> CommandResult:
+static func _cheatsheet(ctx: CommandContext, a: Dictionary) -> CommandResult:
 	var r := CommandResult.new()
-	r.line("CHULETA", "accent")
+	# Con una misión activa, solo los comandos que nombra su texto (lecciones, tareas, pistas).
+	var g: Variant = ctx.shell.get_game()
+	var mission: Dictionary = g.active_mission if g != null else {}
+	var mission_text := "" if mission.is_empty() or a.get("all", false) else JSON.stringify(mission)
+	var relevant: Array = []
 	for cmd in ctx.registry.all():
 		if cmd.tier > ctx.shell.tier or cmd.category == "ayuda" or cmd.category == "terminal":
 			continue
+		if mission_text.is_empty() or mentions_command(mission_text, cmd.path):
+			relevant.append(cmd)
+	if relevant.is_empty():
+		mission_text = ""
+		for cmd in ctx.registry.all():
+			if not (cmd.tier > ctx.shell.tier or cmd.category == "ayuda" or cmd.category == "terminal"):
+				relevant.append(cmd)
+	r.line("CHULETA" + ("" if mission_text.is_empty() else " · comandos de %s (todos: cheatsheet --all)" % mission["id"]), "accent")
+	for cmd: Command in relevant:
 		var used: bool = ctx.shell.usage_count.get(cmd.path, 0) > 0
 		var mark := "✓" if used else "·"
 		r.line("%s %s" % [mark, cmd.signature.usage(cmd.path)], "data")
@@ -231,6 +245,22 @@ static func _cheatsheet(ctx: CommandContext, _a: Dictionary) -> CommandResult:
 	r.line("Ayuda: help <cmd> · <cmd> --help · man <tema> · explain <término> · línea terminada en « ?»", "muted")
 	r.line("✓ = ya lo has usado", "muted")
 	return r
+
+
+## ¿Nombra el texto este comando como comando (seguido de espacio, fin o signo, no de letra)?
+static func mentions_command(text: String, path: String) -> bool:
+	var from := 0
+	while true:
+		var i := text.find(path, from)
+		if i < 0:
+			return false
+		var before := text.substr(i - 1, 1) if i > 0 else " "
+		var after := text.substr(i + path.length(), 1)
+		var letter := RegEx.create_from_string("[\\p{L}\\p{N}_-]")
+		if letter.search(before) == null and (after.is_empty() or letter.search(after) == null):
+			return true
+		from = i + 1
+	return false
 
 
 static func _forja_setup(ctx: CommandContext, a: Dictionary) -> CommandResult:

@@ -145,7 +145,7 @@ static func _attention(c: CommandContext, a: Dictionary) -> CommandResult:
 		data.append(row)
 		focus[words[i]] = words[best_j] if best_j != -1 else ""
 	r.table(headers, data)
-	r.line("Cada fila suma 1 (softmax). %d palabras → %d pesos: el coste crece con el CUADRADO de la longitud." % [words.size(), words.size() * words.size()], "muted")
+	r.line("Cada fila suma 1 (softmax): cada palabra reparte su atención entre las palabras que puede ver.", "muted")
 	c.emit("attention.computed", {"words": " ".join(words), "n": words.size(), "causal": causal, "scaled": scaled, "focus": focus,
 		"weights": res["weights"], "first_self": res["weights"][0][0]})
 	return r

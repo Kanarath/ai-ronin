@@ -66,7 +66,13 @@ func _ready() -> void:
 	_output.add_theme_font_override("bold_font", RoninFonts.mono())
 	_output.add_theme_font_size_override("normal_font_size", 14)
 	_output.add_theme_font_size_override("bold_font_size", 14)
+	# Hueco encima de la salida para que su alto sea un número entero de líneas: así la línea
+	# de arriba no queda cortada por la mitad (y no pierde las tildes).
+	_top_pad = Control.new()
+	_top_pad.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_child(_top_pad)
 	box.add_child(_output)
+	_output.resized.connect(_align_lines)
 
 	var row := HBoxContainer.new()
 	box.add_child(row)
@@ -94,6 +100,27 @@ func _ready() -> void:
 	_output.gui_input.connect(func(e: InputEvent) -> void:
 		if e is InputEventMouseButton and e.pressed:
 			finish_reveal())
+
+
+var _top_pad: Control
+var _aligning := false
+
+
+## Ajusta el hueco superior para que la salida mida un número entero de líneas.
+func _align_lines() -> void:
+	if _aligning or _output == null:
+		return
+	var font := _output.get_theme_font("normal_font")
+	var lh := font.get_height(14) + _output.get_theme_constant("line_separation")
+	if lh <= 0.0:
+		return
+	var total := _output.size.y + _top_pad.custom_minimum_size.y
+	var pad := fmod(total, lh)
+	if absf(pad - _top_pad.custom_minimum_size.y) < 0.5:
+		return
+	_aligning = true
+	_top_pad.custom_minimum_size.y = pad
+	_aligning = false
 
 
 func _process(delta: float) -> void:

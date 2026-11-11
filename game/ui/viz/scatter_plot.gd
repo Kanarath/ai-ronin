@@ -7,7 +7,11 @@ const MARGIN_LEFT := 64.0
 const MARGIN_RIGHT := 24.0
 const MARGIN_TOP := 44.0
 const MARGIN_BOTTOM := 48.0
-const CLASS_COLORS: Array[Color] = [RoninPalette.TEAL, RoninPalette.GOLD, RoninPalette.CYAN, RoninPalette.VIOLET]
+const CLASS_COLORS: Array[Color] = [RoninPalette.TEAL, RoninPalette.CYAN, RoninPalette.VIOLET, RoninPalette.TEXT]
+## La clase «positiva» (la mala, la que se quiere detectar) va siempre en el color cálido,
+## en todos los datasets: defectuosa, inyección, abuso, llamada peligrosa, salida 1…
+const WARM := RoninPalette.GOLD
+const POSITIVE_CLASSES: Array[String] = ["defectuosa", "inyeccion", "inyección", "abuso", "peligrosa", "ataque", "maliciosa", "1"]
 
 var dataset: Dataset
 var fx: int = 0
@@ -86,31 +90,63 @@ func _draw() -> void:
 	draw_string(font, Vector2(plot.position.x + plot.size.x / 2 - 60, size.y - 10), "→ " + dataset.feature_names[fx], HORIZONTAL_ALIGNMENT_LEFT, -1, 13, RoninPalette.TEXT)
 	draw_string(font, Vector2(MARGIN_LEFT, 18), "↑ " + dataset.feature_names[fy], HORIZONTAL_ALIGNMENT_LEFT, -1, 13, RoninPalette.TEXT)
 
-	# Leyenda
+	# Leyenda: después del título del eje y, en una o dos filas según quepa; el nombre del
+	# dataset, a la derecha.
 	var classes := dataset.classes()
-	var lx := plot.end.x - 220.0
-	draw_string(font, Vector2(lx - 120, 18), dataset.name, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, RoninPalette.MUTED)
+	var colors := class_colors(classes)
+	var name_w := font.get_string_size(dataset.name, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x
+	draw_string(font, Vector2(size.x - MARGIN_RIGHT - name_w, 18), dataset.name, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, RoninPalette.MUTED)
 	var labelled := not (classes.size() == 1 and classes[0] == "")
+	var lx := MARGIN_LEFT + font.get_string_size("↑ " + dataset.feature_names[fy], HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x + 30.0
+	var ly := 13.0
+	var limit := size.x - MARGIN_RIGHT - name_w - 20.0
 	for c in classes.size() if labelled else 0:
-		var col := CLASS_COLORS[c % CLASS_COLORS.size()]
-		draw_circle(Vector2(lx + c * 110, 13), 5, col)
-		draw_string(font, Vector2(lx + c * 110 + 10, 18), classes[c], HORIZONTAL_ALIGNMENT_LEFT, -1, 12, RoninPalette.TEXT)
+		var w := font.get_string_size(classes[c], HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x + 30.0
+		if lx + w > limit and ly < 20.0:
+			lx = MARGIN_LEFT + 140.0
+			ly = 31.0
+			limit = size.x - MARGIN_RIGHT
+		draw_circle(Vector2(lx, ly), 5, colors[classes[c]])
+		draw_string(font, Vector2(lx + 10, ly + 5), classes[c], HORIZONTAL_ALIGNMENT_LEFT, -1, 12, RoninPalette.TEXT)
+		lx += w
 
-	# Puntos
+	# Puntos. Las etiquetas de puntos que caen en el mismo sitio se juntan en una sola
+	# («herrera · maestra»; si son muchas, «arma, katana +5»), y las que quedan muy cerca
+	# se desplazan hacia abajo para no pisarse.
 	var query_pos := Vector2(-1, -1)
+	var groups := {}  # posición redondeada -> [pos, [ids]]
 	for i in dataset.size():
 		var p := Vector2(
 			plot.position.x + inverse_lerp(xr.x, xr.y, xs[i]) * plot.size.x,
 			plot.end.y - inverse_lerp(yr.x, yr.y, ys[i]) * plot.size.y)
-		var col := CLASS_COLORS[classes.find(dataset.labels[i]) % CLASS_COLORS.size()]
+		var col: Color = colors.get(dataset.labels[i], CLASS_COLORS[0])
 		var id := dataset.ids[i]
 		if id in neighbor_ids:
 			draw_arc(p, 8, 0, TAU, 20, RoninPalette.TEXT, 1.5)
 		draw_circle(p, 3.5, Color(col, 0.85))
-		if dataset.size() <= 40:
-			draw_string(font, p + Vector2(6, -4), id, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, RoninPalette.MUTED)
+		var key := Vector2i(roundi(p.x / 3.0), roundi(p.y / 3.0))
+		if not groups.has(key):
+			groups[key] = [p, PackedStringArray()]
+		groups[key][1].append(id)
 		if id == query_id:
 			query_pos = p
+	if dataset.size() <= 40:
+		var placed: Array[Rect2] = []
+		for key: Vector2i in groups:
+			var p: Vector2 = groups[key][0]
+			var ids: PackedStringArray = groups[key][1]
+			var text := " · ".join(ids) if ids.size() <= 3 else "%s, %s +%d" % [ids[0], ids[1], ids.size() - 2]
+			var tw := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, 11).x
+			var pos := p + Vector2(6, -4)
+			if pos.x + tw > size.x - 4:
+				pos.x = p.x - 6 - tw
+			var r := Rect2(pos - Vector2(0, 10), Vector2(tw, 12))
+			var tries := 0
+			while tries < 6 and placed.any(func(o: Rect2) -> bool: return o.intersects(r)):
+				r.position.y += 12
+				tries += 1
+			placed.append(r)
+			draw_string(font, r.position + Vector2(0, 10), text, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, RoninPalette.MUTED)
 	if not regression_line.is_empty() and regression_line["x"] == dataset.feature_names[fx] and regression_line["y"] == dataset.feature_names[fy]:
 		var pts := PackedVector2Array()
 		for t in [xr.x, xr.y]:
@@ -123,6 +159,25 @@ func _draw() -> void:
 	if query_pos.x >= 0:
 		draw_arc(query_pos, 12, 0, TAU, 28, RoninPalette.CYAN, 2.0)
 		draw_string(font, query_pos + Vector2(14, -10), query_id, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, RoninPalette.CYAN)
+
+
+## Color de cada clase: la positiva, cálido; el resto, colores fríos en orden.
+static func class_colors(classes: PackedStringArray) -> Dictionary:
+	var out := {}
+	var has_positive := false
+	for c in classes:
+		has_positive = has_positive or c.to_lower() in POSITIVE_CLASSES
+	# Sin clase positiva (p. ej. las categorías de los embeddings) se usan todos los colores.
+	var all_colors: Array[Color] = [RoninPalette.TEAL, RoninPalette.GOLD, RoninPalette.CYAN, RoninPalette.VIOLET, RoninPalette.TEXT, RoninPalette.RED, RoninPalette.MUTED]
+	var pal: Array[Color] = CLASS_COLORS if has_positive else all_colors
+	var k := 0
+	for c in classes:
+		if has_positive and c.to_lower() in POSITIVE_CLASSES:
+			out[c] = WARM
+		else:
+			out[c] = pal[k % pal.size()]
+			k += 1
+	return out
 
 
 ## Recorta un segmento al rectángulo (algoritmo de Liang-Barsky).

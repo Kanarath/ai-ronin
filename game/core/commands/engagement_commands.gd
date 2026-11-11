@@ -55,7 +55,7 @@ static func _recon(c: CommandContext, a: Dictionary) -> CommandResult:
 			copies.append("  %s → %s" % [x["id"], x["lab"]])
 	var r := CommandResult.new()
 	r.line("Activos de IA de %s:" % e.data["client"], "accent")
-	r.table(PackedStringArray(["id", "activo", "en alcance", "exposición"]), rows)
+	r.lines_from(TextUtils.table_wrapped(PackedStringArray(["id", "activo", "en alcance", "exposición"]), rows, 90), "data")
 	if not copies.is_empty():
 		r.line("Copia en el laboratorio de cada activo en alcance:", "muted")
 		r.lines_from(copies, "data")

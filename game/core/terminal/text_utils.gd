@@ -59,7 +59,7 @@ static func table(headers: PackedStringArray, rows: Array, max_cell: int = MAX_C
 	for r: Array in rows:
 		var row_cells := PackedStringArray()
 		for c in r.size():
-			var s := fmt(r[c]).replace("\n", " ")
+			var s := narrow_glyphs(fmt(r[c]).replace("\n", " "))
 			if c < n - 1 and max_cell > 0:
 				s = clip(s, max_cell)
 			row_cells.append(s)
@@ -74,6 +74,52 @@ static func table(headers: PackedStringArray, rows: Array, max_cell: int = MAX_C
 	for rc: PackedStringArray in cells:
 		out.append(_join_row(rc, widths))
 	return out
+
+
+## Como table, pero la última columna (un texto largo) se parte en líneas de wrap celdas
+## como mucho, que siguen debajo de su columna: la consola no la parte por su cuenta.
+static func table_wrapped(headers: PackedStringArray, rows: Array, wrap: int) -> PackedStringArray:
+	var n := headers.size()
+	var expanded: Array = []
+	for r: Array in rows:
+		var parts := wrap_words(fmt(r[n - 1]), wrap) if r.size() == n else PackedStringArray([""])
+		for i in parts.size():
+			var row: Array = r.slice(0, n - 1) if i == 0 else []
+			if i > 0:
+				for k in n - 1:
+					row.append("")
+			row.append(parts[i])
+			expanded.append(row)
+	return table(headers, expanded)
+
+
+## Parte un texto en líneas de como mucho w celdas, por palabras.
+static func wrap_words(text: String, w: int) -> PackedStringArray:
+	var out := PackedStringArray()
+	var line := ""
+	for word in text.split(" ", false):
+		if line.is_empty():
+			line = word
+		elif display_width(line) + 1 + display_width(word) <= w:
+			line += " " + word
+		else:
+			out.append(line)
+			line = word
+	out.append(line)
+	return out
+
+
+## Dentro de una tabla, los símbolos que la fuente monoespaciada no tiene (y se dibujan con
+## otra fuente, más anchos que una celda y no siempre igual) se cambian por equivalentes que
+## sí ocupan una celda: así ninguna fila se descuadra.
+const NARROW := {"❌": "×", "✔": "✓", "✅": "✓"}
+
+
+static func narrow_glyphs(s: String) -> String:
+	for k: String in NARROW:
+		if s.contains(k):
+			s = s.replace(k, NARROW[k])
+	return s.replace("️", "")
 
 
 ## Corta un texto a n celdas como mucho, terminando en «…» si sobra.

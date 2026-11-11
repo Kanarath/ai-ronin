@@ -211,13 +211,16 @@ func ask(question: String, role: String, k: int = 3) -> Dictionary:
 	return res
 
 
-## Frases de un texto. Un punto entre dígitos («1.000») no corta la frase.
+## Frases de un texto. Un punto pegado a letras o cifras por los dos lados («1.000»,
+## «compras@tamagawa.example», «v2.1») no corta la frase: solo corta el que va seguido de un
+## espacio o del final del texto.
 static func split_sentences(text: String) -> PackedStringArray:
-	var protected := RegEx.create_from_string("(\\d)\\.(\\d)").sub(text, "$1·$2", true)
+	var mark := char(0xE000)
+	var protected := RegEx.create_from_string("(?<=[\\p{L}\\p{N}])\\.(?=[\\p{L}\\p{N}])").sub(text, mark, true)
 	var out := PackedStringArray()
 	for s in protected.split(".", false):
 		if not s.strip_edges().is_empty():
-			out.append(s.replace("·", ".").strip_edges())
+			out.append(s.replace(mark, ".").strip_edges())
 	return out
 
 

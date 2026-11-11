@@ -86,6 +86,14 @@ func test_parcial_no_verifica_y_no_quita_lo_ganado() -> void:
 	assert_true(EvidenceImporter.is_verified(game.progress, "T2-01"), "una vez verificado, se queda")
 
 
+func test_parcial_dice_cuantos_tests_faltan() -> void:
+	var said: Array[String] = []
+	game.runner.mentor_message.connect(func(t: String, _k: String) -> void: said.append(t))
+	var path := _write("p.json", _evidence("T2-01", 11))
+	game.shell.execute("evidence import \"%s\"" % ProjectSettings.globalize_path(path))
+	assert_true(said.has("Falta 1 test de T2-01: el objetivo pide los 12/12."), str(said))
+
+
 func test_rechazos() -> void:
 	var bad := _evidence("T1-02", 12)
 	bad["tests_sha256"] = "0".repeat(64)

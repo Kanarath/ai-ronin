@@ -79,8 +79,9 @@ static func _tools(c: CommandContext, a: Dictionary) -> CommandResult:
 		for task: String in ag.task_tools:
 			if t["name"] in ag.task_tools[task]:
 				tasks.append(task)
-		data.append([t["name"], "⚠ sí" if t["sensitive"] else "no", t["description"], ", ".join(tasks) if not tasks.is_empty() else "—"])
-	var r := CommandResult.new().table(PackedStringArray(["herramienta", "sensible", "qué hace", "tareas que la necesitan"]), data)
+		# «sensible» va al final: el ⚠ se dibuja con la fuente de emojis y descuadraría las columnas siguientes.
+		data.append([t["name"], t["description"], ", ".join(tasks) if not tasks.is_empty() else "—", "⚠ sí" if t["sensitive"] else "no"])
+	var r := CommandResult.new().table(PackedStringArray(["herramienta", "qué hace", "tareas que la necesitan", "sensible"]), data)
 	r.line("Ahora mismo el agente puede usar TODAS las herramientas en cualquier tarea (salvo que actives least-privilege).", "muted")
 	c.emit("agent.tools", {"agent": a["agente"], "sensitive": ag.tools.filter(func(t: Dictionary) -> bool: return t["sensitive"]).size()})
 	return r
