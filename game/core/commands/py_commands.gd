@@ -24,6 +24,13 @@ static func register(reg: CommandRegistry) -> void:
 		func(c: CommandContext, a: Dictionary) -> CommandResult: return _reset(c, a), "python"))
 	reg.register(Command.new("py close", "Cierra el editor de Python (tu código se guarda).",
 		func(c: CommandContext, a: Dictionary) -> CommandResult: return _close(c, a), "python"))
+	reg.register(Command.new("py ejemplos", "Zona libre: ejemplos de Python para trastear fuera de las misiones.",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _examples(c, a), "python"))
+	reg.register(Command.new("py ejemplo", "Abre un ejemplo de la zona libre en el editor (tus cambios se guardan).",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _example(c, a), "python")
+		.with_signature(CommandSignature.new()
+			.pos("nombre", "el ejemplo (lista: py ejemplos)")
+			.example("py ejemplo listas").example("py ejemplo softmax")))
 
 
 static func _game(c: CommandContext) -> DojoGame:
@@ -201,3 +208,44 @@ static func _show(v: Variant) -> String:
 			parts.append("%s: %s" % [_show(k), _show(v[k])])
 		return "{" + ", ".join(parts) + "}"
 	return str(v)
+
+
+# ── Zona libre ───────────────────────────────────────────────────────────────
+
+const EXAMPLES_PATH := "res://content/py_ejemplos.json"
+
+
+static func examples() -> Array:
+	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(EXAMPLES_PATH))
+	return data.get("ejemplos", []) if data is Dictionary else []
+
+
+static func _examples(_c: CommandContext, _a: Dictionary) -> CommandResult:
+	var r := CommandResult.new()
+	r.line("Zona libre de Python · ejemplos para trastear (no cuentan para ninguna misión)", "accent")
+	var rows: Array = []
+	for e: Dictionary in examples():
+		rows.append([e["id"], e["titulo"]])
+	r.table(PackedStringArray(["ejemplo", "qué enseña"]), rows)
+	r.line("Ábrelo con py ejemplo <nombre>, cámbialo y ejecútalo con py run (o Ctrl+Enter).", "muted")
+	return r
+
+
+static func _example(c: CommandContext, a: Dictionary) -> CommandResult:
+	var g := _game(c)
+	if g == null:
+		return CommandResult.error("El editor de Python necesita una partida.")
+	var want := str(a.get("nombre", "")).to_lower()
+	for e: Dictionary in examples():
+		if e["id"] == want:
+			g.store_py_code()
+			g.py_exercise_id = "libre-" + e["id"]
+			g.py_code = g.saved_py_code(g.py_exercise_id, e["codigo"])
+			var r := CommandResult.new()
+			r.action = "py_open"
+			r.line("Ejemplo «%s» abierto en el editor. py run lo ejecuta; tus cambios se guardan." % e["titulo"], "accent")
+			return r
+	var names := PackedStringArray()
+	for e: Dictionary in examples():
+		names.append(e["id"])
+	return CommandResult.error("No hay un ejemplo «%s». Hay: %s" % [want, ", ".join(names)])

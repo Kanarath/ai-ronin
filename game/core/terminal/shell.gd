@@ -44,6 +44,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	StudyCommands.register(registry)
 	MapCommands.register(registry)
 	AkaCommands.register(registry)
+	LearnCommands.register(registry)
 	PyCommands.register(registry)
 	EvidenceCommands.register(registry)
 
