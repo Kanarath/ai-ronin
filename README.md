@@ -11,18 +11,22 @@ El proyecto tiene dos planos:
 | **El Dojo** | La aplicación Godot: hub de laboratorio, terminal ficticio, mentor RONIN, simulaciones y ML real en GDScript | `game/` | Offline, aislada, sin red, sin ejecutar código del sistema |
 | **La Forja** | Laboratorios reales en Python, Docker y modelos locales (siempre en localhost) | `forja/` | Solo en tu máquina; el Dojo nunca la ejecuta, solo importa evidencias |
 
+## Jugar
+
+Doble clic en `Jugar AI RONIN.bat` (abre el Dojo con Godot 4.7.2 sin pasar por el editor; busca Godot junto a la carpeta del proyecto o en la variable `GODOT`).
+
 ## Estado
 
 - Diseño aprobado el 2026-11-06.
 - Fase 0 (cimientos) completada: proyecto Godot y tests. Los tests se ejecutan en local; el repositorio no usa GitHub Actions.
-- **Contenido jugable:** 83 misiones, todas con el patrón de acompañamiento: «para qué sirve» al empezar, «Por qué:» en cada paso, comprobaciones de comprensión con explicación y un cierre «Qué puedes hacer ya». Muchas incluyen un paso guiado de Python en el editor del Dojo (mini-Python propio, sin acceso al sistema). Tras cada unidad de fundamentos hay una misión aplicada (T1-03, T2-02, T3-03, T4-03, T5-03, T6-03). Comando `mapa`: el temario y dónde estás. **Todo se puede jugar dentro del Dojo, sin instalar nada:** los pasos de la Forja tienen un ejercicio guiado en el editor del Dojo y `forja medir` reproduce mediciones reales ya grabadas con un modelo local; programar el laboratorio completo y medir en tu máquina (Python, Ollama) es un extra opcional. `aka <SIGLA>` explica cada sigla.
+- **Contenido jugable:** 84 misiones, todas con el patrón de acompañamiento: «para qué sirve» al empezar, «Por qué:» en cada paso, comprobaciones de comprensión con explicación y un cierre «Qué puedes hacer ya». Muchas incluyen un paso guiado de Python en el editor del Dojo (mini-Python propio, sin acceso al sistema). Tras cada unidad de fundamentos hay una misión aplicada (T1-03, T2-02, T3-03, T4-03, T5-03, T6-03). Comando `mapa`: el temario y dónde estás. **Todo se puede jugar dentro del Dojo, sin instalar nada:** los pasos de la Forja tienen un ejercicio guiado en el editor del Dojo y `forja medir` reproduce mediciones reales ya grabadas con un modelo local; programar el laboratorio completo y medir en tu máquina (Python, Ollama) es un extra opcional. `aka <SIGLA>` explica cada sigla.
   - Tutorial T0.
   - Tronco común T1–T6: datos, k-NN, descenso por gradiente, métricas, redes neuronales con backprop, tokens BPE, embeddings, modelo de lenguaje, muestreo y atención.
   - Arco de seguridad A1 completo (construir, atacar, defender y desplegar un chatbot), con informes de vulnerabilidad.
   - Arco A2 (RAG y embeddings): construir un RAG con índice TF-IDF real; inyección indirecta, envenenamiento, fuga sin control de acceso e inversión de embeddings; defensas en capas.
   - Arco A3 (agentes): agente con herramientas y memoria; secuestro del objetivo, exfiltración, confused deputy, envenenamiento de memoria y bucles; controles en el código frente a spotlight y supervisión humana.
   - Arco A4 (MCP): host MCP simulado con mensajes JSON-RPC; envenenamiento de herramientas, rug pull, shadowing, token passthrough e inyección por la salida; huellas, espacios de nombres, tokens mínimos y aislamiento frente al consentimiento del usuario.
-  - Arco A5 (multiagente y A2A): taller multiagente simulado (comandos `a2a`); mensajes falsificados, tarjetas engañosas, fuga de contexto y confianza cero entre agentes, con su capstone C4 (Multi-Agent Red Team Lab).
+  - Arco A5 (multiagente y A2A): taller multiagente simulado (comandos `a2a`); mensajes falsificados, tarjetas engañosas, fuga de contexto y confianza cero entre agentes, con su capstone C4 (Multi-Agent Red Team Lab, dos misiones: cobertura mínima y defensa en profundidad con `lab resilience a2a`).
   - Arco A6 (supply chain e infraestructura): pipeline de ML simulado con AI-BOM; dataset envenenado, pickle con código, adapter manipulado, paquete inventado, API expuesta, contenedor root y secreto en la imagen; un control por eslabón.
   - Pista de oficio O5 (marcos y gobernanza): AI Act (con el aplazamiento del Digital Omnibus), NIST AI RMF e ISO/IEC 42001, qué es cada uno y qué no; clasificación de sistemas por nivel de riesgo, requisitos de alto riesgo y registro de riesgos con apetito y tratamientos.
   - Pista de oficio O6 (detección y respuesta): registro de trazas de un agente; qué registrar sin guardar datos personales, reglas de detección medidas con precision y recall, correlación de señales, respuesta a un incidente de inyección indirecta con exfiltración y notificación al DPD.

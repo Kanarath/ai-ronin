@@ -3,6 +3,7 @@ extends TestCase
 ## Las soluciones de referencia de los ejercicios viven SOLO aquí.
 
 const SOLUCIONES := {
+	"C4-02": "# Completa la línea marcada y compruébala con py check.\ndef fragiles(matriz, activos):\n    # matriz: {ataque: [controles que lo bloquean]}\n    salida = []\n    for ataque, bloquean in matriz.items():\n        usados = [c for c in bloquean if c in activos]\n        if len(usados) == 1:\n            salida.append(ataque)\n    return sorted(salida)\n\nprint(fragiles({\"falso\": [\"message-auth\"], \"cascada\": [\"delegated-authz\", \"monitor\"]},\n               [\"message-auth\", \"delegated-authz\", \"monitor\"]))   # ['falso']\n",
 	"A5-01": "# Completa la línea marcada y compruébala con py check.\ndef elegir_agente(tarjetas, habilidad):\n    for t in tarjetas:\n        if habilidad in t[\"habilidades\"] and t[\"firmada\"]:\n            return t[\"nombre\"]\n    return None\n\nprint(elegir_agente([{\"nombre\": \"falso\", \"habilidades\": [\"contabilidad\"], \"firmada\": False},\n                     {\"nombre\": \"contable\", \"habilidades\": [\"contabilidad\"], \"firmada\": True}], \"contabilidad\"))   # contable\n",
 	"A5-02": "# Completa la línea marcada y compruébala con py check.\ndef autentico(mensaje, credenciales):\n    # credenciales: {agente: credencial que esperamos de ese agente}\n    esperado = credenciales.get(mensaje[\"de\"])\n    return esperado is not None and esperado == mensaje[\"credencial\"]\n\nprint(autentico({\"de\": \"orquestador\", \"credencial\": \"falsa\"}, {\"orquestador\": \"k-77\"}))   # False\n",
 	"A5-03": "# Completa la línea marcada y compruébala con py check.\ndef sin_cubrir(matriz, controles):\n    # matriz: {ataque: [controles que lo bloquean]}\n    abiertos = []\n    for ataque, bloquean in matriz.items():\n        if not any(c in controles for c in bloquean):\n            abiertos.append(ataque)\n    return sorted(abiertos)\n\nprint(sin_cubrir({\"falso\": [\"message-auth\"], \"bucle\": [\"hop-limit\"]}, [\"hop-limit\"]))   # ['falso']\n",
@@ -81,3 +82,7 @@ func test_ejercicios_inicio_falla_y_solucion_pasa() -> void:
 		assert_true(int(bad.get("passed", 0)) < int(bad.get("total", 0)), mid + ": el inicio no pasa")
 		var good: Dictionary = PyExercise.check(SOLUCIONES[mid], ex)
 		assert_eq(int(good.get("passed", -1)), int(good.get("total", -2)), "%s: la solución pasa · %s" % [mid, str(good)])
+
+
+func test_C4_02_completa() -> void:
+	_walk("C4-02", ["C4-01"], ["a2a taller red", "lab matrix a2a red", "answer 4", "a2a defend red message-auth on", "a2a defend red card-verification on", "a2a defend red hop-limit on", "a2a defend red context-minimization on", "a2a defend red delegated-authz on", "lab resilience a2a red", "answer a", "hipotesis dos", "a2a defend red monitor on", "lab resilience a2a red", "answer c", "PY", "answer b"])

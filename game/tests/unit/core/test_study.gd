@@ -73,7 +73,7 @@ func test_avisos_al_terminar_y_al_empezar() -> void:
 	game.runner._finish(false)
 	assert_true(mentor.any(func(t: String) -> bool: return t.contains("Desbloqueado: O3") and t.contains("O3-01")))
 	assert_true(mentor.any(func(t: String) -> bool: return t.contains("lecturas A3-03")))
-	_done(["A4-03", "A6-03", "O6-03", "C1-02", "C2-02", "C3-02", "O3-01", "C4-01"])
+	_done(["A4-03", "A6-03", "O6-03", "C1-02", "C2-02", "C3-02", "O3-01", "C4-02"])
 	mentor.clear()
 	assert_eq(game.start_mission("C5-01"), "")
 	assert_true(mentor.any(func(t: String) -> bool: return t.contains("se recomienda estudiar") and t.contains("O1") and t.contains("C4")))

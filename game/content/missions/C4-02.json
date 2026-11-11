@@ -1,0 +1,306 @@
+{
+  "id": "C4-02",
+  "schema_version": 1,
+  "title": "Dos cerraduras entre agentes",
+  "unit": "C4",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 35,
+  "requires_missions": [
+    "C4-01"
+  ],
+  "competencies": {
+    "requires": [
+      "C4.cobertura-minima"
+    ],
+    "trains": [
+      "C4.defensa-profundidad",
+      "C4.riesgo-residual"
+    ]
+  },
+  "briefing": "Multi-Agent Red Team Lab, segunda parte. Tus cinco controles cierran la malla, pero ¿qué pasa si uno falla en el despliegue? Hoy mides la resiliencia: qué ataques aguantan que caiga un control y cuáles vuelven a pasar.",
+  "learning_objectives": [
+    "Leer la matriz de defensas de una malla de agentes",
+    "Medir la resiliencia de una configuración",
+    "Decidir con datos cuándo una segunda capa compensa su coste"
+  ],
+  "mentor_intro": "Cerrar no es lo mismo que cerrar bien. Vamos a ver cuánto aguanta tu malla.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "La defensa en profundidad pide que ningún fallo aislado (una regla mal escrita, un interruptor apagado en un despliegue) deje pasar un ataque. En una malla de agentes con LLM (Large Language Model) es crítico, porque un fallo se propaga de agente en agente. Medir la resiliencia te dice qué vigilar y dónde merece la pena una segunda capa.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Crea una malla nueva y saca su matriz de defensas: a2a taller red y lab matrix a2a red. ¿Cuántos ataques bloquea UNA sola defensa? (answer <número>)",
+      "teach": "La matriz de defensas\nlab matrix activa cada defensa en solitario y mira qué ataques bloquea y qué cuesta en las tareas legítimas.\nLa última columna, «la bloquean», cuenta cuántas defensas paran cada ataque.\nPor qué: un ataque que solo para una defensa es el primero que volverá si esa defensa falla.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "lab.matrix",
+            "where": {
+              "kind": "a2a",
+              "system": "red"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 4,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "Cuenta las filas con un 1 en «la bloquean».",
+        "answer 4"
+      ],
+      "on_complete": "Cuatro ataques cuelgan de una sola defensa. Los otros dos tienen una segunda opción: el monitor."
+    },
+    {
+      "id": "o2",
+      "text": "En esa malla, activa los cinco controles de C4-01 (sin monitor) y mide la resiliencia: lab resilience a2a red",
+      "teach": "Resiliencia\nlab resilience quita, de una en una, cada defensa activa y mira qué ataques vuelven a pasar.\nUn ataque es «robusto» si aguanta que falle cualquier defensa, y «frágil» si depende de una sola.\nPor qué: es la prueba de qué pasa el día que un despliegue sale con un control apagado.",
+      "validator": {
+        "type": "event",
+        "event": "lab.resilience",
+        "where": {
+          "kind": "a2a",
+          "system": "red",
+          "breached": 0,
+          "defense_count": 5
+        }
+      },
+      "hints": [
+        "a2a defend red message-auth on, y lo mismo con card-verification, hop-limit, context-minimization y delegated-authz.",
+        "Después: lab resilience a2a red"
+      ],
+      "on_complete": "0 ataques, 4 de 4 tareas… y los seis frágiles. Cada uno depende de un único control."
+    },
+    {
+      "id": "c1",
+      "text": "¿Qué significa que los seis ataques salgan «frágiles»?",
+      "teach": "Frágil no es abierto\nFrágil quiere decir bloqueado HOY, pero por una sola cerradura.\nPor qué: confundir «bloqueado» con «seguro» es el error más común al presentar resultados.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "que basta un control caído para que ese ataque vuelva",
+          "why": ""
+        },
+        {
+          "id": "b",
+          "text": "que los ataques siguen teniendo éxito con los cinco controles",
+          "why": "Siguen bloqueados: la batería da 0 éxitos. Frágil habla de lo que pasaría si uno fallara."
+        },
+        {
+          "id": "c",
+          "text": "que los controles rompen tareas legítimas",
+          "why": "Las tareas salen 4 de 4: el coste está en otro sitio, en la falta de una segunda capa."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "Relee la lección: ¿qué es «depende solo de»?",
+        "answer a"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Añade el monitor como segunda capa y vuelve a medir: a2a defend red monitor on y lab resilience a2a red",
+      "prediction": {
+        "prompt": "¿Cuántos ataques crees que pasarán a ser robustos?",
+        "options": [
+          "ninguno",
+          "dos",
+          "los seis"
+        ]
+      },
+      "teach": "Una segunda cerradura\nEl monitor bloquea por sí solo la infección en cascada y la tarjeta engañosa, que ya tenían otro control.\nPor qué: una segunda capa solo ayuda en los ataques que puede parar.",
+      "validator": {
+        "type": "event",
+        "event": "lab.resilience",
+        "where": {
+          "kind": "a2a",
+          "system": "red",
+          "robust": 2
+        }
+      },
+      "hints": [
+        "Pon tu hipótesis y después los dos comandos del enunciado."
+      ],
+      "on_complete": "Dos robustos. Pero las tareas bajan a 3 de 4: el monitor vuelve a marcar la investigación sobre el temple."
+    },
+    {
+      "id": "c2",
+      "text": "El monitor da una segunda capa a dos ataques, pero rompe una tarea legítima. ¿Qué harías en producción?",
+      "teach": "Bloquear o avisar\nUna defensa puede bloquear o solo avisar: registrar la alerta para que alguien la revise, sin parar la tarea.\nPor qué: en modo aviso, una defensa con falsos positivos sigue aportando vigilancia sin romper el trabajo.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "dejarlo bloqueando: la seguridad va antes que una investigación",
+          "why": "Una defensa que rompe tareas legítimas acaba apagada por el equipo, y entonces no protege nada."
+        },
+        {
+          "id": "b",
+          "text": "quitarlo del todo: si da falsos positivos, no sirve",
+          "why": "Sí sirve: da una segunda capa a dos ataques. El problema es que bloquee, no que mire."
+        },
+        {
+          "id": "c",
+          "text": "usarlo solo para avisar y mantener los cinco controles bloqueando",
+          "why": ""
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "¿Hay una forma de aprovechar lo que ve el monitor sin que pare la tarea?",
+        "answer c"
+      ],
+      "on_complete": "En el Dojo el monitor es un interruptor; en producción, este modo «solo avisar» es lo habitual en las detecciones con falsos positivos."
+    },
+    {
+      "id": "py1",
+      "text": "Programa el cálculo del riesgo residual: abre el editor con py, completa frágiles y compruébala con py check.",
+      "teach": "Riesgo residual, en código\nVas a calcular, con la matriz y los controles activos, qué ataques dependen de un único control.\nPor qué: es la lista que va en el informe, con lo que hay que vigilar en cada despliegue.",
+      "py_exercise": {
+        "id": "C4-02-fragiles",
+        "title": "fragiles(matriz, activos): ataques que cuelgan de un solo control",
+        "function": "fragiles",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef fragiles(matriz, activos):\n    # matriz: {ataque: [controles que lo bloquean]}\n    salida = []\n    for ataque, bloquean in matriz.items():\n        usados = [c for c in bloquean if c in activos]\n        salida.append(ataque)   # ← cambia esta línea: solo si lo para exactamente un control activo\n    return sorted(salida)\n\nprint(fragiles({\"falso\": [\"message-auth\"], \"cascada\": [\"delegated-authz\", \"monitor\"]},\n               [\"message-auth\", \"delegated-authz\", \"monitor\"]))   # ['falso']\n",
+        "cases": [
+          {
+            "args": [
+              {
+                "falso": [
+                  "message-auth"
+                ],
+                "cascada": [
+                  "delegated-authz",
+                  "monitor"
+                ]
+              },
+              [
+                "message-auth",
+                "delegated-authz",
+                "monitor"
+              ]
+            ],
+            "expected": [
+              "falso"
+            ]
+          },
+          {
+            "args": [
+              {
+                "falso": [
+                  "message-auth"
+                ],
+                "cascada": [
+                  "delegated-authz",
+                  "monitor"
+                ]
+              },
+              [
+                "message-auth",
+                "delegated-authz"
+              ]
+            ],
+            "expected": [
+              "cascada",
+              "falso"
+            ]
+          },
+          {
+            "args": [
+              {
+                "a": [
+                  "x"
+                ]
+              },
+              []
+            ],
+            "expected": []
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "C4-02-fragiles",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Frágil es que len(usados) sea exactamente 1 (con 0 controles, el ataque está abierto, no frágil).",
+        "La línea queda así: if len(usados) == 1: salida.append(ataque)"
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Con la configuración final, ¿qué vigilarías en cada despliegue?",
+      "teach": "Vigilar lo que no tiene segunda capa\nEl riesgo residual son los ataques que dependen de un único control: si ese control se apaga, vuelven.\nPor qué: el informe debe decir qué comprobar en cada despliegue, no solo qué activar hoy.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "que el monitor siga sin falsos positivos",
+          "why": "El monitor ahora solo avisa: un falso positivo ya no rompe nada. Lo crítico es otra cosa."
+        },
+        {
+          "id": "b",
+          "text": "que message-auth, hop-limit, context-minimization y delegated-authz sigan activos",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "que la batería de ataques siga teniendo seis ataques",
+          "why": "La batería es tu herramienta de medida; lo que hay que vigilar son los controles sin segunda capa."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué controles son el único freno de algún ataque?",
+        "answer b"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes medir la defensa en profundidad de una malla de agentes, distinguir bloqueado de robusto, decidir cuándo una segunda capa compensa y escribir el riesgo residual que hay que vigilar. Siguiente: C5, el encargo de red team completo.",
+  "debrief": {
+    "what_happened": "Has visto en la matriz que cuatro ataques dependen de una sola defensa, medido que tus cinco controles dejan los seis frágiles y comprobado que el monitor da una segunda capa a dos a cambio de una tarea legítima.",
+    "why": "Una configuración que bloquea hoy puede abrirse mañana por un solo fallo; la resiliencia dice dónde.",
+    "in_production": "Los equipos vigilan en cada despliegue que los controles críticos siguen activos (comprobaciones de configuración en CI/CD, Continuous Integration / Continuous Delivery) y dejan en modo aviso las detecciones con falsos positivos.",
+    "simplifications": [
+      "Controles como interruptores",
+      "El monitor solo puede bloquear: el modo aviso se discute, no se simula"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-agentic-2026",
+    "ref.a2a-spec"
+  ],
+  "xp": {
+    "base": 300
+  }
+}

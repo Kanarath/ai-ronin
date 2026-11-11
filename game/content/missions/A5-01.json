@@ -82,7 +82,7 @@
         {
           "id": "c",
           "text": "el primer agente que contesta, como en una subasta",
-          "why": "No hay subasta: el orquestador elige leyendo las habilidades que anuncia cada agente."
+          "why": "Aquí no se subasta nada: el orquestador elige leyendo las habilidades que anuncia cada agente."
         }
       ],
       "validator": {

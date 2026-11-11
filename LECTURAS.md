@@ -447,6 +447,11 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [Agent2Agent (A2A) Protocol · especificación (versión estable 1.x; proyecto de la Linux Foundation)](https://a2a-protocol.org/latest/specification/) — A2A Project · Linux Foundation · consultada 2026-11-09
 - [GenAI Red Teaming Guide v1.0 (enero de 2025)](https://genai.owasp.org/resource/genai-red-teaming-guide/) — OWASP GenAI Security Project · consultada 2026-11-09
 
+**C4-02 · Dos cerraduras entre agentes**
+
+- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [Agent2Agent (A2A) Protocol · especificación (versión estable 1.x; proyecto de la Linux Foundation)](https://a2a-protocol.org/latest/specification/) — A2A Project · Linux Foundation · consultada 2026-11-09
+
 ## C5
 
 **C5-01 · La carta de encargo**

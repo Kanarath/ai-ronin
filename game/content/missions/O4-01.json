@@ -154,7 +154,7 @@
         {
           "id": "a",
           "text": "«el equipo ha revisado el prompt y ya está bien»",
-          "why": "No es comprobable: no dice qué medir ni qué resultado esperar."
+          "why": "Así no se puede comprobar: no dice qué medir ni qué resultado esperar."
         },
         {
           "id": "b",

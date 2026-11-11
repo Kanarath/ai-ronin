@@ -1,24 +1,24 @@
 class_name LabCommands
 extends RefCounted
-## C1–C3 · Laboratorios integradores: matriz de defensas y resiliencia sobre los sistemas
-## simulados de A2 (RAG), A3 (agente) y A4 (host MCP). No hay ataques nuevos: se reutilizan
+## C1–C4 · Laboratorios integradores: matriz de defensas y resiliencia sobre los sistemas
+## simulados de A2 (RAG), A3 (agente), A4 (host MCP) y A5 (taller multiagente). No hay ataques nuevos: se reutilizan
 ## sus baterías y sus tareas legítimas para MEDIR cada defensa y cada combinación.
 
-const KINDS: Array[String] = ["rag", "agent", "mcp"]
-const CREATE_HINT := {"rag": "rag create <nombre> · rag ingest <nombre>", "agent": "agent create <nombre>", "mcp": "mcp host <nombre>"}
+const KINDS: Array[String] = ["rag", "agent", "mcp", "a2a"]
+const CREATE_HINT := {"rag": "rag create <nombre> · rag ingest <nombre>", "agent": "agent create <nombre>", "mcp": "mcp host <nombre>", "a2a": "a2a taller <nombre>"}
 
 
 static func register(reg: CommandRegistry) -> void:
 	reg.register(Command.new("lab matrix", "Matriz de defensas: qué ataques bloquea cada defensa por sí sola y qué cuesta en las tareas legítimas.",
 		func(c: CommandContext, a: Dictionary) -> CommandResult: return _matrix(c, a), "laboratorio")
 		.with_signature(CommandSignature.new()
-			.pos("tipo", "rag, agent o mcp", "string", true, Array(KINDS))
+			.pos("tipo", "rag, agent, mcp o a2a", "string", true, Array(KINDS))
 			.pos("sistema", "nombre del sistema")
 			.example("lab matrix agent kage")))
 	reg.register(Command.new("lab resilience", "Con las defensas activas: qué ataques siguen pasando y cuáles dependen de UNA sola defensa.",
 		func(c: CommandContext, a: Dictionary) -> CommandResult: return _resilience(c, a), "laboratorio")
 		.with_signature(CommandSignature.new()
-			.pos("tipo", "rag, agent o mcp", "string", true, Array(KINDS))
+			.pos("tipo", "rag, agent, mcp o a2a", "string", true, Array(KINDS))
 			.pos("sistema", "nombre del sistema")
 			.example("lab resilience rag biblio")))
 
@@ -27,6 +27,7 @@ static func defenses_of(kind: String) -> Array[String]:
 	match kind:
 		"rag": return RagSystem.DEFENSES
 		"agent": return MockAgent.DEFENSES
+		"a2a": return MockAgentMesh.DEFENSES
 		_: return MockMcpHost.DEFENSES
 
 
@@ -35,6 +36,7 @@ static func _lookup(c: CommandContext, kind: String, p_name: String) -> Variant:
 	match kind:
 		"rag": store = c.world.rags
 		"agent": store = c.world.agents
+		"a2a": store = c.world.meshes
 		_: store = c.world.mcps
 	return store.get(p_name)
 
@@ -71,6 +73,9 @@ static func measure(kind: String, obj: Variant) -> Dictionary:
 		"agent":
 			rows = AgentCommands.run_suite(obj)
 			ev = AgentCommands.run_eval(obj)
+		"a2a":
+			rows = A2aCommands.run_suite(obj)
+			ev = A2aCommands.run_eval(obj)
 		_:
 			rows = McpCommands.run_suite(obj)
 			ev = McpCommands.run_eval(obj)

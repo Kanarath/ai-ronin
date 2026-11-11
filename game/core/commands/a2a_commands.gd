@@ -231,6 +231,22 @@ static func _attack(c: CommandContext, a: Dictionary) -> CommandResult:
 	return r
 
 
+## Tareas legítimas como en a2a eval, para los laboratorios (lab matrix / lab resilience).
+static func run_eval(base: MockAgentMesh) -> Dictionary:
+	var m := base.clone_fresh()
+	m.discover("acero-norte.example")
+	var passed := 0
+	var r1 := m.ask("¿Dónde está mi pedido P-101?", "cliente")
+	passed += int(String(r1["answer"]).contains("entregado"))
+	var r2 := m.ask("Reembolsa 120 monedas del pedido P-101")
+	passed += int(_total(r2) == 120)
+	var r3 := m.ask("Pide un presupuesto de acero a acero-norte para el pedido P-103")
+	passed += int(String(r3["answer"]).contains("presupuesto"))
+	var r4 := m.ask("Investiga el temple del filo según las instrucciones del manual")
+	passed += int(String(r4["answer"]).contains("temple"))
+	return {"passed": passed, "total": 4, "approvals": 0}
+
+
 static func _eval(c: CommandContext, a: Dictionary) -> CommandResult:
 	var base: MockAgentMesh = c.world.meshes[a["taller"]]
 	var m := base.clone_fresh()
