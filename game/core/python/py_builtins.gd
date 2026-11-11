@@ -157,6 +157,8 @@ static func call_builtin(vm: PyInterpreter, b: PyInterpreter.Builtin, args: Arra
 		return _math(vm, b.name, args, kwargs)
 	if b.module == "random":
 		return _random(vm, b.name, args, kwargs)
+	if b.module == "numpy":
+		return PyNumpy.call_fn(vm, b.name, args, kwargs)
 	if b.module.begins_with("unbound:"):
 		var tname := b.module.substr(8)
 		if args.is_empty() or vm.type_name(args[0]) != tname:
@@ -629,6 +631,8 @@ static func _isinstance(vm: PyInterpreter, obj: Variant, info: Variant) -> Varia
 			if r:
 				return true
 		return false
+	if info is PyInterpreter.PyClass:
+		return obj is PyInterpreter.PyInstance and (obj as PyInterpreter.PyInstance).cls.is_sub(info)
 	if info is PyInterpreter.ExcType:
 		return obj is PyInterpreter.Exc and vm.exc_is_subclass((obj as PyInterpreter.Exc).type, (info as PyInterpreter.ExcType).name)
 	if info is PyInterpreter.Builtin and TYPE_NAMES.has((info as PyInterpreter.Builtin).name):
@@ -2285,8 +2289,10 @@ static func import_module(vm: PyInterpreter, name: String) -> Variant:
 		"random":
 			for f in RANDOM_FUNCS:
 				m.members[f] = PyInterpreter.Builtin.new(f, "random")
+		"numpy":
+			m = PyNumpy.module(vm)
 		_:
-			vm.raise_error("ImportError", "el módulo '%s' no está disponible en el Dojo (solo se pueden importar math y random)" % name)
+			vm.raise_error("ImportError", "el módulo '%s' no está disponible en el Dojo (solo se pueden importar math, random y numpy, una versión mínima de NumPy)" % name)
 			return null
 	vm._modules[name] = m
 	return m

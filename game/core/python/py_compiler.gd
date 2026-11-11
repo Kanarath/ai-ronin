@@ -77,7 +77,7 @@ func _collect(body: Array, assigned: Dictionary, globals: Dictionary, nonlocals:
 					_collect(h["body"], assigned, globals, nonlocals)
 				_collect(s["orelse"], assigned, globals, nonlocals)
 				_collect(s["finalbody"], assigned, globals, nonlocals)
-			"def":
+			"def", "class":
 				assigned[s["name"]] = true
 			"import":
 				for item: Array in s["names"]:
@@ -240,6 +240,20 @@ func _compile_stmt(s: Dictionary) -> void:
 			_code.emit(PyCode.RETURN, null, line)
 		"def":
 			_compile_function_def(s)
+			_emit_store(s["name"], line)
+		"class":
+			if s["base"] != null:
+				_compile_expr(s["base"])
+			else:
+				_code.emit(PyCode.CONST, null, line)
+			var names: Array = []
+			for mem: Dictionary in s["members"]:
+				if mem.has("value"):
+					_compile_expr(mem["value"])
+				else:
+					_compile_function_def(mem["node"])
+				names.append(mem["name"])
+			_code.emit(PyCode.BUILD_CLASS, {"name": s["name"], "names": names}, line)
 			_emit_store(s["name"], line)
 		"global":
 			pass

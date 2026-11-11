@@ -86,6 +86,52 @@ class Module:
 	var members: Dictionary = {}
 
 
+## Una clase definida con class: nombre, clase base (o null) y sus atributos y métodos.
+class PyClass:
+	extends RefCounted
+	var name := ""
+	var base: PyClass = null
+	var attrs: Dictionary = {}
+
+	func lookup(n: String) -> Variant:
+		var c: PyClass = self
+		while c != null:
+			if c.attrs.has(n):
+				return c.attrs[n]
+			c = c.base
+		return null
+
+	func has(n: String) -> bool:
+		var c: PyClass = self
+		while c != null:
+			if c.attrs.has(n):
+				return true
+			c = c.base
+		return false
+
+	func is_sub(other: PyClass) -> bool:
+		var c: PyClass = self
+		while c != null:
+			if c == other:
+				return true
+			c = c.base
+		return false
+
+
+## Un objeto creado a partir de una clase: sus atributos propios (self.x = ...).
+class PyInstance:
+	extends RefCounted
+	var cls: PyClass
+	var fields: Dictionary = {}
+
+
+## Un método ligado a su objeto (obj.metodo): al llamarlo, self es obj.
+class BoundMethod:
+	extends RefCounted
+	var fn: Func
+	var obj: Variant
+
+
 class Exc:
 	extends RefCounted
 	var type := ""
@@ -602,6 +648,8 @@ func _execute(base: int) -> Variant:
 					break
 			elif op == _RETURN:
 				var v: Variant = st.pop_back()
+				if f.size() > 8:
+					v = f[8]
 				_frames.pop_back()
 				if _frames.size() > base:
 					_frames[_frames.size() - 1][F_STACK].push_back(v)
@@ -626,7 +674,8 @@ func _execute(base: int) -> Variant:
 					break
 				st.push_back(r)
 			elif op == _LOAD_ATTR:
-				var r: Variant = PyBuiltins.get_attr(self, st.pop_back(), arg)
+				var target: Variant = st.pop_back()
+				var r: Variant = get_object_attr(target, arg) if (target is PyInstance or target is PyClass) else PyBuiltins.get_attr(self, target, arg)
 				if _exc != null:
 					break
 				st.push_back(r)
@@ -798,8 +847,27 @@ func _exec_other(f: Array, op: int, arg: Variant) -> void:
 			del_item(obj, idx)
 		PyCode.STORE_ATTR:
 			var obj: Variant = st.pop_back()
-			st.pop_back()
-			raise_error("AttributeError", "no se pueden crear ni cambiar atributos de un objeto '%s' en el Dojo" % type_name(obj))
+			var val: Variant = st.pop_back()
+			if obj is PyInstance and not (arg as String).begins_with("__"):
+				(obj as PyInstance).fields[arg] = val
+			elif obj is PyClass and not (arg as String).begins_with("__"):
+				(obj as PyClass).attrs[arg] = val
+			else:
+				raise_error("AttributeError", "no se pueden crear ni cambiar atributos de un objeto '%s' en el Dojo" % type_name(obj))
+		PyCode.BUILD_CLASS:
+			var names: Array = arg["names"]
+			var vals: Array = st.slice(st.size() - names.size()) if names.size() > 0 else []
+			st.resize(st.size() - names.size())
+			var base_cls: Variant = st.pop_back()
+			if base_cls != null and not base_cls is PyClass:
+				raise_error("TypeError", "una clase solo puede heredar de otra clase definida con class, no de '%s'" % type_name(base_cls))
+				return
+			var cls := PyClass.new()
+			cls.name = arg["name"]
+			cls.base = base_cls
+			for k in names.size():
+				cls.attrs[names[k]] = vals[k]
+			st.push_back(cls)
 		PyCode.UNPACK_EX:
 			var items: Variant = to_array(st.pop_back())
 			if _exc != null:
@@ -1013,6 +1081,22 @@ func _op_call(f: Array, arg: Array) -> void:
 	if fn is Func:
 		_push_call(fn, args, kwargs)
 		return
+	if fn is BoundMethod:
+		_push_call((fn as BoundMethod).fn, [(fn as BoundMethod).obj] + args, kwargs)
+		return
+	if fn is PyClass:
+		var inst := PyInstance.new()
+		inst.cls = fn
+		var init: Variant = (fn as PyClass).lookup("__init__")
+		if init is Func:
+			if _push_call(init, [inst] + args, kwargs):
+				_frames[_frames.size() - 1].append(inst)
+			return
+		if not args.is_empty() or not kwargs.is_empty():
+			raise_error("TypeError", "%s() no recibe argumentos: define __init__ para recibirlos" % (fn as PyClass).name)
+			return
+		st.push_back(inst)
+		return
 	var r: Variant = null
 	if fn is Builtin:
 		r = PyBuiltins.call_builtin(self, fn, args, kwargs)
@@ -1134,12 +1218,50 @@ func call_native(fn: Variant, args: Array, kwargs: Dictionary) -> Variant:
 		return e
 	if fn is Func:
 		return call_sync(fn, args, kwargs)
+	if fn is BoundMethod:
+		return call_sync((fn as BoundMethod).fn, [(fn as BoundMethod).obj] + args, kwargs)
+	if fn is PyClass:
+		var inst := PyInstance.new()
+		inst.cls = fn
+		var init: Variant = (fn as PyClass).lookup("__init__")
+		if init is Func:
+			call_sync(init, [inst] + args, kwargs)
+		elif not args.is_empty() or not kwargs.is_empty():
+			raise_error("TypeError", "%s() no recibe argumentos: define __init__ para recibirlos" % (fn as PyClass).name)
+		return inst
 	raise_error("TypeError", "el objeto de tipo '%s' no se puede llamar como una función (sobran los paréntesis)" % type_name(fn))
 	return null
 
 
 func is_callable(v: Variant) -> bool:
-	return v is Func or v is Builtin or v is Method or v is ExcType
+	return v is Func or v is Builtin or v is Method or v is ExcType or v is PyClass or v is BoundMethod
+
+
+## Atributo de un objeto o de una clase definidos con class.
+func get_object_attr(obj: Variant, n: String) -> Variant:
+	if obj is PyInstance:
+		var inst: PyInstance = obj
+		if inst.fields.has(n):
+			return inst.fields[n]
+		if inst.cls.has(n):
+			var v: Variant = inst.cls.lookup(n)
+			if v is Func:
+				var bm := BoundMethod.new()
+				bm.fn = v
+				bm.obj = inst
+				return bm
+			return v
+		if n == "__class__":
+			return inst.cls
+		raise_error("AttributeError", "el objeto '%s' no tiene el atributo '%s'" % [inst.cls.name, n])
+		return null
+	var cls: PyClass = obj
+	if cls.has(n):
+		return cls.lookup(n)
+	if n == "__name__":
+		return cls.name
+	raise_error("AttributeError", "la clase '%s' no tiene el atributo '%s'" % [cls.name, n])
+	return null
 
 
 # ── Tipos y verdad ───────────────────────────────────────────────────────────
@@ -1161,6 +1283,12 @@ func type_name(v: Variant) -> String:
 		TYPE_DICTIONARY:
 			return "dict"
 		TYPE_OBJECT:
+			if v is PyInstance:
+				return (v as PyInstance).cls.name
+			if v is PyClass:
+				return "type"
+			if v is BoundMethod:
+				return "method"
 			if v is Func:
 				return "function"
 			if v is Builtin:
@@ -1522,6 +1650,9 @@ func to_array(v: Variant) -> Variant:
 func py_str(v: Variant) -> String:
 	if typeof(v) == TYPE_STRING:
 		return v
+	if v is PyInstance and (v as PyInstance).cls.has("__str__"):
+		var r: Variant = call_sync((v as PyInstance).cls.lookup("__str__"), [v], _NO_KWARGS)
+		return r if typeof(r) == TYPE_STRING else py_repr(r)
 	if v is Exc:
 		return (v as Exc).message
 	return py_repr(v)
@@ -1585,6 +1716,16 @@ func py_repr(v: Variant) -> String:
 				if r.step == 1:
 					return "range(%d, %d)" % [r.start, r.stop]
 				return "range(%d, %d, %d)" % [r.start, r.stop, r.step]
+			if v is PyInstance:
+				var inst: PyInstance = v
+				if inst.cls.has("__repr__"):
+					var rr: Variant = call_sync(inst.cls.lookup("__repr__"), [v], _NO_KWARGS)
+					return rr if typeof(rr) == TYPE_STRING else "<%s object>" % inst.cls.name
+				return "<%s object>" % inst.cls.name
+			if v is PyClass:
+				return "<class '%s'>" % (v as PyClass).name
+			if v is BoundMethod:
+				return "<bound method %s of %s object>" % [(v as BoundMethod).fn.name, type_name((v as BoundMethod).obj)]
 			if v is Func:
 				return "<function %s>" % (v as Func).name
 			if v is Builtin:

@@ -215,7 +215,7 @@ func _parse_statement(out: Array) -> void:
 				out.append(_parse_try())
 				return
 			"class":
-				_fail_at(t, "SyntaxError", "las clases (class) todavía no están disponibles en el Dojo")
+				out.append(_parse_class())
 				return
 			"with":
 				_fail_at(t, "SyntaxError", "'with' no está disponible en el Dojo (no hay ficheros que abrir)")
@@ -332,6 +332,39 @@ func _parse_def() -> Dictionary:
 	var node := {"k": "def", "line": t["line"], "name": name, "body": body}
 	node.merge(params)
 	return node
+
+
+## class Nombre[(Base)]: con métodos (def), atributos de clase (nombre = valor), pass y docstrings.
+func _parse_class() -> Dictionary:
+	var t := _advance()
+	var name := _expect_name("nombre de la clase")
+	var base_expr: Variant = null
+	if _accept_op("("):
+		if not _at_op(")"):
+			base_expr = _parse_test()
+		if _accept_op(","):
+			_fail_at(_peek(), "SyntaxError", "en el Dojo una clase solo puede heredar de otra (herencia simple)")
+		_expect_op(")")
+	_expect_colon("class")
+	var body := _parse_block("class")
+	var members: Array = []
+	for s: Dictionary in body:
+		match s["k"]:
+			"def":
+				members.append({"name": s["name"], "node": s})
+			"assign":
+				if s["targets"].size() == 1 and s["targets"][0]["k"] == "name":
+					members.append({"name": s["targets"][0]["id"], "node": s, "value": s["value"]})
+				else:
+					_fail_at({"line": s["line"], "col": 0}, "SyntaxError", "dentro de una clase, los atributos se escriben nombre = valor")
+			"pass":
+				pass
+			"expr":
+				if s["e"]["k"] != "const":
+					_fail_at({"line": s["line"], "col": 0}, "SyntaxError", "dentro de una clase solo van métodos (def) y atributos (nombre = valor)")
+			_:
+				_fail_at({"line": s["line"], "col": 0}, "SyntaxError", "dentro de una clase solo van métodos (def) y atributos (nombre = valor)")
+	return {"k": "class", "line": t["line"], "name": name, "base": base_expr, "members": members}
 
 
 ## Parámetros hasta `closer` (")" para def, ":" para lambda).

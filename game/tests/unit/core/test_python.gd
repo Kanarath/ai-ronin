@@ -375,7 +375,7 @@ func test_random_determinista_como_cpython() -> void:
 
 func test_otros_modulos_dan_import_error() -> void:
 	expect_error("import os", "ImportError", 1, "no está disponible en el Dojo")
-	expect_error("x = 1\nimport numpy as np", "ImportError", 2, "numpy")
+	expect_error("x = 1\nimport pandas as pd", "ImportError", 2, "pandas")
 	expect_error("from subprocess import run", "ImportError", 1)
 	expect_error("from math import nope", "ImportError", 1, "nope")
 
@@ -418,7 +418,7 @@ func test_errores_de_sintaxis_con_linea() -> void:
 	expect_error("return 1", "SyntaxError", 1, "fuera de una función")
 	expect_error("x = 5 +", "SyntaxError", 1)
 	expect_error("1 = x", "SyntaxError", 1)
-	expect_error("class A:\n    pass", "SyntaxError", 1, "clases")
+	expect_error("class A(B, C):\n    pass", "SyntaxError", 1, "herencia simple")
 
 
 func test_errores_de_indentacion() -> void:
