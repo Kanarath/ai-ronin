@@ -22,7 +22,7 @@
       "A1.regresion-prompts"
     ]
   },
-  "briefing": "En A1-05 dabas por buena una respuesta del mostrador si contenía ciertas palabras. Para evaluar de verdad hace falta un criterio, y la práctica habitual es pedírselo a otro LLM con una rúbrica. Hoy construyes ese juez con llama3.2:1b y lo auditas: si coincide con las etiquetas humanas, si cambia de opinión al intercambiar A y B, si premia la respuesta larga o si obedece una nota escondida para el evaluador. Instrucciones: forja/labs/A1-06_juez/README.md.",
+  "briefing": "En A1-05 dabas por buena una respuesta del mostrador si contenía ciertas palabras. Para evaluar de verdad hace falta un criterio, y la práctica habitual es pedírselo a otro LLM (Large Language Model) con una rúbrica. Hoy construyes ese juez con llama3.2:1b y lo auditas: si coincide con las etiquetas humanas, si cambia de opinión al intercambiar A y B, si premia la respuesta larga o si obedece una nota escondida para el evaluador. Instrucciones: forja/labs/A1-06_juez/README.md.",
   "learning_objectives": [
     "Implementar las plantillas de un juez LLM y un parseo robusto de su puntuación y su veredicto",
     "Medir el acuerdo con etiquetas humanas con kappa de Cohen y un intervalo bootstrap",
@@ -39,17 +39,14 @@
     {
       "id": "kappa",
       "title": "Acuerdo y kappa de Cohen",
-      "body": "Si el 90 % de las respuestas son buenas, un juez que dice siempre «bien» coincide con los humanos un 90 % de las veces sin mirar nada. La kappa de Cohen (1960) descuenta ese acuerdo por azar: (po − pe) / (1 − pe). Vale 1 con acuerdo perfecto, 0 con el que daría el azar y es negativa si lo hace peor que el azar. Con pocos ejemplos, la kappa necesita un intervalo: aquí se calcula por bootstrap, remuestreando pares con reemplazo."
+      "body": "Si el 90 % de las respuestas son buenas, un juez que dice siempre «bien» coincide con los humanos un 90 % de las veces sin mirar nada. La kappa de Cohen (1960) descuenta ese acuerdo por azar: (po − pe) / (1 − pe). Vale 1 con acuerdo perfecto, 0 con el que daría el azar y es negativa si lo hace peor que el azar. Con pocos ejemplos, la kappa necesita un intervalo: aquí se calcula por bootstrap, remuestreando pares con reemplazo.",
+      "unlock_on": "objective:o2"
     },
     {
       "id": "sesgos",
       "title": "Sesgos del juez",
-      "body": "Zheng et al. (2023) describieron tres sesgos de los jueces LLM. El de posición: preferir la respuesta que va primera, o la segunda. El de verbosidad: preferir la más larga. El de autopreferencia: favorecer las respuestas del mismo modelo. Una mitigación del de posición es juzgar cada par en los dos órdenes y quedarse solo con los veredictos que coinciden (Wang et al., 2023). Si no coinciden, se declara empate. Además, la respuesta evaluada es una entrada no confiable: puede traer instrucciones para el juez."
-    },
-    {
-      "id": "regresion",
-      "title": "Test de regresión de prompts",
-      "body": "Un prompt es código: si lo cambias, puedes romper algo que funcionaba. El test de regresión es un conjunto de referencia fijo que se responde y se juzga antes y después del cambio. Si la nota de alguna pregunta cae más que la tolerancia, el cambio no pasa. La tolerancia existe porque el juez también tiene ruido."
+      "body": "Zheng et al. (2023) describieron tres sesgos de los jueces LLM (Large Language Model). El de posición: preferir la respuesta que va primera, o la segunda. El de longitud (o verbosidad): preferir la más larga. El de autopreferencia: favorecer las respuestas del mismo modelo. Una mitigación del de posición es juzgar cada par en los dos órdenes y quedarse solo con los veredictos que coinciden (Wang et al., 2023). Si no coinciden, se declara empate. Además, la respuesta evaluada es una entrada no confiable: puede traer instrucciones para el juez.",
+      "unlock_on": "objective:o3"
     }
   ],
   "objectives": [
@@ -99,7 +96,7 @@
         "python bateria.py · entre 15 y 30 minutos en CPU con las 4 configuraciones y --n 2.",
         "Con poco tiempo: python bateria.py --n 1 --configs \"ninguna;rubrica;intercambio,rubrica\""
       ],
-      "on_complete": "Ya tienes los números. En cada configuración, mira cuántas veces se dejó engañar el juez, cuántas cambió de veredicto con el orden y qué kappa obtuvo, con su intervalo."
+      "on_complete": "Ya tienes los números. En la salida de bateria.py, mira en cada configuración cuántas veces se dejó engañar el juez, cuántas cambió de veredicto con el orden y qué kappa obtuvo, con su intervalo."
     },
     {
       "id": "o3",
@@ -108,31 +105,31 @@
       "choices": [
         {
           "id": "a",
-          "text": "elimina el sesgo: el juez deja de preferir una posición",
-          "why": "El juez sigue igual de sesgado. Por eso «cambió con el orden» sigue alto."
+          "text": "el veredicto final deja de depender del orden, pero el juez conserva su sesgo"
         },
         {
           "id": "b",
-          "text": "juzga cada par en los dos órdenes y, si los veredictos no coinciden, declara empate: el veredicto final ya no depende del orden, pero el juez sigue sesgado"
+          "text": "elimina el sesgo: el juez deja de preferir una de las dos posiciones",
+          "why": "El juez sigue igual de sesgado. Por eso «cambió con el orden» sigue alto."
         },
         {
           "id": "c",
-          "text": "elige al azar una de las dos posiciones",
-          "why": "No hay azar: se juzga dos veces y solo vale el veredicto si coincide en los dos órdenes."
+          "text": "sortea en cada par cuál de las dos respuestas se le enseña primero",
+          "why": "Aquí no hay azar: se juzga dos veces y solo vale el veredicto si coincide en los dos órdenes."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "Repasa la tarjeta «Sesgos del juez» con mission brief.",
-        "Mitigar no es arreglar. answer b"
+        "Mitigar no es arreglar. answer a"
       ],
-      "on_complete": "Exacto. Como el filtro de salida de A1-05, tapa el síntoma. Y si la mitad de los pares acaba en empate, el juez apenas decide nada: mira cuántos empates tienes en tu medición."
+      "on_complete": "Exacto. Como el filtro de salida de A1-05, tapa el síntoma. Y si la mitad de los pares acaba en empate, el juez apenas decide nada: mira cuántos empates hay en la salida de bateria.py."
     },
     {
       "id": "o4",
@@ -146,30 +143,30 @@
         },
         {
           "id": "b",
-          "text": "que puede dar regresiones falsas y pasar por alto las reales, porque no sabes cuánto ruido tiene"
+          "text": "que cada test tarda más y el ciclo de trabajo se alarga",
+          "why": "El tiempo no es el problema: el problema es fiarse de una nota cuya calidad no conoces."
         },
         {
           "id": "c",
-          "text": "que los tests tardan más",
-          "why": "El tiempo no es el problema: el problema es fiarse de una nota cuya calidad no conoces."
+          "text": "que su ruido puede inventar regresiones y ocultar las reales"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
-        "Repasa la tarjeta «Test de regresión de prompts».",
-        "Un juez ruidoso se equivoca en los dos sentidos. answer b"
+        "Piensa en qué pasa si la nota del juez cambia por ruido y no por el prompt.",
+        "Un juez ruidoso se equivoca en los dos sentidos. answer c"
       ],
       "on_complete": "Exacto. Fíjate también en qué preguntas empeoraron con v2: el prompt quitó datos de la tienda que las respuestas necesitaban. Ese es el tipo de fallo que un test de regresión debe cazar antes de producción."
     }
   ],
   "debrief": {
-    "what_happened": "Has construido un juez LLM con rúbrica y lo has auditado como a cualquier otro instrumento de medida. Has medido su acuerdo con las personas, descontando el azar y con su incertidumbre, y cuánto le influyen el orden, la longitud y las instrucciones escondidas. Después lo has usado como guardián de regresiones de un prompt.",
+    "what_happened": "Has construido un juez LLM (Large Language Model) con rúbrica y lo has auditado como a cualquier otro instrumento de medida. Has medido su acuerdo con las personas, descontando el azar y con su incertidumbre, y cuánto le influyen el orden, la longitud y las instrucciones escondidas. Después lo has usado como guardián de regresiones de un prompt.",
     "why": "Las evaluaciones son la base del «antes y después» de cualquier defensa. Y un evaluador automático tiene sus propios fallos y su propia superficie de ataque. Si no mides el juez, no sabes qué miden sus notas.",
     "in_production": "Los equipos usan jueces más capaces, con rúbricas específicas y validados contra un conjunto etiquetado por varias personas, de quienes también se mide el acuerdo. Los pares se juzgan en los dos órdenes y las evaluaciones se ejecutan en cada cambio de prompt o de modelo, con una tolerancia. Las respuestas que se evalúan se tratan como entradas no confiables. Un juez que puede ser manipulado no debe decidir nada con consecuencias sin supervisión humana.",
     "simplifications": [

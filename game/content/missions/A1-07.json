@@ -39,19 +39,20 @@
     {
       "id": "naive-bayes",
       "title": "Naive Bayes sobre n-gramas",
-      "body": "Cada mensaje se trocea en fragmentos de 2 a 4 caracteres. Al entrenar, se cuenta cuántas veces sale cada fragmento en los mensajes legítimos y en las inyecciones. Al clasificar, se suma para cada fragmento el logaritmo de lo probable que es en cada clase, como si fueran independientes: esa es la parte «ingenua». El suavizado de Laplace (sumar 1 a cada cuenta) evita que un fragmento nunca visto en una clase la descarte por completo. Es rápido y fácil de entender, y aprende la forma del texto, no su intención."
+      "body": "Cada mensaje se trocea en fragmentos de 2 a 4 caracteres. Al entrenar, se cuenta cuántas veces sale cada fragmento en los mensajes legítimos y en las inyecciones. Al clasificar, se suma para cada fragmento el logaritmo de lo probable que es en cada clase, como si fueran independientes: esa es la parte «ingenua». El suavizado de Laplace (sumar 1 a cada cuenta) evita que un fragmento nunca visto en una clase la descarte por completo. Es rápido y fácil de entender."
     },
     {
       "id": "umbral",
       "title": "Falsos positivos, falsos negativos y umbral",
-      "body": "Un falso positivo es un cliente normal bloqueado: un ticket de soporte o una venta perdida. Un falso negativo es un ataque que pasa. El umbral reparte el error entre los dos: si lo bajas, bloqueas más ataques y molestas a más clientes. Se elige con datos de validación y con una pregunta de negocio: cuántos clientes legítimos aceptas molestar. Nunca se elige con los datos de prueba, porque entonces el resultado de la prueba ya no vale."
+      "body": "Un falso positivo es un cliente normal bloqueado: un ticket de soporte o una venta perdida. Un falso negativo es un ataque que pasa. El umbral reparte el error entre los dos: si lo bajas, bloqueas más ataques y molestas a más clientes. Se elige con datos de validación y con una pregunta de negocio: cuántos clientes legítimos aceptas molestar. Nunca se elige con los datos de prueba, porque entonces el resultado de la prueba ya no vale.",
+      "unlock_on": "objective:o2"
     }
   ],
   "objectives": [
     {
       "id": "o1",
       "text": "Implementa las ocho funciones de guardian.py hasta que pasen los 19 tests y trae la evidencia.",
-      "teach": "Logaritmos para no llegar a cero\nMultiplicar cien probabilidades de 0,01 da 10⁻²⁰⁰, y eso en el ordenador ya es casi cero. Por eso Naive Bayes suma logaritmos.\nAun así, la suma crece con la longitud del mensaje. Aquí se promedia por fragmento para que el umbral sirva.\nEl resultado es una puntuación, no una probabilidad calibrada.\nPor qué: los clasificadores reales también trabajan en logaritmos para no perder precisión.",
+      "teach": "Logaritmos para no llegar a cero\nMultiplicar cien probabilidades de 0,01 da 10 elevado a −200, y eso en el ordenador ya es casi cero. Por eso Naive Bayes suma logaritmos.\nAun así, la suma crece con la longitud del mensaje. Aquí se promedia por fragmento para que el umbral sirva.\nEl resultado es una puntuación, no una probabilidad calibrada.\nPor qué: los clasificadores reales también trabajan en logaritmos para no perder precisión.",
       "validator": {
         "type": "event",
         "event": "evidence.imported",
@@ -70,7 +71,7 @@
     {
       "id": "o2",
       "text": "Ejecuta bateria.py (al menos 3 configuraciones, una de ellas «ninguna») y trae la medición. Con Ollama, añade si quieres la configuración «llm».",
-      "teach": "Medir al guardián\nbateria.py pasa ataques y mensajes legítimos por cada configuración (ninguna, patrones, clasificador…) y cuenta cuántos ataques pasan y cuántos clientes se bloquean.\nUn FALSO POSITIVO es un cliente bloqueado sin motivo; un FALSO NEGATIVO, un ataque que pasa.\nPor qué: un guardián se juzga por los dos errores a la vez, nunca solo por los ataques que para.",
+      "teach": "Medir al guardián\nbateria.py pasa ataques y mensajes legítimos por cada configuración (ninguna, patrones, clasificador…) y cuenta cuántos ataques pasan y cuántos clientes se bloquean.\nPor qué: un guardián se juzga por los dos errores a la vez, nunca solo por los ataques que para.",
       "prediction": {
         "prompt": "¿Crees que el clasificador entrenado dejará pasar menos ataques que el filtro de patrones de A1-05 sin bloquear a más clientes normales?",
         "options": [
@@ -94,59 +95,26 @@
         "python bateria.py · sin Ollama tarda unos segundos.",
         "Con el LLM: python bateria.py --configs \"ninguna;patrones;clasificador;llm\" --n 3"
       ],
-      "on_complete": "Ya tienes la curva de umbral y las cuatro columnas. Mira qué variantes de ataque pasan cada guardián y qué mensajes legítimos bloquea."
+      "on_complete": "Ya tienes la curva de umbral y las cuatro columnas en la salida de bateria.py. Mira qué variantes de ataque pasan cada guardián y qué mensajes legítimos bloquea."
     },
     {
       "id": "o3",
-      "text": "En tu medición, el clasificador bloquea a un cliente que escribe «olvida mi mensaje anterior, quería preguntar por envíos». ¿Qué te dice ese error?",
-      "teach": "Qué aprende de verdad un clasificador\nSi los ataques de entrenamiento son órdenes («ignora…», «muéstrame…») y los mensajes legítimos son preguntas («¿a qué hora…?»), el clasificador puede aprender que una orden es un ataque y una pregunta no.\nPor qué: un modelo aprende los atajos que le dan los datos, no lo que tú querías que aprendiera.",
+      "text": "Imagina que el clasificador bloquea a un cliente que escribe «olvida mi mensaje anterior, quería preguntar por envíos». ¿Qué te dice ese error?",
+      "teach": "Qué aprende de verdad un clasificador\nUn clasificador no sabe qué quieres que aprenda: busca lo que distingue a las dos clases en sus ejemplos.\nSi los ataques y los mensajes legítimos se diferencian en algo más que la intención, puede quedarse con ese atajo.\nPor qué: un modelo aprende los atajos que le dan los datos, no lo que tú querías que aprendiera.",
       "choices": [
         {
           "id": "a",
-          "text": "que el clasificador ha aprendido la forma del texto (una orden frente a una pregunta), no la intención"
-        },
-        {
-          "id": "b",
-          "text": "que es un fallo al azar sin importancia",
+          "text": "que es un fallo al azar, sin importancia, que no se repetirá",
           "why": "Estos errores no son al azar: se repiten con todos los mensajes que se parecen en la forma."
         },
         {
-          "id": "c",
-          "text": "que Naive Bayes no sirve para texto",
-          "why": "Naive Bayes se usa mucho con texto, por ejemplo en filtros antispam. El problema es qué ejemplos tenía para aprender."
-        }
-      ],
-      "validator": {
-        "type": "answer",
-        "expected": "a",
-        "accept": [
-          "a"
-        ]
-      },
-      "hints": [
-        "Mira el texto de los legítimos bloqueados en ataques.json y compáralo con los ataques de entrenamiento.",
-        "Los ataques de entrenamiento eran órdenes; los legítimos, preguntas. answer a"
-      ],
-      "on_complete": "Exacto. Y lo mismo al revés: un ataque formulado como pregunta amable puede pasar. Los errores de un guardián te enseñan qué ha aprendido de verdad."
-    },
-    {
-      "id": "o4",
-      "text": "Tu guardián «bloquea el 90 % de los ataques de la batería». ¿Qué te asegura esa cifra?",
-      "teach": "El atacante adaptativo\nUn ATACANTE ADAPTATIVO no repite tus ataques: prueba variantes hasta encontrar una que pase.\nPor qué: las cifras de un guardián se miden con ataques conocidos; en producción llegan los que tu guardián no conoce.",
-      "choices": [
-        {
-          "id": "a",
-          "text": "que en producción solo pasará el 10 % de los ataques",
-          "why": "Solo vale para ataques parecidos a los de tu batería. Un atacante que se adapta prueba hasta dar con los que pasan."
-        },
-        {
           "id": "b",
-          "text": "la tasa contra ataques parecidos a los de la prueba; un atacante adaptativo buscará el 10 % que pasa, así que siguen haciendo falta las defensas de arquitectura"
+          "text": "que ha aprendido a separar órdenes de preguntas, no la intención"
         },
         {
           "id": "c",
-          "text": "que ya se puede volver a poner el secreto en el prompt",
-          "why": "Si el guardián falla una vez, el secreto sale. Sin secreto en el prompt, no hay nada que filtrar (sin-secreto en A1-05)."
+          "text": "que Naive Bayes no sirve para clasificar mensajes de texto",
+          "why": "Naive Bayes se usa mucho con texto, por ejemplo en filtros antispam. El problema es qué ejemplos tenía para aprender."
         }
       ],
       "validator": {
@@ -157,16 +125,49 @@
         ]
       },
       "hints": [
+        "Mira el texto de los legítimos bloqueados en ataques.json y compáralo con los ataques de entrenamiento.",
+        "Los ataques de entrenamiento eran órdenes; los legítimos, preguntas. answer b"
+      ],
+      "on_complete": "Exacto. Y lo mismo al revés: un ataque formulado como pregunta amable puede pasar. Los errores de un guardián te enseñan qué ha aprendido de verdad."
+    },
+    {
+      "id": "o4",
+      "text": "Tu guardián «bloquea el 90 % de los ataques de la batería». ¿Qué te asegura esa cifra?",
+      "teach": "El atacante adaptativo\nUn ATACANTE ADAPTATIVO no repite tus ataques: prueba variantes hasta encontrar una que pase.\nPor qué: las cifras de un guardián se miden con ataques conocidos; en producción llegan los que tu guardián no conoce.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "solo su tasa contra ataques parecidos a los de la prueba"
+        },
+        {
+          "id": "b",
+          "text": "que en producción solo pasará el 10 % de los ataques",
+          "why": "Solo vale para ataques parecidos a los de tu batería. Un atacante que se adapta prueba hasta dar con los que pasan."
+        },
+        {
+          "id": "c",
+          "text": "que ya se puede volver a poner el secreto en el prompt",
+          "why": "Si el guardián falla una vez, el secreto sale. Sin secreto en el prompt, no hay nada que filtrar (sin-secreto en A1-05)."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
         "La prueba se parece al entrenamiento; el atacante, no.",
-        "answer b"
+        "Mide lo conocido, no lo que inventará el atacante. answer a"
       ],
       "on_complete": "Exacto. Un guardián es una capa más, útil para reducir ruido y detectar campañas, pero nunca sustituye al mínimo privilegio, a no tener secretos en el prompt ni a la autorización en las herramientas."
     }
   ],
   "debrief": {
     "what_happened": "Has entrenado un clasificador de inyecciones desde cero y lo has medido con datos que no vio al entrenar. Has calculado sus falsos positivos y negativos, has elegido el umbral con validación y has comprobado cómo se esquiva. Y lo has comparado con el filtro de patrones de A1-05.",
-    "why": "Los guardianes de entrada son la defensa contra la inyección que más se despliega, porque se añaden sin tocar la aplicación y dan una cifra fácil de enseñar. Pero esa cifra solo vale para ataques parecidos a los de su entrenamiento, y cada punto de seguridad que ganas lo pagan clientes legítimos bloqueados. La inyección de prompts no tiene hoy una solución completa (OWASP LLM01:2025).",
-    "in_production": "Se usan clasificadores tipo transformer entrenados para esto, como Llama Prompt Guard 2 de Meta, a menudo junto a un LLM juez y a reglas. Se ajustan con datos de la propia aplicación y el umbral se fija con un objetivo explícito de falsos positivos. Los bloqueos se registran para detectar campañas (O6) y la evaluación se repite con ataques adaptativos. Siempre funcionan como una capa más, nunca en lugar de las defensas de arquitectura: mínimo privilegio, nada de secretos en el prompt y autorización en las herramientas.",
+    "why": "Los guardianes de entrada son la defensa contra la inyección que más se despliega, porque se añaden sin tocar la aplicación y dan una cifra fácil de enseñar. Pero esa cifra solo vale para ataques parecidos a los de su entrenamiento, y cada punto de seguridad que ganas lo pagan clientes legítimos bloqueados. La inyección de prompts no tiene hoy una solución completa según OWASP (Open Worldwide Application Security Project) en LLM01:2025.",
+    "in_production": "Se usan clasificadores tipo transformer entrenados para esto, como Llama Prompt Guard 2 de Meta, a menudo junto a un LLM (Large Language Model) juez y a reglas. Se ajustan con datos de la propia aplicación y el umbral se fija con un objetivo explícito de falsos positivos. Los bloqueos se registran para detectar campañas (O6) y la evaluación se repite con ataques adaptativos. Siempre funcionan como una capa más, nunca en lugar de las defensas de arquitectura: mínimo privilegio, nada de secretos en el prompt y autorización en las herramientas.",
     "simplifications": [
       "90 mensajes de entrenamiento escritos a mano: un dataset real tiene decenas de miles",
       "La puntuación se promedia por n-grama para que el umbral sirva; no está calibrada",

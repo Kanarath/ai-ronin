@@ -138,7 +138,7 @@ func test_mision_P0_01() -> void:
 	assert_eq(game.runner.index, 1)
 	game.import_evidence(_write("P0-01.json", _evidence("P0-01", 17)))
 	assert_eq(game.runner.index, 2)
-	for l in ["hipotesis entre 2 y 4", "answer a", "answer b"]:
+	for l in ["hipotesis entre 2 y 4", "answer c", "answer a"]:
 		var res := game.shell.execute(l)
 		assert_true(res.ok, res.plain_text())
 	assert_eq(finished.size(), 1)
@@ -189,7 +189,7 @@ func test_mision_A1_05() -> void:
 	assert_eq(game.runner.index, 1, "hacen falta 3 configuraciones")
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("entrada", 6), _cfg("sin-secreto", 0)])))
 	assert_eq(game.runner.index, 2)
-	for l in ["answer b", "answer a"]:
+	for l in ["answer c", "answer b"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -218,7 +218,7 @@ func test_mision_A2_04() -> void:
 
 ## Misiones P0-02…P0-05 (ejercicios de clases, NumPy, Unicode y generadores): bloqueadas sin
 ## sus requisitos; después, evidencia, evidencia completa y las órdenes del terminal `lineas`.
-func _run_p0(id: String, previas: Array, lineas: Array) -> void:
+func _run_p0(id: String, previas: Array, lineas: Array, py_tras_primera: String = "") -> void:
 	var finished: Array = []
 	game.mission_completed.connect(func(_m: Dictionary, r: Dictionary, _xp: int) -> void: finished.append(r))
 	assert_ne(game.start_mission(id), "", "%s bloqueada sin sus requisitos" % id)
@@ -228,8 +228,13 @@ func _run_p0(id: String, previas: Array, lineas: Array) -> void:
 	assert_eq(game.evidence.exercise_of_mission(game.catalog.get_mission(id)), id)
 	assert_true(game.import_evidence(_write("p.json", _evidence(id, 0)))["ok"])
 	assert_eq(game.runner.index, 1)
+	var extra := 0
+	if not py_tras_primera.is_empty():
+		_solve_py(py_tras_primera)
+		extra = 1
+		assert_eq(game.runner.index, 2)
 	game.import_evidence(_write("p.json", _evidence(id, game.evidence.exercises[id]["total_tests"])))
-	assert_eq(game.runner.index, 2)
+	assert_eq(game.runner.index, 2 + extra)
 	for l: String in lineas:
 		if l.begins_with("PY:"):
 			_solve_py(l.substr(3))
@@ -240,19 +245,19 @@ func _run_p0(id: String, previas: Array, lineas: Array) -> void:
 
 
 func test_mision_P0_02() -> void:
-	_run_p0("P0-02", ["T4-01"], ["answer 0.871", "hipotesis más de 50 veces", "answer b"])
+	_run_p0("P0-02", ["T4-01"], ["answer 0.871", "hipotesis más de 50 veces", "answer c"])
 
 
 func test_mision_P0_03() -> void:
-	_run_p0("P0-03", ["T4-02", "P0-02"], ["answer 0.0024", "answer b"])
+	_run_p0("P0-03", ["T4-02", "P0-02"], ["answer 0.0024", "answer a"])
 
 
 func test_mision_P0_04() -> void:
-	_run_p0("P0-04", ["T5-01"], ["hipotesis 8", "answer 17", "answer b"])
+	_run_p0("P0-04", ["T5-01"], ["hipotesis 8", "answer 17", "answer c"])
 
 
 func test_mision_P0_05() -> void:
-	_run_p0("P0-05", ["T6-01", "P0-04"], ["PY:" + PY_ELEGIR, "hipotesis no", "answer paciencia", "answer b"])
+	_run_p0("P0-05", ["T6-01", "P0-04"], ["hipotesis no", "answer paciencia", "answer b"], PY_ELEGIR)
 
 
 
@@ -458,7 +463,7 @@ func test_mision_A1_06() -> void:
 	assert_eq(game.runner.index, 1, "falta la configuración ninguna")
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 9), _cfg("rubrica", 6), _cfg("intercambio,rubrica", 2)], "A1-06")))
 	assert_eq(game.runner.index, 2)
-	for l in ["answer b", "answer b"]:
+	for l in ["answer a", "answer c"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
@@ -477,7 +482,7 @@ func test_mision_A1_07() -> void:
 	game.import_evidence(_write("m.json", _measurement([_cfg("ninguna", 18, 15), _cfg("patrones", 12, 14), _cfg("clasificador", 5, 12)], "A1-07")))
 	assert_eq(game.runner.index, 2)
 	assert_true(game.shell.execute("evidence list").plain_text().contains("clasificador 5/18"))
-	for l in ["answer a", "answer b"]:
+	for l in ["answer b", "answer a"]:
 		var r := game.shell.execute(l)
 		assert_true(r.ok, r.plain_text())
 	assert_eq(finished.size(), 1)
