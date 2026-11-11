@@ -240,3 +240,78 @@ static func _next_skill(g: DojoGame) -> String:
 			continue
 		return "%s · %s (mission start %s)" % [m["id"], m["title"], m["id"]]
 	return ""
+
+
+# ── Explícamelo más simple ──────────────────────────────────────────────────
+
+static func register_explain(reg: CommandRegistry) -> void:
+	reg.register(Command.new("explicame", "RONIN te vuelve a explicar el paso actual, más despacio y con las palabras clave desglosadas.",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _simpler(c, a), "mentor"))
+
+
+## Términos del glosario y siglas que aparecen en un texto (sin repetir).
+static func key_terms(c: CommandContext, text: String) -> Array:
+	var low := text.to_lower()
+	var out: Array = []
+	var seen := {}
+	for t: Dictionary in c.library.terms:
+		var names: Array = [t["term"]] + t.get("aliases", [])
+		for n: String in names:
+			if n.length() >= 3 and _has_word(low, n.to_lower()) and not seen.has(t["id"]):
+				seen[t["id"]] = true
+				out.append({"name": t["term"], "text": t["short"]})
+	for s: Dictionary in AkaCommands.siglas():
+		var sig: String = s["sigla"]
+		if _has_word(text, sig) and not seen.has("aka:" + sig):
+			seen["aka:" + sig] = true
+			out.append({"name": sig, "text": "%s: %s" % [s["en"], s["es"]]})
+	return out
+
+
+static func _has_word(text: String, word: String) -> bool:
+	var i := text.find(word)
+	while i >= 0:
+		var before := i == 0 or not _is_letter(text[i - 1])
+		var after := i + word.length() >= text.length() or not _is_letter(text[i + word.length()])
+		if before and after:
+			return true
+		i = text.find(word, i + 1)
+	return false
+
+
+static func _is_letter(ch: String) -> bool:
+	return ch.to_lower() != ch.to_upper() or (ch >= "0" and ch <= "9")
+
+
+static func _simpler(c: CommandContext, _a: Dictionary) -> CommandResult:
+	var g := _game(c)
+	if g == null or not g.runner.is_running():
+		return CommandResult.error("No hay ningún paso en curso. Empieza una misión: mission list")
+	var o := g.runner.current_objective()
+	var teach := str(o.get("teach_simple", o.get("teach", "")))
+	# Una pregunta sin lección propia se apoya en la lección del paso anterior que la tenga.
+	if teach.is_empty():
+		var i := g.runner.index - 1
+		while i >= 0 and teach.is_empty():
+			var prev: Dictionary = g.runner.objectives[i]
+			teach = str(prev.get("teach_simple", prev.get("teach", "")))
+			i -= 1
+	var r := CommandResult.new()
+	if teach.is_empty():
+		r.line("Este paso no tiene lección; repasa el briefing con mission brief.", "muted")
+	else:
+		var parts := teach.split("\n")
+		r.line("Otra vez, despacio · " + parts[0], "accent")
+		for i in range(1, parts.size()):
+			r.line("  %d. %s" % [i, parts[i]])
+	var terms := key_terms(c, teach + " " + str(o.get("text", "")))
+	if not terms.is_empty():
+		r.line("")
+		r.line("Palabras clave de este paso:", "accent")
+		for t: Dictionary in terms.slice(0, 8):
+			r.line("  · %s — %s" % [t["name"], t["text"]], "normal")
+	r.line("")
+	r.line("Lo que tienes que hacer ahora: " + str(o.get("text", "")), "muted")
+	r.line("¿Sigues atascado? hint te da una pista; explain <término> y aka <SIGLA> amplían.", "muted")
+	c.emit("help.simpler", {"objective": str(o.get("id", ""))})
+	return r

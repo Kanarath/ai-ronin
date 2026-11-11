@@ -67,6 +67,18 @@ static func register(reg: CommandRegistry) -> void:
 	reg.register(Command.new("clear", "Limpia la pantalla del terminal.",
 		func(_ctx: CommandContext, _a: Dictionary) -> CommandResult: return _clear(), "terminal"))
 
+	reg.register(Command.new("ajustes letra", "Tamaño de letra de la consola y del editor: pequeña, normal o grande.",
+		func(ctx: CommandContext, a: Dictionary) -> CommandResult: return _font(ctx, a), "terminal")
+		.with_signature(CommandSignature.new()
+			.pos("tamano", "pequeña, normal o grande", "string", false)
+			.example("ajustes letra grande")))
+
+	reg.register(Command.new("ajustes sonido", "Sonidos suaves al avanzar, completar misiones y subir de nivel: on u off.",
+		func(ctx: CommandContext, a: Dictionary) -> CommandResult: return _sound(ctx, a), "terminal")
+		.with_signature(CommandSignature.new()
+			.pos("estado", "on u off", "string", false)
+			.example("ajustes sonido off")))
+
 	reg.register(Command.new("efectos", "Efecto de escritura de la consola: lento, normal, rapido, on u off.",
 		func(ctx: CommandContext, a: Dictionary) -> CommandResult: return _effects(ctx, a), "terminal")
 		.with_signature(CommandSignature.new()
@@ -83,6 +95,53 @@ static func _clear() -> CommandResult:
 
 
 ## Preferencia del efecto de escritura; se guarda con el progreso (settings.efectos).
+const FONT_SIZES := {"pequena": 12, "normal": 14, "grande": 17, "enorme": 20}
+
+
+static func _font(ctx: CommandContext, a: Dictionary) -> CommandResult:
+	var raw: Variant = a.get("tamano")
+	var want := "" if raw == null else str(raw).to_lower().replace("ñ", "n")
+	var g: Variant = ctx.shell.get_game()
+	if want.is_empty():
+		var cur := "normal"
+		if g != null:
+			cur = str(g.progress.data.get("settings", {}).get("letra", "normal"))
+		return CommandResult.new().line("Letra: %s. Cámbiala con ajustes letra pequeña, normal, grande o enorme." % cur.replace("pequena", "pequeña"), "muted")
+	if not FONT_SIZES.has(want):
+		return CommandResult.error("Usa ajustes letra pequeña, normal, grande o enorme.")
+	if g != null:
+		if not g.progress.data.has("settings"):
+			g.progress.data["settings"] = {}
+		g.progress.data["settings"]["letra"] = want
+		g.save()
+	var r := CommandResult.new()
+	r.action = "font_%d" % FONT_SIZES[want]
+	r.line("Letra: %s." % want.replace("pequena", "pequeña"), "muted")
+	return r
+
+
+static func _sound(ctx: CommandContext, a: Dictionary) -> CommandResult:
+	var raw: Variant = a.get("estado")
+	var want := "" if raw == null else str(raw).to_lower()
+	var g: Variant = ctx.shell.get_game()
+	if want.is_empty():
+		var on := true
+		if g != null:
+			on = bool(g.progress.data.get("settings", {}).get("sonido", true))
+		return CommandResult.new().line("Sonido: %s. Cámbialo con ajustes sonido on u off." % ("activado" if on else "desactivado"), "muted")
+	if want != "on" and want != "off":
+		return CommandResult.error("Usa ajustes sonido on u off.")
+	if g != null:
+		if not g.progress.data.has("settings"):
+			g.progress.data["settings"] = {}
+		g.progress.data["settings"]["sonido"] = want == "on"
+		g.save()
+	var r := CommandResult.new()
+	r.action = "sound_" + want
+	r.line("Sonido %s." % ("activado" if want == "on" else "desactivado"), "muted")
+	return r
+
+
 static func _effects(ctx: CommandContext, a: Dictionary) -> CommandResult:
 	var g: Variant = ctx.shell.get_game()
 	var raw: Variant = a.get("estado")

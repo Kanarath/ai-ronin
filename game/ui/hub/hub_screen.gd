@@ -45,6 +45,7 @@ var _lab: PanelContainer
 var _lab_content: VBoxContainer
 var _mission_label: Label
 var _pending_xp: int = 0
+var _sfx: Sfx
 ## Historial de rondas de seguridad (A1): tasa de éxito de ataques y de eval.
 var _attack_history := PackedVector2Array()
 var _eval_history := PackedVector2Array()
@@ -53,6 +54,12 @@ var _eval_history := PackedVector2Array()
 func _ready() -> void:
 	game = Dojo.game
 	_build_layout()
+	_sfx = Sfx.new()
+	_sfx.enabled = bool(game.progress.data.get("settings", {}).get("sonido", true))
+	add_child(_sfx)
+	var letra := str(game.progress.data.get("settings", {}).get("letra", "normal"))
+	if letra != "normal" and CoreCommands.FONT_SIZES.has(letra):
+		_apply_font_size(int(CoreCommands.FONT_SIZES[letra]))
 	game.mission_started.connect(_on_mission_started)
 	game.mission_completed.connect(_on_mission_completed)
 	game.runner.mentor_message.connect(_on_mentor)
@@ -63,8 +70,10 @@ func _ready() -> void:
 		_toaster.xp(amount, reason)
 		_refresh_top())
 	game.achievement_unlocked.connect(func(a: Dictionary) -> void:
+		_sfx.play("sello")
 		_toaster.toast("%s  SELLO CONSEGUIDO\n%s\n%s" % [a["seal"], a["title"], a["description"]], RoninPalette.CYAN, true))
 	game.level_up.connect(func(lv: int, rk: Dictionary) -> void:
+		_sfx.play("nivel")
 		_toaster.toast("⬆ NIVEL %d\nRango: %s %s (%s)" % [lv, rk["name"], rk["kanji"], rk["es"]], RoninPalette.GOLD, true))
 	game.progress_changed.connect(func() -> void:
 		_pending_xp = 0
@@ -354,6 +363,7 @@ func _refresh_mission() -> void:
 	# Destello breve del panel de misión cuando avanzas un objetivo.
 	var mid := str(game.active_mission.get("id", ""))
 	if mid == _last_mission and r.index > _last_index and _terminal != null and _terminal.effects:
+		_sfx.play("paso")
 		_mission_text.modulate = Color(1.6, 1.6, 1.6)
 		create_tween().tween_property(_mission_text, "modulate", Color.WHITE, 0.5)
 	_last_mission = mid
@@ -452,6 +462,23 @@ func _on_command_action(_line: String, result: CommandResult) -> void:
 		"py_close":
 			_show_code(false)
 			_terminal.focus_input()
+		"sound_on":
+			_sfx.enabled = true
+			_sfx.play("paso")
+		"sound_off":
+			_sfx.enabled = false
+		_:
+			if result.action.begins_with("font_"):
+				_apply_font_size(int(result.action.trim_prefix("font_")))
+
+
+## Tamaño de letra elegido con «ajustes letra»: consola, editor de Python y panel de misión.
+func _apply_font_size(n: int) -> void:
+	_terminal.set_font_size(n)
+	if _code != null:
+		_code.add_theme_font_size_override("font_size", n + 1)
+	_mission_text.add_theme_font_size_override("normal_font_size", n + 2)
+	_mission_text.add_theme_font_size_override("bold_font_size", n + 2)
 
 
 # ── Eventos ──────────────────────────────────────────────────────────────────
@@ -489,6 +516,7 @@ func _on_mission_started(m: Dictionary) -> void:
 
 
 func _on_mission_completed(m: Dictionary, result: Dictionary, xp_gained: int) -> void:
+	_sfx.play("mision")
 	var trial := "Prueba de dominio superada: competencias dominadas." if result["trial_passed"] else "Sin prueba de dominio."
 	_on_mentor("◆ Misión %s completada · +%d XP · maestría %d/100. %s" % [m["id"], xp_gained, result["score"], trial], "praise")
 	# El aviso del ejercicio de la Forja lo da DojoGame (forja_message), solo si sigue pendiente.

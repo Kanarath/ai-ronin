@@ -43,6 +43,9 @@ var _pending_mentor: Array = []
 ## Velocidades en caracteres por segundo: [RONIN, salida de comandos].
 const SPEEDS := {"lento": [32.0, 450.0], "normal": [48.0, 800.0], "rapido": [110.0, 2000.0]}
 var effects := true
+## Tamaño de letra de la consola (ajustes letra).
+var font_size := 14
+var _prompt: Label
 var speed := "normal"
 var _shown: int = -1
 ## Tiempo acumulado hacia el siguiente carácter.
@@ -84,6 +87,7 @@ func _ready() -> void:
 	var row := HBoxContainer.new()
 	box.add_child(row)
 	var prompt := Label.new()
+	_prompt = prompt
 	prompt.text = PROMPT
 	prompt.add_theme_color_override("font_color", RoninPalette.TEAL)
 	prompt.add_theme_font_override("font", RoninFonts.mono())
@@ -181,6 +185,17 @@ func finish_reveal() -> void:
 
 func is_revealing() -> bool:
 	return not _reveal.is_empty()
+
+
+## Cambia el tamaño de letra de la salida, del prompt y de la línea de entrada.
+func set_font_size(n: int) -> void:
+	font_size = n
+	if _output == null:
+		return
+	_output.add_theme_font_size_override("normal_font_size", n)
+	_output.add_theme_font_size_override("bold_font_size", n)
+	_prompt.add_theme_font_size_override("font_size", n)
+	_input.add_theme_font_size_override("font_size", n)
 
 
 func focus_input() -> void:

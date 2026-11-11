@@ -78,3 +78,20 @@ func test_py_ejemplo_abre_el_editor_y_guarda() -> void:
 	assert_true(game.py_code.contains("durezas"))
 	assert_eq(game.py_exercise_id, "libre-listas")
 	assert_false(game.shell.execute("py ejemplo nada").ok)
+
+
+func test_ajustes_letra_se_guarda() -> void:
+	assert_eq(game.shell.execute("ajustes letra grande").action, "font_17")
+	assert_eq(game.progress.data["settings"]["letra"], "grande")
+	assert_eq(game.shell.execute("ajustes letra pequeña").action, "font_12")
+	assert_false(game.shell.execute("ajustes letra gigante").ok)
+
+
+func test_explicame_repite_la_leccion_y_desglosa_palabras() -> void:
+	assert_false(game.shell.execute("explicame").ok, "sin misión no hay paso que explicar")
+	game.start_mission("T1-01")
+	game.shell.execute("dataset list")
+	var r := game.shell.execute("explicame")
+	assert_true(r.ok, r.plain_text())
+	assert_true(r.plain_text().contains("Otra vez, despacio"), r.plain_text())
+	assert_true(r.plain_text().contains("Palabras clave"), r.plain_text())
