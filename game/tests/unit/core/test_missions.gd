@@ -818,3 +818,19 @@ func test_OCE_sin_reflexiones_escritas_y_con_el_patron() -> void:
 					if c["id"] != o["validator"]["expected"]:
 						assert_false(str(c.get("why", "")).is_empty(), "%s %s %s: opción incorrecta sin why" % [id, o["id"], c["id"]])
 		assert_true(checks >= 1, "%s: al menos una comprobación" % id)
+
+
+# --- Consola ---
+
+func test_la_pista_la_dice_solo_ronin() -> void:
+	game.start_mission("T1-01")
+	var r := game.shell.execute("hint")
+	assert_true(r.lines.is_empty(), "la pista no se repite en la salida del comando")
+	assert_true(mentor_said("Pista 1"), "RONIN da la pista")
+
+
+func test_efectos_se_guardan() -> void:
+	assert_true(game.shell.execute("efectos off").ok)
+	assert_eq(game.progress.data["settings"]["efectos"], false)
+	assert_eq(game.shell.execute("efectos on").action, "effects_on")
+	assert_false(game.shell.execute("efectos quizá").ok)
