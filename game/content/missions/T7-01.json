@@ -1,0 +1,315 @@
+{
+  "id": "T7-01",
+  "schema_version": 1,
+  "title": "Preguntas en cascada",
+  "unit": "T7",
+  "difficulty": 2,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "T3-03"
+  ],
+  "competencies": {
+    "requires": [
+      "T2.generalizacion"
+    ],
+    "trains": [
+      "T7.arbol-decision",
+      "T7.sobreajuste-arbol"
+    ]
+  },
+  "briefing": "La forja quiere un clasificador que un maestro pueda leer y discutir. k-NN acierta, pero no explica nada. Hoy entrenas un árbol de decisión: una cadena de preguntas de sí o no sobre las features.",
+  "learning_objectives": [
+    "Entrenar un árbol de decisión y leer sus reglas",
+    "Medir un árbol en test",
+    "Reconocer el sobreajuste de un árbol profundo"
+  ],
+  "mentor_intro": "Un árbol pregunta; tú vas a ver qué pregunta y si se pasa de listo.",
+  "lab": {
+    "datasets": [
+      {
+        "file": "katanas.csv",
+        "name": "katanas",
+        "label": "calidad"
+      }
+    ],
+    "viz": {}
+  },
+  "purpose": "Los árboles de decisión, y sobre todo los bosques que verás en T7-02, son de lo más usado en la industria con datos en tablas: fraude, riesgo de crédito, detección en un SOC (Security Operations Center). Tienen una ventaja que importa en seguridad y en auditoría: sus reglas se pueden leer y explicar.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Aparta el test como en T2-01: dataset split katanas --test 0.3 --seed 42",
+      "teach": "Primero, el examen\nComo con k-NN, se aparta un test antes de entrenar, para medir con datos que el modelo no ha visto.\nPor qué: sin test, cualquier modelo parece perfecto.",
+      "validator": {
+        "type": "event",
+        "event": "dataset.split"
+      },
+      "hints": [
+        "dataset split katanas --test 0.3 --seed 42"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Entrena un árbol pequeño y lee sus reglas: tree train t2 katanas_train --depth 2",
+      "teach": "Un árbol de decisión\nEl árbol busca la pregunta que mejor separa las clases («¿dureza_hrc <= 61,9?») y repite en cada rama.\n--depth limita cuántas preguntas seguidas puede hacer.\nPor qué: cada hoja es una regla que se puede leer, como las de un experto.",
+      "validator": {
+        "type": "event",
+        "event": "tree.trained",
+        "where": {
+          "model": "t2",
+          "max_depth": 2
+        }
+      },
+      "hints": [
+        "tree train t2 katanas_train --depth 2"
+      ],
+      "on_complete": "Cuatro reglas que un maestro puede discutir. Mira la primera pregunta: la dureza es lo que más separa."
+    },
+    {
+      "id": "c1",
+      "text": "¿Cómo elige el árbol cada pregunta?",
+      "teach": "Impureza de Gini\nUna rama es «pura» si todos sus ejemplos son de la misma clase. El árbol prueba cada feature y cada corte y se queda con el que deja ramas más puras.\nPor qué: es una búsqueda voraz: elige lo mejor en cada paso, sin mirar más allá.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "prueba cortes y elige el que deja las ramas más puras",
+          "why": ""
+        },
+        {
+          "id": "b",
+          "text": "pregunta siempre por la feature con números más grandes",
+          "why": "El tamaño de los números da igual: lo que cuenta es lo bien que separa las clases."
+        },
+        {
+          "id": "c",
+          "text": "elige las preguntas al azar y se queda con el primer intento",
+          "why": "Eso lo hace en parte un bosque aleatorio (T7-02); un árbol solo busca el mejor corte."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "Relee la lección: ¿qué es una rama pura?",
+        "answer a"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Mídelo en test: classic evaluate t2 katanas_test. ¿Qué accuracy da? (answer <número>, 3 decimales)",
+      "teach": "Medir con datos nuevos\nclassic evaluate cuenta cuántas katanas del test clasifica bien el árbol.\nPor qué: es el número que te dice si el árbol generaliza, no si se ha aprendido el entrenamiento.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "classic.evaluated",
+            "where": {
+              "model": "t2",
+              "same_as_train": false
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.806,
+            "tolerance": 0.001
+          }
+        ]
+      },
+      "hints": [
+        "classic evaluate t2 katanas_test",
+        "answer 0.806"
+      ]
+    },
+    {
+      "id": "o4",
+      "text": "Ahora deja que el árbol pregunte mucho: tree train t8 katanas_train --depth 8 y classic evaluate t8 katanas_test",
+      "prediction": {
+        "prompt": "Con 8 preguntas en vez de 2, ¿qué crees que pasará en test?",
+        "options": [
+          "mejora",
+          "empeora",
+          "igual"
+        ]
+      },
+      "teach": "Más preguntas\nCon más profundidad, el árbol puede crear reglas para casi cada ejemplo, también para el ruido.\nPor qué: es el sobreajuste (overfitting) de T2-01, ahora en forma de reglas.",
+      "validator": {
+        "type": "event",
+        "event": "classic.evaluated",
+        "where": {
+          "model": "t8",
+          "same_as_train": false
+        }
+      },
+      "hints": [
+        "Pon tu hipótesis y lanza los dos comandos del enunciado."
+      ],
+      "on_complete": "En entrenamiento sube al 0,946, pero en test baja a 0,778: 23 reglas, muchas para casos sueltos."
+    },
+    {
+      "id": "c2",
+      "text": "¿Por qué el árbol de profundidad 8 acierta menos en test?",
+      "teach": "Memorizar no es aprender\nUna hoja con 2 ejemplos es una regla para esos dos, no para katanas nuevas.\nPor qué: en producción, un modelo que memoriza falla justo con los casos nuevos, que son los que importan.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque con más profundidad usa menos features",
+          "why": "Usa más features, no menos; el problema es que aprende casos sueltos."
+        },
+        {
+          "id": "b",
+          "text": "porque el test tiene katanas peores que el entrenamiento",
+          "why": "El test se apartó al azar: es el mismo tipo de katanas."
+        },
+        {
+          "id": "c",
+          "text": "porque crea reglas para el ruido del entrenamiento",
+          "why": ""
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "Mira cuántos ejemplos tienen algunas hojas del árbol profundo (tree show t8).",
+        "answer c"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa cómo decide un árbol: abre el editor con py, completa predecir y compruébala con py check.",
+      "teach": "El árbol, en código\nUn nodo pregunta «¿fila[f] <= t?» y manda a la izquierda o a la derecha; una hoja da la clase.\nPor qué: así se ejecuta un árbol en producción: unas pocas comparaciones, muy rápido.",
+      "py_exercise": {
+        "id": "T7-01-predecir",
+        "title": "predecir(nodo, fila): baja por el árbol hasta una hoja",
+        "function": "predecir",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef predecir(nodo, fila):\n    while \"hoja\" not in nodo:\n        if fila[nodo[\"f\"]] <= nodo[\"t\"]:\n            nodo = nodo[\"izq\"]\n        else:\n            nodo = nodo[\"izq\"]   # ← cambia esta línea: si no, va a la derecha\n    return nodo[\"hoja\"]\n\narbol = {\"f\": 0, \"t\": 61.9, \"izq\": {\"hoja\": \"apta\"}, \"der\": {\"hoja\": \"defectuosa\"}}\nprint(predecir(arbol, [63.0, 5.0]))   # defectuosa\n",
+        "cases": [
+          {
+            "args": [
+              {
+                "f": 0,
+                "t": 61.9,
+                "izq": {
+                  "hoja": "apta"
+                },
+                "der": {
+                  "hoja": "defectuosa"
+                }
+              },
+              [
+                63.0,
+                5.0
+              ]
+            ],
+            "expected": "defectuosa"
+          },
+          {
+            "args": [
+              {
+                "f": 0,
+                "t": 61.9,
+                "izq": {
+                  "hoja": "apta"
+                },
+                "der": {
+                  "hoja": "defectuosa"
+                }
+              },
+              [
+                60.0,
+                5.0
+              ]
+            ],
+            "expected": "apta"
+          },
+          {
+            "args": [
+              {
+                "f": 1,
+                "t": 5.7,
+                "izq": {
+                  "f": 0,
+                  "t": 58.2,
+                  "izq": {
+                    "hoja": "defectuosa"
+                  },
+                  "der": {
+                    "hoja": "apta"
+                  }
+                },
+                "der": {
+                  "hoja": "defectuosa"
+                }
+              },
+              [
+                59.0,
+                5.0
+              ]
+            ],
+            "expected": "apta"
+          },
+          {
+            "args": [
+              {
+                "f": 1,
+                "t": 5.7,
+                "izq": {
+                  "hoja": "apta"
+                },
+                "der": {
+                  "hoja": "defectuosa"
+                }
+              },
+              [
+                59.0,
+                7.0
+              ]
+            ],
+            "expected": "defectuosa"
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T7-01-predecir",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Si la condición no se cumple, el siguiente nodo es nodo[\"der\"].",
+        "La línea queda así: nodo = nodo[\"der\"]"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes entrenar un árbol de decisión, leer sus reglas, medirlo en test y reconocer cuándo memoriza. Siguiente: T7-02, muchos árboles que votan.",
+  "debrief": {
+    "what_happened": "Has entrenado un árbol de 4 reglas que acierta 0,806 en test y uno de 23 reglas que sube en entrenamiento y baja en test.",
+    "why": "Un árbol es un clasificador que se puede leer, pero con demasiada profundidad aprende el ruido.",
+    "in_production": "Los árboles se limitan con profundidad máxima o mínimo de ejemplos por hoja, y casi siempre se usan en bosques o en boosting (XGBoost, LightGBM) para datos en tablas.",
+    "simplifications": [
+      "Árbol CART con impureza de Gini y cortes binarios",
+      "Sin poda posterior"
+    ]
+  },
+  "further_reading": [
+    "ref.sklearn-trees",
+    "ref.sklearn-pitfalls"
+  ],
+  "xp": {
+    "base": 250
+  }
+}

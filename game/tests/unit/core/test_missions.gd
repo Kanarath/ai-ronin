@@ -227,7 +227,7 @@ func test_mision_T3_02_completa() -> void:
 
 
 func test_mision_T4_01_completa() -> void:
-	game.progress.data["missions"]["T3-03"] = {"completed": true}
+	game.progress.data["missions"]["T7-04"] = {"completed": true}
 	assert_eq(game.start_mission("T4-01"), "")
 	run(["nn create n --hidden 0", "nn forward n 1,1", "answer 0.313", "answer b"])
 	run(["hipotesis sí", "nn train n puerta_and --epochs 2000"])
@@ -520,7 +520,7 @@ const PETICIONES_HONESTO := ["dataset split peticiones --test 0.3 --seed 42", "d
 
 
 func test_T2_T3_cadena_de_requisitos() -> void:
-	var chain := {"T2-01": "T1-03", "T2-02": "T2-01", "T3-01": "T2-02", "T3-02": "T3-01", "T3-03": "T3-02", "T4-01": "T3-03"}
+	var chain := {"T2-01": "T1-03", "T2-02": "T2-01", "T3-01": "T2-02", "T3-02": "T3-01", "T3-03": "T3-02", "T4-01": "T7-04"}
 	for id: String in chain:
 		assert_has(game.catalog.ids(), id)
 		assert_eq(game.catalog.get_mission(id)["requires_missions"], [chain[id]], id)

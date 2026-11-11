@@ -1,0 +1,237 @@
+{
+  "id": "T7-04",
+  "schema_version": 1,
+  "title": "Lo raro y lo malo",
+  "unit": "T7",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "T7-03"
+  ],
+  "competencies": {
+    "requires": [
+      "T7.kmeans"
+    ],
+    "trains": [
+      "T7.anomalias",
+      "T7.deteccion-combinada"
+    ]
+  },
+  "briefing": "El SOC de la forja no tiene etiquetas para los ataques de mañana. Te piden un detector de clientes raros en la API: uno que avise de lo que se sale de lo normal, aunque nadie lo haya visto antes.",
+  "learning_objectives": [
+    "Detectar anomalías sin etiquetas",
+    "Explicar por qué lo malo no siempre es raro",
+    "Combinar detección de anomalías con un modelo supervisado"
+  ],
+  "mentor_intro": "Lo raro llama la atención. La pregunta es si lo malo siempre es raro.",
+  "lab": {
+    "datasets": [
+      {
+        "file": "peticiones.csv",
+        "name": "peticiones",
+        "label": "tipo"
+      }
+    ],
+    "viz": {}
+  },
+  "purpose": "La detección de anomalías es una de las técnicas básicas de un SOC (Security Operations Center) y de la vigilancia de sistemas de IA en producción: avisar de lo que se aleja del comportamiento normal, sin necesitar ejemplos previos del ataque.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Normaliza y busca los diez clientes más raros: dataset normalize peticiones --method minmax --as pn y kmeans outliers pn --k 1 --top 10",
+      "teach": "Raro = lejos de lo normal\nCon k = 1, el centro es el cliente «medio». Los más lejos de él son los más raros.\nPor qué: no hace falta saber cómo es un ataque para ver que algo se sale de lo habitual.",
+      "validator": {
+        "type": "event",
+        "event": "kmeans.outliers",
+        "where": {
+          "dataset": "pn",
+          "k": 1,
+          "top": 10
+        }
+      },
+      "hints": [
+        "Dos comandos: el normalize y el kmeans outliers del enunciado."
+      ],
+      "on_complete": "Los diez son abusadores: piden muchísimo y les rechazan mucho. Sin una sola etiqueta."
+    },
+    {
+      "id": "o2",
+      "text": "Mira más allá de los diez primeros: kmeans outliers pn --k 1 --top 30. ¿Aparece cli-041, el abusador lento de T2-02? (answer sí o no)",
+      "teach": "El abusador que se parece a todos\ncli-041 abusa despacio: pide poco por hora, como un cliente normal.\nPor qué: un atacante cuidadoso intenta parecer normal justo para no salir en este tipo de listas.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "kmeans.outliers",
+            "where": {
+              "dataset": "pn",
+              "top": 30
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "no",
+            "accept": [
+              "no"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "Busca cli-041 en la lista de 30.",
+        "answer no"
+      ],
+      "on_complete": "No aparece: lo malo no siempre es raro."
+    },
+    {
+      "id": "c1",
+      "text": "¿Qué detector montarías para el SOC?",
+      "teach": "Defensa combinada\nUn modelo supervisado (como el bosque de T7-02) reconoce los abusos que ya conoces. La detección de anomalías avisa de lo nuevo y raro.\nPor qué: cada uno tapa el hueco del otro; ninguno solo basta.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "solo anomalías: no necesitan etiquetas y pillan lo nuevo",
+          "why": "Se le escapan los atacantes que imitan a un cliente normal, como cli-041."
+        },
+        {
+          "id": "b",
+          "text": "las dos cosas: el bosque para lo conocido y anomalías para lo raro",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "solo el bosque: acierta 0,917 y no necesita más",
+          "why": "Solo reconoce lo que ha visto en sus etiquetas: un abuso nuevo puede pasarle de largo."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué se le escapa a cada uno?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Con k = 2, entre los diez más raros salen tres clientes normales. ¿Qué te dice eso?",
+      "teach": "Raro no es malo\nUn cliente legítimo pero distinto (una empresa grande, un pico de uso) también sale como raro.\nPor qué: una anomalía es una alerta para revisar, no una condena; bloquear sin revisar castiga a clientes buenos.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "que una anomalía se revisa antes de bloquear",
+          "why": ""
+        },
+        {
+          "id": "b",
+          "text": "que esos tres clientes normales están mal etiquetados",
+          "why": "No hay por qué: un cliente puede ser legítimo y distinto a la vez."
+        },
+        {
+          "id": "c",
+          "text": "que k = 2 es siempre peor que k = 1",
+          "why": "Depende de los datos; la lección es que raro no significa malo."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "¿Qué harías con una alerta de un cliente legítimo pero distinto?",
+        "answer a"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa el ranking de anomalías: abre el editor con py, completa mas_raros y compruébala con py check.",
+      "teach": "El ranking, en código\nOrdena los clientes por su distancia al centro, de mayor a menor, y quédate con los primeros.\nPor qué: es la cola de alertas que un analista del SOC revisa cada mañana.",
+      "py_exercise": {
+        "id": "T7-04-raros",
+        "title": "mas_raros(distancias, n): los n más lejos de lo normal",
+        "function": "mas_raros",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef mas_raros(distancias, n):\n    # distancias: {id: distancia al centro}\n    orden = sorted(distancias, key=lambda c: distancias[c])   # ← cambia esta línea: de mayor a menor\n    return orden[:n]\n\nprint(mas_raros({\"cli-001\": 0.1, \"cli-039\": 0.98, \"cli-041\": 0.2}, 1))   # ['cli-039']\n",
+        "cases": [
+          {
+            "args": [
+              {
+                "cli-001": 0.1,
+                "cli-039": 0.98,
+                "cli-041": 0.2
+              },
+              1
+            ],
+            "expected": [
+              "cli-039"
+            ]
+          },
+          {
+            "args": [
+              {
+                "a": 0.5,
+                "b": 0.9,
+                "c": 0.7
+              },
+              2
+            ],
+            "expected": [
+              "b",
+              "c"
+            ]
+          },
+          {
+            "args": [
+              {
+                "x": 0.3
+              },
+              5
+            ],
+            "expected": [
+              "x"
+            ]
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T7-04-raros",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "sorted tiene el parámetro reverse=True.",
+        "La línea queda así: orden = sorted(distancias, key=lambda c: distancias[c], reverse=True)"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes montar un detector de anomalías sin etiquetas, sabes que lo malo no siempre es raro ni lo raro siempre malo, y sabes combinarlo con un modelo supervisado. Siguiente: T4, las redes neuronales.",
+  "debrief": {
+    "what_happened": "Has encontrado diez abusadores sin etiquetas, has visto que el abusador lento no sale entre los treinta más raros y que algunos clientes legítimos sí salen.",
+    "why": "La detección de anomalías descubre lo nuevo, pero un atacante cuidadoso imita lo normal; por eso se combina con modelos supervisados y con revisión humana.",
+    "in_production": "Los SOC combinan reglas, modelos supervisados y detección de anomalías (Isolation Forest, distancias, autoencoders), y tratan cada anomalía como una alerta para revisar.",
+    "simplifications": [
+      "Anomalía medida como distancia al centro de k-means",
+      "Ciento veinte clientes sintéticos"
+    ]
+  },
+  "further_reading": [
+    "ref.sklearn-clustering",
+    "ref.mitre-atlas"
+  ],
+  "xp": {
+    "base": 300
+  }
+}

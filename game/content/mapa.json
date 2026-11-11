@@ -19,6 +19,10 @@
       "para_que": "Optimización y métricas: cómo se entrena un modelo (descenso por gradiente) y cómo se mide si acierta (precision y recall). Aplicado: elegir cuándo bloquear según lo que cuesta cada error."
     },
     {
+      "unit": "T7",
+      "para_que": "ML clásico: árboles de decisión, bosques aleatorios y k-means; lo más usado con datos en tablas (fraude, abuso, SOC). Aplicado: detectar clientes raros sin etiquetas."
+    },
+    {
       "unit": "T4",
       "para_que": "Redes neuronales: la pieza con la que están hechos todos los LLM (Large Language Models). Aplicado: reconocer las llamadas peligrosas de un agente."
     },

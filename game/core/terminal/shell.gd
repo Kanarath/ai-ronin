@@ -25,6 +25,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	library = p_library if p_library != null else ContentLibrary.new()
 	CoreCommands.register(registry)
 	MlCommands.register(registry)
+	ClassicCommands.register(registry)
 	MissionCommands.register(registry)
 	OptimCommands.register(registry)
 	NnCommands.register(registry)

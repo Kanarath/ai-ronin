@@ -4,8 +4,8 @@ extends RefCounted
 
 const DATASETS_DIR := "res://content/datasets"
 ## Tipos de objeto con nombre (sirven también como tipos de argumento en CommandSignature).
-const KINDS: Array[String] = ["dataset", "model", "regressor", "network", "tokenizer", "lm", "bot", "rag", "agent", "mcp", "mesh", "pipeline", "soc", "engagement", "gov", "audit"]
-const KIND_NAMES := {"dataset": "dataset", "model": "modelo", "regressor": "regresor", "network": "red", "tokenizer": "tokenizador", "lm": "modelo de lenguaje", "bot": "chatbot", "rag": "sistema RAG", "agent": "agente", "mcp": "host MCP", "mesh": "taller multiagente", "pipeline": "pipeline de ML", "soc": "registro de trazas", "engagement": "encargo", "gov": "carpeta de gobernanza", "audit": "expediente de auditoría"}
+const KINDS: Array[String] = ["dataset", "model", "regressor", "network", "tokenizer", "lm", "bot", "rag", "agent", "mcp", "mesh", "pipeline", "soc", "engagement", "gov", "audit", "classic"]
+const KIND_NAMES := {"dataset": "dataset", "model": "modelo", "regressor": "regresor", "network": "red", "tokenizer": "tokenizador", "lm": "modelo de lenguaje", "bot": "chatbot", "rag": "sistema RAG", "agent": "agente", "mcp": "host MCP", "mesh": "taller multiagente", "pipeline": "pipeline de ML", "soc": "registro de trazas", "engagement": "encargo", "gov": "carpeta de gobernanza", "audit": "expediente de auditoría", "classic": "modelo clásico (árbol o bosque)"}
 
 var datasets: Dictionary = {}  # nombre -> Dataset
 ## nombre -> {"model": KNNClassifier, "trained_on": String}
@@ -38,6 +38,8 @@ var engagements: Dictionary = {}
 var governances: Dictionary = {}
 ## nombre -> MockAudit
 var audits: Dictionary = {}
+## nombre -> {"kind": "tree"|"forest", "model": ClassicML.DTree|Forest, "trained_on": String}
+var classics: Dictionary = {}
 ## Tabla de embeddings (se carga al usarla)
 var embeddings: EmbeddingTable = null
 
@@ -72,6 +74,7 @@ func store_of(kind: String) -> Dictionary:
 		"engagement": return engagements
 		"gov": return governances
 		"audit": return audits
+		"classic": return classics
 	return {}
 
 

@@ -1,0 +1,279 @@
+{
+  "id": "T7-02",
+  "schema_version": 1,
+  "title": "Muchos árboles votan",
+  "unit": "T7",
+  "difficulty": 2,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "T7-01"
+  ],
+  "competencies": {
+    "requires": [
+      "T7.arbol-decision"
+    ],
+    "trains": [
+      "T7.bosque-aleatorio",
+      "T7.importancia-features"
+    ]
+  },
+  "briefing": "Un árbol se equivoca a su manera. Muchos árboles distintos, cada uno con otra muestra de datos, se equivocan en sitios distintos. Si votan, los errores se compensan. Hoy lo pruebas con los clientes de la API de la forja.",
+  "learning_objectives": [
+    "Entrenar un bosque aleatorio",
+    "Explicar por qué la votación de árboles distintos ayuda",
+    "Interpretar la importancia de las features con cuidado"
+  ],
+  "mentor_intro": "Un comité de árboles. Veamos si acierta más que uno solo.",
+  "lab": {
+    "datasets": [
+      {
+        "file": "peticiones.csv",
+        "name": "peticiones",
+        "label": "tipo"
+      }
+    ],
+    "viz": {}
+  },
+  "purpose": "Los bosques aleatorios (random forests) y sus parientes de boosting son el modelo por defecto con datos en tablas en muchas empresas, incluida la detección de fraude y de abuso. Además dan una pista de qué features importan, útil para explicar una decisión a un auditor.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Aparta el test y entrena un árbol que pregunte mucho: dataset split peticiones --test 0.3 --seed 42 y tree train p8 peticiones_train --depth 8",
+      "teach": "El punto de partida\nEl dataset peticiones es el de T2-02: clientes normales y abusadores de la API (Application Programming Interface) de la forja.\nPor qué: compararás el bosque contra un árbol suelto, con los mismos datos.",
+      "validator": {
+        "type": "event",
+        "event": "tree.trained",
+        "where": {
+          "model": "p8"
+        }
+      },
+      "hints": [
+        "Dos comandos: el split y el tree train del enunciado."
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Mide el árbol en test: classic evaluate p8 peticiones_test. ¿Qué accuracy da? (answer <número>, 3 decimales)",
+      "teach": "La línea base\nPrimero el árbol solo, para tener con qué comparar.\nPor qué: una mejora solo existe si la mides contra algo.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "classic.evaluated",
+            "where": {
+              "model": "p8",
+              "same_as_train": false
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.889,
+            "tolerance": 0.001
+          }
+        ]
+      },
+      "hints": [
+        "classic evaluate p8 peticiones_test",
+        "answer 0.889"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Entrena un bosque y mídelo: forest train f peticiones_train --trees 50 --depth 6 y classic evaluate f peticiones_test",
+      "prediction": {
+        "prompt": "¿Acertará más el bosque de 50 árboles que el árbol solo?",
+        "options": [
+          "sí",
+          "no",
+          "igual"
+        ]
+      },
+      "teach": "Un bosque aleatorio\nCada árbol se entrena con una muestra al azar de los datos (con repetición) y, en cada corte, solo puede mirar algunas features. Al final votan.\nPor qué: árboles distintos se equivocan en sitios distintos; la votación compensa los errores.",
+      "validator": {
+        "type": "event",
+        "event": "classic.evaluated",
+        "where": {
+          "model": "f",
+          "same_as_train": false
+        }
+      },
+      "hints": [
+        "Pon tu hipótesis y lanza los dos comandos."
+      ],
+      "on_complete": "0,917 frente a 0,889: tres clientes más bien clasificados de 36. Con datos ruidosos, a veces el bosque no gana; aquí sí."
+    },
+    {
+      "id": "c1",
+      "text": "¿Por qué cada árbol del bosque ve una muestra distinta de los datos?",
+      "teach": "Diversidad\nSi todos los árboles vieran exactamente lo mismo, serían iguales y votarían lo mismo.\nPor qué: la fuerza del bosque está en que sus errores no coincidan.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "para que cada árbol tarde menos en entrenarse",
+          "why": "Es más rápido, sí, pero el motivo es otro: que los árboles sean distintos."
+        },
+        {
+          "id": "b",
+          "text": "para que los árboles sean distintos y sus errores se compensen",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "para esconder datos personales a cada árbol",
+          "why": "No es una medida de privacidad: todos los árboles acaban viendo casi todos los datos."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿De qué serviría votar entre árboles idénticos?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o4",
+      "text": "Mira qué features usa más el bosque: tree show f",
+      "teach": "Importancia de las features\nUn bosque tiene demasiadas reglas para leerlas, pero puedes contar qué features usa en sus cortes.\nPor qué: es la primera explicación que pide un auditor: ¿en qué se basa el modelo?",
+      "validator": {
+        "type": "event",
+        "event": "classic.shown",
+        "where": {
+          "model": "f"
+        }
+      },
+      "hints": [
+        "tree show f"
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "El bosque corta mucho por peticiones_hora. ¿Qué puedes concluir?",
+      "teach": "Importancia no es causa\nQue una feature se use mucho significa que separa bien en estos datos, no que cause el abuso.\nPor qué: confundir correlación con causa lleva a decisiones injustas o fáciles de esquivar.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "que pedir muchas veces por hora causa que un cliente abuse",
+          "why": "La importancia no prueba causas: solo que esa feature separa bien estos datos."
+        },
+        {
+          "id": "b",
+          "text": "que el bosque ya no necesita las otras features",
+          "why": "Las otras también se usan; quitarlas puede empeorar el modelo."
+        },
+        {
+          "id": "c",
+          "text": "que separa bien estos datos, y que un abusador lento podría esquivarlo",
+          "why": ""
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "Recuerda a cli-041, el abusador «lento» de T2-02.",
+        "answer c"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la medida que usan los árboles: abre el editor con py, completa gini y compruébala con py check.",
+      "teach": "Gini, en código\nLa impureza de Gini de un grupo es 1 menos la suma de los cuadrados de las proporciones de cada clase: 0 si es puro.\nPor qué: es la cuenta que el árbol hace miles de veces para elegir cada corte.",
+      "py_exercise": {
+        "id": "T7-02-gini",
+        "title": "gini(etiquetas): cuánto se mezclan las clases",
+        "function": "gini",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef gini(etiquetas):\n    cuenta = {}\n    for e in etiquetas:\n        cuenta[e] = cuenta.get(e, 0) + 1\n    n = len(etiquetas)\n    return 1 - 0   # ← cambia esta línea: resta la suma de (veces / n) al cuadrado\n\nprint(gini([\"abuso\", \"abuso\", \"normal\", \"normal\"]))   # 0.5\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "abuso",
+                "abuso",
+                "normal",
+                "normal"
+              ]
+            ],
+            "expected": 0.5,
+            "tolerance": 1e-09
+          },
+          {
+            "args": [
+              [
+                "a",
+                "a",
+                "a"
+              ]
+            ],
+            "expected": 0.0,
+            "tolerance": 1e-09
+          },
+          {
+            "args": [
+              [
+                "a",
+                "b",
+                "c"
+              ]
+            ],
+            "expected": 0.666667,
+            "tolerance": 1e-05
+          },
+          {
+            "args": [
+              [
+                "x",
+                "x",
+                "x",
+                "y"
+              ]
+            ],
+            "expected": 0.375,
+            "tolerance": 1e-09
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T7-02-gini",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Suma (cuenta[c] / n) ** 2 para cada clase c.",
+        "La línea queda así: return 1 - sum((cuenta[c] / n) ** 2 for c in cuenta)"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes entrenar un bosque aleatorio, compararlo con un árbol, explicar por qué vota mejor y leer la importancia de las features sin confundirla con una causa. Siguiente: T7-03, agrupar sin etiquetas.",
+  "debrief": {
+    "what_happened": "Has comparado un árbol (0,889) con un bosque de 50 árboles (0,917) y has visto qué features usa más.",
+    "why": "Muchos modelos distintos que votan suelen generalizar mejor que uno solo.",
+    "in_production": "Con datos en tablas, los equipos suelen probar primero un bosque o un modelo de boosting, y explican sus decisiones con técnicas como SHAP (SHapley Additive exPlanations).",
+    "simplifications": [
+      "Importancia contada por número de cortes, no por mejora de impureza",
+      "Bosques pequeños"
+    ]
+  },
+  "further_reading": [
+    "ref.sklearn-ensemble",
+    "ref.breiman-2001"
+  ],
+  "xp": {
+    "base": 250
+  }
+}

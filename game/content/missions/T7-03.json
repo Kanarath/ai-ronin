@@ -1,0 +1,267 @@
+{
+  "id": "T7-03",
+  "schema_version": 1,
+  "title": "Grupos sin etiquetas",
+  "unit": "T7",
+  "difficulty": 2,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "T7-02"
+  ],
+  "competencies": {
+    "requires": [
+      "T7.bosque-aleatorio"
+    ],
+    "trains": [
+      "T7.kmeans",
+      "T7.no-supervisado"
+    ]
+  },
+  "briefing": "Hasta ahora siempre había una columna con la respuesta. ¿Y si no la hay? Hoy agrupas datos sin etiquetas con k-means y compruebas si los grupos que encuentra significan algo.",
+  "learning_objectives": [
+    "Agrupar datos con k-means",
+    "Medir la pureza de unos grupos",
+    "Elegir entre aprendizaje supervisado y no supervisado"
+  ],
+  "mentor_intro": "Sin respuestas que copiar. A ver qué encuentra.",
+  "lab": {
+    "datasets": [
+      {
+        "file": "katanas.csv",
+        "name": "katanas",
+        "label": "calidad"
+      },
+      {
+        "file": "peticiones.csv",
+        "name": "peticiones",
+        "label": "tipo"
+      }
+    ],
+    "viz": {}
+  },
+  "purpose": "El aprendizaje no supervisado busca estructura sin respuestas: segmentar clientes, agrupar documentos parecidos en un RAG (Retrieval-Augmented Generation) o encontrar comportamientos raros en un SOC (Security Operations Center). Es lo que usas cuando nadie ha etiquetado los datos, que es lo normal.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Normaliza las katanas y agrúpalas en dos: dataset normalize katanas --method minmax --as kn y kmeans kn --k 2",
+      "teach": "k-means\nk-means coloca k centros, asigna cada punto al más cercano, mueve cada centro a la media de sus puntos y repite.\nSe normaliza antes, como en T1-03, porque usa distancias.\nPor qué: es la forma más sencilla de encontrar grupos en datos sin etiquetas.",
+      "validator": {
+        "type": "event",
+        "event": "kmeans.done",
+        "where": {
+          "dataset": "kn",
+          "k": 2
+        }
+      },
+      "hints": [
+        "Dos comandos: el normalize y el kmeans del enunciado."
+      ]
+    },
+    {
+      "id": "c1",
+      "text": "La pureza sale 0,52: cada grupo mezcla aptas y defectuosas casi a partes iguales. ¿Por qué?",
+      "teach": "Lo que encuentra k-means\nk-means agrupa por lo que más varía entre los puntos, no por la etiqueta que a ti te interesa. Mira los centros: se diferencian sobre todo en la temperatura de temple.\nPor qué: un grupo «natural» de los datos no tiene por qué coincidir con tu pregunta.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque k-means ha fallado y hay que repetirlo con otra semilla",
+          "why": "Otra semilla dará grupos parecidos: no es un fallo, es lo que hay en los datos."
+        },
+        {
+          "id": "b",
+          "text": "porque ha agrupado por temperatura, no por calidad",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "porque con k = 2 nunca se puede separar nada",
+          "why": "Con k = 2 se pueden separar dos grupos si existen; mira el siguiente paso."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Compara los dos centros: ¿en qué número se diferencian más?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Prueba con los clientes de la API: dataset normalize peticiones --method minmax --as pn y kmeans pn --k 2. ¿Qué pureza da? (answer <número>, 2 decimales)",
+      "prediction": {
+        "prompt": "¿Crees que aquí los grupos coincidirán mejor con normal y abuso?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "Cuando sí hay estructura\nSi la etiqueta se nota en las features (los abusadores piden mucho y les rechazan mucho), los grupos sí la reflejan.\nPor qué: k-means es útil cuando la estructura que buscas es la que domina los datos.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "kmeans.done",
+            "where": {
+              "dataset": "pn",
+              "k": 2
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.88,
+            "tolerance": 0.005
+          }
+        ]
+      },
+      "hints": [
+        "Pon tu hipótesis y lanza los dos comandos.",
+        "answer 0.88"
+      ],
+      "on_complete": "0,88: un grupo de 35 clientes que son todos abusadores. Sin decirle nada, k-means ha encontrado a la mayoría."
+    },
+    {
+      "id": "py1",
+      "text": "Programa el paso de asignar de k-means: abre el editor con py, completa asignar y compruébala con py check.",
+      "teach": "k-means, en código\nCada punto va al centro más cercano (distancia euclídea de T1-02).\nPor qué: es la mitad del algoritmo; la otra mitad es mover cada centro a la media de sus puntos.",
+      "py_exercise": {
+        "id": "T7-03-asignar",
+        "title": "asignar(punto, centros): el índice del centro más cercano",
+        "function": "asignar",
+        "starter": "# Completa la línea marcada y compruébala con py check.\nimport math\n\ndef asignar(punto, centros):\n    mejor, mejor_d = 0, math.inf\n    for i, c in enumerate(centros):\n        d = math.sqrt(sum((x - y) ** 2 for x, y in zip(punto, c)))\n        if d < mejor_d:\n            mejor_d = d   # ← falta guardar también cuál es: mejor = i\n    return mejor\n\nprint(asignar([0.9, 0.8], [[0.1, 0.2], [0.8, 0.7]]))   # 1\n",
+        "cases": [
+          {
+            "args": [
+              [
+                0.9,
+                0.8
+              ],
+              [
+                [
+                  0.1,
+                  0.2
+                ],
+                [
+                  0.8,
+                  0.7
+                ]
+              ]
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              [
+                0.0,
+                0.1
+              ],
+              [
+                [
+                  0.1,
+                  0.2
+                ],
+                [
+                  0.8,
+                  0.7
+                ]
+              ]
+            ],
+            "expected": 0
+          },
+          {
+            "args": [
+              [
+                5,
+                5
+              ],
+              [
+                [
+                  0,
+                  0
+                ],
+                [
+                  10,
+                  10
+                ],
+                [
+                  5,
+                  6
+                ]
+              ]
+            ],
+            "expected": 2
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T7-03-asignar",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Cuando encuentras un centro más cercano, guarda su distancia Y su índice.",
+        "Añade debajo: mejor = i"
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "¿Cuándo usarías k-means en lugar de un árbol?",
+      "teach": "Supervisado frente a no supervisado\nUn árbol necesita ejemplos etiquetados; k-means no.\nPor qué: en seguridad, los ataques nuevos no vienen etiquetados; agrupar ayuda a descubrirlos.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "cuando tienes muchos datos etiquetados y quieres máxima accuracy",
+          "why": "Con buenas etiquetas, un modelo supervisado como un árbol o un bosque suele acertar más."
+        },
+        {
+          "id": "b",
+          "text": "cuando quieres reglas que un auditor pueda leer",
+          "why": "Eso lo da mejor un árbol: k-means solo da centros y grupos."
+        },
+        {
+          "id": "c",
+          "text": "cuando no tienes etiquetas y quieres descubrir grupos",
+          "why": ""
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "¿Qué necesita cada uno para funcionar?",
+        "answer c"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes agrupar datos sin etiquetas con k-means, medir si los grupos significan algo y saber cuándo usarlo en lugar de un modelo supervisado. Siguiente: T7-04, buscar lo raro en un SOC.",
+  "debrief": {
+    "what_happened": "Has visto a k-means agrupar las katanas por temperatura (pureza 0,52) y a los clientes de la API casi por normal y abuso (0,88).",
+    "why": "El aprendizaje no supervisado encuentra la estructura que domina los datos, que no siempre es la que buscas.",
+    "in_production": "Se usa para segmentar, para agrupar documentos y como primer filtro de anomalías; el número de grupos se elige midiendo, no a ojo.",
+    "simplifications": [
+      "k-means++ con una sola inicialización",
+      "Pureza calculada con las etiquetas reales, que en un caso real no tendrías"
+    ]
+  },
+  "further_reading": [
+    "ref.sklearn-clustering"
+  ],
+  "xp": {
+    "base": 250
+  }
+}
