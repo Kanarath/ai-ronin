@@ -119,51 +119,51 @@
     { "id": "H1", "control": "C08", "rating": "nc-mayor",
       "condition": "No hay ninguna evaluación propia de sesgos de Ayuda-Valle desde su puesta en marcha (marzo de 2028); solo existe el informe de pruebas del proveedor de 2027, hecho con datos de otra provincia.",
       "fields": {
-        "criterio": { "ok": "B", "options": {
-          "A": "Las buenas prácticas de IA responsable.",
-          "B": "POL-IA §6 (evaluación trimestral de sesgos, tomada de NIST AI RMF MEASURE 2.11) y AI Act, art. 26.4 (en la medida en que controla los datos de entrada, el responsable del despliegue se asegura de que sean pertinentes y suficientemente representativos).",
-          "C": "Un control del anexo A de ISO/IEC 42001 sobre la calidad de los datos." } },
-        "evidencia": { "ok": "B", "options": {
-          "A": "El responsable del servicio nos dijo que «los sesgos están controlados».",
-          "B": "Informe del proveedor DF-TR-2027-11, único documento de sesgos aportado; acta del comité de IA del 2028-09-12, que reconoce que la evaluación trimestral está pendiente.",
-          "C": "Ayuda-Valle es un modelo de IA y todos los modelos tienen sesgos." } },
+        "criterio": { "ok": "C", "options": {
+          "A": "ISO/IEC 42001, anexo A, control sobre la calidad de los datos de los sistemas de IA, y la guía de buenas prácticas de IA responsable para servicios sociales, que el ayuntamiento conoce y enlaza en su web aunque no la haya adoptado como criterio.",
+          "B": "AI Act, art. 10 (los conjuntos de datos de entrenamiento, validación y prueba se examinan para detectar posibles sesgos que afecten a los derechos fundamentales o lleven a discriminación) y POL-IA §6, porque el ayuntamiento no ha comprobado los datos con los que se entrenó Ayuda-Valle.",
+          "C": "POL-IA §6 (evaluación trimestral de sesgos, tomada de NIST AI RMF MEASURE 2.11) y AI Act, art. 26.4 (en la medida en que controla los datos de entrada, el responsable del despliegue se asegura de que sean pertinentes y suficientemente representativos)." } },
+        "evidencia": { "ok": "A", "options": {
+          "A": "Informe del proveedor DF-TR-2027-11, único documento de sesgos aportado; acta del comité de IA del 2028-09-12, que reconoce que la evaluación trimestral está pendiente.",
+          "B": "Entrevista del 2028-10-03 con el responsable del servicio y la técnica de datos, que confirman que desde marzo de 2028 no se ha hecho ninguna evaluación propia de sesgos.",
+          "C": "Informe del proveedor DF-TR-2027-11, hecho con datos de otra provincia, del que se deduce que Ayuda-Valle discrimina a los solicitantes de Valdeacero, como suele pasar con estos modelos." } },
         "riesgo": { "ok": "B", "options": {
-          "A": "Multa segura de 35 millones de euros o del 7 % del volumen de negocio.",
+          "A": "Multa segura de hasta 35 millones de euros o del 7 % del volumen de negocio (AI Act, art. 99) en cuanto la autoridad lo detecte, además de la suspensión inmediata de Ayuda-Valle y de las ayudas tramitadas con él.",
           "B": "Sin medir, un sesgo contra un colectivo puede negar ayudas de emergencia de forma sistemática sin que nadie lo detecte: daño al derecho a la no discriminación, y la FRIA se basa en un supuesto que nadie ha comprobado.",
-          "C": "Bajo: el sistema solo propone y decide una persona." } },
-        "recomendacion": { "ok": "A", "options": {
-          "A": "Definir métricas de equidad por colectivo con los datos propios, hacer la primera evaluación en 60 días y después cada trimestre, asignar un responsable y revisar la FRIA con los resultados.",
-          "B": "Mejorar la gestión de los sesgos.",
-          "C": "El equipo auditor reentrenará el modelo con datos equilibrados." } },
-        "seguimiento": { "ok": "C", "options": {
-          "A": "Se revisará en la próxima auditoría.",
-          "B": "Cerrado: el responsable se ha comprometido de palabra.",
-          "C": "Responsable: jefatura de Servicios Sociales. Fecha: 2028-12-15. Evidencia de cierre: informe de la primera evaluación de sesgos y acta del comité de IA que la revisa." } }
+          "C": "Bajo: Ayuda-Valle solo propone y un trabajador social revisa y firma cada propuesta, así que cualquier sesgo del modelo lo corregirá la persona antes de que la denegación llegue al solicitante." } },
+        "recomendacion": { "ok": "C", "options": {
+          "A": "Que el equipo auditor, que ya conoce los datos, calcule en 60 días las métricas de equidad por colectivo con los expedientes de Ayuda-Valle y entregue los resultados al comité de IA para revisar la FRIA.",
+          "B": "Pedir a Datoforja que repita su informe de pruebas DF-TR-2027-11 con la versión actual del modelo y adjuntarlo a la FRIA, para que el comité de IA tenga un análisis de sesgos actualizado cada trimestre.",
+          "C": "Definir métricas de equidad por colectivo con los datos propios, hacer la primera evaluación en 60 días y después cada trimestre, asignar un responsable y revisar la FRIA con los resultados." } },
+        "seguimiento": { "ok": "A", "options": {
+          "A": "Responsable: jefatura de Servicios Sociales. Fecha: 2028-12-15. Evidencia de cierre: informe de la primera evaluación de sesgos y acta del comité de IA que la revisa.",
+          "B": "Responsable: jefatura de Servicios Sociales. Fecha: 2028-12-15. Evidencia de cierre: escrito del comité de IA que confirma que la evaluación de sesgos ya está contratada.",
+          "C": "Responsable: el comité de IA en su conjunto. Fecha: en cuanto haya recursos. Evidencia de cierre: informe de la primera evaluación de sesgos y acta del comité que la revisa." } }
       },
       "followup": { "closable": false, "text": "El ayuntamiento envía un plan: contratará la evaluación de sesgos en enero de 2029. No hay todavía ningún resultado." } },
     { "id": "H2", "control": "C10", "rating": "nc-mayor",
       "condition": "En una muestra aleatoria de expedientes denegados entre marzo y septiembre de 2028, varias denegaciones no tienen la firma de revisión de un trabajador social que exige el procedimiento PRO-07.",
       "fields": {
-        "criterio": { "ok": "C", "options": {
-          "A": "AI Act, art. 14, que obliga al ayuntamiento a diseñar la supervisión humana del sistema.",
-          "B": "El sentido común.",
-          "C": "PRO-07 §3 (toda denegación la revisa y firma un trabajador social), NIST AI RMF MANAGE 4.1 (apelación y anulación) y AI Act, art. 26.2 (el responsable del despliegue encomienda la supervisión humana a personas con la competencia, la formación y la autoridad necesarias)." } },
-        "evidencia": { "ok": "A", "options": {
-          "A": "Muestra aleatoria (semilla 42) de 10 de los 40 expedientes denegados del periodo, con sus identificadores y los fallos encontrados; extraída del gestor de expedientes y del registro de Ayuda-Valle.",
-          "B": "Según la jefa de servicio, la plantilla revisa siempre.",
-          "C": "Faltan firmas en todos los expedientes del ayuntamiento." } },
-        "riesgo": { "ok": "B", "options": {
-          "A": "Ninguno: probablemente se revisaron igual y no se firmó.",
-          "B": "Denegaciones de ayudas de emergencia sin revisión humana efectiva: personas vulnerables afectadas por decisiones que nadie ha comprobado ni podía anular a tiempo, que pueden convertirse en decisiones únicamente automatizadas (RGPD, art. 22).",
-          "C": "Riesgo de imagen en redes sociales." } },
+        "criterio": { "ok": "B", "options": {
+          "A": "AI Act, art. 14 (el sistema se diseña para que personas físicas puedan supervisarlo de forma efectiva, entender sus límites y anular sus resultados) y PRO-07 §3, porque las firmas que faltan demuestran que esa supervisión no existe en la práctica diaria del servicio.",
+          "B": "PRO-07 §3 (toda denegación la revisa y firma un trabajador social), NIST AI RMF MANAGE 4.1 (apelación y anulación) y AI Act, art. 26.2 (el responsable del despliegue encomienda la supervisión humana a personas con la competencia, la formación y la autoridad necesarias).",
+          "C": "NIST AI RMF MAP 3.5 (los procesos de supervisión humana están definidos, evaluados y documentados según las políticas) y RGPD, art. 22, porque toda denegación sin firma pasa a ser una decisión basada únicamente en el tratamiento automatizado." } },
+        "evidencia": { "ok": "C", "options": {
+          "A": "Entrevista del 2028-10-02 a la jefa de servicio y a dos trabajadoras sociales, que reconocen que, con la carga de trabajo, algunas denegaciones se cierran sin firmar la revisión.",
+          "B": "Los 5 expedientes denegados que la jefa de servicio eligió como representativos del periodo, revisados en su despacho el 2028-10-02; en 2 falta la firma de revisión que exige PRO-07.",
+          "C": "Muestra aleatoria (semilla 42) de 10 de los 40 expedientes denegados del periodo, con sus identificadores y los fallos encontrados; extraída del gestor de expedientes y del registro de Ayuda-Valle." } },
+        "riesgo": { "ok": "A", "options": {
+          "A": "Denegaciones de ayudas de emergencia sin revisión humana efectiva: personas vulnerables afectadas por decisiones que nadie ha comprobado ni podía anular a tiempo, que pueden convertirse en decisiones únicamente automatizadas (RGPD, art. 22).",
+          "B": "Las denegaciones sin firma son decisiones automatizadas prohibidas por el RGPD, art. 22, y por el AI Act, art. 5: todas las resoluciones del periodo son nulas y el ayuntamiento tendrá que pagar, con intereses, todas las ayudas denegadas desde marzo de 2028.",
+          "C": "Bajo: la falta de firma es un defecto formal del expediente; lo más probable es que el trabajador social sí revisara la propuesta y solo olvidara firmarla, según asegura la jefa de servicio, y ninguna persona afectada ha reclamado todavía." } },
         "recomendacion": { "ok": "B", "options": {
-          "A": "Recordar a la plantilla que firme.",
+          "A": "Enviar una circular de la jefatura a toda la plantilla que recuerde la obligación de PRO-07 §3 de revisar y firmar cada denegación, y repetir antes de fin de año, con control de asistencia, la formación en supervisión humana de 2028-02.",
           "B": "Impedir en el gestor que se cierre una denegación sin la firma de revisión, formar a la plantilla en el sesgo de automatización y revisar ahora los 40 expedientes, informando a las personas afectadas de su derecho a reclamar.",
-          "C": "Retirar Ayuda-Valle para siempre, sin valorar si el control lo corrige." } },
-        "seguimiento": { "ok": "A", "options": {
-          "A": "Responsables: jefatura de Servicios Sociales e informática. Fecha: 2028-11-30. Evidencia de cierre: bloqueo activo en el gestor y una muestra nueva de denegaciones posteriores sin ninguna sin firma.",
-          "B": "Pendiente.",
-          "C": "Lo verificará el proveedor cuando pueda." } }
+          "C": "Activar el procedimiento de desactivación, que ya tiene responsable, y volver a la tramitación manual de todas las ayudas hasta la próxima auditoría, sin esperar a comprobar si un control en el gestor de expedientes corrige el fallo." } },
+        "seguimiento": { "ok": "C", "options": {
+          "A": "Responsables: jefatura de Servicios Sociales e informática. Fecha: 2028-11-30. Evidencia de cierre: circular firmada y enviada a la plantilla y hoja de asistencia a la nueva sesión de formación.",
+          "B": "Responsable: Datoforja S.L. Fecha: la de la próxima versión de Ayuda-Valle. Evidencia de cierre: certificado del proveedor de que el sistema ya no permite cerrar una denegación sin la firma de revisión.",
+          "C": "Responsables: jefatura de Servicios Sociales e informática. Fecha: 2028-11-30. Evidencia de cierre: bloqueo activo en el gestor y una muestra nueva de denegaciones posteriores sin ninguna sin firma." } }
       },
       "followup": { "closable": true, "text": "Bloqueo activo en el gestor desde el 2028-11-04 (captura y registro de cambios). Muestra nueva de 15 denegaciones de noviembre: todas firmadas. Los 40 expedientes antiguos se han revisado y 2 resoluciones se han corregido." } },
     { "id": "H3", "control": "C05", "rating": "nc-menor",
@@ -171,35 +171,35 @@
       "fields": {
         "criterio": { "ok": "A", "options": {
           "A": "AI Act, art. 27.1.b (periodo y frecuencia de uso) y art. 27.2 (actualizar la información si cambia algún elemento); NIST AI RMF MAP 1.1.",
-          "B": "RGPD, art. 35 (la EIPD).",
-          "C": "AI Act, art. 5 (prácticas prohibidas)." } },
-        "evidencia": { "ok": "A", "options": {
-          "A": "FRIA v1 firmada (2028-02-10), sección 2: «por determinar»; registro de uso de Ayuda-Valle: 2 140 propuestas entre marzo y septiembre de 2028, en días laborables.",
-          "B": "No hemos visto la FRIA, pero el equipo dice que está incompleta.",
-          "C": "La FRIA es demasiado corta." } },
+          "B": "RGPD, art. 35.7.a (descripción sistemática del tratamiento y de sus fines) y art. 35.11 (revisar la EIPD si cambia el riesgo); NIST AI RMF MAP 1.1.",
+          "C": "AI Act, art. 72 (seguimiento posterior a la comercialización: recoger y analizar datos sobre el funcionamiento del sistema durante su vida útil); NIST AI RMF MAP 1.1." } },
+        "evidencia": { "ok": "B", "options": {
+          "A": "Correo del 2028-10-01 de la secretaría del comité de IA: «la sección 2 de la FRIA sigue sin completar»; el equipo calcula que el sistema se usa unas 15 veces al día.",
+          "B": "FRIA v1 firmada (2028-02-10), sección 2: «por determinar»; registro de uso de Ayuda-Valle: 2 140 propuestas entre marzo y septiembre de 2028, en días laborables.",
+          "C": "FRIA v1 firmada (2028-02-10), sección 2: «por determinar»; a juicio del equipo auditor, el documento es demasiado breve comparado con las FRIA de otros ayuntamientos." } },
         "riesgo": { "ok": "C", "options": {
-          "A": "La FRIA es nula y el sistema es ilegal: hay que apagarlo hoy.",
-          "B": "Ninguno: es un trámite.",
+          "A": "Sin una FRIA completa, Ayuda-Valle funciona sin la evaluación que exige el art. 27 y cada propuesta emitida desde marzo de 2028 es ilegal: hay que paralizarlo hoy hasta aprobar la versión nueva.",
+          "B": "Bajo y solo formal: la FRIA se hizo y se notificó a tiempo, y el periodo de uso no cambia los riesgos para los derechos, que ya están descritos en las demás secciones del documento.",
           "C": "Sin el periodo y la frecuencia no se puede dimensionar cuántas personas se ven afectadas ni la carga de revisión humana, y lo notificado a la autoridad no refleja el uso real." } },
         "recomendacion": { "ok": "A", "options": {
-          "A": "Completar la sección con el uso real, aprobar la versión actualizada y revisar la FRIA cada vez que cambie el uso (art. 27.2).",
-          "B": "Rehacer todas las evaluaciones de la organización.",
-          "C": "Que el auditor redacte la sección que falta." } },
+          "A": "Completar la sección 2 con el uso real que muestra el registro, aprobar en el comité de IA la versión actualizada y revisar la FRIA cada vez que cambie el uso (art. 27.2).",
+          "B": "Que el equipo auditor complete la sección 2 con el registro de uso que ya ha analizado y la entregue al comité de IA para que la apruebe en su próxima reunión.",
+          "C": "Rehacer desde cero la FRIA y la EIPD de Ayuda-Valle con una consultora externa y revisar todas las evaluaciones de impacto del ayuntamiento antes de la próxima auditoría." } },
         "seguimiento": { "ok": "B", "options": {
-          "A": "Sin seguimiento: es una no conformidad menor.",
-          "B": "Responsable: secretaría del comité de IA. Fecha: 2028-11-15. Evidencia de cierre: FRIA v2 aprobada con la sección completa.",
-          "C": "Revisar algún día." } }
+          "A": "Sin seguimiento formal: al ser una no conformidad menor, basta con que la secretaría del comité de IA confirme por correo que ha completado la sección 2.",
+          "B": "Responsable: secretaría del comité de IA. Fecha: 2028-11-15. Evidencia de cierre: FRIA v2 aprobada por el comité, con la sección 2 completa según el registro de uso.",
+          "C": "Responsable: secretaría del comité de IA. Fecha: 2028-11-15. Evidencia de cierre: borrador de la FRIA v2 con la sección 2 completa, enviado al comité de IA para su aprobación." } }
       },
       "followup": { "closable": true, "text": "FRIA v2 aprobada por el comité de IA el 2028-11-08: la sección 2 recoge el uso real (días laborables, unas 15 propuestas al día) y una revisión semestral." } }
   ],
   "report_fields": {
-    "alcance": { "ok": "B", "options": {
-      "A": "Hemos auditado todo el ayuntamiento y todo está bien salvo lo indicado.",
-      "B": "Alcance: Ayuda-Valle, del 2028-03-01 al 2028-09-30. Criterios: POL-IA (basada en el NIST AI RMF 1.0), AI Act y RGPD. Muestra de 6 de los 12 controles, elegida por riesgo, y expedientes elegidos al azar. Lo que no está en la muestra no se ha evaluado.",
-      "C": "Alcance: el que se pudo en el tiempo disponible." } },
+    "alcance": { "ok": "A", "options": {
+      "A": "Alcance: Ayuda-Valle, del 2028-03-01 al 2028-09-30. Criterios: POL-IA (basada en el NIST AI RMF 1.0), AI Act y RGPD. Muestra de 6 de los 12 controles, elegida por riesgo, y expedientes elegidos al azar. Lo que no está en la muestra no se ha evaluado.",
+      "B": "Alcance: Ayuda-Valle y los demás sistemas de IA del inventario, del 2028-03-01 al 2028-09-30. Criterios: POL-IA, AI Act y RGPD. Muestra de 6 de los 12 controles, elegida por riesgo; sus conclusiones se extienden a los 12 controles.",
+      "C": "Alcance: Ayuda-Valle durante sus primeros meses de uso. Se revisaron 6 controles de la política de IA y varios expedientes junto con el equipo de Servicios Sociales, según lo que permitió el tiempo disponible para el trabajo de campo." } },
     "conclusion": { "ok": "C", "options": {
-      "A": "Ayuda-Valle cumple el AI Act.",
-      "B": "Suspendido: todo está mal.",
+      "A": "Salvo H1, H2 y H3, que el ayuntamiento ya está corrigiendo, Ayuda-Valle cumple el AI Act y el RGPD, y puede ampliarse a nuevas ayudas en cuanto se cierren las dos no conformidades mayores. Así se comunicará al pleno municipal.",
+      "B": "Con dos no conformidades mayores, la gestión de la IA del ayuntamiento no funciona: se recomienda retirar Ayuda-Valle y los demás sistemas de IA municipales hasta una nueva auditoría completa de todos los controles.",
       "C": "Con dos no conformidades mayores, los controles muestreados de sesgos y de supervisión humana no funcionan como exige la política: se recomienda no ampliar Ayuda-Valle a nuevas ayudas hasta cerrar H1 y H2. No es una opinión jurídica." } }
   },
   "rubric": [

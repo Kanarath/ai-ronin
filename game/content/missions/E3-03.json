@@ -62,7 +62,7 @@
       "hints": [
         "audit open valle · audit rubric valle · audit findings valle H2 · audit draft valle H2 <campo> <A|B|C>",
         "El art. 14 son requisitos de diseño para el proveedor; el del responsable del despliegue es el 26.2. La evidencia buena dice qué muestra y cómo se eligió.",
-        "H2: criterio C · evidencia A · riesgo B · recomendacion B · seguimiento A."
+        "H2: criterio B · evidencia C · riesgo A · recomendacion B · seguimiento C."
       ],
       "on_complete": "H2 se sostiene: criterio de la política y de la ley, una muestra que otra persona puede repetir, un riesgo concreto, que incluye el art. 22 del RGPD (GDPR, General Data Protection Regulation), y un cierre verificable.",
       "teach": "Redactar con la rúbrica\naudit rubric valle enseña qué exige cada campo; audit findings valle H2 enseña las tres redacciones posibles de cada campo de H2; audit draft valle H2 <campo> <A|B|C> elige una.\nLos campos son criterio, evidencia, riesgo, recomendacion y seguimiento.\nPor qué: un hallazgo con el criterio mal citado o la evidencia vaga se cae en la reunión de cierre."
@@ -79,11 +79,11 @@
       },
       "hints": [
         "audit findings valle H1 · audit findings valle H3",
-        "Desconfía de: «buenas prácticas», un control de una norma que no está en el alcance ni has verificado, «nos dijeron», multas de prácticas prohibidas y un auditor que se ofrece a arreglarlo.",
-        "H1: B B B A C · H3: A A C A B (criterio, evidencia, riesgo, recomendacion, seguimiento)."
+        "Desconfía de: una norma que no está en el alcance, un artículo que obliga a otro actor, «nos dijeron», multas de prácticas prohibidas, un cierre sin evidencia y un auditor que se ofrece a arreglarlo.",
+        "H1: C A B C A · H3: A B C A B (criterio, evidencia, riesgo, recomendacion, seguimiento)."
       ],
       "on_complete": "Tres hallazgos completos. La multa de 35 millones era una trampa: ese tramo es para las prácticas prohibidas (art. 99.3), y a las autoridades públicas se les aplica lo que diga cada Estado (art. 99.8).",
-      "teach": "Desconfía de las trampas\nCada campo tiene una redacción que se sostiene y otras con trampas: «buenas prácticas» sin criterio, una norma que no está en el alcance, «nos dijeron», cifras de multas que no corresponden o un auditor que se ofrece a arreglarlo.\nPor qué: estas trampas son las que usa la parte auditada para discutir un hallazgo."
+      "teach": "Desconfía de las trampas\nCada campo tiene una redacción que se sostiene y otras con trampas: una norma que no está en el alcance, un artículo que obliga a otro actor, «nos dijeron», multas que no corresponden, un cierre sin evidencia o un auditor que se ofrece a arreglarlo.\nPor qué: estas trampas son las que usa la parte auditada para discutir un hallazgo."
     },
     {
       "id": "c1",
@@ -130,7 +130,7 @@
       "hints": [
         "audit findings valle informe · audit draft valle informe <alcance|conclusion> <A|B|C> · audit report valle",
         "Un auditor no dice que algo «cumple el AI Act»: dice qué ha visto en la muestra contra los criterios acordados.",
-        "alcance B · conclusion C."
+        "alcance A · conclusion C."
       ],
       "on_complete": "Informe aprobado: ordenado por severidad, con alcance y limitaciones, y una conclusión que no va más allá de la muestra.",
       "teach": "Alcance y conclusión\naudit findings valle informe enseña las opciones del alcance y la conclusión; audit report valle genera el informe y aplica la rúbrica.\nPor qué: la conclusión de un auditor no va más allá de lo que ha visto en su muestra."
