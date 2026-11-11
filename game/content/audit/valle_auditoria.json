@@ -31,7 +31,7 @@
     { "id": "E5", "text": "Medidas de supervisión humana, según las instrucciones de uso del proveedor.", "where": "fria", "basis": "AI Act, art. 27.1.e" },
     { "id": "E6", "text": "Medidas si los riesgos se materializan, incluidos la gobernanza interna y los mecanismos de reclamación.", "where": "fria", "basis": "AI Act, art. 27.1.f" },
     { "id": "E7", "text": "Garantías, medidas de seguridad y mecanismos para proteger los datos personales y demostrar el cumplimiento.", "where": "eipd", "basis": "RGPD, art. 35.7.d" },
-    { "id": "E8", "text": "Riesgos de perjuicio para los derechos y libertades de las personas afectadas.", "where": "ambas", "basis": "AI Act, art. 27.1.d y RGPD, art. 35.7.c: por eso la FRIA puede remitirse a la EIPD y la complementa (art. 27.4)" },
+    { "id": "E8", "text": "Riesgos de perjuicio para los derechos y libertades de las personas afectadas.", "where": "ambas", "basis": "AI Act, art. 27.1.d y RGPD, art. 35.7.c: por eso la FRIA complementa la EIPD (art. 27.4) y, según el texto consolidado tras el Digital Omnibus, puede remitirse a ella (pendiente de confirmar en EUR-Lex)" },
     { "id": "E9", "text": "Notificar los resultados a la autoridad de vigilancia del mercado con el formulario de la Oficina de IA.", "where": "fria", "basis": "AI Act, art. 27.3 y 27.5" },
     { "id": "E10", "text": "Consultar a la autoridad de control antes del tratamiento si, pese a las medidas, el riesgo sigue siendo alto.", "where": "eipd", "basis": "RGPD, art. 36" }
   ],

@@ -40,8 +40,8 @@
     },
     {
       "id": "calendario",
-      "title": "Calendario (consultado el 2026-11-09)",
-      "body": "En vigor desde el 1 de agosto de 2024. Prohibiciones y alfabetización en IA (Inteligencia Artificial): desde el 2 de febrero de 2025. Modelos de uso general: desde el 2 de agosto de 2025. Transparencia (art. 50): desde el 2 de agosto de 2026. El Digital Omnibus (Reglamento (UE) 2026/1744, en vigor desde el 27 de julio de 2026) aplazó los sistemas de alto riesgo del anexo III al 2 de diciembre de 2027 y los del anexo I (integrados en productos regulados) al 2 de agosto de 2028. Las fechas pueden volver a cambiar: compruébalas siempre en EUR-Lex.",
+      "title": "Calendario (consultado el 2026-11-11)",
+      "body": "En vigor desde el 1 de agosto de 2024. Prohibiciones y alfabetización en IA (Inteligencia Artificial): desde el 2 de febrero de 2025. Modelos de uso general: desde el 2 de agosto de 2025. Transparencia (art. 50): desde el 2 de agosto de 2026. El Digital Omnibus (Reglamento (UE) 2026/1744, en vigor desde el 27 de julio de 2026) aplazó los sistemas de alto riesgo del anexo III al 2 de diciembre de 2027 y los del anexo I (integrados en productos regulados) al 2 de agosto de 2028. También añadió prohibiciones nuevas y dio hasta el 2 de diciembre de 2026 para marcar el contenido sintético (art. 50.2) a los sistemas que ya estaban en el mercado. Las fechas pueden volver a cambiar: compruébalas siempre en EUR-Lex.",
       "unlock_on": "objective:o2"
     }
   ],
@@ -235,7 +235,8 @@
   },
   "further_reading": [
     "ref.eu-ai-act",
-    "ref.eu-ai-act-omnibus"
+    "ref.eu-ai-act-omnibus",
+    "ref.ai-act-calendario-comision"
   ],
   "xp": {
     "base": 300

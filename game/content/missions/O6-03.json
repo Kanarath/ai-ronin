@@ -204,7 +204,7 @@
     {
       "id": "o5",
       "text": "Consigue 0 ataques con éxito y 1,0 en las tareas legítimas, y avisa al delegado de protección de datos.",
-      "teach": "Actuar sobre la acción y avisar\nBusca un control que actúe sobre la ACCIÓN (a dónde puede enviar datos el agente), no sobre el documento.\nY avisa: salieron datos personales de 212 clientes. El RGPD (Reglamento General de Protección de Datos; en inglés, GDPR), art. 33, obliga al responsable a notificar una violación de datos personales a la autoridad de control sin dilación indebida y, si es posible, en 72 horas desde que tiene constancia, salvo que sea improbable que suponga un riesgo para las personas.\nEsa evaluación la hace la organización con su DPD (delegado de protección de datos; en inglés, DPO), no el equipo técnico solo. (Esto es formación, no asesoramiento jurídico.)\nPor qué: un incidente de IA (Inteligencia Artificial) con datos personales es también un incidente de protección de datos.",
+      "teach": "Actuar sobre la acción y avisar\nBusca un control que actúe sobre la ACCIÓN (a dónde puede enviar datos el agente), no sobre el documento.\nY avisa: salieron datos personales de 212 clientes. El RGPD (Reglamento General de Protección de Datos; en inglés, GDPR), art. 33, obliga al responsable a notificar una violación de datos personales a la autoridad de control sin dilación indebida y, si es posible, en 72 horas desde que tiene constancia, salvo que sea improbable que suponga un riesgo para las personas. (Una propuesta de la Comisión, el Digital Omnibus de 2025, plantea cambiar este plazo; a 11 de noviembre de 2026 no está aprobada.)\nEsa evaluación la hace la organización con su DPD (delegado de protección de datos; en inglés, DPO), no el equipo técnico solo. (Esto es formación, no asesoramiento jurídico.)\nPor qué: un incidente de IA (Inteligencia Artificial) con datos personales es también un incidente de protección de datos.",
       "validator": {
         "type": "event",
         "event": "soc.retest",
@@ -333,6 +333,7 @@
   "further_reading": [
     "ref.nist-800-61r3",
     "ref.rgpd-art33",
+    "ref.digital-omnibus-propuesta",
     "ref.greshake-2023",
     "ref.owasp-llm-2025"
   ],

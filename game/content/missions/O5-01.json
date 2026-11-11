@@ -36,7 +36,7 @@
     {
       "id": "tres-marcos",
       "title": "Ley, marco y norma",
-      "body": "AI Act: el Reglamento (UE) 2024/1689, modificado en 2026 por el Reglamento (UE) 2026/1744 (Digital Omnibus). Obliga según el nivel de riesgo del sistema. NIST AI RMF (AI Risk Management Framework) 1.0 (NIST AI 100-1, 2023): marco voluntario de gestión de riesgos con cuatro funciones; tiene un perfil para IA (Inteligencia Artificial) generativa (NIST AI 600-1, 2024) y está en revisión. ISO/IEC (International Organization for Standardization / International Electrotechnical Commission) 42001:2023: norma de sistema de gestión de la IA, certificable, con la estructura común de ISO 27001 o 9001 y un anexo A de controles de referencia. Comandos: gov open · gov frameworks · gov framework."
+      "body": "AI Act: el Reglamento (UE) 2024/1689, modificado en 2026 por el Reglamento (UE) 2026/1744 (Digital Omnibus). Obliga según el nivel de riesgo del sistema. NIST AI RMF (AI Risk Management Framework) 1.0 (NIST AI 100-1, 2023): marco voluntario de gestión de riesgos con cuatro funciones; tiene un perfil para IA (Inteligencia Artificial) generativa (NIST AI 600-1, 2024) y, según el NIST, se está revisando (consultado el 2026-11-11). ISO/IEC (International Organization for Standardization / International Electrotechnical Commission) 42001:2023: norma de sistema de gestión de la IA, certificable, con la estructura común de ISO 27001 o 9001 y un anexo A de controles de referencia. Comandos: gov open · gov frameworks · gov framework."
     },
     {
       "id": "funciones-y-clausulas",

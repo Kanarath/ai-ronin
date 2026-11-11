@@ -401,21 +401,39 @@
     },
     {
       "id": "ref.eu-ai-act-omnibus",
-      "title": "Reglamento (UE) 2026/1744 (Digital Omnibus sobre IA): aplaza el alto riesgo del anexo III al 2 de diciembre de 2027 y del anexo I al 2 de agosto de 2028; en vigor desde el 27 de julio de 2026",
-      "source": "EUR-Lex; resumen en artificialintelligenceact.eu",
+      "title": "Reglamento (UE) 2026/1744 (Digital Omnibus sobre IA), de 8 de julio de 2026, publicado en el DOUE el 24 de julio y en vigor desde el 27 de julio de 2026: aplaza el alto riesgo del anexo III al 2 de diciembre de 2027 y del anexo I al 2 de agosto de 2028; nuevas prohibiciones y plazo transitorio del art. 50.2 hasta el 2 de diciembre de 2026 (procedimiento 2025/0359(COD))",
+      "source": "EUR-Lex; fechas del procedimiento en el Observatorio Legislativo del Parlamento Europeo (OEIL)",
       "type": "legislacion",
-      "url": "https://artificialintelligenceact.eu/ai-act-explorer/digital-omnibus/",
-      "consulted": "2026-11-09",
-      "review_by": "2027-05-09"
+      "url": "https://eur-lex.europa.eu/eli/reg/2026/1744/oj",
+      "consulted": "2026-11-11",
+      "review_by": "2027-05-11"
+    },
+    {
+      "id": "ref.ai-act-calendario-comision",
+      "title": "Comisión Europea · AI Act Service Desk: calendario de aplicación del AI Act (incluye los cambios del Digital Omnibus)",
+      "source": "Comisión Europea",
+      "type": "documentacion-oficial",
+      "url": "https://ai-act-service-desk.ec.europa.eu/en/ai-act/timeline/timeline-implementation-eu-ai-act",
+      "consulted": "2026-11-11",
+      "review_by": "2027-05-11"
+    },
+    {
+      "id": "ref.digital-omnibus-propuesta",
+      "title": "Propuesta de Reglamento «Digital Omnibus» (COM(2025) 837, procedimiento 2025/0360(COD)): propone, entre otras cosas, cambiar la notificación de violaciones del art. 33 del RGPD. En tramitación, no aprobada a 2026-11-11",
+      "source": "Observatorio Legislativo del Parlamento Europeo (OEIL)",
+      "type": "legislacion",
+      "url": "https://oeil.europarl.europa.eu/oeil/en/procedure-file?reference=2025/0360(COD)",
+      "consulted": "2026-11-11",
+      "review_by": "2027-02-11"
     },
     {
       "id": "ref.nist-ai-rmf",
-      "title": "NIST AI 100-1: Artificial Intelligence Risk Management Framework (AI RMF 1.0), enero de 2023; en revisión",
+      "title": "NIST AI 100-1: Artificial Intelligence Risk Management Framework (AI RMF 1.0), 26 de enero de 2023; NIST indica que se está revisando dentro del Plan de Acción de IA de la Casa Blanca",
       "source": "NIST",
       "type": "framework",
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
-      "consulted": "2026-11-09",
-      "review_by": "2027-05-09"
+      "consulted": "2026-11-11",
+      "review_by": "2027-05-11"
     },
     {
       "id": "ref.iso-42001",
@@ -481,7 +499,7 @@
     {"id": "ref.dwork-roth-2014", "title": "The Algorithmic Foundations of Differential Privacy", "authors": "C. Dwork, A. Roth", "source": "Foundations and Trends in Theoretical Computer Science 9(3-4)", "year": 2014, "type": "libro", "url": "https://doi.org/10.1561/0400000042", "consulted": "2026-11-10"},
     {"id": "ref.abadi-2016", "title": "Deep Learning with Differential Privacy (DP-SGD)", "authors": "M. Abadi, A. Chu, I. Goodfellow, H. B. McMahan, I. Mironov, K. Talwar, L. Zhang", "source": "ACM CCS 2016, 308-318 · arXiv:1607.00133", "year": 2016, "type": "paper", "url": "https://arxiv.org/abs/1607.00133", "consulted": "2026-11-10"},
     {"id": "ref.owasp-llm02-2025", "title": "OWASP LLM02:2025 Sensitive Information Disclosure (mitigaciones: privacidad diferencial; enlaza MITRE ATLAS AML.T0024.000 Infer Training Data Membership)", "source": "OWASP GenAI Security Project", "type": "guia", "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/", "consulted": "2026-11-10", "review_by": "2027-05-10"},
-    {"id": "ref.cepd-dictamen-28-2024", "title": "CEPD (EDPB) · Dictamen 28/2024 sobre determinados aspectos de protección de datos relacionados con el tratamiento de datos personales en el contexto de los modelos de IA (adoptado el 17 de diciembre de 2024; §43 sobre el anonimato de los modelos)", "source": "Comité Europeo de Protección de Datos", "type": "documentacion-oficial", "url": "https://www.edpb.europa.eu/our-work-tools/our-documents/opinion-board-art-64/opinion-282024-certain-data-protection-aspects_en", "consulted": "2026-11-10", "review_by": "2027-05-10"},
+    {"id": "ref.cepd-dictamen-28-2024", "title": "CEPD (EDPB) · Dictamen 28/2024 sobre determinados aspectos de protección de datos relacionados con el tratamiento de datos personales en el contexto de los modelos de IA (adoptado el 17 de diciembre de 2024; §43 sobre el anonimato de los modelos)", "source": "Comité Europeo de Protección de Datos", "type": "documentacion-oficial", "url": "https://www.edpb.europa.eu/our-work-tools/our-documents/opinion-board-art-64/opinion-282024-certain-data-protection-aspects_en", "consulted": "2026-11-11", "review_by": "2027-05-11"},
     {"id": "ref.rgpd-art35", "title": "Reglamento (UE) 2016/679 (RGPD), artículos 35 (evaluación de impacto relativa a la protección de datos) y 36 (consulta previa)", "source": "EUR-Lex", "type": "legislacion", "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj", "consulted": "2026-11-10", "review_by": "2027-11-10"},
     {"id": "ref.iso-19011", "title": "ISO 19011:2026 Guidelines for auditing management systems (4.ª edición, mayo de 2026; sustituye a la de 2018). Norma de pago: solo se usa su descripción pública", "source": "ISO", "type": "norma", "url": "https://www.iso.org/standard/88984.html", "consulted": "2026-11-10", "review_by": "2027-11-10"},
     {"id": "ref.iia-gias-2024", "title": "The IIA · Global Internal Audit Standards (publicadas en enero de 2024, aplicables desde el 9 de enero de 2025)", "source": "The Institute of Internal Auditors", "type": "norma", "url": "https://www.theiia.org/en/standards/2024-standards/global-internal-audit-standards/", "consulted": "2026-11-10", "review_by": "2027-11-10"},
