@@ -54,22 +54,98 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Implementa las ocho funciones de rag.py hasta que pasen los 20 tests y trae la evidencia.",
-      "teach": "Filtrar dentro de la búsqueda\nEl control de acceso y la procedencia se aplican como filtro DENTRO de la consulta a Qdrant (la base vectorial) y del ranking BM25 (Best Matching 25, una puntuación por palabras), no quitando resultados después.\nSi filtraras después, un documento prohibido ocuparía un puesto del top-k y el cliente recibiría menos fragmentos útiles.\nPor qué: así se aplican los permisos en los asistentes de empresa.",
+      "text": "En el Dojo: abre el editor con py, programa fusion_rrf, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las ocho funciones de rag.py hasta que pasen los 20 tests y trae la evidencia.",
+      "teach": "Filtrar dentro de la búsqueda\nEl control de acceso y la procedencia se aplican como filtro DENTRO de la consulta a Qdrant (la base vectorial) y del ranking BM25 (Best Matching 25, una puntuación por palabras), no quitando resultados después.\nSi filtraras después, un documento prohibido ocuparía un puesto del top-k y el cliente recibiría menos fragmentos útiles.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: así se aplican los permisos en los asistentes de empresa.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "A2-04",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "A2-04",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "A2-04-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Cada documento suma 1 / (k + posición), con la posición empezando en 1.",
+        "La línea queda así: puntos[doc] = puntos.get(doc, 0) + 1 / (k + pos + 1)",
         "Orden: trocear → bm25 → fusion_rrf → recall_en_k → filtro_acceso → firmar → verificar_firma → ensamblar_contexto.",
         "Desde forja/labs/A2-04_rag: .\\.venv\\Scripts\\python.exe -m unittest -v test_rag (crea el entorno como en P0-01).",
         ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py A2-04 · y aquí: evidence import"
       ],
-      "on_complete": "Tu biblioteca funciona con modelos simulados. Ahora, con los reales."
+      "on_complete": "Es la búsqueda híbrida de A2-04: junta lo que encuentran BM25 y los embeddings. Tu biblioteca funciona con modelos simulados. Ahora, con los reales.",
+      "py_exercise": {
+        "id": "A2-04-forja",
+        "title": "fusion_rrf(listas, k): mezclar el ranking por palabras y el de vectores",
+        "function": "fusion_rrf",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef fusion_rrf(listas, k=60):\n    puntos = {}\n    for lista in listas:\n        for pos, doc in enumerate(lista):\n            puntos[doc] = puntos.get(doc, 0)   # ← cambia esta línea: suma 1 / (k + pos + 1)\n    return sorted(puntos, key=lambda d: (-puntos[d], d))\n\nprint(fusion_rrf([[\"a\", \"b\", \"c\"], [\"b\", \"c\", \"a\"]]))   # ['b', 'a', 'c']\n",
+        "cases": [
+          {
+            "args": [
+              [
+                [
+                  "a",
+                  "b",
+                  "c"
+                ],
+                [
+                  "b",
+                  "c",
+                  "a"
+                ]
+              ]
+            ],
+            "expected": [
+              "b",
+              "a",
+              "c"
+            ]
+          },
+          {
+            "args": [
+              [
+                [
+                  "x"
+                ],
+                [
+                  "y",
+                  "x"
+                ]
+              ]
+            ],
+            "expected": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "args": [
+              [
+                [
+                  "p",
+                  "q"
+                ]
+              ],
+              1
+            ],
+            "expected": [
+              "p",
+              "q"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "o2",

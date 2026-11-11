@@ -147,22 +147,85 @@
     },
     {
       "id": "o1",
-      "text": "Implementa las siete funciones de privacidad.py hasta que pasen los 14 tests y trae la evidencia.",
-      "teach": "Una curva, no un número\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E2-03_privacidad/README.md e implementa privacidad.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUn ataque con umbral es una familia de ataques: con un umbral bajo marca a pocos y casi siempre acierta; con uno alto marca a casi todos. La curva ROC (Receiver Operating Characteristic) recorre todos los umbrales y muestra cada compromiso entre aciertos (TPR) y falsas alarmas (FPR).\nPor qué: por eso se informa de la curva y de la TPR con FPR baja, y no de una sola precisión.",
+      "text": "En el Dojo: abre el editor con py, programa perdida_por_ejemplo, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las siete funciones de privacidad.py hasta que pasen los 14 tests y trae la evidencia.",
+      "teach": "Una curva, no un número\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E2-03_privacidad/README.md e implementa privacidad.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUn ataque con umbral es una familia de ataques: con un umbral bajo marca a pocos y casi siempre acierta; con uno alto marca a casi todos. La curva ROC (Receiver Operating Characteristic) recorre todos los umbrales y muestra cada compromiso entre aciertos (TPR) y falsas alarmas (FPR).\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: por eso se informa de la curva y de la TPR con FPR baja, y no de una sola precisión.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "E2-03",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "E2-03",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "E2-03-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "La pérdida de un ejemplo es −ln de la probabilidad que el modelo da a su clase real.",
+        "La línea queda así: out.append(-math.log(p))",
         "Orden: perdida_por_ejemplo → curva_roc → area_bajo_curva → mejor_umbral → media_laplace → media_gaussiana → recortar_y_ruido.",
         "Desde forja/labs/E2-03_privacidad: crea el entorno (README, sección 1) y ejecuta .\\.venv\\Scripts\\python.exe -m unittest -v test_privacidad",
         ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py E2-03 · y aquí: evidence import"
       ],
-      "on_complete": "Tu ataque y tus mecanismos pasan los tests. Ahora, a medir."
+      "on_complete": "El ataque de pertenencia usa esta pérdida: los ejemplos del entrenamiento suelen tenerla más baja. Tu ataque y tus mecanismos pasan los tests. Ahora, a medir.",
+      "py_exercise": {
+        "id": "E2-03-forja",
+        "title": "perdida_por_ejemplo(probs, y): −ln de la probabilidad de la clase real",
+        "function": "perdida_por_ejemplo",
+        "starter": "# Completa la línea marcada y compruébala con py check.\nimport math\n\ndef perdida_por_ejemplo(probs, y):\n    out = []\n    for fila, clase in zip(probs, y):\n        p = max(fila[clase], 1e-12)\n        out.append(0)   # ← cambia esta línea: −ln p\n    return out\n\nprint(perdida_por_ejemplo([[0.9, 0.1], [0.3, 0.7]], [0, 0]))   # [0.105, 1.204]\n",
+        "cases": [
+          {
+            "args": [
+              [
+                [
+                  0.9,
+                  0.1
+                ],
+                [
+                  0.3,
+                  0.7
+                ]
+              ],
+              [
+                0,
+                0
+              ]
+            ],
+            "expected": [
+              0.105361,
+              1.203973
+            ],
+            "tolerance": 0.0001
+          },
+          {
+            "args": [
+              [
+                [
+                  0.5,
+                  0.5
+                ]
+              ],
+              [
+                1
+              ]
+            ],
+            "expected": [
+              0.693147
+            ],
+            "tolerance": 0.0001
+          }
+        ]
+      }
     },
     {
       "id": "c1",

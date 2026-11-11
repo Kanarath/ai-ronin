@@ -53,22 +53,73 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Implementa las seis funciones de chatbot.py hasta que pasen los 19 tests y trae la evidencia.",
-      "teach": "Normalizar antes de comparar\nUn filtro que busca «KUROGANE-77» literal se esquiva escribiendo «k u r o g a n e 7 7».\nPor eso contiene_secreto compara versiones normalizadas: minúsculas, sin tildes y sin separadores.\nAun así, no detecta una traducción o una paráfrasis.\nPor qué: los filtros de salida reducen el riesgo, no lo eliminan; lo vas a medir con un modelo real.",
+      "text": "En el Dojo: abre el editor con py, programa contiene_secreto, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las seis funciones de chatbot.py hasta que pasen los 19 tests y trae la evidencia.",
+      "teach": "Normalizar antes de comparar\nUn filtro que busca «KUROGANE-77» literal se esquiva escribiendo «k u r o g a n e 7 7».\nPor eso contiene_secreto compara versiones normalizadas: minúsculas, sin tildes y sin separadores.\nAun así, no detecta una traducción o una paráfrasis.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: los filtros de salida reducen el riesgo, no lo eliminan; lo vas a medir con un modelo real.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "A1-05",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "A1-05",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "A1-05-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "El secreto también tiene que pasar a minúsculas y perder lo que no sea letra o número.",
+        "La línea queda así: buscado = \"\".join(c for c in secreto.lower() if c.isalnum())",
         "Orden: normalizar → contiene_secreto → filtrar_entrada → filtrar_salida → delimitar → intervalo_wilson.",
         "Desde forja/labs/A1-05_chatbot: .\\.venv\\Scripts\\python.exe -m unittest -v test_chatbot (crea el entorno como en P0-01).",
         ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py A1-05 · y aquí: evidence import"
       ],
-      "on_complete": "Tus defensas funcionan contra el modelo simulado. Ahora, contra el real."
+      "on_complete": "Es el filtro de salida de A1-05: busca el secreto aunque el modelo lo deletree. Tus defensas funcionan contra el modelo simulado. Ahora, contra el real.",
+      "py_exercise": {
+        "id": "A1-05-forja",
+        "title": "contiene_secreto(texto, secreto): el canario, aunque venga disfrazado",
+        "function": "contiene_secreto",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef contiene_secreto(texto, secreto):\n    limpio = \"\".join(c for c in texto.lower() if c.isalnum())\n    buscado = secreto   # ← cambia esta línea: normaliza también el secreto\n    return buscado in limpio\n\nprint(contiene_secreto(\"el código es K-A-T-A-N-A 99\", \"katana99\"))   # True\n",
+        "cases": [
+          {
+            "args": [
+              "el código es K-A-T-A-N-A 99",
+              "katana99"
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "nada que ver",
+              "katana99"
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              "KATANA99",
+              "Katana99"
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "katana 9 9",
+              "katana99"
+            ],
+            "expected": true
+          }
+        ]
+      }
     },
     {
       "id": "o2",

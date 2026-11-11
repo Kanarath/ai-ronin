@@ -53,22 +53,99 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Implementa las ocho funciones de evasion.py hasta que pasen los 16 tests y trae la evidencia.",
-      "teach": "Gradiente respecto a la entrada\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E2-01_evasion/README.md e implementa evasion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nCon P = softmax(XW + b), el gradiente de la entropía cruzada respecto a los logits es P − onehot(y). Por la regla de la cadena, respecto a la entrada es (P − onehot(y)) · Wᵀ: la cuenta de T4-02 para los pesos, pero multiplicando por los pesos en lugar de por la entrada.\nPor qué: el atacante usa la misma herramienta que el entrenamiento, solo que la apunta a la entrada.",
+      "text": "En el Dojo: abre el editor con py, programa fgsm, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las ocho funciones de evasion.py hasta que pasen los 16 tests y trae la evidencia.",
+      "teach": "Gradiente respecto a la entrada\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E2-01_evasion/README.md e implementa evasion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nCon P = softmax(XW + b), el gradiente de la entropía cruzada respecto a los logits es P − onehot(y). Por la regla de la cadena, respecto a la entrada es (P − onehot(y)) · Wᵀ: la cuenta de T4-02 para los pesos, pero multiplicando por los pesos en lugar de por la entrada.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: el atacante usa la misma herramienta que el entrenamiento, solo que la apunta a la entrada.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "E2-01",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "E2-01",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "E2-01-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Cada píxel se mueve epsilon en la dirección del signo de su gradiente.",
+        "La línea queda así: v = xi + epsilon * signo(gi)",
         "Orden: softmax → gradiente_entrada → fgsm → curva_epsilon → gradiente_adversario → reducir_bits → puntuacion_squeezing → umbral_para_fpr.",
         "Desde forja/labs/E2-01_evasion: crea el entorno (README, sección 1) y ejecuta .\\.venv\\Scripts\\python.exe -m unittest -v test_evasion",
         ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py E2-01 · y aquí: evidence import"
       ],
-      "on_complete": "Tu ataque y tus defensas pasan los tests. Ahora, a medir."
+      "on_complete": "Un cambio de 0,1 por píxel, invisible para una persona, puede tumbar el modelo. Tu ataque y tus defensas pasan los tests. Ahora, a medir.",
+      "py_exercise": {
+        "id": "E2-01-forja",
+        "title": "fgsm(x, gradiente, epsilon): el ataque de un paso",
+        "function": "fgsm",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef signo(g):\n    return 1 if g > 0 else (-1 if g < 0 else 0)\n\ndef fgsm(x, gradiente, epsilon):\n    nuevo = []\n    for xi, gi in zip(x, gradiente):\n        v = xi   # ← cambia esta línea: xi + epsilon · signo(gi)\n        nuevo.append(min(1.0, max(0.0, v)))\n    return nuevo\n\nprint(fgsm([0.5, 0.95, 0.0], [2.0, 1.0, -3.0], 0.1))   # [0.6, 1.0, 0.0]\n",
+        "cases": [
+          {
+            "args": [
+              [
+                0.5,
+                0.95,
+                0.0
+              ],
+              [
+                2.0,
+                1.0,
+                -3.0
+              ],
+              0.1
+            ],
+            "expected": [
+              0.6,
+              1.0,
+              0.0
+            ],
+            "tolerance": 0.0001
+          },
+          {
+            "args": [
+              [
+                0.5
+              ],
+              [
+                0.0
+              ],
+              0.3
+            ],
+            "expected": [
+              0.5
+            ],
+            "tolerance": 0.0001
+          },
+          {
+            "args": [
+              [
+                0.2,
+                0.8
+              ],
+              [
+                -1,
+                1
+              ],
+              0.05
+            ],
+            "expected": [
+              0.15,
+              0.85
+            ],
+            "tolerance": 0.0001
+          }
+        ]
+      }
     },
     {
       "id": "c1",

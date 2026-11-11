@@ -52,22 +52,73 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Implementa las nueve funciones de juez.py hasta que pasen los 26 tests y trae la evidencia.",
-      "teach": "Parsear lo que dice un modelo\nUn modelo pequeño no siempre contesta «Puntuación: 4». A veces escribe «Le doy un 4 de 5» o «**4**», o se corrige a mitad de frase.\nUn parseo robusto prueba varias reglas en orden y se queda con la última conclusión.\nSi no encuentra un número válido, devuelve None: nunca inventa una nota. Y cuenta cuántas veces pasa.\nPor qué: un juez que no sigue el formato también es un fallo que hay que medir.",
+      "text": "En el Dojo: abre el editor con py, programa veredicto_equilibrado, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las nueve funciones de juez.py hasta que pasen los 26 tests y trae la evidencia.",
+      "teach": "Parsear lo que dice un modelo\nUn modelo pequeño no siempre contesta «Puntuación: 4». A veces escribe «Le doy un 4 de 5» o «**4**», o se corrige a mitad de frase.\nUn parseo robusto prueba varias reglas en orden y se queda con la última conclusión.\nSi no encuentra un número válido, devuelve None: nunca inventa una nota. Y cuenta cuántas veces pasa.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: un juez que no sigue el formato también es un fallo que hay que medir.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "A1-06",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "A1-06",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "A1-06-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "b gana de verdad si gana en las dos pasadas: «B» en la primera y «A» en la segunda.",
+        "Antes del return: if v_ab == \"B\" and v_ba == \"A\": return \"B\"",
         "Orden: plantillas → parsear_puntuacion → parsear_veredicto → veredicto_equilibrado → porcentaje_acuerdo → kappa_cohen → intervalo_bootstrap → comparar_con_referencia.",
         "Desde forja/labs/A1-06_juez: .\\.venv\\Scripts\\python.exe -m unittest -v test_juez (crea el entorno como en A1-05).",
         ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py A1-06 · y aquí: evidence import"
       ],
-      "on_complete": "Tu juez funciona con un modelo simulado que obedece. Ahora, con uno real que no siempre lo hace."
+      "on_complete": "Es la mitigación del sesgo de posición: si el veredicto cambia con el orden, no vale. Tu juez funciona con un modelo simulado que obedece. Ahora, con uno real que no siempre lo hace.",
+      "py_exercise": {
+        "id": "A1-06-forja",
+        "title": "veredicto_equilibrado(v_ab, v_ba): el juez, con el orden cambiado",
+        "function": "veredicto_equilibrado",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef veredicto_equilibrado(v_ab, v_ba):\n    # v_ab: veredicto con A primero. v_ba: con B primero, así que su «A» es la respuesta b.\n    if v_ab == \"A\" and v_ba == \"B\":\n        return \"A\"\n    return \"empate\"   # ← cambia esta línea: falta el caso en que gana b las dos veces\n\nprint(veredicto_equilibrado(\"B\", \"A\"))   # B\n",
+        "cases": [
+          {
+            "args": [
+              "A",
+              "B"
+            ],
+            "expected": "A"
+          },
+          {
+            "args": [
+              "B",
+              "A"
+            ],
+            "expected": "B"
+          },
+          {
+            "args": [
+              "A",
+              "A"
+            ],
+            "expected": "empate"
+          },
+          {
+            "args": [
+              "B",
+              "B"
+            ],
+            "expected": "empate"
+          }
+        ]
+      }
     },
     {
       "id": "o2",

@@ -58,22 +58,81 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Implementa las nueve funciones de politica.py hasta que pasen los 18 tests y trae la evidencia.",
-      "teach": "Denegar por defecto\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E4-03_despliegue/README.md e implementa politica.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUn servicio de compose sin la clave «user:» no corre «con un usuario normal»: corre con el que diga la imagen, y muchas imágenes usan root. Un puerto sin IP (Internet Protocol) no está «en local»: escucha en todas las interfaces. Una IP que no sabes interpretar no es segura.\nEn cada duda, la regla dice no y explica por qué.\nPor qué: es más barato añadir una línea al compose que investigar un incidente.",
+      "text": "En el Dojo: abre el editor con py, programa hallazgos, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las nueve funciones de politica.py hasta que pasen los 18 tests y trae la evidencia.",
+      "teach": "Denegar por defecto\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E4-03_despliegue/README.md e implementa politica.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUn servicio de compose sin la clave «user:» no corre «con un usuario normal»: corre con el que diga la imagen, y muchas imágenes usan root. Un puerto sin IP (Internet Protocol) no está «en local»: escucha en todas las interfaces. Una IP que no sabes interpretar no es segura.\nEn cada duda, la regla dice no y explica por qué.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: es más barato añadir una línea al compose que investigar un incidente.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "E4-03",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "E4-03",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "E4-03-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Recorre servicio.get(\"ports\", []) y mira si cada puerto empieza por «127.0.0.1:».",
+        "Añade: if any(not p.startswith(\"127.0.0.1:\") for p in servicio.get(\"ports\", [])): h.append(\"puerto-expuesto\")",
         "Orden: regla_modelo → regla_usuario → regla_recursos → puerto_expuesto → regla_puertos → regla_imagen → evaluar → repartir → decidir_canary.",
         "Desde forja/labs/E4-03_despliegue: .\\.venv\\Scripts\\python.exe -m unittest -v test_politica (crea el entorno como en P0-01).",
         ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py E4-03 · y aquí: evidence import"
       ],
-      "on_complete": "Tu puerta funciona con despliegues de prueba. Ahora, con los compose.yaml de verdad y un canary contra el modelo real."
+      "on_complete": "Es la puerta de despliegue de E4-03: bloquea lo inseguro antes de que llegue a producción. Tu puerta funciona con despliegues de prueba. Ahora, con los compose.yaml de verdad y un canary contra el modelo real.",
+      "py_exercise": {
+        "id": "E4-03-forja",
+        "title": "hallazgos(servicio): lo que la política de despliegue rechaza",
+        "function": "hallazgos",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef hallazgos(servicio):\n    h = []\n    if \"@sha256:\" not in servicio.get(\"image\", \"\"):\n        h.append(\"imagen-sin-huella\")\n    if \"user\" not in servicio:\n        h.append(\"root\")\n    # ← añade aquí: cada puerto que no empiece por 127.0.0.1: es «puerto-expuesto»\n    return h\n\nprint(hallazgos({\"image\": \"ollama/ollama:latest\", \"ports\": [\"11434:11434\"]}))\n",
+        "cases": [
+          {
+            "args": [
+              {
+                "image": "ollama/ollama:latest",
+                "ports": [
+                  "11434:11434"
+                ]
+              }
+            ],
+            "expected": [
+              "imagen-sin-huella",
+              "root",
+              "puerto-expuesto"
+            ]
+          },
+          {
+            "args": [
+              {
+                "image": "x@sha256:ab",
+                "user": "1000",
+                "ports": [
+                  "127.0.0.1:8000:8000"
+                ]
+              }
+            ],
+            "expected": []
+          },
+          {
+            "args": [
+              {
+                "image": "x@sha256:ab",
+                "user": "1000"
+              }
+            ],
+            "expected": []
+          }
+        ]
+      }
     },
     {
       "id": "c1",

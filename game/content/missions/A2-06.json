@@ -139,22 +139,84 @@
     },
     {
       "id": "o1",
-      "text": "Implementa las siete funciones de reranking.py hasta que pasen los 13 tests y trae la evidencia.",
-      "teach": "Reordenar sin perder el orden anterior\nCuando dos candidatos tienen la misma puntuación, gana el que la primera etapa puso antes: así el reordenador nunca empeora un empate.\nsorted() es estable: con la clave «menos la puntuación» respeta ese orden.\nDevuelve copias: si añades la puntuación a los dicts de la biblioteca, la siguiente búsqueda verá puntuaciones viejas.\nPor qué: los fallos de un sistema de búsqueda suelen estar en detalles así.",
+      "text": "En el Dojo: abre el editor con py, programa rango_reciproco, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las siete funciones de reranking.py hasta que pasen los 13 tests y trae la evidencia.",
+      "teach": "Reordenar sin perder el orden anterior\nCuando dos candidatos tienen la misma puntuación, gana el que la primera etapa puso antes: así el reordenador nunca empeora un empate.\nsorted() es estable: con la clave «menos la puntuación» respeta ese orden.\nDevuelve copias: si añades la puntuación a los dicts de la biblioteca, la siguiente búsqueda verá puntuaciones viejas.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: los fallos de un sistema de búsqueda suelen estar en detalles así.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "A2-06",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "A2-06",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "A2-06-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "enumerate empieza en 0: la primera posición es pos + 1.",
+        "La línea queda así: return 1 / (pos + 1)",
         "Orden: reordenar → recuperar_reordenado → recall_en_k → rango_reciproco → ndcg_en_k → percentil → puntuacion_llm.",
         "Desde forja/labs/A2-06_reranking: .\\.venv\\Scripts\\python.exe -m unittest -v test_reranking (crea el entorno como en A2-04).",
         ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py A2-06 · y aquí: evidence import"
       ],
-      "on_complete": "Tu tubería de dos etapas funciona con un reordenador simulado. Ahora, con los de verdad."
+      "on_complete": "Es la base del MRR (Mean Reciprocal Rank) con el que A2-06 mide si el reranking ayuda. Tu tubería de dos etapas funciona con un reordenador simulado. Ahora, con los de verdad.",
+      "py_exercise": {
+        "id": "A2-06-forja",
+        "title": "rango_reciproco(recuperados, relevantes): 1 / posición del primero bueno",
+        "function": "rango_reciproco",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef rango_reciproco(recuperados, relevantes):\n    for pos, doc in enumerate(recuperados):\n        if doc in relevantes:\n            return 0   # ← cambia esta línea: 1 / posición, contando desde 1\n    return 0.0\n\nprint(rango_reciproco([\"x\", \"bueno\", \"y\"], [\"bueno\"]))   # 0.5\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "x",
+                "bueno",
+                "y"
+              ],
+              [
+                "bueno"
+              ]
+            ],
+            "expected": 0.5,
+            "tolerance": 0.0001
+          },
+          {
+            "args": [
+              [
+                "bueno"
+              ],
+              [
+                "bueno"
+              ]
+            ],
+            "expected": 1.0,
+            "tolerance": 0.0001
+          },
+          {
+            "args": [
+              [
+                "x",
+                "y"
+              ],
+              [
+                "z"
+              ]
+            ],
+            "expected": 0.0,
+            "tolerance": 0.0001
+          }
+        ]
+      }
     },
     {
       "id": "o2",

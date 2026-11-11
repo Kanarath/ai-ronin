@@ -59,16 +59,29 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Prepara el entorno del laboratorio (README, sección 1), ejecuta ronin_check para P0-01 y trae la primera evidencia, aunque no pase ningún test todavía.",
-      "teach": "Entornos virtuales\nCada laboratorio tiene su propio entorno, la carpeta .venv, con las versiones fijadas en requirements.txt.\nAsí un proyecto no rompe a otro, y lo que funciona hoy funciona mañana.\nSi ronin_check dice que falta un paquete, lo has ejecutado con el Python del sistema y no con el del entorno.\nevidence import trae aquí el resultado de los tests: el Dojo no ve tu ordenador, solo tus evidencias.\nPor qué: los proyectos de IA (Inteligencia Artificial) dependen de muchas librerías; sin versiones fijadas, un resultado no se puede repetir.",
+      "text": "En el Dojo: abre el editor con py, escribe por ejemplo print(\"hola\") y ejecútalo con py run. Extra opcional: prepara el entorno del laboratorio (README, sección 1), ejecuta ronin_check para P0-01 y trae la primera evidencia, aunque no pase ningún test todavía.",
+      "teach": "Entornos virtuales\nCada laboratorio tiene su propio entorno, la carpeta .venv, con las versiones fijadas en requirements.txt.\nAsí un proyecto no rompe a otro, y lo que funciona hoy funciona mañana.\nSi ronin_check dice que falta un paquete, lo has ejecutado con el Python del sistema y no con el del entorno.\nevidence import trae aquí el resultado de los tests: el Dojo no ve tu ordenador, solo tus evidencias.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: los proyectos de IA (Inteligencia Artificial) dependen de muchas librerías; sin versiones fijadas, un resultado no se puede repetir.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "P0-01"
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "P0-01"
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.ran",
+            "where": {
+              "ok": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Escribe py, pon print(\"hola\") en el editor y escribe py run.",
         "Desde forja/labs/P0-01_servicio_llm: python -m venv .venv · .\\.venv\\Scripts\\python.exe -m pip install -r requirements.txt",
         ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py P0-01 · y aquí: evidence import"
       ],
@@ -76,22 +89,85 @@
     },
     {
       "id": "o2",
-      "text": "Implementa las cuatro funciones de servicio.py hasta que pasen los 17 tests, y trae la evidencia.",
-      "teach": "El contrato con Ollama\nOllama es el programa que sirve el modelo en tu ordenador. Tu servicio le habla por HTTP (HyperText Transfer Protocol): le envía un JSON y recibe otro.\nLee ollama_simulado() en los tests: es exactamente lo que envía y recibe Ollama.\nTres detalles: los tiempos llegan en nanosegundos; stream debe ser False para recibir una sola respuesta; y un error HTTP (por ejemplo, el modelo no está descargado) se convierte en excepción con raise_for_status().\nPor qué: cualquier API de un LLM, local o en la nube, usa este mismo contrato de petición y respuesta.",
+      "text": "En el Dojo: abre el editor con py, programa construir_peticion, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las cuatro funciones de servicio.py hasta que pasen los 17 tests, y trae la evidencia.",
+      "teach": "El contrato con Ollama\nOllama es el programa que sirve el modelo en tu ordenador. Tu servicio le habla por HTTP (HyperText Transfer Protocol): le envía un JSON y recibe otro.\nLee ollama_simulado() en los tests: es exactamente lo que envía y recibe Ollama.\nTres detalles: los tiempos llegan en nanosegundos; stream debe ser False para recibir una sola respuesta; y un error HTTP (por ejemplo, el modelo no está descargado) se convierte en excepción con raise_for_status().\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: cualquier API de un LLM, local o en la nube, usa este mismo contrato de petición y respuesta.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "P0-01",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "P0-01",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "P0-01-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "La temperatura va dentro de options, con la clave «temperature».",
+        "La línea queda así: \"options\": {\"temperature\": temperatura},",
         "Orden: validar_pregunta → construir_peticion → extraer_respuesta → preguntar.",
         "La semilla 0 es una semilla válida: comprueba «is not None», no la verdad del valor.",
         "preguntar: r = await cliente.post(\"/api/chat\", json=...) · r.raise_for_status() · extraer_respuesta(r.json())"
       ],
-      "on_complete": "Tu servicio ya funciona contra el Ollama simulado. Ahora, contra el real."
+      "on_complete": "Es el JSON que tu servicio manda a Ollama: con él controlas el modelo desde tu código. Tu servicio ya funciona contra el Ollama simulado. Ahora, contra el real.",
+      "py_exercise": {
+        "id": "P0-01-forja",
+        "title": "construir_peticion(pregunta, modelo, temperatura): el cuerpo para Ollama",
+        "function": "construir_peticion",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef construir_peticion(pregunta, modelo, temperatura):\n    return {\n        \"model\": modelo,\n        \"stream\": False,\n        \"messages\": [{\"role\": \"user\", \"content\": pregunta}],\n        \"options\": {},   # ← cambia esta línea: la temperatura va aquí\n    }\n\nprint(construir_peticion(\"¿Qué es el temple?\", \"llama3.2:1b\", 0.8))\n",
+        "cases": [
+          {
+            "args": [
+              "hola",
+              "llama3.2:1b",
+              0.8
+            ],
+            "expected": {
+              "model": "llama3.2:1b",
+              "stream": false,
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "hola"
+                }
+              ],
+              "options": {
+                "temperature": 0.8
+              }
+            }
+          },
+          {
+            "args": [
+              "¿temple?",
+              "m",
+              0
+            ],
+            "expected": {
+              "model": "m",
+              "stream": false,
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "¿temple?"
+                }
+              ],
+              "options": {
+                "temperature": 0
+              }
+            }
+          }
+        ]
+      }
     },
     {
       "id": "o3",

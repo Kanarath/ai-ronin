@@ -65,22 +65,78 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Implementa la clase LoRA y las seis funciones de lora.py hasta que pasen los 15 tests y trae la evidencia.",
-      "teach": "nn.Module y nn.Parameter\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E1-03_lora_lente/README.md e implementa lora.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUn nn.Module registra solo los nn.Parameter que asignas como atributos (self.A = nn.Parameter(...)) y los submódulos (self.base = base). Así modelo.parameters() los encuentra y el optimizador puede moverlos. Un tensor normal asignado como atributo no se registra y no se entrenaría.\nPor qué: es el error más típico al escribir un adaptador: el código corre, la pérdida no baja y nadie avisa.",
+      "text": "En el Dojo: abre el editor con py, programa parametros_lora, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa la clase LoRA y las seis funciones de lora.py hasta que pasen los 15 tests y trae la evidencia.",
+      "teach": "nn.Module y nn.Parameter\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E1-03_lora_lente/README.md e implementa lora.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUn nn.Module registra solo los nn.Parameter que asignas como atributos (self.A = nn.Parameter(...)) y los submódulos (self.base = base). Así modelo.parameters() los encuentra y el optimizador puede moverlos. Un tensor normal asignado como atributo no se registra y no se entrenaría.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: es el error más típico al escribir un adaptador: el código corre, la pérdida no baja y nadie avisa.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "E1-03",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "E1-03",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "E1-03-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "LoRA entrena dos matrices pequeñas: rango·n pesos más m·rango pesos.",
+        "La línea queda así: lora = rango * n + m * rango",
         "Orden: LoRA.__init__ → LoRA.forward → fusionar → contar_parametros → aplicar_lora → perdida_lm → entrenar → lente_logit.",
         "aplicar_lora: for nombre, m in list(modelo.named_modules()): si isinstance(m, nn.Linear) y nombre.rpartition(\".\")[2] in objetivos → padre, _, hijo = nombre.rpartition(\".\") · setattr(modelo.get_submodule(padre), hijo, LoRA(m, rango, alfa, generador)).",
         "Desde forja/labs/E1-03_lora_lente: ..\\E1-01_generacion\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py E1-03 · y aquí: evidence import"
       ],
-      "on_complete": "Tu adaptador y tu lente funcionan con el modelo diminuto. Ahora, con SmolLM2."
+      "on_complete": "Por eso LoRA ajusta modelos grandes con poca memoria: entrena una fracción mínima. Tu adaptador y tu lente funcionan con el modelo diminuto. Ahora, con SmolLM2.",
+      "py_exercise": {
+        "id": "E1-03-forja",
+        "title": "parametros_lora(n, m, rango): lo que se entrena con LoRA",
+        "function": "parametros_lora",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef parametros_lora(n, m, rango):\n    completa = n * m\n    lora = 0   # ← cambia esta línea: A es rango × n y B es m × rango\n    return lora, completa\n\nprint(parametros_lora(4096, 4096, 8))   # (65536, 16777216)\n",
+        "cases": [
+          {
+            "args": [
+              4096,
+              4096,
+              8
+            ],
+            "expected": [
+              65536,
+              16777216
+            ]
+          },
+          {
+            "args": [
+              10,
+              20,
+              1
+            ],
+            "expected": [
+              30,
+              200
+            ]
+          },
+          {
+            "args": [
+              768,
+              3072,
+              16
+            ],
+            "expected": [
+              61440,
+              2359296
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "c1",

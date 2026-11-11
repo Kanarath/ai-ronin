@@ -51,22 +51,63 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Implementa las siete funciones de multimodal.py hasta que pasen los 18 tests y trae la evidencia.",
-      "teach": "Una máquina de estados\nEl contenido de un PDF (Portable Document Format) es una lista de operadores: unos cambian el estado (color, modo de pintado, tamaño de letra) y otros pintan texto con el estado de ese momento.\nq guarda el estado en una pila y Q lo recupera. BT y ET abren y cierran un bloque de texto, pero no reinician el color ni el modo.\nPor qué: para saber si un texto se ve, hay que seguir el estado como lo hace el visor.",
+      "text": "En el Dojo: abre el editor con py, programa quitar_invisibles, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las siete funciones de multimodal.py hasta que pasen los 18 tests y trae la evidencia.",
+      "teach": "Una máquina de estados\nEl contenido de un PDF (Portable Document Format) es una lista de operadores: unos cambian el estado (color, modo de pintado, tamaño de letra) y otros pintan texto con el estado de ese momento.\nq guarda el estado en una pila y Q lo recupera. BT y ET abren y cierran un bloque de texto, pero no reinician el color ni el modo.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: para saber si un texto se ve, hay que seguir el estado como lo hace el visor.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "A2-05",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "A2-05",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "A2-05-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "ord(c) da el código de cada carácter: quédate solo con los que NO están en INVISIBLES.",
+        "La línea queda así: return \"\".join(c for c in texto if ord(c) not in INVISIBLES)",
         "Orden: caracteres_invisibles → quitar_invisibles → revelar_etiquetas → normalizar_unicode → oculto_por_estilo → texto_visible_html → texto_visible_pdf.",
         "Desde forja/labs/A2-05_multimodal: .\\.venv\\Scripts\\python.exe -m unittest -v test_multimodal (crea el entorno como en A2-04).",
         ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py A2-05 · y aquí: evidence import"
       ],
-      "on_complete": "Tu extracción ya mira lo que se pinta. Ahora, a medir qué cambia."
+      "on_complete": "Así se limpia un documento antes de indexarlo: las instrucciones escondidas pierden su disfraz. Tu extracción ya mira lo que se pinta. Ahora, a medir qué cambia.",
+      "py_exercise": {
+        "id": "A2-05-forja",
+        "title": "quitar_invisibles(texto): fuera los caracteres que no se ven",
+        "function": "quitar_invisibles",
+        "starter": "# Completa la línea marcada y compruébala con py check.\nINVISIBLES = [0x200B, 0x200C, 0x200D, 0x2060, 0xFEFF]\n\ndef quitar_invisibles(texto):\n    return \"\".join(c for c in texto if True)   # ← cambia esta línea: quita los de la lista\n\nprint(quitar_invisibles(\"ho\\u200bla\"))   # hola\n",
+        "cases": [
+          {
+            "args": [
+              "ho​la"
+            ],
+            "expected": "hola"
+          },
+          {
+            "args": [
+              "sin nada"
+            ],
+            "expected": "sin nada"
+          },
+          {
+            "args": [
+              "﻿a⁠b‍c"
+            ],
+            "expected": "abc"
+          }
+        ]
+      }
     },
     {
       "id": "o2",

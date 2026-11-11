@@ -54,22 +54,79 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Implementa las ocho funciones de agente.py hasta que pasen los 28 tests y trae la evidencia.",
-      "teach": "La puerta fuera del modelo\nTrabajas fuera del Dojo, en forja/labs/A3-04_agente: el README lo explica todo.\nautorizar se ejecuta entre lo que el modelo pide y lo que la trastienda hace.\nComprueba, en orden: que la herramienta existe, que el rol puede usarla, que los argumentos cumplen el esquema JSON y, si hace falta, que un humano lo aprueba.\nNada de eso depende de lo que el modelo haya leído en la nota del cliente.\nPor qué: es la misma puerta que lleva un agente en producción, en el código que ejecuta las llamadas.",
+      "text": "En el Dojo: abre el editor con py, programa fugas, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las ocho funciones de agente.py hasta que pasen los 28 tests y trae la evidencia.",
+      "teach": "La puerta fuera del modelo\nTrabajas fuera del Dojo, en forja/labs/A3-04_agente: el README lo explica todo.\nautorizar se ejecuta entre lo que el modelo pide y lo que la trastienda hace.\nComprueba, en orden: que la herramienta existe, que el rol puede usarla, que los argumentos cumplen el esquema JSON y, si hace falta, que un humano lo aprueba.\nNada de eso depende de lo que el modelo haya leído en la nota del cliente.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: es la misma puerta que lleva un agente en producción, en el código que ejecuta las llamadas.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "A3-04",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "A3-04",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "A3-04-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Recorre ajenos y quédate con los que están dentro de t (en minúsculas).",
+        "La línea queda así: return [d for d in ajenos if d.lower() in t]",
         "Orden: validar_argumentos → permitido → necesita_aprobacion → autorizar → marcar_no_confiable → comprobar_limites → detectar_exfiltracion → recortar_memoria.",
         "Desde forja/labs/A3-04_agente: .\\.venv\\Scripts\\python.exe -m unittest -v test_agente (crea el entorno como en P0-01).",
         ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py A3-04 · y aquí: evidence import (ronin_check genera la evidencia cuando pasan los tests)."
       ],
-      "on_complete": "Tus controles funcionan con un modelo que sigue un guion. Ahora, con uno que decide solo."
+      "on_complete": "Es el detector de exfiltración: se ejecuta FUERA del modelo, antes de enviar el correo. Tus controles funcionan con un modelo que sigue un guion. Ahora, con uno que decide solo.",
+      "py_exercise": {
+        "id": "A3-04-forja",
+        "title": "fugas(texto, ajenos): datos de otros clientes en un correo del agente",
+        "function": "fugas",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef fugas(texto, ajenos):\n    t = texto.lower()\n    return []   # ← cambia esta línea: los datos de ajenos que aparecen en t\n\nprint(fugas(\"Hola, el DNI de Ana es 1234X\", [\"1234x\", \"ana@x.com\"]))   # ['1234x']\n",
+        "cases": [
+          {
+            "args": [
+              "Hola, el DNI de Ana es 1234X",
+              [
+                "1234x",
+                "ana@x.com"
+              ]
+            ],
+            "expected": [
+              "1234x"
+            ]
+          },
+          {
+            "args": [
+              "nada raro",
+              [
+                "1234x"
+              ]
+            ],
+            "expected": []
+          },
+          {
+            "args": [
+              "ANA@X.COM y 1234X",
+              [
+                "1234x",
+                "ana@x.com"
+              ]
+            ],
+            "expected": [
+              "1234x",
+              "ana@x.com"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "o2",

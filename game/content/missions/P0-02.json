@@ -51,16 +51,29 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Prepara el entorno de los ejercicios con NumPy (forja/ejercicios: python -m venv .venv y pip install -r requirements.txt), ejecuta ronin_check para P0-02 con ese Python y trae la primera evidencia, aunque no pase ningún test todavía.",
-      "teach": "Versiones fijadas\nrequirements.txt dice numpy==2.5.4, no «numpy» a secas.\nUna versión nueva puede cambiar resultados o romper código; fijarla hace que lo que pasa hoy pase mañana. El primer test lo comprueba.\nEl entorno .venv de forja/ejercicios vale también para P0-03.\nPor qué: un modelo de IA (Inteligencia Artificial) que no se puede reproducir no se puede auditar.",
+      "text": "En el Dojo: abre el editor con py, escribe por ejemplo print(\"hola\") y ejecútalo con py run. Extra opcional: prepara el entorno de los ejercicios con NumPy (forja/ejercicios: python -m venv .venv y pip install -r requirements.txt), ejecuta ronin_check para P0-02 con ese Python y trae la primera evidencia, aunque no pase ningún test todavía.",
+      "teach": "Versiones fijadas\nrequirements.txt dice numpy==2.5.4, no «numpy» a secas.\nUna versión nueva puede cambiar resultados o romper código; fijarla hace que lo que pasa hoy pase mañana. El primer test lo comprueba.\nEl entorno .venv de forja/ejercicios vale también para P0-03.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: un modelo de IA (Inteligencia Artificial) que no se puede reproducir no se puede auditar.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "P0-02"
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "P0-02"
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.ran",
+            "where": {
+              "ok": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Escribe py, pon print(\"hola\") en el editor y escribe py run.",
         "Desde forja/ejercicios: python -m venv .venv · .\\.venv\\Scripts\\python.exe -m pip install -r requirements.txt",
         ".\\.venv\\Scripts\\python.exe -m ronin_check P0-02 · y aquí: evidence import"
       ],
@@ -68,22 +81,88 @@
     },
     {
       "id": "o2",
-      "text": "Implementa P0_02_logistica.py hasta que pasen los 10 tests y trae la evidencia.",
-      "teach": "Una clase es un molde\nUna CLASE agrupa datos (atributos: self.pesos, self.lr) y las funciones que los usan (métodos: ajustar, predecir).\nVECTORIZAR es cambiar un bucle de Python por una operación de NumPy sobre toda la matriz: X @ w hace todos los productos de golpe.\nOrden: estandarizar y ampliar_cuadrados → la clase pura → la clase NumPy → cronometrar.\ntest_mismo_modelo_que_la_pura es tu red de seguridad.\nPor qué: es el contrato fit/predict de scikit-learn, y las cuentas en matrices son lo que acelera cualquier red neuronal.",
+      "text": "En el Dojo: abre el editor con py, programa probabilidad, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa P0_02_logistica.py hasta que pasen los 10 tests y trae la evidencia.",
+      "teach": "Una clase es un molde\nUna CLASE agrupa datos (atributos: self.pesos, self.lr) y las funciones que los usan (métodos: ajustar, predecir).\nVECTORIZAR es cambiar un bucle de Python por una operación de NumPy sobre toda la matriz: X @ w hace todos los productos de golpe.\nOrden: estandarizar y ampliar_cuadrados → la clase pura → la clase NumPy → cronometrar.\ntest_mismo_modelo_que_la_pura es tu red de seguridad.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: es el contrato fit/predict de scikit-learn, y las cuentas en matrices son lo que acelera cualquier red neuronal.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "P0-02",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "P0-02",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "P0-02-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Dentro del bucle, z tiene que ir acumulando xi · wi.",
+        "La línea queda así: z = z + xi * wi",
         "self es el propio objeto: dentro de un método, los atributos se leen y escriben con self.nombre.",
         "En la clase pura, calcula todas las p antes de tocar los pesos: el gradiente usa los pesos de ANTES de la actualización.",
         "NumPy: e = self.probabilidades(X) - y · self.pesos = self.pesos - self.lr * (X.T @ e) / n"
       ],
-      "on_complete": "Dos implementaciones, un mismo modelo. Ahora, úsalo: ¿cuánto acierta con los cuadrados?"
+      "on_complete": "Es una neurona con sigmoide: P0-02 la escribe con NumPy para miles de filas a la vez. Dos implementaciones, un mismo modelo. Ahora, úsalo: ¿cuánto acierta con los cuadrados?",
+      "py_exercise": {
+        "id": "P0-02-forja",
+        "title": "probabilidad(x, pesos, sesgo): la regresión logística de una fila",
+        "function": "probabilidad",
+        "starter": "# Completa la línea marcada y compruébala con py check.\nimport math\n\ndef probabilidad(x, pesos, sesgo):\n    z = sesgo\n    for xi, wi in zip(x, pesos):\n        z = z   # ← cambia esta línea: suma cada entrada por su peso\n    return 1 / (1 + math.exp(-z))\n\nprint(probabilidad([1.0, 2.0], [0.5, -0.25], 0.1))   # unos 0.525\n",
+        "cases": [
+          {
+            "args": [
+              [
+                1.0,
+                2.0
+              ],
+              [
+                0.5,
+                -0.25
+              ],
+              0.1
+            ],
+            "expected": 0.524979,
+            "tolerance": 0.0001
+          },
+          {
+            "args": [
+              [
+                0,
+                0
+              ],
+              [
+                3,
+                3
+              ],
+              0
+            ],
+            "expected": 0.5,
+            "tolerance": 0.0001
+          },
+          {
+            "args": [
+              [
+                2.0
+              ],
+              [
+                1.5
+              ],
+              -1.0
+            ],
+            "expected": 0.880797,
+            "tolerance": 0.0001
+          }
+        ]
+      }
     },
     {
       "id": "o3",

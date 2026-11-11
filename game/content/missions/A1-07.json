@@ -51,22 +51,85 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Implementa las ocho funciones de guardian.py hasta que pasen los 19 tests y trae la evidencia.",
-      "teach": "Logaritmos para no llegar a cero\nMultiplicar cien probabilidades de 0,01 da 10 elevado a −200, y eso en el ordenador ya es casi cero. Por eso Naive Bayes suma logaritmos.\nAun así, la suma crece con la longitud del mensaje. Aquí se promedia por fragmento para que el umbral sirva.\nEl resultado es una puntuación, no una probabilidad calibrada.\nPor qué: los clasificadores reales también trabajan en logaritmos para no perder precisión.",
+      "text": "En el Dojo: abre el editor con py, programa matriz_confusion, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las ocho funciones de guardian.py hasta que pasen los 19 tests y trae la evidencia.",
+      "teach": "Logaritmos para no llegar a cero\nMultiplicar cien probabilidades de 0,01 da 10 elevado a −200, y eso en el ordenador ya es casi cero. Por eso Naive Bayes suma logaritmos.\nAun así, la suma crece con la longitud del mensaje. Aquí se promedia por fragmento para que el umbral sirva.\nEl resultado es una puntuación, no una probabilidad calibrada.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: los clasificadores reales también trabajan en logaritmos para no perder precisión.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "A1-07",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "A1-07",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "A1-07-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Falta el caso e == 1 y p == 0: un ataque que el guardián deja pasar.",
+        "Añade: else: m[\"fn\"] += 1",
         "Orden: ngramas → entrenar → probabilidad → matriz_confusion → tasas → curva_umbral → elegir_umbral → con_separadores.",
         "Desde forja/labs/A1-07_guardian: .\\.venv\\Scripts\\python.exe -m unittest -v test_guardian (crea el entorno como en A1-05).",
         ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py A1-07 · y aquí: evidence import"
       ],
-      "on_complete": "Tienes un guardián entrenado. Ahora toca ver qué deja pasar y a quién bloquea."
+      "on_complete": "Con estos cuatro números se calculan las tasas con las que eliges el umbral del guardián. Tienes un guardián entrenado. Ahora toca ver qué deja pasar y a quién bloquea.",
+      "py_exercise": {
+        "id": "A1-07-forja",
+        "title": "matriz_confusion(etiquetas, predicciones): vp, fp, vn y fn",
+        "function": "matriz_confusion",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef matriz_confusion(etiquetas, predicciones):\n    m = {\"vp\": 0, \"fp\": 0, \"vn\": 0, \"fn\": 0}\n    for e, p in zip(etiquetas, predicciones):\n        if e == 1 and p == 1:\n            m[\"vp\"] += 1\n        elif e == 0 and p == 1:\n            m[\"fp\"] += 1\n        elif e == 0 and p == 0:\n            m[\"vn\"] += 1\n        # ← añade aquí el último caso: un ataque que se escapa\n    return m\n\nprint(matriz_confusion([1, 0, 1, 0], [1, 1, 0, 0]))\n",
+        "cases": [
+          {
+            "args": [
+              [
+                1,
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                1,
+                0,
+                0
+              ]
+            ],
+            "expected": {
+              "vp": 1,
+              "fp": 1,
+              "vn": 1,
+              "fn": 1
+            }
+          },
+          {
+            "args": [
+              [
+                1,
+                1
+              ],
+              [
+                0,
+                0
+              ]
+            ],
+            "expected": {
+              "vp": 0,
+              "fp": 0,
+              "vn": 0,
+              "fn": 2
+            }
+          }
+        ]
+      }
     },
     {
       "id": "o2",

@@ -212,22 +212,63 @@
     },
     {
       "id": "o1",
-      "text": "Implementa las siete piezas de carga.py hasta que pasen los 25 tests y trae la evidencia.",
-      "teach": "La caché también es una frontera\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E4-01_carga/README.md e implementa carga.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUna respuesta en caché se sirve a quien haga la misma pregunta. Si es pública (el horario de la forja), compartirla ahorra trabajo; si es del usuario (su pedido), es una fuga entre clientes. Por eso clave_cache lleva un ámbito: el usuario cuando la respuesta es suya y \"publico\" cuando no.\nPor qué: es un fallo real de servicios con caché: un cliente recibe la respuesta de otro.",
+      "text": "En el Dojo: abre el editor con py, programa normalizar_pregunta, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las siete piezas de carga.py hasta que pasen los 25 tests y trae la evidencia.",
+      "teach": "La caché también es una frontera\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E4-01_carga/README.md e implementa carga.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUna respuesta en caché se sirve a quien haga la misma pregunta. Si es pública (el horario de la forja), compartirla ahorra trabajo; si es del usuario (su pedido), es una fuga entre clientes. Por eso clave_cache lleva un ámbito: el usuario cuando la respuesta es suya y \"publico\" cuando no.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: es un fallo real de servicios con caché: un cliente recibe la respuesta de otro.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "E4-01",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "E4-01",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "E4-01-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "split() sin argumentos corta por cualquier cantidad de espacios; luego vuelve a unir con uno.",
+        "La línea queda así: return \" \".join(t.split())",
         "Orden: percentil → resumen_latencias → CuboDeTokens → normalizar_pregunta → clave_cache → CacheRespuestas → atender.",
         "Desde forja/labs/E4-01_carga: .\\.venv\\Scripts\\python.exe -m unittest -v test_carga (crea el entorno como en P0-01).",
         ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py E4-01 · y aquí: evidence import"
       ],
-      "on_complete": "Tu tubería funciona con un modelo simulado que tarda lo que dice el test. Ahora, con uno que tarda lo que tarda tu CPU."
+      "on_complete": "Así variantes triviales de la misma pregunta comparten entrada en la caché. Tu tubería funciona con un modelo simulado que tarda lo que dice el test. Ahora, con uno que tarda lo que tarda tu CPU.",
+      "py_exercise": {
+        "id": "E4-01-forja",
+        "title": "normalizar_pregunta(texto): la clave común de la caché",
+        "function": "normalizar_pregunta",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef normalizar_pregunta(texto):\n    t = texto.lower().strip(\" ¿?¡!.\")\n    return t   # ← cambia esta línea: deja un solo espacio entre palabras\n\nprint(normalizar_pregunta(\"  ¿Qué  ACEITE uso?  \"))   # qué aceite uso\n",
+        "cases": [
+          {
+            "args": [
+              "  ¿Qué  ACEITE uso?  "
+            ],
+            "expected": "qué aceite uso"
+          },
+          {
+            "args": [
+              "hola"
+            ],
+            "expected": "hola"
+          },
+          {
+            "args": [
+              "¡Precio   de la katana!"
+            ],
+            "expected": "precio de la katana"
+          }
+        ]
+      }
     },
     {
       "id": "c1",

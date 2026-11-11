@@ -37,38 +37,109 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Ejecuta ronin_check para P0-04 (no necesita NumPy: vale el Python del sistema) y trae la primera evidencia.",
-      "teach": "Sin dependencias\nEste ejercicio solo usa la librería estándar de Python: vale el Python del sistema.\nronin_check P0-04 ejecuta los 12 tests; evidence import trae el resultado.\nPor qué: tratar texto bien no necesita librerías especiales, pero sí saber cómo se guarda.",
+      "text": "En el Dojo: abre el editor con py, escribe por ejemplo print(\"hola\") y ejecútalo con py run. Extra opcional: ejecuta ronin_check para P0-04 (no necesita NumPy: vale el Python del sistema) y trae la primera evidencia.",
+      "teach": "Sin dependencias\nEste ejercicio solo usa la librería estándar de Python: vale el Python del sistema.\nronin_check P0-04 ejecuta los 12 tests; evidence import trae el resultado.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: tratar texto bien no necesita librerías especiales, pero sí saber cómo se guarda.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "P0-04"
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "P0-04"
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.ran",
+            "where": {
+              "ok": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Escribe py, pon print(\"hola\") en el editor y escribe py run.",
         "Desde forja/ejercicios: python -m ronin_check P0-04 · y aquí: evidence import"
       ],
       "on_complete": "12 tests. Léelos: los textos están escritos con escapes \\u para que veas cada punto de código."
     },
     {
       "id": "o2",
-      "text": "Implementa las cinco funciones de P0_04_unicode.py hasta que pasen los 12 tests y trae la evidencia.",
-      "teach": "Un generador por paso\nUna función con yield es un GENERADOR: entrega valores de uno en uno cuando alguien los pide, sin cargarlo todo en memoria.\ndecodificar convierte bytes en texto; lineas, texto en líneas; tokens, líneas en tokens. Cada uno recibe un iterable y hace yield: no devuelvas listas.\nPrueba cada pieza por separado con list(...) en el intérprete antes de encadenarlas.\nPor qué: así se leen los corpus de entrenamiento de varios gigas, y así llega la respuesta de un LLM (Large Language Model) en streaming.",
+      "text": "En el Dojo: abre el editor con py, programa lineas, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las cinco funciones de P0_04_unicode.py hasta que pasen los 12 tests y trae la evidencia.",
+      "teach": "Un generador por paso\nUna función con yield es un GENERADOR: entrega valores de uno en uno cuando alguien los pide, sin cargarlo todo en memoria.\ndecodificar convierte bytes en texto; lineas, texto en líneas; tokens, líneas en tokens. Cada uno recibe un iterable y hace yield: no devuelvas listas.\nPrueba cada pieza por separado con list(...) en el intérprete antes de encadenarlas.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: así se leen los corpus de entrenamiento de varios gigas, y así llega la respuesta de un LLM (Large Language Model) en streaming.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "P0-04",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "P0-04",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "P0-04-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Un modelo en streaming manda el texto a trozos: primero hay que juntarlos.",
+        "La línea queda así: texto = \"\".join(trozos)",
         "Si un test dice que no es un generador, es que tu función usa return con una lista en lugar de yield.",
         "decodificar: crea el decodificador UNA vez, fuera del bucle; si lo creas dentro, olvida los bytes a medias.",
         "lineas: while \"\\n\" in bufer: linea, bufer = bufer.split(\"\\n\", 1) · yield linea.removesuffix(\"\\r\")"
       ],
-      "on_complete": "La tubería procesa el corpus en trozos de 7 bytes y da exactamente lo mismo que leerlo entero."
+      "on_complete": "Así se reconstruyen las líneas de una respuesta que llega a trozos, como en P0-04 y P0-05. La tubería procesa el corpus en trozos de 7 bytes y da exactamente lo mismo que leerlo entero.",
+      "py_exercise": {
+        "id": "P0-04-forja",
+        "title": "lineas(trozos): líneas completas a partir de trozos de texto",
+        "function": "lineas",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef lineas(trozos):\n    texto = \"\"   # ← cambia esta línea: junta todos los trozos\n    partes = texto.split(\"\\n\")\n    return [p for p in partes if p != \"\"]\n\nprint(lineas([\"hola mun\", \"do\\nadiós\"]))   # ['hola mundo', 'adiós']\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "hola mun",
+                "do\nadiós"
+              ]
+            ],
+            "expected": [
+              "hola mundo",
+              "adiós"
+            ]
+          },
+          {
+            "args": [
+              [
+                "a\n",
+                "b\nc"
+              ]
+            ],
+            "expected": [
+              "a",
+              "b",
+              "c"
+            ]
+          },
+          {
+            "args": [
+              [
+                "sin salto"
+              ]
+            ],
+            "expected": [
+              "sin salto"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "o3",

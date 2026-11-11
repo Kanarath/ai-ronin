@@ -61,22 +61,85 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Implementa las siete funciones de servidor.py hasta que pasen los 28 tests y trae la evidencia.",
-      "teach": "Antes del servidor o dentro de él\nTrabajas fuera del Dojo, en forja/labs/A4-04_mcp: el README lo explica todo.\nLa revisión de descripciones y la huella (pinning) viven en el HOST: si funcionan, el modelo no llega a ver la instrucción envenenada.\nLa validación de argumentos, los scopes, el saneado de rutas y la audiencia viven en el SERVIDOR: la llamada llega, pero el servidor la rechaza.\nSanear rutas es impedir que un argumento como «../../secretos» saque a la herramienta de su carpeta (path traversal).\nPor qué: un servidor MCP real necesita las dos capas.",
+      "text": "En el Dojo: abre el editor con py, programa scopes_que_faltan, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las siete funciones de servidor.py hasta que pasen los 28 tests y trae la evidencia.",
+      "teach": "Antes del servidor o dentro de él\nTrabajas fuera del Dojo, en forja/labs/A4-04_mcp: el README lo explica todo.\nLa revisión de descripciones y la huella (pinning) viven en el HOST: si funcionan, el modelo no llega a ver la instrucción envenenada.\nLa validación de argumentos, los scopes, el saneado de rutas y la audiencia viven en el SERVIDOR: la llamada llega, pero el servidor la rechaza.\nSanear rutas es impedir que un argumento como «../../secretos» saque a la herramienta de su carpeta (path traversal).\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: un servidor MCP real necesita las dos capas.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "A4-04",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "A4-04",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "A4-04-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Quédate con cada scope de requeridos que no esté en concedidos.",
+        "La línea queda así: faltan = [s for s in requeridos if s not in concedidos]",
         "Orden sugerido: validar_argumentos → scopes_que_faltan → ruta_segura → huella_definicion → revisar_definiciones → senales_sospechosas → audiencia_valida.",
         "Desde forja/labs/A4-04_mcp: .\\.venv\\Scripts\\python.exe -m unittest -v test_servidor (crea el entorno como en P0-01, con pip install -r requirements.txt).",
         ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py A4-04 · y aquí: evidence import"
       ],
-      "on_complete": "Tu servidor MCP valida, autoriza y sanea. Ahora mide cuánto protege cada defensa."
+      "on_complete": "El servidor MCP comprueba los permisos del token él mismo, sin fiarse del cliente. Tu servidor MCP valida, autoriza y sanea. Ahora mide cuánto protege cada defensa.",
+      "py_exercise": {
+        "id": "A4-04-forja",
+        "title": "scopes_que_faltan(concedidos, requeridos): lo que el token no cubre",
+        "function": "scopes_que_faltan",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef scopes_que_faltan(concedidos, requeridos):\n    faltan = []   # ← cambia esta línea: los requeridos que no están en concedidos\n    return sorted(set(faltan))\n\nprint(scopes_que_faltan([\"leer\"], [\"leer\", \"escribir\"]))   # ['escribir']\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "leer"
+              ],
+              [
+                "leer",
+                "escribir"
+              ]
+            ],
+            "expected": [
+              "escribir"
+            ]
+          },
+          {
+            "args": [
+              [
+                "a",
+                "b"
+              ],
+              [
+                "b"
+              ]
+            ],
+            "expected": []
+          },
+          {
+            "args": [
+              [],
+              [
+                "z",
+                "a",
+                "z"
+              ]
+            ],
+            "expected": [
+              "a",
+              "z"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "o2",

@@ -46,16 +46,29 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Ejecuta ronin_check para P0-05 y trae la primera evidencia.",
-      "teach": "Arrancar el ejercicio\nronin_check P0-05 ejecuta los 9 tests y escribe la evidencia; evidence import la trae.\nPor qué: vas a construir la pieza que hace que un LLM (Large Language Model) «escriba».",
+      "text": "En el Dojo: abre el editor con py, escribe por ejemplo print(\"hola\") y ejecútalo con py run. Extra opcional: ejecuta ronin_check para P0-05 y trae la primera evidencia.",
+      "teach": "Arrancar el ejercicio\nronin_check P0-05 ejecuta los 9 tests y escribe la evidencia; evidence import la trae.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: vas a construir la pieza que hace que un LLM (Large Language Model) «escriba».",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "P0-05"
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "P0-05"
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.ran",
+            "where": {
+              "ok": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Escribe py, pon print(\"hola\") en el editor y escribe py run.",
         "Desde forja/ejercicios: python -m ronin_check P0-05 · y aquí: evidence import"
       ],
       "on_complete": "9 tests esperando. Antes de escribirlos, practica aquí el sorteo con pesos."
@@ -168,22 +181,71 @@
     },
     {
       "id": "o2",
-      "text": "Implementa las cinco funciones de P0_05_generacion.py hasta que pasen los 9 tests y trae la evidencia.",
-      "teach": "Generadores que paran\nDentro de un generador, return (sin valor) termina la secuencia y el for que lo recorre acaba.\nEn generar hay tres salidas: no hay continuación, sale el token de fin (que SÍ se entrega antes de parar) o se llega a max_tokens.\nLee test_es_un_generador_perezoso: comprueba en qué momento se llama al modelo.\nPor qué: si el usuario pulsa «detener», el generador deja de pedir tokens y el modelo deja de trabajar.",
+      "text": "En el Dojo: abre el editor con py, programa frecuencias, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las cinco funciones de P0_05_generacion.py hasta que pasen los 9 tests y trae la evidencia.",
+      "teach": "Generadores que paran\nDentro de un generador, return (sin valor) termina la secuencia y el for que lo recorre acaba.\nEn generar hay tres salidas: no hay continuación, sale el token de fin (que SÍ se entrega antes de parar) o se llega a max_tokens.\nLee test_es_un_generador_perezoso: comprueba en qué momento se llama al modelo.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: si el usuario pulsa «detener», el generador deja de pedir tokens y el modelo deja de trabajar.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "P0-05",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "P0-05",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "P0-05-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Divide las veces de cada token entre el número total de muestras: len(muestras).",
+        "La línea queda así: return {t: cuenta[t] / len(muestras) for t in cuenta}",
         "muestrear: una sola llamada a rng.random(), ANTES del bucle.",
         "generar: for _ in range(max_tokens): dist = siguiente(actual) · if not dist: return · actual = muestrear(dist, rng) · yield actual · if actual == fin: return",
         "con_presupuesto: lleva la cuenta de bytes usados con len(pieza.encode(\"utf-8\")) y haz return en cuanto la siguiente no quepa."
       ],
-      "on_complete": "Ejecuta python P0_05_generacion.py: tu generador escribe en pantalla token a token."
+      "on_complete": "Así compruebas que el muestreo respeta las probabilidades del modelo. Ejecuta python P0_05_generacion.py: tu generador escribe en pantalla token a token.",
+      "py_exercise": {
+        "id": "P0-05-forja",
+        "title": "frecuencias(muestras): cuántas veces sale cada token, en proporción",
+        "function": "frecuencias",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef frecuencias(muestras):\n    cuenta = {}\n    for t in muestras:\n        cuenta[t] = cuenta.get(t, 0) + 1\n    return {t: 0 for t in cuenta}   # ← cambia esta línea: veces / total\n\nprint(frecuencias([\"a\", \"b\", \"a\", \"a\"]))   # {'a': 0.75, 'b': 0.25}\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "a",
+                "b",
+                "a",
+                "a"
+              ]
+            ],
+            "expected": {
+              "a": 0.75,
+              "b": 0.25
+            },
+            "tolerance": 0.0001
+          },
+          {
+            "args": [
+              [
+                "x"
+              ]
+            ],
+            "expected": {
+              "x": 1.0
+            },
+            "tolerance": 0.0001
+          }
+        ]
+      }
     },
     {
       "id": "o3",

@@ -63,22 +63,78 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Implementa las seis funciones de verificador.py hasta que pasen los 27 tests y trae la evidencia.",
-      "teach": "Una regla, un nombre\nTrabajas fuera del Dojo, en forja/labs/A6-04_cadena: el README lo explica todo.\nCada comprobación devuelve tuplas (regla, detalle), como «hash-distinto» o «secreto-en-arg».\nCon nombres así puedes medir qué control detecta qué, y una CI (Continuous Integration) puede decidir qué reglas bloquean y cuáles solo avisan.\nEmpieza por imports_pickle: el truco está en la memoria del pickle (MEMOIZE y BINGET).\nPor qué: es el tipo de herramienta que corre en la CI de los equipos que publican y despliegan modelos.",
+      "text": "En el Dojo: abre el editor con py, programa sin_fijar, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las seis funciones de verificador.py hasta que pasen los 27 tests y trae la evidencia.",
+      "teach": "Una regla, un nombre\nTrabajas fuera del Dojo, en forja/labs/A6-04_cadena: el README lo explica todo.\nCada comprobación devuelve tuplas (regla, detalle), como «hash-distinto» o «secreto-en-arg».\nCon nombres así puedes medir qué control detecta qué, y una CI (Continuous Integration) puede decidir qué reglas bloquean y cuáles solo avisan.\nEmpieza por imports_pickle: el truco está en la memoria del pickle (MEMOIZE y BINGET).\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: es el tipo de herramienta que corre en la CI de los equipos que publican y despliegan modelos.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "A6-04",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "A6-04",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "A6-04-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Si «==» no está en la línea, añádela a malas.",
+        "Añade: if \"==\" not in l: malas.append(l)",
         "Orden: imports_pickle → revisar_pickle → validar_safetensors → verificar_bom → revisar_requirements → revisar_dockerfile.",
         "Desde forja/labs/A6-04_cadena: py -3.13 -m unittest -v test_verificador (solo biblioteca estándar: no hay nada que instalar).",
         "py -3.13 ..\\..\\ejercicios\\ronin_check.py A6-04 · y aquí: evidence import"
       ],
-      "on_complete": "Tu verificador pasa los tests. Ahora, a ver qué detecta cada control por separado."
+      "on_complete": "Sin versión fijada, cada instalación puede traer un paquete distinto (o uno envenenado). Tu verificador pasa los tests. Ahora, a ver qué detecta cada control por separado.",
+      "py_exercise": {
+        "id": "A6-04-forja",
+        "title": "sin_fijar(lineas): dependencias sin versión fijada",
+        "function": "sin_fijar",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef sin_fijar(lineas):\n    malas = []\n    for l in lineas:\n        l = l.strip()\n        if l == \"\" or l.startswith(\"#\"):\n            continue\n        # ← añade aquí: si la línea no tiene «==», guarda su nombre\n    return malas\n\nprint(sin_fijar([\"numpy==2.5.4\", \"requests\", \"# comentario\"]))   # ['requests']\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "numpy==2.5.4",
+                "requests",
+                "# comentario"
+              ]
+            ],
+            "expected": [
+              "requests"
+            ]
+          },
+          {
+            "args": [
+              [
+                "a==1",
+                "b>=2",
+                "c"
+              ]
+            ],
+            "expected": [
+              "b>=2",
+              "c"
+            ]
+          },
+          {
+            "args": [
+              [
+                "x==1"
+              ]
+            ],
+            "expected": []
+          }
+        ]
+      }
     },
     {
       "id": "o2",

@@ -49,22 +49,89 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Implementa las cinco funciones de extraccion.py hasta que pasen los 13 tests y trae la evidencia.",
-      "teach": "Mínimos cuadrados\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E2-02_extraccion/README.md e implementa extraccion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nnp.linalg.lstsq(A, R) busca la matriz S que hace A·S lo más parecido posible a R. Con tantas ecuaciones independientes como incógnitas, la solución es exacta; con más, es la mejor aproximación; con menos, es una de muchas. Añadir una columna de unos a las consultas permite estimar el sesgo b.\nPor qué: es el robo por ecuaciones de la tarjeta, escrito con una sola función de NumPy.",
+      "text": "En el Dojo: abre el editor con py, programa acuerdo, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las cinco funciones de extraccion.py hasta que pasen los 13 tests y trae la evidencia.",
+      "teach": "Mínimos cuadrados\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E2-02_extraccion/README.md e implementa extraccion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nnp.linalg.lstsq(A, R) busca la matriz S que hace A·S lo más parecido posible a R. Con tantas ecuaciones independientes como incógnitas, la solución es exacta; con más, es la mejor aproximación; con menos, es una de muchas. Añadir una columna de unos a las consultas permite estimar el sesgo b.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: es el robo por ecuaciones de la tarjeta, escrito con una sola función de NumPy.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "E2-02",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "E2-02",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "E2-02-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Recorre las dos listas a la vez con zip y cuenta cuántas veces x == y.",
+        "La línea queda así: iguales = sum(1 for x, y in zip(a, b) if x == y)",
         "Orden: redondear_probabilidades → permitir_consulta → etiquetas_de_respuesta → acuerdo → resolver_ecuaciones.",
         "Desde forja/labs/E2-02_extraccion: crea el entorno (README, sección 1) y ejecuta .\\.venv\\Scripts\\python.exe -m unittest -v test_extraccion",
         ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py E2-02 · y aquí: evidence import"
       ],
-      "on_complete": "Tu ataque funciona contra la API de los tests. Ahora, por HTTP de verdad."
+      "on_complete": "Es la métrica de E2-02: si la copia acuerda en casi todo, el modelo ha sido extraído. Tu ataque funciona contra la API de los tests. Ahora, por HTTP de verdad.",
+      "py_exercise": {
+        "id": "E2-02-forja",
+        "title": "acuerdo(a, b): cuánto se parece la copia al original",
+        "function": "acuerdo",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef acuerdo(a, b):\n    iguales = 0   # ← cambia esta línea: cuenta las posiciones en que coinciden\n    return iguales / len(a)\n\nprint(acuerdo([1, 2, 3, 4], [1, 2, 0, 4]))   # 0.75\n",
+        "cases": [
+          {
+            "args": [
+              [
+                1,
+                2,
+                3,
+                4
+              ],
+              [
+                1,
+                2,
+                0,
+                4
+              ]
+            ],
+            "expected": 0.75,
+            "tolerance": 0.0001
+          },
+          {
+            "args": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                1
+              ]
+            ],
+            "expected": 0.0,
+            "tolerance": 0.0001
+          },
+          {
+            "args": [
+              [
+                5
+              ],
+              [
+                5
+              ]
+            ],
+            "expected": 1.0,
+            "tolerance": 0.0001
+          }
+        ]
+      }
     },
     {
       "id": "c1",

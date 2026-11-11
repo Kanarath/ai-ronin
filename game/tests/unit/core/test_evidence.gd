@@ -573,7 +573,7 @@ func test_P0_A2_python_guiado_inicial_falla() -> void:
 		var m := game.catalog.get_mission(pair[0])
 		var ex: Dictionary = {}
 		for o: Dictionary in m["objectives"]:
-			if o.has("py_exercise"):
+			if o.has("py_exercise") and o["py_exercise"]["id"] == pair[1]:
 				ex = PyCommands._int_spec(o["py_exercise"])  # como py check: los enteros del JSON, enteros
 		assert_eq(ex["id"], pair[1])
 		var start := PyExercise.check(ex["starter"], ex)

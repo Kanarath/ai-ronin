@@ -58,22 +58,86 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Implementa las cinco funciones de generacion.py hasta que pasen los 17 tests y trae la evidencia.",
-      "teach": "Un modelo diminuto en el test\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E1-01_generacion/README.md e implementa generacion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nLos tests no descargan nada: crean un LlamaForCausalLM de 2 capas y 16 dimensiones con pesos aleatorios. Dice tonterías, pero es la misma arquitectura que SmolLM2.\nPor qué: si tu bucle da lo mismo que generate() con el modelo diminuto, lo dará con el de verdad; así se prueban las piezas de un sistema de IA (Inteligencia Artificial) sin gastar horas de cálculo.",
+      "text": "En el Dojo: abre el editor con py, programa top_p, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las cinco funciones de generacion.py hasta que pasen los 17 tests y trae la evidencia.",
+      "teach": "Un modelo diminuto en el test\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E1-01_generacion/README.md e implementa generacion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nLos tests no descargan nada: crean un LlamaForCausalLM de 2 capas y 16 dimensiones con pesos aleatorios. Dice tonterías, pero es la misma arquitectura que SmolLM2.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: si tu bucle da lo mismo que generate() con el modelo diminuto, lo dará con el de verdad; así se prueban las piezas de un sistema de IA (Inteligencia Artificial) sin gastar horas de cálculo.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "E1-01",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "E1-01",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "E1-01-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Después de sumar, si suma >= p, sal del bucle.",
+        "Añade: if suma >= p: break",
         "Orden: con_temperatura → filtro_top_p → siguiente_token → generar → log_probs_secuencia. Entorno: README, sección 1 (unos 175 MB).",
         "filtro_top_p: orden = torch.sort(probs, descending=True, stable=True); acum = torch.cumsum(orden.values, 0). Cuenta cuántos hacen falta para llegar a p y copia solo esas posiciones (orden.indices) en un tensor de ceros.",
         "Desde forja/labs/E1-01_generacion: .\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py E1-01 · y aquí: evidence import"
       ],
-      "on_complete": "Tu bucle genera igual que el de Transformers. Ahora, con el modelo de verdad."
+      "on_complete": "Es el top-p de E1-01: recorta la cola de tokens raros antes de elegir. Tu bucle genera igual que el de Transformers. Ahora, con el modelo de verdad.",
+      "py_exercise": {
+        "id": "E1-01-forja",
+        "title": "top_p(probs, p): los tokens que se quedan en el muestreo de núcleo",
+        "function": "top_p",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef top_p(probs, p):\n    orden = sorted(range(len(probs)), key=lambda i: -probs[i])\n    elegidos, suma = [], 0\n    for i in orden:\n        elegidos.append(i)\n        suma += probs[i]\n        # ← añade aquí: para en cuanto la suma llegue a p\n    return sorted(elegidos)\n\nprint(top_p([0.1, 0.6, 0.3], 0.8))   # [1, 2]\n",
+        "cases": [
+          {
+            "args": [
+              [
+                0.1,
+                0.6,
+                0.3
+              ],
+              0.8
+            ],
+            "expected": [
+              1,
+              2
+            ]
+          },
+          {
+            "args": [
+              [
+                0.5,
+                0.5
+              ],
+              0.4
+            ],
+            "expected": [
+              0
+            ]
+          },
+          {
+            "args": [
+              [
+                0.2,
+                0.2,
+                0.6
+              ],
+              1.0
+            ],
+            "expected": [
+              0,
+              1,
+              2
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "c1",

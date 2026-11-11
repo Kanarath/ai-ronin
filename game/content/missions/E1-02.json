@@ -124,22 +124,87 @@
     },
     {
       "id": "o1",
-      "text": "Implementa las siete funciones de cuantizacion.py hasta que pasen los 12 tests y trae la evidencia.",
-      "teach": "Cuidado con los tipos\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E1-02_cuantizacion/README.md e implementa cuantizacion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUn int8 solo llega a 127: si restas el punto cero sin pasar antes a float32, la resta se desborda y da basura sin ningún error. Y torch.round redondea los .5 al par (2.5 → 2), como el redondeo bancario: los tests lo tienen en cuenta.\nPor qué: estos errores silenciosos son los que estropean un modelo cuantizado sin que nada avise.",
+      "text": "En el Dojo: abre el editor con py, programa cuantizar, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las siete funciones de cuantizacion.py hasta que pasen los 12 tests y trae la evidencia.",
+      "teach": "Cuidado con los tipos\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E1-02_cuantizacion/README.md e implementa cuantizacion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUn int8 solo llega a 127: si restas el punto cero sin pasar antes a float32, la resta se desborda y da basura sin ningún error. Y torch.round redondea los .5 al par (2.5 → 2), como el redondeo bancario: los tests lo tienen en cuenta.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: estos errores silenciosos son los que estropean un modelo cuantizado sin que nada avise.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "E1-02",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "E1-02",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "E1-02-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "int8 solo guarda de −128 a 127: usa max y min.",
+        "La línea queda así: q.append(max(-128, min(127, v)))",
         "Orden: parametros_afines → cuantizar → descuantizar → cuantizar_q8_0 → error_relativo → bytes_esquema → perplejidad.",
         "cuantizar_q8_0: x = w.reshape(-1, bloque); d = x.abs().amax(dim=1, keepdim=True) / 127. Para no dividir por 0: divisor = torch.where(d > 0, d, torch.ones_like(d)) y después pon a 0 los bloques con d == 0.",
         "Desde forja/labs/E1-02_cuantizacion: ..\\E1-01_generacion\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py E1-02 · y aquí: evidence import"
       ],
-      "on_complete": "Tus funciones cuantizan. Ahora, el modelo entero."
+      "on_complete": "Así se cuantiza un modelo para que ocupe 4 veces menos que en float32. Tus funciones cuantizan. Ahora, el modelo entero.",
+      "py_exercise": {
+        "id": "E1-02-forja",
+        "title": "cuantizar(pesos, escala, punto_cero): de float a int8",
+        "function": "cuantizar",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef cuantizar(pesos, escala, punto_cero):\n    q = []\n    for w in pesos:\n        v = round(w / escala) + punto_cero\n        q.append(v)   # ← cambia esta línea: recorta v a [-128, 127]\n    return q\n\nprint(cuantizar([0.5, -2.0, 10.0], 0.05, 0))   # [10, -40, 127]\n",
+        "cases": [
+          {
+            "args": [
+              [
+                0.5,
+                -2.0,
+                10.0
+              ],
+              0.05,
+              0
+            ],
+            "expected": [
+              10,
+              -40,
+              127
+            ]
+          },
+          {
+            "args": [
+              [
+                -100.0
+              ],
+              0.1,
+              0
+            ],
+            "expected": [
+              -128
+            ]
+          },
+          {
+            "args": [
+              [
+                0.0,
+                0.1
+              ],
+              0.1,
+              5
+            ],
+            "expected": [
+              5,
+              6
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "c1",

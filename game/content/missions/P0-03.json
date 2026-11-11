@@ -52,38 +52,116 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Con el entorno .venv de P0-02, ejecuta ronin_check para P0-03 y trae la primera evidencia.",
-      "teach": "Arrancar el ejercicio\nUsas el mismo entorno .venv de P0-02: ya tiene NumPy.\nronin_check ejecuta los tests y escribe la evidencia; evidence import la trae al Dojo.\nPor qué: los tests son tu especificación; leerlos antes de programar te dice qué tiene que hacer cada función.",
+      "text": "En el Dojo: abre el editor con py, escribe por ejemplo print(\"hola\") y ejecútalo con py run. Extra opcional: con el entorno .venv de P0-02, ejecuta ronin_check para P0-03 y trae la primera evidencia.",
+      "teach": "Arrancar el ejercicio\nUsas el mismo entorno .venv de P0-02: ya tiene NumPy.\nronin_check ejecuta los tests y escribe la evidencia; evidence import la trae al Dojo.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: los tests son tu especificación; leerlos antes de programar te dice qué tiene que hacer cada función.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "P0-03"
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "P0-03"
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.ran",
+            "where": {
+              "ok": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Escribe py, pon print(\"hola\") en el editor y escribe py run.",
         ".\\.venv\\Scripts\\python.exe -m ronin_check P0-03 · y aquí: evidence import"
       ],
       "on_complete": "7 tests esperando. El más importante es el gradient check."
     },
     {
       "id": "o2",
-      "text": "Implementa la clase MLP de P0_03_mlp.py hasta que pasen los 7 tests y trae la evidencia.",
-      "teach": "Piensa en formas\nCon n ejemplos, d entradas y H neuronas ocultas: X es (n, d), W1 es (d, H) y X @ W1 es (n, H): una fila por ejemplo.\nSi algo falla, imprime las formas: print(A1.shape, D1.shape).\nEl GRADIENT CHECK compara tus gradientes con los que salen de mover un poco cada peso y medir el cambio de la pérdida. Si solo falla W1, el error está en D1 o en X.T @ D1.\nPor qué: un error de traspuesta puede dar formas correctas y números equivocados; el gradient check es la forma de cazarlo.",
+      "text": "En el Dojo: abre el editor con py, programa entropia_cruzada, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa la clase MLP de P0_03_mlp.py hasta que pasen los 7 tests y trae la evidencia.",
+      "teach": "Piensa en formas\nCon n ejemplos, d entradas y H neuronas ocultas: X es (n, d), W1 es (d, H) y X @ W1 es (n, H): una fila por ejemplo.\nSi algo falla, imprime las formas: print(A1.shape, D1.shape).\nEl GRADIENT CHECK compara tus gradientes con los que salen de mover un poco cada peso y medir el cambio de la pérdida. Si solo falla W1, el error está en D1 o en X.T @ D1.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: un error de traspuesta puede dar formas correctas y números equivocados; el gradient check es la forma de cazarlo.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "P0-03",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "P0-03",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "P0-03-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Si y es 1 pesa −ln p; si y es 0 pesa −ln(1 − p). La fórmula junta los dos casos.",
+        "La línea queda así: total += -(y * math.log(p) + (1 - y) * math.log(1 - p))",
         "Escribe las formas de cada línea del docstring de gradientes antes de programarla.",
         "Si el gradiente de b1 tiene forma (n, H), te falta sumar por filas: .sum(axis=0).",
         "paso: self.W1 -= lr * grads[\"W1\"] (y lo mismo con b1, W2 y b2). Con «=» en lugar de «-=» falla test_paso_en_el_sitio."
       ],
-      "on_complete": "El mismo backprop de T4-02, sin un solo bucle sobre los ejemplos."
+      "on_complete": "Es la pérdida que la red de P0-03 baja con backpropagation. El mismo backprop de T4-02, sin un solo bucle sobre los ejemplos.",
+      "py_exercise": {
+        "id": "P0-03-forja",
+        "title": "entropia_cruzada(probs, etiquetas): la pérdida media",
+        "function": "entropia_cruzada",
+        "starter": "# Completa la línea marcada y compruébala con py check.\nimport math\n\ndef entropia_cruzada(probs, etiquetas):\n    total = 0\n    for p, y in zip(probs, etiquetas):\n        p = min(max(p, 1e-12), 1 - 1e-12)\n        total += 0   # ← cambia esta línea: -(y·ln p + (1−y)·ln(1−p))\n    return total / len(probs)\n\nprint(entropia_cruzada([0.9, 0.2], [1, 0]))   # unos 0.164\n",
+        "cases": [
+          {
+            "args": [
+              [
+                0.9,
+                0.2
+              ],
+              [
+                1,
+                0
+              ]
+            ],
+            "expected": 0.164252,
+            "tolerance": 0.0001
+          },
+          {
+            "args": [
+              [
+                0.5
+              ],
+              [
+                1
+              ]
+            ],
+            "expected": 0.693147,
+            "tolerance": 0.0001
+          },
+          {
+            "args": [
+              [
+                0.99,
+                0.01,
+                0.6
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "expected": 0.312133,
+            "tolerance": 0.0001
+          }
+        ]
+      }
     },
     {
       "id": "o3",

@@ -59,22 +59,63 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Implementa las siete funciones de trazas.py hasta que pasen los 17 tests y trae la evidencia.",
-      "teach": "record_exception=False\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E4-02_trazas/README.md e implementa trazas.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nOpenTelemetry añade por defecto al span (el registro de una petición en la traza) un evento con el mensaje y la pila de cualquier excepción. Muchos mensajes de error incluyen lo que se estaba procesando: la pregunta, una URL (Uniform Resource Locator) con un token o una fila de la base de datos.\nRegistra el tipo de error (error.type) y el estado, no el mensaje.\nPor qué: es una vía de fuga que casi nadie revisa: nadie piensa que un error sea un dato.",
+      "text": "En el Dojo: abre el editor con py, programa redactar, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las siete funciones de trazas.py hasta que pasen los 17 tests y trae la evidencia.",
+      "teach": "record_exception=False\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E4-02_trazas/README.md e implementa trazas.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nOpenTelemetry añade por defecto al span (el registro de una petición en la traza) un evento con el mensaje y la pila de cualquier excepción. Muchos mensajes de error incluyen lo que se estaba procesando: la pregunta, una URL (Uniform Resource Locator) con un token o una fila de la base de datos.\nRegistra el tipo de error (error.type) y el estado, no el mensaje.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: es una vía de fuga que casi nadie revisa: nadie piensa que un error sea un dato.",
       "validator": {
-        "type": "event",
-        "event": "evidence.imported",
-        "where": {
-          "exercise": "E4-02",
-          "all_passed": true
-        }
+        "type": "any",
+        "of": [
+          {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "E4-02",
+              "all_passed": true
+            }
+          },
+          {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "E4-02-forja",
+              "all_passed": true
+            }
+          }
+        ]
       },
       "hints": [
+        "Mira si «@» está en la palabra y, si está, añade \"[correo]\" en su lugar.",
+        "La línea queda así: palabras.append(\"[correo]\" if \"@\" in p else p)",
         "Orden: luhn_valido → redactar → redactar_valor → atributos_peticion → atributos_respuesta → mensajes → preguntar_con_traza.",
         "Desde forja/labs/E4-02_trazas: .\\.venv\\Scripts\\python.exe -m unittest -v test_trazas (crea el entorno como en P0-01).",
         ".\\.venv\\Scripts\\python.exe ..\\..\\ejercicios\\ronin_check.py E4-02 · y aquí: evidence import"
       ],
-      "on_complete": "Tus spans siguen las convenciones y tu redacción pasa los casos del test. Ahora, con lo que escriba un modelo de verdad."
+      "on_complete": "Redactar reduce lo que se filtra a las trazas; no registrar el contenido lo elimina. Tus spans siguen las convenciones y tu redacción pasa los casos del test. Ahora, con lo que escriba un modelo de verdad.",
+      "py_exercise": {
+        "id": "E4-02-forja",
+        "title": "redactar(texto): tapa los correos antes de guardar la traza",
+        "function": "redactar",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef redactar(texto):\n    palabras = []\n    for p in texto.split():\n        palabras.append(p)   # ← cambia esta línea: si tiene @, guarda [correo]\n    return \" \".join(palabras)\n\nprint(redactar(\"escribe a ana@x.com mañana\"))   # escribe a [correo] mañana\n",
+        "cases": [
+          {
+            "args": [
+              "escribe a ana@x.com mañana"
+            ],
+            "expected": "escribe a [correo] mañana"
+          },
+          {
+            "args": [
+              "sin datos"
+            ],
+            "expected": "sin datos"
+          },
+          {
+            "args": [
+              "a@b c@d"
+            ],
+            "expected": "[correo] [correo]"
+          }
+        ]
+      }
     },
     {
       "id": "c1",
