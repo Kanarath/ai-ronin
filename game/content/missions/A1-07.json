@@ -95,7 +95,7 @@
         "python bateria.py · sin Ollama tarda unos segundos.",
         "Con el LLM: python bateria.py --configs \"ninguna;patrones;clasificador;llm\" --n 3"
       ],
-      "on_complete": "Ya tienes la curva de umbral y las cuatro columnas en la salida de bateria.py. Mira qué variantes de ataque pasan cada guardián y qué mensajes legítimos bloquea."
+      "on_complete": "Ya tienes la curva de umbral y las cuatro configuraciones en la salida de bateria.py. Mira qué variantes de ataque pasan cada guardián y qué mensajes legítimos bloquea."
     },
     {
       "id": "o3",
@@ -109,7 +109,7 @@
         },
         {
           "id": "b",
-          "text": "que ha aprendido a separar órdenes de preguntas, no la intención"
+          "text": "que se ha quedado con palabras de los ataques, no con la intención"
         },
         {
           "id": "c",
@@ -126,9 +126,9 @@
       },
       "hints": [
         "Mira el texto de los legítimos bloqueados en ataques.json y compáralo con los ataques de entrenamiento.",
-        "Los ataques de entrenamiento eran órdenes; los legítimos, preguntas. answer b"
+        "Compara las palabras de los legítimos bloqueados («ignora», «código») con las de los ataques. answer b"
       ],
-      "on_complete": "Exacto. Y lo mismo al revés: un ataque formulado como pregunta amable puede pasar. Los errores de un guardián te enseñan qué ha aprendido de verdad."
+      "on_complete": "Exacto. Y lo mismo al revés: en tu medición, casi todas las paráfrasis amables de un ataque pasan. Los errores de un guardián te enseñan qué ha aprendido de verdad."
     },
     {
       "id": "o4",

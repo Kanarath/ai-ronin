@@ -129,7 +129,7 @@
         "Repasa la tarjeta «Sesgos del juez» con mission brief.",
         "Mitigar no es arreglar. answer a"
       ],
-      "on_complete": "Exacto. Como el filtro de salida de A1-05, tapa el síntoma. Y si la mitad de los pares acaba en empate, el juez apenas decide nada: mira cuántos empates hay en la salida de bateria.py."
+      "on_complete": "Exacto. Como el filtro de salida de A1-05, tapa el síntoma. Y si la mitad de los pares acaba en empate, el juez apenas decide nada: mira cuántos empates y cuántos veredictos sin formato hay en la salida de bateria.py."
     },
     {
       "id": "o4",
@@ -162,7 +162,7 @@
         "Piensa en qué pasa si la nota del juez cambia por ruido y no por el prompt.",
         "Un juez ruidoso se equivoca en los dos sentidos. answer c"
       ],
-      "on_complete": "Exacto. Fíjate también en qué preguntas empeoraron con v2: el prompt quitó datos de la tienda que las respuestas necesitaban. Ese es el tipo de fallo que un test de regresión debe cazar antes de producción."
+      "on_complete": "Exacto. Fíjate en qué preguntas empeoraron con v2: el prompt quitó datos de la tienda que las respuestas necesitaban. Y lee las respuestas que el juez marcó como «mejoras»: si no tienen sentido, estás viendo su ruido."
     }
   ],
   "debrief": {

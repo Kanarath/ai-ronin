@@ -102,7 +102,7 @@
     },
     {
       "id": "o3",
-      "text": "En tu medición, los resultados de spotlight varían entre repeticiones y los de acl no. ¿Por qué?",
+      "text": "En tu medición, lo que frena acl lo frena siempre («en contexto» de fuga-acl baja a 0), y lo que frena spotlight varía entre repeticiones. ¿Por qué?",
       "teach": "Lo que vio frente a lo que obedeció\nacl y procedencia actúan antes del modelo: si funcionan, «en contexto» baja a 0 y el ataque no tiene con qué trabajar.\nspotlight actúa dentro del modelo: el documento sigue llegando.\nPor qué: saber dónde actúa una defensa te dice cuánto puedes fiarte de ella.",
       "choices": [
         {
@@ -131,7 +131,7 @@
         "Mira la columna «en contexto» de cada configuración.",
         "Lo que vio frente a lo que obedeció. answer b"
       ],
-      "on_complete": "Exacto. Las capas que deciden qué entra en el contexto son deterministas; las que piden al modelo que no obedezca, no. Por eso los intervalos de spotlight son más anchos."
+      "on_complete": "Exacto. Las capas que deciden qué entra en el contexto son deterministas; las que piden al modelo que no obedezca, no. Por eso, con spotlight, una sola medición no basta para fiarte de la cifra."
     },
     {
       "id": "o4",

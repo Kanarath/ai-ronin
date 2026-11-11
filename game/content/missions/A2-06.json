@@ -187,7 +187,7 @@
     },
     {
       "id": "o3",
-      "text": "En tu medición, el cross-encoder sube a los primeros puestos una respuesta falsa bien escrita de un tercero. ¿Por qué un reordenador no es una defensa?",
+      "text": "En tu medición, con el cross-encoder siguen entrando en el top-3 documentos de terceros con datos falsos. ¿Por qué un reordenador no es una defensa?",
       "teach": "Un reordenador no es una defensa\nUn CROSS-ENCODER lee la pregunta y el fragmento juntos y puntúa cuánto parece que el fragmento responde. Aprendió con millones de pares pregunta-respuesta.\nPor qué: mejora el orden de lo recuperado, pero no sabe de dónde viene cada texto.",
       "choices": [
         {

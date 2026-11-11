@@ -108,11 +108,11 @@
         {
           "id": "a",
           "text": "el modelo ha dejado de pedir acciones privilegiadas",
-          "why": "El modelo las sigue pidiendo cuando una nota se lo dice. Los permisos y la aprobación no cambian lo que pide."
+          "why": "Compara «pedidas» en las dos filas: las sigue pidiendo. Los permisos y la aprobación no cambian lo que pide."
         },
         {
           "id": "b",
-          "text": "el modelo las sigue pidiendo, pero se ejecutan muchas menos"
+          "text": "el modelo las sigue pidiendo, pero no todas se ejecutan"
         },
         {
           "id": "c",
@@ -131,7 +131,7 @@
         "Compara, en la salida de bateria.py, las privilegiadas pedidas con las ejecutadas.",
         "answer b"
       ],
-      "on_complete": "Eso es: pedir no es ejecutar. Y fíjate en memoria-exfiltracion: un correo a un cliente de la forja no necesita aprobación, así que esa fuga solo la frena el detector de exfiltración, que mira el contenido."
+      "on_complete": "Eso es: pedir no es ejecutar. Si en tu medición el modelo casi no obedeció las notas («lo pidió» cerca de 0), eso no es una defensa: con otra nota, otra temperatura u otro modelo, obedece. Y en memoria-exfiltracion: un correo a un cliente de la forja no necesita aprobación, así que esa fuga solo la frena el detector de exfiltración, que mira el contenido."
     },
     {
       "id": "o4",
@@ -168,7 +168,7 @@
     }
   ],
   "debrief": {
-    "what_happened": "Has construido los controles de un agente real con herramientas: validación de argumentos, permisos por rol, aprobación humana, marcado de la salida de las herramientas, límites, detección de exfiltración y una memoria con tope. Después has medido contra un modelo local qué ataque frena cada uno. El modelo sigue pidiendo acciones privilegiadas cuando una nota se lo dice, y tus controles deciden cuáles se ejecutan.",
+    "what_happened": "Has construido los controles de un agente real con herramientas: validación de argumentos, permisos por rol, aprobación humana, marcado de la salida de las herramientas, límites, detección de exfiltración y una memoria con tope. Después has medido contra un modelo local qué ataque frena cada uno. El modelo pide acciones privilegiadas también durante los ataques, y tus controles deciden cuáles se ejecutan; que en una medición no obedezca las notas no protege nada.",
     "why": "Un agente convierte texto en acciones, y parte de ese texto lo escribe cualquiera: una nota de pedido, un correo, una página web. Mientras la inyección de prompts no tenga solución, lo que protege es que la decisión de ejecutar se tome fuera del modelo, con el rol de quien pide, un esquema estricto, un humano en lo irreversible y límites a lo que puede gastar un turno.",
     "in_production": "Cada herramienta lleva su propia autorización con la identidad del usuario, no la del agente, y comprueba también el recurso: ¿es tu pedido? Las acciones irreversibles pasan por una aprobación con contexto suficiente para decidir y se registran para auditarlas (O6). Los correos salen por una pasarela con listas de dominios y prevención de fuga de datos. Los agentes se evalúan con baterías de cientos de tareas con inyecciones, como AgentDojo, en cada cambio de modelo o de prompt.",
     "simplifications": [
