@@ -1,0 +1,235 @@
+{
+  "id": "O2-01",
+  "schema_version": 1,
+  "title": "Mapa de activos",
+  "unit": "O2",
+  "difficulty": 2,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 25,
+  "requires_missions": [
+    "A2-03",
+    "O1-01"
+  ],
+  "competencies": {
+    "requires": [
+      "O1.alcance"
+    ],
+    "trains": [
+      "O2.inventario",
+      "O2.exposicion"
+    ]
+  },
+  "briefing": "Con permiso en la mano, toca saber qué hay. Haces el inventario de los sistemas de IA de Forja del Norte y decides por dónde empezar.",
+  "learning_objectives": [
+    "Inventariar los componentes de IA de un sistema",
+    "Valorar la exposición de cada activo",
+    "Hacer reconocimiento dentro del alcance"
+  ],
+  "mentor_intro": "Un buen mapa ahorra la mitad del trabajo.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "El reconocimiento es descubrir qué componentes de IA tiene un sistema (modelos, buscadores, agentes, dependencias) y cuánto está expuesto cada uno. En IA es fácil pasar por alto un componente: un RAG (Retrieval-Augmented Generation) interno o un pipeline de modelos también son superficie de ataque.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Abre el encargo y haz el inventario: engagement start norte y engagement recon norte. ¿Cuántos activos están en alcance? (answer <número>)",
+      "teach": "El inventario\nengagement recon lista cada activo de IA, si está en alcance y su exposición: quién puede llegar a él y qué puede hacer.\nPor qué: no puedes proteger ni probar lo que no sabes que existe.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "engagement.recon",
+            "where": {
+              "engagement": "norte"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 5,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "Cuenta los «sí» de la columna «en alcance».",
+        "answer 5"
+      ]
+    },
+    {
+      "id": "c1",
+      "text": "¿Qué activo está más expuesto?",
+      "teach": "Exposición\nMira dos cosas: quién puede llegar (público, interno) y qué puede hacer o qué sabe.\nPor qué: el activo más expuesto suele ser el primero que encuentra un atacante real.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "A-02, el buscador interno con documentos de RR. HH.",
+          "why": "Tiene datos sensibles, pero es interno: hace falta estar dentro para llegar."
+        },
+        {
+          "id": "b",
+          "text": "A-01, el chatbot público sin autenticación",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "A-05, el pipeline que entrena modelos de inspección",
+          "why": "Es un riesgo de cadena de suministro, pero nadie de fuera habla con él directamente."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Cuál se puede usar desde internet sin cuenta?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "¿Qué reconocimiento es aceptable en este encargo?",
+      "teach": "Reconocimiento dentro de las reglas\nEl reconocimiento también tiene alcance: lo que miras, cómo y de quién.\nPor qué: escanear sistemas de terceros es una prueba, y necesita su permiso.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "revisar el inventario y la documentación del cliente",
+          "why": ""
+        },
+        {
+          "id": "b",
+          "text": "escanear la API de acero-norte para ver su versión",
+          "why": "A-06 es de un tercero y está fuera de alcance: escanearla es probarla."
+        },
+        {
+          "id": "c",
+          "text": "probar contraseñas típicas en el chatbot de producción",
+          "why": "A-07 está fuera de alcance, y probar contraseñas es un ataque, no un reconocimiento."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "Recuerda O1: ¿qué está en alcance?",
+        "answer a"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Comprueba el pipeline de modelos y mira cómo se reproduce en el laboratorio: engagement scope norte A-05",
+      "teach": "De la lista al laboratorio\nCada activo en alcance tiene una copia en el laboratorio del Dojo (para A-05, supply forja).\nPor qué: las pruebas se hacen sobre la copia, nunca sobre el sistema del cliente.",
+      "validator": {
+        "type": "event",
+        "event": "engagement.scoped",
+        "where": {
+          "engagement": "norte",
+          "asset": "A-05",
+          "in_scope": true
+        }
+      },
+      "hints": [
+        "engagement scope norte A-05"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa el primer filtro del reconocimiento: abre el editor con py, completa publicos y compruébala con py check.",
+      "teach": "El inventario, en código\nVas a sacar los activos expuestos al público a partir del inventario.\nPor qué: en un encargo con cientos de activos, este filtro decide por dónde empiezas.",
+      "py_exercise": {
+        "id": "O2-01-publicos",
+        "title": "publicos(activos): los que cualquiera puede alcanzar",
+        "function": "publicos",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef publicos(activos):\n    salida = []\n    for a in activos:\n        if a[\"en_alcance\"]:\n            salida.append(a[\"id\"])   # ← cambia esta línea: solo si la exposición dice «público»\n    return salida\n\nprint(publicos([{\"id\": \"A-01\", \"en_alcance\": True, \"exposicion\": \"público en la web\"},\n                {\"id\": \"A-02\", \"en_alcance\": True, \"exposicion\": \"interno\"}]))   # ['A-01']\n",
+        "cases": [
+          {
+            "args": [
+              [
+                {
+                  "id": "A-01",
+                  "en_alcance": true,
+                  "exposicion": "público en la web"
+                },
+                {
+                  "id": "A-02",
+                  "en_alcance": true,
+                  "exposicion": "interno"
+                }
+              ]
+            ],
+            "expected": [
+              "A-01"
+            ]
+          },
+          {
+            "args": [
+              [
+                {
+                  "id": "A-07",
+                  "en_alcance": false,
+                  "exposicion": "Público, con clientes reales"
+                }
+              ]
+            ],
+            "expected": []
+          },
+          {
+            "args": [
+              [
+                {
+                  "id": "X",
+                  "en_alcance": true,
+                  "exposicion": "PÚBLICO"
+                }
+              ]
+            ],
+            "expected": [
+              "X"
+            ]
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "O2-01-publicos",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Comprueba si «público» está en la exposición en minúsculas.",
+        "La línea queda así: if \"público\" in a[\"exposicion\"].lower(): salida.append(a[\"id\"])"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes hacer el reconocimiento de un sistema de IA: inventariar componentes, valorar su exposición y quedarte dentro del alcance. Siguiente: O3, el modelo de amenazas.",
+  "debrief": {
+    "what_happened": "Has inventariado siete activos de IA, contado los cinco en alcance, identificado el más expuesto y comprobado cómo se reproduce uno en el laboratorio.",
+    "why": "El reconocimiento decide qué se prueba y en qué orden.",
+    "in_production": "Los equipos mantienen un inventario de sus sistemas de IA (a veces como AI-BOM, AI Bill of Materials) que el red team usa como punto de partida.",
+    "simplifications": [
+      "Inventario dado por el cliente",
+      "Siete activos"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-genai-redteam",
+    "ref.cyclonedx-mlbom",
+    "ref.nist-ai-100-2"
+  ],
+  "xp": {
+    "base": 200
+  }
+}

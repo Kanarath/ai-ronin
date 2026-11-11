@@ -1,0 +1,275 @@
+{
+  "id": "O1-01",
+  "schema_version": 1,
+  "title": "Permiso antes que ataque",
+  "unit": "O1",
+  "difficulty": 2,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 25,
+  "requires_missions": [
+    "A1-04"
+  ],
+  "competencies": {
+    "requires": [],
+    "trains": [
+      "O1.reglas-enfrentamiento",
+      "O1.alcance"
+    ]
+  },
+  "briefing": "Forja del Norte (ficticia) quiere que pruebes sus sistemas de IA. Antes de tocar nada, lees el contrato: quién autoriza, cuándo, qué se puede probar y qué no.",
+  "learning_objectives": [
+    "Leer las reglas de enfrentamiento de un encargo",
+    "Decidir si un activo está en alcance",
+    "Saber qué hacer ante datos reales"
+  ],
+  "mentor_intro": "El mejor atacante es el que sabe dónde no tiene que tocar.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "En un red team real, atacar sin autorización por escrito es un delito, aunque la intención sea buena. Las reglas de enfrentamiento (rules of engagement) fijan qué se prueba, cuándo y qué hacer si algo sale mal. Es lo primero que se aprende y lo que usarás en C5.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Abre el encargo y lee las reglas: engagement start norte",
+      "teach": "El encargo\nengagement start abre el contrato: cliente, quién autoriza, ventana de pruebas y reglas de enfrentamiento.\nPor qué: la autorización por escrito es lo que separa una prueba de seguridad de un ataque.",
+      "validator": {
+        "type": "event",
+        "event": "engagement.created",
+        "where": {
+          "engagement": "norte"
+        }
+      },
+      "hints": [
+        "engagement start norte"
+      ]
+    },
+    {
+      "id": "c1",
+      "text": "En mitad de una prueba aparecen datos personales reales. ¿Qué haces?",
+      "teach": "Las reglas mandan\nRelee las reglas del encargo: dicen qué hacer en este caso.\nPor qué: las reglas protegen a terceros que no han firmado nada.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "los anonimizas y sigues probando para no perder la ventana",
+          "why": "Las reglas no dicen que sigas: dicen que pares. Esos datos son de personas que no han autorizado nada."
+        },
+        {
+          "id": "b",
+          "text": "paras la prueba y avisas a la responsable del encargo",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "los borras para que nadie los vea",
+          "why": "Borrar puede destruir evidencia y no protege a nadie: la regla es parar y avisar."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "La tercera regla del encargo lo dice.",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Comprueba si se puede probar el chatbot de producción: engagement scope norte A-07",
+      "teach": "Alcance\nengagement scope dice si un activo está dentro del contrato y dónde se prueba.\nPor qué: probar fuera de alcance, aunque sea por error, rompe la autorización.",
+      "validator": {
+        "type": "event",
+        "event": "engagement.scoped",
+        "where": {
+          "engagement": "norte",
+          "asset": "A-07",
+          "in_scope": false
+        }
+      },
+      "hints": [
+        "engagement scope norte A-07"
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "A-07 es la misma aplicación que A-01. ¿Por qué no se puede probar?",
+      "teach": "Producción frente a laboratorio\nUna copia de laboratorio se comporta igual, pero sin clientes reales.\nPor qué: una prueba puede degradar el servicio o exponer datos de quien no ha consentido.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque tiene clientes reales y el permiso cubre solo la copia",
+          "why": ""
+        },
+        {
+          "id": "b",
+          "text": "porque producción es más segura y no hace falta probarla",
+          "why": "Producción no es más segura: es la misma aplicación. Se prueba en la copia para no dañar a nadie."
+        },
+        {
+          "id": "c",
+          "text": "porque el chatbot de producción no usa IA",
+          "why": "Usa la misma IA que A-01; el motivo es el riesgo para clientes reales."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "Relee la exposición de A-07 en el resultado de engagement scope.",
+        "answer a"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Comprueba la API del proveedor: engagement scope norte A-06",
+      "teach": "Activos de terceros\nQue un sistema use un servicio no te da permiso para probarlo.\nPor qué: solo el dueño de un sistema puede autorizar pruebas sobre él.",
+      "validator": {
+        "type": "event",
+        "event": "engagement.scoped",
+        "where": {
+          "engagement": "norte",
+          "asset": "A-06",
+          "in_scope": false
+        }
+      },
+      "hints": [
+        "engagement scope norte A-06"
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Una prueba necesita tocar la API de acero-norte (A-06). ¿Quién puede autorizarla?",
+      "teach": "Quién firma\nEl cliente solo puede autorizar lo que es suyo.\nPor qué: atacar el sistema de un tercero sin su permiso es ilegal, aunque tu cliente te lo pida.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "la directora de operaciones de Forja del Norte",
+          "why": "Ella autoriza lo de su empresa; la API es de acero-norte."
+        },
+        {
+          "id": "b",
+          "text": "tú, si la prueba es pequeña y no rompe nada",
+          "why": "El tamaño de la prueba no cambia quién es el dueño del sistema."
+        },
+        {
+          "id": "c",
+          "text": "solo acero-norte, por escrito",
+          "why": ""
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "¿De quién es la API?",
+        "answer c"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la regla del encargo: abre el editor con py, completa puedo_probar y compruébala con py check.",
+      "teach": "Las reglas, en código\nVas a escribir la comprobación que haces antes de cada prueba: en alcance, en laboratorio y dentro de la ventana de 08:00 a 18:00.\nPor qué: las herramientas de red team serias bloquean por código lo que el contrato prohíbe.",
+      "py_exercise": {
+        "id": "O1-01-permiso",
+        "title": "puedo_probar(activo, hora): ¿lo permite el contrato?",
+        "function": "puedo_probar",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef puedo_probar(activo, hora):\n    if not activo[\"en_alcance\"]:\n        return False\n    if activo[\"entorno\"] != \"laboratorio\":\n        return False\n    return True   # ← cambia esta línea: solo de 8 a 18 (las 18 ya no)\n\nprint(puedo_probar({\"en_alcance\": True, \"entorno\": \"laboratorio\"}, 20))   # False\n",
+        "cases": [
+          {
+            "args": [
+              {
+                "en_alcance": true,
+                "entorno": "laboratorio"
+              },
+              20
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              {
+                "en_alcance": true,
+                "entorno": "laboratorio"
+              },
+              9
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              {
+                "en_alcance": true,
+                "entorno": "produccion"
+              },
+              10
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              {
+                "en_alcance": true,
+                "entorno": "laboratorio"
+              },
+              18
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              {
+                "en_alcance": false,
+                "entorno": "laboratorio"
+              },
+              10
+            ],
+            "expected": false
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "O1-01-permiso",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "La hora tiene que ser 8 o más y menos de 18.",
+        "La línea queda así: return 8 <= hora < 18"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes leer un encargo de red team: quién autoriza, qué está en alcance, qué hacer si aparecen datos reales y por qué no se toca ni producción ni lo de terceros. Siguiente: O2, el reconocimiento.",
+  "debrief": {
+    "what_happened": "Has abierto un encargo, aplicado sus reglas a un caso con datos reales y comprobado por qué dos activos quedan fuera de alcance.",
+    "why": "La autorización y el alcance son la base legal y ética de cualquier prueba de seguridad.",
+    "in_production": "Los encargos de red team de IA se firman con alcance, ventana, contactos de emergencia y criterios de parada antes de la primera prueba.",
+    "simplifications": [
+      "Empresa y contrato ficticios",
+      "Reglas resumidas en cuatro puntos"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-genai-redteam",
+    "ref.owasp-llm-2025"
+  ],
+  "xp": {
+    "base": 200
+  }
+}

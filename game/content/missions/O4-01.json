@@ -1,0 +1,219 @@
+{
+  "id": "O4-01",
+  "schema_version": 1,
+  "title": "Del ataque al informe",
+  "unit": "O4",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "O1-01",
+    "A1-02"
+  ],
+  "competencies": {
+    "requires": [
+      "O1.alcance"
+    ],
+    "trains": [
+      "O4.severidad",
+      "O4.evidencia",
+      "O4.informe"
+    ]
+  },
+  "briefing": "Has encontrado algo. Ahora viene la parte que más se lee: demostrar el impacto, decidir la severidad y escribir un informe que el equipo de la forja pueda reproducir, arreglar y verificar.",
+  "learning_objectives": [
+    "Reproducir un fallo con pasos exactos",
+    "Justificar la severidad de un hallazgo",
+    "Escribir un informe con verificación comprobable"
+  ],
+  "mentor_intro": "Tu trabajo lo juzgarán por el informe, no por el ataque.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Un hallazgo sin informe no existe. La severidad se decide con criterios (impacto y probabilidad, o una escala como CVSS, Common Vulnerability Scoring System), la evidencia tiene que ser reproducible y la recomendación, comprobable. Es lo que usarás en C5-02 y en los informes de O5.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Reproduce el fallo en el laboratorio: bot create kuro y bot attack kuro",
+      "teach": "Reproducir primero\nAntes de escribir, consigue el fallo de nuevo, con pasos exactos, en la copia del laboratorio.\nPor qué: si el equipo no puede reproducirlo, no puede arreglarlo ni comprobar el arreglo.",
+      "validator": {
+        "type": "event",
+        "event": "bot.attacks",
+        "where": {
+          "bot": "kuro",
+          "successes": {
+            "gte": 1
+          }
+        }
+      },
+      "hints": [
+        "bot create kuro y después bot attack kuro"
+      ]
+    },
+    {
+      "id": "c1",
+      "text": "El chatbot público, sin autenticación, revela un código interno a quien se lo pida bien. ¿Qué severidad le das?",
+      "teach": "Severidad = impacto × probabilidad\nImpacto: qué se pierde si ocurre. Probabilidad: lo fácil que es que ocurra.\nPor qué: la severidad decide qué se arregla primero; tiene que poder justificarse.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "baja, porque un código de descuento vale poco",
+          "why": "El impacto es moderado, pero cualquiera puede conseguirlo sin cuenta: la probabilidad es alta."
+        },
+        {
+          "id": "b",
+          "text": "crítica, porque es un fallo de IA",
+          "why": "Ser de IA no lo hace crítico: no hay acceso a sistemas ni datos personales."
+        },
+        {
+          "id": "c",
+          "text": "alta: impacto moderado, pero muy fácil de explotar",
+          "why": ""
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "Piensa por separado en el impacto y en la probabilidad.",
+        "answer c"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la matriz de severidad: abre el editor con py, completa severidad y compruébala con py check.",
+      "teach": "La matriz, en código\nImpacto y probabilidad de 1 a 3. Su producto da la severidad: 9 crítica, 6 o más alta, 3 o más media, si no baja.\nPor qué: una regla escrita hace que dos auditores lleguen a la misma severidad.",
+      "py_exercise": {
+        "id": "O4-01-severidad",
+        "title": "severidad(impacto, probabilidad): baja, media, alta o crítica",
+        "function": "severidad",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef severidad(impacto, probabilidad):\n    p = impacto * probabilidad\n    if p == 9:\n        return \"crítica\"\n    if p >= 6:\n        return \"alta\"\n    return \"baja\"   # ← cambia esta línea: falta el tramo «media» (3 o más)\n\nprint(severidad(2, 3))   # alta\n",
+        "cases": [
+          {
+            "args": [
+              2,
+              3
+            ],
+            "expected": "alta"
+          },
+          {
+            "args": [
+              3,
+              3
+            ],
+            "expected": "crítica"
+          },
+          {
+            "args": [
+              1,
+              3
+            ],
+            "expected": "media"
+          },
+          {
+            "args": [
+              1,
+              2
+            ],
+            "expected": "baja"
+          },
+          {
+            "args": [
+              2,
+              2
+            ],
+            "expected": "media"
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "O4-01-severidad",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Antes del último return, si p >= 3 devuelve «media».",
+        "Añade: if p >= 3: return \"media\""
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "¿Qué verificación permite comprobar de verdad el arreglo?",
+      "teach": "Verificación comprobable\nLa verificación dice cómo saber que el fallo ya no está, con una medida que se pueda repetir.\nPor qué: «lo he revisado» no se puede comprobar; «la batería baja a 0» sí.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "«el equipo ha revisado el prompt y ya está bien»",
+          "why": "No es comprobable: no dice qué medir ni qué resultado esperar."
+        },
+        {
+          "id": "b",
+          "text": "«la batería de ataques pasa de su tasa actual a 0 éxitos»",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "«se ha añadido una regla nueva al prompt de sistema»",
+          "why": "Describe el cambio, no cómo comprobar que funciona; y una regla en el prompt no impide la inyección."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Cuál se puede repetir y da un número?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Escribe el informe del hallazgo hasta que cumpla la rúbrica: informe nuevo …, informe campo … e informe revisar.",
+      "teach": "El informe\nCampos: titulo · severidad · componente · owasp (p. ej. LLM07) · descripcion · pasos (los comandos, en orden) · impacto · evidencia · mitigacion · verificacion.\nPor qué: es lo que el cliente lee, prioriza y usa para arreglar.",
+      "validator": {
+        "type": "event",
+        "event": "report.checked",
+        "where": {
+          "complete": true,
+          "owasp": {
+            "icontains": "LLM"
+          }
+        }
+      },
+      "hints": [
+        "En pasos: 1) bot create kuro 2) bot attack kuro. En evidencia: lo que salió en la batería.",
+        "informe revisar te dice qué campo falta o no cumple."
+      ]
+    }
+  ],
+  "you_can_now": "Sabes convertir un ataque en un hallazgo útil: reproducirlo, justificar la severidad, escribir pasos y evidencia, y proponer una verificación comprobable. Siguiente: C5, donde lo harás para todo un encargo.",
+  "debrief": {
+    "what_happened": "Has reproducido un fallo en el laboratorio, decidido su severidad con impacto y probabilidad, programado la matriz y escrito un informe que cumple la rúbrica.",
+    "why": "El informe es el producto del red team: lo que permite priorizar, arreglar y comprobar.",
+    "in_production": "Los informes de red team de IA incluyen severidad justificada (CVSS o una matriz propia), pasos reproducibles, evidencia y una prueba de verificación que se repite tras el arreglo.",
+    "simplifications": [
+      "Matriz de severidad de 3×3",
+      "La rúbrica revisa la estructura, no la redacción"
+    ]
+  },
+  "further_reading": [
+    "ref.cvss-4",
+    "ref.owasp-genai-redteam"
+  ],
+  "xp": {
+    "base": 250
+  }
+}

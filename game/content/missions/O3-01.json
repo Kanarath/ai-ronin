@@ -1,0 +1,254 @@
+{
+  "id": "O3-01",
+  "schema_version": 1,
+  "title": "Dónde se rompe la confianza",
+  "unit": "O3",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "A3-03",
+    "O2-01"
+  ],
+  "competencies": {
+    "requires": [
+      "O2.inventario"
+    ],
+    "trains": [
+      "O3.amenazas",
+      "O3.stride",
+      "O3.fronteras-confianza"
+    ]
+  },
+  "briefing": "Ya sabes qué hay. Ahora, antes de lanzar un solo ataque, piensas qué podría salir mal en cada activo y por dónde entraría un atacante.",
+  "learning_objectives": [
+    "Identificar fronteras de confianza",
+    "Clasificar amenazas con STRIDE y OWASP",
+    "Comprobar la cobertura de un modelo de amenazas"
+  ],
+  "mentor_intro": "Un ataque que no has imaginado es un ataque que no vas a probar.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "El modelado de amenazas (threat modeling) es pensar los ataques antes de probarlos: activos, fronteras de confianza y rutas de ataque. STRIDE da seis categorías para no olvidar ninguna, y las listas de OWASP (Open Worldwide Application Security Project) y MITRE ATLAS las concretan para sistemas de IA.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Abre el encargo y añade la primera amenaza: engagement start norte y engagement threat norte A-01 LLM07",
+      "teach": "Una amenaza, con nombre\nengagement threat apunta una amenaza: activo y categoría de OWASP. LLM07 es la fuga del prompt de sistema: el chatbot público conoce un código interno.\nPor qué: nombrar la amenaza con un estándar hace que todo el equipo la entienda igual.",
+      "validator": {
+        "type": "event",
+        "event": "engagement.threat",
+        "where": {
+          "engagement": "norte",
+          "asset": "A-01",
+          "relevant": true
+        }
+      },
+      "hints": [
+        "engagement start norte y después engagement threat norte A-01 LLM07"
+      ]
+    },
+    {
+      "id": "c1",
+      "text": "En el asistente del taller (A-03), ¿por dónde entra lo que un atacante controla?",
+      "teach": "Fronteras de confianza\nUna frontera de confianza es el punto donde entran datos de alguien en quien no confías. Mira la exposición de A-03: lee el correo de clientes.\nPor qué: casi todos los ataques a agentes empiezan cruzando una frontera de confianza.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "por el correo de clientes que lee el agente",
+          "why": ""
+        },
+        {
+          "id": "b",
+          "text": "por el prompt de sistema que escribe la forja",
+          "why": "El prompt de sistema lo controla la forja: está del lado de confianza."
+        },
+        {
+          "id": "c",
+          "text": "por la base de datos de pedidos interna",
+          "why": "La base de datos es interna; el atacante de fuera no escribe en ella directamente."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "¿Qué lee A-03 que cualquiera puede enviar?",
+        "answer a"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Añade una amenaza que encaje en A-03 con la lista de agentes: engagement threat norte A-03 ASI01",
+      "teach": "ASI01: secuestro del objetivo\nUn correo con instrucciones puede cambiar lo que el agente intenta hacer.\nPor qué: es la amenaza número uno de la lista de OWASP para aplicaciones con agentes.",
+      "validator": {
+        "type": "event",
+        "event": "engagement.threat",
+        "where": {
+          "engagement": "norte",
+          "asset": "A-03",
+          "relevant": true
+        }
+      },
+      "hints": [
+        "engagement threat norte A-03 ASI01"
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "En STRIDE, ¿qué letra es un mensaje con remitente falso?",
+      "teach": "STRIDE\nSpoofing (suplantar), Tampering (manipular), Repudiation (negar haberlo hecho), Information disclosure (fuga), Denial of service (dejar sin servicio), Elevation of privilege (escalar permisos).\nPor qué: recorrer las seis letras por activo es la forma de no olvidarte de ninguna amenaza.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "T, de Tampering: manipular datos",
+          "why": "Tampering es cambiar algo que existe; aquí alguien se hace pasar por otro."
+        },
+        {
+          "id": "b",
+          "text": "E, de Elevation of privilege",
+          "why": "Puede acabar en escalada, pero el ataque en sí es hacerse pasar por otro."
+        },
+        {
+          "id": "c",
+          "text": "S, de Spoofing: hacerse pasar por otro",
+          "why": ""
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "¿Qué hace exactamente el atacante?",
+        "answer c"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Completa el modelo: añade una amenaza que encaje en al menos tres de los cinco activos en alcance.",
+      "teach": "Cobertura del modelo\nEl encargo te dice cuántos activos tienen al menos una amenaza que encaja. Prueba con A-02 (RAG) o A-04 (MCP, Model Context Protocol).\nPor qué: un activo sin amenazas apuntadas suele ser un activo que nadie ha pensado.",
+      "validator": {
+        "type": "event",
+        "event": "engagement.threat",
+        "where": {
+          "engagement": "norte",
+          "covered": {
+            "gte": 3
+          }
+        }
+      },
+      "hints": [
+        "Para A-02, un RAG que indexa documentos de proveedores, piensa en LLM04 (envenenamiento).",
+        "engagement threat norte A-02 LLM04"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la comprobación de cobertura: abre el editor con py, completa sin_amenazas y compruébala con py check.",
+      "teach": "El modelo, en código\nVas a calcular qué activos se han quedado sin ninguna amenaza apuntada.\nPor qué: es la pregunta que hace cualquier revisor de un modelo de amenazas.",
+      "py_exercise": {
+        "id": "O3-01-cobertura",
+        "title": "sin_amenazas(activos, amenazas): activos que nadie ha pensado",
+        "function": "sin_amenazas",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef sin_amenazas(activos, amenazas):\n    # amenazas: lista de [activo, categoria]\n    cubiertos = []   # ← cambia esta línea: los activos que aparecen en amenazas\n    return [a for a in activos if a not in cubiertos]\n\nprint(sin_amenazas([\"A-01\", \"A-02\", \"A-03\"], [[\"A-01\", \"LLM07\"], [\"A-03\", \"ASI01\"]]))   # ['A-02']\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "A-01",
+                "A-02",
+                "A-03"
+              ],
+              [
+                [
+                  "A-01",
+                  "LLM07"
+                ],
+                [
+                  "A-03",
+                  "ASI01"
+                ]
+              ]
+            ],
+            "expected": [
+              "A-02"
+            ]
+          },
+          {
+            "args": [
+              [
+                "A-01"
+              ],
+              []
+            ],
+            "expected": [
+              "A-01"
+            ]
+          },
+          {
+            "args": [
+              [
+                "A-01",
+                "A-02"
+              ],
+              [
+                [
+                  "A-02",
+                  "LLM04"
+                ],
+                [
+                  "A-01",
+                  "LLM01"
+                ]
+              ]
+            ],
+            "expected": []
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "O3-01-cobertura",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Saca el primer elemento de cada amenaza.",
+        "La línea queda así: cubiertos = [x[0] for x in amenazas]"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes modelar amenazas de un sistema de IA: fronteras de confianza, categorías de OWASP para LLM y para agentes, STRIDE y cobertura por activo. Siguiente: O4, convertir un ataque en un informe que alguien pueda arreglar.",
+  "debrief": {
+    "what_happened": "Has apuntado amenazas con categorías estándar, localizado la frontera de confianza de un agente, clasificado una suplantación con STRIDE y cubierto al menos tres activos.",
+    "why": "El modelo de amenazas decide qué ataques merece la pena probar y evita olvidar componentes.",
+    "in_production": "Los modelos de amenazas de IA combinan STRIDE con MITRE ATLAS (Adversarial Threat Landscape for Artificial-Intelligence Systems) y las listas de OWASP, y se revisan cuando cambia el sistema.",
+    "simplifications": [
+      "Las amenazas se dan por buenas si la categoría encaja con el activo",
+      "Cinco activos"
+    ]
+  },
+  "further_reading": [
+    "ref.ms-stride",
+    "ref.mitre-atlas",
+    "ref.nist-ai-100-2",
+    "ref.owasp-agentic-2026"
+  ],
+  "xp": {
+    "base": 250
+  }
+}

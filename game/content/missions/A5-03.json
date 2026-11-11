@@ -1,0 +1,271 @@
+{
+  "id": "A5-03",
+  "schema_version": 1,
+  "title": "Seis cerraduras",
+  "unit": "A5",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 35,
+  "requires_missions": [
+    "A5-02"
+  ],
+  "competencies": {
+    "requires": [
+      "A5.autenticacion"
+    ],
+    "trains": [
+      "A5.matriz-defensas",
+      "A5.coste-defensa",
+      "A5.autorizacion-delegada"
+    ]
+  },
+  "briefing": "La malla tiene seis ataques conocidos y seis controles. Hoy los mides todos: qué bloquea cada uno, cuál rompe tareas legítimas y cuál vale por dos.",
+  "learning_objectives": [
+    "Medir una batería de ataques y tareas legítimas",
+    "Comparar el coste de dos defensas",
+    "Calcular la cobertura de un conjunto de controles"
+  ],
+  "mentor_intro": "Medir antes de opinar. Lanza la batería.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "En seguridad no basta con saber que una defensa existe: hay que medir qué bloquea y qué cuesta. Una defensa que da falsas alarmas puede acabar desactivada. Esto prepara el capstone C4, donde tendrás que cerrar toda la malla con lo justo.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Crea un taller y lanza la batería de ataques sin defensas: a2a taller b y a2a attack b. ¿Cuántos ataques tienen éxito? (answer <número>)",
+      "teach": "La batería A5\na2a attack lanza seis ataques, cada uno sobre un taller nuevo: infección en cascada, tarjeta engañosa, mensaje falsificado, escalada por delegación, bucle de delegación y fuga de contexto.\nPor qué: una batería fija permite comparar defensas con los mismos ataques.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "a2a.attacks",
+            "where": {
+              "mesh": "b"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 6,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "a2a taller b · a2a attack b · y cuenta los ✗ ÉXITO.",
+        "answer 6"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Comprueba las tareas legítimas: a2a eval b",
+      "teach": "Lo que no se puede romper\na2a eval lanza cuatro tareas normales: un pedido, un reembolso legítimo, un presupuesto y una investigación.\nPor qué: una defensa que rompe el trabajo normal no se queda mucho tiempo activada.",
+      "validator": {
+        "type": "event",
+        "event": "a2a.eval",
+        "where": {
+          "mesh": "b",
+          "pass_rate": 1.0
+        }
+      },
+      "hints": [
+        "a2a eval b"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Prueba el monitor: en un taller nuevo, a2a taller mon, a2a defend mon monitor on, a2a attack mon y a2a eval mon",
+      "prediction": {
+        "prompt": "¿Crees que el monitor romperá alguna tarea legítima?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "Un vigilante de palabras\nmonitor busca frases sospechosas («nota para los agentes», «ignora», «instrucciones») en lo que se pasan los agentes.\nPor qué: detectar por palabras es barato, pero la misma palabra aparece en textos inocentes.",
+      "validator": {
+        "type": "event",
+        "event": "a2a.eval",
+        "where": {
+          "mesh": "mon",
+          "pass_rate": {
+            "lt": 1.0
+          }
+        }
+      },
+      "hints": [
+        "Son cuatro comandos; pon tu hipótesis antes del a2a attack."
+      ],
+      "on_complete": "Bloquea dos ataques, pero marca como sospechosa una investigación legítima: 3 de 4 tareas."
+    },
+    {
+      "id": "c1",
+      "text": "¿Por qué el monitor falla en la investigación sobre el temple?",
+      "teach": "Falsos positivos\nUn falso positivo es una alarma ante algo inocente. Cuantas más palabras vigilas, más falsos positivos.\nPor qué: es el mismo equilibrio entre precision y recall de T3-02, ahora en una defensa.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque el investigador es un agente externo",
+          "why": "El investigador es interno; el monitor no mira el origen."
+        },
+        {
+          "id": "b",
+          "text": "porque el texto legítimo contiene una palabra vigilada",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "porque el monitor bloquea toda tarea que tarde mucho",
+          "why": "El monitor no mide tiempos: busca palabras."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Relee qué busca el monitor.",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o4",
+      "text": "Prueba la autorización delegada: a2a taller del, a2a defend del delegated-authz on y a2a attack del. ¿Cuántos ataques siguen teniendo éxito? (answer <número>)",
+      "prediction": {
+        "prompt": "¿Cuántos ataques crees que bloquea delegated-authz él solo?",
+        "options": [
+          "uno",
+          "dos",
+          "todos"
+        ]
+      },
+      "teach": "Permisos de quien pidió, no de quien llama\ndelegated-authz hace que cada agente compruebe los permisos del usuario original de la tarea, no los del agente que se la pasa.\nPor qué: así un agente con privilegios no los presta sin querer a quien no los tiene.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "a2a.attacks",
+            "where": {
+              "mesh": "del",
+              "defenses": {
+                "icontains": "delegated-authz"
+              }
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 4,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "Pon tu hipótesis, lanza los tres comandos y cuenta los ✗ ÉXITO.",
+        "answer 4"
+      ],
+      "on_complete": "Bloquea dos: la escalada por delegación y la infección en cascada, que también necesitaba pedir algo con privilegios ajenos."
+    },
+    {
+      "id": "py1",
+      "text": "Prepara el capstone: abre el editor con py, completa sin_cubrir y compruébala con py check.",
+      "teach": "La matriz, en código\nVas a escribir qué ataques quedan sin cubrir con un conjunto de controles: la cuenta que necesitarás en C4.\nPor qué: elegir defensas es un problema de cobertura: que cada ataque tenga al menos un control que lo pare.",
+      "py_exercise": {
+        "id": "A5-03-cubrir",
+        "title": "sin_cubrir(matriz, controles): ataques que siguen abiertos",
+        "function": "sin_cubrir",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef sin_cubrir(matriz, controles):\n    # matriz: {ataque: [controles que lo bloquean]}\n    abiertos = []\n    for ataque, bloquean in matriz.items():\n        abiertos.append(ataque)   # ← cambia esta línea: solo si ningún control elegido lo bloquea\n    return sorted(abiertos)\n\nprint(sin_cubrir({\"falso\": [\"message-auth\"], \"bucle\": [\"hop-limit\"]}, [\"hop-limit\"]))   # ['falso']\n",
+        "cases": [
+          {
+            "args": [
+              {
+                "falso": [
+                  "message-auth"
+                ],
+                "bucle": [
+                  "hop-limit"
+                ]
+              },
+              [
+                "hop-limit"
+              ]
+            ],
+            "expected": [
+              "falso"
+            ]
+          },
+          {
+            "args": [
+              {
+                "a": [
+                  "x",
+                  "y"
+                ],
+                "b": [
+                  "y"
+                ]
+              },
+              [
+                "y"
+              ]
+            ],
+            "expected": []
+          },
+          {
+            "args": [
+              {
+                "a": [
+                  "x"
+                ],
+                "b": [
+                  "z"
+                ]
+              },
+              []
+            ],
+            "expected": [
+              "a",
+              "b"
+            ]
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "A5-03-cubrir",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Añade el ataque solo si ningún control de bloquean está en controles.",
+        "La línea queda así: if not any(c in controles for c in bloquean): abiertos.append(ataque)"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes medir las defensas de una malla de agentes, distinguir una que vale por dos (delegated-authz) de una que cuesta tareas legítimas (monitor), y calcular qué ataques quedan abiertos. Siguiente: C4, el laboratorio multiagente completo.",
+  "debrief": {
+    "what_happened": "Has medido la línea base (6 de 6 ataques), el coste del monitor (3 de 4 tareas) y la autorización delegada (bloquea dos ataques sin coste).",
+    "why": "Las defensas se eligen con datos: qué bloquean, qué rompen y cuánto se solapan.",
+    "in_production": "Los equipos mantienen baterías de ataques para su malla de agentes y las repiten en cada cambio, junto con sus tareas legítimas.",
+    "simplifications": [
+      "Seis ataques fijos",
+      "Defensas como interruptores"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-agentic-2026",
+    "ref.a2a-spec"
+  ],
+  "xp": {
+    "base": 250
+  }
+}

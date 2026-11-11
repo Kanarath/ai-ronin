@@ -19,7 +19,9 @@ func _done(ids: Array) -> void:
 func test_referencias_y_requisitos_existen() -> void:
 	var ids := game.catalog.ids()
 	for u: Dictionary in game.study.units:
-		assert_true(game.catalog.get_mission(u["id"] + "-01").is_empty(), "%s no debe tener misión" % u["id"])
+		# Desde 2026-11-11 cada unidad del temario externo tiene también su misión jugable;
+		# las lecturas quedan como apoyo.
+		assert_false(game.catalog.get_mission(u["id"] + "-01").is_empty(), "%s tiene su misión práctica" % u["id"])
 		for r: String in u["refs"]:
 			assert_true(game.study.refs.has(r), "%s: falta la referencia %s" % [u["id"], r])
 		for m: String in u["unlock"]["missions"] + u["recommended_before"]:
@@ -69,9 +71,9 @@ func test_avisos_al_terminar_y_al_empezar() -> void:
 	game.progress.data["missions"]["A3-02"] = {"completed": true}
 	assert_eq(game.start_mission("A3-03"), "")
 	game.runner._finish(false)
-	assert_true(mentor.any(func(t: String) -> bool: return t.contains("Desbloqueado en la ruta de estudio externo: O3")))
+	assert_true(mentor.any(func(t: String) -> bool: return t.contains("Desbloqueado: O3") and t.contains("O3-01")))
 	assert_true(mentor.any(func(t: String) -> bool: return t.contains("lecturas A3-03")))
-	_done(["A4-03", "A6-03", "O6-03", "C1-02", "C2-02", "C3-02"])
+	_done(["A4-03", "A6-03", "O6-03", "C1-02", "C2-02", "C3-02", "O3-01", "C4-01"])
 	mentor.clear()
 	assert_eq(game.start_mission("C5-01"), "")
 	assert_true(mentor.any(func(t: String) -> bool: return t.contains("se recomienda estudiar") and t.contains("O1") and t.contains("C4")))

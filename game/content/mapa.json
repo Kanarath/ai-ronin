@@ -51,8 +51,28 @@
       "para_que": "MCP (Model Context Protocol): cómo se conectan herramientas a un LLM y cómo se abusa de ellas."
     },
     {
+      "unit": "A5",
+      "para_que": "Multiagente y A2A (Agent2Agent): varios agentes que se encargan trabajo; mensajes falsificados, tarjetas engañosas y confianza cero entre agentes."
+    },
+    {
       "unit": "A6",
       "para_que": "Supply chain (cadena de suministro): modelos, datos y dependencias manipulados antes de llegar a producción."
+    },
+    {
+      "unit": "O1",
+      "para_que": "Mentalidad red team: autorización, alcance y reglas de enfrentamiento antes de atacar nada."
+    },
+    {
+      "unit": "O2",
+      "para_que": "Reconocimiento: inventario de los componentes de IA de un sistema y de su exposición."
+    },
+    {
+      "unit": "O3",
+      "para_que": "Threat modeling (modelado de amenazas): fronteras de confianza, STRIDE y las listas de OWASP (Open Worldwide Application Security Project)."
+    },
+    {
+      "unit": "O4",
+      "para_que": "Impacto e informes: severidad justificada, evidencia reproducible y verificación comprobable."
     },
     {
       "unit": "O5",
@@ -73,6 +93,10 @@
     {
       "unit": "C3",
       "para_que": "Capstone (proyecto final de un arco): laboratorio completo de seguridad de MCP (Model Context Protocol)."
+    },
+    {
+      "unit": "C4",
+      "para_que": "Capstone (proyecto final de un arco): laboratorio de red team multiagente."
     },
     {
       "unit": "C5",

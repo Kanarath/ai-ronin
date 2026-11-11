@@ -1,0 +1,310 @@
+{
+  "id": "A5-01",
+  "schema_version": 1,
+  "title": "Una malla de agentes",
+  "unit": "A5",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 35,
+  "requires_missions": [
+    "A4-03"
+  ],
+  "competencies": {
+    "requires": [
+      "A3.agente-herramientas"
+    ],
+    "trains": [
+      "A5.orquestador",
+      "A5.agent-card",
+      "A5.fuga-contexto"
+    ]
+  },
+  "briefing": "La forja ya no tiene un asistente: tiene un equipo. Un orquestador reparte el trabajo entre recepción, contabilidad e investigación, y puede contratar agentes de fuera. Vas a ver cómo se hablan, cómo se presentan y qué viaja en cada mensaje.",
+  "learning_objectives": [
+    "Explicar cómo un orquestador reparte tareas entre agentes",
+    "Leer una Agent Card y un mensaje A2A",
+    "Reconocer una fuga de contexto al delegar"
+  ],
+  "mentor_intro": "Un agente solo ya es difícil de vigilar. Varios hablando entre ellos, más. Empecemos por mirar cómo se organizan.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Los sistemas multiagente reparten una tarea entre varios agentes con LLM (Large Language Model) que se pasan mensajes. El protocolo A2A (Agent2Agent) es el estándar abierto para que agentes de distintos proveedores se descubran y se encarguen trabajo. Entender cómo se enruta una tarea y qué contexto viaja con ella es lo que te permitirá ver dónde se rompe la confianza en A5-02 y A5-03.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Crea el taller multiagente de la forja: a2a taller kuro",
+      "teach": "Orquestador y trabajadores\nEn una malla de agentes, un orquestador recibe la tarea y decide qué agente trabajador la hace.\nEl taller del Dojo tiene cuatro: orquestador, recepcion, contable e investigador.\nPor qué: así funcionan los sistemas de IA que encadenan agentes especializados, en lugar de un único asistente que lo hace todo.",
+      "validator": {
+        "type": "event",
+        "event": "a2a.created",
+        "where": {
+          "mesh": "kuro"
+        }
+      },
+      "hints": [
+        "Escribe exactamente: a2a taller kuro"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Mira quién hay en el taller: a2a agents kuro",
+      "teach": "Quién es quién\na2a agents lista cada agente, su origen (interno o externo), sus habilidades y si su tarjeta está firmada.\nPor qué: antes de confiar en un agente, hay que saber de dónde viene y quién lo respalda.",
+      "validator": {
+        "type": "event",
+        "event": "a2a.agents",
+        "where": {
+          "mesh": "kuro"
+        }
+      },
+      "hints": [
+        "a2a agents kuro"
+      ]
+    },
+    {
+      "id": "c1",
+      "text": "Cuando llega una petición, ¿quién decide qué agente la atiende?",
+      "teach": "El enrutado\nRecepción habla con el usuario. Si la tarea no es suya, se la pasa al orquestador, que elige al trabajador según las habilidades que cada uno anuncia.\nPor qué: quien enruta decide a quién se le da poder sobre la tarea; es la pieza que un atacante querrá engañar.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "el usuario, que nombra al agente en su mensaje",
+          "why": "El usuario solo pide algo; no elige al agente. Quien reparte es el orquestador."
+        },
+        {
+          "id": "b",
+          "text": "el orquestador, según las habilidades de cada tarjeta",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "el primer agente que contesta, como en una subasta",
+          "why": "No hay subasta: el orquestador elige leyendo las habilidades que anuncia cada agente."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Relee la lección: ¿quién recibe la tarea cuando no es de recepción?",
+        "answer b"
+      ],
+      "on_complete": "Exacto. Y el orquestador elige leyendo lo que cada agente dice de sí mismo. Eso es la tarjeta."
+    },
+    {
+      "id": "o3",
+      "text": "Lee la tarjeta del contable: a2a card kuro contable",
+      "teach": "La Agent Card\nCada agente publica una tarjeta JSON (JavaScript Object Notation) en /.well-known/agent-card.json: nombre, descripción, habilidades y, si es de confianza, una firma.\nPor qué: es la «presentación» que lee el orquestador; si alguien la falsea, engaña al que reparte el trabajo.",
+      "validator": {
+        "type": "event",
+        "event": "a2a.card",
+        "where": {
+          "mesh": "kuro",
+          "agent": "contable"
+        }
+      },
+      "hints": [
+        "a2a card kuro contable"
+      ]
+    },
+    {
+      "id": "o4",
+      "text": "Pregunta como cliente por un pedido: a2a ask kuro ¿Dónde está mi pedido P-101?",
+      "prediction": {
+        "prompt": "¿Cuántos agentes crees que tocarán esta petición?",
+        "options": [
+          "uno",
+          "dos",
+          "todos"
+        ]
+      },
+      "teach": "Los mensajes A2A\nCada salto es un mensaje SendMessage en JSON-RPC (JSON Remote Procedure Call), con un campo «de» y uno «para».\nPor qué: lo que viaja en cada salto es lo que un atacante puede leer, cambiar o inventarse.",
+      "validator": {
+        "type": "event",
+        "event": "a2a.asked",
+        "where": {
+          "mesh": "kuro"
+        }
+      },
+      "hints": [
+        "Primero hipotesis <opción>, después a2a ask kuro ¿Dónde está mi pedido P-101?"
+      ],
+      "on_complete": "Uno solo: recepción sabe responder por el pedido y no delega. Fíjate en el JSON del último mensaje: «de» y «para» son solo texto."
+    },
+    {
+      "id": "o5",
+      "text": "Contrata a un proveedor de fuera: a2a discover kuro acero-norte.example",
+      "teach": "Agentes externos\na2a discover lee la tarjeta de un agente en su dominio y lo registra. Desde ese momento, el orquestador puede encargarle trabajo.\nPor qué: es tan fácil como instalar un plugin; por eso hay que decidir antes en quién se confía.",
+      "validator": {
+        "type": "event",
+        "event": "a2a.discovered",
+        "where": {
+          "mesh": "kuro",
+          "accepted": true
+        }
+      },
+      "hints": [
+        "a2a discover kuro acero-norte.example"
+      ]
+    },
+    {
+      "id": "o6",
+      "text": "Pide un presupuesto al proveedor: a2a ask kuro Pide a acero un presupuesto para P-103",
+      "prediction": {
+        "prompt": "¿Qué crees que recibirá acero-norte?",
+        "options": [
+          "solo el pedido",
+          "el pedido y datos de clientes"
+        ]
+      },
+      "teach": "El contexto que viaja\nAl delegar, el orquestador adjunta el contexto que tiene. Si no se filtra, un agente externo recibe más de lo que necesita.\nPor qué: es una fuga de datos sin ataque: basta un diseño que comparte de más.",
+      "validator": {
+        "type": "event",
+        "event": "a2a.asked",
+        "where": {
+          "mesh": "kuro",
+          "leaked": true
+        }
+      },
+      "hints": [
+        "Primero hipotesis <opción>, después el a2a ask del enunciado."
+      ],
+      "on_complete": "El aviso lo dice: datos de clientes enviados a un agente externo. Nadie ha atacado; el diseño comparte de más."
+    },
+    {
+      "id": "c2",
+      "text": "¿Por qué ha recibido acero-norte correos de clientes?",
+      "teach": "Mínimo contexto\nCada agente solo debería recibir lo que su tarea necesita. Un presupuesto necesita el pedido, no la lista de clientes.\nPor qué: en el RGPD (Reglamento General de Protección de Datos) esto se llama minimización de datos, y en seguridad, mínimo privilegio aplicado al contexto.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque acero-norte ha atacado al orquestador para robarlos",
+          "why": "acero-norte no ha hecho nada raro: le han dado los datos sin pedirlos."
+        },
+        {
+          "id": "b",
+          "text": "porque el cliente los incluyó en su mensaje",
+          "why": "El mensaje solo hablaba del pedido P-103."
+        },
+        {
+          "id": "c",
+          "text": "porque el orquestador le pasa todo su contexto sin filtrar",
+          "why": ""
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "Mira el JSON del último mensaje: ¿quién lo construye?",
+        "answer c"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa cómo elige el orquestador: abre el editor con py, completa elegir_agente y compruébala con py check.",
+      "teach": "El enrutado, en código\nVas a escribir la regla del orquestador: el primer agente con la habilidad pedida y la tarjeta firmada.\nPor qué: elegir solo entre agentes de confianza es la primera defensa de la malla.",
+      "py_exercise": {
+        "id": "A5-01-elegir",
+        "title": "elegir_agente(tarjetas, habilidad): a quién se le encarga",
+        "function": "elegir_agente",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef elegir_agente(tarjetas, habilidad):\n    for t in tarjetas:\n        if habilidad in t[\"habilidades\"]:   # ← cambia esta línea: y además firmada\n            return t[\"nombre\"]\n    return None\n\nprint(elegir_agente([{\"nombre\": \"falso\", \"habilidades\": [\"contabilidad\"], \"firmada\": False},\n                     {\"nombre\": \"contable\", \"habilidades\": [\"contabilidad\"], \"firmada\": True}], \"contabilidad\"))   # contable\n",
+        "cases": [
+          {
+            "args": [
+              [
+                {
+                  "nombre": "falso",
+                  "habilidades": [
+                    "contabilidad"
+                  ],
+                  "firmada": false
+                },
+                {
+                  "nombre": "contable",
+                  "habilidades": [
+                    "contabilidad"
+                  ],
+                  "firmada": true
+                }
+              ],
+              "contabilidad"
+            ],
+            "expected": "contable"
+          },
+          {
+            "args": [
+              [
+                {
+                  "nombre": "x",
+                  "habilidades": [
+                    "investigacion"
+                  ],
+                  "firmada": true
+                }
+              ],
+              "contabilidad"
+            ],
+            "expected": null
+          },
+          {
+            "args": [
+              [
+                {
+                  "nombre": "y",
+                  "habilidades": [
+                    "atencion"
+                  ],
+                  "firmada": true
+                }
+              ],
+              "atencion"
+            ],
+            "expected": "y"
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "A5-01-elegir",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Añade a la condición que t[\"firmada\"] sea True.",
+        "La línea queda así: if habilidad in t[\"habilidades\"] and t[\"firmada\"]:"
+      ],
+      "on_complete": "Así se elige solo entre agentes de confianza. En A5-02 verás qué pasa cuando esa comprobación no existe."
+    }
+  ],
+  "you_can_now": "Sabes cómo se organiza una malla de agentes: quién enruta, qué es una Agent Card y qué viaja en cada mensaje A2A. Y has visto una fuga de datos sin ataque, solo por compartir de más. Siguiente: A5-02, cuando alguien miente en esos mensajes.",
+  "debrief": {
+    "what_happened": "Has creado un taller multiagente, leído tarjetas, seguido los saltos de una petición y visto cómo el orquestador manda datos de clientes a un proveedor externo.",
+    "why": "En los sistemas multiagente, la seguridad depende de en quién confía cada agente y de qué le pasa a los demás.",
+    "in_production": "Los equipos que despliegan mallas de agentes registran qué agentes externos se aceptan, firman las tarjetas internas y limitan el contexto que se comparte en cada delegación.",
+    "simplifications": [
+      "Agentes, red y firmas simulados",
+      "Estructura de A2A simplificada"
+    ]
+  },
+  "further_reading": [
+    "ref.a2a-spec",
+    "ref.owasp-agentic-2026"
+  ],
+  "xp": {
+    "base": 250
+  }
+}

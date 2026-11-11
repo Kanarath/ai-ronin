@@ -341,6 +341,33 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
   - [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
   - [GenAI Red Teaming Guide v1.0 (enero de 2025)](https://genai.owasp.org/resource/genai-red-teaming-guide/) — OWASP GenAI Security Project · consultada 2026-11-09
 
+## A5
+
+**A5-01 · Una malla de agentes**
+
+- [Agent2Agent (A2A) Protocol · especificación (versión estable 1.x; proyecto de la Linux Foundation)](https://a2a-protocol.org/latest/specification/) — A2A Project · Linux Foundation · consultada 2026-11-09
+- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
+
+**A5-02 · Mentiras entre agentes**
+
+- [Agent2Agent (A2A) Protocol · especificación (versión estable 1.x; proyecto de la Linux Foundation)](https://a2a-protocol.org/latest/specification/) — A2A Project · Linux Foundation · consultada 2026-11-09
+- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
+
+**A5-03 · Seis cerraduras**
+
+- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [Agent2Agent (A2A) Protocol · especificación (versión estable 1.x; proyecto de la Linux Foundation)](https://a2a-protocol.org/latest/specification/) — A2A Project · Linux Foundation · consultada 2026-11-09
+
+### 📖 C4 · Multi-Agent Red Team Lab · estudio externo
+
+- **Temario:** Capstone de A5: confianza entre agentes.
+- **Se estudia después de:** A5
+- **Recomendada antes de:** C5-01
+- **Referencias:**
+  - [Agent2Agent (A2A) Protocol · especificación (versión estable 1.x; proyecto de la Linux Foundation)](https://a2a-protocol.org/latest/specification/) — A2A Project · Linux Foundation · consultada 2026-11-09
+  - [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
+  - [GenAI Red Teaming Guide v1.0 (enero de 2025)](https://genai.owasp.org/resource/genai-red-teaming-guide/) — OWASP GenAI Security Project · consultada 2026-11-09
+
 ## A6
 
 **A6-01 · La forja de modelos**
@@ -412,6 +439,14 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [Model Context Protocol Specification, revisión 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28) — modelcontextprotocol.io · consultada 2026-11-06
 - [MCP Security Notification: Tool Poisoning Attacks (abril de 2025)](https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks) — Invariant Labs · consultada 2026-11-06
 
+## C4
+
+**C4-01 · Multi-Agent Red Team Lab**
+
+- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [Agent2Agent (A2A) Protocol · especificación (versión estable 1.x; proyecto de la Linux Foundation)](https://a2a-protocol.org/latest/specification/) — A2A Project · Linux Foundation · consultada 2026-11-09
+- [GenAI Red Teaming Guide v1.0 (enero de 2025)](https://genai.owasp.org/resource/genai-red-teaming-guide/) — OWASP GenAI Security Project · consultada 2026-11-09
+
 ## C5
 
 **C5-01 · La carta de encargo**
@@ -430,6 +465,46 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
 - [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
 - [NIST SP 800-61 Rev. 3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile (abril de 2025)](https://csrc.nist.gov/pubs/sp/800/61/r3/final) — NIST · consultada 2026-11-09
+
+## O1
+
+**O1-01 · Permiso antes que ataque**
+
+- [GenAI Red Teaming Guide v1.0 (enero de 2025)](https://genai.owasp.org/resource/genai-red-teaming-guide/) — OWASP GenAI Security Project · consultada 2026-11-09
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+
+### 📖 O4 · Impacto e informes · estudio externo
+
+- **Temario:** Demostración de impacto e informes: severidad, reproducibilidad, evidencias, recomendaciones y verificación.
+- **Se estudia después de:** O1
+- **Recomendada antes de:** C5-02, O5-01
+- **Referencias:**
+  - [CVSS v4.0 Specification Document (publicada el 1 de noviembre de 2023)](https://www.first.org/cvss/v4.0/specification-document) — FIRST · consultada 2026-11-09
+  - [GenAI Red Teaming Guide v1.0 (enero de 2025)](https://genai.owasp.org/resource/genai-red-teaming-guide/) — OWASP GenAI Security Project · consultada 2026-11-09
+
+## O2
+
+**O2-01 · Mapa de activos**
+
+- [GenAI Red Teaming Guide v1.0 (enero de 2025)](https://genai.owasp.org/resource/genai-red-teaming-guide/) — OWASP GenAI Security Project · consultada 2026-11-09
+- [CycloneDX: Machine Learning Bill of Materials (ML-BOM). Última versión de la especificación: 1.7 (21 de octubre de 2025; ECMA-424)](https://cyclonedx.org/capabilities/mlbom/) — OWASP CycloneDX · consultada 2026-11-10
+- [NIST AI 100-2 E2025 · Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations (marzo de 2025; NIST prevé revisiones anuales)](https://csrc.nist.gov/pubs/ai/100/2/e2025/final) — NIST · consultada 2026-11-09
+
+## O3
+
+**O3-01 · Dónde se rompe la confianza**
+
+- [Microsoft Threat Modeling Tool · categorías de amenaza STRIDE](https://learn.microsoft.com/azure/security/develop/threat-modeling-tool-threats) — Microsoft Learn · consultada 2026-11-09
+- [MITRE ATLAS (Adversarial Threat Landscape for Artificial-Intelligence Systems) · base de conocimiento viva; comprueba la versión vigente en la web](https://atlas.mitre.org/) — MITRE · consultada 2026-11-09
+- [NIST AI 100-2 E2025 · Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations (marzo de 2025; NIST prevé revisiones anuales)](https://csrc.nist.gov/pubs/ai/100/2/e2025/final) — NIST · consultada 2026-11-09
+- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
+
+## O4
+
+**O4-01 · Del ataque al informe**
+
+- [CVSS v4.0 Specification Document (publicada el 1 de noviembre de 2023)](https://www.first.org/cvss/v4.0/specification-document) — FIRST · consultada 2026-11-09
+- [GenAI Red Teaming Guide v1.0 (enero de 2025)](https://genai.owasp.org/resource/genai-red-teaming-guide/) — OWASP GenAI Security Project · consultada 2026-11-09
 
 ## O5
 

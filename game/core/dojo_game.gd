@@ -225,7 +225,15 @@ func _announce_readings(m: Dictionary, first_time: bool) -> void:
 	if not first_time:
 		return
 	for u: Dictionary in study.unlocked_by(progress, m["id"]):
-		runner.mentor_message.emit("Desbloqueado en la ruta de estudio externo: %s. Esta parte del temario no tiene misión: se estudia con lecturas. Escribe lecturas %s." % [u["title"], u["id"]], "lesson")
+		var practice := ""
+		for pm: Dictionary in catalog.missions:
+			if pm["unit"] == u["id"]:
+				practice = pm["id"]
+				break
+		if practice.is_empty():
+			runner.mentor_message.emit("Desbloqueado en la ruta de estudio externo: %s. Esta parte del temario no tiene misión: se estudia con lecturas. Escribe lecturas %s." % [u["title"], u["id"]], "lesson")
+		else:
+			runner.mentor_message.emit("Desbloqueado: %s. Se practica en la misión %s (mission start %s); las lecturas de apoyo, con lecturas %s." % [u["title"], practice, practice, u["id"]], "lesson")
 
 
 ## Aviso de fin de misión sobre su ejercicio de la Forja, o "" si no tiene o ya está verificado

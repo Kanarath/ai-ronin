@@ -96,7 +96,7 @@ func test_cinco_activos_cerrados() -> void:
 
 
 func test_mision_C5_01() -> void:
-	for m in ["A4-03", "A6-03", "O6-03", "C1-02", "C2-02", "C3-02"]:
+	for m in ["A4-03", "A6-03", "O6-03", "C1-02", "C2-02", "C3-02", "O3-01", "C4-01"]:
 		game.progress.data["missions"][m] = {"completed": true}
 	assert_eq(game.start_mission("C5-01"), "")
 	run(["engagement start final", "engagement recon final", "answer 5"])
@@ -124,6 +124,7 @@ func test_mision_C5_01() -> void:
 
 func test_mision_C5_02() -> void:
 	game.progress.data["missions"]["C5-01"] = {"completed": true}
+	game.progress.data["missions"]["O4-01"] = {"completed": true}
 	assert_eq(game.start_mission("C5-02"), "")
 	var ids := ["A-01", "A-02", "A-03", "A-04", "A-05"]
 	run(_setup("final", ids))
