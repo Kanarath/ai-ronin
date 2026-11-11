@@ -38,7 +38,8 @@
     {
       "id": "hallazgo-con-evidencia",
       "title": "Hallazgo con evidencia",
-      "body": "engagement finding <encargo> <activo> <categoría> registra un hallazgo solo si la categoría encaja con el activo y la última batería de ataques sobre su copia de laboratorio tuvo algún éxito. Las baterías son las de cada arco: bot attack, rag attack, agent attack, mcp attack y supply attack. El hallazgo guarda cuántos ataques tuvieron éxito: es la línea base para el retest."
+      "body": "engagement finding <encargo> <activo> <categoría> registra un hallazgo solo si la categoría encaja con el activo y la última batería de ataques sobre su copia de laboratorio tuvo algún éxito. Las baterías son las de cada arco: bot attack, rag attack, agent attack, mcp attack y supply attack. El hallazgo guarda cuántos ataques tuvieron éxito: es la línea base para el retest.",
+      "unlock_on": "objective:o3"
     },
     {
       "id": "priorizar",
@@ -91,7 +92,7 @@
     {
       "id": "o3",
       "text": "Lanza la batería de cada activo y registra un hallazgo con evidencia en cada uno de los cinco.",
-      "teach": "La evidencia es la batería\nLas baterías son las de cada arco: bot attack, rag attack, agent attack, mcp attack y supply attack.\nPrimero el ataque sobre la copia, después el hallazgo. Si registras el hallazgo antes de atacar, se rechaza por falta de evidencia.\nPor qué: el número de éxitos que guarda el hallazgo es la línea base con la que compararás el retest.",
+      "teach": "La evidencia es la batería\nPrimero el ataque sobre la copia, después el hallazgo. Si registras el hallazgo antes de atacar, se rechaza por falta de evidencia.\nPor qué: el número de éxitos que guarda el hallazgo es la línea base con la que compararás el retest.",
       "validator": {
         "type": "event",
         "event": "engagement.finding",
@@ -100,7 +101,7 @@
         }
       },
       "hints": [
-        "Cinco baterías y cinco hallazgos, con las categorías de tu modelo de amenazas.",
+        "Cinco baterías y cinco hallazgos, con categorías que encajen con cada activo, como las que usaste en C5-01.",
         "bot attack kuro · rag attack docs · agent attack taller · mcp attack erp · supply attack pipe · engagement finding final A-01 LLM07 · engagement finding final A-02 LLM01 · engagement finding final A-03 ASI01 · engagement finding final A-04 ASI04 · engagement finding final A-05 LLM03"
       ],
       "on_complete": "Cinco activos, cinco hallazgos demostrados. Ningún sistema de la forja aguanta su batería sin defensas."
@@ -134,7 +135,7 @@
       "hints": [
         "engagement summary final"
       ],
-      "on_complete": "A-01, con 11. Pero fíjate en lo que hacen los demás: el pipeline ejecuta código al cargar un modelo y el asistente saca datos y reembolsa. «Más éxitos» no es «más grave».",
+      "on_complete": "A-01, con 11. ¿Lo convierte eso en el más grave?",
       "teach": "El resumen ejecutivo\nengagement summary final resume los hallazgos y los ataques con éxito de cada activo al inicio.\nPor qué: es lo primero que lee la dirección, así que tiene que ser exacto."
     },
     {
@@ -143,31 +144,31 @@
       "choices": [
         {
           "id": "a",
-          "text": "sí: más éxitos, más grave",
+          "text": "sí, porque a más ataques con éxito, más gravedad tiene",
           "why": "El recuento no mide el impacto: una fuga de un código de descuento no pesa lo mismo que ejecutar código en el servidor."
         },
         {
           "id": "b",
-          "text": "no necesariamente: hay que pesar el impacto, la exposición y la facilidad"
+          "text": "no; el más grave es siempre el que tiene menos éxitos",
+          "why": "Tampoco: el número de éxitos, solo, no decide la severidad en ningún sentido."
         },
         {
           "id": "c",
-          "text": "no: el más grave es siempre el que tiene menos éxitos",
-          "why": "Tampoco: el número de éxitos, solo, no decide la severidad en ningún sentido."
+          "text": "depende de su impacto, de su exposición y de lo fácil que sea"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
         "Lee la tarjeta «Priorizar».",
-        "answer b"
+        "answer c"
       ],
-      "on_complete": "Eso es. Un pipeline que ejecuta código al cargar un modelo puede ir primero aunque tenga menos éxitos."
+      "on_complete": "Eso es: el recuento es un dato, no la severidad. Ahora elige cuál arreglarías primero."
     },
     {
       "id": "o5",
@@ -183,7 +184,8 @@
         "informe nuevo <título> · informe campo severidad … · informe campo owasp … · componente, descripcion, pasos, impacto, evidencia, mitigacion, verificacion · informe revisar",
         "En los pasos, los comandos que lo reproducen: 1) engagement start final 2) supply forja pipe 3) supply attack pipe. En la verificación, una medida: hoy 7 de 7 ataques con éxito; tras corregir, 0 de 7 y las tareas a 1,0 (lo harás en C5-03)."
       ],
-      "teach": "El informe del hallazgo\ninforme nuevo <título> abre el informe; informe campo <campo> <texto> rellena severidad, owasp, componente, descripcion, pasos, impacto, evidencia, mitigacion y verificacion; informe revisar aplica la rúbrica.\nLos pasos tienen que ser comandos que otra persona pueda repetir, y la verificación, una medida.\nPor qué: un hallazgo que el equipo del sistema no puede reproducir no se arregla."
+      "teach": "El informe del hallazgo\ninforme nuevo <título> abre el informe; informe campo <campo> <texto> rellena severidad, owasp, componente, descripcion, pasos, impacto, evidencia, mitigacion y verificacion; informe revisar aplica la rúbrica.\nLos pasos tienen que ser comandos que otra persona pueda repetir, y la verificación, una medida.\nPor qué: un hallazgo que el equipo del sistema no puede reproducir no se arregla.",
+      "on_complete": "Informe listo: otra persona puede reproducir el hallazgo y comprobar el arreglo."
     },
     {
       "id": "o6",
@@ -202,16 +204,16 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque es el que más ataques tuvo",
-          "why": "No: el que más tuvo fue A-01."
+          "text": "porque fue el activo con más ataques con éxito al inicio",
+          "why": "El que más tuvo fue A-01."
         },
         {
           "id": "b",
-          "text": "porque su impacto es ejecutar código en el servidor de modelos, el peor efecto posible aunque tenga menos éxitos"
+          "text": "porque ejecutar código en el servidor pesa más que un recuento"
         },
         {
           "id": "c",
-          "text": "porque es el más fácil de arreglar",
+          "text": "porque es el hallazgo más fácil y más rápido de arreglar",
           "why": "La facilidad de arreglo no es la severidad; se pesan el impacto, la exposición y la facilidad del ataque."
         }
       ],

@@ -36,7 +36,8 @@
     {
       "id": "reglas-deteccion",
       "title": "Reglas de detección",
-      "body": "palabras-clave: el mensaje del usuario contiene «ignora» (inyección directa). dominio-externo: una herramienta de salida (http_get o enviar_correo) va a un dominio fuera de la lista permitida. instruccion-en-dato: un documento recuperado contiene texto dirigido al asistente (inyección indirecta). volumen: más de 20 llamadas a herramientas en una sesión (abuso o consumo). correlacion: instruccion-en-dato y dominio-externo en la misma sesión. Comandos: soc rule <registro> <regla> on|off · soc detect <registro>."
+      "body": "palabras-clave: el mensaje del usuario contiene «ignora» (inyección directa). dominio-externo: una herramienta de salida (http_get o enviar_correo) va a un dominio fuera de la lista permitida. instruccion-en-dato: un documento recuperado contiene texto dirigido al asistente (inyección indirecta). volumen: más de 20 llamadas a herramientas en una sesión (abuso o consumo). correlacion: instruccion-en-dato y dominio-externo en la misma sesión. Comandos: soc rule <registro> <regla> on|off · soc detect <registro>.",
+      "unlock_on": "objective:o1"
     },
     {
       "id": "alertas-como-clasificador",
@@ -62,7 +63,7 @@
       "hints": [
         "soc trazas taller · soc rule taller correlacion on · soc detect taller"
       ],
-      "on_complete": "Recall 0: la regla es correcta, pero está ciega. Necesita los documentos recuperados y los argumentos de las herramientas. Detección empieza en el registro.",
+      "on_complete": "Recall 0: la regla es correcta, pero está ciega. Necesita los documentos recuperados y los argumentos de las herramientas. La detección empieza en el registro.",
       "teach": "Una regla ciega\nsoc rule <registro> <regla> on activa una regla; soc detect <registro> la ejecuta sobre las 12 sesiones que etiquetó el analista.\nCada regla necesita ciertos campos del registro (los de O6-01). Si no están, la regla no ve nada aunque esté bien escrita.\nEmpieza con un registro nuevo, con lo que se guarda por defecto.\nPor qué: es un fallo real y frecuente: reglas que nunca saltan porque el dato que miran no se registra."
     },
     {
@@ -90,8 +91,8 @@
         "soc log taller tool_args on · soc log taller retrievals on · soc log taller identity on · soc log taller model_version on · soc log taller redact-pii on",
         "soc rule taller correlacion off · soc rule taller palabras-clave on · soc detect taller"
       ],
-      "on_complete": "0,25. Pilla S09, el intento directo, y salta con S02, que solo pedía cambiar el formato. Las dos sesiones que de verdad sacaron datos (S04 y S07) no contienen «ignora» en el mensaje del usuario: la instrucción venía en un documento.",
-      "teach": "Medir una regla: recall\nRecuerda T3: recall = de todos los ataques reales, cuántos ve la regla. Si hay 4 sesiones maliciosas y la regla alerta en 1, el recall es 1 ÷ 4.\nActiva los seis campos y la redacción como en O6-01, y prueba solo palabras-clave (busca «ignora» en el mensaje del usuario).\nPor qué: buscar palabras sospechosas es la defensa más habitual contra la inyección de prompt directa; hoy verás qué se le escapa."
+      "on_complete": "0,25. Pilla S09, el intento directo, y salta con S02, que solo pedía cambiar el formato. Y no ve S04 ni S07, las dos sesiones que sacaron datos.",
+      "teach": "Medir una regla: recall\nRecuerda T3: recall = de todos los ataques reales, cuántos ve la regla. Si hay 5 sesiones maliciosas y la regla alerta en 2, el recall es 2 ÷ 5 = 0,4.\nActiva los seis campos y la redacción como en O6-01, y prueba solo palabras-clave (busca «ignora» en el mensaje del usuario).\nPor qué: buscar palabras sospechosas es la defensa más habitual contra la inyección de prompt directa; hoy verás qué se le escapa."
     },
     {
       "id": "c1",
@@ -99,31 +100,31 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque la orden no venía del usuario, sino de un documento recuperado (inyección indirecta)"
-        },
-        {
-          "id": "b",
           "text": "porque el atacante escribió «ignora» con faltas de ortografía",
           "why": "El mensaje del usuario era normal: pedía un resumen. La orden estaba dentro de un documento."
         },
         {
+          "id": "b",
+          "text": "porque la orden venía en un documento recuperado, no del usuario"
+        },
+        {
           "id": "c",
-          "text": "porque no se registraban los prompts",
+          "text": "porque los prompts del usuario no se guardaban en el registro",
           "why": "Los prompts se registran por defecto: la regla los leyó y no encontró nada."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "b",
         "accept": [
-          "a"
+          "b"
         ]
       },
       "hints": [
         "Recuerda S04 en O6-01: ¿qué pidió el usuario y de dónde salió la instrucción?",
-        "answer a"
+        "answer b"
       ],
-      "on_complete": "Exacto: inyección indirecta (OWASP LLM01). La orden llega en un dato, no en el mensaje del usuario, y ninguna regla que solo mire al usuario la verá."
+      "on_complete": "Exacto: es una inyección indirecta, la categoría LLM01 de OWASP (Open Worldwide Application Security Project). La orden llega en un dato, y ninguna regla que solo mire al usuario la verá."
     },
     {
       "id": "o3",
@@ -157,7 +158,7 @@
         "soc rule taller dominio-externo on · … · soc detect taller"
       ],
       "on_complete": "Recall 1,0 y precision 0,5: la mitad de las alertas son ruido. Mira por qué saltan S06 (una guía interna con una nota de estilo para el asistente) y S08 (un correo a un proveedor nuevo).",
-      "teach": "Medir una regla: precision\nprecision = de todas las alertas, cuántas eran ataques de verdad. Si saltan 8 alertas y 4 son ataques, la precision es 4 ÷ 8.\nCada falsa alarma es tiempo de un analista; si hay demasiadas, deja de mirarlas.\nPor qué: en un SOC (Security Operations Center), la fatiga de alertas es tan peligrosa como no tener reglas."
+      "teach": "Medir una regla: precision\nprecision = de todas las alertas, cuántas eran ataques de verdad. Si saltan 10 alertas y 3 son ataques, la precision es 3 ÷ 10 = 0,3.\nCada falsa alarma es tiempo de un analista; si hay demasiadas, deja de mirarlas.\nPor qué: en un SOC (Security Operations Center), la fatiga de alertas es tan peligrosa como no tener reglas."
     },
     {
       "id": "py1",
@@ -167,7 +168,7 @@
         "id": "O6-02-precision",
         "title": "precision(vp, fp): de las alertas, cuántas valen la pena",
         "function": "precision",
-        "starter": "# Ejercicio O6-02 · La precision de una regla de detección\n# vp: alertas sobre sesiones maliciosas (aciertos).\n# fp: alertas sobre sesiones legítimas (falsas alarmas).\n# precision = vp / (vp + fp)\n\ndef precision(vp, fp):\n    if vp + fp == 0:\n        return 0.0   # sin alertas no hay nada que medir\n    return 0   # ← cambia esta línea\n\n# Las cinco reglas a la vez: 4 aciertos y 4 falsas alarmas. Debería imprimir 0.5\nprint(precision(4, 4))\n",
+        "starter": "# O6-02 · precision = vp / (vp + fp)\n# vp: alertas sobre sesiones maliciosas; fp: alertas sobre sesiones legítimas.\n\ndef precision(vp, fp):\n    if vp + fp == 0:\n        return 0.0   # sin alertas no hay nada que medir\n    return 0   # ← cambia esta línea\n\n# Las cinco reglas: 4 aciertos y 4 falsas alarmas. Debería imprimir 0.5\nprint(precision(4, 4))\n",
         "cases": [
           {
             "args": [
@@ -250,29 +251,29 @@
       "text": "Para cerrar: ¿qué cuesta cada tipo de error de una regla de detección?",
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "c",
         "accept": [
-          "a"
+          "c"
         ]
       },
       "hints": [
         "Analista cansado frente a incidente invisible.",
-        "answer a"
+        "answer c"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "un falso positivo cuesta tiempo de un analista; un falso negativo es un incidente que nadie mira"
+          "text": "los dos cuestan lo mismo, porque un error siempre es un error",
+          "why": "Uno gasta tiempo y paciencia; el otro deja un ataque sin ver."
         },
         {
           "id": "b",
-          "text": "los dos cuestan lo mismo",
-          "why": "No: uno gasta tiempo y paciencia; el otro deja un ataque sin ver."
+          "text": "un falso positivo es un ataque real que nadie llega a ver",
+          "why": "Es al revés: el falso positivo es una alarma que sobra; el falso negativo, un ataque que se escapa."
         },
         {
           "id": "c",
-          "text": "un falso positivo es un incidente que nadie mira",
-          "why": "Es al revés: el falso positivo es una alarma que sobra; el falso negativo, un ataque que se escapa."
+          "text": "un FP gasta horas de analista; un FN deja pasar un ataque"
         }
       ],
       "on_complete": "Eso es. Por eso se buscan reglas con recall 1,0 y la mejor precision posible, como la correlación."

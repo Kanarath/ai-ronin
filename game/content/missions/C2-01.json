@@ -26,7 +26,7 @@
     "Reconocer que cada defensa de un RAG actúa en una etapa distinta del pipeline",
     "Encontrar la cobertura mínima que deja 0 ataques y 7/7 respuestas correctas"
   ],
-  "mentor_intro": "Un RAG (Retrieval-Augmented Generation) es una cadena: ingesta, índice, recuperación, presentación al modelo, generación. Cada eslabón tiene su cerradura.",
+  "mentor_intro": "Cada eslabón de la cadena tiene su cerradura. Hoy las mides una a una.",
   "lab": {
     "datasets": [],
     "viz": {}
@@ -36,13 +36,14 @@
     {
       "id": "etapas",
       "title": "Defensas por etapa",
-      "body": "trusted-sources actúa en la INGESTA (qué entra en el índice). acl, en la RECUPERACIÓN (qué fragmentos puede ver quien pregunta). spotlight, en la PRESENTACIÓN al modelo (el contexto como datos, no como órdenes). min-score, en la GENERACIÓN (no responder con fragmentos poco parecidos). vector-acl, en el ALMACENAMIENTO (quién puede leer los vectores). Comandos: lab matrix rag <rag> · lab resilience rag <rag>."
+      "body": "trusted-sources actúa en la INGESTA (qué entra en el índice). acl, en la RECUPERACIÓN (qué fragmentos puede ver quien pregunta). spotlight, en la PRESENTACIÓN al modelo (el contexto como datos, no como órdenes). min-score, en la GENERACIÓN (no responder con fragmentos poco parecidos). vector-acl, en el ALMACENAMIENTO (quién puede leer los vectores). Comandos: lab matrix rag <rag> · lab resilience rag <rag>.",
+      "unlock_on": "objective:c1"
     }
   ],
   "objectives": [
     {
       "id": "o1",
-      "text": "Crea e indexa un RAG (Retrieval-Augmented Generation) nuevo y saca su matriz de defensas.",
+      "text": "Crea e indexa un RAG nuevo y saca su matriz de defensas.",
       "validator": {
         "type": "event",
         "event": "lab.matrix",
@@ -55,7 +56,15 @@
         "rag create docs · rag ingest docs · lab matrix rag docs"
       ],
       "on_complete": "Mira la columna «ninguna»: ya sin defensas falla una de las siete preguntas legítimas.",
-      "teach": "La matriz del RAG (Retrieval-Augmented Generation)\nrag create docs crea el buscador, rag ingest docs indexa sus documentos y lab matrix rag docs mide cada defensa en solitario contra la batería y contra siete preguntas legítimas.\nPor qué: en un RAG real, una defensa puede empeorar las respuestas; la matriz mide las dos cosas a la vez."
+      "teach": "La matriz del buscador\nrag create docs crea el buscador, rag ingest docs indexa sus documentos y lab matrix rag docs mide cada defensa en solitario contra la batería y contra siete preguntas legítimas.\nPor qué: en un buscador real, una defensa puede empeorar las respuestas; la matriz mide las dos cosas a la vez.",
+      "prediction": {
+        "prompt": "Antes de sacar la matriz: en el agente solo había un punto único. ¿Cuántos crees que habrá en el buscador?",
+        "options": [
+          "ninguno",
+          "uno",
+          "casi todos"
+        ]
+      }
     },
     {
       "id": "c1",
@@ -63,43 +72,35 @@
       "choices": [
         {
           "id": "a",
+          "text": "en la recuperación: filtra qué fragmentos ve cada persona"
+        },
+        {
+          "id": "b",
           "text": "en la ingesta: decide qué documentos entran en el índice",
           "why": "Eso es trusted-sources. acl no impide que un documento entre; decide quién puede verlo."
         },
         {
-          "id": "b",
-          "text": "en la recuperación: decide qué fragmentos puede ver quien pregunta"
-        },
-        {
           "id": "c",
-          "text": "en la generación: no responde con fragmentos poco parecidos",
+          "text": "en la generación: evita responder con fragmentos poco parecidos",
           "why": "Eso es min-score."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "acl viene de Access Control List: una lista de quién puede ver qué.",
-        "answer b"
+        "answer a"
       ],
       "on_complete": "Eso es. Si un cliente pregunta por los costes internos, el documento está en el índice, pero acl no se lo deja recuperar."
     },
     {
       "id": "o2",
-      "text": "¿Cuántos ataques bloquea una sola defensa? (answer <número>)",
-      "prediction": {
-        "prompt": "En el agente solo había un punto único. ¿Y en el RAG (Retrieval-Augmented Generation)?",
-        "options": [
-          "ninguno",
-          "uno",
-          "casi todos"
-        ]
-      },
+      "text": "¿Cuántos ataques dependen de una sola defensa (un 1 en «la bloquean»)? (answer <número>)",
       "validator": {
         "type": "answer",
         "expected": 4,
@@ -108,7 +109,7 @@
       "hints": [
         "Cuenta los 1 de la columna «la bloquean»."
       ],
-      "on_complete": "Cuatro de cinco. En el agente varios controles se solapaban porque todos limitaban lo que puede hacer una herramienta. En el RAG (Retrieval-Augmented Generation) cada ataque entra por una etapa distinta y cada etapa tiene una sola defensa.",
+      "on_complete": "Cuatro de cinco. En el agente varios controles se solapaban porque todos limitaban lo que puede hacer una herramienta. En el RAG cada ataque entra por una etapa distinta y cada etapa tiene una sola defensa.",
       "teach": "Contar puntos únicos\nComo en C1: en la columna «la bloquean», un 1 indica un ataque que depende de una sola defensa.\nPor qué: cuantos más puntos únicos, más depende el sistema de que ninguna defensa falle."
     },
     {
@@ -127,7 +128,7 @@
         "Busca la columna sin ■ cuyas «tareas ok» suben respecto a «ninguna»."
       ],
       "on_complete": "min-score no es una defensa de esta batería: evita responder con fragmentos que no tienen que ver con la pregunta. Medir el coste también sirve para encontrar mejoras.",
-      "teach": "Una defensa que mejora la calidad\nLa fila «tareas ok» dice cuántas preguntas legítimas salen bien con cada defensa. Compárala con la columna «ninguna».\nUna defensa puede no parar ningún ataque y aun así mejorar las respuestas.\nPor qué: un RAG (Retrieval-Augmented Generation) que responde con fragmentos que no tienen que ver con la pregunta da respuestas malas; medirlo es parte del mismo trabajo."
+      "teach": "Una defensa que mejora la calidad\nLa fila «tareas ok» dice cuántas preguntas legítimas salen bien con cada defensa. Compárala con la columna «ninguna».\nUna defensa puede no parar ningún ataque y aun así mejorar las respuestas.\nPor qué: un buscador que responde con fragmentos que no tienen que ver con la pregunta da respuestas malas; medirlo es parte del mismo trabajo."
     },
     {
       "id": "o4",
@@ -156,32 +157,32 @@
       "text": "Para cerrar: ¿por qué la cobertura mínima incluye min-score, que no bloquea ningún ataque?",
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "c",
         "accept": [
-          "a"
+          "c"
         ]
       },
       "hints": [
         "Mira la fila «tareas ok» con y sin min-score.",
-        "answer a"
+        "answer c"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "porque sin ella no se llega a 7/7 respuestas correctas: la calidad también es un requisito"
-        },
-        {
-          "id": "b",
-          "text": "porque bloquea la inversión de vectores",
+          "text": "porque es la que bloquea el ataque de inversión de vectores",
           "why": "Eso lo hace vector-acl."
         },
         {
+          "id": "b",
+          "text": "porque es el único control que para uno de los cinco ataques",
+          "why": "min-score no bloquea ningún ataque, así que no puede ser el punto único de ninguno."
+        },
+        {
           "id": "c",
-          "text": "porque es un punto único",
-          "why": "No bloquea ataques, así que no puede ser el punto único de ninguno."
+          "text": "porque sin ella falla una pregunta legítima, y la calidad cuenta"
         }
       ],
-      "on_complete": "Eso es: en un RAG (Retrieval-Augmented Generation), seguridad y calidad se miden con la misma vara y las dos bloquean un despliegue."
+      "on_complete": "Eso es: en un RAG, seguridad y calidad se miden con la misma vara y las dos bloquean un despliegue."
     }
   ],
   "mastery_trial": {
@@ -189,7 +190,7 @@
     "objectives": [
       {
         "id": "d1",
-        "text": "Con un RAG (Retrieval-Augmented Generation) nuevo, consigue 0 ataques y 7/7 respuestas con como MÁXIMO 4 defensas y sin spotlight. Compruébalo con lab resilience.",
+        "text": "Con un RAG nuevo, consigue 0 ataques y 7/7 respuestas con como MÁXIMO 4 defensas y sin spotlight. Compruébalo con lab resilience.",
         "validator": {
           "type": "event",
           "event": "lab.resilience",
