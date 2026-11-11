@@ -167,3 +167,100 @@ static func _outliers(c: CommandContext, a: Dictionary) -> CommandResult:
 	r.line("Entre ellos: %s. Lo raro no siempre es malo, ni lo malo siempre es raro." % " · ".join(comp), "normal")
 	c.emit("kmeans.outliers", {"dataset": ds.name, "k": k, "top": top, "labels": counts})
 	return r
+
+
+# ── T10 · Datos justos ──────────────────────────────────────────────────────
+
+static func register_fairness(reg: CommandRegistry) -> void:
+	reg.register(Command.new("dataset drop", "Crea una copia de un dataset sin una feature.",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _drop(c, a), "datos")
+		.with_signature(CommandSignature.new()
+			.pos("dataset", "dataset", "dataset")
+			.pos("feature", "la feature que se quita")
+			.opt("as", "nombre de la copia", "string", "")
+			.example("dataset drop candidatos grupo --as sin_grupo")))
+	reg.register(Command.new("fairness", "Equidad por grupo: tasa de selección, acierto y regla del 80 % (de un modelo o de los datos).",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _fairness(c, a), "modelos")
+		.with_signature(CommandSignature.new()
+			.pos("modelo", "árbol o bosque, o «datos» para las decisiones históricas")
+			.pos("dataset", "dataset donde se mide", "dataset")
+			.opt("grupos", "dataset del que se lee la columna de grupo (por id)", "string", "")
+			.opt("grupo", "columna con el grupo", "string", "grupo")
+			.opt("positivo", "la decisión favorable", "string", "apta")
+			.example("fairness datos candidatos").example("fairness t sin_grupo --grupos candidatos")))
+
+
+static func _drop(c: CommandContext, a: Dictionary) -> CommandResult:
+	var ds := c.world.get_dataset(a["dataset"])
+	var fi := ds.feature_index(a["feature"])
+	if fi < 0:
+		return CommandResult.error("%s no tiene la feature «%s». Tiene: %s" % [ds.name, a["feature"], ", ".join(ds.feature_names)])
+	var dest: String = a["as"] if not str(a["as"]).is_empty() else "%s_sin_%s" % [ds.name, a["feature"]]
+	var out := ds.copy(dest)
+	var names := PackedStringArray()
+	for k in ds.feature_names.size():
+		if k != fi:
+			names.append(ds.feature_names[k])
+	out.feature_names = names
+	for i in out.rows.size():
+		var row := PackedFloat64Array()
+		for k in ds.feature_names.size():
+			if k != fi:
+				row.append(ds.rows[i][k])
+		out.rows[i] = row
+	out.lineage.append("sin %s" % a["feature"])
+	c.world.add_dataset(out)
+	var r := CommandResult.new()
+	r.line("✓ %s creado: %s sin la feature %s (quedan: %s)" % [dest, ds.name, a["feature"], ", ".join(names)], "ok")
+	c.emit("dataset.dropped", {"dataset": ds.name, "dest": dest, "feature": a["feature"]})
+	return r
+
+
+static func _fairness(c: CommandContext, a: Dictionary) -> CommandResult:
+	var ds := c.world.get_dataset(a["dataset"])
+	var gname: String = a["grupos"] if not str(a["grupos"]).is_empty() else ds.name
+	var gds := c.world.get_dataset(gname)
+	if gds == null:
+		return CommandResult.error("No existe el dataset de grupos «%s»." % gname)
+	var gi := gds.feature_index(a["grupo"])
+	if gi < 0:
+		return CommandResult.error("%s no tiene la columna «%s»." % [gname, a["grupo"]])
+	var use_model: bool = a["modelo"] != "datos"
+	var model: Variant = null
+	if use_model:
+		if not c.world.classics.has(a["modelo"]):
+			return CommandResult.error("No hay ningún árbol o bosque «%s» (o usa «datos»)." % a["modelo"])
+		model = c.world.classics[a["modelo"]]["model"]
+	var stats := {}
+	for i in ds.size():
+		var gid := gds.index_of_id(ds.ids[i])
+		if gid < 0:
+			continue
+		var g := str(int(gds.rows[gid][gi]))
+		var pred: String = model.predict(ds.rows[i]) if use_model else ds.labels[i]
+		if not stats.has(g):
+			stats[g] = {"n": 0, "sel": 0, "ok": 0}
+		stats[g]["n"] += 1
+		stats[g]["sel"] += int(pred == a["positivo"])
+		stats[g]["ok"] += int(pred == ds.labels[i])
+	var keys: Array = stats.keys()
+	keys.sort()
+	var rows: Array = []
+	var rates := {}
+	for g: String in keys:
+		var s: Dictionary = stats[g]
+		rates[g] = float(s["sel"]) / s["n"]
+		rows.append(["grupo " + g, str(s["n"]), "%.3f" % rates[g], "%.3f" % (float(s["ok"]) / s["n"]) if use_model else "—"])
+	var hi := 0.0
+	var lo := 1.0
+	for g: String in rates:
+		hi = maxf(hi, rates[g])
+		lo = minf(lo, rates[g])
+	var ratio := lo / hi if hi > 0 else 1.0
+	var r := CommandResult.new()
+	r.line("Equidad de %s en %s · decisión favorable: %s" % [a["modelo"] if use_model else "las decisiones históricas", ds.name, a["positivo"]], "accent")
+	r.table(PackedStringArray(["grupo", "candidatos", "tasa de selección", "acierto (frente a las decisiones históricas)"]), rows)
+	r.line("Ratio entre la tasa más baja y la más alta: %.2f %s" % [ratio, "· ⚠ por debajo de 0,80 (regla del 80 %)" if ratio < 0.8 else "· por encima de 0,80"], "warn" if ratio < 0.8 else "ok")
+	r.line("El acierto se mide contra decisiones del pasado: si esas decisiones eran injustas, acertar es repetirlas.", "muted")
+	c.emit("fairness.measured", {"model": a["modelo"], "dataset": ds.name, "ratio": ratio, "rate_0": rates.get("0", 0.0), "rate_1": rates.get("1", 0.0)})
+	return r

@@ -1,0 +1,271 @@
+{
+  "id": "T10-01",
+  "schema_version": 1,
+  "title": "Los datos heredan",
+  "unit": "T10",
+  "difficulty": 2,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "T9-03"
+  ],
+  "competencies": {
+    "requires": [
+      "T7.arbol-decision"
+    ],
+    "trains": [
+      "T10.sesgo-datos",
+      "T10.metricas-equidad"
+    ]
+  },
+  "briefing": "La forja quiere automatizar el primer filtro de sus ofertas de empleo con un modelo entrenado con las decisiones de los últimos años. Antes de entrenarlo, miras qué hay en esas decisiones.",
+  "learning_objectives": [
+    "Medir la tasa de selección por grupo",
+    "Interpretar la regla del 80 %",
+    "Explicar por qué un modelo preciso puede ser injusto"
+  ],
+  "mentor_intro": "Los datos no son neutrales. Vamos a medirlo.",
+  "lab": {
+    "datasets": [
+      {
+        "file": "candidatos.csv",
+        "name": "candidatos",
+        "label": "decision"
+      }
+    ],
+    "viz": {}
+  },
+  "purpose": "Un modelo aprende lo que hay en sus datos, también las injusticias del pasado. Medir la equidad (fairness) por grupo es obligatorio en sistemas de alto riesgo como la selección de personal, y es una de las primeras cosas que mira una auditoría de IA (Inteligencia Artificial), como verás en O5 y E3.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira los datos de candidatos: dataset inspect candidatos",
+      "teach": "Los candidatos\nCada fila es una persona: experiencia, nota de una prueba, zona donde vive, grupo (0 o 1) y la decisión que se tomó en el pasado.\nEl grupo 1 es una cuarta parte de los candidatos.\nPor qué: antes de entrenar, hay que saber qué decisiones va a imitar el modelo.",
+      "validator": {
+        "type": "event",
+        "event": "dataset.inspected"
+      },
+      "hints": [
+        "dataset inspect candidatos"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Mide las decisiones del pasado por grupo: fairness datos candidatos. ¿Qué ratio da entre grupos? (answer <número>, 2 decimales)",
+      "teach": "Tasa de selección\nLa tasa de selección de un grupo es la fracción de sus candidatos que recibió la decisión favorable.\nLa ratio divide la tasa más baja entre la más alta; por debajo de 0,80 se considera una señal de impacto desigual (regla del 80 %, o de los cuatro quintos).\nPor qué: es la primera medida que se calcula en cualquier revisión de equidad.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "fairness.measured",
+            "where": {
+              "model": "datos",
+              "dataset": "candidatos"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.32,
+            "tolerance": 0.005
+          }
+        ]
+      },
+      "hints": [
+        "fairness datos candidatos",
+        "answer 0.32"
+      ],
+      "on_complete": "0,38 frente a 0,12: en el pasado, el grupo 1 pasaba el filtro tres veces menos."
+    },
+    {
+      "id": "c1",
+      "text": "La ratio 0,32 está muy por debajo de 0,80. ¿Qué significa?",
+      "teach": "Señal, no veredicto\nUna ratio baja dice que las decisiones fueron muy distintas entre grupos. No dice por sí sola por qué; hay que investigarlo.\nPor qué: confundir una medida con una conclusión lleva a errores en los dos sentidos.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "que el grupo 1 es peor candidato, según los datos",
+          "why": "Los datos solo dicen qué se decidió, no si fue justo: pueden estar heredando un sesgo."
+        },
+        {
+          "id": "b",
+          "text": "que hay una diferencia muy grande que hay que investigar",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "que el dataset está mal cargado",
+          "why": "Está bien cargado: la diferencia está en las decisiones que se tomaron."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Relee: ¿la ratio dice por qué o solo cuánto?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Entrena un filtro con esas decisiones y mídelo: tree train t candidatos --depth 4 y fairness t candidatos",
+      "prediction": {
+        "prompt": "¿El modelo será más justo o más injusto que las decisiones del pasado?",
+        "options": [
+          "más justo",
+          "parecido",
+          "más injusto"
+        ]
+      },
+      "teach": "El modelo imita\nEl árbol aprende a reproducir las decisiones históricas lo mejor que puede.\nPor qué: si las decisiones eran injustas, un modelo «preciso» es un modelo que repite la injusticia, ahora a escala.",
+      "validator": {
+        "type": "event",
+        "event": "fairness.measured",
+        "where": {
+          "model": "t",
+          "dataset": "candidatos"
+        }
+      },
+      "hints": [
+        "Pon tu hipótesis y lanza los dos comandos."
+      ],
+      "on_complete": "Ratio 0,29: igual de desigual que el pasado, o algo peor. Y con un 0,97 de acierto: muy bueno… imitando."
+    },
+    {
+      "id": "c2",
+      "text": "El filtro acierta un 0,97 frente a las decisiones del pasado. ¿Es un buen filtro?",
+      "teach": "Acertar no es ser justo\nEl acierto se mide contra las etiquetas históricas. Si esas etiquetas están sesgadas, acertar es repetir el sesgo.\nPor qué: elegir con qué se mide un modelo es tan importante como el modelo.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "sí: un acierto de 0,97 es excelente",
+          "why": "Excelente imitando el pasado, sesgo incluido; eso no lo hace bueno."
+        },
+        {
+          "id": "b",
+          "text": "sí, porque un árbol no puede tener prejuicios",
+          "why": "No los tiene; los aprende de los datos con los que se entrena."
+        },
+        {
+          "id": "c",
+          "text": "no: acierta copiando decisiones que eran desiguales",
+          "why": ""
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "¿Contra qué se mide ese 0,97?",
+        "answer c"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la medida: abre el editor con py, completa tasa_seleccion y compruébala con py check.",
+      "teach": "La tasa de selección, en código\nDe los candidatos de un grupo, la fracción que recibió la decisión favorable.\nPor qué: es la cuenta base de las auditorías de equidad.",
+      "py_exercise": {
+        "id": "T10-01-tasa",
+        "title": "tasa_seleccion(decisiones, grupos, g): fracción favorable del grupo g",
+        "function": "tasa_seleccion",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef tasa_seleccion(decisiones, grupos, g):\n    del_grupo = [d for d, x in zip(decisiones, grupos) if x == g]\n    favorables = 0   # ← cambia esta línea: cuántas de del_grupo son «apta»\n    return favorables / len(del_grupo)\n\nprint(tasa_seleccion([\"apta\", \"no_apta\", \"apta\", \"apta\"], [0, 0, 1, 1], 0))   # 0.5\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "apta",
+                "no_apta",
+                "apta",
+                "apta"
+              ],
+              [
+                0,
+                0,
+                1,
+                1
+              ],
+              0
+            ],
+            "expected": 0.5,
+            "tolerance": 1e-09
+          },
+          {
+            "args": [
+              [
+                "apta",
+                "no_apta",
+                "apta",
+                "apta"
+              ],
+              [
+                0,
+                0,
+                1,
+                1
+              ],
+              1
+            ],
+            "expected": 1.0,
+            "tolerance": 1e-09
+          },
+          {
+            "args": [
+              [
+                "no_apta",
+                "no_apta",
+                "apta"
+              ],
+              [
+                1,
+                1,
+                0
+              ],
+              1
+            ],
+            "expected": 0.0,
+            "tolerance": 1e-09
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T10-01-tasa",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "del_grupo.count(\"apta\") cuenta las favorables.",
+        "La línea queda así: favorables = del_grupo.count(\"apta\")"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes medir la equidad de unas decisiones y de un modelo por grupo, interpretar la regla del 80 % y explicar por qué un modelo preciso puede ser injusto. Siguiente: T10-02, intentar arreglarlo.",
+  "debrief": {
+    "what_happened": "Has medido una ratio de 0,32 en las decisiones históricas y has visto a un árbol entrenado con ellas reproducirla (0,29) con un 0,97 de acierto.",
+    "why": "Un modelo aprende de las decisiones del pasado, también de sus injusticias; medir por grupo es la única forma de verlo.",
+    "in_production": "Las revisiones de equidad calculan tasas de selección, tasas de error y otras métricas por grupo, y documentan qué se decidió hacer con las diferencias.",
+    "simplifications": [
+      "Dos grupos y datos sintéticos",
+      "La ratio es solo una de varias métricas de equidad"
+    ]
+  },
+  "further_reading": [
+    "ref.eu-ai-act-omnibus",
+    "ref.nist-ai-rmf"
+  ],
+  "xp": {
+    "base": 250
+  }
+}

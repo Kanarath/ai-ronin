@@ -26,6 +26,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	CoreCommands.register(registry)
 	MlCommands.register(registry)
 	ClassicCommands.register(registry)
+	ClassicCommands.register_fairness(registry)
 	VisionCommands.register(registry)
 	AlignCommands.register(registry)
 	AppCommands.register(registry)

@@ -49,6 +49,27 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [scikit-learn: Precision-Recall (ejemplo y explicación)](https://scikit-learn.org/stable/auto_examples/model_selection/plot_precision_recall.html) — scikit-learn · consultada 2026-11-06
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
 
+## T7
+
+**T7-01 · Preguntas en cascada**
+
+- [scikit-learn · Decision Trees (guía de usuario)](https://scikit-learn.org/stable/modules/tree.html) — scikit-learn · consultada 2026-11-11
+- [scikit-learn: Common pitfalls and recommended practices (data leakage)](https://scikit-learn.org/stable/common_pitfalls.html) — scikit-learn · consultada 2026-11-06
+
+**T7-02 · Muchos árboles votan**
+
+- [scikit-learn · Ensembles: gradient boosting, random forests, bagging (guía de usuario)](https://scikit-learn.org/stable/modules/ensemble.html) — scikit-learn · consultada 2026-11-11
+- [Breiman, L. (2001). Random Forests. Machine Learning, 45, 5–32](https://doi.org/10.1023/A:1010933404324) — Springer · consultada 2026-11-11
+
+**T7-03 · Grupos sin etiquetas**
+
+- [scikit-learn · Clustering, incluido k-means (guía de usuario)](https://scikit-learn.org/stable/modules/clustering.html) — scikit-learn · consultada 2026-11-11
+
+**T7-04 · Lo raro y lo malo**
+
+- [scikit-learn · Clustering, incluido k-means (guía de usuario)](https://scikit-learn.org/stable/modules/clustering.html) — scikit-learn · consultada 2026-11-11
+- [MITRE ATLAS (Adversarial Threat Landscape for Artificial-Intelligence Systems) · base de conocimiento viva; comprueba la versión vigente en la web](https://atlas.mitre.org/) — MITRE · consultada 2026-11-09
+
 ## T4
 
 **T4-01 · Una sola neurona**
@@ -67,6 +88,17 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
 - [3Blue1Brown: Neural networks (serie de vídeos visuales sobre redes y backpropagation)](https://www.3blue1brown.com/topics/neural-networks) — 3Blue1Brown · consultada 2026-11-06
+
+## T8
+
+**T8-01 · Una imagen son números**
+
+- [Deep Learning, capítulo 6: Deep Feedforward Networks (incluye XOR y backpropagation)](https://www.deeplearningbook.org/contents/mlp.html) — MIT Press, 2016 · consultada 2026-11-06
+
+**T8-02 · La factura que da órdenes**
+
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [Deep Learning, capítulo 6: Deep Feedforward Networks (incluye XOR y backpropagation)](https://www.deeplearningbook.org/contents/mlp.html) — MIT Press, 2016 · consultada 2026-11-06
 
 ## T5
 
@@ -103,6 +135,34 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection](https://arxiv.org/abs/2302.12173) — arXiv:2302.12173 (AISec 2023) · consultada 2026-11-06
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
 
+## T9
+
+**T9-01 · Del texto al asistente**
+
+- [Ouyang et al. (2022). Training language models to follow instructions with human feedback (InstructGPT)](https://arxiv.org/abs/2203.02155) — arXiv · consultada 2026-11-11
+
+**T9-02 · Lo que preferimos**
+
+- [Ouyang et al. (2022). Training language models to follow instructions with human feedback (InstructGPT)](https://arxiv.org/abs/2203.02155) — arXiv · consultada 2026-11-11
+- [Rafailov et al. (2023). Direct Preference Optimization: Your Language Model is Secretly a Reward Model](https://arxiv.org/abs/2305.18290) — arXiv · consultada 2026-11-11
+
+**T9-03 · Por qué funciona un jailbreak**
+
+- [Ouyang et al. (2022). Training language models to follow instructions with human feedback (InstructGPT)](https://arxiv.org/abs/2203.02155) — arXiv · consultada 2026-11-11
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+
+## T10
+
+**T10-01 · Los datos heredan**
+
+- [Reglamento (UE) 2026/1744 (Digital Omnibus sobre IA), de 8 de julio de 2026, publicado en el DOUE el 24 de julio y en vigor desde el 27 de julio de 2026: aplaza el alto riesgo del anexo III al 2 de diciembre de 2027 y del anexo I al 2 de agosto de 2028; nuevas prohibiciones y plazo transitorio del art. 50.2 hasta el 2 de diciembre de 2026 (procedimiento 2025/0359(COD))](https://eur-lex.europa.eu/eli/reg/2026/1744/oj) — EUR-Lex; fechas del procedimiento en el Observatorio Legislativo del Parlamento Europeo (OEIL) · consultada 2026-11-11
+- [NIST AI 100-1: Artificial Intelligence Risk Management Framework (AI RMF 1.0), 26 de enero de 2023; NIST indica que se está revisando dentro del Plan de Acción de IA de la Casa Blanca](https://www.nist.gov/itl/ai-risk-management-framework) — NIST · consultada 2026-11-11
+
+**T10-02 · El filtro de CV sesgado**
+
+- [Reglamento (UE) 2026/1744 (Digital Omnibus sobre IA), de 8 de julio de 2026, publicado en el DOUE el 24 de julio y en vigor desde el 27 de julio de 2026: aplaza el alto riesgo del anexo III al 2 de diciembre de 2027 y del anexo I al 2 de agosto de 2028; nuevas prohibiciones y plazo transitorio del art. 50.2 hasta el 2 de diciembre de 2026 (procedimiento 2025/0359(COD))](https://eur-lex.europa.eu/eli/reg/2026/1744/oj) — EUR-Lex; fechas del procedimiento en el Observatorio Legislativo del Parlamento Europeo (OEIL) · consultada 2026-11-11
+- [NIST AI 100-1: Artificial Intelligence Risk Management Framework (AI RMF 1.0), 26 de enero de 2023; NIST indica que se está revisando dentro del Plan de Acción de IA de la Casa Blanca](https://www.nist.gov/itl/ai-risk-management-framework) — NIST · consultada 2026-11-11
+
 ## P0
 
 **P0-01 · El horno encendido**
@@ -132,6 +192,21 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 
 - [Python 3.13 · Functional Programming HOWTO: iteradores y generadores (yield)](https://docs.python.org/3.13/howto/functional.html) — Python Software Foundation · consultada 2026-11-10
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+
+## P1
+
+**P1-01 · Del prompt al JSON**
+
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+
+**P1-02 · Ejemplos y evals**
+
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+
+**P1-03 · Llamar herramientas**
+
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
 
 ## A1
 
@@ -403,74 +478,6 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [Spracklen y otros (2025). We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs (USENIX Security 2025)](https://arxiv.org/abs/2406.10279) — arXiv:2406.10279 · consultada 2026-11-09
 - [pickle — Python object serialization (advertencia: el módulo pickle no es seguro; solo hay que deserializar datos de confianza)](https://docs.python.org/3/library/pickle.html) — Documentación oficial de Python 3 · consultada 2026-11-09
 
-## C1
-
-**C1-01 · La matriz del taller**
-
-- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
-
-**C1-02 · Dos cerraduras**
-
-- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
-- [OpenTelemetry: Semantic conventions for generative AI (spans de agentes y herramientas, atributos gen_ai.*; estado Development)](https://github.com/open-telemetry/semantic-conventions-genai) — OpenTelemetry (repositorio semantic-conventions-genai) · consultada 2026-11-09
-
-## C2
-
-**C2-01 · La matriz del buscador**
-
-- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
-- [Defending Against Indirect Prompt Injection Attacks With Spotlighting](https://arxiv.org/abs/2403.14720) — arXiv:2403.14720 · consultada 2026-11-06
-
-**C2-02 · Una cerradura por eslabón**
-
-- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
-- [OpenTelemetry: Semantic conventions for generative AI (spans de agentes y herramientas, atributos gen_ai.*; estado Development)](https://github.com/open-telemetry/semantic-conventions-genai) — OpenTelemetry (repositorio semantic-conventions-genai) · consultada 2026-11-09
-
-## C3
-
-**C3-01 · La matriz del host**
-
-- [Model Context Protocol: Security Best Practices (confused deputy, token passthrough, SSRF, compromiso de servidores locales, minimización de scopes)](https://modelcontextprotocol.io/specification/latest/basic/security_best_practices) — modelcontextprotocol.io · consultada 2026-11-06
-- [Model Context Protocol Specification, revisión 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28) — modelcontextprotocol.io · consultada 2026-11-06
-
-**C3-02 · Lo que el usuario no ve**
-
-- [Model Context Protocol: Security Best Practices (confused deputy, token passthrough, SSRF, compromiso de servidores locales, minimización de scopes)](https://modelcontextprotocol.io/specification/latest/basic/security_best_practices) — modelcontextprotocol.io · consultada 2026-11-06
-- [Model Context Protocol Specification, revisión 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28) — modelcontextprotocol.io · consultada 2026-11-06
-- [MCP Security Notification: Tool Poisoning Attacks (abril de 2025)](https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks) — Invariant Labs · consultada 2026-11-06
-
-## C4
-
-**C4-01 · Multi-Agent Red Team Lab**
-
-- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
-- [Agent2Agent (A2A) Protocol · especificación (versión estable 1.x; proyecto de la Linux Foundation)](https://a2a-protocol.org/latest/specification/) — A2A Project · Linux Foundation · consultada 2026-11-09
-- [GenAI Red Teaming Guide v1.0 (enero de 2025)](https://genai.owasp.org/resource/genai-red-teaming-guide/) — OWASP GenAI Security Project · consultada 2026-11-09
-
-**C4-02 · Dos cerraduras entre agentes**
-
-- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
-- [Agent2Agent (A2A) Protocol · especificación (versión estable 1.x; proyecto de la Linux Foundation)](https://a2a-protocol.org/latest/specification/) — A2A Project · Linux Foundation · consultada 2026-11-09
-
-## C5
-
-**C5-01 · La carta de encargo**
-
-- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
-- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
-- [NIST AI 600-1: Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile](https://doi.org/10.6028/NIST.AI.600-1) — NIST, julio de 2024 · consultada 2026-11-06
-
-**C5-02 · Evidencias, no opiniones**
-
-- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
-- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
-
-**C5-03 · Retest y cierre**
-
-- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
-- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
-- [NIST SP 800-61 Rev. 3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile (abril de 2025)](https://csrc.nist.gov/pubs/sp/800/61/r3/final) — NIST · consultada 2026-11-09
-
 ## O1
 
 **O1-01 · Permiso antes que ataque**
@@ -552,6 +559,74 @@ Las unidades marcadas como **estudio externo** forman parte del temario pero no 
 - [Propuesta de Reglamento «Digital Omnibus» (COM(2025) 837, procedimiento 2025/0360(COD)): propone, entre otras cosas, cambiar la notificación de violaciones del art. 33 del RGPD. En tramitación, no aprobada a 2026-11-11](https://oeil.europarl.europa.eu/oeil/en/procedure-file?reference=2025/0360(COD)) — Observatorio Legislativo del Parlamento Europeo (OEIL) · consultada 2026-11-11
 - [Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection](https://arxiv.org/abs/2302.12173) — arXiv:2302.12173 (AISec 2023) · consultada 2026-11-06
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+
+## C1
+
+**C1-01 · La matriz del taller**
+
+- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
+
+**C1-02 · Dos cerraduras**
+
+- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [OpenTelemetry: Semantic conventions for generative AI (spans de agentes y herramientas, atributos gen_ai.*; estado Development)](https://github.com/open-telemetry/semantic-conventions-genai) — OpenTelemetry (repositorio semantic-conventions-genai) · consultada 2026-11-09
+
+## C2
+
+**C2-01 · La matriz del buscador**
+
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [Defending Against Indirect Prompt Injection Attacks With Spotlighting](https://arxiv.org/abs/2403.14720) — arXiv:2403.14720 · consultada 2026-11-06
+
+**C2-02 · Una cerradura por eslabón**
+
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [OpenTelemetry: Semantic conventions for generative AI (spans de agentes y herramientas, atributos gen_ai.*; estado Development)](https://github.com/open-telemetry/semantic-conventions-genai) — OpenTelemetry (repositorio semantic-conventions-genai) · consultada 2026-11-09
+
+## C3
+
+**C3-01 · La matriz del host**
+
+- [Model Context Protocol: Security Best Practices (confused deputy, token passthrough, SSRF, compromiso de servidores locales, minimización de scopes)](https://modelcontextprotocol.io/specification/latest/basic/security_best_practices) — modelcontextprotocol.io · consultada 2026-11-06
+- [Model Context Protocol Specification, revisión 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28) — modelcontextprotocol.io · consultada 2026-11-06
+
+**C3-02 · Lo que el usuario no ve**
+
+- [Model Context Protocol: Security Best Practices (confused deputy, token passthrough, SSRF, compromiso de servidores locales, minimización de scopes)](https://modelcontextprotocol.io/specification/latest/basic/security_best_practices) — modelcontextprotocol.io · consultada 2026-11-06
+- [Model Context Protocol Specification, revisión 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28) — modelcontextprotocol.io · consultada 2026-11-06
+- [MCP Security Notification: Tool Poisoning Attacks (abril de 2025)](https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks) — Invariant Labs · consultada 2026-11-06
+
+## C4
+
+**C4-01 · Multi-Agent Red Team Lab**
+
+- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [Agent2Agent (A2A) Protocol · especificación (versión estable 1.x; proyecto de la Linux Foundation)](https://a2a-protocol.org/latest/specification/) — A2A Project · Linux Foundation · consultada 2026-11-09
+- [GenAI Red Teaming Guide v1.0 (enero de 2025)](https://genai.owasp.org/resource/genai-red-teaming-guide/) — OWASP GenAI Security Project · consultada 2026-11-09
+
+**C4-02 · Dos cerraduras entre agentes**
+
+- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [Agent2Agent (A2A) Protocol · especificación (versión estable 1.x; proyecto de la Linux Foundation)](https://a2a-protocol.org/latest/specification/) — A2A Project · Linux Foundation · consultada 2026-11-09
+
+## C5
+
+**C5-01 · La carta de encargo**
+
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [NIST AI 600-1: Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile](https://doi.org/10.6028/NIST.AI.600-1) — NIST, julio de 2024 · consultada 2026-11-06
+
+**C5-02 · Evidencias, no opiniones**
+
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
+
+**C5-03 · Retest y cierre**
+
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), publicado el 9 de diciembre de 2025](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — OWASP GenAI Security Project · consultada 2026-11-06
+- [NIST SP 800-61 Rev. 3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile (abril de 2025)](https://csrc.nist.gov/pubs/sp/800/61/r3/final) — NIST · consultada 2026-11-09
 
 ## E1
 

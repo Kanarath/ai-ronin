@@ -15,6 +15,8 @@ const SOLUCIONES := {
 	"P1-01": "# Completa la línea marcada y compruébala con py check.\ndef valida(salida, campos):\n    if not isinstance(salida, dict):\n        return False\n    for c in campos:\n        if c not in salida:\n            return False\n        if not isinstance(salida[c], str):\n            return False\n    return True\n\nprint(valida({\"pedido\": \"P-101\", \"problema\": \"rota\", \"urgencia\": None}, [\"pedido\", \"problema\", \"urgencia\"]))   # False\n",
 	"P1-02": "# Completa la línea marcada y compruébala con py check.\ndef exactitud(salidas, oro, campo):\n    bien = 0\n    for s, o in zip(salidas, oro):\n        bien += 1 if s[campo] == o[campo] else 0\n    return bien / len(oro)\n\nprint(exactitud([{\"urgencia\": \"alta\"}, {\"urgencia\": \"media\"}], [{\"urgencia\": \"alta\"}, {\"urgencia\": \"baja\"}], \"urgencia\"))   # 0.5\n",
 	"P1-03": "# Completa la línea marcada y compruébala con py check.\ndef id_valido(texto):\n    if not texto.startswith(\"P-\"):\n        return False\n    resto = texto[2:]\n    return len(resto) == 3 and resto.isdigit()\n\nprint(id_valido(\"P109\"), id_valido(\"P-109\"))   # False True\n",
+	"T10-01": "# Completa la línea marcada y compruébala con py check.\ndef tasa_seleccion(decisiones, grupos, g):\n    del_grupo = [d for d, x in zip(decisiones, grupos) if x == g]\n    favorables = del_grupo.count(\"apta\")\n    return favorables / len(del_grupo)\n\nprint(tasa_seleccion([\"apta\", \"no_apta\", \"apta\", \"apta\"], [0, 0, 1, 1], 0))   # 0.5\n",
+	"T10-02": "# Completa la línea marcada y compruébala con py check.\ndef ratio(tasas):\n    # tasas: {grupo: tasa de selección}\n    return min(tasas.values()) / max(tasas.values())\n\nprint(ratio({\"0\": 0.38, \"1\": 0.12}))   # unos 0.316\n",
 }
 
 var game: DojoGame
@@ -91,6 +93,14 @@ func test_P1_02_completa() -> void:
 
 func test_P1_03_completa() -> void:
 	_walk("P1-03", ["P1-02"], ["app create ext", "app set ext formato_json on", "app set ext esquema on", "app set ext instrucciones on", "app set ext ejemplos on", "app set ext delimitar on", "app run ext c08", "hipotesis sí", "app set ext herramientas on", "app run ext c08", "answer b", "app set ext validar_args on", "app run ext c08", "app eval ext", "answer 30", "answer c", "PY"])
+
+
+func test_T10_01_completa() -> void:
+	_walk("T10-01", ["T9-03"], ["dataset inspect candidatos", "fairness datos candidatos", "answer 0.32", "answer b", "hipotesis parecido", "tree train t candidatos --depth 4", "fairness t candidatos", "answer c", "PY"])
+
+
+func test_T10_02_completa() -> void:
+	_walk("T10-02", ["T10-01"], ["hipotesis no", "dataset drop candidatos grupo --as sin_grupo", "tree train t2 sin_grupo --depth 4", "fairness t2 sin_grupo --grupos candidatos", "answer 0.30", "tree show t2", "answer b", "dataset drop sin_grupo zona --as sin_zona", "tree train t3 sin_zona --depth 4", "fairness t3 sin_zona --grupos candidatos", "answer a", "answer c", "PY"])
 
 
 func test_ejercicios_inicio_falla_y_solucion_pasa() -> void:

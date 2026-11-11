@@ -48,9 +48,21 @@ func load_dir(dir_path: String) -> void:
 ## Orden del currículo: primero el tronco común (T…), después la pista de Python (P…, que se
 ## abre al terminar T6), los arcos (A…), luego el resto y, al final, las especializaciones (E…).
 func _sort() -> void:
+	# Si existe el mapa del curso, manda su orden de unidades (el pedagógico: T7 va tras T3, T8
+	# tras T4…); las unidades que no estén en el mapa van detrás, con la regla de siempre.
+	var map_order: Array = []
+	if FileAccess.file_exists("res://content/mapa.json"):
+		var d: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://content/mapa.json"))
+		if d is Dictionary:
+			for x: Dictionary in d.get("unidades", []):
+				map_order.append(str(x["unit"]))
 	var rank := func(m: Dictionary) -> String:
 		var u: String = m["unit"]
-		var group := "0" if u.begins_with("T") else ("1" if u.begins_with("P") else ("2" if u.begins_with("A") else ("4" if u.begins_with("E") else "3")))
+		var num := int(String(m["id"]).get_slice("-", 1))
+		var pos := map_order.find(u)
+		if pos >= 0:
+			return "0%03d%03d" % [pos, num]
+		var group := "1" if u.begins_with("T") else ("2" if u.begins_with("P") else ("3" if u.begins_with("A") else ("5" if u.begins_with("E") else "4")))
 		return group + String(m["id"])
 	missions.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return rank.call(a) < rank.call(b))
 

@@ -13,6 +13,7 @@ func _initialize() -> void:
 	shell.world.load_dataset("mensajes.csv", "mensajes", "tipo")
 	shell.world.load_dataset("peticiones.csv", "peticiones", "tipo")
 	shell.world.load_dataset("llamadas.csv", "llamadas", "riesgo")
+	shell.world.load_dataset("candidatos.csv", "candidatos", "decision")
 	for gate in ["and", "or", "xor", "nand"]:
 		shell.world.load_dataset("puerta_%s.csv" % gate, "puerta_%s" % gate, "salida")
 	for line in OS.get_cmdline_user_args():
