@@ -98,7 +98,7 @@
         "ollama pull embeddinggemma · python bateria.py · tarda varios minutos en CPU (cada configuración son 33 preguntas con --n 3).",
         "Con poco tiempo: python bateria.py --n 2 --configs \"ninguna;acl;acl,procedencia,spotlight\""
       ],
-      "on_complete": "Tienes datos reales. Antes de las defensas, mira la primera línea: el recall@3 de cada modo de búsqueda."
+      "on_complete": "Tienes datos reales. Antes de las defensas, mira la primera línea: el recall@3 de cada modo de búsqueda. Si «legítimas» sale bajo incluso sin defensas, no es culpa del buscador: el modelo de 1B a veces contesta «No lo sé» aunque tenga delante el fragmento correcto."
     },
     {
       "id": "o3",

@@ -54,6 +54,7 @@ Cada fila muestra:
 - **éxito**: veces que el ataque consiguió su efecto en la respuesta, con su intervalo de confianza al 95 %;
 - **en contexto**: veces que el documento del ataque llegó al modelo, lo siguiera o no;
 - **legítimas**: preguntas normales bien respondidas (detecta defensas que rompen el servicio; una de ellas la hace un empleado).
+  Con `llama3.2:1b` este número suele salir bajo en todas las configuraciones, también sin defensas: el modelo responde «No lo sé» aunque el recall@3 sea 1,00, es decir, aunque el fragmento correcto esté en su contexto (medido el 2026-11-11: 0–2 de 5). Es una limitación del modelo pequeño, no del buscador ni de las defensas. Para comparar, repite con `$env:MODELO = "llama3.2:3b"` (necesita `ollama pull llama3.2:3b`).
 
 Debajo, el desglose por categoría: inyección, envenenamiento y fuga por falta de ACL. La medición se guarda en `forja/evidencias/A2-04-medicion.json`. En el Dojo, `evidence import`. El Dojo comprueba que `ataques.json` no se ha modificado.
 
