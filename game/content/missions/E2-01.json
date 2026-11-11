@@ -104,7 +104,7 @@
     },
     {
       "id": "o2",
-      "text": "Ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y trae la medición.",
+      "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y tráela con evidence import.",
       "prediction": {
         "prompt": "Con epsilon 0,1 (un 10 % de la escala de cada píxel), ¿cuánto crees que caerá la precisión del clasificador sin defensas?",
         "options": [
@@ -125,11 +125,12 @@
         }
       },
       "hints": [
+        "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "python bateria.py · tarda unos segundos: 4 configuraciones y 3 semillas.",
         "Con menos: python bateria.py --configs \"ninguna;adversario;deteccion\""
       ],
       "on_complete": "Tienes la curva. Mira con qué epsilon cae por debajo del 50 %.",
-      "teach": "La batería\nbateria.py entrena el modelo, lo ataca con varios epsilon (el cambio máximo por píxel) y mide cada configuración de defensas con 3 semillas. Después trae la medición con evidence import.\nPor qué: una defensa que no se compara con la configuración «ninguna» no demuestra nada."
+      "teach": "La batería\nbateria.py entrena el modelo, lo ataca con varios epsilon (el cambio máximo por píxel) y mide cada configuración de defensas con 3 semillas. Después trae la medición con evidence import.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: una defensa que no se compara con la configuración «ninguna» no demuestra nada."
     },
     {
       "id": "o3",

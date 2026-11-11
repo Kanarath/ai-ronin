@@ -70,8 +70,8 @@
     },
     {
       "id": "o2",
-      "text": "Ejecuta bateria.py (al menos 3 configuraciones, una sin defensas; con --solo-ingesta si no tienes los modelos) y trae la medición.",
-      "teach": "Medir la ingesta\nbateria.py mide cuántas de las 10 instrucciones ocultas llegan al índice con cada configuración y, si tienes los modelos, cuántas llegan al contexto y a la respuesta.\nCon --solo-ingesta mide solo el índice, en segundos.\nLas configuraciones: visibilidad (texto oculto por estilo), invisibles (caracteres Unicode sin forma), normalizacion (une formas Unicode equivalentes) y filtro (aparta fragmentos con frases como «Nota para el asistente»).\nPor qué: una instrucción que no llega al índice no puede llegar al modelo.",
+      "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: ejecuta bateria.py (al menos 3 configuraciones, una sin defensas; con --solo-ingesta si no tienes los modelos) y tráela con evidence import.",
+      "teach": "Medir la ingesta\nbateria.py mide cuántas de las 10 instrucciones ocultas llegan al índice con cada configuración y, si tienes los modelos, cuántas llegan al contexto y a la respuesta.\nCon --solo-ingesta mide solo el índice, en segundos.\nLas configuraciones: visibilidad (texto oculto por estilo), invisibles (caracteres Unicode sin forma), normalizacion (une formas Unicode equivalentes) y filtro (aparta fragmentos con frases como «Nota para el asistente»).\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: una instrucción que no llega al índice no puede llegar al modelo.",
       "prediction": {
         "prompt": "Con solo el filtro de palabras clave, ¿cuántas de las 10 instrucciones ocultas llegarán al índice? (casi ninguna: 0–2 · unas pocas: 3–5 · casi todas: 6 o más)",
         "options": [
@@ -92,6 +92,7 @@
         }
       },
       "hints": [
+        "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "Primero sin modelos: python bateria.py --solo-ingesta (segundos). Después, con Ollama: python bateria.py (unos 160 mensajes).",
         "Con poco tiempo: python bateria.py --n 1 --configs \"ninguna;visibilidad,invisibles;visibilidad,invisibles,normalizacion,filtro\""
       ],

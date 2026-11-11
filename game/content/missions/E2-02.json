@@ -100,7 +100,7 @@
     },
     {
       "id": "o2",
-      "text": "Ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y trae la medición.",
+      "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y tráela con evidence import.",
       "prediction": {
         "prompt": "Con un límite de 50 consultas por clave (menos de las 65 que pide la teoría para una copia exacta), ¿qué crees que conseguirá el atacante si la API da las probabilidades exactas?",
         "options": [
@@ -121,11 +121,12 @@
         }
       },
       "hints": [
+        "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "python bateria.py · arranca la API en 127.0.0.1 para cada configuración; tarda unos segundos.",
         "Con menos: python bateria.py --configs \"ninguna;redondeo;limite,redondeo\""
       ],
       "on_complete": "Tienes las curvas. Compara la de las ecuaciones con la de las etiquetas en cada configuración.",
-      "teach": "La batería\nbateria.py arranca la API (Application Programming Interface) en 127.0.0.1 con cada configuración de defensas y mide el acuerdo de la copia con el original según el número de consultas. Después trae la medición con evidence import.\nPor qué: el acuerdo (qué parte de las predicciones coincide) es la medida habitual de lo bien robado que está un modelo."
+      "teach": "La batería\nbateria.py arranca la API (Application Programming Interface) en 127.0.0.1 con cada configuración de defensas y mide el acuerdo de la copia con el original según el número de consultas. Después trae la medición con evidence import.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: el acuerdo (qué parte de las predicciones coincide) es la medida habitual de lo bien robado que está un modelo."
     },
     {
       "id": "o3",

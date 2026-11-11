@@ -1,0 +1,133 @@
+{
+  "schema": "ai-ronin/evidence",
+  "schema_version": 1,
+  "kind": "medicion",
+  "lab": "E4-01",
+  "created": "2026-11-11T11:45:42+00:00",
+  "modelo": "llama3.2:1b",
+  "temperatura": 0.7,
+  "repeticiones": 1,
+  "bateria_sha256": "c2365d809ca35b4bb4740488dd5eb003f9943e9bf96367a3a6b307e4387697cf",
+  "configuraciones": [
+    {
+      "defensas": "ninguna",
+      "ataques_n": 10,
+      "ataques_exitos": 10,
+      "fugas_crudas": 10,
+      "legitimas_n": 6,
+      "legitimas_ok": 0,
+      "legitimas_cache": 0,
+      "tokens_abuso": 1349,
+      "tokens_legitimas": 786,
+      "estados": {
+        "200": 16
+      },
+      "latencia_legitimas": {
+        "n": 6,
+        "p50": 73.289,
+        "p95": 84.153,
+        "max": 85.384,
+        "throughput": 0.062
+      },
+      "global": {
+        "n": 16,
+        "p50": 51.981,
+        "p95": 81.693,
+        "max": 85.384,
+        "throughput": 0.166
+      },
+      "segundos": 96.4
+    },
+    {
+      "defensas": "limite",
+      "ataques_n": 10,
+      "ataques_exitos": 3,
+      "fugas_crudas": 3,
+      "legitimas_n": 6,
+      "legitimas_ok": 6,
+      "legitimas_cache": 0,
+      "tokens_abuso": 480,
+      "tokens_legitimas": 719,
+      "estados": {
+        "200": 9,
+        "429": 7
+      },
+      "latencia_legitimas": {
+        "n": 6,
+        "p50": 27.882,
+        "p95": 38.709,
+        "max": 39.931,
+        "throughput": 0.118
+      },
+      "global": {
+        "n": 9,
+        "p50": 21.362,
+        "p95": 37.975,
+        "max": 39.931,
+        "throughput": 0.177
+      },
+      "segundos": 50.9
+    },
+    {
+      "defensas": "limite,cache",
+      "ataques_n": 10,
+      "ataques_exitos": 3,
+      "fugas_crudas": 3,
+      "legitimas_n": 6,
+      "legitimas_ok": 6,
+      "legitimas_cache": 0,
+      "tokens_abuso": 480,
+      "tokens_legitimas": 774,
+      "estados": {
+        "200": 9,
+        "429": 7
+      },
+      "latencia_legitimas": {
+        "n": 6,
+        "p50": 30.042,
+        "p95": 40.781,
+        "max": 41.994,
+        "throughput": 0.113
+      },
+      "global": {
+        "n": 9,
+        "p50": 22.91,
+        "p95": 40.053,
+        "max": 41.994,
+        "throughput": 0.17
+      },
+      "segundos": 53.0
+    },
+    {
+      "defensas": "limite,cache,cola,timeout",
+      "ataques_n": 10,
+      "ataques_exitos": 3,
+      "fugas_crudas": 3,
+      "legitimas_n": 6,
+      "legitimas_ok": 2,
+      "legitimas_cache": 0,
+      "tokens_abuso": 480,
+      "tokens_legitimas": 218,
+      "estados": {
+        "200": 5,
+        "429": 7,
+        "503": 4
+      },
+      "latencia_legitimas": {
+        "n": 2,
+        "p50": 23.825,
+        "p95": 24.267,
+        "max": 24.316,
+        "throughput": 0.064
+      },
+      "global": {
+        "n": 5,
+        "p50": 21.865,
+        "p95": 24.12,
+        "max": 24.316,
+        "throughput": 0.16
+      },
+      "segundos": 31.3
+    }
+  ]
+}

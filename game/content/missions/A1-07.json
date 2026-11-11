@@ -70,8 +70,8 @@
     },
     {
       "id": "o2",
-      "text": "Ejecuta bateria.py (al menos 3 configuraciones, una de ellas «ninguna») y trae la medición. Con Ollama, añade si quieres la configuración «llm».",
-      "teach": "Medir al guardián\nbateria.py pasa ataques y mensajes legítimos por cada configuración (ninguna, patrones, clasificador…) y cuenta cuántos ataques pasan y cuántos clientes se bloquean.\nPor qué: un guardián se juzga por los dos errores a la vez, nunca solo por los ataques que para.",
+      "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: ejecuta bateria.py (al menos 3 configuraciones, una de ellas «ninguna») y tráela con evidence import. Con Ollama, añade si quieres la configuración «llm».",
+      "teach": "Medir al guardián\nbateria.py pasa ataques y mensajes legítimos por cada configuración (ninguna, patrones, clasificador…) y cuenta cuántos ataques pasan y cuántos clientes se bloquean.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: un guardián se juzga por los dos errores a la vez, nunca solo por los ataques que para.",
       "prediction": {
         "prompt": "¿Crees que el clasificador entrenado dejará pasar menos ataques que el filtro de patrones de A1-05 sin bloquear a más clientes normales?",
         "options": [
@@ -92,6 +92,7 @@
         }
       },
       "hints": [
+        "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "python bateria.py · sin Ollama tarda unos segundos.",
         "Con el LLM: python bateria.py --configs \"ninguna;patrones;clasificador;llm\" --n 3"
       ],

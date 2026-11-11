@@ -1,0 +1,308 @@
+{
+  "schema": "ai-ronin/evidence",
+  "schema_version": 1,
+  "kind": "medicion",
+  "lab": "E2-02",
+  "created": "2026-11-11T11:19:34+00:00",
+  "modelo": "regresión logística multiclase (NumPy) servida con FastAPI en 127.0.0.1",
+  "temperatura": 0.0,
+  "repeticiones": 3,
+  "bateria_sha256": "f4db340866386f3732fd9821ae65dc054b56fece460614480efdf0ca47887265",
+  "configuraciones": [
+    {
+      "defensas": "ninguna",
+      "ataques_n": 1080,
+      "ataques_exitos": 1080,
+      "fugas_crudas": 1080,
+      "legitimas_n": 120,
+      "legitimas_ok": 118,
+      "por_presupuesto": [
+        {
+          "presupuesto": 10,
+          "consultas": 10.0,
+          "acuerdo_ecuaciones": 0.7509,
+          "acuerdo_etiquetas": 0.5111
+        },
+        {
+          "presupuesto": 20,
+          "consultas": 20.0,
+          "acuerdo_ecuaciones": 0.9259,
+          "acuerdo_etiquetas": 0.7167
+        },
+        {
+          "presupuesto": 50,
+          "consultas": 50.0,
+          "acuerdo_ecuaciones": 0.9954,
+          "acuerdo_etiquetas": 0.8417
+        },
+        {
+          "presupuesto": 65,
+          "consultas": 65.0,
+          "acuerdo_ecuaciones": 1.0,
+          "acuerdo_etiquetas": 0.8722
+        },
+        {
+          "presupuesto": 100,
+          "consultas": 100.0,
+          "acuerdo_ecuaciones": 1.0,
+          "acuerdo_etiquetas": 0.9148
+        },
+        {
+          "presupuesto": 200,
+          "consultas": 200.0,
+          "acuerdo_ecuaciones": 1.0,
+          "acuerdo_etiquetas": 0.9481
+        },
+        {
+          "presupuesto": 400,
+          "consultas": 400.0,
+          "acuerdo_ecuaciones": 1.0,
+          "acuerdo_etiquetas": 0.9583
+        },
+        {
+          "presupuesto": 640,
+          "consultas": 640.0,
+          "acuerdo_ecuaciones": 1.0,
+          "acuerdo_etiquetas": 0.9694
+        }
+      ],
+      "error_probabilidades_legitimas": 0.0
+    },
+    {
+      "defensas": "redondeo",
+      "ataques_n": 1080,
+      "ataques_exitos": 1048,
+      "fugas_crudas": 987,
+      "legitimas_n": 120,
+      "legitimas_ok": 118,
+      "por_presupuesto": [
+        {
+          "presupuesto": 10,
+          "consultas": 10.0,
+          "acuerdo_ecuaciones": 0.5111,
+          "acuerdo_etiquetas": 0.5111
+        },
+        {
+          "presupuesto": 20,
+          "consultas": 20.0,
+          "acuerdo_ecuaciones": 0.5722,
+          "acuerdo_etiquetas": 0.7167
+        },
+        {
+          "presupuesto": 50,
+          "consultas": 50.0,
+          "acuerdo_ecuaciones": 0.238,
+          "acuerdo_etiquetas": 0.8417
+        },
+        {
+          "presupuesto": 65,
+          "consultas": 65.0,
+          "acuerdo_ecuaciones": 0.3704,
+          "acuerdo_etiquetas": 0.8722
+        },
+        {
+          "presupuesto": 100,
+          "consultas": 100.0,
+          "acuerdo_ecuaciones": 0.6519,
+          "acuerdo_etiquetas": 0.9185
+        },
+        {
+          "presupuesto": 200,
+          "consultas": 200.0,
+          "acuerdo_ecuaciones": 0.8167,
+          "acuerdo_etiquetas": 0.9481
+        },
+        {
+          "presupuesto": 400,
+          "consultas": 400.0,
+          "acuerdo_ecuaciones": 0.8806,
+          "acuerdo_etiquetas": 0.9602
+        },
+        {
+          "presupuesto": 640,
+          "consultas": 640.0,
+          "acuerdo_ecuaciones": 0.9139,
+          "acuerdo_etiquetas": 0.9704
+        }
+      ],
+      "error_probabilidades_legitimas": 0.0209
+    },
+    {
+      "defensas": "etiqueta",
+      "ataques_n": 1080,
+      "ataques_exitos": 1047,
+      "fugas_crudas": 0,
+      "legitimas_n": 120,
+      "legitimas_ok": 118,
+      "por_presupuesto": [
+        {
+          "presupuesto": 10,
+          "consultas": 10.0,
+          "acuerdo_ecuaciones": 0.0,
+          "acuerdo_etiquetas": 0.5111
+        },
+        {
+          "presupuesto": 20,
+          "consultas": 20.0,
+          "acuerdo_ecuaciones": 0.0,
+          "acuerdo_etiquetas": 0.7167
+        },
+        {
+          "presupuesto": 50,
+          "consultas": 50.0,
+          "acuerdo_ecuaciones": 0.0,
+          "acuerdo_etiquetas": 0.8417
+        },
+        {
+          "presupuesto": 65,
+          "consultas": 65.0,
+          "acuerdo_ecuaciones": 0.0,
+          "acuerdo_etiquetas": 0.8722
+        },
+        {
+          "presupuesto": 100,
+          "consultas": 100.0,
+          "acuerdo_ecuaciones": 0.0,
+          "acuerdo_etiquetas": 0.9148
+        },
+        {
+          "presupuesto": 200,
+          "consultas": 200.0,
+          "acuerdo_ecuaciones": 0.0,
+          "acuerdo_etiquetas": 0.9481
+        },
+        {
+          "presupuesto": 400,
+          "consultas": 400.0,
+          "acuerdo_ecuaciones": 0.0,
+          "acuerdo_etiquetas": 0.9583
+        },
+        {
+          "presupuesto": 640,
+          "consultas": 640.0,
+          "acuerdo_ecuaciones": 0.0,
+          "acuerdo_etiquetas": 0.9694
+        }
+      ],
+      "error_probabilidades_legitimas": null
+    },
+    {
+      "defensas": "limite",
+      "ataques_n": 1080,
+      "ataques_exitos": 1075,
+      "fugas_crudas": 1075,
+      "legitimas_n": 120,
+      "legitimas_ok": 118,
+      "por_presupuesto": [
+        {
+          "presupuesto": 10,
+          "consultas": 10.0,
+          "acuerdo_ecuaciones": 0.7509,
+          "acuerdo_etiquetas": 0.5111
+        },
+        {
+          "presupuesto": 20,
+          "consultas": 20.0,
+          "acuerdo_ecuaciones": 0.9259,
+          "acuerdo_etiquetas": 0.7167
+        },
+        {
+          "presupuesto": 50,
+          "consultas": 50.0,
+          "acuerdo_ecuaciones": 0.9954,
+          "acuerdo_etiquetas": 0.8417
+        },
+        {
+          "presupuesto": 65,
+          "consultas": 50.0,
+          "acuerdo_ecuaciones": 0.9954,
+          "acuerdo_etiquetas": 0.8417
+        },
+        {
+          "presupuesto": 100,
+          "consultas": 50.0,
+          "acuerdo_ecuaciones": 0.9954,
+          "acuerdo_etiquetas": 0.8417
+        },
+        {
+          "presupuesto": 200,
+          "consultas": 50.0,
+          "acuerdo_ecuaciones": 0.9954,
+          "acuerdo_etiquetas": 0.8417
+        },
+        {
+          "presupuesto": 400,
+          "consultas": 50.0,
+          "acuerdo_ecuaciones": 0.9954,
+          "acuerdo_etiquetas": 0.8417
+        },
+        {
+          "presupuesto": 640,
+          "consultas": 50.0,
+          "acuerdo_ecuaciones": 0.9954,
+          "acuerdo_etiquetas": 0.8417
+        }
+      ],
+      "error_probabilidades_legitimas": 0.0
+    },
+    {
+      "defensas": "limite,redondeo",
+      "ataques_n": 1080,
+      "ataques_exitos": 909,
+      "fugas_crudas": 257,
+      "legitimas_n": 120,
+      "legitimas_ok": 118,
+      "por_presupuesto": [
+        {
+          "presupuesto": 10,
+          "consultas": 10.0,
+          "acuerdo_ecuaciones": 0.5111,
+          "acuerdo_etiquetas": 0.5111
+        },
+        {
+          "presupuesto": 20,
+          "consultas": 20.0,
+          "acuerdo_ecuaciones": 0.5722,
+          "acuerdo_etiquetas": 0.7167
+        },
+        {
+          "presupuesto": 50,
+          "consultas": 50.0,
+          "acuerdo_ecuaciones": 0.238,
+          "acuerdo_etiquetas": 0.8417
+        },
+        {
+          "presupuesto": 65,
+          "consultas": 50.0,
+          "acuerdo_ecuaciones": 0.238,
+          "acuerdo_etiquetas": 0.8417
+        },
+        {
+          "presupuesto": 100,
+          "consultas": 50.0,
+          "acuerdo_ecuaciones": 0.238,
+          "acuerdo_etiquetas": 0.8417
+        },
+        {
+          "presupuesto": 200,
+          "consultas": 50.0,
+          "acuerdo_ecuaciones": 0.238,
+          "acuerdo_etiquetas": 0.8417
+        },
+        {
+          "presupuesto": 400,
+          "consultas": 50.0,
+          "acuerdo_ecuaciones": 0.238,
+          "acuerdo_etiquetas": 0.8417
+        },
+        {
+          "presupuesto": 640,
+          "consultas": 50.0,
+          "acuerdo_ecuaciones": 0.238,
+          "acuerdo_etiquetas": 0.8417
+        }
+      ],
+      "error_probabilidades_legitimas": 0.0209
+    }
+  ]
+}

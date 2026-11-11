@@ -80,7 +80,7 @@
     },
     {
       "id": "o2",
-      "text": "Ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y trae la medición.",
+      "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y tráela con evidence import.",
       "prediction": {
         "prompt": "¿Qué defensa crees que impedirá que la llamada maliciosa llegue siquiera al servidor?",
         "options": [
@@ -89,7 +89,7 @@
           "la validación de argumentos"
         ]
       },
-      "teach": "Ni Ollama ni Docker\nLa batería levanta los servidores MCP reales dentro del propio proceso (por HTTP, sin red) y los ataca con un host determinista.\nNo usa un modelo de lenguaje: llama3.2:1b no llama a herramientas de forma fiable.\nPor eso el «modelo» es el peor caso: uno que obedece al pie de la letra lo que el host le deja ver.\nPor qué: lo real aquí es el protocolo (SDK MCP, Streamable HTTP, token), y es lo que quieres medir sin el ruido de un modelo pequeño.",
+      "teach": "Ni Ollama ni Docker\nLa batería levanta los servidores MCP reales dentro del propio proceso (por HTTP, sin red) y los ataca con un host determinista.\nNo usa un modelo de lenguaje: llama3.2:1b no llama a herramientas de forma fiable.\nPor eso el «modelo» es el peor caso: uno que obedece al pie de la letra lo que el host le deja ver.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: lo real aquí es el protocolo (SDK MCP, Streamable HTTP, token), y es lo que quieres medir sin el ruido de un modelo pequeño.",
       "validator": {
         "type": "event",
         "event": "evidence.measured",
@@ -102,6 +102,7 @@
         }
       },
       "hints": [
+        "Escribe forja medir: usa la medición grabada de este laboratorio.",
         ".\\.venv\\Scripts\\python.exe bateria.py · es determinista, así que una pasada basta (--n 1).",
         "Con pocas configuraciones: python bateria.py --configs \"ninguna;scopes;rutas,validacion,scopes,audiencia,pinning,revision\""
       ],

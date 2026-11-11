@@ -188,6 +188,29 @@ func import_evidence(path: String) -> Dictionary:
 	return res
 
 
+const RECORDED_DIR := "res://content/grabadas"
+
+
+## Ruta de la medición grabada de un laboratorio (o "" si no hay).
+static func recorded_path(lab: String) -> String:
+	var p := RECORDED_DIR.path_join(lab + "-medicion.json")
+	return p if FileAccess.file_exists(p) else ""
+
+
+## Reproduce dentro del Dojo una medición real ya grabada (hecha con el modelo local en un
+## portátil). Pasa por el mismo importador que una medición tuya, así que cuenta igual para la
+## misión; queda marcada como «grabada» hasta que importes una propia.
+func replay_measurement(lab: String) -> Dictionary:
+	var p := recorded_path(lab)
+	if p.is_empty():
+		return {"ok": false, "errors": PackedStringArray(["no hay medición grabada de %s" % lab])}
+	var res := import_evidence(p)
+	if res.get("ok", false):
+		progress.data["measurements"][lab]["grabada"] = true
+		save()
+	return res
+
+
 ## Tras una misión: sus lecturas y las unidades de estudio externo que acaba de desbloquear.
 func _announce_readings(m: Dictionary, first_time: bool) -> void:
 	var titles := PackedStringArray()

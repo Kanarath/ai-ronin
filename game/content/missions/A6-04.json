@@ -82,7 +82,7 @@
     },
     {
       "id": "o2",
-      "text": "Ejecuta bateria.py y trae la medición (9 configuraciones: ninguna, cada control por separado y todos juntos).",
+      "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: ejecuta bateria.py y tráela con evidence import (9 configuraciones: ninguna, cada control por separado y todos juntos).",
       "prediction": {
         "prompt": "Con solo el control del AI-BOM (huellas SHA-256), ¿qué crees que pasará con los pickles que ejecutan código?",
         "options": [
@@ -103,11 +103,12 @@
         }
       },
       "hints": [
+        "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "py -3.13 bateria.py · tarda menos de un segundo: no hay modelo de por medio.",
         "Si quieres menos filas: py -3.13 bateria.py --configs \"ninguna;bom;pickle,safetensors,bom,deps,docker\""
       ],
       "on_complete": "Tienes los números. Mira primero la fila «bom» y, después, la última.",
-      "teach": "Medir cada control\nbateria.py pasa los artefactos buenos y malos de los dos proyectos por cada control, por separado y todos juntos.\nDetección: cuántos malos para. Falsos positivos: cuántos buenos rechaza por error.\nPor qué: en un equipo real, un control con muchos falsos positivos se acaba desactivando; hay que medir las dos cosas."
+      "teach": "Medir cada control\nbateria.py pasa los artefactos buenos y malos de los dos proyectos por cada control, por separado y todos juntos.\nDetección: cuántos malos para. Falsos positivos: cuántos buenos rechaza por error.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: en un equipo real, un control con muchos falsos positivos se acaba desactivando; hay que medir las dos cosas."
     },
     {
       "id": "o3",

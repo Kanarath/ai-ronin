@@ -869,3 +869,23 @@ func test_aka_explica_una_sigla() -> void:
 func test_las_siglas_principales_estan_en_aka() -> void:
 	for s in ["API", "LLM", "RAG", "MCP", "OWASP", "NIST", "RGPD", "FRIA", "EIPD", "SOC", "CPU", "GPU", "ML", "IA", "JSON", "HTTP", "BPE", "LoRA", "XSS", "SHA-256"]:
 		assert_false(AkaCommands.find(s).is_empty(), s)
+
+
+# --- Forja dentro del Dojo ---
+
+func test_forja_medir_reproduce_la_medicion_grabada() -> void:
+	var r := game.shell.execute("forja medir A1-05")
+	assert_true(r.ok, r.plain_text())
+	assert_true(r.plain_text().contains("Medición grabada"), r.plain_text())
+	var ev: Array = game.shell.events_named("evidence.measured")
+	assert_eq(ev.size(), 1, "cuenta como una medición para la misión")
+	assert_eq(ev[-1]["data"]["lab"], "A1-05")
+	assert_true(ev[-1]["data"]["has_baseline"])
+	assert_true(game.progress.data["measurements"]["A1-05"]["grabada"], "queda marcada como grabada")
+
+
+func test_todas_las_mediciones_grabadas_son_validas() -> void:
+	for f in EvidenceImporter.json_files(DojoGame.RECORDED_DIR):
+		var lab := f.get_file().trim_suffix("-medicion.json")
+		var res := game.replay_measurement(lab)
+		assert_true(res.get("ok", false), "%s: %s" % [lab, str(res.get("errors", ""))])

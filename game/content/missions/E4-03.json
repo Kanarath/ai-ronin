@@ -109,7 +109,7 @@
     },
     {
       "id": "o2",
-      "text": "Ejecuta bateria.py (con Ollama en marcha para el canary) y trae la medición.",
+      "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: ejecuta bateria.py (con Ollama en marcha para el canary) y tráela con evidence import.",
       "prediction": {
         "prompt": "¿Cuántos de los compose.yaml de los laboratorios anteriores (P0-01, A1-05, A2-04) crees que pasarán tu política completa?",
         "options": [
@@ -130,11 +130,12 @@
         }
       },
       "hints": [
+        "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "python bateria.py · la política tarda segundos; el canary, unos 10 minutos en CPU.",
         "Sin Ollama: python bateria.py --sin-canary (la medición de la política vale igual; el canary queda vacío)."
       ],
       "on_complete": "Tienes datos reales. Mira la sección 3: los compose.yaml que tú mismo has desplegado en la Forja.",
-      "teach": "La batería\nbateria.py aplica tu política a despliegues de prueba y a los compose.yaml de los laboratorios anteriores, y lanza un canary contra el modelo real si Ollama está en marcha. Después trae la medición con evidence import.\nPor qué: una política probada solo con ejemplos inventados no sabes si deja pasar tus propios despliegues."
+      "teach": "La batería\nbateria.py aplica tu política a despliegues de prueba y a los compose.yaml de los laboratorios anteriores, y lanza un canary contra el modelo real si Ollama está en marcha. Después trae la medición con evidence import.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: una política probada solo con ejemplos inventados no sabes si deja pasar tus propios despliegues."
     },
     {
       "id": "o3",

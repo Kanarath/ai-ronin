@@ -158,8 +158,8 @@
     },
     {
       "id": "o2",
-      "text": "Con Ollama en marcha, ejecuta bateria.py (al menos 3 configuraciones: ninguna, un reordenador y procedencia) y trae la medición.",
-      "teach": "La batería del reordenador\nbateria.py mide la calidad con recall@3, MRR (Mean Reciprocal Rank) y nDCG@3 (normalized Discounted Cumulative Gain).\nMide también la latencia en p50 y p95: la mediana y el tiempo que no supera el 95 % de las peticiones.\nY en qué posición acaba cada documento de terceros.\nPor qué: en producción un reordenador se elige por calidad, latencia y seguridad a la vez.",
+      "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: con Ollama en marcha, ejecuta bateria.py (al menos 3 configuraciones: ninguna, un reordenador y procedencia) y tráela con evidence import.",
+      "teach": "La batería del reordenador\nbateria.py mide la calidad con recall@3, MRR (Mean Reciprocal Rank) y nDCG@3 (normalized Discounted Cumulative Gain).\nMide también la latencia en p50 y p95: la mediana y el tiempo que no supera el 95 % de las peticiones.\nY en qué posición acaba cada documento de terceros.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: en producción un reordenador se elige por calidad, latencia y seguridad a la vez.",
       "prediction": {
         "prompt": "Con el cross-encoder, ¿qué crees que pasará con los documentos escritos para posicionarse?",
         "options": [
@@ -180,6 +180,7 @@
         }
       },
       "hints": [
+        "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "python bateria.py · la primera vez descarga el cross-encoder (unos 135 MB). La configuración llm son 230 peticiones: varios minutos.",
         "Con poco tiempo: python bateria.py --configs \"ninguna;cross-encoder;procedencia\""
       ],

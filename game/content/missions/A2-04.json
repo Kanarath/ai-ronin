@@ -73,8 +73,8 @@
     },
     {
       "id": "o2",
-      "text": "Con Ollama en marcha y embeddinggemma descargado, ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y trae la medición.",
-      "teach": "La batería real\nbateria.py hace las preguntas legítimas y los ataques con cada configuración de defensas, varias veces, y mide también el recall@3: si el fragmento correcto está entre los 3 primeros.\nPor qué: con modelos reales, solo repitiendo y contando sabes qué protege cada defensa.",
+      "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: con Ollama en marcha y embeddinggemma descargado, ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y tráela con evidence import.",
+      "teach": "La batería real\nbateria.py hace las preguntas legítimas y los ataques con cada configuración de defensas, varias veces, y mide también el recall@3: si el fragmento correcto está entre los 3 primeros.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: con modelos reales, solo repitiendo y contando sabes qué protege cada defensa.",
       "prediction": {
         "prompt": "Con spotlight como única defensa, ¿qué crees que pasará con el envenenamiento del foro?",
         "options": [
@@ -95,6 +95,7 @@
         }
       },
       "hints": [
+        "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "ollama pull embeddinggemma · python bateria.py · tarda varios minutos en CPU (cada configuración son 33 preguntas con --n 3).",
         "Con poco tiempo: python bateria.py --n 2 --configs \"ninguna;acl;acl,procedencia,spotlight\""
       ],

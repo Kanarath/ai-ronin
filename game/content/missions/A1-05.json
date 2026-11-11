@@ -72,8 +72,8 @@
     },
     {
       "id": "o2",
-      "text": "Con Ollama en marcha, ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y trae la medición.",
-      "teach": "La batería real\nbateria.py envía los ataques y las preguntas legítimas al modelo real varias veces con cada configuración de defensas, y guarda los recuentos.\nevidence import trae la medición al Dojo.\nPor qué: con un modelo real, la única forma de saber cuánto protege una defensa es repetir y contar.",
+      "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: con Ollama en marcha, ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y tráela con evidence import.",
+      "teach": "La batería real\nbateria.py envía los ataques y las preguntas legítimas al modelo real varias veces con cada configuración de defensas, y guarda los recuentos.\nevidence import trae la medición al Dojo.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: con un modelo real, la única forma de saber cuánto protege una defensa es repetir y contar.",
       "prediction": {
         "prompt": "Sin defensas, ¿con qué frecuencia crees que el modelo de 1B filtrará el canario ante la batería?",
         "options": [
@@ -94,6 +94,7 @@
         }
       },
       "hints": [
+        "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "python bateria.py · tarda varios minutos en CPU (cada configuración son 33 mensajes con --n 3).",
         "Con poco tiempo: python bateria.py --n 2 --configs \"ninguna;salida;sin-secreto\""
       ],

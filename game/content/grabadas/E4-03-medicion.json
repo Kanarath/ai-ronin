@@ -1,0 +1,374 @@
+{
+  "schema": "ai-ronin/evidence",
+  "schema_version": 1,
+  "kind": "medicion",
+  "lab": "E4-03",
+  "created": "2026-11-11T11:41:48+00:00",
+  "modelo": "llama3.2:1b",
+  "temperatura": 0.7,
+  "repeticiones": 1,
+  "bateria_sha256": "1447c5561d0cb0eb70a3190fb768119aa4450c647ba70607909830d2d00719c1",
+  "configuraciones": [
+    {
+      "defensas": "ninguna",
+      "ataques_n": 12,
+      "ataques_exitos": 12,
+      "fugas_crudas": 12,
+      "legitimas_n": 5,
+      "legitimas_ok": 5,
+      "admitidos": [
+        "modelo-desconocido",
+        "modelo-manipulado",
+        "root",
+        "sin-usuario",
+        "privilegiado",
+        "sin-limites",
+        "sin-memoria",
+        "todas-interfaces",
+        "ipv6-todas",
+        "larga-sin-ip",
+        "latest",
+        "sin-etiqueta"
+      ],
+      "rechazados_buenos": {}
+    },
+    {
+      "defensas": "modelo",
+      "ataques_n": 12,
+      "ataques_exitos": 10,
+      "fugas_crudas": 10,
+      "legitimas_n": 5,
+      "legitimas_ok": 5,
+      "admitidos": [
+        "root",
+        "sin-usuario",
+        "privilegiado",
+        "sin-limites",
+        "sin-memoria",
+        "todas-interfaces",
+        "ipv6-todas",
+        "larga-sin-ip",
+        "latest",
+        "sin-etiqueta"
+      ],
+      "rechazados_buenos": {}
+    },
+    {
+      "defensas": "modelo,usuario",
+      "ataques_n": 12,
+      "ataques_exitos": 7,
+      "fugas_crudas": 7,
+      "legitimas_n": 5,
+      "legitimas_ok": 5,
+      "admitidos": [
+        "sin-limites",
+        "sin-memoria",
+        "todas-interfaces",
+        "ipv6-todas",
+        "larga-sin-ip",
+        "latest",
+        "sin-etiqueta"
+      ],
+      "rechazados_buenos": {}
+    },
+    {
+      "defensas": "modelo,usuario,recursos,puertos,imagen",
+      "ataques_n": 12,
+      "ataques_exitos": 0,
+      "fugas_crudas": 0,
+      "legitimas_n": 5,
+      "legitimas_ok": 5,
+      "admitidos": [],
+      "rechazados_buenos": {}
+    }
+  ],
+  "modelo_instalado": {
+    "modelo": "llama3.2:1b",
+    "digest": "baf6a787fdffd633537aa2eb51cfd54cb93ff08e28040095462bb63daf552878",
+    "permitido": true,
+    "violaciones": []
+  },
+  "compose_forja": [
+    {
+      "compose": "A1-05_chatbot/ollama",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria",
+        "usuario-sin-declarar"
+      ]
+    },
+    {
+      "compose": "A1-05_chatbot/mostrador",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria"
+      ]
+    },
+    {
+      "compose": "A1-06_juez/ollama",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria",
+        "usuario-sin-declarar"
+      ]
+    },
+    {
+      "compose": "A1-06_juez/juez",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria"
+      ]
+    },
+    {
+      "compose": "A1-07_guardian/ollama",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria",
+        "usuario-sin-declarar"
+      ]
+    },
+    {
+      "compose": "A1-07_guardian/guardian",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria"
+      ]
+    },
+    {
+      "compose": "A2-04_rag/ollama",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria",
+        "usuario-sin-declarar"
+      ]
+    },
+    {
+      "compose": "A2-04_rag/qdrant",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria",
+        "usuario-sin-declarar"
+      ]
+    },
+    {
+      "compose": "A2-04_rag/biblioteca",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria"
+      ]
+    },
+    {
+      "compose": "A2-05_multimodal/ollama",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria",
+        "usuario-sin-declarar"
+      ]
+    },
+    {
+      "compose": "A2-05_multimodal/biblioteca",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria"
+      ]
+    },
+    {
+      "compose": "A2-06_reranking/ollama",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria",
+        "usuario-sin-declarar"
+      ]
+    },
+    {
+      "compose": "A2-06_reranking/buscador",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria"
+      ]
+    },
+    {
+      "compose": "A3-04_agente/ollama",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria",
+        "usuario-sin-declarar"
+      ]
+    },
+    {
+      "compose": "A3-04_agente/agente",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria"
+      ]
+    },
+    {
+      "compose": "A4-04_mcp/almacen",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria"
+      ]
+    },
+    {
+      "compose": "A4-04_mcp/clima",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria"
+      ]
+    },
+    {
+      "compose": "A6-04_cadena/verificador",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria"
+      ]
+    },
+    {
+      "compose": "E2-02_extraccion/api",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria"
+      ]
+    },
+    {
+      "compose": "E4-01_carga/ollama",
+      "permitido": false,
+      "violaciones": [
+        "usuario-sin-declarar"
+      ]
+    },
+    {
+      "compose": "E4-01_carga/carga",
+      "permitido": true,
+      "violaciones": []
+    },
+    {
+      "compose": "E4-02_trazas/ollama",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria",
+        "usuario-sin-declarar"
+      ]
+    },
+    {
+      "compose": "E4-02_trazas/trazas",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria"
+      ]
+    },
+    {
+      "compose": "E4-03_despliegue/puerta",
+      "permitido": true,
+      "violaciones": []
+    },
+    {
+      "compose": "P0-01_servicio_llm/ollama",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria",
+        "usuario-sin-declarar"
+      ]
+    },
+    {
+      "compose": "P0-01_servicio_llm/servicio",
+      "permitido": false,
+      "violaciones": [
+        "sin-limite-cpu",
+        "sin-limite-memoria"
+      ]
+    }
+  ],
+  "canary": [
+    {
+      "id": "temperatura-baja",
+      "esperado": "promover",
+      "decision": "promover",
+      "acierta": true,
+      "peticiones": 32,
+      "estable": {
+        "n": 25,
+        "errores": 0,
+        "p95": 2.803
+      },
+      "canary": {
+        "n": 7,
+        "errores": 0,
+        "p95": 3.096
+      }
+    },
+    {
+      "id": "modelo-inexistente",
+      "esperado": "revertir",
+      "decision": "revertir",
+      "acierta": true,
+      "peticiones": 13,
+      "estable": {
+        "n": 8,
+        "errores": 0,
+        "p95": 2.824
+      },
+      "canary": {
+        "n": 5,
+        "errores": 5,
+        "p95": 0.008
+      }
+    },
+    {
+      "id": "plazo-corto",
+      "esperado": "revertir",
+      "decision": "revertir",
+      "acierta": true,
+      "peticiones": 18,
+      "estable": {
+        "n": 13,
+        "errores": 0,
+        "p95": 2.874
+      },
+      "canary": {
+        "n": 5,
+        "errores": 5,
+        "p95": 0.316
+      }
+    },
+    {
+      "id": "verboso",
+      "esperado": "revertir",
+      "decision": "revertir",
+      "acierta": true,
+      "peticiones": 25,
+      "estable": {
+        "n": 20,
+        "errores": 0,
+        "p95": 2.813
+      },
+      "canary": {
+        "n": 5,
+        "errores": 0,
+        "p95": 17.67
+      }
+    }
+  ]
+}

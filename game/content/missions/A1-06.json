@@ -71,8 +71,8 @@
     },
     {
       "id": "o2",
-      "text": "Con Ollama en marcha, ejecuta bateria.py (al menos 3 configuraciones, una de ellas «ninguna») y trae la medición.",
-      "teach": "La batería del juez\nbateria.py pide al juez que puntúe respuestas ya etiquetadas por personas, con varias configuraciones, y guarda los recuentos.\nLa KAPPA DE COHEN mide cuánto coincide el juez con las personas descontando lo que coincidiría por azar: 1 es acuerdo perfecto y 0 es el del azar.\nPor qué: un juez cuya kappa no has medido es solo otra opinión.",
+      "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: con Ollama en marcha, ejecuta bateria.py (al menos 3 configuraciones, una de ellas «ninguna») y tráela con evidence import.",
+      "teach": "La batería del juez\nbateria.py pide al juez que puntúe respuestas ya etiquetadas por personas, con varias configuraciones, y guarda los recuentos.\nLa KAPPA DE COHEN mide cuánto coincide el juez con las personas descontando lo que coincidiría por azar: 1 es acuerdo perfecto y 0 es el del azar.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: un juez cuya kappa no has medido es solo otra opinión.",
       "prediction": {
         "prompt": "Con la rúbrica básica, ¿cuánto crees que coincidirá el juez de 1B con las etiquetas humanas, medido con kappa?",
         "options": [
@@ -93,6 +93,7 @@
         }
       },
       "hints": [
+        "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "python bateria.py · entre 15 y 30 minutos en CPU con las 4 configuraciones y --n 2.",
         "Con poco tiempo: python bateria.py --n 1 --configs \"ninguna;rubrica;intercambio,rubrica\""
       ],

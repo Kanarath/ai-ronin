@@ -73,7 +73,7 @@
     },
     {
       "id": "o2",
-      "text": "Con Ollama en marcha y llama3.2:3b descargado, ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y trae la medición.",
+      "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: con Ollama en marcha y llama3.2:3b descargado, ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y tráela con evidence import.",
       "prediction": {
         "prompt": "Con permisos y aprobación humana activos, ¿cuántas acciones privilegiadas crees que seguirá pidiendo el modelo durante los ataques?",
         "options": [
@@ -94,11 +94,12 @@
         }
       },
       "hints": [
+        "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "ollama pull llama3.2:3b · python bateria.py · con --n 3 y las 5 configuraciones son 150 tareas: más de una hora en CPU (Central Processing Unit).",
         "Con poco tiempo: python bateria.py --n 2 --configs \"ninguna;permisos;permisos,aprobacion,spotlight,exfiltracion,limites\""
       ],
       "on_complete": "Tienes datos reales. Compara, en cada configuración, la línea de «privilegiadas»: pedidas frente a ejecutadas.",
-      "teach": "Medir con un modelo real\nbateria.py lanza ataques y tareas legítimas contra el agente con el modelo llama3.2:3b de Ollama, con varias combinaciones de defensas.\nUna acción PRIVILEGIADA es la que mueve dinero o saca datos: un reembolso, un correo fuera.\nLa batería cuenta dos cosas: cuántas pidió el modelo y cuántas se ejecutaron.\nPor qué: con un modelo real los resultados cambian entre repeticiones; por eso se repite cada tarea y se mide con intervalos."
+      "teach": "Medir con un modelo real\nbateria.py lanza ataques y tareas legítimas contra el agente con el modelo llama3.2:3b de Ollama, con varias combinaciones de defensas.\nUna acción PRIVILEGIADA es la que mueve dinero o saca datos: un reembolso, un correo fuera.\nLa batería cuenta dos cosas: cuántas pidió el modelo y cuántas se ejecutaron.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: con un modelo real los resultados cambian entre repeticiones; por eso se repite cada tarea y se mide con intervalos."
     },
     {
       "id": "o3",

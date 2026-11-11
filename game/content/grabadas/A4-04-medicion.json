@@ -1,0 +1,293 @@
+{
+  "schema": "ai-ronin/evidence",
+  "schema_version": 1,
+  "kind": "medicion",
+  "lab": "A4-04",
+  "created": "2026-11-11T11:18:59+00:00",
+  "modelo": "SDK mcp 2.3.0 (Streamable HTTP) + host determinista",
+  "temperatura": 0.0,
+  "repeticiones": 1,
+  "bateria_sha256": "e00eebee18863dfb0651b680c06d3e7e6645433f798bd509c5dd5a63302cbddf",
+  "configuraciones": [
+    {
+      "defensas": "ninguna",
+      "ataques_n": 6,
+      "ataques_exitos": 6,
+      "fugas_crudas": 6,
+      "legitimas_n": 4,
+      "legitimas_ok": 4,
+      "por_categoria": {
+        "tool-poisoning": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        },
+        "rug-pull": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        },
+        "confusion-token": {
+          "exitos": 2,
+          "n": 2,
+          "crudas": 2
+        },
+        "permisos-excesivos": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        },
+        "validacion-ausente": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        }
+      }
+    },
+    {
+      "defensas": "scopes",
+      "ataques_n": 6,
+      "ataques_exitos": 3,
+      "fugas_crudas": 6,
+      "legitimas_n": 4,
+      "legitimas_ok": 4,
+      "por_categoria": {
+        "tool-poisoning": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        },
+        "rug-pull": {
+          "exitos": 0,
+          "n": 1,
+          "crudas": 1
+        },
+        "confusion-token": {
+          "exitos": 1,
+          "n": 2,
+          "crudas": 2
+        },
+        "permisos-excesivos": {
+          "exitos": 0,
+          "n": 1,
+          "crudas": 1
+        },
+        "validacion-ausente": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        }
+      }
+    },
+    {
+      "defensas": "validacion",
+      "ataques_n": 6,
+      "ataques_exitos": 4,
+      "fugas_crudas": 6,
+      "legitimas_n": 4,
+      "legitimas_ok": 4,
+      "por_categoria": {
+        "tool-poisoning": {
+          "exitos": 0,
+          "n": 1,
+          "crudas": 1
+        },
+        "rug-pull": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        },
+        "confusion-token": {
+          "exitos": 2,
+          "n": 2,
+          "crudas": 2
+        },
+        "permisos-excesivos": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        },
+        "validacion-ausente": {
+          "exitos": 0,
+          "n": 1,
+          "crudas": 1
+        }
+      }
+    },
+    {
+      "defensas": "rutas",
+      "ataques_n": 6,
+      "ataques_exitos": 4,
+      "fugas_crudas": 6,
+      "legitimas_n": 4,
+      "legitimas_ok": 4,
+      "por_categoria": {
+        "tool-poisoning": {
+          "exitos": 0,
+          "n": 1,
+          "crudas": 1
+        },
+        "rug-pull": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        },
+        "confusion-token": {
+          "exitos": 2,
+          "n": 2,
+          "crudas": 2
+        },
+        "permisos-excesivos": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        },
+        "validacion-ausente": {
+          "exitos": 0,
+          "n": 1,
+          "crudas": 1
+        }
+      }
+    },
+    {
+      "defensas": "audiencia",
+      "ataques_n": 6,
+      "ataques_exitos": 4,
+      "fugas_crudas": 6,
+      "legitimas_n": 4,
+      "legitimas_ok": 4,
+      "por_categoria": {
+        "tool-poisoning": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        },
+        "rug-pull": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        },
+        "confusion-token": {
+          "exitos": 0,
+          "n": 2,
+          "crudas": 2
+        },
+        "permisos-excesivos": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        },
+        "validacion-ausente": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        }
+      }
+    },
+    {
+      "defensas": "pinning",
+      "ataques_n": 6,
+      "ataques_exitos": 5,
+      "fugas_crudas": 5,
+      "legitimas_n": 4,
+      "legitimas_ok": 4,
+      "por_categoria": {
+        "tool-poisoning": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        },
+        "rug-pull": {
+          "exitos": 0,
+          "n": 1,
+          "crudas": 0
+        },
+        "confusion-token": {
+          "exitos": 2,
+          "n": 2,
+          "crudas": 2
+        },
+        "permisos-excesivos": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        },
+        "validacion-ausente": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        }
+      }
+    },
+    {
+      "defensas": "revision",
+      "ataques_n": 6,
+      "ataques_exitos": 4,
+      "fugas_crudas": 4,
+      "legitimas_n": 4,
+      "legitimas_ok": 4,
+      "por_categoria": {
+        "tool-poisoning": {
+          "exitos": 0,
+          "n": 1,
+          "crudas": 0
+        },
+        "rug-pull": {
+          "exitos": 0,
+          "n": 1,
+          "crudas": 0
+        },
+        "confusion-token": {
+          "exitos": 2,
+          "n": 2,
+          "crudas": 2
+        },
+        "permisos-excesivos": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        },
+        "validacion-ausente": {
+          "exitos": 1,
+          "n": 1,
+          "crudas": 1
+        }
+      }
+    },
+    {
+      "defensas": "scopes,validacion,rutas,audiencia,pinning,revision",
+      "ataques_n": 6,
+      "ataques_exitos": 0,
+      "fugas_crudas": 4,
+      "legitimas_n": 4,
+      "legitimas_ok": 4,
+      "por_categoria": {
+        "tool-poisoning": {
+          "exitos": 0,
+          "n": 1,
+          "crudas": 0
+        },
+        "rug-pull": {
+          "exitos": 0,
+          "n": 1,
+          "crudas": 0
+        },
+        "confusion-token": {
+          "exitos": 0,
+          "n": 2,
+          "crudas": 2
+        },
+        "permisos-excesivos": {
+          "exitos": 0,
+          "n": 1,
+          "crudas": 1
+        },
+        "validacion-ausente": {
+          "exitos": 0,
+          "n": 1,
+          "crudas": 1
+        }
+      }
+    }
+  ]
+}

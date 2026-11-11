@@ -1,0 +1,94 @@
+{
+  "schema": "ai-ronin/evidence",
+  "schema_version": 1,
+  "kind": "medicion",
+  "lab": "E2-03",
+  "created": "2026-11-11T11:19:48+00:00",
+  "modelo": "MLP 64-32-10 (NumPy) · dígitos 8×8 de scikit-learn",
+  "temperatura": 0.0,
+  "repeticiones": 3,
+  "bateria_sha256": "fb206c4984aeb11068672a640a3e4283571ca3731c2057360b9b03bb2149424d",
+  "configuraciones": [
+    {
+      "defensas": "ninguna",
+      "ataques_n": 1800,
+      "ataques_exitos": 1067,
+      "fugas_crudas": 877,
+      "legitimas_n": 1791,
+      "legitimas_ok": 1689,
+      "tpr": 0.9744,
+      "fpr": 0.7889,
+      "ventaja": 0.1856,
+      "auc": 0.5616,
+      "ventaja_oraculo": 0.1922,
+      "tpr_a_fpr_5": 0.07,
+      "precision_entrenamiento": 1.0,
+      "segundos_entrenamiento": 0.58
+    },
+    {
+      "defensas": "regularizado",
+      "ataques_n": 1800,
+      "ataques_exitos": 988,
+      "fugas_crudas": 557,
+      "legitimas_n": 1791,
+      "legitimas_ok": 1684,
+      "tpr": 0.6189,
+      "fpr": 0.5211,
+      "ventaja": 0.0978,
+      "auc": 0.5598,
+      "ventaja_oraculo": 0.1156,
+      "tpr_a_fpr_5": 0.0689,
+      "precision_entrenamiento": 0.9789,
+      "segundos_entrenamiento": 0.09
+    },
+    {
+      "defensas": "dp-sgd",
+      "ataques_n": 1800,
+      "ataques_exitos": 987,
+      "fugas_crudas": 580,
+      "legitimas_n": 1791,
+      "legitimas_ok": 1609,
+      "tpr": 0.6444,
+      "fpr": 0.5478,
+      "ventaja": 0.0967,
+      "auc": 0.5609,
+      "ventaja_oraculo": 0.1189,
+      "tpr_a_fpr_5": 0.0789,
+      "precision_entrenamiento": 0.9356,
+      "segundos_entrenamiento": 0.35
+    },
+    {
+      "defensas": "dp-sgd-fuerte",
+      "ataques_n": 1800,
+      "ataques_exitos": 946,
+      "fugas_crudas": 581,
+      "legitimas_n": 1791,
+      "legitimas_ok": 1112,
+      "tpr": 0.6456,
+      "fpr": 0.5944,
+      "ventaja": 0.0511,
+      "auc": 0.5478,
+      "ventaja_oraculo": 0.0978,
+      "tpr_a_fpr_5": 0.0567,
+      "precision_entrenamiento": 0.69,
+      "segundos_entrenamiento": 0.23
+    }
+  ],
+  "media_privada": {
+    "media_real": 44.519,
+    "laplace": {
+      "0.01": 7.31,
+      "0.05": 1.3736,
+      "0.1": 0.7741,
+      "0.5": 0.1495,
+      "1": 0.0729,
+      "5": 0.0136
+    },
+    "gaussiano": {
+      "0.05": 5.9063,
+      "0.1": 2.6591,
+      "0.5": 0.5746,
+      "0.9": 0.297
+    }
+  }
+}

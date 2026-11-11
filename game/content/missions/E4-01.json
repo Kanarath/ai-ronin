@@ -263,7 +263,7 @@
     },
     {
       "id": "o2",
-      "text": "Con Ollama en marcha, ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y trae la medición.",
+      "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: con Ollama en marcha, ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y tráela con evidence import.",
       "prediction": {
         "prompt": "Sin defensas, con la ráfaga del abusador delante, ¿cuántas de las 6 preguntas legítimas crees que se responderán antes de 60 segundos?",
         "options": [
@@ -284,11 +284,12 @@
         }
       },
       "hints": [
+        "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "python bateria.py · tarda entre 10 y 20 minutos en CPU: cada ronda son 16 peticiones a la vez.",
         "Con poco tiempo: python bateria.py --configs \"ninguna;limite;limite,cache,cola,timeout\""
       ],
       "on_complete": "Tienes datos reales. Mira primero la fila sin defensas: ¿cuánto esperó la pregunta legítima típica y cuánto la peor?",
-      "teach": "La carga de verdad\nbateria.py lanza rondas de 16 peticiones a la vez contra tu servicio con Ollama, las del abusador y las de los clientes legítimos, con cada configuración de defensas. Después trae la medición con evidence import.\nPor qué: una defensa contra el abuso solo se demuestra con carga, no con una petición de prueba."
+      "teach": "La carga de verdad\nbateria.py lanza rondas de 16 peticiones a la vez contra tu servicio con Ollama, las del abusador y las de los clientes legítimos, con cada configuración de defensas. Después trae la medición con evidence import.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: una defensa contra el abuso solo se demuestra con carga, no con una petición de prueba."
     },
     {
       "id": "o3",

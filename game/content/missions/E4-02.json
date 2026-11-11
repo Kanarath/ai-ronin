@@ -110,7 +110,7 @@
     },
     {
       "id": "o2",
-      "text": "Con Ollama en marcha, ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y trae la medición.",
+      "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: con Ollama en marcha, ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y tráela con evidence import.",
       "prediction": {
         "prompt": "Con la redacción en tu código, ¿cuántos de los 7 datos personales de la batería crees que acabarán en el fichero de trazas?",
         "options": [
@@ -131,11 +131,12 @@
         }
       },
       "hints": [
+        "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "python bateria.py · unos 10 minutos en CPU (80 preguntas con --n 2).",
         "Con poco tiempo: python bateria.py --n 1 --configs \"ninguna;redaccion;sin-contenido\""
       ],
       "on_complete": "Tienes datos reales y ficheros de trazas en forja/labs/E4-02_trazas/trazas/. Ábrelos y busca tú los datos que se escaparon.",
-      "teach": "La batería\nbateria.py hace preguntas con datos personales ficticios a tu servicio con Ollama, con varias configuraciones (sin defensas, redacción en tu código, en el exportador, sin contenido), y después busca esos datos en los ficheros de trazas. Trae la medición con evidence import.\nPor qué: la única forma de saber qué se escapa a un registro es buscarlo en el registro."
+      "teach": "La batería\nbateria.py hace preguntas con datos personales ficticios a tu servicio con Ollama, con varias configuraciones (sin defensas, redacción en tu código, en el exportador, sin contenido), y después busca esos datos en los ficheros de trazas. Trae la medición con evidence import.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: la única forma de saber qué se escapa a un registro es buscarlo en el registro."
     },
     {
       "id": "o3",

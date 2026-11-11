@@ -199,7 +199,7 @@
     },
     {
       "id": "o2",
-      "text": "Ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y trae la medición.",
+      "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y tráela con evidence import.",
       "prediction": {
         "prompt": "Contra el modelo sobreajustado (100 % de acierto en sus 300 ejemplos), ¿qué ventaja crees que tendrá el atacante?",
         "options": [
@@ -220,11 +220,12 @@
         }
       },
       "hints": [
+        "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "python bateria.py · tarda menos de un minuto: 4 recetas, 3 semillas y la media privada.",
         "Con menos: python bateria.py --configs \"ninguna;regularizado;dp-sgd-fuerte\""
       ],
       "on_complete": "Tienes los datos. Mira juntas la ventaja y la precisión en test de cada receta.",
-      "teach": "La batería\nbateria.py entrena cuatro recetas con 3 semillas: sobreajustada, regularizada y dos con DP-SGD (Differentially Private Stochastic Gradient Descent). Las ataca y publica una media con privacidad diferencial. Después trae la medición con evidence import.\nPor qué: la privacidad de un modelo no se supone: se mide con el ataque."
+      "teach": "La batería\nbateria.py entrena cuatro recetas con 3 semillas: sobreajustada, regularizada y dos con DP-SGD (Differentially Private Stochastic Gradient Descent). Las ataca y publica una media con privacidad diferencial. Después trae la medición con evidence import.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: la privacidad de un modelo no se supone: se mide con el ataque."
     },
     {
       "id": "o3",

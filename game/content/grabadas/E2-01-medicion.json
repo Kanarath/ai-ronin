@@ -1,0 +1,85 @@
+{
+  "schema": "ai-ronin/evidence",
+  "schema_version": 1,
+  "kind": "medicion",
+  "lab": "E2-01",
+  "created": "2026-11-11T11:19:11+00:00",
+  "modelo": "regresión logística multiclase (NumPy) · dígitos 8×8 de scikit-learn",
+  "temperatura": 0.0,
+  "repeticiones": 3,
+  "bateria_sha256": "691fd9acac5bc11426bdae6293d904b6a0f9f299734d4b2eb47320d1c5b89f4d",
+  "configuraciones": [
+    {
+      "defensas": "ninguna",
+      "ataques_n": 1620,
+      "ataques_exitos": 458,
+      "fugas_crudas": 458,
+      "legitimas_n": 1620,
+      "legitimas_ok": 1538,
+      "por_epsilon": {
+        "0": 0.9494,
+        "0.02": 0.9198,
+        "0.05": 0.8611,
+        "0.1": 0.7173,
+        "0.15": 0.4765,
+        "0.2": 0.2019,
+        "0.3": 0.0012
+      },
+      "segundos_entrenamiento": 0.271
+    },
+    {
+      "defensas": "adversario",
+      "ataques_n": 1620,
+      "ataques_exitos": 397,
+      "fugas_crudas": 397,
+      "legitimas_n": 1620,
+      "legitimas_ok": 1518,
+      "por_epsilon": {
+        "0": 0.937,
+        "0.02": 0.9216,
+        "0.05": 0.8722,
+        "0.1": 0.7549,
+        "0.15": 0.5827,
+        "0.2": 0.3667,
+        "0.3": 0.0253
+      },
+      "segundos_entrenamiento": 0.584
+    },
+    {
+      "defensas": "deteccion",
+      "ataques_n": 1620,
+      "ataques_exitos": 243,
+      "fugas_crudas": 458,
+      "legitimas_n": 1620,
+      "legitimas_ok": 1482,
+      "por_epsilon": {
+        "0": 0.9494,
+        "0.02": 0.9198,
+        "0.05": 0.8611,
+        "0.1": 0.7173,
+        "0.15": 0.4765,
+        "0.2": 0.2019,
+        "0.3": 0.0012
+      },
+      "segundos_entrenamiento": 0.259
+    },
+    {
+      "defensas": "adversario,deteccion",
+      "ataques_n": 1620,
+      "ataques_exitos": 255,
+      "fugas_crudas": 397,
+      "legitimas_n": 1620,
+      "legitimas_ok": 1464,
+      "por_epsilon": {
+        "0": 0.937,
+        "0.02": 0.9216,
+        "0.05": 0.8722,
+        "0.1": 0.7549,
+        "0.15": 0.5827,
+        "0.2": 0.3667,
+        "0.3": 0.0253
+      },
+      "segundos_entrenamiento": 0.668
+    }
+  ]
+}

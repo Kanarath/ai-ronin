@@ -1,0 +1,490 @@
+{
+  "schema": "ai-ronin/evidence",
+  "schema_version": 1,
+  "kind": "medicion",
+  "lab": "A6-04",
+  "created": "2026-11-11T11:19:01+00:00",
+  "modelo": "verificador determinista (sin modelo)",
+  "repeticiones": 1,
+  "bateria_sha256": "d4e9b40f20fa609de0a6db3bbcc6f32068f723554353ccb871f66191dddf1d1b",
+  "configuraciones": [
+    {
+      "defensas": "ninguna",
+      "ataques_n": 22,
+      "ataques_exitos": 22,
+      "fugas_crudas": 5,
+      "legitimas_n": 11,
+      "legitimas_ok": 11,
+      "por_categoria": {
+        "codigo": {
+          "exitos": 5,
+          "n": 5
+        },
+        "formato": {
+          "exitos": 4,
+          "n": 4
+        },
+        "integridad": {
+          "exitos": 2,
+          "n": 2
+        },
+        "datos": {
+          "exitos": 1,
+          "n": 1
+        },
+        "dependencias": {
+          "exitos": 5,
+          "n": 5
+        },
+        "contenedor": {
+          "exitos": 5,
+          "n": 5
+        }
+      },
+      "no_detectados": [
+        "taller-comprometido/modelos/detector-grietas.bin",
+        "taller-comprometido/modelos/horno.pkl",
+        "taller-comprometido/modelos/ofuscado.pkl",
+        "taller-comprometido/modelos/modelo.pt",
+        "taller-comprometido/modelos/vision.safetensors",
+        "taller-comprometido/modelos/pesos.safetensors",
+        "taller-comprometido/modelos/capas.safetensors",
+        "taller-comprometido/modelos/gigante.safetensors",
+        "taller-comprometido/modelos/incoherente.safetensors",
+        "taller-comprometido/modelos/adaptador-estilo.safetensors",
+        "taller-comprometido/modelos/extra.pkl",
+        "taller-comprometido/datos/espejo-comunidad.csv",
+        "taller-comprometido/requirements.txt",
+        "taller-comprometido/requirements-asistente.txt",
+        "taller-comprometido/requirements-reciente.txt",
+        "taller-comprometido/requirements-espejo.txt",
+        "taller-comprometido/requirements-version.txt",
+        "taller-comprometido/Dockerfile",
+        "taller-comprometido/Dockerfile.secreto",
+        "taller-comprometido/Dockerfile.sin-version",
+        "taller-comprometido/Dockerfile.arg",
+        "taller-comprometido/Dockerfile.vuelta-a-root"
+      ],
+      "falsos_positivos": [],
+      "hallazgos": 0
+    },
+    {
+      "defensas": "pickle-estricto",
+      "ataques_n": 22,
+      "ataques_exitos": 17,
+      "fugas_crudas": 1,
+      "legitimas_n": 11,
+      "legitimas_ok": 9,
+      "por_categoria": {
+        "codigo": {
+          "exitos": 1,
+          "n": 5
+        },
+        "formato": {
+          "exitos": 4,
+          "n": 4
+        },
+        "integridad": {
+          "exitos": 1,
+          "n": 2
+        },
+        "datos": {
+          "exitos": 1,
+          "n": 1
+        },
+        "dependencias": {
+          "exitos": 5,
+          "n": 5
+        },
+        "contenedor": {
+          "exitos": 5,
+          "n": 5
+        }
+      },
+      "no_detectados": [
+        "taller-comprometido/modelos/vision.safetensors",
+        "taller-comprometido/modelos/pesos.safetensors",
+        "taller-comprometido/modelos/capas.safetensors",
+        "taller-comprometido/modelos/gigante.safetensors",
+        "taller-comprometido/modelos/incoherente.safetensors",
+        "taller-comprometido/modelos/adaptador-estilo.safetensors",
+        "taller-comprometido/datos/espejo-comunidad.csv",
+        "taller-comprometido/requirements.txt",
+        "taller-comprometido/requirements-asistente.txt",
+        "taller-comprometido/requirements-reciente.txt",
+        "taller-comprometido/requirements-espejo.txt",
+        "taller-comprometido/requirements-version.txt",
+        "taller-comprometido/Dockerfile",
+        "taller-comprometido/Dockerfile.secreto",
+        "taller-comprometido/Dockerfile.sin-version",
+        "taller-comprometido/Dockerfile.arg",
+        "taller-comprometido/Dockerfile.vuelta-a-root"
+      ],
+      "falsos_positivos": [
+        "taller-bueno/modelos/tokenizador.pkl",
+        "taller-bueno/modelos/clasificador.pt"
+      ],
+      "hallazgos": 14
+    },
+    {
+      "defensas": "pickle",
+      "ataques_n": 22,
+      "ataques_exitos": 18,
+      "fugas_crudas": 1,
+      "legitimas_n": 11,
+      "legitimas_ok": 11,
+      "por_categoria": {
+        "codigo": {
+          "exitos": 1,
+          "n": 5
+        },
+        "formato": {
+          "exitos": 4,
+          "n": 4
+        },
+        "integridad": {
+          "exitos": 2,
+          "n": 2
+        },
+        "datos": {
+          "exitos": 1,
+          "n": 1
+        },
+        "dependencias": {
+          "exitos": 5,
+          "n": 5
+        },
+        "contenedor": {
+          "exitos": 5,
+          "n": 5
+        }
+      },
+      "no_detectados": [
+        "taller-comprometido/modelos/vision.safetensors",
+        "taller-comprometido/modelos/pesos.safetensors",
+        "taller-comprometido/modelos/capas.safetensors",
+        "taller-comprometido/modelos/gigante.safetensors",
+        "taller-comprometido/modelos/incoherente.safetensors",
+        "taller-comprometido/modelos/adaptador-estilo.safetensors",
+        "taller-comprometido/modelos/extra.pkl",
+        "taller-comprometido/datos/espejo-comunidad.csv",
+        "taller-comprometido/requirements.txt",
+        "taller-comprometido/requirements-asistente.txt",
+        "taller-comprometido/requirements-reciente.txt",
+        "taller-comprometido/requirements-espejo.txt",
+        "taller-comprometido/requirements-version.txt",
+        "taller-comprometido/Dockerfile",
+        "taller-comprometido/Dockerfile.secreto",
+        "taller-comprometido/Dockerfile.sin-version",
+        "taller-comprometido/Dockerfile.arg",
+        "taller-comprometido/Dockerfile.vuelta-a-root"
+      ],
+      "falsos_positivos": [],
+      "hallazgos": 4
+    },
+    {
+      "defensas": "safetensors",
+      "ataques_n": 22,
+      "ataques_exitos": 17,
+      "fugas_crudas": 4,
+      "legitimas_n": 11,
+      "legitimas_ok": 11,
+      "por_categoria": {
+        "codigo": {
+          "exitos": 4,
+          "n": 5
+        },
+        "formato": {
+          "exitos": 0,
+          "n": 4
+        },
+        "integridad": {
+          "exitos": 2,
+          "n": 2
+        },
+        "datos": {
+          "exitos": 1,
+          "n": 1
+        },
+        "dependencias": {
+          "exitos": 5,
+          "n": 5
+        },
+        "contenedor": {
+          "exitos": 5,
+          "n": 5
+        }
+      },
+      "no_detectados": [
+        "taller-comprometido/modelos/detector-grietas.bin",
+        "taller-comprometido/modelos/horno.pkl",
+        "taller-comprometido/modelos/ofuscado.pkl",
+        "taller-comprometido/modelos/modelo.pt",
+        "taller-comprometido/modelos/adaptador-estilo.safetensors",
+        "taller-comprometido/modelos/extra.pkl",
+        "taller-comprometido/datos/espejo-comunidad.csv",
+        "taller-comprometido/requirements.txt",
+        "taller-comprometido/requirements-asistente.txt",
+        "taller-comprometido/requirements-reciente.txt",
+        "taller-comprometido/requirements-espejo.txt",
+        "taller-comprometido/requirements-version.txt",
+        "taller-comprometido/Dockerfile",
+        "taller-comprometido/Dockerfile.secreto",
+        "taller-comprometido/Dockerfile.sin-version",
+        "taller-comprometido/Dockerfile.arg",
+        "taller-comprometido/Dockerfile.vuelta-a-root"
+      ],
+      "falsos_positivos": [],
+      "hallazgos": 6
+    },
+    {
+      "defensas": "bom",
+      "ataques_n": 22,
+      "ataques_exitos": 20,
+      "fugas_crudas": 5,
+      "legitimas_n": 11,
+      "legitimas_ok": 11,
+      "por_categoria": {
+        "codigo": {
+          "exitos": 5,
+          "n": 5
+        },
+        "formato": {
+          "exitos": 4,
+          "n": 4
+        },
+        "integridad": {
+          "exitos": 0,
+          "n": 2
+        },
+        "datos": {
+          "exitos": 1,
+          "n": 1
+        },
+        "dependencias": {
+          "exitos": 5,
+          "n": 5
+        },
+        "contenedor": {
+          "exitos": 5,
+          "n": 5
+        }
+      },
+      "no_detectados": [
+        "taller-comprometido/modelos/detector-grietas.bin",
+        "taller-comprometido/modelos/horno.pkl",
+        "taller-comprometido/modelos/ofuscado.pkl",
+        "taller-comprometido/modelos/modelo.pt",
+        "taller-comprometido/modelos/vision.safetensors",
+        "taller-comprometido/modelos/pesos.safetensors",
+        "taller-comprometido/modelos/capas.safetensors",
+        "taller-comprometido/modelos/gigante.safetensors",
+        "taller-comprometido/modelos/incoherente.safetensors",
+        "taller-comprometido/datos/espejo-comunidad.csv",
+        "taller-comprometido/requirements.txt",
+        "taller-comprometido/requirements-asistente.txt",
+        "taller-comprometido/requirements-reciente.txt",
+        "taller-comprometido/requirements-espejo.txt",
+        "taller-comprometido/requirements-version.txt",
+        "taller-comprometido/Dockerfile",
+        "taller-comprometido/Dockerfile.secreto",
+        "taller-comprometido/Dockerfile.sin-version",
+        "taller-comprometido/Dockerfile.arg",
+        "taller-comprometido/Dockerfile.vuelta-a-root"
+      ],
+      "falsos_positivos": [],
+      "hallazgos": 2
+    },
+    {
+      "defensas": "deps",
+      "ataques_n": 22,
+      "ataques_exitos": 17,
+      "fugas_crudas": 5,
+      "legitimas_n": 11,
+      "legitimas_ok": 11,
+      "por_categoria": {
+        "codigo": {
+          "exitos": 5,
+          "n": 5
+        },
+        "formato": {
+          "exitos": 4,
+          "n": 4
+        },
+        "integridad": {
+          "exitos": 2,
+          "n": 2
+        },
+        "datos": {
+          "exitos": 1,
+          "n": 1
+        },
+        "dependencias": {
+          "exitos": 0,
+          "n": 5
+        },
+        "contenedor": {
+          "exitos": 5,
+          "n": 5
+        }
+      },
+      "no_detectados": [
+        "taller-comprometido/modelos/detector-grietas.bin",
+        "taller-comprometido/modelos/horno.pkl",
+        "taller-comprometido/modelos/ofuscado.pkl",
+        "taller-comprometido/modelos/modelo.pt",
+        "taller-comprometido/modelos/vision.safetensors",
+        "taller-comprometido/modelos/pesos.safetensors",
+        "taller-comprometido/modelos/capas.safetensors",
+        "taller-comprometido/modelos/gigante.safetensors",
+        "taller-comprometido/modelos/incoherente.safetensors",
+        "taller-comprometido/modelos/adaptador-estilo.safetensors",
+        "taller-comprometido/modelos/extra.pkl",
+        "taller-comprometido/datos/espejo-comunidad.csv",
+        "taller-comprometido/Dockerfile",
+        "taller-comprometido/Dockerfile.secreto",
+        "taller-comprometido/Dockerfile.sin-version",
+        "taller-comprometido/Dockerfile.arg",
+        "taller-comprometido/Dockerfile.vuelta-a-root"
+      ],
+      "falsos_positivos": [],
+      "hallazgos": 5
+    },
+    {
+      "defensas": "docker",
+      "ataques_n": 22,
+      "ataques_exitos": 17,
+      "fugas_crudas": 5,
+      "legitimas_n": 11,
+      "legitimas_ok": 11,
+      "por_categoria": {
+        "codigo": {
+          "exitos": 5,
+          "n": 5
+        },
+        "formato": {
+          "exitos": 4,
+          "n": 4
+        },
+        "integridad": {
+          "exitos": 2,
+          "n": 2
+        },
+        "datos": {
+          "exitos": 1,
+          "n": 1
+        },
+        "dependencias": {
+          "exitos": 5,
+          "n": 5
+        },
+        "contenedor": {
+          "exitos": 0,
+          "n": 5
+        }
+      },
+      "no_detectados": [
+        "taller-comprometido/modelos/detector-grietas.bin",
+        "taller-comprometido/modelos/horno.pkl",
+        "taller-comprometido/modelos/ofuscado.pkl",
+        "taller-comprometido/modelos/modelo.pt",
+        "taller-comprometido/modelos/vision.safetensors",
+        "taller-comprometido/modelos/pesos.safetensors",
+        "taller-comprometido/modelos/capas.safetensors",
+        "taller-comprometido/modelos/gigante.safetensors",
+        "taller-comprometido/modelos/incoherente.safetensors",
+        "taller-comprometido/modelos/adaptador-estilo.safetensors",
+        "taller-comprometido/modelos/extra.pkl",
+        "taller-comprometido/datos/espejo-comunidad.csv",
+        "taller-comprometido/requirements.txt",
+        "taller-comprometido/requirements-asistente.txt",
+        "taller-comprometido/requirements-reciente.txt",
+        "taller-comprometido/requirements-espejo.txt",
+        "taller-comprometido/requirements-version.txt"
+      ],
+      "falsos_positivos": [],
+      "hallazgos": 5
+    },
+    {
+      "defensas": "bom,deps,docker,pickle,safetensors",
+      "ataques_n": 22,
+      "ataques_exitos": 1,
+      "fugas_crudas": 0,
+      "legitimas_n": 11,
+      "legitimas_ok": 11,
+      "por_categoria": {
+        "codigo": {
+          "exitos": 0,
+          "n": 5
+        },
+        "formato": {
+          "exitos": 0,
+          "n": 4
+        },
+        "integridad": {
+          "exitos": 0,
+          "n": 2
+        },
+        "datos": {
+          "exitos": 1,
+          "n": 1
+        },
+        "dependencias": {
+          "exitos": 0,
+          "n": 5
+        },
+        "contenedor": {
+          "exitos": 0,
+          "n": 5
+        }
+      },
+      "no_detectados": [
+        "taller-comprometido/datos/espejo-comunidad.csv"
+      ],
+      "falsos_positivos": [],
+      "hallazgos": 22
+    },
+    {
+      "defensas": "bom,deps,docker,pickle-estricto,safetensors",
+      "ataques_n": 22,
+      "ataques_exitos": 1,
+      "fugas_crudas": 0,
+      "legitimas_n": 11,
+      "legitimas_ok": 9,
+      "por_categoria": {
+        "codigo": {
+          "exitos": 0,
+          "n": 5
+        },
+        "formato": {
+          "exitos": 0,
+          "n": 4
+        },
+        "integridad": {
+          "exitos": 0,
+          "n": 2
+        },
+        "datos": {
+          "exitos": 1,
+          "n": 1
+        },
+        "dependencias": {
+          "exitos": 0,
+          "n": 5
+        },
+        "contenedor": {
+          "exitos": 0,
+          "n": 5
+        }
+      },
+      "no_detectados": [
+        "taller-comprometido/datos/espejo-comunidad.csv"
+      ],
+      "falsos_positivos": [
+        "taller-bueno/modelos/tokenizador.pkl",
+        "taller-bueno/modelos/clasificador.pt"
+      ],
+      "hallazgos": 32
+    }
+  ]
+}

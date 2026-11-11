@@ -12,6 +12,65 @@ static func register(reg: CommandRegistry) -> void:
 			.example("evidence import").example("evidence import \"C:/ruta/T1-02.json\"")))
 	reg.register(Command.new("evidence list", "Tus ejercicios de Python: cuáles has verificado y en qué misiones se usan.",
 		func(c: CommandContext, a: Dictionary) -> CommandResult: return _list(c, a), "misiones"))
+	reg.register(Command.new("forja medir", "Reproduce en el Dojo una medición real ya grabada del laboratorio (sin instalar nada).",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _replay(c, a), "misiones")
+		.with_signature(CommandSignature.new()
+			.pos("lab", "laboratorio, p. ej. A1-05 (sin nada: el de tu paso actual)", "string", false)
+			.example("forja medir").example("forja medir A1-05")))
+
+
+## Laboratorio que pide medir el objetivo actual (validador evidence.measured), o "".
+static func current_lab(g: DojoGame) -> String:
+	var v: Variant = g.runner.current_objective().get("validator", {})
+	var found := [""]
+	var walk := func(x: Variant, self_ref: Callable) -> void:
+		if x is Dictionary:
+			if x.get("event", "") == "evidence.measured" and x.get("where", {}).has("lab"):
+				found[0] = str(x["where"]["lab"])
+			for k: Variant in x:
+				self_ref.call(x[k], self_ref)
+		elif x is Array:
+			for y: Variant in x:
+				self_ref.call(y, self_ref)
+	walk.call(v, walk)
+	return found[0]
+
+
+static func _replay(c: CommandContext, a: Dictionary) -> CommandResult:
+	var g := _game(c)
+	if g == null:
+		return CommandResult.error("La Forja necesita una partida.")
+	var lab: String = str(a.get("lab", "")) if a.get("lab") != null else ""
+	if lab.is_empty():
+		lab = current_lab(g)
+	lab = lab.to_upper()
+	if lab.is_empty() or DojoGame.recorded_path(lab).is_empty():
+		var have := PackedStringArray()
+		for f in EvidenceImporter.json_files(DojoGame.RECORDED_DIR):
+			have.append(f.get_file().trim_suffix("-medicion.json"))
+		return CommandResult.error("Indica el laboratorio. Hay mediciones grabadas de: %s" % ", ".join(have))
+	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(DojoGame.recorded_path(lab)))
+	var r := CommandResult.new()
+	r.line("Medición grabada · %s" % lab, "accent")
+	if data is Dictionary:
+		r.line("Hecha de verdad con %s, en un portátil (solo CPU), el %s · %d repetición(es)." % [
+			str(data.get("modelo", "?")), str(data.get("created", "?")).substr(0, 10), int(data.get("repeticiones", 1))], "muted")
+		var label: Array = MEASURE_LABELS.get(lab, ["éxito de los ataques", "sin defensas"])
+		var rows: Array = []
+		for cfg: Dictionary in data.get("configuraciones", []):
+			var n := int(cfg.get("ataques_n", 0))
+			var e := int(cfg.get("ataques_exitos", 0))
+			var ln := int(cfg.get("legitimas_n", 0))
+			rows.append([str(cfg.get("defensas", "?")), "%d/%d (%s)" % [e, n, _pct(float(e) / float(n)) if n > 0 else "—"],
+				str(int(cfg.get("fugas_crudas", 0))), "%d/%d" % [int(cfg.get("legitimas_ok", 0)), ln] if ln > 0 else "—"])
+		r.table(PackedStringArray(["configuración", label[0], "en bruto", "legítimas"]), rows)
+	var res := g.replay_measurement(lab)
+	if not res.get("ok", false):
+		r.line("No se ha podido usar: " + "; ".join(res.get("errors", PackedStringArray())), "error")
+		return r
+	r.line(measurement_summary(res), "normal")
+	r.line("Extra: si quieres medir en tu máquina, sigue el README de forja/labs (%s) y después evidence import." % lab, "muted")
+	return r
 
 
 static func _game(c: CommandContext) -> DojoGame:
