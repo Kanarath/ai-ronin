@@ -26,7 +26,7 @@
     "Controlar el muestreo con temperatura, top-k y top-p, y predecir su efecto",
     "Relacionar la ventana de contexto con la coherencia y con la memorización de datos"
   ],
-  "mentor_intro": "El modelo de hoy es un n-grama: cuenta qué palabra suele seguir a otras en el corpus de la forja. Un LLM (Large Language Model) usa una red neuronal enorme en lugar de un recuento, pero la tarea es idéntica. Vamos paso a paso.",
+  "mentor_intro": "El modelo de hoy es un n-grama: cuenta qué palabra suele seguir a otras en el corpus de la forja. Un LLM usa una red neuronal enorme en lugar de un recuento, pero la tarea es idéntica. Vamos paso a paso.",
   "lab": {
     "datasets": [],
     "viz": {}
@@ -35,7 +35,8 @@
     {
       "id": "autoregresivo",
       "title": "Generación autorregresiva",
-      "body": "1) El modelo recibe el texto. 2) Calcula P(siguiente token | texto) para todo el vocabulario. 3) Se ELIGE un token según una estrategia de muestreo. 4) Se añade al texto y se vuelve al paso 1. El modelo no «planifica» la frase: la construye token a token. Más: man llm"
+      "body": "1) El modelo recibe el texto. 2) Calcula P(siguiente token | texto) para todo el vocabulario. 3) Se ELIGE un token según una estrategia de muestreo. 4) Se añade al texto y se vuelve al paso 1. El modelo no «planifica» la frase: la construye token a token. Más: man llm",
+      "unlock_on": "objective:o3"
     }
   ],
   "objectives": [
@@ -67,7 +68,7 @@
         "lm train lm2 --order 2",
         "lm next lm2 la"
       ],
-      "on_complete": "forja, con 0,233: después de «la» vino «forja» 7 de 30 veces. Y «hoja» 6 de 30. Esa tabla de probabilidades ES la salida de un modelo de lenguaje. Un LLM (Large Language Model) la calcula sobre unos 100.000 tokens posibles y mirando miles de tokens hacia atrás."
+      "on_complete": "forja, con 0,233: después de «la» vino «forja» 7 de 30 veces, y «hoja» 6 de 30. Esa tabla de probabilidades ES la salida de un modelo de lenguaje. Un LLM la calcula sobre unos 100.000 tokens posibles y mirando miles de tokens hacia atrás."
     },
     {
       "id": "o2",
@@ -80,7 +81,7 @@
           "no cambia"
         ]
       },
-      "teach": "Temperatura\nAntes de elegir, la distribución se puede deformar. Con temperatura T, cada probabilidad se eleva a 1/T y después se divide entre la suma de todas, para que vuelvan a sumar 1.\nT < 1 exagera las diferencias (el favorito gana más); T > 1 las suaviza (todo se iguala); T = 0 es «greedy»: siempre el más probable.\nOpción: lm next lm2 la --temperature 0.1\nPor qué: es el parámetro temperature de cualquier API (Application Programming Interface) de LLM.",
+      "teach": "Temperatura\nAntes de elegir, la distribución se puede deformar. Con temperatura T, cada probabilidad se eleva a 1/T y después se divide entre la suma de todas, para que vuelvan a sumar 1.\nT < 1 exagera las diferencias (el favorito gana más); T > 1 las suaviza (todo se iguala); T = 0 es «greedy»: siempre el más probable.\nOpción: lm next lm2 la --temperature 0.1\nPor qué: es el parámetro temperature de cualquier API (Application Programming Interface) de LLM (Large Language Model).",
       "validator": {
         "type": "all",
         "of": [
@@ -103,7 +104,7 @@
         "lm next lm2 la --temperature 0.1",
         "Columna «P final», fila forja."
       ],
-      "on_complete": "0,824: el favorito pasa del 23 % al 82 %. Prueba también --temperature 2: todos se acercan. Por eso, en una API (Application Programming Interface) de LLM, una temperatura baja da respuestas más predecibles y una alta, más variadas (y más disparatadas)."
+      "on_complete": "0,824: el favorito pasa del 23 % al 82 %. Prueba también --temperature 2: todos se acercan. Por eso, en una API de LLM, una temperatura baja da respuestas más predecibles y una alta, más variadas (y más disparatadas)."
     },
     {
       "id": "o3",
@@ -127,12 +128,12 @@
       "hints": [
         "lm generate lm2 el maestro --temperature 0 --tokens 12"
       ],
-      "on_complete": "«el maestro . el maestro . el maestro…»: un bucle. Elegir siempre lo más probable lleva a estados que se repiten. Los LLM (Large Language Model) sufren lo mismo (repetición, degeneración), y por eso las API usan muestreo con temperatura y penalizaciones de repetición."
+      "on_complete": "«el maestro . el maestro . el maestro…»: un bucle. Elegir siempre lo más probable lleva a estados que se repiten. Los LLM sufren lo mismo (repetición, degeneración), y por eso las API usan muestreo con temperatura y penalizaciones de repetición."
     },
     {
       "id": "o4",
       "text": "Genera desde «el maestro» con temperatura 1 usando dos semillas distintas y compara.",
-      "teach": "Semilla del muestreo\nCon temperatura > 0 el modelo SORTEA cada token según su probabilidad.\n--seed <n> fija ese sorteo: la misma semilla da el mismo texto y otra semilla, otro texto. Si no la indicas, usa la semilla 1.\nEjemplo: lm generate lm2 el maestro --temperature 1 --seed 2\nPor qué: por esto la misma pregunta a un chatbot da respuestas distintas, y por esto las API permiten fijar una semilla para repetir un experimento.",
+      "teach": "Semilla del muestreo\nCon temperatura > 0 el modelo SORTEA cada token según su probabilidad.\n--seed <n> fija ese sorteo: la misma semilla da el mismo texto y otra semilla, otro texto. Si no la indicas, usa la semilla 1.\nEjemplo: lm generate lm2 el maestro --temperature 1 --seed 2\nPor qué: por esto la misma pregunta a un chatbot da respuestas distintas, y por esto las API (Application Programming Interface) permiten fijar una semilla para repetir un experimento.",
       "validator": {
         "type": "event",
         "event": "lm.generated",
@@ -157,36 +158,37 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque el modelo tiene un error de programación",
-          "why": "Funciona como debe: cada palabra es una continuación probable de la anterior."
+          "text": "porque la semilla elegida era mala",
+          "why": "Con otra semilla sale otro texto, también sin sentido. La semilla solo cambia el sorteo."
         },
         {
           "id": "b",
-          "text": "porque elige palabras probables después de las anteriores, sin comprobar si lo que dice es verdad"
+          "text": "porque tiene un error de programación",
+          "why": "Funciona como debe: cada palabra es una continuación probable de la anterior."
         },
         {
           "id": "c",
-          "text": "porque la semilla era mala",
-          "why": "Con otra semilla sale otro texto, también sin sentido. La semilla solo cambia el sorteo."
+          "text": "porque elige lo probable, no lo cierto",
+          "why": ""
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
         "¿En qué paso del bucle se comprueba que la frase es verdad?",
-        "answer b"
+        "answer c"
       ],
       "on_complete": "Eso es. Las ALUCINACIONES de un LLM tienen la misma raíz: genera lo plausible, no lo verdadero. Uno grande es plausible a un nivel mucho más alto, y por eso sus errores convencen más."
     },
     {
       "id": "o5",
       "text": "Aplica top-p 0.5 a la distribución tras «la». ¿Cuántos candidatos quedan? (answer <número>)",
-      "teach": "Top-k y top-p\nTop-k se queda solo con los k tokens más probables.\nTop-p (nucleus sampling) se queda con los más probables hasta que su probabilidad sumada llega a p.\nLos dos recortan la «cola» de opciones improbables antes de sortear. Opciones: --top-k y --top-p.\nPor qué: es el parámetro top_p de las API (Application Programming Interface) de LLM; recorta los disparates sin volver al bucle del greedy.",
+      "teach": "Top-k y top-p\nTop-k se queda solo con los k tokens más probables.\nTop-p (nucleus sampling) se queda con los más probables hasta que su probabilidad sumada llega a p.\nLos dos recortan la «cola» de opciones improbables antes de sortear. Opciones: --top-k y --top-p.\nPor qué: es el parámetro top_p de las API (Application Programming Interface) de LLM (Large Language Model); recorta los disparates sin volver al bucle del greedy.",
       "validator": {
         "type": "all",
         "of": [
@@ -235,7 +237,7 @@
         "lm train lm3 --order 3",
         "lm generate lm3 el maestro --temperature 1 --seed 1 --tokens 15"
       ],
-      "on_complete": "Copia 14 tokens seguidos del corpus. Con más contexto, el texto es más coherente, pero en un corpus pequeño cada contexto de 2 palabras casi solo tiene una continuación posible: el modelo MEMORIZA y repite sus datos de entrenamiento. Los LLM (Large Language Model) también memorizan: Carlini et al. (2021) extrajeron de GPT-2 textos literales de su entrenamiento, incluidos datos personales. Es una vulnerabilidad real (OWASP (Open Worldwide Application Security Project) LLM02, divulgación de información sensible) que atacarás y mitigarás más adelante.",
+      "on_complete": "Copia 14 tokens seguidos del corpus: con tan pocos datos, cada contexto de 2 palabras casi solo tiene una continuación, y el modelo MEMORIZA. Los LLM también memorizan: Carlini et al. (2021) extrajeron de GPT-2 textos literales de su entrenamiento, incluidos datos personales. Es una vulnerabilidad real, la LLM02 de OWASP (Open Worldwide Application Security Project): divulgación de información sensible.",
       "teach": "Más contexto\nUn trigrama (order 3) mira las 2 últimas palabras en lugar de 1.\nComandos: lm train lm3 --order 3 y lm generate lm3 el maestro --temperature 1 --seed 1 --tokens 15\nPor qué: cuánto contexto mira un modelo decide lo coherente que es, y también lo fácil que le resulta copiar su entrenamiento."
     },
     {
@@ -245,42 +247,42 @@
       "choices": [
         {
           "id": "a",
-          "text": "baja, cerca de 0, para que elija casi siempre lo más probable",
-          "why": "Bien visto. Ojo: ni con temperatura 0 el modelo comprueba la verdad. Reduce la variedad, no elimina las alucinaciones."
-        },
-        {
-          "id": "b",
-          "text": "alta, por ejemplo 2, para que tenga más donde elegir",
+          "text": "alta, por ejemplo 2, para tener variedad",
           "why": "Una temperatura alta aplana la distribución: suben las opciones raras y, con ellas, los disparates."
         },
         {
+          "id": "b",
+          "text": "baja, cerca de 0, para ir a lo seguro",
+          "why": "Bien visto. Ojo: ni con temperatura 0 el modelo comprueba la verdad. Reduce la variedad, no elimina las alucinaciones."
+        },
+        {
           "id": "c",
-          "text": "da igual: la temperatura solo cambia el estilo",
-          "why": "Cambia qué token se elige: viste cómo «forja» pasaba del 23 % al 82 %."
+          "text": "da igual: solo cambia el estilo del texto",
+          "why": "Cambia qué token se elige: viste cómo «forja» pasaba del 23 % al 82 %."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "b",
         "accept": [
-          "a"
+          "b"
         ]
       },
       "hints": [
         "Recuerda qué pasó con --temperature 0.1 y con --temperature 2.",
-        "answer a"
+        "answer b"
       ],
       "on_complete": "Eso es: baja. Para escribir textos creativos se sube; para datos, se baja. Y para que los datos sean ciertos hace falta algo más que la temperatura: dárselos al modelo en el contexto, que es lo que hace un RAG (Retrieval-Augmented Generation)."
     },
     {
       "id": "py1",
       "text": "Escribe en Python softmax, la función que convierte las puntuaciones de un LLM en probabilidades: abre el editor con py, completa la función softmax y compruébala con py check.",
-      "teach": "De puntuaciones a probabilidades: softmax\nUn LLM (Large Language Model) no da probabilidades directamente: da una puntuación por token, el «logit».\nSoftmax las convierte: calcula e elevado a cada puntuación (math.exp) y divide cada resultado entre la suma de todos. Salen números positivos que suman 1.\nLa temperatura de una API divide las puntuaciones entre T antes del softmax: es lo mismo que elevar las probabilidades a 1/T, como hace lm next.\nPor qué: softmax es la última capa de todo LLM, y la volverás a ver dentro de la atención en T6-02.",
+      "teach": "De puntuaciones a probabilidades: softmax\nUn LLM (Large Language Model) no da probabilidades directamente: da una puntuación por token, el «logit».\nSoftmax las convierte: calcula e elevado a cada puntuación (math.exp) y divide cada resultado entre la suma de todos. Salen números positivos que suman 1.\nLa temperatura de una API (Application Programming Interface) divide las puntuaciones entre T antes del softmax: es lo mismo que elevar las probabilidades a 1/T, como hace lm next.\nPor qué: softmax es la última capa de todo LLM, y la volverás a ver dentro de la atención en T6-02.",
       "py_exercise": {
         "id": "T6-01-softmax",
         "title": "softmax(puntuaciones): puntuaciones → probabilidades que suman 1",
         "function": "softmax",
-        "starter": "# Ejercicio T6-01 · Softmax\n# puntuaciones es una lista de números (los logits de cada token candidato).\n# Paso 1 (ya hecho): exps tiene e elevado a cada puntuación.\n# Paso 2 (ya hecho): total es la suma de exps.\n# Paso 3 (tú): devuelve una lista con cada elemento de exps dividido entre total.\nimport math\n\ndef softmax(puntuaciones):\n    exps = [math.exp(s) for s in puntuaciones]\n    total = sum(exps)\n    return exps   # ← cambia esta línea\n\n# Dos tokens empatados: debería imprimir [0.5, 0.5]\nprint(softmax([0, 0]))\n",
+        "starter": "# Ejercicio T6-01 · Softmax: exps (e elevado a cada puntuación) y total (su suma) ya están hechos.\n# Tú: devuelve una lista con cada elemento de exps dividido entre total.\nimport math\n\ndef softmax(puntuaciones):\n    exps = [math.exp(s) for s in puntuaciones]\n    total = sum(exps)\n    return exps   # ← cambia esta línea\n\n# Dos tokens empatados: debería imprimir [0.5, 0.5]\nprint(softmax([0, 0]))\n",
         "cases": [
           {
             "args": [
@@ -409,5 +411,5 @@
     "base": 200
   },
   "purpose": "Un LLM (Large Language Model) solo hace una cosa: calcular la probabilidad de cada posible siguiente token, elegir uno y repetir. Los parámetros que verás en cualquier API (Application Programming Interface) de LLM, temperature y top_p, controlan esa elección. Entenderlo explica por qué la misma pregunta da respuestas distintas, por qué un modelo se inventa cosas con aplomo y por qué puede repetir textos con los que se entrenó.",
-  "you_can_now": "Sabes cómo genera texto un LLM (Large Language Model) token a token, qué hacen la temperatura, top-k y top-p, y por qué un modelo alucina y memoriza. Siguiente: T6-02, la atención, el mecanismo que permite a un LLM mirar todo el contexto y no solo las 2 últimas palabras."
+  "you_can_now": "Sabes cómo genera texto un LLM token a token, qué hacen la temperatura, top-k y top-p, y por qué un modelo alucina y memoriza. Siguiente: T6-02, la atención, el mecanismo que permite a un LLM mirar todo el contexto y no solo las 2 últimas palabras."
 }

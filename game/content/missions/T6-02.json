@@ -37,7 +37,8 @@
       "id": "atencion",
       "title": "Self-attention en tres pasos",
       "body": "1) PUNTUAR: para cada par de palabras (i, j), puntuación = Qᵢ·Kⱼ / √d (producto escalar: cuánto se parecen). 2) NORMALIZAR: softmax por filas → pesos positivos que suman 1. 3) MEZCLAR: la nueva representación de i = Σⱼ pesoᵢⱼ · Vⱼ. Cada palabra sale «contaminada» con información de las palabras a las que atiende. Más: man atencion",
-      "simplified": true
+      "simplified": true,
+      "unlock_on": "objective:o1"
     }
   ],
   "objectives": [
@@ -77,31 +78,32 @@
       "choices": [
         {
           "id": "a",
-          "text": "que el 22 % de la nueva representación de katana viene de martillo"
-        },
-        {
-          "id": "b",
-          "text": "que katana y martillo están a 0,22 de distancia en la frase",
+          "text": "que katana y martillo están a 0,22 en la frase",
           "why": "La atención no mide posiciones: mide cuánto se parecen sus vectores (producto escalar) y lo normaliza con softmax."
         },
         {
+          "id": "b",
+          "text": "que martillo sale el 22 % de las veces en el corpus",
+          "why": "Es otra cosa: sale del producto escalar entre los dos vectores y del softmax, no de contar el corpus."
+        },
+        {
           "id": "c",
-          "text": "que martillo aparece el 22 % de las veces en el corpus",
-          "why": "No es una frecuencia del corpus: sale del producto escalar entre los dos vectores y del softmax."
+          "text": "que el 22 % de la nueva katana es martillo",
+          "why": ""
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "c",
         "accept": [
-          "a"
+          "c"
         ]
       },
       "hints": [
         "Cada fila suma 1: es un reparto de la «mezcla» de esa palabra.",
-        "answer a"
+        "answer c"
       ],
-      "on_complete": "Exacto: la nueva katana es un 22 % martillo, un poco más de sí misma y el resto del resto. Eso es «mezclar información» del contexto."
+      "on_complete": "Exacto: la nueva katana es un 22 % martillo, un poco más de sí misma y el resto del resto. Eso es «mezclar información» del contexto."
     },
     {
       "id": "o2",
@@ -136,7 +138,7 @@
         "attention herrera martillo katana fuego agua --causal",
         "Primera fila, primera columna."
       ],
-      "on_complete": "1,00: la primera palabra solo se tiene a sí misma. La matriz queda triangular. Así son los LLM tipo GPT (Generative Pre-trained Transformer), llamados «decoder-only»: cada posición solo ve su pasado, que es justo lo que hace falta para predecir el siguiente token."
+      "on_complete": "1,00: la primera palabra solo se tiene a sí misma. La matriz queda triangular. Así son los LLM tipo GPT, llamados «decoder-only»: cada posición solo ve su pasado, que es justo lo que hace falta para predecir el siguiente token."
     },
     {
       "id": "o3",
@@ -164,8 +166,8 @@
     },
     {
       "id": "o4",
-      "text": "Calcula la atención de una frase de 10 palabras de la tabla (las que quieras). ¿Cuántos pesos de atención hay que calcular? (answer <número>)",
-      "teach": "El coste de mirar a todos\nCada palabra puntúa a TODAS las demás: con n palabras hay n × n pesos.\nDuplicar el texto cuadruplica el trabajo y la memoria de la atención.\nPor qué: es la razón de que la ventana de contexto de un LLM (Large Language Model) tenga un límite y de que los prompts largos sean caros.",
+      "text": "Calcula la atención de una frase de 10 palabras del vocabulario (embed list las muestra). ¿Cuántos pesos de atención hay que calcular? (answer <número>)",
+      "teach": "El coste de mirar a todos\nCada palabra puntúa a TODAS las demás: con n palabras hay n × n pesos.\nPor qué: es la razón de que la ventana de contexto de un LLM (Large Language Model) tenga un límite y de que los prompts largos sean caros.",
       "validator": {
         "type": "all",
         "of": [
@@ -187,7 +189,7 @@
         "Elige 10 palabras de embed list.",
         "attention katana espada daga lanza arco escudo acero hierro fuego agua"
       ],
-      "on_complete": "100. Con un contexto de 100.000 tokens serían 10.000 millones de pesos por cabezal y por capa. Por eso la VENTANA DE CONTEXTO de un LLM tiene un límite y los contextos largos son caros. Hay técnicas para reducir el coste (FlashAttention, atención dispersa…), pero el problema de fondo sigue ahí. Y una consecuencia de seguridad: todo lo que cabe en la ventana (también un documento malicioso) puede influir en la respuesta."
+      "on_complete": "100. Con un contexto de 100.000 tokens serían 10.000 millones de pesos por cabezal y por capa: por eso la VENTANA DE CONTEXTO de un LLM tiene un límite y los contextos largos son caros. Y todo lo que cabe en la ventana, también un documento malicioso, puede influir en la respuesta."
     },
     {
       "id": "o5",
@@ -201,7 +203,8 @@
         },
         {
           "id": "b",
-          "text": "el cuádruple"
+          "text": "el cuádruple",
+          "why": ""
         },
         {
           "id": "c",
@@ -230,7 +233,7 @@
         "id": "T6-02-atencion",
         "title": "pesos_atencion(q, claves): softmax de los productos escalares",
         "function": "pesos_atencion",
-        "starter": "# Ejercicio T6-02 · Los pesos de atención de una palabra\n# q es el vector de la palabra que pregunta; claves, una lista de vectores.\n# Para cada clave k: puntuación = (q·k) / √d, donde d es el número de dimensiones.\n# softmax (como en T6-01) convierte las puntuaciones en pesos que suman 1.\nimport math\n\ndef softmax(puntuaciones):\n    exps = [math.exp(s) for s in puntuaciones]\n    total = sum(exps)\n    return [e / total for e in exps]\n\ndef pesos_atencion(q, claves):\n    puntuaciones = []\n    for k in claves:\n        punto = 0   # ← cambia esta línea: el producto escalar de q y k\n        puntuaciones.append(punto / math.sqrt(len(q)))\n    return softmax(puntuaciones)\n\n# Debería imprimir [0.669..., 0.330...]: q se parece más a la primera clave\nprint(pesos_atencion([1, 0], [[1, 0], [0, 1]]))\n",
+        "starter": "# Ejercicio T6-02 · Pesos de atención: para cada clave k, puntuación = (q·k) / √d, con d = número de dimensiones.\n# softmax (la de T6-01, al final) convierte las puntuaciones en pesos que suman 1.\nimport math\n\ndef pesos_atencion(q, claves):\n    puntuaciones = []\n    for k in claves:\n        punto = 0   # ← cambia esta línea: el producto escalar de q y k\n        puntuaciones.append(punto / math.sqrt(len(q)))\n    return softmax(puntuaciones)\n\ndef softmax(puntuaciones):\n    exps = [math.exp(s) for s in puntuaciones]\n    total = sum(exps)\n    return [e / total for e in exps]\n\n# Debería imprimir [0.669..., 0.330...]: q se parece más a la primera clave\nprint(pesos_atencion([1, 0], [[1, 0], [0, 1]]))\n",
         "cases": [
           {
             "args": [
@@ -286,44 +289,32 @@
           {
             "args": [
               [
-                1.0,
+                1,
                 0.8,
-                0,
-                0,
-                0.05,
                 0.3
               ],
               [
                 [
-                  1.0,
+                  1,
                   0.8,
-                  0,
-                  0,
-                  0.05,
                   0.3
                 ],
                 [
                   0.98,
                   0.82,
-                  0,
-                  0,
-                  0.03,
                   0.25
                 ],
                 [
                   0.2,
                   0.5,
-                  0,
-                  0,
-                  0,
                   1.0
                 ]
               ]
             ],
             "expected": [
-              0.369859,
-              0.366851,
-              0.26329
+              0.383381,
+              0.379199,
+              0.23742
             ],
             "tolerance": 1e-05
           }
@@ -341,7 +332,7 @@
         "Multiplica cada pareja de números de q y k y suma: sum([x * y for x, y in zip(q, k)])",
         "La línea queda así: punto = sum([x * y for x, y in zip(q, k)])"
       ],
-      "on_complete": "Ya has escrito la atención. El último caso es katana preguntando a katana, espada y martillo: 0,37, 0,37 y 0,26. Con punto = 0 todas las claves recibían el mismo peso: sin producto escalar, la atención no sabe a quién mirar."
+      "on_complete": "Ya has escrito la atención. El último caso es una katana resumida en 3 dimensiones preguntando a katana, espada y martillo: 0,38, 0,38 y 0,24. Con punto = 0 todas las claves recibían el mismo peso: sin producto escalar, la atención no sabe a quién mirar."
     }
   ],
   "mastery_trial": {
@@ -372,7 +363,7 @@
           "attention con --causal y esas tres palabras.",
           "Fila katana, columna martillo."
         ],
-        "on_complete": "0,31: idéntico al que tenía en la frase de 5 palabras con máscara causal. ¿Por qué? Porque con la máscara, lo que viene DESPUÉS no afecta a las filas anteriores. Por eso los LLM (Large Language Model) pueden reutilizar los cálculos de los tokens previos al generar: la KV (Key-Value) cache."
+        "on_complete": "0,31, idéntico al de la frase de 5 palabras con máscara causal: con la máscara, lo que viene DESPUÉS no afecta a las filas anteriores. Por eso un LLM puede reutilizar los cálculos de los tokens previos al generar: la KV (Key-Value) cache."
       }
     ]
   },

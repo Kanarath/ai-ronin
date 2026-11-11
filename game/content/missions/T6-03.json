@@ -59,7 +59,7 @@
         "attention katana espada fuego agua hielo brasa horno",
         "Fila katana, columna espada."
       ],
-      "on_complete": "0,22, el doble que cualquier palabra de relleno (0,11). Ahora alejemos la instrucción."
+      "on_complete": "0,22, el doble que casi todo el relleno (0,11; horno, 0,13). Ahora alejemos la instrucción."
     },
     {
       "id": "o2",
@@ -104,29 +104,30 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque la atención compara el contenido de los vectores (producto escalar), no cuánto se separan en el texto"
-        },
-        {
-          "id": "b",
           "text": "porque el documento es demasiado corto",
           "why": "Con un documento más largo pasaría lo mismo: la cuenta no mira posiciones, solo vectores."
         },
         {
+          "id": "b",
+          "text": "porque compara contenidos, no posiciones",
+          "why": ""
+        },
+        {
           "id": "c",
           "text": "porque el atacante ha usado mayúsculas",
-          "why": "No hay mayúsculas: la palabra es la misma y su vector también. Lo que cuenta es lo que se parecen katana y espada."
+          "why": "La palabra es la misma, sin mayúsculas, y su vector también. Lo que cuenta es lo que se parecen katana y espada."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "b",
         "accept": [
-          "a"
+          "b"
         ]
       },
       "hints": [
         "Recuerda cómo se calcula la puntuación en T6-02: ¿entra la posición en la cuenta?",
-        "answer a"
+        "answer b"
       ],
       "on_complete": "Exacto. Aquí no hay posiciones en absoluto. En un transformer real sí hay codificación posicional y la posición cuenta algo, pero un token lejano puede recibir mucha atención si su contenido encaja: es justo la ventaja que tiene sobre tu n-grama de T6-01."
     },
@@ -169,21 +170,55 @@
     {
       "id": "o5",
       "text": "Un documento real tiene miles de palabras de relleno, que diluyen la atención. ¿Cómo consigue el atacante que su instrucción siga recibiendo mucho peso?",
-      "teach": "La dilución\nSoftmax reparte un total de 1 entre todas las palabras: cuanto más relleno, menos le toca a cada una.\nPero no se reparte a partes iguales: la palabra que más se parece a la consulta se lleva más que cualquier otra.\nPor qué: entender este reparto explica cómo se diseñan las inyecciones indirectas reales.",
+      "teach": "La dilución\nSoftmax reparte un total de 1 entre todas las palabras: cuanto más relleno, menos le toca a cada una.\nPero no se reparte a partes iguales. ¿De qué depende cuánto se lleva cada palabra?\nPor qué: entender este reparto explica cómo se diseñan las inyecciones indirectas reales.",
       "choices": [
         {
           "id": "a",
-          "text": "escribiéndola con palabras muy parecidas a lo que el usuario preguntará"
-        },
-        {
-          "id": "b",
           "text": "poniéndola lo más lejos posible",
           "why": "Ya has visto que la distancia no cambia el peso: alejarla no le da más atención."
         },
         {
-          "id": "c",
-          "text": "no puede: con mucho relleno, toda la atención se diluye por igual",
+          "id": "b",
+          "text": "no puede: el relleno lo diluye todo",
           "why": "El relleno diluye, pero no por igual: la palabra más parecida a la consulta sigue llevándose más que el resto."
+        },
+        {
+          "id": "c",
+          "text": "imitando las palabras de la pregunta",
+          "why": ""
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "¿De qué depende la puntuación de la atención?",
+        "answer c"
+      ],
+      "on_complete": "Eso es. Por eso las inyecciones indirectas reales repiten las palabras del tema («garantía katanas garantía…»): se parecen a la pregunta, el RAG las recupera y la atención les da peso. Lo verás en A2-02."
+    },
+    {
+      "id": "o6",
+      "text": "Si la atención no distingue instrucciones de datos, ¿qué defensa tiene sentido?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "marcar lo externo y limitar permisos",
+          "why": "Bien. Ojo: marcar el texto ayuda, pero no es perfecto; por eso se limita además lo que el modelo puede hacer."
+        },
+        {
+          "id": "b",
+          "text": "confiar en que ignore lo lejano u oculto",
+          "why": "Acabas de ver que no lo ignora: ni la distancia ni la letra blanca le quitan atención."
+        },
+        {
+          "id": "c",
+          "text": "quitar la máscara causal del modelo",
+          "why": "Sin máscara el modelo vería también el futuro, y la respuesta seguiría viendo todo el documento. No protege nada."
         }
       ],
       "validator": {
@@ -194,43 +229,10 @@
         ]
       },
       "hints": [
-        "¿De qué depende la puntuación de la atención?",
+        "Si no puedes evitar que el modelo lea el texto, ¿qué puedes controlar?",
         "answer a"
       ],
-      "on_complete": "Eso es. Por eso las inyecciones indirectas reales repiten las palabras del tema («garantía katanas garantía…»): se parecen a la pregunta, el RAG (Retrieval-Augmented Generation) las recupera y la atención les da peso. Lo verás en A2-02."
-    },
-    {
-      "id": "o6",
-      "text": "Si la atención no distingue instrucciones de datos, ¿qué defensa tiene sentido?",
-      "choices": [
-        {
-          "id": "a",
-          "text": "confiar en que el modelo ignore lo que está lejos o escondido",
-          "why": "Acabas de ver que no lo ignora: ni la distancia ni la letra blanca le quitan atención."
-        },
-        {
-          "id": "b",
-          "text": "marcar el texto de fuera como datos (por ejemplo, entre delimitadores) y no dar al modelo permisos peligrosos mientras lo lee",
-          "why": "Bien. Ojo: marcar el texto ayuda, pero no es perfecto; por eso se limita además lo que el modelo puede hacer."
-        },
-        {
-          "id": "c",
-          "text": "quitar la máscara causal",
-          "why": "Sin máscara el modelo vería también el futuro, y la respuesta seguiría viendo todo el documento. No protege nada."
-        }
-      ],
-      "validator": {
-        "type": "answer",
-        "expected": "b",
-        "accept": [
-          "b"
-        ]
-      },
-      "hints": [
-        "Si no puedes evitar que el modelo lea el texto, ¿qué puedes controlar?",
-        "answer b"
-      ],
-      "on_complete": "Exacto: señalar qué es dato y limitar el daño posible. En A1 y A2 activarás esas defensas (spotlighting, permisos) y medirás cuánto aguantan."
+      "on_complete": "Exacto: marcar el texto de fuera como datos (por ejemplo, entre delimitadores) y no dar permisos peligrosos mientras se lee. En A1 y A2 activarás esas defensas (spotlighting, permisos) y medirás cuánto aguantan."
     },
     {
       "id": "py1",
@@ -240,7 +242,7 @@
         "id": "T6-03-dilucion",
         "title": "peso_oculto(s_oculta, s_relleno, n): peso de la instrucción entre n palabras de relleno",
         "function": "peso_oculto",
-        "starter": "# Ejercicio T6-03 · Cuánta atención recibe una instrucción escondida\n# s_oculta: puntuación de la instrucción; s_relleno: puntuación de cada palabra de relleno;\n# n: cuántas palabras de relleno hay.\n# El peso es e_oculta dividido entre la suma de e^puntuación de TODAS las palabras.\nimport math\n\ndef peso_oculto(s_oculta, s_relleno, n):\n    e_oculta = math.exp(s_oculta)\n    e_relleno = math.exp(s_relleno)\n    total = e_oculta   # ← cambia esta línea: suma también las n palabras de relleno\n    return e_oculta / total\n\n# Una instrucción igual de parecida que 4 palabras de relleno: debería imprimir 0.2\nprint(peso_oculto(0, 0, 4))\n",
+        "starter": "# Ejercicio T6-03 · Peso de una instrucción (puntuación s_oculta) entre n palabras de relleno (s_relleno cada una).\n# Peso = e_oculta / suma de e^puntuación de TODAS las palabras.\nimport math\n\ndef peso_oculto(s_oculta, s_relleno, n):\n    e_oculta = math.exp(s_oculta)\n    e_relleno = math.exp(s_relleno)\n    total = e_oculta   # ← cambia esta línea: suma también las n palabras de relleno\n    return e_oculta / total\n\n# Una instrucción igual de parecida que 4 palabras de relleno: debería imprimir 0.2\nprint(peso_oculto(0, 0, 4))\n",
         "cases": [
           {
             "args": [
@@ -292,14 +294,14 @@
         "El total tiene que incluir la instrucción y las n palabras de relleno: n veces e_relleno.",
         "La línea queda así: total = e_oculta + n * e_relleno"
       ],
-      "on_complete": "Mira los dos últimos casos: con 10 palabras de relleno, una instrucción que puntúa 2 puntos más se lleva el 42 % de la atención; con 100, una que puntúa 5 más se lleva casi el 60 %. La puntuación entra en una exponencial: un poco más de parecido compensa mucho relleno."
+      "on_complete": "Mira los dos últimos casos: con 10 palabras de relleno, una instrucción que puntúa 2 puntos más se lleva el 42 % de la atención; con 100, una que puntúa 5 más se lleva casi el 60 %. La puntuación entra en una exponencial: un poco más de parecido compensa mucho relleno."
     }
   ],
-  "you_can_now": "Sabes explicar por qué una instrucción escondida en un documento largo influye en un LLM (Large Language Model): la atención mira el contenido y no la distancia, la respuesta ve todo el contexto, y el parecido compensa el relleno. Siguiente: P0, donde escribirás el código de verdad, y A1 y A2, donde atacarás y defenderás chatbots y RAG (Retrieval-Augmented Generation).",
+  "you_can_now": "Sabes explicar por qué una instrucción escondida en un documento largo influye en un LLM: la atención mira el contenido y no la distancia, la respuesta ve todo el contexto, y el parecido compensa el relleno. Siguiente: P0, donde escribirás el código de verdad, y A1 y A2, donde atacarás y defenderás chatbots y RAG.",
   "debrief": {
     "what_happened": "Has comprobado que la atención da el mismo peso a una palabra cerca o lejos, que la máscara causal no tapa el documento a la respuesta, y has calculado cómo el relleno diluye la atención y cómo el parecido lo compensa.",
     "why": "Es la base técnica de la inyección de instrucciones indirecta: todo texto que entra en el contexto puede influir en la respuesta, lo vea una persona o no. Por eso las defensas no pueden depender de que el modelo «ignore» el texto malicioso.",
-    "in_production": "La inyección indirecta (por ejemplo, en webs, correos o documentos de un RAG (Retrieval-Augmented Generation)) está entre los riesgos principales del OWASP (Open Worldwide Application Security Project) Top 10 para aplicaciones LLM. Las defensas reales combinan marcar el contenido externo, filtrar lo que se recupera y, sobre todo, limitar lo que el modelo puede hacer cuando ha leído texto no confiable.",
+    "in_production": "La inyección indirecta, escondida en webs, correos o documentos de un RAG (Retrieval-Augmented Generation), está entre los riesgos principales del OWASP (Open Worldwide Application Security Project) Top 10 para aplicaciones con LLM (Large Language Model). Las defensas reales combinan marcar el contenido externo, filtrar lo que se recupera y, sobre todo, limitar lo que el modelo puede hacer cuando ha leído texto no confiable.",
     "simplifications": [
       "Atención sin codificación posicional: en un transformer real la posición influye algo",
       "Una palabra hace de instrucción entera; Q = K = V = embeddings diseñados a mano"

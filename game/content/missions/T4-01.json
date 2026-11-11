@@ -60,7 +60,8 @@
     {
       "id": "neurona",
       "title": "La neurona artificial",
-      "body": "Recibe entradas (a, b), multiplica cada una por un PESO, suma un SESGO: z = w₁·a + w₂·b + bias. Después aplica una función de activación; aquí la SIGMOIDE σ(z) = 1 / (1 + e^(−z)), que convierte cualquier número en un valor entre 0 y 1 que interpretamos como probabilidad. Si σ(z) ≥ 0,5 (es decir, si z ≥ 0), la neurona dice «1». Más: man neurona"
+      "body": "Recibe entradas (a, b), multiplica cada una por un PESO y suma un SESGO. Después aplica una función de activación, la SIGMOIDE, que convierte cualquier número en un valor entre 0 y 1. Más: man neurona",
+      "unlock_on": "objective:o1"
     }
   ],
   "objectives": [
@@ -79,12 +80,12 @@
         "Los comandos de redes empiezan por nn. Prueba: help nn",
         "nn create neurona --hidden 0"
       ],
-      "on_complete": "Mírala por dentro con nn weights <nombre>: w2_0 es el peso de la entrada a, w2_1 el de b y b2 el sesgo."
+      "on_complete": "Mírala por dentro con nn weights <nombre>: w2_0 es el peso de la entrada a (x0 en el diagrama), w2_1 el de b (x1) y b2 el sesgo."
     },
     {
       "id": "o2",
       "text": "Calcula la salida de la neurona SIN entrenar para la entrada a=1, b=1. ¿Qué probabilidad da? (answer <número>, 3 decimales)",
-      "teach": "Pasada hacia delante (forward pass)\nLa neurona calcula z = w₁·a + w₂·b + bias: cada entrada por su peso, más el sesgo.\nDespués aplica la sigmoide σ(z) = 1 / (1 + e^(−z)), que convierte z en un número entre 0 y 1: la probabilidad de «1».\nnn forward <red> 1,1 enseña las dos cuentas. Calcular la salida así se llama forward pass.\nPor qué: cada vez que un LLM (Large Language Model) genera una palabra hace millones de estas cuentas.",
+      "teach": "Pasada hacia delante (forward pass)\nLa neurona calcula z = w₁·a + w₂·b + bias: cada entrada por su peso, más el sesgo.\nDespués aplica la sigmoide σ(z) = 1 / (1 + e^(−z)), que convierte z en un número entre 0 y 1: la probabilidad de «1».\nnn forward <red> 1,1 enseña las dos cuentas; en su salida, σ(z) aparece como sigmoid(z).\nPor qué: cada vez que un LLM (Large Language Model) genera una palabra hace millones de estas cuentas.",
       "validator": {
         "type": "all",
         "of": [
@@ -115,32 +116,32 @@
       "choices": [
         {
           "id": "a",
-          "text": "«0», porque 0,313 es menor que 0,5",
-          "why": "Eso es: por debajo de 0,5 dice 0. Equivale a que z sea negativo (aquí −0,788)."
-        },
-        {
-          "id": "b",
           "text": "«1», porque las dos entradas valen 1",
           "why": "Las entradas no deciden solas: decide σ(z). Con 0,313, que es menor que 0,5, la neurona dice 0."
         },
         {
+          "id": "b",
+          "text": "«0», porque 0,313 no llega a 0,5",
+          "why": "Eso es: por debajo de 0,5 dice 0. Equivale a que z sea negativo (aquí −0,788)."
+        },
+        {
           "id": "c",
-          "text": "0,313 es el error de la neurona",
-          "why": "No es un error: es la probabilidad que da a la clase 1. El error se mide después, al compararla con la etiqueta."
+          "text": "0,313 es el error que comete la red",
+          "why": "Es la probabilidad que da a la clase 1, no un error. El error se mide después, al compararla con la etiqueta."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "b",
         "accept": [
-          "a"
+          "b"
         ]
       },
       "hints": [
         "Mira la última línea de nn forward: «Predicción: …».",
-        "answer a"
+        "answer b"
       ],
-      "on_complete": "Eso es. La regla es: σ(z) ≥ 0,5 → «1»; si no, «0». Y σ(z) ≥ 0,5 es lo mismo que z ≥ 0. Todo depende del signo de z."
+      "on_complete": "Eso es: la regla es σ(z) ≥ 0,5 → «1» y, si no, «0». Y σ(z) ≥ 0,5 es lo mismo que z ≥ 0, así que todo depende del signo de z."
     },
     {
       "id": "o3",
@@ -286,7 +287,7 @@
         "Primera línea: multiplica a por w1 y b por w2, súmalos y suma el sesgo. Segunda línea: devuelve la sigmoide de z.",
         "Las dos líneas quedan así:  z = w1 * a + w2 * b + bias  y  return 1 / (1 + math.exp(-z))"
       ],
-      "on_complete": "Ya tienes una neurona en dos líneas. Con los pesos iniciales de tu primera neurona (−0,341, −0,447 y sesgo 0) da 0,313, lo mismo que nn forward. Un LLM (Large Language Model) es esta cuenta repetida miles de millones de veces."
+      "on_complete": "Ya tienes una neurona en dos líneas. Con los pesos iniciales de tu primera neurona (−0,341, −0,447 y sesgo 0) da 0,313, lo mismo que nn forward. Un LLM es esta cuenta repetida miles de millones de veces."
     },
     {
       "id": "o5",
@@ -313,8 +314,8 @@
         "Igual que con AND, cambiando el dataset. Usa al menos 1000 épocas.",
         "nn create x --hidden 0 · nn train x puerta_xor --epochs 5000"
       ],
-      "on_complete": "No aprende: accuracy 0,5 y la pérdida se queda clavada. Dibuja XOR mentalmente: (0,1) y (1,0) valen 1 y están en esquinas opuestas; (0,0) y (1,1) valen 0 y ocupan las otras dos. NINGUNA recta deja los unos a un lado y los ceros al otro. XOR no es linealmente separable. Esta limitación, señalada por Minsky y Papert en 1969, contribuyó a frenar la investigación en redes neuronales durante años.",
-      "teach": "La puerta XOR\nXOR da 1 cuando a y b son distintas: (0,1) y (1,0) valen 1; (0,0) y (1,1) valen 0.\nCrea una neurona nueva y entrénala igual que con AND, cambiando el dataset.\nPor qué: XOR es el problema más pequeño que una neurona sola no resuelve, y muchos problemas reales tienen esa forma."
+      "on_complete": "No aprende: accuracy 0,5 y la pérdida se queda clavada. Más épocas no lo arreglan. Enseguida verás por qué.",
+      "teach": "La puerta XOR\nXOR da 1 cuando a y b son distintas: (0,1) y (1,0) valen 1; (0,0) y (1,1) valen 0.\nCrea una neurona nueva y entrénala igual que con AND, cambiando el dataset.\nPor qué: XOR es la prueba clásica para una neurona, y muchos problemas reales tienen esa forma."
     },
     {
       "id": "o6",
@@ -338,31 +339,32 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque traza una sola recta (z = 0) y en XOR los unos están en esquinas opuestas"
-        },
-        {
-          "id": "b",
-          "text": "porque no la has entrenado suficientes épocas",
+          "text": "porque le faltan épocas de entrenamiento",
           "why": "La pérdida se queda clavada en 0,693 aunque sigas entrenando. Más épocas no cambian una recta en una curva."
         },
         {
-          "id": "c",
+          "id": "b",
           "text": "porque la sigmoide no sirve para XOR",
           "why": "Con cualquier activación, una neurona sola dice 1 a un lado de la recta z = 0 y 0 al otro. El límite es la recta, no la sigmoide."
+        },
+        {
+          "id": "c",
+          "text": "porque una sola recta no separa esas esquinas",
+          "why": ""
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "c",
         "accept": [
-          "a"
+          "c"
         ]
       },
       "hints": [
         "Recuerda lo que hiciste con OR: la neurona dice 1 a un lado de una línea y 0 al otro.",
-        "answer a"
+        "answer c"
       ],
-      "on_complete": "Exacto. Una neurona solo separa con una recta. Para XOR hacen falta dos rectas combinadas: varias neuronas en capa. Es la siguiente misión."
+      "on_complete": "Exacto: en XOR los unos están en esquinas opuestas y ninguna recta los deja a un lado y los ceros al otro. Minsky y Papert señalaron este límite en 1969, y frenó durante años la investigación en redes. Para XOR hacen falta varias neuronas en capa: es la siguiente misión."
     }
   ],
   "mastery_trial": {
