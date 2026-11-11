@@ -52,7 +52,8 @@
     {
       "id": "capas",
       "title": "Capas y backpropagation",
-      "body": "En una red 2-2-1, las 2 entradas van a 2 neuronas OCULTAS (cada una con sus pesos y su sesgo) y sus salidas van a 1 neurona de salida. Para entrenarla hay que saber cuánto culpa tiene cada peso del error, incluidos los de la capa oculta, que no ven el error directamente. BACKPROPAGATION lo calcula aplicando la regla de la cadena desde la salida hacia atrás. Más: man backprop"
+      "body": "En una red 2-2-1, las 2 entradas van a 2 neuronas OCULTAS (cada una con sus pesos y su sesgo) y sus salidas van a 1 neurona de salida. Para entrenarla hay que saber cuánto culpa tiene cada peso del error, incluidos los de la capa oculta, que no ven el error directamente. BACKPROPAGATION lo calcula aplicando la regla de la cadena desde la salida hacia atrás. Más: man backprop",
+      "unlock_on": "objective:o1"
     }
   ],
   "objectives": [
@@ -86,7 +87,7 @@
     {
       "id": "o2",
       "text": "Averigua qué ha aprendido la neurona oculta 1: pasa las cuatro entradas (0,0 · 0,1 · 1,0 · 1,1) con nn forward y mira cuándo se «enciende» (activación > 0,5). ¿A qué puerta lógica corresponde? (answer <puerta>)",
-      "teach": "Leer una neurona oculta\nCada neurona oculta es una neurona como las de T4-01: traza su propia recta.\nMira su activación (sigmoid(z)) en la línea «oculta 1» de nn forward para cada una de las cuatro entradas.\nSi solo se enciende en un caso, o en tres, reconocerás una puerta conocida.\nPor qué: leer qué detecta cada neurona es lo que intenta la interpretabilidad, la rama que estudia qué ha aprendido un modelo.",
+      "teach": "Leer una neurona oculta\nCada neurona oculta es una neurona como las de T4-01: traza su propia recta.\nMira su activación, el valor sigmoid(z), en la línea «oculta 1» de nn forward para cada una de las cuatro entradas.\nSi solo se enciende en un caso, o en tres, reconocerás una puerta conocida.\nPor qué: leer qué detecta cada neurona es lo que intenta la interpretabilidad, la rama que estudia qué ha aprendido un modelo.",
       "validator": {
         "type": "all",
         "of": [
@@ -113,7 +114,7 @@
         "nn forward red 0,0 · nn forward red 0,1 · nn forward red 1,0 · nn forward red 1,1",
         "Solo se enciende con una de las cuatro entradas. ¿Qué puerta da 1 solo en ese caso?"
       ],
-      "on_complete": "AND. Y la neurona oculta 0 se enciende solo con (0,0): es NOR. La salida combina: «ni NOR ni AND» = XOR. Nadie le ha dicho a la red que use puertas lógicas: ha DESCUBIERTO que esas dos rectas le sirven. Eso es aprender representaciones, la idea central del deep learning."
+      "on_complete": "AND. Y la oculta 0 se enciende solo con (0,0): es NOR. Nadie le ha dicho a la red que use puertas lógicas: las ha DESCUBIERTO, y eso es aprender representaciones, la idea central del deep learning."
     },
     {
       "id": "c1",
@@ -121,29 +122,30 @@
       "choices": [
         {
           "id": "a",
-          "text": "cada neurona oculta traza su recta (NOR y AND) y la salida combina sus respuestas"
-        },
-        {
-          "id": "b",
-          "text": "permite entrenar más épocas",
+          "text": "permite entrenar durante más épocas",
           "why": "Las épocas no dependen de la arquitectura: la neurona sola de T4-01 también entrenó miles y no aprendió XOR."
         },
         {
-          "id": "c",
+          "id": "b",
           "text": "memoriza los cuatro casos de la tabla",
-          "why": "No guarda la tabla: has visto que la oculta 0 es NOR y la oculta 1 es AND, dos rectas que la salida combina."
+          "why": "La red no guarda la tabla: has visto que la oculta 0 es NOR y la oculta 1 es AND, dos rectas que la salida combina."
+        },
+        {
+          "id": "c",
+          "text": "combina dos rectas en una sola frontera",
+          "why": ""
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "c",
         "accept": [
-          "a"
+          "c"
         ]
       },
       "hints": [
         "Recuerda lo que viste con nn forward: ¿qué puerta era cada neurona oculta?",
-        "answer a"
+        "answer c"
       ],
       "on_complete": "Eso es. Dos rectas combinadas hacen una frontera que una sola recta no puede hacer. Apilando capas, las redes construyen fronteras cada vez más complejas."
     },
@@ -155,7 +157,7 @@
         "id": "T4-02-capa",
         "title": "capa(entradas, pesos, sesgos): pasada hacia delante de una capa",
         "function": "capa",
-        "starter": "# Ejercicio T4-02 · Una capa oculta en Python\n# Para cada neurona: z = sesgo + suma de (peso × entrada); su salida es sigmoide(z).\nimport math\n\ndef sigmoide(z):\n    return 1 / (1 + math.exp(-z))\n\ndef capa(entradas, pesos, sesgos):\n    salidas = []\n    for w, b in zip(pesos, sesgos):      # una vuelta por neurona\n        z = b\n        for wi, xi in zip(w, entradas):  # cada peso con su entrada\n            z = z + 0   # ← cambia esta línea\n        salidas.append(sigmoide(z))\n    return salidas\n\n# Capa de XOR: neurona 0 = NOR, neurona 1 = AND. Con la entrada 1,1 NOR se apaga y AND se enciende.\n# Debería imprimir [3.059022269256247e-07, 0.9933071490757153]\nprint(capa([1, 1], [[-10, -10], [10, 10]], [5, -15]))\n",
+        "starter": "# Ejercicio T4-02 · Una capa: para cada neurona, z = sesgo + suma de (peso × entrada) y su salida es sigmoide(z).\nimport math\n\ndef capa(entradas, pesos, sesgos):\n    salidas = []\n    for w, b in zip(pesos, sesgos):      # una vuelta por neurona\n        z = b\n        for wi, xi in zip(w, entradas):  # cada peso con su entrada\n            z = z + 0   # ← cambia esta línea\n        salidas.append(sigmoide(z))\n    return salidas\n\ndef sigmoide(z):\n    return 1 / (1 + math.exp(-z))\n\n# Capa de XOR: neurona 0 = NOR, neurona 1 = AND. Con la entrada 1,1 NOR se apaga y AND se enciende.\n# Debería imprimir [3.059022269256247e-07, 0.9933071490757153]\nprint(capa([1, 1], [[-10, -10], [10, 10]], [5, -15]))\n",
         "cases": [
           {
             "args": [
@@ -294,7 +296,7 @@
           "se queda atascada"
         ]
       },
-      "teach": "La semilla\nLa semilla decide los pesos iniciales aleatorios. Desde ahí, el descenso por gradiente baja por la superficie de error.\nPero esa superficie, en una red, no es un cuenco: tiene valles secundarios y mesetas.\nPor qué: por eso los equipos que entrenan modelos fijan la semilla, para poder repetir un resultado.",
+      "teach": "La semilla\nLa semilla decide los pesos iniciales aleatorios. Desde ahí, el descenso por gradiente baja por la superficie de error.\n¿Llegará siempre al mismo sitio? Compruébalo.\nPor qué: por eso los equipos que entrenan modelos fijan la semilla, para poder repetir un resultado.",
       "validator": {
         "type": "event",
         "event": "nn.trained",
@@ -338,7 +340,7 @@
     {
       "id": "o5",
       "text": "Ahora un problema real: con el split honesto de katanas (test 0.3, seed 42, min-max aprendido del train), compara en el TEST una sola neurona (--hidden 0) y una red con 8 ocultas (semilla 1), ambas con lr 1 y 3000 épocas, usando «defectuosa» como clase 1.",
-      "teach": "Redes con datos reales\nLas katanas tienen 3 features, así que la red necesita --inputs 3.\nComo las etiquetas son «apta»/«defectuosa» y no 0/1, indica cuál es la clase 1 con --positive defectuosa al entrenar.\nY como siempre: se entrena con el train normalizado y se evalúa en el test.\nPor qué: la comparación honesta en el test es la única que dice si un modelo merece la pena.",
+      "teach": "Redes con datos reales\nPrepara los datos como en T2-01: dataset split katanas --test 0.3 --seed 42 · dataset normalize katanas_train --as tr · dataset normalize katanas_test --fit katanas_train --as te\nLas katanas tienen 3 features: crea la red con --inputs 3.\nLas etiquetas son «apta»/«defectuosa»: al entrenar, marca la clase 1 con --positive defectuosa.\nEntrena con tr y evalúa con te.\nPor qué: la comparación honesta en el test es la única que dice si un modelo merece la pena.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -388,7 +390,7 @@
         "Lo mismo con --hidden 8 --seed 1.",
         "dataset split katanas --test 0.3 --seed 42 · dataset normalize katanas_train --as tr · dataset normalize katanas_test --fit katanas_train --as te · nn create n0 --inputs 3 --hidden 0 --lr 1 · nn train n0 tr --epochs 3000 --positive defectuosa · nn evaluate n0 te · nn create n8 --inputs 3 --hidden 8 --lr 1 --seed 1 · nn train n8 tr --epochs 3000 --positive defectuosa · nn evaluate n8 te"
       ],
-      "on_complete": "Una neurona: ~0,53, prácticamente azar. La red: ~0,86. ¿Recuerdas el gráfico de T1-01? Las defectuosas forman DOS grupos (quebradizas y blandas), uno a cada lado de las aptas: no hay recta que las separe, igual que en XOR."
+      "on_complete": "La neurona sola se queda cerca del azar y la red la supera con claridad. ¿Recuerdas el gráfico de T1-01? Las defectuosas forman DOS grupos (quebradizas y blandas), uno a cada lado de las aptas: no hay recta que las separe, igual que en XOR."
     },
     {
       "id": "o6",
@@ -402,7 +404,7 @@
       "hints": [
         "Última línea de nn evaluate con la red de 8 ocultas sobre te."
       ],
-      "on_complete": "0,861. Como referencia, un k-NN (k-Nearest Neighbors) con k=9 obtiene 0,847 en este mismo test. En este problema pequeño la red apenas gana, y es mucho menos interpretable. Elegir modelo es siempre un compromiso."
+      "on_complete": "0,861. Como referencia, un k-NN (k-Nearest Neighbors) con k=9 queda a poco más de un punto en este mismo test. La red apenas gana y es mucho menos interpretable: elegir modelo es siempre un compromiso."
     },
     {
       "id": "o7",
@@ -410,29 +412,30 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque empezó con otros pesos iniciales y el descenso cayó en un mínimo local o una meseta"
-        },
-        {
-          "id": "b",
-          "text": "porque la semilla 5 cambia los datos de XOR",
+          "text": "la semilla 5 cambia los datos de XOR",
           "why": "La semilla solo decide los pesos iniciales. Los cuatro casos de XOR son los mismos."
         },
         {
+          "id": "b",
+          "text": "partió de otros pesos y quedó atrapada",
+          "why": ""
+        },
+        {
           "id": "c",
-          "text": "porque backpropagation tiene un error",
+          "text": "backpropagation tiene un error de cálculo",
           "why": "El mismo algoritmo funcionó con la semilla 1 y con 4 ocultas. El problema es el punto de partida."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "b",
         "accept": [
-          "a"
+          "b"
         ]
       },
       "hints": [
         "¿Qué es lo único que cambia la semilla?",
-        "answer a"
+        "answer b"
       ],
       "on_complete": "Exacto. La superficie de error de una red tiene trampas. Más neuronas dan más caminos cuesta abajo; por eso lo arreglaste ensanchando la red."
     }

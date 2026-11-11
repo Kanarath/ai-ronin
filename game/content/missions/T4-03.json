@@ -81,7 +81,7 @@
         "Copia el comando del enunciado.",
         "plot llamadas --x confianza_origen --y confianza_destino"
       ],
-      "on_complete": "Compara con tu predicción: las peligrosas están en dos esquinas opuestas. Abajo a la derecha, las fugas (origen de confianza, destino externo). Arriba a la izquierda, las entradas no fiables (origen externo, destino interno). Las seguras ocupan las otras dos esquinas."
+      "on_complete": "Compara con tu predicción: las peligrosas ocupan dos esquinas opuestas. Abajo a la derecha están las fugas (origen de confianza, destino externo) y arriba a la izquierda, las entradas no fiables (origen externo, destino interno). Las seguras ocupan las otras dos."
     },
     {
       "id": "o3",
@@ -94,7 +94,8 @@
         },
         {
           "id": "b",
-          "text": "XOR"
+          "text": "XOR",
+          "why": ""
         },
         {
           "id": "c",
@@ -187,39 +188,40 @@
         "Son dos comandos, uno con cada entrada. Si tu red no se llama red, usa su nombre.",
         "nn forward red 0.9,0.1  y después  nn forward red 0.1,0.9"
       ],
-      "on_complete": "Las dos salen como peligrosas (0,998). Pero no las detectan las mismas neuronas: mira las líneas «oculta 1» y «oculta 2» en las dos pasadas."
+      "on_complete": "Las dos salen como peligrosas (0,998). Pero no las detectan las mismas neuronas: mira las líneas «oculta 1» y «oculta 2» en las dos pasadas (sube en la consola para ver la primera)."
     },
     {
       "id": "o7",
-      "text": "¿Qué detecta la neurona oculta 2?",
+      "text": "¿Qué detecta la neurona oculta 2? Compara su activación con 0.9,0.1 y con 0.1,0.9.",
       "choices": [
         {
           "id": "a",
-          "text": "las fugas: se enciende con 0.9,0.1 y se apaga con 0.1,0.9"
-        },
-        {
-          "id": "b",
           "text": "las entradas no fiables",
           "why": "Esa es la oculta 1: se enciende con 0.1,0.9. La oculta 2 vale 0,946 con 0.9,0.1 y 0,0 con 0.1,0.9."
         },
         {
-          "id": "c",
+          "id": "b",
           "text": "cualquier llamada peligrosa",
           "why": "Con la entrada no fiable (0.1,0.9) la oculta 2 vale 0,0. Detecta solo un tipo de peligro."
+        },
+        {
+          "id": "c",
+          "text": "las fugas",
+          "why": ""
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "a",
+        "expected": "c",
         "accept": [
-          "a"
+          "c"
         ]
       },
       "hints": [
         "Compara la línea «oculta 2» en las dos pasadas: ¿en cuál pasa de 0,5?",
-        "answer a"
+        "answer c"
       ],
-      "on_complete": "Eso es. La oculta 2 detecta fugas y la oculta 1, entradas no fiables. Nadie se lo dijo: la red lo descubrió, como NOR y AND en T4-02. Con dos features aún se puede leer. ¿Y con más?"
+      "on_complete": "Eso es: la oculta 2 detecta fugas y la oculta 1, entradas no fiables. Nadie se lo dijo: la red lo descubrió, como NOR y AND en T4-02. Con dos features aún se puede leer, ¿y con más?"
     },
     {
       "id": "o8",
@@ -228,12 +230,13 @@
       "choices": [
         {
           "id": "a",
-          "text": "la regla exacta, que está escrita en los pesos",
-          "why": "Los pesos son números, no reglas. Algunas neuronas se dejan interpretar (como la oculta 2), otras no (como la oculta 3)."
+          "text": "sus 17 números, pero ninguna regla legible",
+          "why": ""
         },
         {
           "id": "b",
-          "text": "los 17 números y la cuenta que lleva a la decisión, pero no una regla legible"
+          "text": "la regla exacta, escrita en los pesos",
+          "why": "Los pesos son números, no reglas. Algunas neuronas se dejan interpretar (como la oculta 2), otras no (como la oculta 3)."
         },
         {
           "id": "c",
@@ -250,18 +253,18 @@
           },
           {
             "type": "answer",
-            "expected": "b",
+            "expected": "a",
             "accept": [
-              "b"
+              "a"
             ]
           }
         ]
       },
       "hints": [
         "Primero nn weights red. Después piensa: ¿hay en esa tabla alguna frase del tipo «si… entonces…»?",
-        "nn weights red  y después  answer b"
+        "nn weights red  y después  answer a"
       ],
-      "on_complete": "Exacto. Por eso se dice que una red es una caja negra: puedes ver todos sus números y aun así no tener una razón que leer. Con 17 pesos aún se puede rastrear; con los miles de millones de un LLM (Large Language Model), no."
+      "on_complete": "Exacto. Por eso se dice que una red es una caja negra: puedes ver todos sus números y aun así no tener una razón que leer. Con 17 pesos aún se puede rastrear; con los miles de millones de un LLM, no."
     },
     {
       "id": "py1",
@@ -271,7 +274,7 @@
         "id": "T4-03-peligrosa",
         "title": "peligrosa(origen, destino): regla de frontera de confianza",
         "function": "peligrosa",
-        "starter": "# Ejercicio T4-03 · Una regla legible\n# Devuelve True si la confianza del origen y la del destino se diferencian en más de 0.4.\n# abs(x) quita el signo: abs(0.1 - 0.9) es 0.8.\n\ndef peligrosa(origen, destino):\n    return False   # ← cambia esta línea\n\n# Una fuga: datos de confianza (0.9) hacia fuera (0.1). Debería imprimir True\nprint(peligrosa(0.9, 0.1))\n",
+        "starter": "# Ejercicio T4-03 · Una regla legible: True si origen y destino se diferencian en más de 0.4.\n# abs(x) quita el signo: abs(0.1 - 0.9) es 0.8.\n\ndef peligrosa(origen, destino):\n    return False   # ← cambia esta línea\n\n# Una fuga: datos de confianza (0.9) hacia fuera (0.1). Debería imprimir True\nprint(peligrosa(0.9, 0.1))\n",
         "cases": [
           {
             "args": [
@@ -315,7 +318,7 @@
         "Calcula la diferencia con abs(origen - destino) y compárala con 0.4.",
         "La línea queda así: return abs(origen - destino) > 0.4"
       ],
-      "on_complete": "Tu regla acierta las 60 llamadas, igual que la red, y cabe en una línea. Aquí gana la regla. Cuando el problema tiene cientos de features, las reglas a mano no llegan y se usan redes. Por eso se combinan las dos."
+      "on_complete": "Tu regla acierta las 60 llamadas, igual que la red, y cabe en una línea: aquí gana la regla. Cuando el problema tiene cientos de features, las reglas a mano no llegan y se usan redes."
     },
     {
       "id": "o9",
@@ -323,16 +326,17 @@
       "choices": [
         {
           "id": "a",
-          "text": "como única barrera: si la red dice «segura», la llamada se ejecuta",
+          "text": "como única barrera ante cualquier llamada",
           "why": "Ningún clasificador acierta siempre con ataques nuevos. Una sola barrera que falla deja pasar el ataque entero."
         },
         {
           "id": "b",
-          "text": "como una capa más: reglas legibles, confirmación humana en las llamadas de riesgo y un registro de cada decisión"
+          "text": "como una capa más, junto a otras defensas",
+          "why": ""
         },
         {
           "id": "c",
-          "text": "quitarlo y dejar que el LLM decida si la llamada es segura",
+          "text": "quitarlo y que el LLM decida si es segura",
           "why": "El LLM es justo lo que el atacante manipula con prompt injection. No puede vigilarse a sí mismo."
         }
       ],
@@ -347,10 +351,10 @@
         "Piensa en qué pasa el día que el clasificador se equivoque.",
         "answer b"
       ],
-      "on_complete": "Eso es: defensa en profundidad. Varias capas, cada una con sus fallos, y un registro para poder auditar después. Lo verás a fondo cuando ataques y defiendas agentes en la parte de seguridad."
+      "on_complete": "Eso es: defensa en profundidad. Reglas legibles, confirmación humana en las llamadas de riesgo y un registro de cada decisión: cada capa tiene sus fallos, pero juntas aguantan más. Lo verás a fondo cuando ataques y defiendas agentes en la parte de seguridad."
     }
   ],
-  "you_can_now": "Sabes describir las llamadas de un agente con features de confianza, ver que el riesgo tiene forma de XOR, resolverlo con una capa oculta y explicar por qué una red es difícil de auditar. Siguiente: T5, donde verás cómo un LLM (Large Language Model) convierte el texto en números.",
+  "you_can_now": "Sabes describir las llamadas de un agente con features de confianza, ver que el riesgo tiene forma de XOR, resolverlo con una capa oculta y explicar por qué una red es difícil de auditar. Siguiente: T5, donde verás cómo un LLM convierte el texto en números.",
   "debrief": {
     "what_happened": "Has construido un clasificador de llamadas de un agente: una neurona sola falla porque el riesgo tiene forma de XOR, una red con 4 ocultas acierta todo, y al abrirla has visto neuronas que se leen (fugas, entradas no fiables) y otras que no.",
     "why": "Cruzar una frontera de confianza, en cualquiera de los dos sentidos, es lo que convierte una acción normal en un riesgo. Y una red que acierta no basta: en seguridad hay que poder explicar y auditar cada decisión.",
