@@ -44,6 +44,8 @@ var classics: Dictionary = {}
 var images: Dictionary = {}
 ## nombre -> {"stage": "base"|"sft"|"prefs", "sets": [...]} (T9)
 var aligned: Dictionary = {}
+## nombre -> {"on": {técnica: bool}} (P1)
+var apps: Dictionary = {}
 ## Tabla de embeddings (se carga al usarla)
 var embeddings: EmbeddingTable = null
 
@@ -106,4 +108,5 @@ func reset() -> void:
 		store_of(kind).clear()
 	images.clear()
 	aligned.clear()
+	apps.clear()
 	embeddings = null

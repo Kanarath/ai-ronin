@@ -12,6 +12,9 @@ const SOLUCIONES := {
 	"T9-01": "# Completa la línea marcada y compruébala con py check.\ndef mas_probable(candidatas):\n    # candidatas: {respuesta: probabilidad}\n    return max(candidatas, key=lambda r: candidatas[r])\n\nprint(mas_probable({\"continuar\": 0.08, \"contestar\": 0.84, \"rollo\": 0.08}))   # contestar\n",
 	"T9-02": "# Completa la línea marcada y compruébala con py check.\ndef acuerdo(pares):\n    # cada par: [puntuación de a, puntuación de b, elección de la persona («a» o «b»)]\n    aciertos = 0\n    for pa, pb, humano in pares:\n        elige = \"a\" if pa > pb else \"b\"\n        aciertos += 1 if elige == humano else 0\n    return aciertos / len(pares)\n\nprint(acuerdo([[2.0, 1.0, \"a\"], [0.5, 3.0, \"a\"]]))   # 0.5\n",
 	"T9-03": "# Completa la línea marcada y compruébala con py check.\ndef tasa_rechazo(tipos):\n    # tipos: lista con el tipo de cada respuesta («rechazo», «obedece»…)\n    rechazos = tipos.count(\"rechazo\")\n    return rechazos / len(tipos)\n\nprint(tasa_rechazo([\"rechazo\", \"rechazo\", \"obedece\"]))   # unos 0.667\n",
+	"P1-01": "# Completa la línea marcada y compruébala con py check.\ndef valida(salida, campos):\n    if not isinstance(salida, dict):\n        return False\n    for c in campos:\n        if c not in salida:\n            return False\n        if not isinstance(salida[c], str):\n            return False\n    return True\n\nprint(valida({\"pedido\": \"P-101\", \"problema\": \"rota\", \"urgencia\": None}, [\"pedido\", \"problema\", \"urgencia\"]))   # False\n",
+	"P1-02": "# Completa la línea marcada y compruébala con py check.\ndef exactitud(salidas, oro, campo):\n    bien = 0\n    for s, o in zip(salidas, oro):\n        bien += 1 if s[campo] == o[campo] else 0\n    return bien / len(oro)\n\nprint(exactitud([{\"urgencia\": \"alta\"}, {\"urgencia\": \"media\"}], [{\"urgencia\": \"alta\"}, {\"urgencia\": \"baja\"}], \"urgencia\"))   # 0.5\n",
+	"P1-03": "# Completa la línea marcada y compruébala con py check.\ndef id_valido(texto):\n    if not texto.startswith(\"P-\"):\n        return False\n    resto = texto[2:]\n    return len(resto) == 3 and resto.isdigit()\n\nprint(id_valido(\"P109\"), id_valido(\"P-109\"))   # False True\n",
 }
 
 var game: DojoGame
@@ -76,6 +79,18 @@ func test_T9_02_completa() -> void:
 
 func test_T9_03_completa() -> void:
 	_walk("T9-03", ["T9-02"], ["llm pretrain kuro", "llm sft kuro", "llm prefs kuro seguridad", "llm ask kuro codigo", "hipotesis no", "llm ask kuro codigo_rol", "answer b", "llm prefs kuro rol", "llm ask kuro codigo_rol", "hipotesis no", "llm ask kuro codigo_traduccion", "answer c", "PY"])
+
+
+func test_P1_01_completa() -> void:
+	_walk("P1-01", ["P0-01", "T9-03"], ["app create ext", "app run ext c02", "answer b", "app eval ext", "answer 5", "hipotesis entre", "app set ext formato_json on", "app eval ext", "app set ext esquema on", "app eval ext", "answer a", "PY"])
+
+
+func test_P1_02_completa() -> void:
+	_walk("P1-02", ["P1-01"], ["app create ext", "app set ext formato_json on", "app set ext esquema on", "app eval ext", "answer 0.767", "app set ext instrucciones on", "app eval ext", "hipotesis suben mucho", "app set ext ejemplos on", "app eval ext", "answer c", "app run ext c07", "app set ext delimitar on", "app eval ext", "answer a", "PY"])
+
+
+func test_P1_03_completa() -> void:
+	_walk("P1-03", ["P1-02"], ["app create ext", "app set ext formato_json on", "app set ext esquema on", "app set ext instrucciones on", "app set ext ejemplos on", "app set ext delimitar on", "app run ext c08", "hipotesis sí", "app set ext herramientas on", "app run ext c08", "answer b", "app set ext validar_args on", "app run ext c08", "app eval ext", "answer 30", "answer c", "PY"])
 
 
 func test_ejercicios_inicio_falla_y_solucion_pasa() -> void:

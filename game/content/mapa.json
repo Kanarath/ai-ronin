@@ -47,6 +47,10 @@
       "para_que": "Python para IA: servir un LLM local y escribir el código de verdad."
     },
     {
+      "unit": "P1",
+      "para_que": "Construir con LLM (Large Language Model): salida JSON validada, prompts medidos con un banco de evals, coste en tokens y llamadas a herramientas (function calling) con argumentos validados."
+    },
+    {
       "unit": "A1",
       "para_que": "Aplicación LLM: construir un chatbot, atacarlo con prompt injection (inyección de instrucciones) y defenderlo."
     },

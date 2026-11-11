@@ -1,0 +1,281 @@
+{
+  "id": "P1-01",
+  "schema_version": 1,
+  "title": "Del prompt al JSON",
+  "unit": "P1",
+  "difficulty": 2,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "P0-01",
+    "T9-03"
+  ],
+  "competencies": {
+    "requires": [
+      "T9.sft"
+    ],
+    "trains": [
+      "P1.salida-estructurada",
+      "P1.validacion-esquema"
+    ]
+  },
+  "briefing": "La forja recibe cientos de correos de clientes y quiere un extractor automático: de cada correo, el pedido, el problema y la urgencia, en JSON para su sistema de incidencias. Lo construyes con un LLM y descubres que «que funcione en la demo» no es lo mismo que «que funcione».",
+  "learning_objectives": [
+    "Pedir salida estructurada a un LLM",
+    "Validar la salida con un esquema",
+    "Medir una aplicación con un banco de evals"
+  ],
+  "mentor_intro": "Un extractor que habla demasiado. Vamos a domarlo.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Casi todas las aplicaciones reales con LLM (Large Language Model) no conversan: extraen, clasifican o rellenan datos para otro programa. Para eso la salida tiene que ser estructurada, normalmente JSON (JavaScript Object Notation), y validarse fuera del modelo. Es la base de la ingeniería de aplicaciones con LLM y de los agentes de A3.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Crea la aplicación y pruébala con un correo: app create ext y app run ext c02",
+      "teach": "El extractor\nLa aplicación manda cada correo al modelo con un prompt mínimo: «extrae pedido, problema y urgencia».\napp run enseña lo que devuelve el modelo para un correo.\nPor qué: lo primero es ver qué sale de verdad, no lo que esperas que salga.",
+      "validator": {
+        "type": "event",
+        "event": "app.ran",
+        "where": {
+          "app": "ext",
+          "mail": "c02"
+        }
+      },
+      "hints": [
+        "app create ext y después app run ext c02"
+      ],
+      "on_complete": "Los datos están, pero rodeados de texto amable: «¡Claro! Aquí tienes…»."
+    },
+    {
+      "id": "c1",
+      "text": "¿Por qué ese texto amable rompe la aplicación?",
+      "teach": "Un programa no lee como una persona\nEl sistema de incidencias espera exactamente un JSON con tres campos. Cualquier texto alrededor hace que no se pueda leer.\nPor qué: entre programas, «casi bien» es «mal».",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque el cliente se ofende con tanta amabilidad",
+          "why": "El cliente no ve esa respuesta: la lee el programa de incidencias."
+        },
+        {
+          "id": "b",
+          "text": "porque el programa espera solo el JSON y no sabe leer el resto",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "porque los datos que ha sacado son incorrectos",
+          "why": "Los datos de este correo están bien; lo que falla es el formato."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Quién lee la salida del modelo?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Mide con los diez correos: app eval ext. ¿Cuántos devuelven JSON válido? (answer <número>)",
+      "teach": "Un banco de evals\napp eval pasa los diez correos y cuenta cuántas salidas son JSON válido y cuántos campos coinciden con la respuesta correcta.\nPor qué: probar con un correo es una demo; probar con muchos es una evaluación.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "app.eval",
+            "where": {
+              "app": "ext"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 5,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "app eval ext y mira «JSON válido».",
+        "answer 5"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Pide salida JSON y vuelve a medir: app set ext formato_json on y app eval ext",
+      "prediction": {
+        "prompt": "Con el modo JSON, ¿cuántos correos crees que saldrán válidos?",
+        "options": [
+          "5 o menos",
+          "entre 6 y 9",
+          "los 10"
+        ]
+      },
+      "teach": "El modo JSON\nLos proveedores de modelos permiten pedir que la salida sea JSON.\nPor qué: reduce mucho el texto sobrante, pero no garantiza que el JSON sea exactamente el que esperas.",
+      "validator": {
+        "type": "event",
+        "event": "app.eval",
+        "where": {
+          "app": "ext",
+          "valid": 9
+        }
+      },
+      "hints": [
+        "Pon tu hipótesis y lanza los dos comandos."
+      ],
+      "on_complete": "9 de 10: el correo c04, con emoticonos y risas, aún sale con un comentario que rompe el JSON."
+    },
+    {
+      "id": "o4",
+      "text": "Valida contra un esquema y reintenta si falla: app set ext esquema on y app eval ext",
+      "teach": "Validar fuera del modelo\nTu código comprueba la salida contra un esquema (qué campos, de qué tipo) y, si no cumple, repite la llamada.\nPor qué: lo que garantiza el formato no es el modelo, es tu código.",
+      "validator": {
+        "type": "event",
+        "event": "app.eval",
+        "where": {
+          "app": "ext",
+          "valid": 10
+        }
+      },
+      "hints": [
+        "app set ext esquema on y después app eval ext"
+      ],
+      "on_complete": "10 de 10. Y fíjate en los tokens: el reintento de c04 cuesta otra llamada."
+    },
+    {
+      "id": "c2",
+      "text": "Si el modo JSON ya da 9 de 10, ¿para qué validar con un esquema?",
+      "teach": "Confiar, pero comprobar\nUn modelo es probabilístico: el 9 de 10 de hoy puede ser 8 de 10 mañana, con otros correos o con otra versión del modelo.\nPor qué: la validación convierte «casi siempre» en «siempre, o un error controlado».",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque 9 de 10 significa que un caso de cada diez rompe el sistema",
+          "why": ""
+        },
+        {
+          "id": "b",
+          "text": "porque el esquema hace que el modelo sea más inteligente",
+          "why": "El esquema no cambia el modelo: comprueba su salida y pide otra si no vale."
+        },
+        {
+          "id": "c",
+          "text": "para gastar menos tokens",
+          "why": "Al contrario: los reintentos gastan algo más; a cambio, nada roto llega al sistema."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "¿Qué pasa con el correo número diez sin esquema?",
+        "answer a"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la validación del esquema: abre el editor con py, completa valida y compruébala con py check.",
+      "teach": "El esquema, en código\nUna salida vale si es un diccionario y tiene cada campo obligatorio con un valor de texto.\nPor qué: es la comprobación que hace tu aplicación antes de fiarse de lo que dice el modelo.",
+      "py_exercise": {
+        "id": "P1-01-valida",
+        "title": "valida(salida, campos): ¿se puede usar la salida del modelo?",
+        "function": "valida",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef valida(salida, campos):\n    if not isinstance(salida, dict):\n        return False\n    for c in campos:\n        if c not in salida:\n            return False\n        # ← añade aquí: el valor tiene que ser un texto (str)\n    return True\n\nprint(valida({\"pedido\": \"P-101\", \"problema\": \"rota\", \"urgencia\": None}, [\"pedido\", \"problema\", \"urgencia\"]))   # False\n",
+        "cases": [
+          {
+            "args": [
+              {
+                "pedido": "P-101",
+                "problema": "rota",
+                "urgencia": null
+              },
+              [
+                "pedido",
+                "problema",
+                "urgencia"
+              ]
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              {
+                "pedido": "P-101",
+                "problema": "rota",
+                "urgencia": "alta"
+              },
+              [
+                "pedido",
+                "problema",
+                "urgencia"
+              ]
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              {
+                "pedido": "P-101"
+              },
+              [
+                "pedido",
+                "problema"
+              ]
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              "¡Claro! Aquí tienes...",
+              [
+                "pedido"
+              ]
+            ],
+            "expected": false
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "P1-01-valida",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "isinstance(valor, str) comprueba que es un texto.",
+        "Añade: if not isinstance(salida[c], str): return False"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes construir un extractor con un LLM que devuelve JSON, medirlo con un banco de evals y garantizar el formato validando contra un esquema fuera del modelo. Siguiente: P1-02, que los datos además sean correctos.",
+  "debrief": {
+    "what_happened": "Has llevado el extractor de 5 a 10 correos con JSON válido: primero con el modo JSON y después validando contra un esquema con reintento.",
+    "why": "Un LLM no garantiza formatos; los garantiza el código que valida su salida.",
+    "in_production": "Las aplicaciones usan salidas estructuradas del proveedor, validan con esquemas (Pydantic, JSON Schema) y reintentan o devuelven un error controlado si la salida no cumple.",
+    "simplifications": [
+      "Modelo simulado con reglas",
+      "Diez correos"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-llm-2025"
+  ],
+  "xp": {
+    "base": 250
+  }
+}

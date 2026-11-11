@@ -28,6 +28,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	ClassicCommands.register(registry)
 	VisionCommands.register(registry)
 	AlignCommands.register(registry)
+	AppCommands.register(registry)
 	MissionCommands.register(registry)
 	OptimCommands.register(registry)
 	NnCommands.register(registry)
