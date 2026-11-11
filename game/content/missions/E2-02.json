@@ -129,7 +129,7 @@
     },
     {
       "id": "o3",
-      "text": "Con el límite de 50 consultas y probabilidades exactas, el atacante aún saca una copia bastante parecida. ¿Por qué, si la teoría pide 65?",
+      "text": "Con el límite de 50 consultas y probabilidades exactas, la copia por ecuaciones coincide con el original en casi todas las imágenes de evaluación. ¿Por qué, si la teoría pide 65?",
       "teach": "Menos consultas de las que dice la teoría\n65 consultas garantizan la copia exacta para CUALQUIER entrada posible, incluidas imágenes que nadie enviará nunca.\nMira un dígito de 8×8: ¿qué valor tienen casi siempre los píxeles del borde? ¿Importa entonces cuánto pesan?\nPor qué: la garantía teórica es el peor caso; un ataque real suele necesitar menos.",
       "validator": {
         "type": "answer",
