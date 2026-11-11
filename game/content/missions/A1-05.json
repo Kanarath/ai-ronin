@@ -97,7 +97,7 @@
         "python bateria.py · tarda varios minutos en CPU (cada configuración son 33 mensajes con --n 3).",
         "Con poco tiempo: python bateria.py --n 2 --configs \"ninguna;salida;sin-secreto\""
       ],
-      "on_complete": "Tienes datos reales. En la salida de bateria.py mira las tres columnas: fugas que llegan al cliente, fugas que generó el modelo y preguntas legítimas bien respondidas."
+      "on_complete": "Tienes datos reales. En la salida de bateria.py mira las tres columnas: fugas que llegan al cliente, fugas que generó el modelo y preguntas legítimas bien respondidas. Fíjate también en delimitar: con un modelo tan pequeño puede no ayudar o incluso dar más fugas que no tener defensas, porque una defensa que no mides es solo una suposición."
     },
     {
       "id": "o3",
