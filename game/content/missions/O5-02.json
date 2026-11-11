@@ -26,7 +26,7 @@
     "Situar cada obligación en su calendario, incluido el aplazamiento del Digital Omnibus",
     "Relacionar los requisitos de un sistema de alto riesgo con sus artículos"
   ],
-  "mentor_intro": "El AI Act no regula «la IA (Inteligencia Artificial)»: regula usos. El mismo modelo puede ser inocuo en un sitio y estar prohibido en otro. Esto es formación, no asesoramiento jurídico.",
+  "mentor_intro": "El AI Act no regula una tecnología: regula usos. El mismo modelo puede ser inocuo en un sitio y estar prohibido en otro. Esto es formación, no asesoramiento jurídico.",
   "lab": {
     "datasets": [],
     "viz": {}
@@ -36,12 +36,13 @@
     {
       "id": "niveles-ai-act",
       "title": "Niveles de riesgo del AI Act",
-      "body": "Prohibido (art. 5): prácticas inaceptables, como inferir emociones de personas en el lugar de trabajo o en centros educativos, salvo por motivos médicos o de seguridad. Alto riesgo (art. 6): entre otros, los usos del anexo III, como la contratación y selección de personas (punto 4). Transparencia (art. 50): por ejemplo, un sistema que interactúa con personas debe informarles de que es una IA (Inteligencia Artificial), salvo que sea evidente. Riesgo mínimo: el resto, sin obligaciones específicas más allá de, por ejemplo, la alfabetización en IA (art. 4). Comandos: gov systems · gov classify."
+      "body": "Prohibido (art. 5): prácticas inaceptables, como inferir emociones de personas en el lugar de trabajo o en centros educativos, salvo por motivos médicos o de seguridad. Alto riesgo (art. 6): entre otros, los usos del anexo III, como la contratación y selección de personas (punto 4). Transparencia (art. 50): por ejemplo, un sistema que interactúa con personas debe informarles de que interactúan con un sistema de inteligencia artificial, salvo que sea evidente. Riesgo mínimo: el resto, sin obligaciones específicas más allá de, por ejemplo, la alfabetización en inteligencia artificial (art. 4). Comandos: gov systems · gov classify.",
+      "unlock_on": "objective:o1"
     },
     {
       "id": "calendario",
       "title": "Calendario (consultado el 2026-11-11)",
-      "body": "En vigor desde el 1 de agosto de 2024. Prohibiciones y alfabetización en IA (Inteligencia Artificial): desde el 2 de febrero de 2025. Modelos de uso general: desde el 2 de agosto de 2025. Transparencia (art. 50): desde el 2 de agosto de 2026. El Digital Omnibus (Reglamento (UE) 2026/1744, en vigor desde el 27 de julio de 2026) aplazó los sistemas de alto riesgo del anexo III al 2 de diciembre de 2027 y los del anexo I (integrados en productos regulados) al 2 de agosto de 2028. También añadió prohibiciones nuevas y dio hasta el 2 de diciembre de 2026 para marcar el contenido sintético (art. 50.2) a los sistemas que ya estaban en el mercado. Las fechas pueden volver a cambiar: compruébalas siempre en EUR-Lex.",
+      "body": "En vigor desde el 1 de agosto de 2024. Prohibiciones y alfabetización en inteligencia artificial: desde el 2 de febrero de 2025. Modelos de uso general: desde el 2 de agosto de 2025. Transparencia (art. 50): desde el 2 de agosto de 2026. El Digital Omnibus, que es el Reglamento (UE) 2026/1744 y está en vigor desde el 27 de julio de 2026, aplazó los sistemas de alto riesgo del anexo III al 2 de diciembre de 2027 y los del anexo I (integrados en productos regulados) al 2 de agosto de 2028. También añadió prohibiciones nuevas y dio hasta el 2 de diciembre de 2026 para marcar el contenido sintético (art. 50.2) a los sistemas que ya estaban en el mercado. Las fechas pueden volver a cambiar: compruébalas siempre en EUR-Lex.",
       "unlock_on": "objective:o2"
     }
   ],
@@ -68,38 +69,38 @@
         "gov open forja · gov systems forja · gov classify forja <sistema> <prohibido|alto|transparencia|minimo>",
         "Una práctica prohibida, un uso del anexo III, un sistema que habla con personas y uno interno sin decisiones sobre personas."
       ],
-      "on_complete": "El monitor de emociones no se puede «hacer bien»: está prohibido. El cribado es alto riesgo. El chatbot solo tiene que avisar de que es una IA (Inteligencia Artificial). La inspección de acero no tiene obligaciones específicas.",
-      "teach": "Cuatro niveles\nEl AI Act ordena los usos en cuatro niveles: prohibido, alto riesgo (con requisitos), transparencia (por ejemplo, avisar de que es una IA (Inteligencia Artificial)) y riesgo mínimo. La tarjeta de arriba da ejemplos de cada uno.\ngov open forja abre la carpeta; gov systems forja lista los sistemas; gov classify forja <sistema> <prohibido|alto|transparencia|minimo> clasifica uno.\nPor qué: la clasificación decide todo lo demás: si un sistema se puede usar, con qué requisitos y desde cuándo."
+      "on_complete": "El monitor de emociones no se puede «hacer bien»: está prohibido. El cribado es alto riesgo y el chatbot solo tiene que avisar de que es una IA. La inspección de acero no tiene obligaciones específicas.",
+      "teach": "Cuatro niveles\nEl AI Act ordena los usos en cuatro niveles: prohibido, alto riesgo (con requisitos), transparencia (por ejemplo, avisar de que quien responde es una máquina) y riesgo mínimo. La tarjeta «Niveles de riesgo del AI Act» da ejemplos de cada uno (repásala con Briefing).\ngov open forja abre la carpeta; gov systems forja lista los sistemas; gov classify forja <sistema> <prohibido|alto|transparencia|minimo> clasifica uno.\nPor qué: la clasificación decide todo lo demás: si un sistema se puede usar, con qué requisitos y desde cuándo."
     },
     {
       "id": "c1",
-      "text": "El chatbot es «transparencia» y el cribado de currículos, «alto riesgo». Los dos usan IA (Inteligencia Artificial). ¿Qué los separa?",
+      "text": "El chatbot es «transparencia» y el cribado de currículos, «alto riesgo». Los dos usan IA. ¿Qué los separa?",
       "choices": [
         {
           "id": "a",
-          "text": "que el cribado usa un modelo más grande",
-          "why": "Para clasificar estos sistemas, el AI Act mira el uso, no el tamaño del modelo."
+          "text": "que el cribado decide quién pasa a entrevista, un uso del anexo III"
         },
         {
           "id": "b",
-          "text": "que el cribado decide sobre personas en un uso del anexo III (la contratación), y el chatbot solo habla con ellas"
+          "text": "que el cribado usa un modelo de lenguaje más grande y caro",
+          "why": "Para clasificar estos sistemas, el AI Act mira el uso, no el tamaño del modelo."
         },
         {
           "id": "c",
-          "text": "que el chatbot lo fabrica un proveedor externo",
+          "text": "que el chatbot lo fabrica y lo mantiene un proveedor externo",
           "why": "Quién lo fabrique no cambia el nivel de riesgo: lo decide el uso. (Sí cambia quién tiene cada obligación.)"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
-        "Mira la tarjeta: ¿qué dice del anexo III, punto 4?",
-        "answer b"
+        "Mira la tarjeta «Niveles de riesgo del AI Act» (repásala con Briefing): ¿qué dice del anexo III, punto 4?",
+        "answer a"
       ],
       "on_complete": "Exacto. El AI Act regula usos: el mismo modelo de lenguaje puede ser «transparencia» en un chatbot y «alto riesgo» si filtra candidatos."
     },
@@ -107,33 +108,20 @@
       "id": "o2",
       "text": "¿Desde qué fecha se aplican al cribado de currículos las obligaciones de alto riesgo? (answer AAAA-MM-DD)",
       "validator": {
-        "type": "all",
-        "of": [
-          {
-            "type": "event",
-            "event": "gov.classified",
-            "where": {
-              "system": "cribado-cv",
-              "ok": true
-            }
-          },
-          {
-            "type": "answer",
-            "expected": "2027-12-02",
-            "accept": [
-              "2027-12-02",
-              "2 de diciembre de 2027",
-              "02/12/2027",
-              "2/12/2027"
-            ]
-          }
+        "type": "answer",
+        "expected": "2027-12-02",
+        "accept": [
+          "2027-12-02",
+          "2 de diciembre de 2027",
+          "02/12/2027",
+          "2/12/2027"
         ]
       },
       "hints": [
-        "La salida de gov classify lo indica; también la tarjeta del calendario."
+        "La salida de gov classify para cribado-cv lo indica en «Se aplica desde»; también la tarjeta del calendario."
       ],
-      "on_complete": "2 de diciembre de 2027, por el aplazamiento del Digital Omnibus. Pero si RR. HH. lo compra hoy, lo usará entonces: los requisitos se diseñan ahora, no la víspera.",
-      "teach": "Desde cuándo\nCada nivel tiene su fecha de aplicación: la salida de gov classify y la tarjeta del calendario las indican.\nEl calendario de alto riesgo ya ha cambiado una vez (Digital Omnibus) y puede volver a cambiar: en la vida real se comprueba en EUR-Lex.\nResponde con el formato AAAA-MM-DD (año, mes y día).\nPor qué: un sistema que compras hoy lo usarás cuando se apliquen sus obligaciones; los requisitos se diseñan antes."
+      "on_complete": "2 de diciembre de 2027, por el aplazamiento del Digital Omnibus. Apunta también que esa fecha ya ha cambiado una vez.",
+      "teach": "Desde cuándo\nCada nivel tiene su fecha de aplicación: la salida de gov classify («Se aplica desde») y la tarjeta del calendario las indican.\nEl calendario de alto riesgo ya ha cambiado una vez (Digital Omnibus) y puede volver a cambiar: en la vida real se comprueba en EUR-Lex.\nResponde con el formato AAAA-MM-DD (año, mes y día).\nPor qué: sin la fecha no sabes qué obligaciones tiene hoy un sistema y cuáles tendrá mañana."
     },
     {
       "id": "o3",
@@ -157,29 +145,29 @@
       "text": "Para cerrar: el alto riesgo del anexo III se aplica desde el 2 de diciembre de 2027. ¿Por qué RR. HH. no puede esperar hasta entonces?",
       "validator": {
         "type": "answer",
-        "expected": "c",
+        "expected": "b",
         "accept": [
-          "c"
+          "b"
         ]
       },
       "hints": [
         "Piensa en cuándo se compra el sistema y cuándo se usará.",
-        "answer c"
+        "answer b"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "porque las fechas ya no pueden cambiar",
+          "text": "porque las fechas del AI Act ya no pueden volver a cambiar",
           "why": "Pueden cambiar (por eso se comprueban en EUR-Lex), pero ese no es el motivo."
         },
         {
           "id": "b",
-          "text": "porque el cribado está prohibido",
-          "why": "Es alto riesgo, no prohibido. Lo prohibido es el monitor de emociones."
+          "text": "porque lo que se compra hoy se usará cuando ya obliguen"
         },
         {
           "id": "c",
-          "text": "porque un sistema que se compra hoy se usará cuando se apliquen las obligaciones: los requisitos se diseñan y se piden al proveedor ahora"
+          "text": "porque el cribado de currículos es una práctica prohibida",
+          "why": "Es alto riesgo, no prohibido. Lo prohibido es el monitor de emociones."
         }
       ],
       "on_complete": "Eso es: los requisitos de alto riesgo entran en el contrato y en el diseño, no la víspera."

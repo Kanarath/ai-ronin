@@ -38,7 +38,8 @@
     {
       "id": "ciclo-respuesta",
       "title": "Ciclo de respuesta a incidentes",
-      "body": "Preparación → detección y análisis → contención, erradicación y recuperación → lecciones aprendidas. Es el ciclo clásico de NIST (National Institute of Standards and Technology) SP 800-61; la revisión 3 (abril de 2025) lo integra en las funciones del NIST CSF (Cybersecurity Framework) 2.0 (Govern, Identify, Protect, Detect, Respond, Recover). En un agente, la causa raíz suele ser un dato (un documento, un correo, una página) y no un fallo de código."
+      "body": "Preparación → detección y análisis → contención, erradicación y recuperación → lecciones aprendidas. Es el ciclo clásico de NIST (National Institute of Standards and Technology) SP 800-61; la revisión 3 (abril de 2025) lo integra en las funciones del NIST CSF (Cybersecurity Framework) 2.0 (Govern, Identify, Protect, Detect, Respond, Recover). En un agente, la causa raíz suele ser un dato (un documento, un correo, una página) y no un fallo de código.",
+      "unlock_on": "objective:o1"
     },
     {
       "id": "contenciones",
@@ -76,8 +77,8 @@
       "hints": [
         "soc trazas taller · soc log taller tool_args on · soc log taller retrievals on · soc log taller identity on · soc log taller model_version on · soc log taller redact-pii on · soc show taller S04"
       ],
-      "on_complete": "Causa raíz: un documento del portal de proveedores con texto invisible para una persona y visible para el modelo. Es una inyección indirecta (OWASP LLM01) que termina en exfiltración de datos.",
-      "teach": "Reconstruir la sesión\nCon el registro completo de O6-01 (seis campos y redacción), soc show <registro> S04 enseña qué documento recuperó el agente justo antes de sacar los datos.\nEse documento es la causa raíz: lo que hizo que todo empezara.\nPor qué: en un agente, la causa raíz suele ser un contenido externo; si no la encuentras, el ataque vuelve."
+      "on_complete": "Causa raíz: un documento del portal de proveedores con texto invisible para una persona y visible para el modelo. Es una inyección indirecta, la categoría LLM01 de OWASP (Open Worldwide Application Security Project), que termina en exfiltración de datos.",
+      "teach": "Reconstruir la sesión\nEl laboratorio empieza limpio: vuelve a crear el registro con soc trazas taller y activa los seis campos y la redacción con soc log … on, como en O6-01.\nDespués, soc show <registro> S04 enseña qué documento recuperó el agente justo antes de sacar los datos. Ese documento es la causa raíz: lo que hizo que todo empezara.\nPor qué: en un agente, la causa raíz suele ser un contenido externo; si no la encuentras, el ataque vuelve."
     },
     {
       "id": "o2",
@@ -166,8 +167,8 @@
       "hints": [
         "soc contain taller apagar-agente off · soc contain taller cuarentena-fuente on · soc retest taller"
       ],
-      "on_complete": "Uno: el atacante sube otro documento con la misma nota. Quitar el documento es erradicar ESTE dato, no la capacidad del agente de mandar datos a cualquier sitio.",
-      "teach": "Erradicar el dato\ncuarentena-fuente saca del índice el documento que trae las instrucciones.\nAntes de mirar el resultado, piensa qué puede hacer el atacante después.\nPor qué: quitar UN dato malicioso no quita la capacidad del agente de obedecer al siguiente."
+      "on_complete": "Uno: el atacante sube otro documento con la misma nota.",
+      "teach": "Erradicar el dato\ncuarentena-fuente saca del índice el documento que trae las instrucciones.\nAntes de mirar el resultado, piensa qué puede hacer el atacante después.\nPor qué: erradicar es quitar la causa raíz de ESTE incidente; un retest dice si con eso basta."
     },
     {
       "id": "c1",
@@ -175,36 +176,36 @@
       "choices": [
         {
           "id": "a",
-          "text": "porque el documento sigue en el índice",
+          "text": "porque el documento malicioso sigue dentro del índice",
           "why": "La cuarentena lo ha sacado. El ataque que queda llega en otro documento."
         },
         {
           "id": "b",
-          "text": "porque el atacante sube otro documento con la misma nota, y el agente sigue pudiendo enviar datos a cualquier dominio"
+          "text": "porque la cuarentena se aplicó mal y no tuvo efecto",
+          "why": "Se aplicó bien: frenó el ataque de prov-77-informe.pdf. El problema es lo que el agente puede hacer con el siguiente."
         },
         {
           "id": "c",
-          "text": "porque la cuarentena se aplicó mal",
-          "why": "Se aplicó bien: frenó el ataque de prov-77-informe.pdf. El problema es lo que el agente puede hacer con el siguiente."
+          "text": "porque el agente aún puede mandar datos a cualquier dominio"
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "c",
         "accept": [
-          "b"
+          "c"
         ]
       },
       "hints": [
         "La cuarentena actúa sobre un dato concreto. ¿Qué sigue pudiendo hacer el agente?",
-        "answer b"
+        "answer c"
       ],
       "on_complete": "Eso es: has erradicado ESTE dato, no la capacidad del agente de mandar datos a cualquier sitio. Hace falta un control sobre la acción."
     },
     {
       "id": "o5",
       "text": "Consigue 0 ataques con éxito y 1,0 en las tareas legítimas, y avisa al delegado de protección de datos.",
-      "teach": "Actuar sobre la acción y avisar\nBusca un control que actúe sobre la ACCIÓN (a dónde puede enviar datos el agente), no sobre el documento.\nY avisa: salieron datos personales de 212 clientes. El RGPD (Reglamento General de Protección de Datos; en inglés, GDPR), art. 33, obliga al responsable a notificar una violación de datos personales a la autoridad de control sin dilación indebida y, si es posible, en 72 horas desde que tiene constancia, salvo que sea improbable que suponga un riesgo para las personas. (Una propuesta de la Comisión, el Digital Omnibus de 2025, plantea cambiar este plazo; a 11 de noviembre de 2026 no está aprobada.)\nEsa evaluación la hace la organización con su DPD (delegado de protección de datos; en inglés, DPO), no el equipo técnico solo. (Esto es formación, no asesoramiento jurídico.)\nPor qué: un incidente de IA (Inteligencia Artificial) con datos personales es también un incidente de protección de datos.",
+      "teach": "Actuar sobre la acción y avisar\nLa contención que actúa sobre la ACCIÓN (a dónde puede enviar datos el agente) es bloquear-salida. Y avisa con notificar-dpd: salieron datos de 212 clientes.\nEl RGPD (Reglamento General de Protección de Datos), art. 33, obliga al responsable a notificar la violación a la autoridad sin dilación indebida y, si es posible, en 72 horas desde que tiene constancia, salvo que sea improbable que suponga un riesgo para las personas. Una propuesta de 2025 plantea cambiar este plazo; a 11 de noviembre de 2026 no está aprobada.\nLo evalúa la organización con su DPD (delegado de protección de datos; en inglés, DPO). Formación, no asesoramiento jurídico.\nPor qué: si hay datos personales, también es un incidente de protección de datos.",
       "validator": {
         "type": "event",
         "event": "soc.retest",
@@ -237,39 +238,40 @@
         "informe nuevo Inyección indirecta en prov-77-informe.pdf exfiltra la lista de clientes · informe campo owasp LLM01 · …",
         "Los pasos con comandos: 1) soc trazas taller 2) soc show taller S04 3) soc search taller prov-77. Verificación: el retest."
       ],
-      "teach": "El informe del incidente\ninforme nuevo <título> abre un informe; informe campo <campo> <texto> rellena cada campo; informe revisar lo corrige con la rúbrica.\nLos campos son severidad, owasp, componente, descripcion, pasos, impacto, evidencia, mitigacion y verificacion. Una inyección indirecta es la categoría LLM01 de OWASP (Open Worldwide Application Security Project).\nLos pasos tienen que ser comandos que otra persona pueda repetir, y la verificación, una medida.\nPor qué: un incidente que no se documenta con pasos y verificación se repite."
+      "teach": "El informe del incidente\ninforme nuevo <título> abre un informe; informe campo <campo> <texto> rellena cada campo; informe revisar lo corrige con la rúbrica.\nLos campos son severidad, owasp, componente, descripcion, pasos, impacto, evidencia, mitigacion y verificacion. Una inyección indirecta es la categoría LLM01 de OWASP (Open Worldwide Application Security Project).\nLos pasos tienen que ser comandos que otra persona pueda repetir, y la verificación, una medida.\nPor qué: un incidente que no se documenta con pasos y verificación se repite.",
+      "on_complete": "Informe completo: otra persona puede repetir los pasos y comprobar la verificación."
     },
     {
       "id": "o7",
       "text": "Para cerrar: ¿por qué apagar el agente no es la contención final?",
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "Mira el primer retest: ¿qué proporción de tareas legítimas salió bien?",
-        "answer b"
+        "answer a"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "porque no frena los ataques",
-          "why": "Sí los frena, todos. El problema es lo que se lleva por delante."
+          "text": "porque también deja sin hacer todas las tareas legítimas del taller"
         },
         {
           "id": "b",
-          "text": "porque frena el ataque pero también todo el trabajo legítimo (0 tareas), y hay que sustituirlo por un control más fino"
+          "text": "porque apagar el agente no llega a frenar los dos ataques",
+          "why": "Sí los frena, todos. El problema es lo que se lleva por delante."
         },
         {
           "id": "c",
-          "text": "porque antes hay que avisar al DPD (delegado de protección de datos; en inglés, DPO)",
+          "text": "porque antes de apagar nada hay que avisar al DPD de la forja",
           "why": "Avisar es obligatorio, pero no es el motivo: el motivo es el coste de parar el servicio."
         }
       ],
-      "on_complete": "Eso es: primera reacción si no sabes qué pasa; después, un control sobre la acción (bloquear-salida) y aviso al DPD (delegado de protección de datos; en inglés, DPO)."
+      "on_complete": "Eso es: primera reacción si no sabes qué pasa; después, un control sobre la acción (bloquear-salida) y aviso al DPD."
     }
   ],
   "mastery_trial": {
@@ -314,13 +316,13 @@
         "hints": [
           "Registro, línea de tiempo, alcance, contención, aviso."
         ],
-        "on_complete": "Incidente cerrado. Queda la última fase del ciclo: lecciones aprendidas (¿por qué el agente podía leer todos los clientes y llamar a cualquier URL (Uniform Resource Locator)?)."
+        "on_complete": "Incidente cerrado. Queda la última fase del ciclo: lecciones aprendidas (¿por qué el agente podía leer todos los clientes y llamar a cualquier dirección web?)."
       }
     ]
   },
-  "you_can_now": "Sabes reconstruir un incidente de un agente desde sus trazas, medir su alcance, elegir una contención que actúa sobre la acción y no solo sobre el dato, y documentarlo. O6-03 abre O5 (gobernanza de la IA (Inteligencia Artificial)) y, junto con P0-01, E4 (operar un servicio de IA real).",
+  "you_can_now": "Sabes reconstruir un incidente de un agente desde sus trazas, medir su alcance, elegir una contención que actúa sobre la acción y no solo sobre el dato, y documentarlo. O6-03 abre O5 (gobernanza de la IA) y, junto con P0-01, E4 (operar un servicio de IA real).",
   "debrief": {
-    "what_happened": "Has reconstruido una inyección indirecta que terminó en exfiltración, has encontrado su segunda víctima, has comprobado que apagarlo todo frena el ataque y el trabajo, que la cuarentena del documento no frena una variante, y que limitar los destinos de las herramientas sí, sin romper las tareas legítimas. Y has avisado al DPD (delegado de protección de datos; en inglés, DPO).",
+    "what_happened": "Has reconstruido una inyección indirecta que terminó en exfiltración, has encontrado su segunda víctima, has comprobado que apagarlo todo frena el ataque y el trabajo, que la cuarentena del documento no frena una variante, y que limitar los destinos de las herramientas sí, sin romper las tareas legítimas. Y has avisado al DPD.",
     "why": "Contener sobre el dato (el documento) erradica este incidente; contener sobre la acción (a dónde puede enviar datos el agente) cierra la clase de ataque. Verificar con un retest es lo que separa una contención de una suposición.",
     "in_production": "Planes de respuesta escritos antes del incidente, interruptor de emergencia por agente y por herramienta, listas de destinos permitidos y proxies de salida, permisos mínimos (el agente no necesitaba leer todos los clientes para resumir un informe), conservación de evidencias, notificación según el RGPD (Reglamento General de Protección de Datos; en inglés, GDPR) y una revisión de lecciones aprendidas que se convierte en nuevas reglas y tests.",
     "simplifications": [

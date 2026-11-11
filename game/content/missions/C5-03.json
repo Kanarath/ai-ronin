@@ -37,12 +37,13 @@
     {
       "id": "retest",
       "title": "Retest",
-      "body": "engagement retest comprueba cada hallazgo: hace falta una batería POSTERIOR al hallazgo sobre la misma copia con 0 éxitos, y una evaluación de tareas legítimas (bot eval, rag eval, agent eval, mcp eval, supply eval) a 1,0. Si falta cualquiera de las dos cosas, el hallazgo sigue abierto y el motivo lo dice."
+      "body": "engagement retest comprueba cada hallazgo: hace falta una batería POSTERIOR al hallazgo sobre la misma copia con 0 éxitos, y una evaluación de tareas legítimas (bot eval, rag eval, agent eval, mcp eval, supply eval) a 1,0. Si falta cualquiera de las dos cosas, el hallazgo sigue abierto y el motivo lo dice.",
+      "unlock_on": "objective:o2"
     },
     {
       "id": "recetas",
       "title": "Defensas de cada arco",
-      "body": "A1 chatbot: sacar el secreto del prompt, escapar la salida y limitar los tokens (bot defend). A2 RAG (Retrieval-Augmented Generation): acl, trusted-sources, spotlight, vector-acl y min-score (rag defend). A3 agente: least-privilege, user-authz y step-budget (agent defend). A4 MCP (Model Context Protocol): pin-definitions, namespacing, least-scope y output-isolation (mcp defend). A6 pipeline: los siete controles y convertir el modelo propio (supply defend, supply convert). Repásalas con man en cada tema si no las recuerdas.",
+      "body": "A1 chatbot: sacar el secreto del prompt, escapar la salida y limitar los tokens (bot defend). A2 RAG (Retrieval-Augmented Generation): acl, trusted-sources, vector-acl y min-score, más spotlight como capa extra (rag defend). A3 agente: least-privilege, user-authz y step-budget (agent defend). A4 MCP (Model Context Protocol): pin-definitions, namespacing, least-scope y output-isolation (mcp defend). A6 pipeline: los siete controles y convertir el modelo propio (supply defend, supply convert). Repásalas con man en cada tema si no las recuerdas.",
       "unlock_on": "objective:o3"
     }
   ],
@@ -101,7 +102,7 @@
         "supply defend pipe <control> on para los siete · supply attack pipe · supply eval pipe · engagement retest final",
         "Controles: data-provenance, safe-formats, artifact-signing, dependency-scan, segmentation, non-root, secret-scan."
       ],
-      "on_complete": "Sigue abierto: 0 ataques, pero las tareas legítimas están a 0,75 porque safe-formats rechaza el modelo propio en pickle. Un arreglo que rompe el servicio se desactiva en una semana.",
+      "on_complete": "Sigue abierto. Mira el motivo en la tabla.",
       "teach": "Las dos condiciones del retest\nengagement retest final comprueba cada hallazgo: hace falta una batería posterior con 0 éxitos Y una evaluación de tareas legítimas a 1,0 (supply eval, bot eval…).\nsupply defend pipe <control> on activa un control del pipeline.\nPor qué: un arreglo que rompe el servicio se desactiva en una semana, y el hallazgo vuelve."
     },
     {
@@ -110,36 +111,36 @@
       "choices": [
         {
           "id": "a",
-          "text": "desactivar safe-formats",
-          "why": "Volvería el ataque del pickle malicioso: cambias un hallazgo abierto por otro."
+          "text": "convertir el modelo propio a un formato que no ejecute código"
         },
         {
           "id": "b",
-          "text": "convertir el modelo propio a un formato que no ejecuta código, para que safe-formats ya no tenga nada que rechazar"
+          "text": "desactivar safe-formats para que acepte el modelo propio",
+          "why": "Volvería el ataque del pickle malicioso: cambias un hallazgo abierto por otro."
         },
         {
           "id": "c",
-          "text": "aceptar 0,75 en las tareas",
+          "text": "aceptar el 0,75 en las tareas legítimas como suficiente",
           "why": "El retest exige 1,0: una cuarta parte de las tareas rotas es un servicio roto."
         }
       ],
       "validator": {
         "type": "answer",
-        "expected": "b",
+        "expected": "a",
         "accept": [
-          "b"
+          "a"
         ]
       },
       "hints": [
         "Recuerda A6: ¿qué tiene de peligroso un pickle y qué alternativa había?",
-        "answer b"
+        "answer a"
       ],
       "on_complete": "Eso es: se arregla la causa (el formato del modelo), no se apaga el control que la señala."
     },
     {
       "id": "o3",
       "text": "Cierra TODOS los hallazgos del encargo: cada activo con 0 ataques y sus tareas legítimas a 1,0.",
-      "teach": "Arreglar la causa\nEn el pipeline, convierte el modelo interno (supply convert pipe clasificador-acero) y repite batería y evaluación. En los demás activos, aplica las defensas de su arco (la tarjeta de arriba las resume), y después su batería y su evaluación.\nPor qué: cerrar un hallazgo es demostrarlo con dos medidas, no con un «ya está».",
+      "teach": "Arreglar la causa\nEn el pipeline, convierte el modelo interno (supply convert pipe clasificador-acero) y repite batería y evaluación. En los demás activos, aplica las defensas de su arco (la tarjeta «Defensas de cada arco» las resume; repásala con Briefing), y después su batería y su evaluación.\nPor qué: cerrar un hallazgo es demostrarlo con dos medidas, no con un «ya está».",
       "validator": {
         "type": "event",
         "event": "engagement.retest",
@@ -152,7 +153,7 @@
       },
       "hints": [
         "Por activo: defensas → attack → eval. Al final, engagement retest final.",
-        "bot defend kuro secret-in-prompt off · bot defend kuro encode-output on · bot defend kuro max-tokens on · agent defend taller least-privilege on · agent defend taller user-authz on · agent defend taller step-budget on · mcp defend erp pin-definitions on · mcp defend erp namespacing on · mcp defend erp least-scope on · mcp defend erp output-isolation on · rag defend docs acl on · rag defend docs trusted-sources on · rag defend docs spotlight on · rag defend docs vector-acl on · rag defend docs min-score on · supply convert pipe clasificador-acero"
+        "bot defend kuro secret-in-prompt off · bot defend kuro encode-output on · bot defend kuro max-tokens on · agent defend taller least-privilege on · agent defend taller user-authz on · agent defend taller step-budget on · mcp defend erp pin-definitions on · mcp defend erp namespacing on · mcp defend erp least-scope on · mcp defend erp output-isolation on · rag defend docs acl on · rag defend docs trusted-sources on · rag defend docs vector-acl on · rag defend docs min-score on · supply convert pipe clasificador-acero"
       ],
       "on_complete": "Todos los hallazgos cerrados y verificados, sin romper nada."
     },
@@ -174,17 +175,17 @@
     },
     {
       "id": "o5",
-      "text": "Para cerrar: ¿qué tienen en común las defensas que cerraron los hallazgos en los cinco activos?",
+      "text": "Para cerrar: ¿qué tienen en común las defensas que cerraron tus hallazgos?",
       "validator": {
         "type": "answer",
-        "expected": "c",
+        "expected": "b",
         "accept": [
-          "c"
+          "b"
         ]
       },
       "hints": [
         "Controles en el código frente a instrucciones al modelo; mínimo privilegio.",
-        "answer c"
+        "answer b"
       ],
       "choices": [
         {
@@ -194,12 +195,12 @@
         },
         {
           "id": "b",
-          "text": "que apagaban las funciones peligrosas",
-          "why": "El retest exigía las tareas legítimas a 1,0: no se apagó nada."
+          "text": "que limitan en el código lo que puede hacer y leer el sistema"
         },
         {
           "id": "c",
-          "text": "que limitan en el código lo que el sistema puede hacer y con qué datos, y se comprobaron con ataque y con tareas"
+          "text": "que desactivaban las funciones peligrosas de cada sistema",
+          "why": "El retest exigía las tareas legítimas a 1,0: no se apagó nada."
         }
       ],
       "on_complete": "Eso es. Y en producción: trazas, reglas medidas y un retest con cada versión nueva (O6, A6)."

@@ -43,7 +43,8 @@
     {
       "id": "reglas-enfrentamiento",
       "title": "Alcance y reglas de enfrentamiento",
-      "body": "El contrato de un red team fija quién autoriza, qué activos se pueden probar, en qué ventana y con qué límites (no degradar producción, qué hacer si aparecen datos personales). Que un sistema sea accesible no significa que esté en alcance: los servicios de terceros solo los puede autorizar su dueño, y producción suele quedar fuera aunque sea la misma aplicación. Comandos: engagement start · engagement recon · engagement scope."
+      "body": "El contrato de un red team fija quién autoriza, qué activos se pueden probar, en qué ventana y con qué límites (no degradar producción, qué hacer si aparecen datos personales). Que un sistema sea accesible no significa que esté en alcance: los servicios de terceros solo los puede autorizar su dueño, y producción suele quedar fuera aunque sea la misma aplicación. Comandos: engagement start · engagement recon · engagement scope.",
+      "unlock_on": "objective:o2"
     },
     {
       "id": "modelo-amenazas",
@@ -55,7 +56,7 @@
   "objectives": [
     {
       "id": "o1",
-      "text": "Abre el encargo y haz el reconocimiento. ¿Cuántos activos de IA (Inteligencia Artificial) están en alcance? (answer <número>)",
+      "text": "Abre el encargo y haz el reconocimiento. ¿Cuántos activos de IA están en alcance? (answer <número>)",
       "validator": {
         "type": "all",
         "of": [
@@ -74,13 +75,13 @@
         "engagement start final · engagement recon final"
       ],
       "on_complete": "Cinco de siete. Los otros dos se usan a diario, pero el contrato no te deja tocarlos.",
-      "teach": "Reconocimiento\nengagement start final abre el encargo; engagement recon final lista los activos de IA (Inteligencia Artificial) de la forja, su exposición y si están en alcance.\nPor qué: en un red team real, el inventario va primero: no puedes probar ni proteger lo que no sabes que existe."
+      "teach": "Reconocimiento\nengagement start final abre el encargo; engagement recon final lista los sistemas de la forja, su exposición y si están en alcance.\nPor qué: en un red team real, el inventario va primero: no puedes probar ni proteger lo que no sabes que existe."
     },
     {
       "id": "o2",
-      "text": "Comprueba el alcance de la API (Application Programming Interface) de pedidos del proveedor. ¿Qué activo es, por id? (answer <id>)",
+      "text": "Comprueba el alcance de la API de pedidos del proveedor. ¿Qué activo es, por id? (answer <id>)",
       "prediction": {
-        "prompt": "El asistente llama a esa API (Application Programming Interface) cada día. ¿Se puede probar?",
+        "prompt": "El asistente llama a esa API cada día. ¿Se puede probar?",
         "options": [
           "sí, el asistente ya tiene acceso",
           "no, es de un tercero y la forja no puede autorizarlo",
@@ -113,7 +114,7 @@
         "engagement scope final A-06"
       ],
       "on_complete": "Fuera de alcance. Que la forja tenga credenciales no la convierte en dueña: probarlo sin permiso de acero-norte es atacar a un tercero. Lo mismo con A-07: producción con clientes reales se prueba en su copia de laboratorio.",
-      "teach": "Accesible no es autorizado\nengagement scope final <activo> enseña el alcance de un activo y el motivo.\nPor qué: probar un sistema sin la autorización de su dueño es un ataque, aunque tengas acceso técnico."
+      "teach": "Accesible no es autorizado\nengagement scope final <activo> enseña el alcance de un activo y el motivo. Por ejemplo, el de la API (Application Programming Interface) de pedidos de un proveedor.\nPor qué: probar un sistema sin la autorización de su dueño es un ataque, aunque tengas acceso técnico."
     },
     {
       "id": "o3",
@@ -135,7 +136,7 @@
     {
       "id": "o4",
       "text": "Construye el modelo de amenazas: al menos una amenaza que encaje en cada uno de los cinco activos.",
-      "teach": "Encajar una amenaza\nengagement threat <encargo> <activo> <categoría> añade una amenaza al modelo, con las categorías de OWASP (Open Worldwide Application Security Project): LLM01…LLM10 y ASI01…ASI10.\nPiensa en la exposición de cada activo (columna «exposición» del reconocimiento) y en lo que viste en su arco. Si la categoría encaja poco, el encargo la acepta pero te avisa y te sugiere otras.\nPor qué: el modelo de amenazas es tu mapa: dice qué probar primero y por qué.",
+      "teach": "Encajar una amenaza\nengagement threat <encargo> <activo> <categoría> añade una amenaza al modelo, con las categorías de los dos Top 10 de la tarjeta: LLM01…LLM10 y ASI01…ASI10.\nPiensa en la exposición de cada activo (columna «exposición» del reconocimiento) y en lo que viste en su arco. Si la categoría encaja poco, el encargo la acepta pero te avisa y te sugiere otras.\nPor qué: el modelo de amenazas es tu mapa: dice qué probar primero y por qué.",
       "validator": {
         "type": "event",
         "event": "engagement.threat",
@@ -147,43 +148,27 @@
         "Chatbot: A1. Buscador: A2. Asistente: A3. Host MCP: A4. Pipeline: A6.",
         "engagement threat final A-01 LLM07 · engagement threat final A-02 LLM01 · engagement threat final A-03 ASI01 · engagement threat final A-04 ASI04 · engagement threat final A-05 LLM03"
       ],
-      "on_complete": "Modelo de amenazas completo. Será tu mapa en la fase de explotación: cada hallazgo tendrá que encajar en él."
+      "on_complete": "Modelo de amenazas completo: los cinco activos tienen al menos una amenaza."
     },
     {
       "id": "c1",
-      "text": "El asistente del taller (A-03) lee correos y documentos y llama a herramientas. ¿Por qué le encajan categorías de los dos Top 10 de OWASP (Open Worldwide Application Security Project)?",
+      "text": "El asistente del taller (A-03) lee correos y documentos y llama a herramientas. ¿Por qué le encajan categorías de los dos Top 10 de OWASP?",
       "choices": [
         {
           "id": "a",
-          "text": "porque usa un LLM (Large Language Model)",
-          "why": "Por usar un LLM (Large Language Model) le tocan las categorías LLM; las agénticas (ASI) le tocan por actuar con herramientas."
+          "text": "porque lee contenido ajeno y, además, actúa con herramientas"
         },
         {
           "id": "b",
-          "text": "porque lee contenido externo (riesgos de LLM (Large Language Model), como la inyección) y además actúa con herramientas (riesgos de agentes)"
+          "text": "porque por dentro usa un modelo de lenguaje grande, un LLM",
+          "why": "Por usar un modelo de lenguaje le tocan las categorías LLM; las agénticas (ASI) le tocan por actuar con herramientas."
         },
         {
           "id": "c",
-          "text": "porque está en producción",
+          "text": "porque ya está desplegado en producción y lo usan clientes",
           "why": "El modelo de amenazas no depende de dónde esté desplegado, sino de qué hace el sistema y a qué está expuesto."
         }
       ],
-      "validator": {
-        "type": "answer",
-        "expected": "b",
-        "accept": [
-          "b"
-        ]
-      },
-      "hints": [
-        "Mira la última frase de la tarjeta «Modelo de amenazas».",
-        "answer b"
-      ],
-      "on_complete": "Eso es. Cuanto más hace un sistema, más categorías le tocan: un agente suma los riesgos de un LLM (Large Language Model) y los de sus acciones."
-    },
-    {
-      "id": "o5",
-      "text": "Para cerrar: ¿qué te aporta el modelo de amenazas antes de lanzar un solo ataque?",
       "validator": {
         "type": "answer",
         "expected": "a",
@@ -192,22 +177,38 @@
         ]
       },
       "hints": [
-        "Prioridad y cobertura: qué probar y por qué.",
+        "Relee la tarjeta «Modelo de amenazas» (repásala con Briefing): ¿qué dice de un activo que lee contenido externo y tiene herramientas?",
         "answer a"
+      ],
+      "on_complete": "Eso es. Cuanto más hace un sistema, más categorías le tocan: un agente suma los riesgos del modelo de lenguaje y los de sus acciones."
+    },
+    {
+      "id": "o5",
+      "text": "Para cerrar: ¿qué te aporta el modelo de amenazas antes de lanzar un solo ataque?",
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Prioridad y cobertura: qué probar y por qué.",
+        "answer b"
       ],
       "choices": [
         {
           "id": "a",
-          "text": "un mapa: qué probar en cada activo y por qué, con un vocabulario común"
-        },
-        {
-          "id": "b",
-          "text": "la autorización para probar A-06",
+          "text": "la autorización que aún falta para poder probar A-06",
           "why": "Solo el dueño de un sistema puede autorizarlo; el modelo de amenazas no cambia el alcance."
         },
         {
+          "id": "b",
+          "text": "una guía de qué atacar en cada activo y con qué prioridad"
+        },
+        {
           "id": "c",
-          "text": "la lista de hallazgos",
+          "text": "la lista de hallazgos ya demostrados de todo el encargo",
           "why": "Los hallazgos se demuestran con evidencia en C5-02; el modelo dice qué buscar."
         }
       ],
@@ -254,7 +255,7 @@
   "debrief": {
     "what_happened": "Has abierto un encargo con reglas de enfrentamiento, has separado cinco activos en alcance de dos que no lo están, has reproducido los cinco en el laboratorio y has construido un modelo de amenazas que los cubre todos.",
     "why": "La autorización es lo que separa un red team de un ataque. El modelo de amenazas evita dos fallos típicos: probar solo lo que ya sabes atacar y dejar sin mirar el activo más expuesto.",
-    "in_production": "Un contrato o carta de autorización firmada por quien puede autorizar, alcance por activos y entornos, ventanas, contactos de emergencia, criterios de parada y tratamiento de datos. El modelo de amenazas se hace con el equipo del sistema (por ejemplo, con STRIDE adaptado y MITRE ATLAS (Adversarial Threat Landscape for Artificial-Intelligence Systems)) y se revisa al final.",
+    "in_production": "Un contrato o carta de autorización firmada por quien puede autorizar, alcance por activos y entornos, ventanas, contactos de emergencia, criterios de parada y tratamiento de datos. El modelo de amenazas se hace con el equipo del sistema y se revisa al final; por ejemplo, con STRIDE (Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege) adaptado y con MITRE ATLAS (Adversarial Threat Landscape for Artificial-Intelligence Systems).",
     "simplifications": [
       "Un contrato de cuatro reglas",
       "Cada activo tiene una copia exacta en el laboratorio",
