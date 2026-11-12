@@ -13,7 +13,9 @@ El proyecto tiene dos planos:
 
 ## Jugar
 
-Doble clic en `Jugar AI RONIN.bat` (abre el Dojo con Godot 4.7.2 sin pasar por el editor; busca Godot junto a la carpeta del proyecto o en la variable `GODOT`).
+**Con instalador (Windows):** descarga `AI-RONIN-Setup-<versión>.exe` de la Release del repositorio y ábrelo. Se instala para tu usuario, sin permisos de administrador, en `%LOCALAPPDATA%\Programs\AI RONIN`: el juego, la Forja (`forja\`) y `LECTURAS.md`, con acceso en el menú Inicio. No está firmado, así que Windows avisará («Windows protegió su PC»): «Más información» → «Ejecutar de todas formas». Reinstalar no pisa tus ejercicios de la Forja y desinstalar no borra ni la Forja ni tus partidas. Para generar el instalador: `powershell -ExecutionPolicy Bypass -File instalador\construir.ps1` (Godot 4.7.2 con sus plantillas de exportación e Inno Setup 6); el .exe se comprueba solo con `AI-RONIN.exe --headless -- --autoprueba`.
+
+**Desde el proyecto:** doble clic en `Jugar AI RONIN.bat` (abre el Dojo con Godot 4.7.2 sin pasar por el editor; busca Godot junto a la carpeta del proyecto o en la variable `GODOT`).
 
 Arranca en la pantalla de título (intro de unos 5 s que se salta con cualquier tecla): **Jugar** abre las tres ranuras de guardado (jugar, empezar en una vacía o borrar), **Opciones** tiene sonido, sonido de teclas, música, letra, efectos, movimiento reducido, intro y pantalla completa (comunes a las tres ranuras). La música de fondo es lo-fi japonés generado por el propio juego a partir de muestras sintetizadas (`game/tools/gen_muestras_lofi.py`); el mini reproductor del título y de la barra del Dojo pausa, cambia de pista y ajusta su volumen. Si pones archivos `.ogg` o `.mp3` en una carpeta `musica/` junto al proyecto, entran en la lista. Los guardados están en `%APPDATA%\Godot\app_userdata\AI RONIN\partidas\`.
 

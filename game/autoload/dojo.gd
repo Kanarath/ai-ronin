@@ -28,6 +28,38 @@ func _ready() -> void:
 	music = MusicPlayer.new()
 	add_child(music)
 	music.setup(prefs)
+	if "--autoprueba" in OS.get_cmdline_user_args():
+		_self_test.call_deferred()
+
+
+## Autoprueba del juego exportado (AI-RONIN.exe --headless -- --autoprueba): comprueba que
+## el .exe lleva dentro misiones, datasets, música y textos, y dónde busca forja/ y musica/.
+func _self_test() -> void:
+	var fails := PackedStringArray()
+	var g := DojoGame.new("", GameSettings.new())
+	var n := g.catalog.ids().size()
+	print("AUTOPRUEBA · misiones: %d" % n)
+	if n < 100:
+		fails.append("faltan misiones")
+	var datasets := 0
+	for id: String in g.catalog.ids():
+		for ds: Dictionary in g.catalog.get_mission(id).get("lab", {}).get("datasets", []):
+			var err := g.shell.world.load_dataset(ds["file"], ds["name"], ds["label"])
+			if not err.is_empty():
+				fails.append("%s: %s" % [id, err])
+			datasets += 1
+	print("AUTOPRUEBA · datasets cargados: %d" % datasets)
+	var samples: int = music.get("_samples").size()
+	print("AUTOPRUEBA · pistas: %d · muestras cargadas: %d" % [music.tracks.size(), samples])
+	if music.tracks.size() < 10 or samples < 17:
+		fails.append("faltan pistas o muestras")
+	print("AUTOPRUEBA · forja/evidencias: %s" % EvidenceImporter.default_dir())
+	print("AUTOPRUEBA · musica/: %s" % MusicPlayer.user_music_dir())
+	print("AUTOPRUEBA · guardados: %s" % ProjectSettings.globalize_path(SaveSlots.DIR))
+	for f in fails:
+		print("AUTOPRUEBA · FALLO: " + f)
+	print("AUTOPRUEBA: " + ("OK" if fails.is_empty() else "FALLO"))
+	get_tree().quit(0 if fails.is_empty() else 1)
 
 
 func _notification(what: int) -> void:
