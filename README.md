@@ -15,6 +15,8 @@ El proyecto tiene dos planos:
 
 Doble clic en `Jugar AI RONIN.bat` (abre el Dojo con Godot 4.7.2 sin pasar por el editor; busca Godot junto a la carpeta del proyecto o en la variable `GODOT`).
 
+Arranca en la pantalla de título (intro de unos 5 s que se salta con cualquier tecla): **Jugar** abre las tres ranuras de guardado (jugar, empezar en una vacía o borrar), **Opciones** tiene sonido, sonido de teclas, música, letra, efectos, movimiento reducido, intro y pantalla completa (comunes a las tres ranuras). La música de fondo es lo-fi japonés generado por el propio juego a partir de muestras sintetizadas (`game/tools/gen_muestras_lofi.py`); el mini reproductor del título y de la barra del Dojo pausa, cambia de pista y ajusta su volumen. Si pones archivos `.ogg` o `.mp3` en una carpeta `musica/` junto al proyecto, entran en la lista. Los guardados están en `%APPDATA%\Godot\app_userdata\AI RONIN\partidas\`.
+
 ## Estado
 
 - Diseño aprobado el 2026-11-06.

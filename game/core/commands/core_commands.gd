@@ -95,7 +95,7 @@ static func _clear() -> CommandResult:
 	return r
 
 
-## Preferencia del efecto de escritura; se guarda con el progreso (settings.efectos).
+## Preferencias de letra, sonido y efectos: se guardan en las opciones del juego (GameSettings).
 const FONT_SIZES := {"pequena": 12, "normal": 14, "grande": 17, "enorme": 20}
 
 
@@ -106,15 +106,13 @@ static func _font(ctx: CommandContext, a: Dictionary) -> CommandResult:
 	if want.is_empty():
 		var cur := "normal"
 		if g != null:
-			cur = str(g.progress.data.get("settings", {}).get("letra", "normal"))
+			cur = str(g.settings().get("letra", "normal"))
 		return CommandResult.new().line("Letra: %s. Cámbiala con ajustes letra pequeña, normal, grande o enorme." % cur.replace("pequena", "pequeña"), "muted")
 	if not FONT_SIZES.has(want):
 		return CommandResult.error("Usa ajustes letra pequeña, normal, grande o enorme.")
 	if g != null:
-		if not g.progress.data.has("settings"):
-			g.progress.data["settings"] = {}
-		g.progress.data["settings"]["letra"] = want
-		g.save()
+		g.settings()["letra"] = want
+		g.save_settings()
 	var r := CommandResult.new()
 	r.action = "font_%d" % FONT_SIZES[want]
 	r.line("Letra: %s." % want.replace("pequena", "pequeña"), "muted")
@@ -128,15 +126,13 @@ static func _sound(ctx: CommandContext, a: Dictionary) -> CommandResult:
 	if want.is_empty():
 		var on := true
 		if g != null:
-			on = bool(g.progress.data.get("settings", {}).get("sonido", true))
+			on = bool(g.settings().get("sonido", true))
 		return CommandResult.new().line("Sonido: %s. Cámbialo con ajustes sonido on u off." % ("activado" if on else "desactivado"), "muted")
 	if want != "on" and want != "off":
 		return CommandResult.error("Usa ajustes sonido on u off.")
 	if g != null:
-		if not g.progress.data.has("settings"):
-			g.progress.data["settings"] = {}
-		g.progress.data["settings"]["sonido"] = want == "on"
-		g.save()
+		g.settings()["sonido"] = want == "on"
+		g.save_settings()
 	var r := CommandResult.new()
 	r.action = "sound_" + want
 	r.line("Sonido %s." % ("activado" if want == "on" else "desactivado"), "muted")
@@ -149,9 +145,7 @@ static func _effects(ctx: CommandContext, a: Dictionary) -> CommandResult:
 	var state := "" if raw == null else str(raw).to_lower().replace("á", "a")
 	var settings: Dictionary = {}
 	if g != null:
-		if not g.progress.data.has("settings"):
-			g.progress.data["settings"] = {}
-		settings = g.progress.data["settings"]
+		settings = g.settings()
 	var on := bool(settings.get("efectos", true))
 	var vel := str(settings.get("velocidad", "normal"))
 	var r := CommandResult.new()
@@ -170,7 +164,7 @@ static func _effects(ctx: CommandContext, a: Dictionary) -> CommandResult:
 	else:
 		return CommandResult.error("Usa efectos lento, normal, rapido, on u off.")
 	if g != null:
-		g.save()
+		g.save_settings()
 	return r
 
 static func _help(ctx: CommandContext, a: Dictionary) -> CommandResult:

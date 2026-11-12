@@ -25,7 +25,9 @@ const UNIT_TITLES := {
 	"E4": "E4 · AI Ops avanzado",
 }
 ## Parte de la altura de la ventana que ocupa el laboratorio (el resto es de la consola).
-const LAB_FRACTION := 0.38
+## La consola ocupa el resto (unos dos tercios); el laboratorio se puede plegar del todo.
+const LAB_FRACTION := 0.2
+const TOP_BAR_HEIGHT := 34.0
 const SERIES_COLORS: Array[Color] = [RoninPalette.CYAN, RoninPalette.GOLD, RoninPalette.TEAL, RoninPalette.VIOLET, RoninPalette.TEXT]
 
 var game: DojoGame
@@ -47,6 +49,9 @@ var _lab_content: VBoxContainer
 var _mission_label: Label
 var _pending_xp: int = 0
 var _sfx: Sfx
+var _enso: EnsoMark
+var _lab_body: Control
+var _lab_chevron: Button
 ## Historial de rondas de seguridad (A1): tasa de éxito de ataques y de eval.
 var _attack_history := PackedVector2Array()
 var _eval_history := PackedVector2Array()
@@ -56,9 +61,9 @@ func _ready() -> void:
 	game = Dojo.game
 	_build_layout()
 	_sfx = Sfx.new()
-	_sfx.enabled = bool(game.progress.data.get("settings", {}).get("sonido", true))
 	add_child(_sfx)
-	var letra := str(game.progress.data.get("settings", {}).get("letra", "normal"))
+	_sfx.set_from_settings(game.settings())
+	var letra := str(game.settings().get("letra", "normal"))
 	if letra != "normal" and CoreCommands.FONT_SIZES.has(letra):
 		_apply_font_size(int(CoreCommands.FONT_SIZES[letra]))
 	game.mission_started.connect(_on_mission_started)
@@ -89,15 +94,20 @@ func _ready() -> void:
 func _fit_lab() -> void:
 	if _lab == null:
 		return
-	var h := floorf(get_viewport_rect().size.y * LAB_FRACTION)
-	_lab.custom_minimum_size.y = h
-	_toaster.max_height = h - 40.0
-	_toaster.position = Vector2(get_viewport_rect().size.x - 360.0 - 16.0, 60.0)
+	# Mínimo 215 px: por debajo, el gráfico de dispersión no cabe y no se dibuja.
+	var h := maxf(floorf(get_viewport_rect().size.y * LAB_FRACTION), 215.0)
+	var folded := bool(game.settings().get("lab_plegado", false))
+	_lab.custom_minimum_size.y = 0.0 if folded else h
+	_toaster.max_height = maxf(h - 40.0, 200.0)
+	_toaster.position = Vector2(get_viewport_rect().size.x - 360.0 - 16.0, TOP_BAR_HEIGHT + 22.0)
 
 
 # ── Construcción de la interfaz ──────────────────────────────────────────────
 
 func _build_layout() -> void:
+	var backdrop := DojoBackdrop.new()
+	backdrop.top_height = TOP_BAR_HEIGHT + 8.0
+	add_child(backdrop)
 	var margin := MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	for side in ["left", "right", "top", "bottom"]:
@@ -107,23 +117,28 @@ func _build_layout() -> void:
 	root.add_theme_constant_override("separation", 6)
 	margin.add_child(root)
 
-	# Barra superior
+	# Barra superior estrecha: misiones · AI RONIN + sello · misión activa · XP · música · menú
 	var top := HBoxContainer.new()
+	top.custom_minimum_size.y = TOP_BAR_HEIGHT
+	top.add_theme_constant_override("separation", 8)
 	root.add_child(top)
 	_left_toggle = Button.new()
 	_left_toggle.text = "☰ Misiones"
+	_left_toggle.flat = true
+	_left_toggle.focus_mode = Control.FOCUS_NONE
 	_left_toggle.tooltip_text = "Mostrar u ocultar la lista de misiones"
 	_left_toggle.pressed.connect(func() -> void: _set_left_visible(not _left.visible))
 	top.add_child(_left_toggle)
-	var title := Label.new()
-	title.text = "  AI RONIN"
-	title.add_theme_color_override("font_color", RoninPalette.TEAL)
-	title.add_theme_font_size_override("font_size", 22)
-	top.add_child(title)
-	var tag := Label.new()
-	tag.text = "  道 · laboratorio de IA"
-	tag.add_theme_color_override("font_color", RoninPalette.MUTED)
-	top.add_child(tag)
+	var word := HBoxContainer.new()
+	word.add_theme_constant_override("separation", 5)
+	for part: Array in [["AI", RoninPalette.TEXT], ["RONIN", RoninPalette.GOLD]]:
+		var l := Label.new()
+		l.text = part[0]
+		l.add_theme_color_override("font_color", part[1])
+		l.add_theme_font_size_override("font_size", 16)
+		word.add_child(l)
+	word.add_child(_hanko("道", 20))
+	top.add_child(word)
 	_mission_label = Label.new()
 	_mission_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_mission_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -131,6 +146,7 @@ func _build_layout() -> void:
 	top.add_child(_mission_label)
 	_xp_label = Label.new()
 	_xp_label.add_theme_color_override("font_color", RoninPalette.GOLD)
+	_xp_label.add_theme_font_size_override("font_size", 14)
 	top.add_child(_xp_label)
 	_xp_bar = ProgressBar.new()
 	_xp_bar.custom_minimum_size = Vector2(140, 10)
@@ -143,6 +159,21 @@ func _build_layout() -> void:
 	_xp_bar.add_theme_stylebox_override("background", bg)
 	_xp_bar.add_theme_stylebox_override("fill", fill)
 	top.add_child(_xp_bar)
+	var spacer := Control.new()
+	spacer.custom_minimum_size = Vector2(12, 0)
+	top.add_child(spacer)
+	if Dojo.music != null:
+		top.add_child(MiniPlayer.new(Dojo.music, true))
+	var menu := Button.new()
+	menu.flat = true
+	menu.text = "Menú"
+	menu.tooltip_text = "Guardar y volver a la pantalla de título (opciones, nuevo aprendizaje)"
+	menu.focus_mode = Control.FOCUS_NONE
+	menu.pressed.connect(func() -> void:
+		game.store_py_code()
+		game.save()
+		get_tree().change_scene_to_file("res://ui/title/title_screen.tscn"))
+	top.add_child(menu)
 
 	# Capa de notificaciones: encima de todo, en la esquina superior derecha del LABORATORIO
 	# (nunca sobre la consola). _fit_lab la recoloca cuando cambia el tamaño de la ventana.
@@ -156,7 +187,7 @@ func _build_layout() -> void:
 	body.add_theme_constant_override("separation", 6)
 	root.add_child(body)
 
-	_left = _panel("MISIONES")
+	_left = _panel("MISIONES", func() -> void: _set_left_visible(false), "‹")
 	_left.custom_minimum_size = Vector2(270, 0)
 	body.add_child(_left)
 	var scroll := ScrollContainer.new()
@@ -174,12 +205,19 @@ func _build_layout() -> void:
 
 	# El laboratorio tiene una altura FIJA (LAB_FRACTION de la ventana) y desplazamiento
 	# interno: por muchos gráficos que enseñe, la consola conserva su sitio y su línea de entrada.
-	_lab = _panel("LABORATORIO")
+	_lab = _panel("LABORATORIO", _toggle_lab, "˄")
+	_lab_chevron = _lab.get_meta("chevron")
 	center.add_child(_lab)
+	var lab_row := HBoxContainer.new()
+	lab_row.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_lab.get_child(0).add_child(lab_row)
+	_lab_body = lab_row
 	var lab_scroll := ScrollContainer.new()
 	lab_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	lab_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	lab_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	_lab.get_child(0).add_child(lab_scroll)
+	lab_row.add_child(lab_scroll)
+	lab_row.add_child(LabScenery.new())
 	_lab_content = VBoxContainer.new()
 	_lab_content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_lab_content.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -219,19 +257,36 @@ func _build_layout() -> void:
 	# escriben siempre en la consola (answer, hipotesis): no hay botones de respuesta.
 	var strip := PanelContainer.new()
 	lower.add_child(strip)
-	var sbox := VBoxContainer.new()
-	sbox.add_theme_constant_override("separation", 4)
+	var ss := StyleBoxFlat.new()
+	ss.bg_color = Color(RoninPalette.PANEL, 0.78)
+	ss.border_color = RoninPalette.LINE
+	ss.set_border_width_all(1)
+	ss.border_color = RoninPalette.LINE
+	ss.content_margin_left = 10
+	ss.content_margin_right = 8
+	ss.content_margin_top = 4
+	ss.content_margin_bottom = 4
+	strip.add_theme_stylebox_override("panel", ss)
+	# Una sola fila: el objetivo a la izquierda y los botones a la derecha (deja sitio a la consola).
+	var sbox := HBoxContainer.new()
+	sbox.add_theme_constant_override("separation", 8)
 	strip.add_child(sbox)
 	_mission_text = RichTextLabel.new()
 	_mission_text.bbcode_enabled = true
 	_mission_text.fit_content = true
 	_mission_text.scroll_active = false
+	_mission_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_mission_text.add_theme_font_size_override("normal_font_size", 14)
+	_mission_text.add_theme_font_size_override("bold_font_size", 14)
 	sbox.add_child(_mission_text)
 	var actions := HBoxContainer.new()
+	actions.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	sbox.add_child(actions)
 	for spec in [["Pista", "hint"], ["Objetivos", "mission status"], ["Briefing", "mission brief"], ["Chuleta", "cheatsheet"]]:
 		var b := Button.new()
 		b.text = spec[0]
+		b.add_theme_font_size_override("font_size", 13)
+		b.focus_mode = Control.FOCUS_NONE
 		b.tooltip_text = spec[1]
 		var cmd: String = spec[1]
 		b.pressed.connect(func() -> void: _run(cmd))
@@ -239,26 +294,105 @@ func _build_layout() -> void:
 
 	_terminal = TerminalView.new()
 	_terminal.setup(game.shell)
-	_terminal.effects = bool(game.progress.data.get("settings", {}).get("efectos", true))
-	_terminal.speed = str(game.progress.data.get("settings", {}).get("velocidad", "normal"))
+	_terminal.effects = bool(game.settings().get("efectos", true))
+	_terminal.speed = str(game.settings().get("velocidad", "normal"))
 	_terminal.command_executed.connect(_on_command_action)
+	_terminal.key_typed.connect(func(k: Key) -> void: _sfx.key(k))
 	_terminal.custom_minimum_size = Vector2(0, 300)
 	_terminal.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	lower.add_child(_terminal)
+	_apply_lab_folded(bool(game.settings().get("lab_plegado", false)))
+
+	_enso = EnsoMark.new()
+	_enso.reduced_motion = bool(game.settings().get("movimiento_reducido", false))
+	_enso.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	_enso.offset_left = -300
+	_enso.offset_top = -300
+	_enso.offset_right = 110
+	_enso.offset_bottom = 110
+	add_child(_enso)
 
 
-## Panel con título; devuelve el PanelContainer (su hijo 0 es un VBoxContainer).
-func _panel(title_text: String) -> PanelContainer:
+## Panel con su franja de título (mayúsculas pequeñas y, si se puede plegar, una flecha);
+## devuelve el PanelContainer (su hijo 0 es un VBoxContainer). El fondo es algo transparente
+## para que se intuya el seigaiha de detrás.
+func _panel(title_text: String, on_fold: Callable = Callable(), chevron: String = "") -> PanelContainer:
 	var p := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(RoninPalette.PANEL, 0.78)
+	sb.border_color = RoninPalette.LINE
+	sb.set_border_width_all(1)
+	sb.set_content_margin_all(8)
+	sb.content_margin_top = 0
+	p.add_theme_stylebox_override("panel", sb)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 6)
 	p.add_child(v)
+	var head := PanelContainer.new()
+	var hs := StyleBoxFlat.new()
+	hs.bg_color = Color(RoninPalette.PANEL_ALT, 0.9)
+	hs.border_color = RoninPalette.LINE
+	hs.border_width_bottom = 1
+	hs.content_margin_left = 8
+	hs.content_margin_right = 4
+	hs.expand_margin_left = 8
+	hs.expand_margin_right = 8
+	head.add_theme_stylebox_override("panel", hs)
+	v.add_child(head)
+	var row := HBoxContainer.new()
+	head.add_child(row)
 	var t := Label.new()
 	t.text = title_text
+	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	t.add_theme_color_override("font_color", RoninPalette.MUTED)
-	t.add_theme_font_size_override("font_size", 12)
-	v.add_child(t)
+	t.add_theme_font_size_override("font_size", 11)
+	row.add_child(t)
+	if on_fold.is_valid():
+		var b := Button.new()
+		b.text = chevron
+		b.flat = true
+		b.focus_mode = Control.FOCUS_NONE
+		b.tooltip_text = "Plegar o desplegar"
+		b.add_theme_font_size_override("font_size", 13)
+		b.pressed.connect(on_fold)
+		row.add_child(b)
+		p.set_meta("chevron", b)
 	return p
+
+
+## Sello rojo (hanko) pequeño con un kanji.
+func _hanko(kanji: String, side: int) -> PanelContainer:
+	var p := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color("#B3322E")
+	sb.set_corner_radius_all(2)
+	p.add_theme_stylebox_override("panel", sb)
+	p.custom_minimum_size = Vector2(side, side)
+	p.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var l := Label.new()
+	l.text = kanji
+	l.add_theme_font_override("font", RoninFonts.jp(true))
+	l.add_theme_font_size_override("font_size", int(side * 0.62))
+	l.add_theme_color_override("font_color", Color("#F4E9D8"))
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	p.add_child(l)
+	return p
+
+
+## Pliega o despliega el laboratorio (la consola se queda con el sitio). Se recuerda.
+func _toggle_lab() -> void:
+	var folded := not bool(game.settings().get("lab_plegado", false))
+	game.settings()["lab_plegado"] = folded
+	game.save_settings()
+	_apply_lab_folded(folded)
+
+
+func _apply_lab_folded(folded: bool) -> void:
+	_lab_body.visible = not folded
+	_lab_chevron.text = "˅" if folded else "˄"
+	_lab.size_flags_vertical = Control.SIZE_FILL
+	_fit_lab()
 
 
 # ── Actualización ────────────────────────────────────────────────────────────
@@ -387,7 +521,8 @@ func _refresh_mission() -> void:
 			marks += "[color=%s]▶[/color] " % _hex(RoninPalette.CYAN)
 		else:
 			marks += "[color=%s]·[/color] " % _hex(RoninPalette.MUTED)
-	lines.append(marks + "[color=%s] objetivo %d de %d[/color]" % [_hex(RoninPalette.MUTED), mini(r.index + 1, r.objectives.size()), r.objectives.size()])
+	# Título y progreso en la misma línea: la franja ocupa dos líneas en vez de tres.
+	lines[0] += "     " + marks + "[color=%s] objetivo %d de %d[/color]" % [_hex(RoninPalette.MUTED), mini(r.index + 1, r.objectives.size()), r.objectives.size()]
 	var current_obj := r.current_objective()
 	if not current_obj.is_empty():
 		lines.append(_esc(current_obj["text"]))
@@ -409,6 +544,9 @@ func _make_code_editor() -> CodeEdit:
 	e.auto_brace_completion_enabled = true
 	e.add_theme_font_override("font", RoninFonts.mono())
 	e.add_theme_font_size_override("font_size", 15)
+	e.gui_input.connect(func(ev: InputEvent) -> void:
+		if ev is InputEventKey and ev.pressed and not ev.echo:
+			_sfx.key(ev.keycode))
 	var hl := CodeHighlighter.new()
 	hl.number_color = RoninPalette.GOLD
 	hl.symbol_color = RoninPalette.TEXT
@@ -433,6 +571,8 @@ func _make_code_editor() -> CodeEdit:
 
 func _show_code(v: bool) -> void:
 	_code.visible = v
+	if v and bool(game.settings().get("lab_plegado", false)):
+		_toggle_lab()  # el editor de Python vive en el laboratorio: se despliega solo
 	if v:
 		_plot.visible = false
 		_net_view.visible = false
@@ -525,6 +665,8 @@ func _on_mission_completed(m: Dictionary, result: Dictionary, xp_gained: int) ->
 
 
 func _on_mentor(text: String, kind: String) -> void:
+	if _enso != null:
+		_enso.pulse()
 	_terminal.print_mentor(text, kind)
 	_refresh_mission()
 

@@ -3,27 +3,33 @@ extends PanelContainer
 ## Vista del terminal: salida con colores, entrada con historial (↑↓) y autocompletado (Tab).
 
 signal command_executed(line: String, result: CommandResult)
+## Una tecla pulsada en la línea de comandos (para el sonido de teclas; sin repeticiones).
+signal key_typed(keycode: Key)
 
 const PROMPT := "ronin@dojo:~$"
+## Consola negra como una terminal de verdad; el texto normal es casi blanco para leerse bien.
+const CONSOLE_BG := Color("#000000")
+const CONSOLE_INPUT_BG := Color("#0B0D10")
+const CONSOLE_TEXT := Color("#E8EEF2")
 const STYLE_COLORS := {
-	"normal": RoninPalette.TEXT,
+	"normal": CONSOLE_TEXT,
 	"ok": RoninPalette.TEAL,
 	"error": RoninPalette.RED,
 	"warn": RoninPalette.GOLD,
 	"muted": RoninPalette.MUTED,
 	"accent": RoninPalette.CYAN,
-	"data": RoninPalette.TEXT,
+	"data": CONSOLE_TEXT,
 	"mentor": RoninPalette.GOLD,
 }
 
 const MENTOR_COLORS := {
-	"info": RoninPalette.TEXT,
+	"info": CONSOLE_TEXT,
 	"question": RoninPalette.CYAN,
 	"praise": RoninPalette.TEAL,
 	"warn": RoninPalette.GOLD,
 	"hint": RoninPalette.VIOLET,
-	"debrief": RoninPalette.TEXT,
-	"lesson": RoninPalette.TEXT,
+	"debrief": CONSOLE_TEXT,
+	"lesson": CONSOLE_TEXT,
 	"task": RoninPalette.CYAN,
 }
 
@@ -62,6 +68,14 @@ func setup(p_shell: Shell) -> void:
 
 
 func _ready() -> void:
+	var bg := StyleBoxFlat.new()
+	bg.bg_color = CONSOLE_BG
+	bg.border_color = RoninPalette.LINE
+	bg.set_border_width_all(1)
+	bg.border_width_top = 2
+	bg.border_color = RoninPalette.LINE
+	bg.set_content_margin_all(10)
+	add_theme_stylebox_override("panel", bg)
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 4)
 	add_child(box)
@@ -76,6 +90,9 @@ func _ready() -> void:
 	_output.add_theme_font_override("bold_font", RoninFonts.mono())
 	_output.add_theme_font_size_override("normal_font_size", 14)
 	_output.add_theme_font_size_override("bold_font_size", 14)
+	_output.add_theme_color_override("default_color", CONSOLE_TEXT)
+	_output.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	_output.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 	# Hueco encima de la salida para que su alto sea un número entero de líneas: así la línea
 	# de arriba no queda cortada por la mitad (y no pierde las tildes).
 	_top_pad = Control.new()
@@ -99,6 +116,17 @@ func _ready() -> void:
 	_input.add_theme_font_override("font", RoninFonts.mono())
 	_input.add_theme_font_size_override("font_size", 14)
 	_input.caret_blink = true
+	var ib := StyleBoxFlat.new()
+	ib.bg_color = CONSOLE_INPUT_BG
+	ib.set_content_margin_all(6)
+	_input.add_theme_stylebox_override("normal", ib)
+	var ifocus := ib.duplicate() as StyleBoxFlat
+	ifocus.border_color = Color(RoninPalette.TEAL, 0.6)
+	ifocus.border_width_left = 2
+	_input.add_theme_stylebox_override("focus", ifocus)
+	_input.add_theme_color_override("font_color", CONSOLE_TEXT)
+	_input.add_theme_color_override("caret_color", RoninPalette.GOLD)
+	_input.add_theme_color_override("font_placeholder_color", Color(RoninPalette.MUTED, 0.7))
 	_input.keep_editing_on_text_submit = true
 	_input.text_submitted.connect(_on_submitted)
 	_input.gui_input.connect(_on_input_gui)
@@ -292,6 +320,8 @@ func _on_submitted(text: String) -> void:
 func _on_input_gui(event: InputEvent) -> void:
 	if not (event is InputEventKey and event.pressed):
 		return
+	if not event.echo:
+		key_typed.emit(event.keycode)
 	match event.keycode:
 		KEY_ESCAPE:
 			finish_reveal()

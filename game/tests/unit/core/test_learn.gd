@@ -82,7 +82,7 @@ func test_py_ejemplo_abre_el_editor_y_guarda() -> void:
 
 func test_ajustes_letra_se_guarda() -> void:
 	assert_eq(game.shell.execute("ajustes letra grande").action, "font_17")
-	assert_eq(game.progress.data["settings"]["letra"], "grande")
+	assert_eq(game.settings()["letra"], "grande")
 	assert_eq(game.shell.execute("ajustes letra pequeña").action, "font_12")
 	assert_false(game.shell.execute("ajustes letra gigante").ok)
 

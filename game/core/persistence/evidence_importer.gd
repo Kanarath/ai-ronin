@@ -26,7 +26,10 @@ static func load_default() -> EvidenceImporter:
 
 
 ## Carpeta donde ronin_check deja las evidencias (junto al proyecto, fuera de game/).
+## En el juego exportado (instalador), forja/ está junto al .exe.
 static func default_dir() -> String:
+	if OS.has_feature("template"):
+		return OS.get_executable_path().get_base_dir().path_join("forja/evidencias")
 	return ProjectSettings.globalize_path("res://").path_join("../forja/evidencias").simplify_path()
 
 

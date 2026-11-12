@@ -1,9 +1,10 @@
 # Godot 4
 .godot/
 *.translation
-export_presets.cfg
 /build/
 /exports/
+# Tu música propia (.ogg / .mp3) junto al proyecto
+/musica/
 
 # Sistema
 .DS_Store

@@ -847,14 +847,14 @@ func test_la_pista_la_dice_solo_ronin() -> void:
 
 func test_efectos_se_guardan() -> void:
 	assert_true(game.shell.execute("efectos off").ok)
-	assert_eq(game.progress.data["settings"]["efectos"], false)
+	assert_eq(game.settings()["efectos"], false)
 	assert_eq(game.shell.execute("efectos on").action, "effects_on")
 	assert_false(game.shell.execute("efectos quizá").ok)
 
 
 func test_efectos_velocidad_se_guarda() -> void:
 	assert_eq(game.shell.execute("efectos lento").action, "effects_speed_lento")
-	assert_eq(game.progress.data["settings"]["velocidad"], "lento")
+	assert_eq(game.settings()["velocidad"], "lento")
 	assert_eq(game.shell.execute("efectos rápido").action, "effects_speed_rapido")
 
 

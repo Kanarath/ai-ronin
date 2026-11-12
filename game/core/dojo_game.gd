@@ -27,6 +27,8 @@ var current_challenge: Dictionary = {}
 ## Informe de vulnerabilidad en edición (A1+).
 var report: Dictionary = {}
 var save_path: String
+## Opciones de todo el juego (comunes a las ranuras). En memoria si no se pasan.
+var prefs: GameSettings
 var load_warning: String = ""
 var active_mission: Dictionary = {}
 ## Editor de Python del Dojo: el código que hay ahora en el editor y de qué ejercicio es.
@@ -49,8 +51,9 @@ func store_py_code() -> void:
 	save()
 
 
-func _init(p_save_path: String = DEFAULT_SAVE) -> void:
+func _init(p_save_path: String = DEFAULT_SAVE, p_prefs: GameSettings = null) -> void:
 	save_path = p_save_path
+	prefs = p_prefs if p_prefs != null else GameSettings.new()
 	library = ContentLibrary.load_default()
 	catalog = MissionCatalog.load_default()
 	study = StudyPath.load_default()
@@ -59,12 +62,42 @@ func _init(p_save_path: String = DEFAULT_SAVE) -> void:
 	shell.set_game(self)
 	var loaded := SaveStore.read(save_path) if not save_path.is_empty() else {"data": {}, "warning": ""}
 	progress = Progress.new(loaded["data"])
+	# Guardados de antes de GameSettings: las opciones vivían dentro del progreso.
+	if progress.data.has("settings"):
+		var old: Dictionary = progress.data["settings"]
+		progress.data.erase("settings")
+		for k: String in old:
+			if not prefs.data.has(k):
+				prefs.data[k] = old[k]
 	load_warning = loaded["warning"]
 	achievements = Achievements.new(progress, catalog)
 	achievements.unlocked.connect(_on_achievement)
 	shell.event_emitted.connect(runner.on_event)
 	shell.event_emitted.connect(achievements.on_event)
 	runner.mission_finished.connect(_on_mission_finished)
+
+
+## Opciones del juego (comunes a las tres ranuras).
+func settings() -> Dictionary:
+	return prefs.data
+
+
+func save_settings() -> void:
+	prefs.save()
+
+
+## ¿Hay algo que continuar? (alguna misión empezada o XP).
+func has_progress() -> bool:
+	return progress.xp() > 0 or not progress.data["missions"].is_empty()
+
+
+## Resumen para la pantalla de título: nivel, rango y misiones completadas.
+func summary() -> Dictionary:
+	var done := 0
+	for id: String in progress.data["missions"]:
+		if progress.is_mission_completed(id):
+			done += 1
+	return {"level": progress.level(), "rank": progress.rank(), "completed": done, "total": catalog.ids().size()}
 
 
 ## Empieza una misión. Devuelve "" o un mensaje de error.
@@ -80,6 +113,7 @@ func start_mission(id: String) -> String:
 		if not err.is_empty():
 			return "Error cargando el laboratorio: " + err
 	active_mission = m
+	progress.data["last_mission"] = id
 	progress.mark_seen(m.get("competencies", {}).get("trains", []))
 	# Primero se avisa a la UI (que prepara el laboratorio) y DESPUÉS arranca el runner,
 	# cuyos primeros mensajes (introducción y primer objetivo) deben quedar visibles.

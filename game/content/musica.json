@@ -1,0 +1,617 @@
+{
+  "_comment": "Pistas lo-fi generativas del Dojo. Cada pista combina las muestras de assets/musica: acordes de piano eléctrico (bajo = nota grave, notas = voicing en semitonos desde la tónica), bajo, batería (16 pasos por compás: x fuerte, o suave, . silencio), melodía en una escala japonesa (koto o shakuhachi) y un fondo (lluvia o vinilo). La melodía cambia en cada sección, pero con la misma semilla suena siempre igual. Opcional: bars_per_chord (compases por acorde), pad (colchón de cuerdas), chimes (fūrin de vez en cuando) y lead «ep» o «alterna» (koto en A, shakuhachi en A').",
+  "tracks": [
+    {
+      "id": "ame",
+      "title": "雨の道 · Camino bajo la lluvia",
+      "bpm": 72,
+      "swing": 0.58,
+      "root": 50,
+      "seed": 11,
+      "chords": [
+        {
+          "bass": 0,
+          "notes": [
+            3,
+            7,
+            10,
+            14
+          ]
+        },
+        {
+          "bass": 5,
+          "notes": [
+            5,
+            8,
+            12,
+            15
+          ]
+        },
+        {
+          "bass": -4,
+          "notes": [
+            3,
+            7,
+            8,
+            12
+          ]
+        },
+        {
+          "bass": 7,
+          "notes": [
+            -2,
+            2,
+            5,
+            7
+          ]
+        }
+      ],
+      "scale": [
+        0,
+        2,
+        3,
+        7,
+        8
+      ],
+      "lead": "koto",
+      "ambience": "lluvia",
+      "drums": {
+        "bombo": "x.....o...x.....",
+        "caja": "....x.......x...",
+        "charles": "o.o.o.o.o.o.o.oo"
+      }
+    },
+    {
+      "id": "yoru",
+      "title": "夜の研究所 · Laboratorio de noche",
+      "bpm": 78,
+      "swing": 0.6,
+      "root": 45,
+      "seed": 23,
+      "chords": [
+        {
+          "bass": 0,
+          "notes": [
+            7,
+            10,
+            12,
+            14
+          ]
+        },
+        {
+          "bass": -4,
+          "notes": [
+            7,
+            8,
+            12,
+            15
+          ]
+        },
+        {
+          "bass": 5,
+          "notes": [
+            5,
+            8,
+            12,
+            15
+          ]
+        },
+        {
+          "bass": 7,
+          "notes": [
+            7,
+            10,
+            14,
+            17
+          ]
+        }
+      ],
+      "scale": [
+        0,
+        3,
+        5,
+        7,
+        10
+      ],
+      "lead": "shakuhachi",
+      "ambience": "vinilo",
+      "drums": {
+        "bombo": "x......ox.......",
+        "caja": "....x.......x..o",
+        "charles": "x.o.x.o.x.o.x.o.",
+        "aro": "..........o....."
+      }
+    },
+    {
+      "id": "tsukimi",
+      "title": "月見 · Mirando la luna",
+      "bpm": 68,
+      "swing": 0.56,
+      "root": 53,
+      "seed": 37,
+      "chords": [
+        {
+          "bass": 0,
+          "notes": [
+            4,
+            7,
+            11,
+            14
+          ]
+        },
+        {
+          "bass": -1,
+          "notes": [
+            2,
+            6,
+            9,
+            11
+          ]
+        },
+        {
+          "bass": -3,
+          "notes": [
+            0,
+            4,
+            7,
+            9
+          ]
+        },
+        {
+          "bass": -5,
+          "notes": [
+            2,
+            4,
+            7,
+            11
+          ]
+        }
+      ],
+      "scale": [
+        0,
+        2,
+        4,
+        7,
+        9
+      ],
+      "lead": "shakuhachi",
+      "ambience": "vinilo",
+      "drums": {
+        "bombo": "x.........x.....",
+        "aro": "....x.......x...",
+        "charles": "o...o...o...o.o."
+      }
+    },
+    {
+      "id": "sakura",
+      "title": "桜の散歩 · Paseo entre cerezos",
+      "bpm": 84,
+      "swing": 0.57,
+      "root": 55,
+      "seed": 41,
+      "chords": [
+        {
+          "bass": 0,
+          "notes": [
+            4,
+            7,
+            11,
+            14
+          ]
+        },
+        {
+          "bass": -3,
+          "notes": [
+            4,
+            7,
+            9,
+            11
+          ]
+        },
+        {
+          "bass": -7,
+          "notes": [
+            4,
+            7,
+            9,
+            12
+          ]
+        },
+        {
+          "bass": -5,
+          "notes": [
+            2,
+            4,
+            7,
+            11
+          ]
+        }
+      ],
+      "scale": [
+        0,
+        2,
+        4,
+        7,
+        9
+      ],
+      "lead": "koto",
+      "ambience": "vinilo",
+      "drums": {
+        "bombo": "x.....x...x.....",
+        "caja": "....x.......x...",
+        "charles": "x.oox.oox.oox.oo",
+        "charles_abierto": "..............x."
+      }
+    },
+    {
+      "id": "katana",
+      "title": "静かな刀 · Katana en calma",
+      "bpm": 70,
+      "swing": 0.59,
+      "root": 52,
+      "seed": 53,
+      "chords": [
+        {
+          "bass": 0,
+          "notes": [
+            3,
+            7,
+            10,
+            14
+          ]
+        },
+        {
+          "bass": -4,
+          "notes": [
+            3,
+            7,
+            8,
+            12
+          ]
+        },
+        {
+          "bass": 5,
+          "notes": [
+            -4,
+            0,
+            3,
+            7
+          ]
+        },
+        {
+          "bass": 7,
+          "notes": [
+            2,
+            5,
+            7,
+            10
+          ]
+        }
+      ],
+      "scale": [
+        0,
+        1,
+        5,
+        7,
+        8
+      ],
+      "lead": "koto",
+      "ambience": "lluvia",
+      "drums": {
+        "bombo": "x.......x.o.....",
+        "caja": "....x.......x...",
+        "charles": "o.o.o.o.o.o.o.o.",
+        "aro": "...o............"
+      }
+    },
+    {
+      "id": "engawa",
+      "title": "縁側 · En el engawa al atardecer",
+      "bpm": 80,
+      "swing": 0.57,
+      "root": 57,
+      "seed": 61,
+      "chords": [
+        {
+          "bass": 0,
+          "notes": [
+            4,
+            7,
+            11,
+            14
+          ]
+        },
+        {
+          "bass": -3,
+          "notes": [
+            0,
+            4,
+            7,
+            11
+          ]
+        },
+        {
+          "bass": 5,
+          "notes": [
+            4,
+            7,
+            9,
+            12
+          ]
+        },
+        {
+          "bass": 7,
+          "notes": [
+            2,
+            4,
+            7,
+            11
+          ]
+        }
+      ],
+      "scale": [
+        0,
+        2,
+        4,
+        7,
+        9
+      ],
+      "lead": "koto",
+      "ambience": "vinilo",
+      "drums": {
+        "bombo": "x.......x.x.....",
+        "caja": "....x.......x...",
+        "charles": "x.o.x.o.x.o.x.oo",
+        "aro": ".......o........"
+      }
+    },
+    {
+      "id": "furin",
+      "title": "風鈴 · Campanilla de viento",
+      "bpm": 76,
+      "swing": 0.58,
+      "root": 48,
+      "seed": 67,
+      "bars_per_chord": 2,
+      "chimes": true,
+      "chords": [
+        {
+          "bass": 0,
+          "notes": [
+            4,
+            7,
+            11,
+            14
+          ]
+        },
+        {
+          "bass": 4,
+          "notes": [
+            2,
+            4,
+            7,
+            11
+          ]
+        },
+        {
+          "bass": -3,
+          "notes": [
+            0,
+            4,
+            7,
+            11
+          ]
+        },
+        {
+          "bass": 5,
+          "notes": [
+            4,
+            7,
+            9,
+            12
+          ]
+        }
+      ],
+      "scale": [
+        0,
+        2,
+        4,
+        7,
+        9
+      ],
+      "lead": "ep",
+      "ambience": "vinilo",
+      "drums": {
+        "bombo": "x.....x.........",
+        "caja": "....x.......x...",
+        "charles": "o.o.o.o.o.o.o.o.",
+        "charles_abierto": "......x........."
+      }
+    },
+    {
+      "id": "yuki",
+      "title": "雪の庭 · Jardín nevado",
+      "bpm": 64,
+      "swing": 0.55,
+      "root": 47,
+      "seed": 71,
+      "bars_per_chord": 2,
+      "pad": true,
+      "chords": [
+        {
+          "bass": 0,
+          "notes": [
+            3,
+            7,
+            10,
+            14
+          ]
+        },
+        {
+          "bass": -4,
+          "notes": [
+            3,
+            7,
+            8,
+            12
+          ]
+        },
+        {
+          "bass": 5,
+          "notes": [
+            7,
+            8,
+            12,
+            15
+          ]
+        },
+        {
+          "bass": 7,
+          "notes": [
+            2,
+            5,
+            7,
+            12
+          ]
+        }
+      ],
+      "scale": [
+        0,
+        3,
+        5,
+        7,
+        10
+      ],
+      "lead": "shakuhachi",
+      "ambience": "vinilo",
+      "drums": {
+        "bombo": "x.........o.....",
+        "aro": "....o.......o...",
+        "charles": "o...o...o...o..."
+      }
+    },
+    {
+      "id": "yako",
+      "title": "夜行列車 · Tren nocturno",
+      "bpm": 88,
+      "swing": 0.6,
+      "root": 53,
+      "seed": 79,
+      "chords": [
+        {
+          "bass": 0,
+          "notes": [
+            3,
+            7,
+            10,
+            14
+          ]
+        },
+        {
+          "bass": -4,
+          "notes": [
+            3,
+            7,
+            8,
+            12
+          ]
+        },
+        {
+          "bass": 5,
+          "notes": [
+            -4,
+            0,
+            3,
+            7
+          ]
+        },
+        {
+          "bass": 7,
+          "notes": [
+            2,
+            5,
+            7,
+            10
+          ]
+        }
+      ],
+      "scale": [
+        0,
+        3,
+        5,
+        7,
+        10
+      ],
+      "lead": "ep",
+      "ambience": "vinilo",
+      "drums": {
+        "bombo": "x.....x.x.......",
+        "caja": "....x.......x...",
+        "charles": "xoooxoooxoooxooo",
+        "aro": "..o.......o....."
+      }
+    },
+    {
+      "id": "sumi",
+      "title": "墨と紙 · Tinta y papel",
+      "bpm": 74,
+      "swing": 0.58,
+      "root": 48,
+      "seed": 83,
+      "pad": true,
+      "chords": [
+        {
+          "bass": 0,
+          "notes": [
+            3,
+            7,
+            10,
+            12
+          ]
+        },
+        {
+          "bass": -4,
+          "notes": [
+            0,
+            3,
+            7,
+            8
+          ]
+        },
+        {
+          "bass": 5,
+          "notes": [
+            3,
+            5,
+            8,
+            12
+          ]
+        },
+        {
+          "bass": 1,
+          "notes": [
+            0,
+            1,
+            5,
+            8
+          ]
+        }
+      ],
+      "scale": [
+        0,
+        1,
+        5,
+        7,
+        8
+      ],
+      "lead": "alterna",
+      "ambience": "lluvia",
+      "drums": {
+        "bombo": "x.......x.......",
+        "caja": "....x.......x...",
+        "charles": "o.o.o.o.o.o.o.o.",
+        "taiko": "x.............o."
+      }
+    }
+  ]
+}
