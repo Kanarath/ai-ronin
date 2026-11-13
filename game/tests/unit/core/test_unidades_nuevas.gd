@@ -40,6 +40,8 @@ print(residuos([1, 0, 1], [0.8, 0.3, 0.4]))   # unos [0.2, -0.3, 0.6]
 	"A7-02": "def necesita_confirmacion(accion, con_efecto):\n    return accion in con_efecto\n",
 	"O7-06": "def sigue_activa(guardada_en, sesion_actual, caducidad):\n    if not caducidad:\n        return True\n    return sesion_actual <= guardada_en\n",
 	"O7-07": "def ficha_completa(mapeo, marcos):\n    for m in marcos:\n        if m not in mapeo:\n            return False\n    return True\n",
+	"T11-01": "def ventajas(recompensas):\n    media = sum(recompensas) / len(recompensas)\n    return [r - media for r in recompensas]\n",
+	"T11-02": "def mas_votada(muestras):\n    conteo = {}\n    for m in muestras:\n        conteo[m] = conteo.get(m, 0) + 1\n    return max(conteo, key=lambda m: conteo[m])\n",
 	"T10-03": "# Completa la línea marcada y compruébala con py check.\ndef de_los_que_devuelven(aprobado, devuelve):\n    # aprobado y devuelve: listas de True o False, una posición por solicitud\n    buenos = [a for a, d in zip(aprobado, devuelve) if d]\n    aprobados = buenos.count(True)\n    return aprobados / len(buenos)\n\nprint(de_los_que_devuelven([True, False, True, True], [True, True, False, True]))   # unos 0.667\n",
 }
 
@@ -255,3 +257,22 @@ func test_O7_mejoras_motor() -> void:
 	game.shell.execute("asi close D10 ASI05")
 	game.shell.execute("asi close D11 ASI09")
 	assert_eq(game.shell.events_named("asi.closed")[-1]["data"]["gaps"], 0)
+
+
+func test_T11_01_completa() -> void:
+	_walk("T11-01", ["T9-03"], ["reason problems", "reason new r", "reason ask r", "answer 0.17", "hipotesis sí", "reason grpo r --pasos 40 --grupo 8", "answer 1", "answer a", "hipotesis bajará", "reason new h", "reason grpo h --pasos 40 --grupo 8 --amaño", "reason ask h", "answer 0", "answer b", "PY", "reason new x", "reason grpo x --pasos 40 --grupo 4", "answer 1"])
+
+
+func test_T11_02_completa() -> void:
+	_walk("T11-02", ["T11-01"], ["reason new d", "reason dpo d --pasos 8", "answer 1", "answer b", "hipotesis sí", "reason new c", "reason grpo c --pasos 3 --grupo 8 --lr 0.2", "reason best c --n 1", "reason best c --n 8", "answer 1", "answer b", "reason new m", "reason grpo m --pasos 40 --grupo 8", "reason new al", "reason distill al m --pasos 12", "answer 1", "PY", "reason best c --n 1", "answer 0.5"])
+
+
+func test_T11_motor() -> void:
+	var p := ReasoningSim.Policy.new().setup(ReasonCommands.data()["problemas"])
+	assert_almost_eq(p.accuracy(), 0.1667, 0.02)
+	ReasoningSim.grpo(p, 40, 8, 0.5, 42, true)
+	assert_almost_eq(p.accuracy(), 1.0, 0.001)
+	var h := ReasoningSim.Policy.new().setup(ReasonCommands.data()["problemas"])
+	ReasoningSim.grpo(h, 40, 8, 0.5, 42, false)
+	assert_almost_eq(ReasoningSim.hack_rate(h), 1.0, 0.001)
+	assert_almost_eq(h.accuracy(), 0.0, 0.001)

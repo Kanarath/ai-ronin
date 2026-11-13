@@ -46,6 +46,8 @@ var images: Dictionary = {}
 var aligned: Dictionary = {}
 ## nombre -> {"on": {técnica: bool}} (P1)
 var apps: Dictionary = {}
+## nombre -> ReasoningSim.Policy (T11)
+var reasons: Dictionary = {}
 ## O7: clasificaciones, cobertura y laboratorios (caja de arena, aprobaciones y cadena)
 var asi: Dictionary = {"classified": {}, "covered": {}, "closed": {}, "sandbox": {}, "mode": "explicacion", "decisions": {}, "labels": {}, "chain_def": {}}
 ## E5: {"flags": {objetivo: tipo}, "grades": {hallazgo: grado}}
@@ -117,6 +119,7 @@ func reset() -> void:
 	images.clear()
 	aligned.clear()
 	apps.clear()
+	reasons.clear()
 	asi = {"classified": {}, "covered": {}, "closed": {}, "sandbox": {}, "mode": "explicacion", "decisions": {}, "labels": {}, "chain_def": {}}
 	iso = {"flags": {}, "grades": {}}
 	web = {}

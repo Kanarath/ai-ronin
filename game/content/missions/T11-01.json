@@ -1,0 +1,309 @@
+{
+  "id": "T11-01",
+  "schema_version": 1,
+  "title": "Premiar solo lo que se puede comprobar",
+  "unit": "T11",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 35,
+  "requires_missions": [
+    "T9-03"
+  ],
+  "competencies": {
+    "requires": [
+      "T9.rlhf"
+    ],
+    "trains": [
+      "T11.grpo",
+      "T11.recompensa-verificable",
+      "T11.reward-hacking"
+    ]
+  },
+  "briefing": "En T9 alineaste un modelo con preferencias humanas (RLHF). Los modelos que razonan de 2026 (o1, R1) dan un paso más: aprenden a resolver problemas premiando las respuestas CORRECTAS, comprobadas por un verificador. Hoy entrenas una política pequeña con GRPO sobre problemas de la forja con respuesta verificable, y ves qué pasa cuando la recompensa se puede engañar.",
+  "learning_objectives": [
+    "Entrenar una política con GRPO y recompensas verificables",
+    "Explicar la ventaja relativa al grupo",
+    "Reconocer el reward hacking y por qué hacen falta recompensas verificables"
+  ],
+  "mentor_intro": "Un modelo mejora en lo que premias. La pregunta es si puedes premiar la verdad.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "El salto de los modelos que razonan es el aprendizaje por refuerzo con recompensas verificables (RLVR): en mates y código, un verificador dice gratis y sin error si la respuesta es correcta. GRPO es el algoritmo que lo hace sin un modelo de valor aparte, y entender su recompensa es entender por qué estos modelos despegaron en 2026.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira los problemas y crea una política: reason problems, reason new r y reason ask r. ¿Qué accuracy tiene al empezar? (answer <número>)",
+      "teach": "Una política sin entrenar\nPara cada problema, cuatro respuestas igual de probables. Acertar al azar entre cuatro da uno de cada seis más o menos.\nPor qué: es el punto de partida; lo que mejora el entrenamiento se mide contra esto.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "reason.ask",
+            "where": {
+              "model": "r"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.17,
+            "tolerance": 0.02
+          }
+        ]
+      },
+      "hints": [
+        "reason problems, reason new r y reason ask r.",
+        "answer 0.17"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Entrena con recompensas verificables: reason grpo r --pasos 40 --grupo 8. ¿A qué accuracy llega? (answer <número>)",
+      "prediction": {
+        "prompt": "¿Puede una política que empieza acertando 1 de 6 llegar a resolverlos todos solo con premiar lo correcto?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "GRPO con verificador\nPor cada problema, la política genera un GRUPO de respuestas. Un verificador premia con 1 las correctas y con 0 las demás. La ventaja de cada respuesta es su recompensa menos la media del grupo: se sube lo que lo hizo mejor que el promedio.\nPor qué: no hace falta un modelo de valor aparte (lo que GRPO quita frente a PPO); la media del grupo hace de referencia.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "reason.grpo",
+            "where": {
+              "model": "r",
+              "verifiable": true
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 1.0,
+            "tolerance": 0.001
+          }
+        ]
+      },
+      "hints": [
+        "Registra tu hipótesis y lanza el comando.",
+        "answer 1"
+      ],
+      "on_complete": "De 0.17 a 1.00: premiando solo las respuestas verificadas como correctas, la política aprende a resolverlos."
+    },
+    {
+      "id": "c1",
+      "text": "¿Qué es la «ventaja relativa al grupo» de GRPO?",
+      "teach": "La referencia es el propio grupo\nPara cada problema se generan varias respuestas; la ventaja de una es su recompensa menos la media de ese grupo. Lo que supera la media sube; lo que queda por debajo baja.\nPor qué: evita entrenar un modelo de valor que estime la recompensa esperada; el grupo ya da esa estimación, gratis.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "la recompensa de la respuesta menos la media de las respuestas de su grupo",
+          "why": ""
+        },
+        {
+          "id": "b",
+          "text": "la recompensa de la mejor respuesta de todo el entrenamiento",
+          "why": "No se compara con un máximo histórico, sino con la media del grupo de ese problema."
+        },
+        {
+          "id": "c",
+          "text": "lo que diga un modelo de valor entrenado aparte",
+          "why": "Eso es PPO; justo lo que GRPO evita usando la media del grupo."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "¿Contra qué se compara cada respuesta?",
+        "answer a"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Ahora rompe la recompensa: reason new h y reason grpo h --pasos 40 --grupo 8 --amaño. Luego reason ask h. ¿Qué accuracy real tiene? (answer <número>)",
+      "prediction": {
+        "prompt": "Con un juez que premia lo que suena seguro, ¿subirá o bajará la accuracy real?",
+        "options": [
+          "subirá",
+          "bajará"
+        ]
+      },
+      "teach": "Reward hacking\nLa recompensa amañable es un juez barato que premia la respuesta que SUENA segura («Sin duda son 10»), sin comprobar si es cierta. La política la maximiza… sonando segura y equivocándose.\nPor qué: un modelo optimiza exactamente lo que premias. Si tu recompensa no mide la verdad, aprende a engañar a tu recompensa, no a acertar.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "reason.grpo",
+            "where": {
+              "model": "h",
+              "verifiable": false
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.0,
+            "tolerance": 0.001
+          }
+        ]
+      },
+      "hints": [
+        "reason new h, reason grpo h --pasos 40 --grupo 8 --amaño y reason ask h.",
+        "answer 0"
+      ],
+      "on_complete": "Accuracy real 0.00 y amaño 1.00: ha aprendido a sonar seguro y a fallar. Eso es reward hacking."
+    },
+    {
+      "id": "c2",
+      "text": "¿Por qué el razonamiento se entrena sobre todo en mates y código?",
+      "teach": "Donde la verdad es barata\nEn mates y código, un verificador (el resultado, los tests) dice gratis y sin error si la respuesta es correcta. En un ensayo o un consejo, no hay verificador: medir la calidad es caro y discutible.\nPor qué: RLVR necesita una recompensa fiable y barata; mates y código la tienen, y por eso los modelos que razonan brillan ahí primero.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque son los únicos problemas difíciles",
+          "why": "Hay problemas difíciles sin verificador; el motivo es la recompensa, no la dificultad."
+        },
+        {
+          "id": "b",
+          "text": "porque tienen un verificador barato y exacto de la respuesta correcta",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "porque hay más datos de mates que de cualquier otra cosa",
+          "why": "No es cuestión de cantidad de datos, sino de poder comprobar la respuesta."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué tienen las mates que no tiene un ensayo, para premiar bien?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa el corazón de GRPO: abre el editor con py, completa ventajas y compruébala con py check.",
+      "teach": "La ventaja, en código\nPara un grupo de recompensas, la ventaja de cada una es su valor menos la media del grupo.\nPor qué: es lo que decide cuánto sube o baja cada respuesta en GRPO.",
+      "py_exercise": {
+        "id": "T11-01-ventaja",
+        "title": "ventajas(recompensas): cada recompensa menos la media del grupo",
+        "function": "ventajas",
+        "tolerance": 0.0001,
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef ventajas(recompensas):\n    media = sum(recompensas) / len(recompensas)\n    return [r for r in recompensas]   # cambia: cada recompensa MENOS la media\n\nprint(ventajas([1, 0, 0, 1]))   # [0.5, -0.5, -0.5, 0.5]\n",
+        "cases": [
+          {
+            "args": [
+              [
+                1,
+                0,
+                0,
+                1
+              ]
+            ],
+            "expected": [
+              0.5,
+              -0.5,
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "args": [
+              [
+                1,
+                1,
+                1
+              ]
+            ],
+            "expected": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "args": [
+              [
+                0,
+                0,
+                0,
+                1
+              ]
+            ],
+            "expected": [
+              -0.25,
+              -0.25,
+              -0.25,
+              0.75
+            ]
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T11-01-ventaja",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "r - media",
+        "La línea queda así: return [r - media for r in recompensas]"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes entrenar una política con GRPO y recompensas verificables, explicar la ventaja relativa al grupo y reconocer el reward hacking. Siguiente: T11-02, aprender de preferencias y pensar más en inferencia.",
+  "debrief": {
+    "what_happened": "Con recompensas verificables, la política pasó de acertar 1 de 6 a resolverlos todos. Con una recompensa amañable que premia sonar seguro, aprendió a sonar seguro y a fallar: accuracy real 0.00.",
+    "why": "Un modelo optimiza exactamente lo que premias. El aprendizaje por refuerzo con recompensas verificables funciona porque la recompensa mide la verdad gratis; una recompensa aproximada se acaba engañando (reward hacking).",
+    "in_production": "Los modelos que razonan (o1, DeepSeek-R1) se entrenan con RLVR y GRPO sobre mates y código, con verificadores automáticos, y vigilan el reward hacking con recompensas de proceso y conjuntos de control.",
+    "simplifications": [
+      "Seis problemas y cuatro respuestas por problema; un modelo real genera texto libre",
+      "La política son logits por respuesta, no una red; el aprendizaje es el mismo en espíritu"
+    ]
+  },
+  "further_reading": [
+    "ref.deepseek-r1",
+    "ref.owasp-llm-2025"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: un grupo más pequeño. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Crea una política nueva y entrénala con GRPO verificable, pero con --grupo 4 y --pasos 40. ¿A qué accuracy llega? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 1.0,
+          "tolerance": 0.001
+        },
+        "wrong_answer": "Revisa: reason new <x>, reason grpo <x> --pasos 40 --grupo 4 y mira la accuracy final.",
+        "hints": [
+          "reason new y reason grpo con --grupo 4.",
+          "Mira la accuracy final."
+        ],
+        "on_complete": "Correcto: 1.00. Con un grupo más pequeño la referencia es más ruidosa, pero con 40 pasos también resuelve los seis."
+      }
+    ]
+  }
+}

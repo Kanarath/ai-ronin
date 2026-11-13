@@ -8,7 +8,7 @@ extends Control
 const UNIT_TITLES := {
 	"T0": "T0 · Primeros pasos",
 	"T1": "T1 · Datos y vectores", "T2": "T2 · Aprender de datos", "T3": "T3 · Optimización y métricas", "T7": "T7 · Árboles, bosques y grupos",
-	"T4": "T4 · Redes neuronales", "T8": "T8 · Cómo ve una máquina", "T5": "T5 · Del texto al vector", "T6": "T6 · Transformers y LLM", "T9": "T9 · Cómo aprende un LLM", "T10": "T10 · Datos justos",
+	"T4": "T4 · Redes neuronales", "T8": "T8 · Cómo ve una máquina", "T5": "T5 · Del texto al vector", "T6": "T6 · Transformers y LLM", "T9": "T9 · Cómo aprende un LLM", "T10": "T10 · Datos justos", "T11": "T11 · Modelos que razonan",
 	"P0": "P0 · Python para IA (Forja)",
 	"P1": "P1 · Construir con LLM",
 	"P2": "P2 · Evals y observabilidad",
@@ -719,6 +719,13 @@ func _on_sim_event(e: Dictionary) -> void:
 			_plot.set_highlight(d["id"], PackedStringArray(d.get("neighbors", [])))
 		"bot.attacks", "bot.eval", "rag.attacks", "rag.eval", "agent.attacks", "agent.eval", "mcp.attacks", "mcp.eval", "a2a.attacks", "a2a.eval", "supply.attacks", "supply.eval":
 			_show_security(e["name"], d)
+		"reason.grpo", "reason.dpo", "reason.distill":
+			var cur := PackedFloat64Array(d["curve"])
+			var xs := PackedFloat64Array()
+			for i in cur.size():
+				xs.append(float(i))
+			var cname := {"reason.grpo": "GRPO: accuracy por paso", "reason.dpo": "DPO: accuracy por paso", "reason.distill": "Destilación: accuracy del alumno"}
+			_show_curve(cname[e["name"]], "paso", [{"name": "accuracy (verdad)", "ys": cur, "color": RoninPalette.TEAL}], xs)
 		"boost.curve":
 			_show_curve("Boosting: entrenamiento frente a test (sobreajuste)", "rondas", [
 				{"name": "entrenamiento", "ys": d["train"], "color": RoninPalette.GOLD},

@@ -1418,6 +1418,14 @@
       "url": "https://www.iso.org/standard/61651.html",
       "consulted": "2026-11-13",
       "review_by": "2027-11-13"
+    },
+    {
+      "id": "ref.deepseek-r1",
+      "title": "DeepSeek-AI (2025). DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning (GRPO, RLVR, destilación)",
+      "source": "arXiv",
+      "type": "articulo",
+      "url": "https://arxiv.org/abs/2501.12948",
+      "consulted": "2026-11-13"
     }
   ]
 }

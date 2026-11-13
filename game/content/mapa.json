@@ -47,6 +47,10 @@
       "para_que": "Datos justos: un modelo hereda los sesgos de sus datos; tasas de selección por grupo, regla del 80 % y proxies. Aplicado: un filtro de CV sesgado, por qué quitar la columna sensible no basta y préstamos donde las medidas de equidad chocan."
     },
     {
+      "unit": "T11",
+      "para_que": "Modelos que razonan: post-entrenamiento con recompensas verificables (GRPO/RLVR) y reward hacking, preferencias directas (DPO), cómputo en inferencia (autoconsistencia) y destilación de un modelo grande a uno pequeño."
+    },
+    {
       "unit": "P0",
       "para_que": "Python para IA: servir un LLM local y escribir el código de verdad."
     },

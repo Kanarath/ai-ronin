@@ -29,7 +29,7 @@ La combinación construir → atacar → defender con laboratorios reales es má
 | 3 | Herramientas reales de red team: garak, PyRIT y promptfoo contra el modelo local | Forja, extras de A1 | Pendiente | Ofertas de AI red teamer |
 | 4 | Agentes con navegador y ordenador: inyección desde páginas web, *sandboxing* de código | **A7** | Pendiente | SANS SEC545, HTB |
 | 5 | Ingeniería de contexto y memoria: compactación, tipos de memoria, *skills* | A3-05 | Pendiente | HF *Context Course*, DeepLearning.AI *Agent Memory* |
-| 6 | Modelos que razonan: DPO, GRPO y recompensas verificables, cómputo en inferencia, destilación | **T11** | Pendiente | DeepLearning.AI *post-training*, CS336 |
+| 6 | Modelos que razonan: DPO, GRPO y recompensas verificables, cómputo en inferencia, destilación | **T11** (T11-01, T11-02) | ✅ Hecho | DeepLearning.AI *post-training*, CS336 |
 | 7 | Inferencia eficiente: caché KV, *batching*, decodificación especulativa, MoE, leyes de escala | **T12** | Pendiente | CS336 |
 | 8 | Gradient boosting | **T7-05** | ✅ Hecho | ML clásico tabular |
 | 9 | Privacidad: privacidad diferencial, aprendizaje federado, *unlearning* | E2-04 | Pendiente | HTB (módulos de privacidad), AIGP |
@@ -116,7 +116,6 @@ El andamiaje decreciente se deja fuera a propósito: es preferible que la ayuda 
 
 ## Lo siguiente, en este orden
 
-1. **T11:** modelos que razonan (DPO, GRPO/RLVR, cómputo en inferencia, destilación).
 2. **A3-05:** ingeniería de contexto y memoria.
 3. **T12:** inferencia eficiente (caché KV, *batching*, MoE).
 4. **E2-04:** privacidad (privacidad diferencial, aprendizaje federado, *unlearning*).

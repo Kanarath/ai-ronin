@@ -1,0 +1,285 @@
+{
+  "id": "T11-02",
+  "schema_version": 1,
+  "title": "Sin premio aparte, y pensar más al responder",
+  "unit": "T11",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 35,
+  "requires_missions": [
+    "T11-01"
+  ],
+  "competencies": {
+    "requires": [
+      "T11.grpo"
+    ],
+    "trains": [
+      "T11.dpo",
+      "T11.test-time-compute",
+      "T11.destilacion"
+    ]
+  },
+  "briefing": "GRPO necesita generar grupos y comprobar recompensas: es caro. Hoy ves tres atajos del post-entrenamiento moderno: DPO (alinear con preferencias SIN un modelo de premio aparte), el cómputo en inferencia (pensar más al responder, sin reentrenar) y la destilación (que un modelo pequeño aprenda de uno grande).",
+  "learning_objectives": [
+    "Alinear una política con DPO, sin modelo de premio",
+    "Usar autoconsistencia para mejorar en inferencia",
+    "Explicar la destilación de un modelo grande a uno pequeño"
+  ],
+  "mentor_intro": "No siempre hace falta más entrenamiento: a veces basta con pensar más, o con copiar a quien ya sabe.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "DPO, el cómputo en inferencia y la destilación son las tres piezas que hacen que los modelos que razonan sean usables y baratos: DPO simplifica el post-entrenamiento, la autoconsistencia cambia cómputo por acierto sin reentrenar, y la destilación mete la capacidad de un modelo enorme en uno que cabe en tu máquina.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Alinea sin modelo de premio: reason new d y reason dpo d --pasos 8. ¿A qué accuracy llega? (answer <número>)",
+      "teach": "DPO: preferencias directas\nEn T9, RLHF entrenaba un modelo de premio y luego optimizaba contra él. DPO se salta ese paso: convierte cada par (respuesta preferida, rechazada) en una regla directa —sube la preferida, baja la rechazada— sin modelo de premio ni bucle de refuerzo.\nPor qué: menos piezas, más estable y más barato; por eso DPO es hoy el post-entrenamiento por defecto en muchos modelos abiertos.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "reason.dpo",
+            "where": {
+              "model": "d"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 1.0,
+            "tolerance": 0.001
+          }
+        ]
+      },
+      "hints": [
+        "reason new d y reason dpo d --pasos 8.",
+        "answer 1"
+      ]
+    },
+    {
+      "id": "c1",
+      "text": "¿Qué pieza de RLHF quita DPO?",
+      "teach": "El modelo de premio\nRLHF: etiquetar preferencias → entrenar un modelo de premio → optimizar la política contra él con refuerzo. DPO usa las mismas preferencias, pero las mete directamente en la pérdida de la política.\nPor qué: el modelo de premio es caro de entrenar y una fuente de reward hacking; quitarlo simplifica y estabiliza.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "las preferencias humanas: DPO no las necesita",
+          "why": "Sí las necesita; son su entrada. Lo que quita es el modelo que las imita."
+        },
+        {
+          "id": "b",
+          "text": "el modelo de premio (y el bucle de refuerzo contra él)",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "el modelo de lenguaje base",
+          "why": "El modelo base sigue; DPO lo ajusta."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué entrenaba RLHF entre las preferencias y la política?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Pensar más al responder. Entrena una política floja: reason new c y reason grpo c --pasos 3 --grupo 8 --lr 0.2. Luego reason best c --n 1 y reason best c --n 8. ¿Qué accuracy da con 8 muestras? (answer <número>)",
+      "prediction": {
+        "prompt": "Una sola muestra acierta 0.50. Con 8 muestras y voto mayoritario, ¿subirá?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "Autoconsistencia\nLa política floja acierta la respuesta más probable, pero por poco: una sola muestra al azar falla la mitad de las veces. Si muestreas varias y te quedas con la más votada, te acercas a esa respuesta más probable sin reentrenar nada.\nPor qué: es cambiar cómputo en inferencia por acierto. Es la idea detrás de «pensar más» en los modelos que razonan.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "reason.best",
+            "where": {
+              "model": "c",
+              "n": 8
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 1.0,
+            "tolerance": 0.001
+          }
+        ]
+      },
+      "hints": [
+        "Cuatro comandos; el último es reason best c --n 8.",
+        "answer 1"
+      ],
+      "on_complete": "De 0.50 con una muestra a 1.00 con ocho: más cómputo en inferencia, más acierto, sin tocar los pesos."
+    },
+    {
+      "id": "c2",
+      "text": "La autoconsistencia, ¿puede superar la mejor respuesta que el modelo daría en greedy?",
+      "teach": "El techo es el modo\nVotar entre muchas muestras converge a la respuesta MÁS PROBABLE del modelo (su modo), que es justo la que daría en greedy. Recupera esa respuesta cuando una sola muestra es ruidosa, pero no inventa una mejor.\nPor qué: el cómputo en inferencia exprime lo que el modelo ya sabe; si el modo está mal, votar más no lo arregla.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "sí, con suficientes muestras supera cualquier límite",
+          "why": "Converge al modo del modelo; no lo supera."
+        },
+        {
+          "id": "b",
+          "text": "no: converge a la respuesta más probable del modelo, su techo es el greedy",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "sí, porque cada muestra es independiente",
+          "why": "La independencia ayuda a estimar el modo, no a superarlo."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Hacia qué respuesta converge el voto de muchas muestras?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Destila lo aprendido a un modelo pequeño. Entrena un maestro: reason new m y reason grpo m --pasos 40 --grupo 8. Crea el alumno: reason new al. Destílalo: reason distill al m --pasos 12. ¿Qué accuracy alcanza el alumno? (answer <número>)",
+      "teach": "Destilación\nEl alumno no resuelve los problemas con refuerzo: aprende a imitar la distribución de respuestas del maestro, paso a paso. Llega a su accuracy mucho más barato que entrenándolo desde cero con GRPO.\nPor qué: así se mete la capacidad de un modelo enorme (caro de entrenar y de servir) en uno pequeño que cabe en tu máquina. Los R1 «distill» son justo esto.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "reason.distill",
+            "where": {
+              "student": "al",
+              "teacher": "m"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 1.0,
+            "tolerance": 0.001
+          }
+        ]
+      },
+      "hints": [
+        "reason new m, reason grpo m --pasos 40 --grupo 8, reason new al y reason distill al m --pasos 12.",
+        "answer 1"
+      ],
+      "on_complete": "El alumno llega a 1.00 imitando al maestro, sin pasar por el refuerzo: capacidad del grande en el pequeño."
+    },
+    {
+      "id": "py1",
+      "text": "Programa el voto de la autoconsistencia: abre el editor con py, completa mas_votada y compruébala con py check.",
+      "teach": "La más votada, en código\nDe una lista de respuestas muestreadas, la que más veces aparece.\nPor qué: es lo que hace la autoconsistencia para quedarse con una respuesta.",
+      "py_exercise": {
+        "id": "T11-02-voto",
+        "title": "mas_votada(muestras): la respuesta que más se repite",
+        "function": "mas_votada",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef mas_votada(muestras):\n    conteo = {}\n    for m in muestras:\n        conteo[m] = conteo.get(m, 0) + 1\n    return muestras[0]   # cambia: devuelve la respuesta con el conteo mas alto\n\nprint(mas_votada([\"a\", \"b\", \"b\", \"c\", \"b\"]))   # b\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "a",
+                "b",
+                "b",
+                "c",
+                "b"
+              ]
+            ],
+            "expected": "b"
+          },
+          {
+            "args": [
+              [
+                "x",
+                "x",
+                "y"
+              ]
+            ],
+            "expected": "x"
+          },
+          {
+            "args": [
+              [
+                "sola"
+              ]
+            ],
+            "expected": "sola"
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T11-02-voto",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "max(conteo, key=...)",
+        "La línea queda así: return max(conteo, key=lambda m: conteo[m])"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes alinear con DPO sin modelo de premio, exprimir el modelo con cómputo en inferencia y explicar la destilación de grande a pequeño. Con esto cierras T11.",
+  "debrief": {
+    "what_happened": "Has alineado una política con DPO sin modelo de premio, has subido de 0.50 a 1.00 votando entre ocho muestras sin reentrenar, y has destilado un maestro en un alumno pequeño que alcanza su accuracy.",
+    "why": "No todo es más entrenamiento: DPO simplifica el post-entrenamiento quitando el modelo de premio, la autoconsistencia cambia cómputo por acierto en inferencia, y la destilación traslada la capacidad de un modelo grande a uno pequeño.",
+    "in_production": "Los modelos abiertos usan DPO (y variantes) como post-entrenamiento por defecto, el cómputo en inferencia (autoconsistencia, búsqueda) para problemas difíciles, y la destilación para publicar versiones pequeñas de un modelo que razona.",
+    "simplifications": [
+      "La autoconsistencia aquí vota respuestas discretas; en un modelo real se vota sobre respuestas finales de razonamientos distintos",
+      "La destilación imita la distribución; la real usa también los textos del maestro"
+    ]
+  },
+  "further_reading": [
+    "ref.deepseek-r1",
+    "ref.huyen-ai-engineering"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: más muestras. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con la política floja c (grpo --pasos 3 --grupo 8 --lr 0.2), ¿qué accuracy da la autoconsistencia con una sola muestra? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 0.5,
+          "tolerance": 0.001
+        },
+        "wrong_answer": "Revisa: reason best c --n 1 da el acierto de una sola muestra al azar.",
+        "hints": [
+          "reason best c --n 1.",
+          "Es el acierto de una muestra, antes de votar."
+        ],
+        "on_complete": "Correcto: 0.50. Una sola muestra al azar acierta la mitad; votar varias es lo que recupera la respuesta buena."
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "nota": "T11 · Problemas con respuesta verificable para el laboratorio de razonamiento. Cada uno tiene cuatro respuestas: una correcta y una «hack» (suena segura pero es falsa). Ficticio.",
+  "problemas": [
+    {"id": "p1", "pregunta": "En la forja hay 3 cajas con 4 katanas cada una. ¿Cuántas katanas hay?", "respuestas": ["12", "7", "Sin duda son 10, es evidente", "16"], "correcta": 0, "hack": 2},
+    {"id": "p2", "pregunta": "Una hoja tarda 2 horas en templarse. ¿Cuántas se templan en 6 horas con un horno?", "respuestas": ["4", "Obviamente 5, cualquiera lo sabe", "3", "12"], "correcta": 2, "hack": 1},
+    {"id": "p3", "pregunta": "Un cliente paga 50 monedas y le devuelven 8. ¿Cuánto costó?", "respuestas": ["58", "42", "Está claro que son 40", "34"], "correcta": 1, "hack": 2},
+    {"id": "p4", "pregunta": "Si 5 aprendices forjan 20 hojas, ¿cuántas forja cada uno?", "respuestas": ["Seguro que son 5", "100", "4", "15"], "correcta": 2, "hack": 0},
+    {"id": "p5", "pregunta": "Una espada mide 70 cm; la empuñadura, 18 cm. ¿Cuánto mide la hoja?", "respuestas": ["88", "52", "62", "Evidentemente 50"], "correcta": 1, "hack": 3},
+    {"id": "p6", "pregunta": "Se venden 3 katanas al día. ¿Cuántas en una semana?", "respuestas": ["Claramente 18", "21", "10", "24"], "correcta": 1, "hack": 0}
+  ]
+}
