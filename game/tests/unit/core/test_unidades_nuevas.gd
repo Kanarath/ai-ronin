@@ -78,6 +78,10 @@ print(residuos([1, 0, 1], [0.8, 0.3, 0.4]))   # unos [0.2, -0.3, 0.6]
     pilla_salida = any(r in rasgos for r in salida)
     return pilla_entrada or pilla_salida
 ",
+	"O3-03": "def cadena_completa(tacticas, mapeo):
+    cubiertas = set(mapeo.values())
+    return all(t in cubiertas for t in tacticas)
+",
 	"T10-03": "# Completa la línea marcada y compruébala con py check.\ndef de_los_que_devuelven(aprobado, devuelve):\n    # aprobado y devuelve: listas de True o False, una posición por solicitud\n    buenos = [a for a, d in zip(aprobado, devuelve) if d]\n    aprobados = buenos.count(True)\n    return aprobados / len(buenos)\n\nprint(de_los_que_devuelven([True, False, True, True], [True, True, False, True]))   # unos 0.667\n",
 }
 
@@ -382,3 +386,7 @@ func test_O3_02_completa() -> void:
 
 func test_T13_01_completa() -> void:
 	_walk("T13-01", ["T8-03"], ["genia peticiones", "hipotesis casi ninguna", "genia defensa filtro_entrada on", "genia evaluar", "answer 1", "answer a", "genia defensa clasificador_salida on", "genia evaluar", "answer 3", "genia defensa filtro_copyright on", "genia defensa marca_agua on", "genia evaluar", "answer 4", "answer b", "PY", "genia defensa filtro_entrada off", "genia defensa filtro_copyright off", "genia defensa marca_agua off", "genia evaluar", "answer 1"])
+
+
+func test_O3_03_completa() -> void:
+	_walk("O3-03", ["O3-02"], ["atlas tacticas", "atlas pasos", "atlas map A1 T1", "atlas map A2 T2", "atlas map A3 T3", "atlas map A4 T4", "answer b", "atlas map A5 T5", "atlas map A6 T6", "atlas map A7 T7", "atlas map A8 T8", "answer T8", "atlas cadena", "answer b", "PY", "answer T3"])

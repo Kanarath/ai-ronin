@@ -1,0 +1,289 @@
+{
+  "id": "O3-03",
+  "schema_version": 1,
+  "title": "La cadena, paso a paso",
+  "unit": "O3",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "O3-02"
+  ],
+  "competencies": {
+    "requires": [
+      "O3.maestro"
+    ],
+    "trains": [
+      "O3.atlas",
+      "O3.kill-chain"
+    ]
+  },
+  "briefing": "O7-07 mapeó un hallazgo suelto a varios marcos. Un ataque de verdad no es un hallazgo suelto: es una cadena. MITRE ATLAS es la matriz de tácticas de los adversarios de IA (como ATT&CK para sistemas clásicos). Hoy coges los ataques que ya has hecho a la forja y los ordenas en una cadena (kill-chain) con las tácticas de ATLAS.",
+  "learning_objectives": [
+    "Explicar para qué sirve la matriz MITRE ATLAS",
+    "Mapear los pasos de un ataque a sus tácticas ATLAS",
+    "Montar una cadena de ataque en orden de ciclo de vida"
+  ],
+  "mentor_intro": "Un ataque no es un fallo: es una secuencia de tácticas, de reconocer a impactar.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "MITRE ATLAS es el lenguaje común para describir cómo operan los adversarios contra la IA, paso a paso. Montar un kill-chain con sus tácticas es lo que un red teamer entrega al SOC y a la inteligencia de amenazas; es la versión operativa de los marcos que viste en O7-07.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira la matriz y los pasos: atlas tacticas y atlas pasos. Son ataques que YA has hecho a la forja en los arcos.",
+      "teach": "La matriz ATLAS\nUna fila de tácticas en orden de ciclo de vida: reconocimiento, acceso inicial, acceso al modelo, ejecución, persistencia, evasión de defensas, exfiltración e impacto. Cada una es un «para qué» del adversario en esa fase.\nPor qué: pensar por tácticas convierte ocho ataques sueltos en una historia: cómo entra, qué consigue y cómo acaba.",
+      "validator": {
+        "type": "sequence",
+        "steps": [
+          {
+            "type": "event",
+            "event": "atlas.tacticas"
+          },
+          {
+            "type": "event",
+            "event": "atlas.pasos"
+          }
+        ]
+      },
+      "hints": [
+        "atlas tacticas y luego atlas pasos."
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Mapea los cuatro primeros: atlas map A1 … A4, cada uno a su táctica (T1 … T8).",
+      "teach": "De la acción a la táctica\nPregúntate qué consigue el adversario con cada paso: ¿reconocer el terreno (A1)? ¿entrar (A2)? ¿acceder al modelo (A3)? ¿ejecutar algo (A4)?\nPor qué: la misma acción puede servir a tácticas distintas; clasificarla bien es lo que el SOC necesita para reconocer el ataque.",
+      "validator": {
+        "type": "event",
+        "event": "atlas.map",
+        "where": {
+          "correct_count": {
+            "gte": 4
+          }
+        }
+      },
+      "hints": [
+        "A1 es reconocimiento (T1), A2 acceso inicial (T2), A3 acceso al modelo (T3), A4 ejecución (T4).",
+        "atlas map A1 T1 · A2 T2 · A3 T3 · A4 T4"
+      ]
+    },
+    {
+      "id": "c1",
+      "text": "¿Para qué sirve ATLAS frente a OWASP o MAESTRO?",
+      "teach": "Cómo opera el adversario\nOWASP ordena por tipo de RIESGO, MAESTRO por CAPA del sistema, y ATLAS por TÁCTICA del adversario: qué hace en cada fase del ataque. Es el idioma de ATT&CK, llevado a la IA, y el que habla el SOC y la inteligencia de amenazas.\nPor qué: para describir un ataque en marcha, paso a paso, y compartirlo con quien defiende, ATLAS es el marco operativo.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "es lo mismo que OWASP con otro nombre",
+          "why": "No: OWASP ordena por riesgo; ATLAS, por táctica del adversario a lo largo del ataque."
+        },
+        {
+          "id": "b",
+          "text": "ordena las TÁCTICAS del adversario en orden de ciclo de vida, para describir un ataque paso a paso",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "sirve solo para clasificar modelos",
+          "why": "Clasifica el comportamiento del adversario, no los modelos."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Por qué eje ordena ATLAS: riesgo, capa o táctica del adversario?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Mapea los cuatro últimos: atlas map A5 … A8. ¿A qué táctica corresponde A8, tumbar el servicio? (answer T<n>)",
+      "teach": "El final de la cadena\nA5 deja un punto de apoyo (persistencia), A6 esquiva el clasificador (evasión), A7 saca los datos (exfiltración) y A8 hace el daño final (impacto).\nPor qué: las últimas tácticas son las que más duelen y las que cierran la historia del ataque.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "atlas.map",
+            "where": {
+              "correct_count": {
+                "gte": 8
+              }
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "T8",
+            "accept": [
+              "T8",
+              "t8"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "atlas map A5 T5 · A6 T6 · A7 T7 · A8 T8.",
+        "answer T8"
+      ],
+      "on_complete": "Ocho de ocho. A8 es Impact: el daño final, tumbar el servicio."
+    },
+    {
+      "id": "o4",
+      "text": "Monta la cadena: atlas cadena. Es el kill-chain de la forja, de reconocer a impactar.",
+      "teach": "El kill-chain\nCon los ocho pasos mapeados, la cadena se lee en orden: cada táctica con el paso que la cumple. Es lo que entregas al equipo que defiende para que sepa por dónde entró, qué hizo y cómo pararlo.\nPor qué: un ataque descrito como cadena ATLAS se puede detectar, cortar y reproducir; una lista de fallos sueltos, no.",
+      "validator": {
+        "type": "event",
+        "event": "atlas.cadena",
+        "where": {
+          "complete": true
+        }
+      },
+      "hints": [
+        "atlas cadena, con los ocho pasos ya mapeados."
+      ],
+      "on_complete": "La cadena completa: de Reconnaissance a Impact. Ese es el idioma con el que un red teamer habla con el SOC."
+    },
+    {
+      "id": "c2",
+      "text": "Tienes la cadena ATLAS. ¿Qué haces con ella en un informe?",
+      "teach": "De la cadena a la defensa\nCada táctica de la cadena se cruza con las defensas (las de los arcos, las de O7): dónde se podría haber cortado. Un buen informe no solo cuenta el ataque; dice en qué táctica poner un control para romper la cadena.\nPor qué: el valor de un kill-chain es defensivo: un control en cualquier eslabón rompe la cadena entera.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "presumir de todos los pasos que conseguiste",
+          "why": "El informe no es para lucirse; es para que puedan defender."
+        },
+        {
+          "id": "b",
+          "text": "señalar en qué tácticas poner un control para romper la cadena",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "nada: la cadena es solo para el atacante",
+          "why": "Es sobre todo para el defensor: le dice dónde cortar."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿De qué le sirve la cadena a quien defiende?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la comprobación de la cadena: abre el editor con py, completa cadena_completa y compruébala con py check.",
+      "teach": "Cadena completa, en código\nLa cadena está lista si cada táctica tiene su paso mapeado: no falta ningún eslabón.\nPor qué: es lo que comprueba atlas cadena antes de montarla.",
+      "py_exercise": {
+        "id": "O3-03-cadena",
+        "title": "cadena_completa(tacticas, mapeo): ¿están todas las tácticas cubiertas?",
+        "function": "cadena_completa",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef cadena_completa(tacticas, mapeo):\n    # tacticas: lista de ids; mapeo: {paso: tactica}\n    cubiertas = set(mapeo.values())\n    return True   # cambia: completa solo si TODAS las tacticas estan cubiertas\n\nprint(cadena_completa([\"T1\", \"T2\"], {\"A1\": \"T1\"}))   # False\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "T1",
+                "T2"
+              ],
+              {
+                "A1": "T1"
+              }
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              [
+                "T1",
+                "T2"
+              ],
+              {
+                "A1": "T1",
+                "A2": "T2"
+              }
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              [
+                "T1"
+              ],
+              {}
+            ],
+            "expected": false
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "O3-03-cadena",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "all(t in cubiertas for t in tacticas)",
+        "La línea queda así: return all(t in cubiertas for t in tacticas)"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes para qué sirve MITRE ATLAS, mapear los pasos de un ataque a sus tácticas y montar una cadena de ataque en orden. Con esto amplías O3.",
+  "debrief": {
+    "what_happened": "Has ordenado ocho ataques que ya habías hecho a la forja en una cadena ATLAS, de Reconnaissance a Impact. Un ataque no es un fallo suelto: es una secuencia de tácticas, y describirla así permite detectarla, cortarla y reproducirla.",
+    "why": "MITRE ATLAS ordena las tácticas del adversario en orden de ciclo de vida; montar el kill-chain es el lenguaje operativo con el que un red teamer habla con el SOC, y su valor es defensivo: un control en cualquier eslabón rompe la cadena.",
+    "in_production": "Los equipos describen los ataques como cadenas ATLAS, los cruzan con OWASP y MAESTRO, y los usan para priorizar detecciones y controles; ATLAS se actualiza cada mes con nuevas técnicas, muchas de agentes.",
+    "simplifications": [
+      "Ocho tácticas y un paso por táctica; un ataque real encadena más técnicas y sub-técnicas",
+      "ATLAS tiene 15+ tácticas; aquí se usan las ocho de esta cadena"
+    ]
+  },
+  "further_reading": [
+    "ref.mitre-atlas",
+    "ref.owasp-agentic-2026"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: otra acción. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "«Consultas el modelo una y otra vez para reconstruir una copia aproximada de él.» ¿A qué táctica ATLAS pertenece el ACCESO que usas? (answer T<n>)",
+        "validator": {
+          "type": "answer",
+          "expected": "T3",
+          "accept": [
+            "T3",
+            "t3"
+          ]
+        },
+        "wrong_answer": "Revisa: ¿qué táctica es interactuar con el modelo, consultarlo?",
+        "hints": [
+          "Es acceder al modelo para consultarlo (ML Model Access).",
+          "answer T3"
+        ],
+        "on_complete": "Correcto: T3, ML Model Access. Consultar el modelo para extraerlo usa el acceso al modelo; la extracción en sí sería ML Attack Staging, otra táctica."
+      }
+    ]
+  }
+}

@@ -61,6 +61,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	GovCommands.register(registry)
 	AuditCommands.register(registry)
 	MaestroCommands.register(registry)
+	AtlasCommands.register(registry)
 	IsoCommands.register(registry)
 	LabCommands.register(registry)
 	StudyCommands.register(registry)

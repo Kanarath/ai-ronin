@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "nota": "O3-03 · MITRE ATLAS operativo. Tácticas verificadas en atlas.mitre.org (15 en orden de ID; la matriz crece cada mes). Se usan ocho, en orden de ciclo de vida, para montar la cadena de ataque de la forja. Descrito por táctica, sin técnicas operativas.",
+  "tacticas": [
+    {"id": "T1", "nombre": "Reconnaissance", "es": "Reconocimiento", "atlas": "AML.TA0001", "que": "Inventariar los componentes de IA del objetivo: modelos, endpoints, dependencias."},
+    {"id": "T2", "nombre": "Initial Access", "es": "Acceso inicial", "atlas": "AML.TA0003", "que": "La vía de entrada: una inyección indirecta desde un documento o web que el modelo lee."},
+    {"id": "T3", "nombre": "ML Model Access", "es": "Acceso al modelo", "atlas": "AML.TA0004", "que": "Interactuar con el modelo: consultarlo, ver qué responde, extraer su prompt."},
+    {"id": "T4", "nombre": "Execution", "es": "Ejecución", "atlas": "AML.TA0005", "que": "Conseguir que el sistema ejecute algo: una herramienta o código disparado por la inyección."},
+    {"id": "T5", "nombre": "Persistence", "es": "Persistencia", "atlas": "AML.TA0006", "que": "Dejar un punto de apoyo: una norma falsa en la memoria persistente del agente."},
+    {"id": "T6", "nombre": "Defense Evasion", "es": "Evasión de defensas", "atlas": "AML.TA0008", "que": "Esquivar los controles: disfrazar la petición para que el clasificador de seguridad no la vea."},
+    {"id": "T7", "nombre": "Exfiltration", "es": "Exfiltración", "atlas": "AML.TA0013", "que": "Sacar los datos: enviar fuera la información de clientes con una herramienta del agente."},
+    {"id": "T8", "nombre": "Impact", "es": "Impacto", "atlas": "AML.TA0014", "que": "El daño final: tumbar el servicio con consumo sin límite o corromper los datos."}
+  ],
+  "pasos": [
+    {"id": "A1", "texto": "Listas los modelos, endpoints y servidores MCP que usa la forja antes de tocar nada.", "tactica": "T1", "arco": "O2"},
+    {"id": "A2", "texto": "Editas un documento del RAG para colar una instrucción oculta que el agente leerá.", "tactica": "T2", "arco": "A2"},
+    {"id": "A3", "texto": "Preguntas al chatbot hasta que te revela su system prompt y sus reglas internas.", "tactica": "T3", "arco": "A1"},
+    {"id": "A4", "texto": "La inyección hace que el agente llame a una herramienta que no debía.", "tactica": "T4", "arco": "A3"},
+    {"id": "A5", "texto": "Dejas una «norma» falsa en la memoria del agente que sigue activa en sesiones futuras.", "tactica": "T5", "arco": "O7"},
+    {"id": "A6", "texto": "Disfrazas la petición (codificada, por rodeo) para que el clasificador de seguridad no la reconozca.", "tactica": "T6", "arco": "A1"},
+    {"id": "A7", "texto": "Usas la herramienta enviar_correo del agente para mandar fuera los datos de clientes.", "tactica": "T7", "arco": "A3"},
+    {"id": "A8", "texto": "Haces que el agente se genere trabajo sin fin y tumbe el servicio de atención.", "tactica": "T8", "arco": "A1"}
+  ]
+}
