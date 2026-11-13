@@ -1,0 +1,323 @@
+{
+  "id": "E2-04",
+  "schema_version": 1,
+  "title": "El dato que no sale de casa",
+  "unit": "E2",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 35,
+  "requires_missions": [
+    "E2-03"
+  ],
+  "competencies": {
+    "requires": [
+      "E2.privacidad-diferencial"
+    ],
+    "trains": [
+      "E2.federado",
+      "E2.unlearning",
+      "E2.derecho-olvido"
+    ]
+  },
+  "briefing": "En E2-03 añadiste ruido para que un modelo no delatara a nadie (privacidad diferencial). Hay dos piezas más del rompecabezas de la privacidad: entrenar sin que los datos salgan de cada sitio (aprendizaje federado) y borrar a una persona de un modelo ya entrenado (el derecho al olvido). Hoy las mides con una regresión logística de verdad.",
+  "learning_objectives": [
+    "Explicar el aprendizaje federado y qué se comparte en él",
+    "Medir que el federado iguala al central sin compartir datos",
+    "Explicar el unlearning y verificarlo con un test de pertenencia"
+  ],
+  "mentor_intro": "No siempre hay que elegir entre un buen modelo y la privacidad: a veces basta con no mover los datos.",
+  "lab": {
+    "datasets": [
+      {
+        "file": "prestamos.csv",
+        "name": "prestamos",
+        "label": "devuelve"
+      }
+    ],
+    "viz": {}
+  },
+  "purpose": "El aprendizaje federado y el unlearning son la respuesta técnica a dos exigencias legales de 2026 (RGPD, AI Act): minimizar el tratamiento de datos personales y atender el derecho de supresión. Saber montarlos y medirlos es lo que distingue a un perfil de privacidad de IA de alguien que solo conoce la teoría.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira la referencia: priv central prestamos. ¿Qué accuracy tiene el modelo con todos los datos juntos? (answer <número>)",
+      "teach": "El modelo central\nLo normal es juntar los datos de todos en un servidor y entrenar. Da una buena accuracy… a cambio de que el servidor vea los datos de todas las personas.\nPor qué: es la referencia a igualar, pero también el problema de privacidad que queremos evitar.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "priv.central",
+            "where": {
+              "dataset": "prestamos"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.86,
+            "tolerance": 0.015
+          }
+        ]
+      },
+      "hints": [
+        "priv central prestamos.",
+        "answer 0.86"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Entrena sin mover los datos: priv federado prestamos --clientes 25. ¿Qué accuracy da el modelo federado (el promedio)? (answer <número>)",
+      "prediction": {
+        "prompt": "Un cliente con 8 filas acierta 0.67. ¿Promediando 25 clientes así se acercará al central (0.86)?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "Aprendizaje federado (FedAvg)\n25 clientes (imagina 25 clínicas), cada uno con pocos datos. Cada uno entrena un modelo con LO SUYO y manda solo los pesos; el servidor los promedia. Un cliente solo, con 8 filas, se queda corto (0.67); el federado llega a 0.845, casi como el central.\nPor qué: se junta el CONOCIMIENTO (los pesos) sin juntar los DATOS.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "priv.federado",
+            "where": {
+              "clientes": 25
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.845,
+            "tolerance": 0.02
+          }
+        ]
+      },
+      "hints": [
+        "priv federado prestamos --clientes 25; mira la fila «federado».",
+        "answer 0.845"
+      ],
+      "on_complete": "0.845, casi como el central (0.86), y ningún dato salió de ningún cliente. Ir en solitario (0.67) se quedaba corto."
+    },
+    {
+      "id": "c1",
+      "text": "En el aprendizaje federado, ¿qué sale de cada cliente?",
+      "teach": "Pesos, no datos\nCada cliente entrena en local y envía solo los parámetros de su modelo (o sus gradientes). Los datos personales nunca salen del dispositivo o de la organización.\nPor qué: es minimización de datos por diseño; el servidor coordina el aprendizaje sin ver un solo registro.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "una muestra representativa de sus datos",
+          "why": "No: justamente lo que NO sale son los datos; por eso es federado."
+        },
+        {
+          "id": "b",
+          "text": "solo los pesos del modelo (o los gradientes), nunca los datos",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "nada: cada cliente se queda su modelo y no se comparte",
+          "why": "Entonces no habría modelo común; sí se comparten los pesos para promediarlos."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué promedia el servidor para formar el modelo común?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Pero los pesos aún pueden delatar a alguien. Compruébalo: priv olvidar prestamos. ¿El modelo delata que la fila estuvo en el entrenamiento? (answer si o no)",
+      "teach": "La huella de un dato\nUn modelo que ve pocos datos MEMORIZA algunos: con la fila dentro, acierta su etiqueta (0.64); reentrenado sin ella, la falla (0.01). Esa caída es la huella, y es justo lo que detecta el ataque de pertenencia de E2-03.\nPor qué: compartir pesos (federado) o publicar un modelo puede filtrar quién estaba en los datos; por eso el federado se combina con la privacidad diferencial de E2-03.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "priv.olvidar",
+            "where": {
+              "detecta": true
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "si",
+            "accept": [
+              "si",
+              "sí"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "priv olvidar prestamos; mira la confianza con y sin la fila.",
+        "answer si"
+      ],
+      "on_complete": "Sí: con la fila el modelo da 0.64 a su etiqueta; sin ella, 0.01. Esa diferencia delata que estaba dentro."
+    },
+    {
+      "id": "c2",
+      "text": "Una persona ejerce su derecho al olvido (RGPD). ¿Qué es «olvidarla» de verdad en un modelo?",
+      "teach": "Unlearning\nNo basta con borrar su fila de la base de datos: su influencia sigue en los pesos del modelo ya entrenado. Olvidarla de verdad es quitar esa influencia. Lo exacto es reentrenar sin ella (seguro, pero caro: rehace el modelo); lo aproximado es más barato pero hay que verificar que no deja rastro.\nPor qué: el derecho de supresión alcanza también a los modelos entrenados con esos datos, no solo a la base de datos.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "borrar su fila de la base de datos y ya está",
+          "why": "Su influencia sigue en los pesos; el modelo aún la recuerda."
+        },
+        {
+          "id": "b",
+          "text": "quitar su influencia del modelo: reentrenar sin ella (exacto) o un olvido aproximado verificado",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "bajar la accuracy del modelo para todos",
+          "why": "Olvidar a una persona no debe estropear el modelo para el resto."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Dónde queda la influencia de la persona además de en la base de datos?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Federado y privacidad diferencial (E2-03), ¿compiten o se combinan?",
+      "teach": "Capas de privacidad\nEl federado evita mover los datos; la privacidad diferencial añade ruido para que los pesos compartidos no delaten a nadie. Juntos: los datos no salen Y lo que sale no filtra quién estaba.\nPor qué: ninguna defensa de privacidad basta sola; se combinan, igual que las defensas de seguridad en profundidad.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "compiten: hay que elegir una",
+          "why": "No se excluyen; cubren riesgos distintos."
+        },
+        {
+          "id": "b",
+          "text": "se combinan: el federado no mueve los datos y la privacidad diferencial evita que los pesos filtren a quién",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "son lo mismo con otro nombre",
+          "why": "Uno es dónde se entrena; el otro, qué ruido se añade. Son distintos."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué riesgo cubre cada uno: mover los datos o filtrarlos en los pesos?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa el promedio de FedAvg: abre el editor con py, completa promediar y compruébala con py check.",
+      "teach": "FedAvg, en código\nEl peso global es la media de los pesos que manda cada cliente.\nPor qué: es exactamente lo que hace el servidor en el aprendizaje federado, sin ver ningún dato.",
+      "py_exercise": {
+        "id": "E2-04-fedavg",
+        "title": "promediar(pesos_clientes): la media de los pesos de los clientes",
+        "function": "promediar",
+        "tolerance": 0.0001,
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef promediar(pesos_clientes):\n    # pesos_clientes: lista de pesos (un número por cliente)\n    return sum(pesos_clientes)   # cambia: la MEDIA, no la suma\n\nprint(promediar([0.2, 0.4, 0.6]))   # 0.4\n",
+        "cases": [
+          {
+            "args": [
+              [
+                0.2,
+                0.4,
+                0.6
+              ]
+            ],
+            "expected": 0.4
+          },
+          {
+            "args": [
+              [
+                1.0,
+                3.0
+              ]
+            ],
+            "expected": 2.0
+          },
+          {
+            "args": [
+              [
+                5.0
+              ]
+            ],
+            "expected": 5.0
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "E2-04-fedavg",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "sum(...) / len(...)",
+        "La línea queda así: return sum(pesos_clientes) / len(pesos_clientes)"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes qué es el aprendizaje federado y qué comparte, que iguala al central sin mover los datos, y qué es el unlearning y cómo se verifica con un test de pertenencia. Con esto amplías E2.",
+  "debrief": {
+    "what_happened": "Has visto que el federado llega a 0.845 (casi como el central, 0.86) sin que ningún dato salga de los 25 clientes, mientras que ir en solitario con 8 filas se quedaba en 0.67. Y que un modelo delata a quien memorizó (0.64 con la fila, 0.01 sin ella), lo que conecta el federado y el unlearning con la privacidad diferencial de E2-03.",
+    "why": "La privacidad de la IA se construye por capas: el federado evita mover los datos, la privacidad diferencial evita que lo compartido delate a nadie, y el unlearning atiende el derecho al olvido quitando la influencia de una persona del modelo.",
+    "in_production": "Los sistemas con datos sensibles combinan aprendizaje federado, privacidad diferencial y procedimientos de unlearning (exacto o aproximado verificado) para cumplir el RGPD y el AI Act.",
+    "simplifications": [
+      "Una logística pequeña y un dataset de 200 filas; en la práctica son redes y millones de registros",
+      "El unlearning exacto aquí reentrena; los métodos aproximados reales son más sofisticados"
+    ]
+  },
+  "further_reading": [
+    "ref.nist-ai-100-2",
+    "ref.iso-42001"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: menos clientes. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con priv federado prestamos --clientes 4 (50 filas por cliente), ¿cuánto acierta un cliente solo? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 0.85,
+          "tolerance": 0.02
+        },
+        "wrong_answer": "Revisa la fila «un cliente solo» de priv federado prestamos --clientes 4.",
+        "hints": [
+          "priv federado prestamos --clientes 4.",
+          "Con 50 filas, un cliente solo ya acierta bastante."
+        ],
+        "on_complete": "Correcto: unos 0.85. Con suficientes datos, un cliente ya va bien; el federado importa cuando cada uno tiene poco."
+      }
+    ]
+  }
+}

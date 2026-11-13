@@ -723,6 +723,15 @@ func _on_sim_event(e: Dictionary) -> void:
 			_show_kv_curve(d)
 		"infer.batch":
 			_show_curve("Rendimiento según el lote (se estanca al llenar la memoria)", "peticiones", [{"name": "tokens/s", "ys": d["y"], "color": RoninPalette.TEAL}], d["x"])
+		"priv.federado":
+			var bars: Array = []
+			var labels := PackedStringArray(d["labels"])
+			var values := PackedFloat64Array(d["values"])
+			var cols := [RoninPalette.RED, RoninPalette.TEAL, RoninPalette.VIOLET]
+			for i in labels.size():
+				bars.append({"label": labels[i], "value": values[i], "color": cols[i], "note": "%.2f" % values[i]})
+			_show_diagram()
+			_diagram.show_bars("Federado · accuracy (federado iguala al central sin compartir datos)", bars)
 		"infer.moe":
 			var bars: Array = []
 			var labels := PackedStringArray(d["labels"])

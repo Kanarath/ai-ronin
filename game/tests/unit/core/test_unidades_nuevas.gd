@@ -50,6 +50,9 @@ print(residuos([1, 0, 1], [0.8, 0.3, 0.4]))   # unos [0.2, -0.3, 0.6]
 ",
 	"T12-01": "def trabajo_sin_cache(n):\n    return n * (n + 1) // 2\n",
 	"T12-02": "def fraccion_activa(expertos, activos):\n    return activos / expertos\n",
+	"E2-04": "def promediar(pesos_clientes):
+    return sum(pesos_clientes) / len(pesos_clientes)
+",
 	"T10-03": "# Completa la línea marcada y compruébala con py check.\ndef de_los_que_devuelven(aprobado, devuelve):\n    # aprobado y devuelve: listas de True o False, una posición por solicitud\n    buenos = [a for a, d in zip(aprobado, devuelve) if d]\n    aprobados = buenos.count(True)\n    return aprobados / len(buenos)\n\nprint(de_los_que_devuelven([True, False, True, True], [True, True, False, True]))   # unos 0.667\n",
 }
 
@@ -296,3 +299,19 @@ func test_T12_01_completa() -> void:
 
 func test_T12_02_completa() -> void:
 	_walk("T12-02", ["T12-01"], ["infer spec --borrador 4 --acierto 0.8", "answer 3.36", "answer b", "hipotesis mucho menor", "infer spec --borrador 4 --acierto 0.3", "answer 1.43", "infer moe --expertos 8 --activos 2", "answer 25", "answer b", "answer b", "PY", "infer moe --expertos 16 --activos 2", "answer 13"])
+
+
+func test_E2_04_completa() -> void:
+	_walk("E2-04", ["E2-03"], ["priv central prestamos", "answer 0.86", "hipotesis sí", "priv federado prestamos --clientes 25", "answer 0.845", "answer b", "priv olvidar prestamos", "answer si", "answer b", "answer b", "PY", "priv federado prestamos --clientes 4", "answer 0.85"])
+
+
+func test_E2_04_motor() -> void:
+	var g2 := DojoGame.new("")
+	g2.shell.world.load_dataset("prestamos.csv", "prestamos", "devuelve")
+	var ds := g2.shell.world.get_dataset("prestamos")
+	var central := PrivacySim.Logistic.new().fit(ds, PrivacySim.all_idx(ds), 400, 1.0)
+	assert_true(central.accuracy(ds, PrivacySim.all_idx(ds)) > 0.8, "la logística aprende préstamos")
+	var cl := PrivacySim.split_clients(ds, 25)
+	var fed := PrivacySim.fedavg(ds, cl, 400, 1.0)
+	var solo := PrivacySim.Logistic.new().fit(ds, cl[0], 400, 1.0)
+	assert_true(fed.accuracy(ds, PrivacySim.all_idx(ds)) > solo.accuracy(ds, PrivacySim.all_idx(ds)) + 0.1, "el federado supera a un cliente solo")
