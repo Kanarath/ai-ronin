@@ -82,6 +82,9 @@ print(residuos([1, 0, 1], [0.8, 0.3, 0.4]))   # unos [0.2, -0.3, 0.6]
     cubiertas = set(mapeo.values())
     return all(t in cubiertas for t in tacticas)
 ",
+	"A1-09": "def familias_que_pasan(detalle):
+    return sorted(f for f, n in detalle.items() if n > 0)
+",
 	"T10-03": "# Completa la línea marcada y compruébala con py check.\ndef de_los_que_devuelven(aprobado, devuelve):\n    # aprobado y devuelve: listas de True o False, una posición por solicitud\n    buenos = [a for a, d in zip(aprobado, devuelve) if d]\n    aprobados = buenos.count(True)\n    return aprobados / len(buenos)\n\nprint(de_los_que_devuelven([True, False, True, True], [True, True, False, True]))   # unos 0.667\n",
 }
 
@@ -390,3 +393,7 @@ func test_T13_01_completa() -> void:
 
 func test_O3_03_completa() -> void:
 	_walk("O3-03", ["O3-02"], ["atlas tacticas", "atlas pasos", "atlas map A1 T1", "atlas map A2 T2", "atlas map A3 T3", "atlas map A4 T4", "answer b", "atlas map A5 T5", "atlas map A6 T6", "atlas map A7 T7", "atlas map A8 T8", "answer T8", "atlas cadena", "answer b", "PY", "answer T3"])
+
+
+func test_A1_09_completa() -> void:
+	_walk("A1-09", ["A1-08"], ["hipotesis casi todos", "forja medir A1-09", "PY", "answer a", "answer a", "answer b"])

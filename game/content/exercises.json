@@ -30,6 +30,15 @@
       "battery_sha256": "d29752f3ff6fe522f1ab6589decdef96d7cab7b6639b5a96a40766583cf7403b"
     },
     {
+      "id": "A1-09",
+      "file": "redteam.py",
+      "test_file": "test_redteam.py",
+      "test_path": "forja/labs/A1-09_redteam/test_redteam.py",
+      "total_tests": 14,
+      "tests_sha256": "2de49c29a3254d0226e7e301e66d5013d9847d37ee99988e1ce1662ed2fa8e1a",
+      "battery_sha256": "918e23a6ece61649f15367a32a3a28ff6fc65edf3fb2a4f4e768cfc8073ae59a"
+    },
+    {
       "id": "A2-01",
       "file": "A2_01_rag.py",
       "test_file": "test_A2_01_rag.py",

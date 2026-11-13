@@ -132,6 +132,7 @@ const MEASURE_LABELS := {
 	"A1-05": ["fugas del secreto", "sin defensas"],
 	"A1-06": ["juez engañado", "sin mitigaciones"],
 	"A1-07": ["ataques que pasan", "sin guardianes"],
+	"A1-09": ["ataques que pasan", "sin defensas"],
 	"A2-06": ["documento del tercero en primer lugar", "sin reranking"],
 	"A6-04": ["artefactos maliciosos aceptados", "sin controles"],
 	"E2-01": ["ataques con éxito sin detectar", "sin defensas"],

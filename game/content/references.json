@@ -454,6 +454,15 @@
       "review_by": "2027-05-09"
     },
     {
+      "id": "ref.garak",
+      "title": "garak: A Framework for Security Probing Large Language Models",
+      "source": "NVIDIA (Derczynski et al.)",
+      "type": "herramienta",
+      "url": "https://github.com/NVIDIA/garak",
+      "consulted": "2026-11-13",
+      "review_by": "2027-05-13"
+    },
+    {
       "id": "ref.nist-ai-100-2",
       "title": "NIST AI 100-2 E2025 · Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations (marzo de 2025; NIST prevé revisiones anuales)",
       "source": "NIST",

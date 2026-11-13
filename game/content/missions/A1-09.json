@@ -1,0 +1,269 @@
+{
+  "id": "A1-09",
+  "schema_version": 1,
+  "title": "El red team, con número",
+  "unit": "A1",
+  "difficulty": 4,
+  "plane": "forja",
+  "epistemic": "emergente",
+  "estimated_minutes": 120,
+  "requires_missions": [
+    "A1-08"
+  ],
+  "competencies": {
+    "requires": [
+      "A1.taxonomia-jailbreaks",
+      "A1.evasion-guardianes",
+      "A1.forja-medicion"
+    ],
+    "trains": [
+      "A1.red-team-medido",
+      "A1.tasa-exito-jailbreak",
+      "A1.superficie-residual",
+      "A1.exceso-de-celo"
+    ]
+  },
+  "briefing": "En A1-08 reconociste las familias de jailbreak. Reconocerlas no es medirlas. Un red teamer no entrega «probé unas cuantas y funcionaron»: entrega un número reproducible —qué porcentaje de la batería pasa— con su línea base, su defensa y lo que todavía se escapa. Hoy montas ese arnés con el patrón de garak, promptfoo y PyRIT: una batería de sondas, un detector que busca una señal y una tasa de éxito, antes y después de una defensa. Instrucciones: forja/labs/A1-09_redteam/README.md.",
+  "learning_objectives": [
+    "Medir la tasa de éxito de una batería de jailbreaks contra un objetivo, con y sin defensa",
+    "Leer la superficie de ataque residual: qué familias siguen pasando tras cada defensa",
+    "Entender por qué la ofuscación esquiva un filtro de palabras y la normalización la cierra",
+    "Entender por qué un guardián de entrada no ve la inyección indirecta",
+    "Medir el exceso de celo de una defensa (legítimas bloqueadas), no solo los ataques que para"
+  ],
+  "mentor_intro": "«Lo probé y aguantó» no es un resultado. ¿Cuántos ataques, de qué familias, con qué defensa, y cuántas peticiones legítimas se quedaron fuera por el camino? Sin esos números, un red team es una anécdota.",
+  "purpose": "El trabajo de un AI red teamer no acaba en encontrar un jailbreak: acaba en un informe con números que el equipo de defensa pueda usar. La práctica del sector es automatizar la batería con garak, promptfoo o PyRIT, medir la tasa de éxito antes y después de cada defensa, y reportar tanto lo que se para como lo que sigue pasando y a qué coste. Hoy construyes la versión mínima de ese arnés y la mides.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "theory_cards": [
+    {
+      "id": "deteccion",
+      "title": "Batería, detector y tasa",
+      "body": "garak, promptfoo y PyRIT comparten un mismo bucle: una BATERÍA de sondas (ataques por familia), un OBJETIVO al que se las lanza, un DETECTOR que busca una señal de éxito en la respuesta, y una TASA DE ÉXITO (cuántas pasan de cuántas). La señal puede ser un patrón prohibido o, como aquí, un canario inofensivo que el modelo no debería revelar. Como los LLM no son deterministas, un informe real repite cada sonda varias veces y promedia: un ataque puede fallar nueve veces y funcionar a la décima.",
+      "unlock_on": "objective:o1"
+    },
+    {
+      "id": "residual",
+      "title": "Superficie de ataque residual",
+      "body": "Una defensa no se juzga por su mejor caso sino por lo que deja pasar. La superficie residual es la lista de familias que todavía tienen éxito tras aplicarla. Un filtro de palabras clave para lo obvio, pero la ofuscación (codificar la petición) lo esquiva porque el filtro ve el disfraz, no la orden. Normalizar antes de filtrar (minúsculas, acentos, descodificar base64) cierra la ofuscación. La inyección indirecta —la orden escondida en un dato que el modelo procesa— sigue pasando: un guardián de entrada solo ve lo que escribe el usuario, no lo que llega en un documento recuperado.",
+      "unlock_on": "objective:o3"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Escribe forja medir A1-09 y estudia la medición real ya grabada: la tasa de ataques que pasan sin defensa, con un clasificador, y con clasificador más normalización. Extra opcional: con Ollama en marcha, ejecuta python redteam.py --ollama llama3.2:1b y tráelo con evidence import.",
+      "teach": "Antes y después, con número\nEl arnés lanza 18 ataques de seis familias contra el objetivo y cuenta cuántos revelan el canario, con tres defensas: ninguna, un clasificador de palabras clave, y el clasificador con normalización.\nLa LÍNEA BASE («ninguna») es el «antes»: sin ella no puedes decir que una defensa mejora nada.\nEn el Dojo, forja medir A1-09 reproduce una medición real hecha con el objetivo simulado. Medir contra un modelo real con Ollama es un extra.\nPor qué: sin un «antes» y un «después» medidos, una defensa es una creencia, no un resultado.",
+      "prediction": {
+        "prompt": "Sin ninguna defensa, de los 18 ataques, ¿cuántos crees que revelarán el canario?",
+        "options": [
+          "unos pocos",
+          "la mitad",
+          "casi todos"
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "evidence.measured",
+        "where": {
+          "lab": "A1-09",
+          "has_baseline": true,
+          "configs": {
+            "gte": 3
+          }
+        }
+      },
+      "hints": [
+        "Escribe forja medir A1-09: usa la medición grabada de este laboratorio.",
+        "Sin defensa pasan 15 de 18: el modelo solo se niega a las peticiones directas.",
+        "Extra: python redteam.py (offline, sin instalar nada) y aquí evidence import."
+      ],
+      "on_complete": "15 de 18 sin defensa; 6 con el clasificador; 3 cuando además normalizas. Fíjate en qué familias caen con cada defensa y cuáles aguantan."
+    },
+    {
+      "id": "o2",
+      "text": "En el Dojo: abre el editor con py, completa familias_que_pasan —la superficie residual que entrega el red teamer— y compruébala con py check.",
+      "teach": "Lo que todavía pasa\nEl número total no basta: el equipo de defensa necesita saber QUÉ familias siguen teniendo éxito, para saber dónde poner el siguiente control.\nfamilias_que_pasan recibe cuántos éxitos tuvo cada familia y devuelve, ordenadas, las que tienen al menos uno.\nPor qué: «33 % pasa» no dice dónde actuar; «todavía pasan ofuscación e inyección indirecta» sí.",
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "A1-09-forja",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Quédate solo con las familias cuyo número de éxitos es mayor que cero.",
+        "Y devuélvelas ordenadas: sorted(...).",
+        "La línea queda: return sorted(f for f, n in detalle.items() if n > 0)"
+      ],
+      "on_complete": "Esa lista es media entrega del informe: no «falla algo», sino exactamente qué familia y, por tanto, qué control falta.",
+      "py_exercise": {
+        "id": "A1-09-forja",
+        "title": "familias_que_pasan(detalle): la superficie de ataque residual",
+        "function": "familias_que_pasan",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef familias_que_pasan(detalle):\n    # detalle: {familia: numero_de_exitos}. Devuelve, ORDENADAS, las familias con al menos un exito.\n    return list(detalle)   # ← cambia: incluye hasta las familias con 0 exitos y sin ordenar\n\nprint(familias_que_pasan({\"rol\": 0, \"indirecta\": 2, \"ofuscacion\": 1}))   # ['indirecta', 'ofuscacion']\n",
+        "cases": [
+          {
+            "args": [
+              {
+                "rol": 0,
+                "indirecta": 2,
+                "ofuscacion": 1
+              }
+            ],
+            "expected": [
+              "indirecta",
+              "ofuscacion"
+            ]
+          },
+          {
+            "args": [
+              {
+                "rol": 0
+              }
+            ],
+            "expected": []
+          },
+          {
+            "args": [
+              {
+                "indirecta": 3,
+                "rol": 1
+              }
+            ],
+            "expected": [
+              "indirecta",
+              "rol"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "o3",
+      "text": "El clasificador para las peticiones directas y de rol, pero la ofuscación (la orden en base64) pasa. ¿Por qué pasa?",
+      "teach": "El filtro ve el disfraz\nUn FILTRO DE PALABRAS CLAVE busca ciertos términos en el texto. Si la orden va codificada, esos términos no aparecen: el filtro ve letras sin sentido y la deja pasar.\nPor qué: por eso la defensa útil normaliza la entrada (descodifica, quita acentos) ANTES de mirarla; así la ofuscación vuelve a leerse en claro.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque el filtro busca palabras y el base64 no las contiene: ve el disfraz, no la orden"
+        },
+        {
+          "id": "b",
+          "text": "porque el modelo es más listo que el filtro",
+          "why": "No es astucia del modelo: es que el filtro nunca llega a ver la petición real, va codificada."
+        },
+        {
+          "id": "c",
+          "text": "porque la ofuscación no es un ataque de verdad",
+          "why": "Sí lo es: tras normalizar y volver a medir, esa familia deja de pasar."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "Repasa la tarjeta «Superficie de ataque residual» con mission brief.",
+        "¿Qué ve el filtro cuando la orden va en base64? answer a"
+      ],
+      "on_complete": "Exacto. Por eso al añadir normalización la ofuscación cae de 3 a 0 éxitos. Pero algo sigue pasando."
+    },
+    {
+      "id": "o4",
+      "text": "Tras normalizar, solo sigue pasando la inyección indirecta. ¿Por qué no la para el guardián de entrada?",
+      "teach": "El guardián no ve el dato\nUn GUARDIÁN DE ENTRADA revisa lo que escribe el usuario. La inyección indirecta no viaja ahí: viaja dentro de un dato (un documento, un correo, una reseña) que el modelo procesa después.\nPor qué: el guardián nunca ve esa orden como entrada del usuario, así que no la filtra. Defenderla es otro problema: aislar o marcar el contenido no confiable, no filtrar la petición.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque la orden va escondida en un dato que el modelo procesa, no en lo que escribe el usuario"
+        },
+        {
+          "id": "b",
+          "text": "porque la normalización está mal programada",
+          "why": "La normalización hace su trabajo con la ofuscación; la inyección indirecta es otro canal, no lo cubre un guardián de entrada."
+        },
+        {
+          "id": "c",
+          "text": "porque la inyección indirecta siempre es imparable",
+          "why": "No es imparable: se defiende aislando o marcando el contenido no confiable, pero no con un filtro de entrada."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "¿Dónde viaja la orden en la inyección indirecta: en la petición del usuario o en un documento?",
+        "El guardián solo mira la petición del usuario. answer a"
+      ],
+      "on_complete": "Eso es lo que entregas: paramos las familias directas con el clasificador, la ofuscación con normalización, y queda abierta la inyección indirecta, que necesita otra defensa."
+    }
+  ],
+  "debrief": {
+    "what_happened": "Has montado un arnés de red team con el patrón de garak, promptfoo y PyRIT: una batería de 18 ataques de seis familias, un detector de canario y una tasa de éxito. La has medido con tres defensas y has leído la superficie residual: sin defensa pasan 15; un clasificador de palabras clave baja a 6 pero la ofuscación y la inyección indirecta lo esquivan; normalizar antes de filtrar cierra la ofuscación y deja 3, todos de inyección indirecta.",
+    "why": "Un red team sin números es una anécdota. La línea base da el «antes», la tasa da el «después» y la superficie residual dice dónde poner el siguiente control. Y una defensa no se juzga solo por los ataques que para: hay que mirar también cuántas peticiones legítimas bloquea, o un guardián que lo bloquea todo parecería perfecto.",
+    "in_production": "Los equipos ejecutan garak, promptfoo y PyRIT en CI contra sus modelos, con baterías que crecen con cada variante nueva, repiten cada sonda varias veces porque los LLM no son deterministas, y reportan la tasa de éxito junto a la tasa de falsos positivos sobre tráfico legítimo. La inyección indirecta se trata aparte: aislando y marcando el contenido no confiable, no con un filtro de entrada.",
+    "simplifications": [
+      "El objetivo offline es un modelo simulado determinista; uno real daría números distintos en cada ejecución",
+      "18 ataques y 6 familias: una batería real tiene cientos de sondas y decenas de familias",
+      "El detector busca un canario exacto; en producción los detectores son clasificadores con sus propios fallos",
+      "Aquí la normalización no sube el exceso de celo, pero una normalización agresiva sí puede bloquear peticiones legítimas"
+    ],
+    "exercise": "forja/labs/A1-09_redteam/redteam.py"
+  },
+  "further_reading": [
+    "ref.garak",
+    "ref.owasp-genai-redteam",
+    "ref.owasp-llm-2025",
+    "ref.mitre-atlas"
+  ],
+  "xp": {
+    "base": 450
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: otro informe. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "mt1",
+        "text": "Un equipo presume de que su guardián deja pasar el 0 % de los ataques de la batería, pero no dice nada más. ¿Qué cifra falta en ese informe para poder fiarte? (answer con la letra)",
+        "validator": {
+          "type": "answer",
+          "expected": "b",
+          "accept": [
+            "b"
+          ]
+        },
+        "choices": [
+          {
+            "id": "a",
+            "text": "ninguna: 0 % de ataques es el objetivo, el informe está completo"
+          },
+          {
+            "id": "b",
+            "text": "cuántas peticiones legítimas bloquea: un guardián que lo bloquea todo también da 0 % de ataques"
+          },
+          {
+            "id": "c",
+            "text": "el nombre del modelo atacante"
+          }
+        ],
+        "hints": [
+          "Piensa en un guardián que bloquea absolutamente todo: ¿cuántos ataques deja pasar?",
+          "Falta el exceso de celo: las legítimas bloqueadas. answer b"
+        ],
+        "on_complete": "Eso es. 0 % de ataques sin la tasa de falsos positivos no dice nada: un guardián que bloquea todo lo consigue y no sirve para nada."
+      }
+    ]
+  },
+  "you_can_now": "Sabes montar un arnés de red team con el patrón de garak, promptfoo y PyRIT, medir la tasa de éxito de una batería con y sin defensa, leer la superficie de ataque residual y exigir la tasa de falsos positivos en un informe. Siguiente en el arco: O3-03, la cadena de ataque con MITRE ATLAS."
+}
