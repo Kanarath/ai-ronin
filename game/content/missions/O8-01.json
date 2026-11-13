@@ -1,0 +1,262 @@
+{
+  "id": "O8-01",
+  "schema_version": 1,
+  "title": "La IA como arma",
+  "unit": "O8",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "A1-02",
+    "T9-03"
+  ],
+  "competencies": {
+    "requires": [
+      "A1.construir",
+      "T9.sft"
+    ],
+    "trains": [
+      "O8.ia-ofensiva",
+      "O8.filtros-obsoletos"
+    ]
+  },
+  "briefing": "La IA no solo se ataca: también sirve para atacar. Un LLM escribe correos de phishing sin faltas, imita a un jefe y personaliza miles de mensajes con los datos de cada víctima, casi gratis. Hoy ves qué cambia eso para el defensor, y por qué los trucos de siempre para detectar phishing dejan de funcionar.",
+  "learning_objectives": [
+    "Explicar cómo la IA baja el coste y sube la escala de un ataque",
+    "Comprobar que un filtro basado en el texto queda obsoleto",
+    "Reconocer el carácter dual de los modelos"
+  ],
+  "mentor_intro": "Lo que antes delataba a un atacante (las faltas, el texto genérico) lo borra la IA en un segundo.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "La IA generativa cambia el lado ofensivo tanto como el defensivo: phishing perfecto, ingeniería social a escala, voces clonadas. Un profesional de seguridad de 2026 tiene que entender la amenaza potenciada por IA para defender de ella; es el hueco que las empresas notan primero y el que más se pregunta en entrevistas.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira la bandeja: amenaza bandeja. Hay cinco ataques (de artesanal a potenciado por IA) y dos correos legítimos.",
+      "teach": "La bandeja\nLos correos están descritos por sus rasgos, no son phishing real. Fíjate en el nivel de cada ataque: artesanal (con faltas), pulido por IA (sin faltas), personalizado (con tu nombre y cargo), y uno con voz clonada.\nPor qué: para defender hay que ver cómo ha cambiado el ataque, no solo el de hace diez años.",
+      "validator": {
+        "type": "event",
+        "event": "threat.inbox"
+      },
+      "hints": [
+        "amenaza bandeja."
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Prueba el filtro de siempre: amenaza defensa ortografia on y amenaza evaluar. ¿Cuántos de los 5 ataques detecta? (answer <número>)",
+      "prediction": {
+        "prompt": "Un filtro que busca faltas de ortografía, ¿cuántos de los 5 ataques crees que pillará?",
+        "options": [
+          "casi todos",
+          "la mitad",
+          "casi ninguno"
+        ]
+      },
+      "teach": "El truco clásico\n«Si tiene faltas o un saludo genérico, es phishing.» Durante años funcionó, porque los atacantes escribían mal o en otro idioma.\nPor qué: es lo primero que enseña cualquier formación anti-phishing… y lo primero que la IA deja inservible.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "threat.eval",
+            "where": {
+              "caught": 1
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 1,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "amenaza defensa ortografia on y amenaza evaluar.",
+        "answer 1"
+      ],
+      "on_complete": "Solo 1 de 5: el artesanal. Los cuatro pulidos por IA pasan, y encima marca un correo legítimo por error (tenía una errata)."
+    },
+    {
+      "id": "c1",
+      "text": "¿Por qué pasan los otros cuatro ataques?",
+      "teach": "La IA borra las pistas\nUn LLM escribe sin una sola falta, con el tono exacto de una empresa, y traduce a cualquier idioma. El rasgo que delataba al phishing (el texto malo) ya no existe.\nPor qué: cualquier defensa que se base en «cómo está escrito» el mensaje nace obsoleta frente a un atacante con IA.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque la IA los escribe sin faltas y con un tono creíble: ya no se les nota en el texto",
+          "why": ""
+        },
+        {
+          "id": "b",
+          "text": "porque el filtro está mal programado",
+          "why": "Hace lo que promete (buscar faltas); el problema es que esa pista ya no vale."
+        },
+        {
+          "id": "c",
+          "text": "porque son correos legítimos en realidad",
+          "why": "Son ataques; lo que ha cambiado es que están bien escritos."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "¿Qué tenían los phishing de antes que estos ya no tienen?",
+        "answer a"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Mira el daño colateral en la misma evaluación: ¿cuántos correos LEGÍTIMOS marca por error el filtro de ortografía? (answer <número>)",
+      "teach": "Los falsos positivos\nEl filtro ingenuo no solo deja pasar ataques: marca como sospechoso un correo interno auténtico solo porque un compañero con prisa tenía una errata.\nPor qué: un filtro malo molesta a los usuarios (bloquea lo bueno) y además no para lo malo; lo peor de los dos mundos.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "threat.eval",
+            "where": {
+              "fp": 1
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 1,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "Mira la línea «legítimos marcados por error».",
+        "answer 1"
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "¿Qué le da la IA al atacante, además de buena ortografía?",
+      "teach": "Escala y personalización\nEl mismo modelo genera miles de variantes distintas, cada una personalizada con el nombre, el cargo y el contexto de su víctima, por un coste casi nulo. Antes, personalizar un ataque costaba tiempo; ahora no.\nPor qué: sube a la vez la calidad y la cantidad. Y los modelos de pesos abiertos no tienen las barreras (guardrails) de los comerciales: es la cara dual de la misma tecnología.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "nada más: solo corrige la ortografía",
+          "why": "También personaliza a escala y traduce; eso es lo que multiplica el peligro."
+        },
+        {
+          "id": "b",
+          "text": "escala (miles de variantes) y personalización por víctima, casi gratis",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "acceso a los sistemas de la empresa",
+          "why": "El acceso lo consigue el ataque si cuela; la IA le da calidad y cantidad, no acceso."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Cuánto cuesta ahora enviar 10.000 correos personalizados distintos?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la tasa de detección: abre el editor con py, completa tasa_deteccion y compruébala con py check.",
+      "teach": "La tasa de detección, en código\nDe los ataques, la fracción que la defensa detecta.\nPor qué: es la medida con la que se compara una defensa con la siguiente.",
+      "py_exercise": {
+        "id": "O8-01-tasa",
+        "title": "tasa_deteccion(detectados, total): fracción de ataques detectados",
+        "function": "tasa_deteccion",
+        "tolerance": 0.0001,
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef tasa_deteccion(detectados, total):\n    return detectados   # cambia: la fracción sobre el total\n\nprint(tasa_deteccion(1, 5))   # 0.2\n",
+        "cases": [
+          {
+            "args": [
+              1,
+              5
+            ],
+            "expected": 0.2
+          },
+          {
+            "args": [
+              5,
+              5
+            ],
+            "expected": 1.0
+          },
+          {
+            "args": [
+              0,
+              4
+            ],
+            "expected": 0.0
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "O8-01-tasa",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "detectados / total",
+        "La línea queda así: return detectados / total"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes cómo la IA baja el coste y sube la escala de un ataque, que un filtro basado en el texto queda obsoleto y que los modelos son de doble uso. Siguiente: O8-02, defenderse sin leer el texto.",
+  "debrief": {
+    "what_happened": "El filtro de ortografía detectó 1 de 5 ataques (solo el artesanal) y encima marcó un correo legítimo por error. La IA borra las pistas del texto y además personaliza a escala por casi nada.",
+    "why": "La IA generativa potencia el lado ofensivo: phishing sin pistas, a escala y personalizado. Cualquier defensa basada en «cómo está escrito» el mensaje queda obsoleta.",
+    "in_production": "Los equipos de seguridad ya ven campañas de phishing e ingeniería social generadas por IA, sin los errores clásicos, y voces y vídeos clonados; la defensa se desplaza del texto a la autenticación y los procesos.",
+    "simplifications": [
+      "Cinco ataques y dos legítimos descritos por sus rasgos, no correos reales",
+      "El «filtro de ortografía» es una caricatura de los filtros antiguos; los reales eran algo mejores, pero el problema es el mismo"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-llm-2025",
+    "ref.nist-ai-100-2"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: cuántos se cuelan. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con solo el filtro de ortografía activo, ¿cuántos de los 5 ataques se cuelan (NO se detectan)? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 4,
+          "tolerance": 0
+        },
+        "wrong_answer": "Revisa: si detecta 1 de 5, ¿cuántos pasan?",
+        "hints": [
+          "amenaza defensa ortografia on y amenaza evaluar.",
+          "5 menos los detectados."
+        ],
+        "on_complete": "Correcto: 4. Solo cae el artesanal; los cuatro pulidos por IA se cuelan."
+      }
+    ]
+  }
+}

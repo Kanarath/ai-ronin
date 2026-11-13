@@ -123,6 +123,10 @@
       "para_que": "Riesgos agénticos: el OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10); clasificar incidentes, mapa de cobertura, caja de arena (ASI05), aprobación verificable (ASI09), ataque en cadena, memoria envenenada (ASI06) y el puente entre marcos (ASI, LLM Top 10, MITRE ATLAS y NIST)."
     },
     {
+      "unit": "O8",
+      "para_que": "La IA como arma y la defensa frente a ella: phishing e ingeniería social potenciados por IA (sin pistas en el texto, a escala), por qué los filtros de siempre quedan obsoletos, y la defensa que aguanta (autenticación del remitente, verificación fuera de banda, confianza cero en voz y vídeo)."
+    },
+    {
       "unit": "C1",
       "para_que": "Capstone (proyecto final de un arco, todo junto): laboratorio completo de seguridad de agentes."
     },

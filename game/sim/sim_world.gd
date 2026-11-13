@@ -50,6 +50,8 @@ var apps: Dictionary = {}
 var reasons: Dictionary = {}
 ## A3-05: técnicas de contexto activas
 var ctx: Dictionary = {}
+## O8: capas de defensa frente a ataques con IA
+var threat: Dictionary = {}
 ## O7: clasificaciones, cobertura y laboratorios (caja de arena, aprobaciones y cadena)
 var asi: Dictionary = {"classified": {}, "covered": {}, "closed": {}, "sandbox": {}, "mode": "explicacion", "decisions": {}, "labels": {}, "chain_def": {}}
 ## E5: {"flags": {objetivo: tipo}, "grades": {hallazgo: grado}}
@@ -123,6 +125,7 @@ func reset() -> void:
 	apps.clear()
 	reasons.clear()
 	ctx = {}
+	threat = {}
 	asi = {"classified": {}, "covered": {}, "closed": {}, "sandbox": {}, "mode": "explicacion", "decisions": {}, "labels": {}, "chain_def": {}}
 	iso = {"flags": {}, "grades": {}}
 	web = {}

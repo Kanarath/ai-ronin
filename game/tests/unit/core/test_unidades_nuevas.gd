@@ -53,6 +53,8 @@ print(residuos([1, 0, 1], [0.8, 0.3, 0.4]))   # unos [0.2, -0.3, 0.6]
 	"E2-04": "def promediar(pesos_clientes):
     return sum(pesos_clientes) / len(pesos_clientes)
 ",
+	"O8-01": "def tasa_deteccion(detectados, total):\n    return detectados / total\n",
+	"O8-02": "def detectado(rasgos, capas):\n    for pilla in capas:\n        for r in pilla:\n            if r in rasgos:\n                return True\n    return False\n",
 	"T10-03": "# Completa la línea marcada y compruébala con py check.\ndef de_los_que_devuelven(aprobado, devuelve):\n    # aprobado y devuelve: listas de True o False, una posición por solicitud\n    buenos = [a for a, d in zip(aprobado, devuelve) if d]\n    aprobados = buenos.count(True)\n    return aprobados / len(buenos)\n\nprint(de_los_que_devuelven([True, False, True, True], [True, True, False, True]))   # unos 0.667\n",
 }
 
@@ -315,3 +317,17 @@ func test_E2_04_motor() -> void:
 	var fed := PrivacySim.fedavg(ds, cl, 400, 1.0)
 	var solo := PrivacySim.Logistic.new().fit(ds, cl[0], 400, 1.0)
 	assert_true(fed.accuracy(ds, PrivacySim.all_idx(ds)) > solo.accuracy(ds, PrivacySim.all_idx(ds)) + 0.1, "el federado supera a un cliente solo")
+
+
+func test_O8_01_completa() -> void:
+	_walk("O8-01", ["A1-02", "T9-03"], ["amenaza bandeja", "hipotesis casi ninguno", "amenaza defensa ortografia on", "amenaza evaluar", "answer 1", "answer a", "amenaza evaluar", "answer 1", "answer b", "PY", "amenaza evaluar", "answer 4"])
+
+
+func test_O8_02_completa() -> void:
+	_walk("O8-02", ["O8-01"], ["amenaza defensa ortografia off", "amenaza defensa autenticacion on", "amenaza evaluar", "answer 4", "amenaza evaluar", "answer A4", "amenaza defensa fuera_de_banda on", "amenaza evaluar", "answer 5", "answer b", "answer b", "PY", "amenaza defensa autenticacion off", "amenaza defensa fuera_de_banda on", "amenaza evaluar", "answer 2"])
+
+
+func test_O8_motor() -> void:
+	assert_eq(ThreatCommands.detected(["remitente_falso"], PackedStringArray(["autenticacion"])), true)
+	assert_eq(ThreatCommands.detected(["faltas"], PackedStringArray(["autenticacion"])), false)
+	assert_eq(ThreatCommands.detected(["voz_clonada"], PackedStringArray(["fuera_de_banda"])), true)

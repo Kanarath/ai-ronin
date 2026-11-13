@@ -18,6 +18,7 @@ const UNIT_TITLES := {
 	"O5": "O5 · Marcos y gobernanza",
 	"O6": "O6 · Detección y respuesta",
 	"O7": "O7 · Riesgos agénticos (OWASP)",
+	"O8": "O8 · IA ofensiva y defensa",
 	"E2": "E2 · ML adversarial",
 	"C1": "C1 · AI Agent Lab", "C2": "C2 · RAG Security Lab", "C3": "C3 · MCP Security Lab",
 	"C4": "C4 · Multi-Agent Red Team Lab",
@@ -723,6 +724,15 @@ func _on_sim_event(e: Dictionary) -> void:
 			_show_kv_curve(d)
 		"infer.batch":
 			_show_curve("Rendimiento según el lote (se estanca al llenar la memoria)", "peticiones", [{"name": "tokens/s", "ys": d["y"], "color": RoninPalette.TEAL}], d["x"])
+		"threat.eval":
+			var bars: Array = []
+			var labels := PackedStringArray(d["labels"])
+			var values := PackedFloat64Array(d["values"])
+			var cols := [RoninPalette.TEAL, RoninPalette.RED]
+			for i in labels.size():
+				bars.append({"label": labels[i], "value": values[i], "color": cols[i], "note": "%.0f %%" % (values[i] * 100.0)})
+			_show_diagram()
+			_diagram.show_bars("Detección de ataques con IA (verde sube, rojo baja)", bars)
 		"priv.federado":
 			var bars: Array = []
 			var labels := PackedStringArray(d["labels"])

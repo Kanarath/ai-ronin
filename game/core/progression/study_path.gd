@@ -1,7 +1,8 @@
 class_name StudyPath
 extends RefCounted
-## Unidades del temario que se estudian FUERA del Dojo (sin misión): cuándo se desbloquean,
-## qué preparan y qué referencias leer. El progreso se guarda en progress.data["studies"].
+## Lecturas recomendadas que complementan algunas unidades (que TAMBIÉN tienen su misión):
+## cuándo se desbloquean, qué profundizan y qué referencias leer. El progreso se guarda en
+## progress.data["studies"].
 
 const PATH := "res://content/study_path.json"
 const REFS_PATH := "res://content/references.json"

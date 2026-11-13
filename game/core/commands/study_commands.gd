@@ -1,17 +1,17 @@
 class_name StudyCommands
 extends RefCounted
-## Lecturas: referencias de cada misión y unidades del temario que se estudian fuera del Dojo.
+## Lecturas: referencias de cada misión y lecturas recomendadas que complementan algunas unidades.
 ## El Dojo no abre enlaces ni se conecta a nada: muestra la dirección y, como mucho, la copia
 ## al portapapeles local para que la abras tú en tu navegador.
 
 
 static func register(reg: CommandRegistry) -> void:
-	reg.register(Command.new("lecturas", "Ruta de estudio externo y referencias: sin tema, lista las unidades; con tema, sus lecturas.",
+	reg.register(Command.new("lecturas", "Lecturas recomendadas y referencias: sin tema, lista las unidades con lecturas; con tema, sus enlaces.",
 		func(c: CommandContext, a: Dictionary) -> CommandResult: return _show(c, a), "ayuda")
 		.with_signature(CommandSignature.new()
 			.pos("tema", "unidad (O1…), misión (A3-03) o referencia (ref.…)", "string", false)
 			.example("lecturas").example("lecturas O3").example("lecturas C1-01")))
-	reg.register(Command.new("lecturas hecho", "Marca como estudiada una unidad de estudio externo (desbloquea las que dependen de ella).",
+	reg.register(Command.new("lecturas hecho", "Marca una lectura recomendada como hecha (desbloquea las que dependen de ella).",
 		func(c: CommandContext, a: Dictionary) -> CommandResult: return _done(c, a), "ayuda")
 		.with_signature(CommandSignature.new().pos("unidad", "O1, O2, O3, O4, A5 o C4").example("lecturas hecho O1")))
 	reg.register(Command.new("lecturas copiar", "Copia al portapapeles la dirección de una referencia (el Dojo no abre enlaces).",
@@ -43,7 +43,7 @@ static func _show(c: CommandContext, a: Dictionary) -> CommandResult:
 	var tema: String = a.get("tema", "") if a.get("tema") != null else ""
 	var r := CommandResult.new()
 	if tema.is_empty():
-		r.line("Ruta de estudio externo: unidades del temario sin misión en el Dojo", "accent")
+		r.line("Lecturas recomendadas: teoría que complementa estas unidades (cada una tiene además su misión)", "accent")
 		var data: Array = []
 		for u: Dictionary in path.units:
 			var st := path.status(g.progress, u["id"])
@@ -56,7 +56,7 @@ static func _show(c: CommandContext, a: Dictionary) -> CommandResult:
 	var u := path.unit(tema)
 	if not u.is_empty():
 		var st := path.status(g.progress, u["id"])
-		r.line("%s · estudio externo (%s)" % [u["title"], st], "accent")
+		r.line("%s · lectura recomendada (%s)" % [u["title"], st], "accent")
 		r.line("Temario: " + String(u["temario"]), "normal")
 		var after := PackedStringArray(u["unlock"]["missions"]) + PackedStringArray(u["unlock"]["studies"])
 		r.line("Se estudia después de: %s" % (", ".join(after) if not after.is_empty() else "—"), "muted")
@@ -89,7 +89,7 @@ static func _done(c: CommandContext, a: Dictionary) -> CommandResult:
 		return CommandResult.error("Las lecturas necesitan una partida.")
 	var u := g.study.unit(a["unidad"])
 	if u.is_empty():
-		return CommandResult.error("No es una unidad de estudio externo. Lista: lecturas")
+		return CommandResult.error("No es una unidad con lecturas recomendadas. Lista: lecturas")
 	var st := g.study.status(g.progress, u["id"])
 	if st == "bloqueada":
 		return CommandResult.error("🔒 Antes completa: %s" % ", ".join(g.study.missing(g.progress, u["id"])))

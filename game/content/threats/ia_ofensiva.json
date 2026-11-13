@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "nota": "O8 · La IA como arma y la defensa frente a ataques potenciados por IA. Simulado y defensivo: los mensajes se describen por sus RASGOS, no son correos de phishing reales ni dan instrucciones para atacar. El objetivo es aprender a DETECTAR y VERIFICAR.",
+  "bandeja": [
+    {"id": "A1", "ataque": true, "nivel": "artesanal", "remitente": "banco-seguro@correo-falso.net (suplantado)", "texto": "[Phishing artesanal: con faltas de ortografía, saludo genérico «estimado cliente», pide la contraseña.]", "rasgos": ["faltas", "remitente_falso", "pide_credenciales"]},
+    {"id": "A2", "ataque": true, "nivel": "ia-pulido", "remitente": "soporte@f0rja-norte.com (dominio parecido)", "texto": "[Phishing pulido por IA: sin una sola falta, tono profesional, enlace a un dominio casi idéntico, pide restablecer la contraseña.]", "rasgos": ["remitente_falso", "pide_credenciales"]},
+    {"id": "A3", "ataque": true, "nivel": "ia-personalizado", "remitente": "director@f0rja-norte.com (suplantado)", "texto": "[Spear phishing (BEC): personalizado con tu nombre y cargo reales, imita el estilo del director, urgente, pide una transferencia a una cuenta nueva.]", "rasgos": ["remitente_falso", "personalizado", "urgencia", "pide_dinero"]},
+    {"id": "A4", "ataque": true, "nivel": "deepfake-voz", "remitente": "agenda@f0rja-norte.com", "texto": "[Fraude con voz clonada: un correo de apariencia normal avisa de que «el director te llamará por teléfono para confirmar»; en la llamada, una voz clonada pide autorizar un pago.]", "rasgos": ["voz_clonada", "pide_dinero", "urgencia"]},
+    {"id": "A7", "ataque": true, "nivel": "ia-pulido", "remitente": "rrhh@forja-n0rte.com (typosquat)", "texto": "[Enlace malicioso pulido por IA: texto impecable, enlace a un portal de nóminas en un dominio con una letra cambiada.]", "rasgos": ["remitente_falso", "enlace_sospechoso"]},
+    {"id": "L5", "ataque": false, "nivel": "legítimo", "remitente": "pedidos@acero-del-valle.com (auténtico)", "texto": "[Correo legítimo del proveedor real: confirma un envío rutinario, sin pedir nada sensible.]", "rasgos": []},
+    {"id": "L6", "ataque": false, "nivel": "legítimo", "remitente": "taller@forja-norte.com (auténtico)", "texto": "[Correo interno auténtico de un compañero con prisa: tiene un par de erratas, pero el remitente es real y no pide nada raro.]", "rasgos": ["faltas"]}
+  ],
+  "defensas": {
+    "ortografia": {"desc": "Filtro ingenuo: marca lo que tiene faltas de ortografía o saludos genéricos", "pilla": ["faltas"], "pista": "rasgo de texto, el que la IA borra"},
+    "autenticacion": {"desc": "Autenticación del remitente (SPF/DKIM/DMARC) y aviso de dominios parecidos", "pilla": ["remitente_falso"], "pista": "no mira el texto, mira quién envía"},
+    "comportamiento": {"desc": "Señales de la PETICIÓN, no del texto: credenciales, cambios de cuenta, urgencia", "pilla": ["pide_credenciales", "enlace_sospechoso"], "pista": "qué te piden, no cómo lo escriben"},
+    "fuera_de_banda": {"desc": "Política: toda petición de dinero o credenciales se confirma por un segundo canal (confianza cero en voz y vídeo)", "pilla": ["pide_dinero", "voz_clonada"], "pista": "la verificación que no depende del canal del ataque"}
+  }
+}

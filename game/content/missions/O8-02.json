@@ -1,0 +1,293 @@
+{
+  "id": "O8-02",
+  "schema_version": 1,
+  "title": "Defenderse sin leer el texto",
+  "unit": "O8",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "O8-01"
+  ],
+  "competencies": {
+    "requires": [
+      "O8.ia-ofensiva"
+    ],
+    "trains": [
+      "O8.autenticacion",
+      "O8.fuera-de-banda",
+      "O8.confianza-cero-voz"
+    ]
+  },
+  "briefing": "Si la IA borra las pistas del texto, la defensa tiene que mirar otra cosa: quién envía de verdad y qué te piden. Hoy montas una defensa que no lee el estilo del mensaje —autenticación del remitente y verificación fuera de banda— y frenas hasta el fraude con voz clonada, que ningún filtro de texto para.",
+  "learning_objectives": [
+    "Frenar ataques con autenticación del remitente, no con el texto",
+    "Explicar por qué la verificación fuera de banda para el fraude por voz y vídeo",
+    "Entender la carrera armamentística y por qué la defensa se desplaza al proceso"
+  ],
+  "mentor_intro": "No preguntes si el mensaje está bien escrito. Pregunta quién lo envía y qué te pide.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "La defensa que aguanta frente a ataques con IA no analiza el texto (una carrera perdida): autentica al remitente (SPF/DKIM/DMARC), vigila la petición y verifica fuera de banda lo sensible. Es lo que distingue una política anti-fraude moderna de una lista de «señales de phishing» que la IA ya sortea.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Deja de mirar el texto. Apaga la ortografía y autentica al remitente: amenaza defensa ortografia off, amenaza defensa autenticacion on y amenaza evaluar. ¿Cuántos de los 5 ataques detecta? (answer <número>)",
+      "teach": "Autenticar, no leer\nSPF, DKIM y DMARC comprueban que el correo viene de verdad del dominio que dice, y se avisa de los dominios parecidos (f0rja en vez de forja). No importa lo bien escrito que esté: si el remitente es falso, cae.\nPor qué: la IA puede falsificar el texto, pero no la autenticación criptográfica del dominio de otro.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "threat.eval",
+            "where": {
+              "caught": 4
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 4,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "Tres comandos; el último es amenaza evaluar.",
+        "answer 4"
+      ],
+      "on_complete": "4 de 5, y sin un solo falso positivo: la autenticación pilla los remitentes falsos sin mirar el texto. Pero uno se cuela."
+    },
+    {
+      "id": "o2",
+      "text": "¿Cuál se cuela? Míralo en la línea «Se cuelan». (answer A<n>)",
+      "teach": "El que no usa un remitente falso\nEl ataque A4 llega en un correo de apariencia normal; el engaño no está en el correo, sino en una llamada posterior con una voz clonada que pide autorizar un pago. La autenticación del correo no lo toca.\nPor qué: cuando el ataque salta a otro canal (una llamada), las defensas de ese canal no valen.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "threat.eval",
+            "where": {
+              "caught": 4
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "A4",
+            "accept": [
+              "A4",
+              "a4"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "La línea «Se cuelan» lo dice.",
+        "answer A4"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Cierra el hueco con una política, no con un filtro: amenaza defensa fuera_de_banda on y amenaza evaluar. ¿Cuántos ataques detecta ahora? (answer <número>)",
+      "teach": "Verificación fuera de banda\nToda petición de dinero o de credenciales se confirma por un segundo canal independiente (llamar al número conocido de la persona, no al que viene en el mensaje). Así, la voz clonada no basta: hay que confirmar por otra vía.\nPor qué: no depende de detectar el ataque, sino de que una acción sensible nunca se autoriza con una sola señal que se puede falsificar.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "threat.eval",
+            "where": {
+              "caught": 5,
+              "fp": 0
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 5,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "amenaza defensa fuera_de_banda on y amenaza evaluar.",
+        "answer 5"
+      ],
+      "on_complete": "5 de 5 y 0 falsos positivos, sin leer el texto de ningún correo: autenticación + verificación fuera de banda."
+    },
+    {
+      "id": "c1",
+      "text": "Te llama tu jefe, reconoces su voz y te pide una transferencia urgente. ¿Qué haces?",
+      "teach": "Confianza cero en voz y vídeo\nUna voz clonada o un vídeo deepfake imitan a cualquiera con unos segundos de muestra. Reconocer la voz ya no prueba nada. Lo sensible se confirma por un canal que tú inicias (llamar al número de siempre, preguntar algo que solo esa persona sepa).\nPor qué: la identidad no se verifica por cómo suena o se ve alguien, sino por un segundo factor que el atacante no controla.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "la hago: he reconocido su voz y era urgente",
+          "why": "Una voz clonada suena idéntica; reconocerla no prueba que sea quien dice."
+        },
+        {
+          "id": "b",
+          "text": "confirmo por un canal que inicio yo (su número conocido) antes de autorizar nada",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "le pido que me lo mande por correo",
+          "why": "El correo también se falsifica; la clave es un segundo canal que tú inicias, no el que te llega."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Prueba algo que la voz suene como la suya?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "A medida que los generadores de IA mejoran, ¿qué le pasa a la detección basada en el texto?",
+      "teach": "La carrera armamentística\nCada mejora del generador borra una pista más, así que un detector que mira el texto va siempre por detrás. Por eso la defensa que aguanta no intenta «adivinar si lo escribió una IA»: se apoya en autenticación, señales de la petición y verificación de procesos, que no dependen de la calidad del texto.\nPor qué: se defiende lo que no se puede falsificar fácilmente (la criptografía del remitente, un segundo canal), no lo que la IA mejora cada mes.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "mejora, porque los detectores también usan IA",
+          "why": "El generador y el detector corren a la vez, pero el generador solo tiene que borrar pistas: lleva ventaja."
+        },
+        {
+          "id": "b",
+          "text": "empeora: cada mejora del generador le quita una pista, así que la defensa se mueve a la autenticación y el proceso",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "no cambia: el texto siempre delata a la IA",
+          "why": "Justo al revés: cada vez delata menos; por eso no se puede depender de ello."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Quién lo tiene más fácil, el que borra pistas o el que las busca?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la regla de la defensa: abre el editor con py, completa detectado y compruébala con py check.",
+      "teach": "Detección por capas, en código\nUn mensaje se detecta si ALGUNA capa activa lo pilla (comparando los rasgos del mensaje con lo que pilla cada capa).\nPor qué: es lo que hace amenaza evaluar con cada correo.",
+      "py_exercise": {
+        "id": "O8-02-detectado",
+        "title": "detectado(rasgos, capas): ¿lo pilla alguna capa?",
+        "function": "detectado",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef detectado(rasgos, capas):\n    # rasgos: lista del mensaje; capas: lista de listas (lo que pilla cada capa activa)\n    for pilla in capas:\n        for r in pilla:\n            if False:   # cambia: True si ese rasgo está en los del mensaje\n                return True\n    return False\n\nprint(detectado([\"remitente_falso\"], [[\"remitente_falso\"]]))   # True\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "remitente_falso"
+              ],
+              [
+                [
+                  "remitente_falso"
+                ]
+              ]
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              [
+                "faltas"
+              ],
+              [
+                [
+                  "remitente_falso"
+                ]
+              ]
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              [
+                "pide_dinero"
+              ],
+              [
+                [
+                  "remitente_falso"
+                ],
+                [
+                  "pide_dinero",
+                  "voz_clonada"
+                ]
+              ]
+            ],
+            "expected": true
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "O8-02-detectado",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "r in rasgos",
+        "La línea queda así: if r in rasgos:"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes frenar ataques con IA sin leer el texto —autenticando al remitente y verificando fuera de banda—, por qué la voz y el vídeo no prueban identidad, y por qué la defensa se desplaza al proceso. Con esto cierras O8.",
+  "debrief": {
+    "what_happened": "La autenticación del remitente frenó 4 de 5 ataques sin leer el texto y sin falsos positivos; el quinto (A4, la voz clonada) solo cayó con la verificación fuera de banda. La defensa que aguanta no analiza el estilo: autentica y verifica.",
+    "why": "Frente a ataques potenciados por IA, la detección basada en el texto es una carrera perdida; la defensa eficaz autentica al remitente, vigila la petición y confirma lo sensible por un segundo canal que uno inicia.",
+    "in_production": "Las organizaciones despliegan DMARC, avisos de dominios parecidos y, sobre todo, procedimientos de doble verificación para pagos y accesos (anti-BEC), partiendo de confianza cero en la voz y el vídeo.",
+    "simplifications": [
+      "Las capas detectan de forma binaria; en la práctica se combinan con puntuaciones y con formación",
+      "El fraude por voz y vídeo real es más variado; aquí se resume en un caso"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-llm-2025",
+    "ref.nist-ai-rmf"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: una defensa de menos. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Si activas SOLO la verificación fuera de banda (ni ortografía, ni autenticación, ni comportamiento), ¿cuántos de los 5 ataques detecta? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 2,
+          "tolerance": 0
+        },
+        "wrong_answer": "Revisa: la verificación fuera de banda pilla lo que pide dinero o credenciales por un segundo canal; ¿cuántos ataques piden dinero? (amenaza evaluar)",
+        "hints": [
+          "amenaza defensa fuera_de_banda on, las demás off, y amenaza evaluar.",
+          "Los que piden dinero o usan voz clonada."
+        ],
+        "on_complete": "Correcto: 2. La verificación fuera de banda frena A3 (la transferencia) y A4 (la voz), que son los que piden dinero; los otros necesitan la autenticación del remitente."
+      }
+    ]
+  }
+}
