@@ -47,11 +47,13 @@ var aligned: Dictionary = {}
 ## nombre -> {"on": {técnica: bool}} (P1)
 var apps: Dictionary = {}
 ## O7: clasificaciones, cobertura y laboratorios (caja de arena, aprobaciones y cadena)
-var asi: Dictionary = {"classified": {}, "covered": {}, "sandbox": {}, "mode": "explicacion", "decisions": {}, "labels": {}, "chain_def": {}}
+var asi: Dictionary = {"classified": {}, "covered": {}, "closed": {}, "sandbox": {}, "mode": "explicacion", "decisions": {}, "labels": {}, "chain_def": {}}
 ## E5: {"flags": {objetivo: tipo}, "grades": {hallazgo: grado}}
 var iso: Dictionary = {"flags": {}, "grades": {}}
 ## A7: {escenario: {defensa: bool}}
 var web: Dictionary = {}
+## O7-06: memoria persistente de un agente {norma_activa, origen, sesion, sesion_guardada, defensas}
+var mem: Dictionary = {}
 ## Tabla de embeddings (se carga al usarla)
 var embeddings: EmbeddingTable = null
 
@@ -115,7 +117,8 @@ func reset() -> void:
 	images.clear()
 	aligned.clear()
 	apps.clear()
-	asi = {"classified": {}, "covered": {}, "sandbox": {}, "mode": "explicacion", "decisions": {}, "labels": {}, "chain_def": {}}
+	asi = {"classified": {}, "covered": {}, "closed": {}, "sandbox": {}, "mode": "explicacion", "decisions": {}, "labels": {}, "chain_def": {}}
 	iso = {"flags": {}, "grades": {}}
 	web = {}
+	mem = {}
 	embeddings = null

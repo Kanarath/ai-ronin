@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "nota": "O7-07 · Un mismo hallazgo mapeado a los cuatro marcos que pide la industria. ATLAS se cita por TÁCTICA (nombres estables), no por identificador de técnica. NIST AI RMF por función. Ficticio.",
+  "catalogos": {
+    "atlas": ["Reconnaissance", "Initial Access", "Execution", "Persistence", "Defense Evasion", "Exfiltration", "Impact"],
+    "nist": ["GOVERN", "MAP", "MEASURE", "MANAGE"]
+  },
+  "que_son": {
+    "asi": "OWASP Top 10 for Agentic Applications: el riesgo del agente, para ingeniería y seguridad de aplicaciones.",
+    "llm": "OWASP Top 10 for LLM Applications: el riesgo a nivel del modelo y su aplicación.",
+    "atlas": "MITRE ATLAS: la TÁCTICA del adversario (qué consigue), el idioma de la inteligencia de amenazas.",
+    "nist": "NIST AI RMF: la FUNCIÓN de gestión del riesgo (GOVERN, MAP, MEASURE, MANAGE), el idioma de la gobernanza."
+  },
+  "hallazgos": [
+    {"id": "F1", "texto": "Una página web que el agente lee le ordena, en texto oculto, reenviar datos del cliente a un tercero.",
+     "asi": "ASI01", "llm": "LLM01", "atlas": "Initial Access", "nist": "MAP",
+     "por_que": {"asi": "El contenido externo secuestra el objetivo del agente.", "llm": "Es una inyección de prompt indirecta.", "atlas": "La instrucción inyectada es la vía de entrada del adversario.", "nist": "Se identifica como riesgo del sistema en la fase de diseño (MAP)."}},
+    {"id": "F2", "texto": "El agente ejecuta, sin aislamiento, código que venía dentro de un fichero subido por un cliente.",
+     "asi": "ASI05", "llm": "LLM05", "atlas": "Execution", "nist": "MANAGE",
+     "por_que": {"asi": "Es ejecución de código inesperada.", "llm": "Es manejo inseguro de la salida/entrada que acaba ejecutándose.", "atlas": "El adversario logra ejecutar código.", "nist": "Se trata con un control (la caja de arena): fase MANAGE."}},
+    {"id": "F3", "texto": "El agente guarda una norma falsa en su memoria persistente y la sigue aplicando en sesiones posteriores.",
+     "asi": "ASI06", "llm": "LLM04", "atlas": "Persistence", "nist": "MEASURE",
+     "por_que": {"asi": "Es envenenamiento de la memoria y el contexto.", "llm": "Es envenenamiento de datos/modelo (la memoria son datos del sistema).", "atlas": "El efecto persiste entre sesiones: táctica de persistencia.", "nist": "Se detecta vigilando y midiendo las escrituras en memoria: fase MEASURE."}}
+  ]
+}

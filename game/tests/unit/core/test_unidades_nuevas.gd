@@ -38,6 +38,8 @@ print(residuos([1, 0, 1], [0.8, 0.3, 0.4]))   # unos [0.2, -0.3, 0.6]
 	"O7-05": "def hay_fuga(ocurre, fuga):\n    for paso in fuga:\n        if ocurre.get(paso, False):\n            return True\n    return False\n",
 	"A7-01": "def accion_peligrosa(accion, origen, con_efecto):\n    return origen == \"web\" and accion in con_efecto\n",
 	"A7-02": "def necesita_confirmacion(accion, con_efecto):\n    return accion in con_efecto\n",
+	"O7-06": "def sigue_activa(guardada_en, sesion_actual, caducidad):\n    if not caducidad:\n        return True\n    return sesion_actual <= guardada_en\n",
+	"O7-07": "def ficha_completa(mapeo, marcos):\n    for m in marcos:\n        if m not in mapeo:\n            return False\n    return True\n",
 	"T10-03": "# Completa la línea marcada y compruébala con py check.\ndef de_los_que_devuelven(aprobado, devuelve):\n    # aprobado y devuelve: listas de True o False, una posición por solicitud\n    buenos = [a for a, d in zip(aprobado, devuelve) if d]\n    aprobados = buenos.count(True)\n    return aprobados / len(buenos)\n\nprint(de_los_que_devuelven([True, False, True, True], [True, True, False, True]))   # unos 0.667\n",
 }
 
@@ -233,3 +235,23 @@ func test_A7_motor() -> void:
 	var fina := WebCommands.battery("ordenador", ["credencial_delegada", "sin_ejecutables", "confirmacion_verificable", "allowlist_acciones", "dominio_tarea"])
 	assert_eq(fina["attacks_ok"], 0, "la acotada tambien")
 	assert_eq(fina["legit_ok"], 4, "y no rompe nada")
+
+
+func test_O7_06_completa() -> void:
+	_walk("O7-06", ["O7-02"], ["memoria estado", "memoria envenenar", "answer si", "hipotesis sí", "memoria nueva_sesion", "memoria caso", "answer si", "answer b", "memoria defensa aislar on", "memoria limpiar", "memoria envenenar", "answer no", "memoria defensa aislar off", "memoria limpiar", "memoria envenenar", "memoria defensa caducidad on", "memoria nueva_sesion", "memoria caso", "answer no", "answer b", "PY", "memoria defensa caducidad off", "memoria defensa origen on", "memoria limpiar", "memoria envenenar", "answer no"])
+
+
+func test_O7_07_completa() -> void:
+	_walk("O7-07", ["O7-06"], ["marco list", "marco show F1", "marco set F1 asi ASI01", "marco set F1 llm LLM01", "marco set F1 atlas Initial Access", "marco set F1 nist MAP", "marco card F1", "marco set F3 asi ASI06", "marco set F3 llm LLM04", "marco set F3 atlas Persistence", "marco set F3 nist MEASURE", "marco card F3", "answer Persistence", "answer b", "asi close D10 ASI05", "asi close D11 ASI09", "answer b", "PY", "marco set F2 asi ASI05", "marco set F2 llm LLM05", "marco set F2 atlas Execution", "marco set F2 nist MANAGE", "marco card F2", "answer Execution"])
+
+
+func test_O7_mejoras_motor() -> void:
+	# riesgo secundario: no cuenta como correcto pero se reconoce
+	game.shell.execute("asi classify I5 ASI02")
+	assert_eq(game.shell.events_named("asi.classified")[-1]["data"]["correct_count"], 0)
+	game.shell.execute("asi classify I5 ASI05")
+	assert_eq(game.shell.events_named("asi.classified")[-1]["data"]["correct_count"], 1)
+	# cerrar el mapa
+	game.shell.execute("asi close D10 ASI05")
+	game.shell.execute("asi close D11 ASI09")
+	assert_eq(game.shell.events_named("asi.closed")[-1]["data"]["gaps"], 0)

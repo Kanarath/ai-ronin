@@ -33,6 +33,9 @@ static func register(reg: CommandRegistry) -> void:
 		CommandSignature.new().pos("defensa", "D1 … D9").pos("riesgo", "ASI01 … ASI10").example("asi cover D1 ASI01"))
 	add.call("asi coverage", "Mapa de cobertura: cada riesgo ASI y las defensas que lo cubren.",
 		func(c: CommandContext, a: Dictionary) -> CommandResult: return _coverage(c, a), CommandSignature.new())
+	add.call("asi close", "Cierra el mapa: asigna las defensas nuevas (caja de arena y aprobación verificable) a los huecos ASI05 y ASI09.",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _close(c, a),
+		CommandSignature.new().pos("defensa", "D10 o D11 (las de O7-03 y O7-04)").pos("riesgo", "ASI05 o ASI09").example("asi close D10 ASI05"))
 
 
 static func data() -> Dictionary:
@@ -111,6 +114,10 @@ static func _classify(c: CommandContext, a: Dictionary) -> CommandResult:
 	if ok:
 		c.world.asi["classified"][inc["id"]] = risk
 		r.line("✓ %s → %s · %s" % [inc["id"], risk, inc["por_que"]], "ok")
+	elif risk in inc.get("secundarios", []):
+		var x := _find("riesgos", risk)
+		r.line("~ Casi: en %s también hay algo de %s (%s), pero no es la CAUSA RAÍZ." % [inc["id"], risk, x["es"]], "warn")
+		r.line("  Se clasifica por lo que falló primero, el punto donde un control habría cortado la cadena. Piensa en el origen, no en el efecto.", "muted")
 	else:
 		var x := _find("riesgos", risk)
 		r.line("✗ %s no es %s (%s). Vuelve a leerlo: ¿qué falló primero? Pista: compara con asi risk %s." % [inc["id"], risk, x["es"], risk], "warn")
@@ -172,4 +179,35 @@ static func _coverage(c: CommandContext, _a: Dictionary) -> CommandResult:
 	else:
 		r.line("Sin cubrir: %s. %s" % [", ".join(uncovered), data()["nota_prioridad"]], "normal")
 	c.emit("asi.coverage", {"mapped": done.size(), "uncovered": ",".join(uncovered), "uncovered_count": uncovered.size()})
+	return r
+
+
+static func _new_def(id: String) -> Dictionary:
+	for x: Dictionary in data().get("defensas_nuevas", []):
+		if x["id"] == id.strip_edges().to_upper():
+			return x
+	return {}
+
+
+static func _close(c: CommandContext, a: Dictionary) -> CommandResult:
+	var d := _new_def(a["defensa"])
+	if d.is_empty():
+		return CommandResult.error("Defensas nuevas: D10 (caja de arena) o D11 (aprobación verificable)")
+	var risk := _norm(a["riesgo"])
+	var ok: bool = risk in d["cubre"]
+	var r := CommandResult.new()
+	if ok:
+		c.world.asi["closed"][d["id"]] = risk
+		r.line("✓ %s cubre %s. Hueco cerrado." % [d["id"], risk], "ok")
+	else:
+		r.line("✗ %s no cubre %s. D10 es la caja de arena (ejecución de código); D11, la aprobación verificable." % [d["id"], risk], "warn")
+	var closed := 0
+	for x: Dictionary in data().get("defensas_nuevas", []):
+		if c.world.asi["closed"].get(x["id"], "") in x["cubre"]:
+			closed += 1
+	var gaps := 2 - closed
+	r.line("Huecos que quedan (ASI05, ASI09): %d" % gaps, "muted" if gaps > 0 else "ok")
+	if gaps == 0:
+		r.line("Mapa completo: los diez riesgos ASI tienen al menos una defensa. Lo que construiste en O7-03 y O7-04 tapa justo lo que O7-02 dejó abierto.", "ok")
+	c.emit("asi.closed", {"defense": d["id"], "risk": risk, "correct": ok, "closed_count": closed, "gaps": gaps})
 	return r

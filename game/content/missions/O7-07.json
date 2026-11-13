@@ -1,0 +1,300 @@
+{
+  "id": "O7-07",
+  "schema_version": 1,
+  "title": "Un hallazgo, cuatro marcos",
+  "unit": "O7",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "O7-06"
+  ],
+  "competencies": {
+    "requires": [
+      "O7.memoria-envenenada",
+      "O7.cobertura"
+    ],
+    "trains": [
+      "O7.multimarco",
+      "O7.cierre-cobertura"
+    ]
+  },
+  "briefing": "Encuentras un fallo y tienes que contarlo a cuatro públicos: al equipo de ingeniería (OWASP), al de aplicación (LLM Top 10), al de inteligencia de amenazas (MITRE ATLAS) y al de gobernanza (NIST AI RMF). Es lo que piden las ofertas de AI security: hablar los cuatro idiomas. Y, de paso, cierras el mapa de cobertura que O7-02 dejó a medias.",
+  "learning_objectives": [
+    "Mapear un mismo hallazgo a ASI, LLM Top 10, MITRE ATLAS y NIST AI RMF",
+    "Explicar a qué público sirve cada marco",
+    "Cerrar el mapa de cobertura con las defensas construidas"
+  ],
+  "mentor_intro": "El mismo fallo, cuatro idiomas: según con quién hables, cambia el nombre, no el fallo.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Ningún marco se usa solo. Las ofertas de AI red teamer y de gobernanza piden mapear hallazgos entre OWASP, MITRE ATLAS y NIST a la vez: es lo que convierte un hallazgo técnico en algo que entienden el SOC, la dirección y el auditor.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira los hallazgos y los cuatro marcos: marco list. Después, el primero: marco show F1.",
+      "teach": "Cuatro marcos, cuatro públicos\nASI (OWASP agéntico) y LLM Top 10 son para quien construye; MITRE ATLAS nombra la TÁCTICA del adversario, para inteligencia de amenazas; NIST AI RMF nombra la FUNCIÓN de gestión (GOVERN, MAP, MEASURE, MANAGE), para gobernanza.\nPor qué: cada equipo decide con su marco; un hallazgo que no se traduce no llega a quien tiene que actuar.",
+      "validator": {
+        "type": "sequence",
+        "steps": [
+          {
+            "type": "event",
+            "event": "marco.listed"
+          },
+          {
+            "type": "event",
+            "event": "marco.shown",
+            "where": {
+              "finding": "F1"
+            }
+          }
+        ]
+      },
+      "hints": [
+        "marco list y luego marco show F1."
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Mapea F1 (una web que ordena al agente reenviar datos) en los cuatro marcos: marco set F1 asi …, llm …, atlas … y nist …. Luego mira la ficha: marco card F1.",
+      "teach": "El primer hallazgo\nEs la inyección indirecta de A7-01: ASI01 (secuestro del objetivo), LLM01 (inyección de prompt), táctica ATLAS de entrada y, en NIST, la función donde se identifica el riesgo en el diseño.\nPor qué: el mismo fallo tiene un nombre en cada marco; la ficha los junta.",
+      "validator": {
+        "type": "event",
+        "event": "marco.card",
+        "where": {
+          "finding": "F1",
+          "complete": true
+        }
+      },
+      "hints": [
+        "marco set F1 asi ASI01 · llm LLM01 · atlas Initial Access · nist MAP; luego marco card F1.",
+        "ATLAS: la táctica con la que el adversario entra. NIST: dónde se identifica el riesgo."
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Mapea F3, el envenenamiento de memoria de O7-06: marco set F3 asi …, llm …, atlas … y nist …. ¿Qué táctica de ATLAS le corresponde? (answer <táctica>)",
+      "teach": "Lo que persiste\nF3 es ASI06 y, en el LLM Top 10, envenenamiento de datos/modelo (la memoria son datos del sistema). En ATLAS, un efecto que dura entre sesiones es la táctica de Persistence; en NIST, se vigila y mide (MEASURE).\nPor qué: relacionar ASI06 con la persistencia de ATLAS es lo que hace que el SOC lo trate como lo que es: un punto de apoyo del atacante que se queda.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "marco.card",
+            "where": {
+              "finding": "F3",
+              "complete": true
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "Persistence",
+            "accept": [
+              "persistence",
+              "persistencia"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "marco set F3 asi ASI06 · llm LLM04 · atlas Persistence · nist MEASURE.",
+        "answer Persistence"
+      ]
+    },
+    {
+      "id": "c1",
+      "text": "¿Para qué sirve mapear el mismo hallazgo a varios marcos?",
+      "teach": "Cada público, su marco\nEl ingeniero actúa con ASI/LLM, el analista de amenazas con ATLAS, la dirección y el auditor con NIST. Un hallazgo bien mapeado llega a los cuatro sin traducciones a mano.\nPor qué: en seguridad de IA, saber traducir entre marcos vale tanto como encontrar el fallo; es lo que piden las ofertas.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "para que parezca más trabajo del que es",
+          "why": "Al contrario: ahorra traducir el hallazgo una y otra vez para cada equipo."
+        },
+        {
+          "id": "b",
+          "text": "porque cada público (ingeniería, amenazas, gobernanza) decide con un marco distinto",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "porque solo uno de los cuatro es el correcto y hay que encontrarlo",
+          "why": "Los cuatro son correctos a la vez: describen el mismo fallo desde ángulos distintos."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Quién usa ATLAS y quién usa NIST?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o4",
+      "text": "Cierra el mapa que O7-02 dejó abierto. Las defensas que construiste en O7-03 y O7-04 tapan ASI05 y ASI09: asi close D10 ASI05 y asi close D11 ASI09.",
+      "teach": "El mapa, completo\nO7-02 dejó dos huecos: ASI05 (ejecución de código) y ASI09 (confianza humano-agente). En O7-03 montaste la caja de arena y en O7-04 la aprobación verificable. Ahora las asignas y el mapa queda sin huecos.\nPor qué: cerrar el mapa es el entregable para el comité: de diez riesgos, ninguno sin defensa, y cada defensa señalando la misión donde se construyó.",
+      "validator": {
+        "type": "event",
+        "event": "asi.closed",
+        "where": {
+          "gaps": 0
+        }
+      },
+      "hints": [
+        "asi close D10 ASI05 y asi close D11 ASI09.",
+        "D10 es la caja de arena (O7-03); D11, la aprobación verificable (O7-04)."
+      ],
+      "on_complete": "Mapa cerrado: los diez riesgos ASI tienen defensa. Lo que faltaba lo construiste tú en O7-03 y O7-04."
+    },
+    {
+      "id": "c2",
+      "text": "Con el mapa cerrado, ¿qué le presentas al comité de riesgos?",
+      "teach": "El entregable\nUna matriz: cada riesgo ASI, la defensa que lo cubre, la evidencia (la misión o el lab donde se midió) y cuándo se revisa. Mapeada además a LLM Top 10, ATLAS y NIST para cada público.\nPor qué: es lo que convierte semanas de trabajo técnico en una página que la dirección entiende y aprueba.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "el código de cada defensa, para que lo revisen",
+          "why": "El comité no revisa código; necesita el riesgo, la cobertura y la evidencia."
+        },
+        {
+          "id": "b",
+          "text": "la matriz de riesgos ASI frente a defensas, con evidencia y mapeo a los otros marcos",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "la lista de los diez riesgos, sin más",
+          "why": "La lista sin la cobertura ni la evidencia no dice si estáis protegidos."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué entiende y aprueba un comité: código o una matriz de riesgo y cobertura?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la comprobación de la ficha: abre el editor con py, completa ficha_completa y compruébala con py check.",
+      "teach": "Ficha completa, en código\nUn hallazgo está listo para presentar si tiene los cuatro marcos rellenos.\nPor qué: es lo que comprueba marco card antes de enseñar la ficha.",
+      "py_exercise": {
+        "id": "O7-07-ficha",
+        "title": "ficha_completa(mapeo, marcos): ¿están los cuatro?",
+        "function": "ficha_completa",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef ficha_completa(mapeo, marcos):\n    # mapeo: {marco: valor}; marcos: lista de los marcos que hacen falta\n    for m in marcos:\n        if m not in mapeo:\n            return True   # cambia: si falta un marco, la ficha NO esta completa\n    return True\n\nprint(ficha_completa({\"asi\": \"ASI01\", \"llm\": \"LLM01\"}, [\"asi\", \"llm\", \"atlas\", \"nist\"]))   # False\n",
+        "cases": [
+          {
+            "args": [
+              {
+                "asi": "ASI01",
+                "llm": "LLM01"
+              },
+              [
+                "asi",
+                "llm",
+                "atlas",
+                "nist"
+              ]
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              {
+                "asi": "ASI01",
+                "llm": "LLM01",
+                "atlas": "Execution",
+                "nist": "MAP"
+              },
+              [
+                "asi",
+                "llm",
+                "atlas",
+                "nist"
+              ]
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              {},
+              [
+                "asi"
+              ]
+            ],
+            "expected": false
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "O7-07-ficha",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "return False cuando falta un marco",
+        "La línea marcada queda así: return False"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes mapear un hallazgo a ASI, LLM Top 10, MITRE ATLAS y NIST AI RMF, explicar a qué público sirve cada marco y has cerrado el mapa de cobertura con las defensas que construiste. Has completado O7.",
+  "debrief": {
+    "what_happened": "Has traducido el mismo hallazgo a los cuatro marcos y has visto que cada público decide con el suyo. Y has cerrado el mapa de cobertura: las defensas de O7-03 y O7-04 tapan los dos huecos que O7-02 había dejado, así que los diez riesgos ASI quedan cubiertos.",
+    "why": "Ningún marco se usa solo: traducir un hallazgo entre OWASP, ATLAS y NIST es lo que lo lleva a ingeniería, al SOC y a la dirección; y el mapa de cobertura cerrado es el entregable de gobernanza.",
+    "in_production": "Los equipos mantienen una matriz que mapea cada hallazgo a varios marcos y una matriz de riesgos frente a controles con evidencia y fecha de revisión, y las presentan al comité y a los auditores.",
+    "simplifications": [
+      "Tres hallazgos y un mapeo por marco; en la realidad un hallazgo puede tocar varias tácticas y funciones",
+      "ATLAS se cita por táctica, no por identificador de técnica"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-agentic-2026",
+    "ref.mitre-atlas",
+    "ref.nist-ai-rmf"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: otro hallazgo. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Mapea F2 (el agente ejecuta código de un fichero del cliente) en los cuatro marcos y enseña su ficha. ¿Qué táctica de ATLAS le corresponde? (answer <táctica>)",
+        "validator": {
+          "type": "answer",
+          "expected": "Execution",
+          "accept": [
+            "execution",
+            "ejecucion",
+            "ejecución"
+          ]
+        },
+        "wrong_answer": "Revisa: ¿qué consigue el adversario con F2? (marco list da las tácticas)",
+        "hints": [
+          "marco set F2 asi ASI05 · llm LLM05 · atlas Execution · nist MANAGE, y marco card F2.",
+          "El adversario logra ejecutar código."
+        ],
+        "on_complete": "Correcto: Execution. F2 es ASI05 / LLM05, y el adversario consigue ejecución de código."
+      }
+    ]
+  }
+}

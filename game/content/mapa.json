@@ -112,7 +112,7 @@
     },
     {
       "unit": "O7",
-      "para_que": "Riesgos agénticos: el OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10); clasificar incidentes y medir qué riesgos cubren tus defensas."
+      "para_que": "Riesgos agénticos: el OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10); clasificar incidentes, mapa de cobertura, caja de arena (ASI05), aprobación verificable (ASI09), ataque en cadena, memoria envenenada (ASI06) y el puente entre marcos (ASI, LLM Top 10, MITRE ATLAS y NIST)."
     },
     {
       "unit": "C1",

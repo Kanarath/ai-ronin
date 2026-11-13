@@ -75,7 +75,15 @@ Clasificar diez incidentes de la forja en ASI01–ASI10.
 **O7-05 · La cadena que no se corta sola** (ASI01–ASI08)
 - Un incidente como cadena de seis eslabones que entra por dos sitios; cortarla en el cuello de botella y reforzarla en profundidad. Comando `chain`.
 
-**Comandos:** `asi`, `sandbox`, `approvals`, `chain`.
+**O7-06 · La memoria que no olvida** (ASI06)
+- Envenenar la memoria persistente de un agente sin darle una orden y ver que el daño persiste entre sesiones y usuarios; defensas de entrada (aislar, origen) y de permanencia (revisión, caducidad). Comando `memoria`.
+
+**O7-07 · Un hallazgo, cuatro marcos**
+- Mapear un mismo hallazgo a ASI, LLM Top 10, MITRE ATLAS (por táctica) y NIST AI RMF (por función), y cerrar el mapa de cobertura que O7-02 dejó abierto con las defensas de O7-03 y O7-04. Comandos `marco` y `asi close`.
+
+Mejoras de O7-01/02: la clasificación reconoce los riesgos secundarios de un incidente («casi: también hay algo de ASIxx, pero no es la causa raíz») sin darlos por buenos.
+
+**Comandos:** `asi`, `sandbox`, `approvals`, `chain`, `memoria`, `marco`.
 
 ### E5 · Auditor de ISO/IEC 42001
 
