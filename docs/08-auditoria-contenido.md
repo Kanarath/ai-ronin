@@ -45,3 +45,11 @@ Bien cubierto: RAG y su seguridad (A2), agentes/MCP/multiagente (A3–A5), suppl
 1. ✅ Corregir la redacción de `study_path` (hecho).
 2. ✅ **O8 · IA ofensiva y defensa** (hueco nº1) — hecho.
 Todos los huecos de la auditoría están hechos (O9, E2-05, A1-08, O3-02, T13).
+
+## Mejoras de red team (previas a la versión 0.3.0)
+
+Antes de publicar, tres mejoras centradas en red team, todas jugables en el Dojo:
+
+1. ✅ **Lab real medido (garak/promptfoo/PyRIT)** → laboratorio `forja/labs/A1-09_redteam/` y misión **A1-09 «El red team, con número»** (comando `forja medir A1-09`). Mide la tasa de éxito de una batería de jailbreaks antes y después de una defensa (sin defensa 15/18 → clasificador 6/18 → con normalización 3/18), con el patrón batería→objetivo→detector→tasa y una señal inofensiva (canario). Objetivo simulado offline determinista y puente opcional a Ollama. La evidencia alimenta el portafolio.
+2. ✅ **Modo CTF / retos** → comando `ctf` (content/ctf.json): cinco retos auto-contenidos, cada uno un oráculo vulnerable (OWASP LLM01/LLM02/LLM06, inyección indirecta, persistencia en memoria). Se dispara la vulnerabilidad por su mecanismo con `ctf probar` y se captura la bandera `CTF{…}` con `ctf enviar`. No operativo: banderas inofensivas, técnicas por categoría.
+3. ✅ **ATLAS operativo** → misión **O3-03 «La cadena, paso a paso»** (comando `atlas`): mapea los ataques ya hechos a la forja a las tácticas de MITRE ATLAS y monta la kill-chain, de Reconnaissance a Impact. Marco operativo (por táctica del adversario) frente a OWASP (riesgo) y MAESTRO (capa).
