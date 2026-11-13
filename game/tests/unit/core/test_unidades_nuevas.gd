@@ -42,6 +42,12 @@ print(residuos([1, 0, 1], [0.8, 0.3, 0.4]))   # unos [0.2, -0.3, 0.6]
 	"O7-07": "def ficha_completa(mapeo, marcos):\n    for m in marcos:\n        if m not in mapeo:\n            return False\n    return True\n",
 	"T11-01": "def ventajas(recompensas):\n    media = sum(recompensas) / len(recompensas)\n    return [r - media for r in recompensas]\n",
 	"T11-02": "def mas_votada(muestras):\n    conteo = {}\n    for m in muestras:\n        conteo[m] = conteo.get(m, 0) + 1\n    return max(conteo, key=lambda m: conteo[m])\n",
+	"A3-05": "def cabe(piezas, ventana):
+    total = 0
+    for t in piezas:
+        total += t
+    return total <= ventana
+",
 	"T10-03": "# Completa la línea marcada y compruébala con py check.\ndef de_los_que_devuelven(aprobado, devuelve):\n    # aprobado y devuelve: listas de True o False, una posición por solicitud\n    buenos = [a for a, d in zip(aprobado, devuelve) if d]\n    aprobados = buenos.count(True)\n    return aprobados / len(buenos)\n\nprint(de_los_que_devuelven([True, False, True, True], [True, True, False, True]))   # unos 0.667\n",
 }
 
@@ -276,3 +282,7 @@ func test_T11_motor() -> void:
 	ReasoningSim.grpo(h, 40, 8, 0.5, 42, false)
 	assert_almost_eq(ReasoningSim.hack_rate(h), 1.0, 0.001)
 	assert_almost_eq(h.accuracy(), 0.0, 0.001)
+
+
+func test_A3_05_completa() -> void:
+	_walk("A3-05", ["A3-04"], ["context show", "context build", "answer 1240", "hipotesis no", "context set recuperar on", "context build", "answer 1440", "answer b", "hipotesis no", "context set skills on", "context set compactar on", "context build", "answer no", "answer b", "context set recordar on", "context build", "answer si", "answer b", "PY", "context set skills off", "context set compactar off", "context build", "answer 1460"])

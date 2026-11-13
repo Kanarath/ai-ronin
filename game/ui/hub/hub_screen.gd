@@ -719,6 +719,15 @@ func _on_sim_event(e: Dictionary) -> void:
 			_plot.set_highlight(d["id"], PackedStringArray(d.get("neighbors", [])))
 		"bot.attacks", "bot.eval", "rag.attacks", "rag.eval", "agent.attacks", "agent.eval", "mcp.attacks", "mcp.eval", "a2a.attacks", "a2a.eval", "supply.attacks", "supply.eval":
 			_show_security(e["name"], d)
+		"context.build":
+			var bars: Array = []
+			var labels := PackedStringArray(d["labels"])
+			var values := PackedFloat64Array(d["values"])
+			var col: Color = RoninPalette.TEAL if bool(d["fits"]) else RoninPalette.RED
+			for i in labels.size():
+				bars.append({"label": labels[i], "value": values[i], "color": col, "note": "%d t" % int(values[i] * 1000.0)})
+			_show_diagram()
+			_diagram.show_bars("Contexto · %d/1000 tokens%s" % [int(d["total"]), "" if bool(d["fits"]) else " · SE PASA"], bars)
 		"reason.grpo", "reason.dpo", "reason.distill":
 			var cur := PackedFloat64Array(d["curve"])
 			var xs := PackedFloat64Array()

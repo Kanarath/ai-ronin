@@ -31,6 +31,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	AlignCommands.register(registry)
 	AppCommands.register(registry)
 	ReasonCommands.register(registry)
+	ContextCommands.register(registry)
 	EvalsCommands.register(registry)
 	MissionCommands.register(registry)
 	OptimCommands.register(registry)

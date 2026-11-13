@@ -48,6 +48,8 @@ var aligned: Dictionary = {}
 var apps: Dictionary = {}
 ## nombre -> ReasoningSim.Policy (T11)
 var reasons: Dictionary = {}
+## A3-05: técnicas de contexto activas
+var ctx: Dictionary = {}
 ## O7: clasificaciones, cobertura y laboratorios (caja de arena, aprobaciones y cadena)
 var asi: Dictionary = {"classified": {}, "covered": {}, "closed": {}, "sandbox": {}, "mode": "explicacion", "decisions": {}, "labels": {}, "chain_def": {}}
 ## E5: {"flags": {objetivo: tipo}, "grades": {hallazgo: grado}}
@@ -120,6 +122,7 @@ func reset() -> void:
 	aligned.clear()
 	apps.clear()
 	reasons.clear()
+	ctx = {}
 	asi = {"classified": {}, "covered": {}, "closed": {}, "sandbox": {}, "mode": "explicacion", "decisions": {}, "labels": {}, "chain_def": {}}
 	iso = {"flags": {}, "grades": {}}
 	web = {}

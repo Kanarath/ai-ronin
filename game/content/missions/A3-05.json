@@ -1,0 +1,375 @@
+{
+  "id": "A3-05",
+  "schema_version": 1,
+  "title": "Lo que cabe en la ventana",
+  "unit": "A3",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 35,
+  "requires_missions": [
+    "A3-04"
+  ],
+  "competencies": {
+    "requires": [
+      "A3.forja-agente"
+    ],
+    "trains": [
+      "A3.ingenieria-contexto",
+      "A3.tipos-memoria",
+      "A3.compactacion"
+    ]
+  },
+  "briefing": "Tu agente de A3 ya valida argumentos y pide aprobación. Pero un caso de verdad es largo: muchos turnos, muchas herramientas, documentos. Y la ventana de contexto NO es infinita. Hoy aprendes ingeniería de contexto: meter lo justo para responder sin pasarte del presupuesto de tokens.",
+  "learning_objectives": [
+    "Explicar por qué un contexto más grande no es siempre mejor",
+    "Gestionar el presupuesto de tokens con skills, compactación y recuperación",
+    "Distinguir memoria a corto plazo (en contexto) de memoria a largo plazo"
+  ],
+  "mentor_intro": "El contexto es un presupuesto, no un cajón sin fondo.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "La ingeniería de contexto es una de las habilidades más pedidas de 2026: decidir qué entra en la ventana (sistema, herramientas, historial, documentos, memoria) y qué se queda fuera. Un agente que mete de todo se pasa de tokens, pierde lo importante y cuesta una fortuna; uno bien montado responde con una fracción.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira el caso y arma el contexto tal cual: context show y context build. ¿Cuántos tokens ocupa? (answer <número>)",
+      "teach": "La ventana es fija\nEl agente necesita dos datos para responder: el id del pedido (que el cliente dijo en el turno 3) y la política de devoluciones (en un documento). De base mete el sistema, todas las herramientas y el historial completo.\nPor qué: sin gestionar nada, el contexto se dispara; hay que medir cuánto ocupa.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "context.build"
+          },
+          {
+            "type": "answer",
+            "expected": 1240,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "context show y context build; mira la línea de tokens.",
+        "answer 1240"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Falta la política. Añádela: context set recuperar on y context build. ¿Cuántos tokens ahora? (answer <número>)",
+      "prediction": {
+        "prompt": "La ventana son 1000 tokens. Si añades el documento, ¿cabrá?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "Más no es mejor\nTraer el documento añade el dato que falta… pero ya estabas por encima del presupuesto, así que ahora te pasas más todavía.\nPor qué: la ventana tiene un tope. Cuando se llena, se trunca lo más antiguo; meter más no cabe, y encima tira lo de antes.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "context.build",
+            "where": {
+              "pol_ok": true
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 1440,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "context set recuperar on y context build.",
+        "answer 1440"
+      ],
+      "on_complete": "1440 de 1000: te pasas aún más. Un contexto más grande no cabe; hay que hacer sitio."
+    },
+    {
+      "id": "c1",
+      "text": "¿Qué pasa cuando el contexto no cabe en la ventana?",
+      "teach": "Truncado\nCuando el contexto supera la ventana, el sistema recorta: normalmente lo más antiguo (el principio del historial), que es justo donde el cliente dio el id del pedido.\nPor qué: no es que el modelo «lea rápido»; es que lo que no cabe, no entra. Y lo que se cae suele ser lo que ya no ves.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "el modelo lee más despacio pero lo lee todo",
+          "why": "No: lo que no cabe en la ventana no se procesa."
+        },
+        {
+          "id": "b",
+          "text": "se trunca lo más antiguo, y ahí estaba el id del pedido del turno 3",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "el modelo resume solo lo que sobra",
+          "why": "Resumir es una técnica que TÚ aplicas (compactar); por defecto se trunca."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué parte del historial se cae primero y qué había ahí?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Haz sitio: carga herramientas a demanda y compacta el historial. context set skills on, context set compactar on y context build. ¿Puede responder ya? (answer si o no)",
+      "prediction": {
+        "prompt": "Ya cabe con holgura. ¿Podrá responder?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "Recortar lo que ocupa\nskills carga la ficha de una herramienta solo cuando se usa (400 → 80). compactar resume el historial largo en pocas líneas (720 → 100). Ahora cabe de sobra.\nPor qué: son las dos palancas de tokens más grandes; con ellas el contexto baja muchísimo.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "context.build",
+            "where": {
+              "fits": true,
+              "answer": false
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "no",
+            "accept": [
+              "no"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "Dos context set … on y context build. Mira si puede responder.",
+        "answer no"
+      ],
+      "on_complete": "Cabe (500 tokens) pero NO puede responder: al compactar el historial se perdió el id del pedido."
+    },
+    {
+      "id": "c2",
+      "text": "Cabe de sobra, pero no puede responder. ¿Por qué?",
+      "teach": "Compactar también olvida\nEl resumen del historial se queda con lo general y tira el detalle: el id del pedido del turno 3 ya no está. Caber no basta si lo que cabe no tiene el dato.\nPor qué: la compactación cambia tokens por detalle; hay que decidir qué detalle no se puede perder.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque 500 tokens siguen siendo demasiados",
+          "why": "500 < 1000: cabe de sobra. El problema no es el tamaño."
+        },
+        {
+          "id": "b",
+          "text": "porque al compactar el historial se perdió el id del pedido, y ya no está en ningún sitio",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "porque las skills ocultan las herramientas",
+          "why": "Las skills cargan la herramienta cuando se usa; no tienen que ver con el id del pedido."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Dónde estaba el id del pedido y qué le pasó al compactar?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o4",
+      "text": "Guárdalo antes de compactar: context set recordar on y context build. ¿Puede responder ahora? (answer si o no)",
+      "teach": "Memoria a largo plazo\nrecordar escribe el dato clave (el id) en la memoria a largo plazo: una nota pequeña (20 tokens) que sobrevive a la compactación. Ahora el agente tiene los dos datos y cabe.\nPor qué: lo que no puede perderse no se deja en el historial (memoria a corto plazo, que se compacta); se escribe en la memoria a largo plazo.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "context.build",
+            "where": {
+              "answer": true
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "si",
+            "accept": [
+              "si",
+              "sí"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "context set recordar on y context build.",
+        "answer si"
+      ],
+      "on_complete": "520 tokens, los dos datos presentes: responde. La clave fue guardar el id en memoria ANTES de compactar."
+    },
+    {
+      "id": "c3",
+      "text": "¿Qué distingue la memoria a corto plazo de la de largo plazo?",
+      "teach": "Dos memorias\nLa de corto plazo es el propio contexto: el historial de la conversación, que se compacta o se trunca. La de largo plazo es un almacén aparte del que se recupera solo lo que hace falta, y persiste entre sesiones.\nPor qué: la ingeniería de contexto consiste en mover lo importante del historial volátil a una memoria duradera y traerlo cuando toca.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "son lo mismo con otro nombre",
+          "why": "No: una vive en la ventana y se pierde; la otra es un almacén aparte que persiste."
+        },
+        {
+          "id": "b",
+          "text": "la de corto plazo es el contexto (se compacta o trunca); la de largo plazo es un almacén aparte que persiste y del que se recupera",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "la de largo plazo es más rápida",
+          "why": "No es cuestión de velocidad, sino de qué se conserva y dónde."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué le pasó al historial al compactar, y qué a la nota de memoria?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa el control del presupuesto: abre el editor con py, completa cabe y compruébala con py check.",
+      "teach": "El presupuesto, en código\nLa suma de los tokens de todas las piezas tiene que caber en la ventana.\nPor qué: es lo que comprueba context build antes de responder.",
+      "py_exercise": {
+        "id": "A3-05-cabe",
+        "title": "cabe(piezas, ventana): ¿cabe el contexto?",
+        "function": "cabe",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef cabe(piezas, ventana):\n    # piezas: lista de tokens de cada pieza\n    total = 0\n    for t in piezas:\n        total += t\n    return True   # cambia: cabe solo si el total no supera la ventana\n\nprint(cabe([120, 80, 100, 200], 1000))   # True\nprint(cabe([400, 720], 1000))            # False\n",
+        "cases": [
+          {
+            "args": [
+              [
+                120,
+                80,
+                100,
+                200
+              ],
+              1000
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              [
+                400,
+                720
+              ],
+              1000
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              [
+                1000
+              ],
+              1000
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              [
+                1001
+              ],
+              1000
+            ],
+            "expected": false
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "A3-05-cabe",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "total <= ventana",
+        "La línea queda así: return total <= ventana"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes que el contexto es un presupuesto, gestionarlo con skills, compactación y recuperación, y mover lo importante a la memoria a largo plazo para que sobreviva. Siguiente arco cuando quieras; con esto amplías A3.",
+  "debrief": {
+    "what_happened": "Sin gestionar nada el contexto ocupaba 1240 de 1000 y perdía datos; añadir el documento lo empeoraba (1440). Con skills y compactación cabía (500) pero perdía el id del pedido; guardándolo en memoria antes de compactar, el agente responde con 520 tokens.",
+    "why": "La ventana de contexto es un presupuesto fijo: se gestiona cargando herramientas a demanda, compactando el historial y recuperando solo lo relevante, y moviendo lo que no puede perderse a una memoria a largo plazo.",
+    "in_production": "Los agentes de producción montan el contexto a mano: system prompt mínimo, herramientas just-in-time (skills), compactación del historial, RAG para traer solo lo relevante y una memoria a largo plazo con lo esencial.",
+    "simplifications": [
+      "Tokens y piezas redondeados; un agente real estima tokens de verdad y recupera por relevancia",
+      "El dato clave es uno; en la práctica hay que decidir qué conservar entre muchos"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-agentic-2026",
+    "ref.huyen-ai-engineering"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: otro montaje. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Deja recuperar y recordar activos pero quita skills y compactar (context set skills off, context set compactar off) y arma el contexto. ¿Cuántos tokens ocupa? (answer <número>)",
+        "validator": {
+          "type": "all",
+          "of": [
+            {
+              "type": "event",
+              "event": "context.build",
+              "where": {
+                "total": 1460
+              }
+            },
+            {
+              "type": "answer",
+              "expected": 1460,
+              "tolerance": 0
+            }
+          ]
+        },
+        "wrong_answer": "Revisa: sistema 120 + herramientas todas 400 + historial completo 720 + memoria 20 + documento 200.",
+        "hints": [
+          "context set recuperar on, context set recordar on y context build.",
+          "Suma las piezas sin compactar ni skills."
+        ],
+        "on_complete": "Correcto: 1460. Tiene los dos datos, pero sin recortar herramientas ni historial no cabe: hay que hacer sitio, no solo añadir."
+      }
+    ]
+  }
+}

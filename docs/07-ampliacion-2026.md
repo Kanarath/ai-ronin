@@ -28,7 +28,7 @@ La combinación construir → atacar → defender con laboratorios reales es má
 | 2 | OWASP Top 10 agéntico (ASI01–ASI10): clasificar incidentes, mapa de cobertura, caja de arena, aprobación verificable y ataque en cadena | **O7** (O7-01 … O7-05) | ✅ Hecho | OWASP GenAI, 9-dic-2025 |
 | 3 | Herramientas reales de red team: garak, PyRIT y promptfoo contra el modelo local | Forja, extras de A1 | Pendiente | Ofertas de AI red teamer |
 | 4 | Agentes con navegador y ordenador: inyección desde páginas web, *sandboxing* de código | **A7** | Pendiente | SANS SEC545, HTB |
-| 5 | Ingeniería de contexto y memoria: compactación, tipos de memoria, *skills* | A3-05 | Pendiente | HF *Context Course*, DeepLearning.AI *Agent Memory* |
+| 5 | Ingeniería de contexto y memoria: compactación, tipos de memoria, *skills* | **A3-05** | ✅ Hecho | HF *Context Course*, DeepLearning.AI *Agent Memory* |
 | 6 | Modelos que razonan: DPO, GRPO y recompensas verificables, cómputo en inferencia, destilación | **T11** (T11-01, T11-02) | ✅ Hecho | DeepLearning.AI *post-training*, CS336 |
 | 7 | Inferencia eficiente: caché KV, *batching*, decodificación especulativa, MoE, leyes de escala | **T12** | Pendiente | CS336 |
 | 8 | Gradient boosting | **T7-05** | ✅ Hecho | ML clásico tabular |
@@ -116,7 +116,6 @@ El andamiaje decreciente se deja fuera a propósito: es preferible que la ayuda 
 
 ## Lo siguiente, en este orden
 
-2. **A3-05:** ingeniería de contexto y memoria.
 3. **T12:** inferencia eficiente (caché KV, *batching*, MoE).
 4. **E2-04:** privacidad (privacidad diferencial, aprendizaje federado, *unlearning*).
 
