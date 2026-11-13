@@ -8,7 +8,7 @@ extends Control
 const UNIT_TITLES := {
 	"T0": "T0 · Primeros pasos",
 	"T1": "T1 · Datos y vectores", "T2": "T2 · Aprender de datos", "T3": "T3 · Optimización y métricas", "T7": "T7 · Árboles, bosques y grupos",
-	"T4": "T4 · Redes neuronales", "T8": "T8 · Cómo ve una máquina", "T5": "T5 · Del texto al vector", "T6": "T6 · Transformers y LLM", "T9": "T9 · Cómo aprende un LLM", "T10": "T10 · Datos justos", "T11": "T11 · Modelos que razonan",
+	"T4": "T4 · Redes neuronales", "T8": "T8 · Cómo ve una máquina", "T5": "T5 · Del texto al vector", "T6": "T6 · Transformers y LLM", "T9": "T9 · Cómo aprende un LLM", "T10": "T10 · Datos justos", "T11": "T11 · Modelos que razonan", "T12": "T12 · Inferencia eficiente",
 	"P0": "P0 · Python para IA (Forja)",
 	"P1": "P1 · Construir con LLM",
 	"P2": "P2 · Evals y observabilidad",
@@ -719,6 +719,19 @@ func _on_sim_event(e: Dictionary) -> void:
 			_plot.set_highlight(d["id"], PackedStringArray(d.get("neighbors", [])))
 		"bot.attacks", "bot.eval", "rag.attacks", "rag.eval", "agent.attacks", "agent.eval", "mcp.attacks", "mcp.eval", "a2a.attacks", "a2a.eval", "supply.attacks", "supply.eval":
 			_show_security(e["name"], d)
+		"infer.kv":
+			_show_kv_curve(d)
+		"infer.batch":
+			_show_curve("Rendimiento según el lote (se estanca al llenar la memoria)", "peticiones", [{"name": "tokens/s", "ys": d["y"], "color": RoninPalette.TEAL}], d["x"])
+		"infer.moe":
+			var bars: Array = []
+			var labels := PackedStringArray(d["labels"])
+			var values := PackedFloat64Array(d["values"])
+			var cols := [RoninPalette.VIOLET, RoninPalette.TEAL]
+			for i in labels.size():
+				bars.append({"label": labels[i], "value": values[i], "color": cols[i], "note": "%.0f %%" % (values[i] * 100.0)})
+			_show_diagram()
+			_diagram.show_bars("MoE · capacidad (total) frente a coste (activo)", bars)
 		"context.build":
 			var bars: Array = []
 			var labels := PackedStringArray(d["labels"])
@@ -823,6 +836,31 @@ func _show_curve(title: String, x_label: String, series_in: Array, xs: Variant) 
 		_diagram.visible = false
 	_chart.x_label = x_label
 	_chart.set_series(title, series, false)
+	_chart.visible = true
+
+
+func _show_kv_curve(d: Dictionary) -> void:
+	var x := PackedFloat64Array(d["x"])
+	var sin_c := PackedFloat64Array(d["sin"])
+	var con_c := PackedFloat64Array(d["con"])
+	var s1: Array[Vector2] = []
+	var s2: Array[Vector2] = []
+	for i in x.size():
+		s1.append(Vector2(x[i], sin_c[i]))
+		s2.append(Vector2(x[i], con_c[i]))
+	var series: Array[Dictionary] = [
+		{"name": "sin caché O(N²)", "points": s1, "color": RoninPalette.RED},
+		{"name": "con caché O(N)", "points": s2, "color": RoninPalette.TEAL},
+	]
+	_plot.visible = false
+	_net_view.visible = false
+	_heatmap.visible = false
+	if _code != null:
+		_code.visible = false
+	if _diagram != null:
+		_diagram.visible = false
+	_chart.x_label = "tokens"
+	_chart.set_series("Caché KV · trabajo acumulado", series, true)
 	_chart.visible = true
 
 

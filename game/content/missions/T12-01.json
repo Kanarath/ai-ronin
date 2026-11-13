@@ -1,0 +1,280 @@
+{
+  "id": "T12-01",
+  "schema_version": 1,
+  "title": "Rápido y barato de servir",
+  "unit": "T12",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "T6-03"
+  ],
+  "competencies": {
+    "requires": [
+      "T6.transformers"
+    ],
+    "trains": [
+      "T12.cache-kv",
+      "T12.batching"
+    ]
+  },
+  "briefing": "Un modelo que funciona no basta: hay que servirlo rápido y sin arruinarse. Dos trucos sostienen casi toda la inferencia moderna: la caché KV (para no recalcular el pasado en cada token) y el batching (para no desperdiciar la memoria). Hoy los mides.",
+  "learning_objectives": [
+    "Explicar por qué sin caché KV generar texto largo es inviable",
+    "Medir el ahorro de la caché KV",
+    "Explicar por qué el batching sube el rendimiento casi gratis"
+  ],
+  "mentor_intro": "El coste de un LLM no está en pensar, está en repetir y en esperar.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "La caché KV y el batching son la base de cualquier motor de inferencia (vLLM, TGI). Entender por qué el coste sin caché es cuadrático, y por qué el batching exprime la memoria ociosa, es lo que te deja razonar sobre latencia y coste en producción, justo lo que piden las ofertas de AI/LLM ops.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mide la caché al generar 64 tokens: infer kv --tokens 64. ¿Cuántas veces menos trabajo con caché? (answer <número>)",
+      "teach": "Por qué hace falta la caché\nPara generar un token, la atención necesita las claves y valores (K,V) de todos los anteriores. Sin caché, se recalculan en cada token: el trabajo crece con el cuadrado de la longitud. Con caché, K,V se guardan y se reutilizan: crece lineal.\nPor qué: sin caché, duplicar la longitud cuadruplica el coste; con caché, solo lo duplica.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "infer.kv",
+            "where": {
+              "tokens": 64
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 32,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "infer kv --tokens 64; mira el «factor».",
+        "answer 32"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Ahora el doble de largo: infer kv --tokens 128. ¿Cuál es el factor de ahorro ahora? (answer <número>)",
+      "prediction": {
+        "prompt": "Al doblar la longitud, ¿el factor de ahorro de la caché sube, baja o se queda igual?",
+        "options": [
+          "sube",
+          "baja",
+          "igual"
+        ]
+      },
+      "teach": "Cuanto más largo, más duele\nCon 64 tokens la caché ahorra 32×; con 128, 64×. El ahorro crece con la longitud, porque el coste sin caché es cuadrático.\nPor qué: por eso los contextos largos (A3-05) solo son viables con caché KV; sin ella, el coste se dispararía.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "infer.kv",
+            "where": {
+              "tokens": 128
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 64,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "infer kv --tokens 128.",
+        "answer 64"
+      ],
+      "on_complete": "De 32× a 64×: al doblar la longitud, el ahorro se dobla. El coste sin caché es O(N²)."
+    },
+    {
+      "id": "c1",
+      "text": "¿Qué guarda exactamente la caché KV?",
+      "teach": "Claves y valores\nGuarda las matrices K y V de cada posición ya procesada, para no recalcularlas. Cada token nuevo solo calcula su K,V y atiende a las guardadas.\nPor qué: es memoria a cambio de cómputo. Ocupa sitio (crece con la longitud y el lote), y por eso la memoria de la caché KV limita cuántas peticiones caben a la vez.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "las claves (K) y los valores (V) de cada posición ya procesada",
+          "why": ""
+        },
+        {
+          "id": "b",
+          "text": "el texto generado hasta ahora, como cadena",
+          "why": "El texto ya se tiene; lo caro es recalcular K,V, que es lo que se cachea."
+        },
+        {
+          "id": "c",
+          "text": "los pesos del modelo",
+          "why": "Los pesos no cambian entre tokens; no hace falta cachearlos."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "¿Qué necesita la atención de cada posición anterior?",
+        "answer a"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Cambia de palanca: el rendimiento. infer batch --peticiones 16. ¿Cuántos tokens por segundo da? (answer <número>)",
+      "teach": "Batching: la memoria ociosa\nGenerar para una sola petición deja la GPU casi vacía: el cuello es traer los pesos de memoria, no la cuenta. Si procesas 16 peticiones a la vez, reutilizas esa misma lectura de pesos para las 16: 16× el rendimiento casi sin coste.\nPor qué: el batching no acelera una petición; multiplica cuántas atiendes con el mismo trabajo de memoria.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "infer.batch",
+            "where": {
+              "peticiones": 16
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 32000,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "infer batch --peticiones 16.",
+        "answer 32000"
+      ],
+      "on_complete": "32000 tokens/s frente a 2000 de una sola: 16× por procesarlas juntas."
+    },
+    {
+      "id": "o4",
+      "text": "Sube el lote: infer batch --peticiones 64. ¿Sigue subiendo 64×? (answer si o no)",
+      "prediction": {
+        "prompt": "Con 64 peticiones, ¿el rendimiento será 64× el de una sola?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "El tope\nLa memoria (en buena parte, la caché KV de todas las peticiones) tiene un límite. Pasado el tope del lote, no caben más peticiones a la vez: el rendimiento se estanca y la latencia empieza a subir.\nPor qué: el batching es casi gratis hasta que la memoria se llena; después, más lote no ayuda.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "infer.batch",
+            "where": {
+              "peticiones": 64
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "no",
+            "accept": [
+              "no"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "infer batch --peticiones 64; mira el aviso.",
+        "answer no"
+      ],
+      "on_complete": "Se estanca: a partir del tope (32) la memoria se llena y meter más peticiones ya no sube el rendimiento."
+    },
+    {
+      "id": "py1",
+      "text": "Programa el coste de la caché: abre el editor con py, completa trabajo_sin_cache y compruébala con py check.",
+      "teach": "El coste cuadrático, en código\nSin caché, generar N tokens recalcula el pasado: 1 + 2 + … + N = N(N+1)/2.\nPor qué: es la cuenta que explica por qué sin caché el texto largo es inviable.",
+      "py_exercise": {
+        "id": "T12-01-kv",
+        "title": "trabajo_sin_cache(n): cálculos de K,V sin caché al generar n tokens",
+        "function": "trabajo_sin_cache",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef trabajo_sin_cache(n):\n    return n   # cambia: la suma 1 + 2 + ... + n\n\nprint(trabajo_sin_cache(64))   # 2080\n",
+        "cases": [
+          {
+            "args": [
+              64
+            ],
+            "expected": 2080
+          },
+          {
+            "args": [
+              1
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              128
+            ],
+            "expected": 8256
+          },
+          {
+            "args": [
+              10
+            ],
+            "expected": 55
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T12-01-kv",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "n * (n + 1) // 2",
+        "La línea queda así: return n * (n + 1) // 2"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes por qué sin caché KV el texto largo es inviable, medir su ahorro y explicar por qué el batching sube el rendimiento casi gratis hasta llenar la memoria. Siguiente: T12-02, modelos más rápidos y más baratos.",
+  "debrief": {
+    "what_happened": "Has medido que la caché KV ahorra 32× con 64 tokens y 64× con 128 (el coste sin caché es cuadrático), y que el batching sube el rendimiento 16× con 16 peticiones, pero se estanca al llenar la memoria.",
+    "why": "El coste de servir un LLM está en recalcular el pasado (lo evita la caché KV) y en la memoria ociosa (lo aprovecha el batching); ambos tienen un límite de memoria.",
+    "in_production": "Los motores de inferencia (vLLM, TGI) viven de la caché KV y el batching continuo, y gestionan la memoria de la caché (paginada) para meter más peticiones a la vez.",
+    "simplifications": [
+      "Trabajo en unidades del laboratorio, no FLOPs reales; el tope del lote es fijo",
+      "La caché KV real también consume memoria que crece con lote y longitud"
+    ]
+  },
+  "further_reading": [
+    "ref.cs336",
+    "ref.huyen-ai-engineering"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: otra longitud. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con infer kv --tokens 32, ¿cuántas veces menos trabajo da la caché? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 16,
+          "tolerance": 0
+        },
+        "wrong_answer": "Revisa: el factor es (n+1)/2 redondeado; con 32 tokens…",
+        "hints": [
+          "infer kv --tokens 32.",
+          "Mira el «factor»."
+        ],
+        "on_complete": "Correcto: 16×. El factor de ahorro es aproximadamente la mitad de la longitud."
+      }
+    ]
+  }
+}

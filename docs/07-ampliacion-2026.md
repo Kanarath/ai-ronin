@@ -30,7 +30,7 @@ La combinación construir → atacar → defender con laboratorios reales es má
 | 4 | Agentes con navegador y ordenador: inyección desde páginas web, *sandboxing* de código | **A7** | Pendiente | SANS SEC545, HTB |
 | 5 | Ingeniería de contexto y memoria: compactación, tipos de memoria, *skills* | **A3-05** | ✅ Hecho | HF *Context Course*, DeepLearning.AI *Agent Memory* |
 | 6 | Modelos que razonan: DPO, GRPO y recompensas verificables, cómputo en inferencia, destilación | **T11** (T11-01, T11-02) | ✅ Hecho | DeepLearning.AI *post-training*, CS336 |
-| 7 | Inferencia eficiente: caché KV, *batching*, decodificación especulativa, MoE, leyes de escala | **T12** | Pendiente | CS336 |
+| 7 | Inferencia eficiente: caché KV, *batching*, decodificación especulativa, MoE, leyes de escala | **T12** (T12-01, T12-02) | ✅ Hecho | CS336 |
 | 8 | Gradient boosting | **T7-05** | ✅ Hecho | ML clásico tabular |
 | 9 | Privacidad: privacidad diferencial, aprendizaje federado, *unlearning* | E2-04 | Pendiente | HTB (módulos de privacidad), AIGP |
 | 10 | Auditor de ISO/IEC 42001: declaración de aplicabilidad del Anexo A, clasificar hallazgos y decidir la certificación | **E5** (E5-01, E5-02) | ✅ Hecho | ISO 42001 Lead Auditor, ISO/IEC 17021-1, AIGP |
@@ -116,7 +116,6 @@ El andamiaje decreciente se deja fuera a propósito: es preferible que la ayuda 
 
 ## Lo siguiente, en este orden
 
-3. **T12:** inferencia eficiente (caché KV, *batching*, MoE).
 4. **E2-04:** privacidad (privacidad diferencial, aprendizaje federado, *unlearning*).
 
 ## Fuentes (consultadas el 2026-11-13)

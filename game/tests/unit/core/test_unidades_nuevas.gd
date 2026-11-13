@@ -48,6 +48,8 @@ print(residuos([1, 0, 1], [0.8, 0.3, 0.4]))   # unos [0.2, -0.3, 0.6]
         total += t
     return total <= ventana
 ",
+	"T12-01": "def trabajo_sin_cache(n):\n    return n * (n + 1) // 2\n",
+	"T12-02": "def fraccion_activa(expertos, activos):\n    return activos / expertos\n",
 	"T10-03": "# Completa la línea marcada y compruébala con py check.\ndef de_los_que_devuelven(aprobado, devuelve):\n    # aprobado y devuelve: listas de True o False, una posición por solicitud\n    buenos = [a for a, d in zip(aprobado, devuelve) if d]\n    aprobados = buenos.count(True)\n    return aprobados / len(buenos)\n\nprint(de_los_que_devuelven([True, False, True, True], [True, True, False, True]))   # unos 0.667\n",
 }
 
@@ -286,3 +288,11 @@ func test_T11_motor() -> void:
 
 func test_A3_05_completa() -> void:
 	_walk("A3-05", ["A3-04"], ["context show", "context build", "answer 1240", "hipotesis no", "context set recuperar on", "context build", "answer 1440", "answer b", "hipotesis no", "context set skills on", "context set compactar on", "context build", "answer no", "answer b", "context set recordar on", "context build", "answer si", "answer b", "PY", "context set skills off", "context set compactar off", "context build", "answer 1460"])
+
+
+func test_T12_01_completa() -> void:
+	_walk("T12-01", ["T6-03"], ["infer kv --tokens 64", "answer 32", "hipotesis sube", "infer kv --tokens 128", "answer 64", "answer a", "infer batch --peticiones 16", "answer 32000", "hipotesis no", "infer batch --peticiones 64", "answer no", "PY", "infer kv --tokens 32", "answer 16"])
+
+
+func test_T12_02_completa() -> void:
+	_walk("T12-02", ["T12-01"], ["infer spec --borrador 4 --acierto 0.8", "answer 3.36", "answer b", "hipotesis mucho menor", "infer spec --borrador 4 --acierto 0.3", "answer 1.43", "infer moe --expertos 8 --activos 2", "answer 25", "answer b", "answer b", "PY", "infer moe --expertos 16 --activos 2", "answer 13"])

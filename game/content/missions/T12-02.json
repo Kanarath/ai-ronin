@@ -1,0 +1,309 @@
+{
+  "id": "T12-02",
+  "schema_version": 1,
+  "title": "Dos modelos mejor que uno",
+  "unit": "T12",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "T12-01"
+  ],
+  "competencies": {
+    "requires": [
+      "T12.cache-kv"
+    ],
+    "trains": [
+      "T12.especulativa",
+      "T12.moe",
+      "T12.leyes-escala"
+    ]
+  },
+  "briefing": "Dos ideas más para ir rápido y barato sin perder calidad: la decodificación especulativa (un modelo pequeño adelanta trabajo y el grande solo verifica) y los MoE (un modelo enorme que enciende solo una parte en cada token). Y, de fondo, por qué los modelos crecen: las leyes de escala.",
+  "learning_objectives": [
+    "Explicar y medir la decodificación especulativa",
+    "Explicar cómo un MoE separa capacidad de coste",
+    "Leer una ley de escala y sus rendimientos decrecientes"
+  ],
+  "mentor_intro": "No hace falta un modelo más pequeño: basta con encender menos y adivinar bien.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "La decodificación especulativa, los MoE y las leyes de escala explican los modelos de 2026: por qué un modelo enorme puede ser barato de servir, cómo se acelera sin perder calidad y por qué se construyen tan grandes. Es el vocabulario de cualquier conversación seria sobre coste y capacidad.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mide la decodificación especulativa: infer spec --borrador 4 --acierto 0.8. ¿Cuántos tokens por pasada del modelo grande? (answer <número>)",
+      "teach": "Un borrador y un verificador\nUn modelo pequeño (borrador) propone 4 tokens; el grande los verifica en UNA sola pasada y acepta los que habría dicho él, hasta el primer fallo. Así, en una pasada del grande salen varios tokens, no uno.\nPor qué: el borrador es barato; el grande, que es el caro, hace menos pasadas para el mismo texto.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "infer.spec",
+            "where": {
+              "acierto": 0.8
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 3.36,
+            "tolerance": 0.05
+          }
+        ]
+      },
+      "hints": [
+        "infer spec --borrador 4 --acierto 0.8.",
+        "answer 3.36"
+      ]
+    },
+    {
+      "id": "c1",
+      "text": "La decodificación especulativa, ¿cambia la respuesta del modelo?",
+      "teach": "Misma salida, más rápido\nEl grande solo acepta los tokens que habría generado él mismo; en cuanto el borrador se desvía, lo corrige. La salida es idéntica a la del grande solo, pero en menos pasadas.\nPor qué: a diferencia de la cuantización o un modelo más pequeño, aquí no se cambia calidad por velocidad: la respuesta es la misma.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "sí, da respuestas un poco peores a cambio de ir más rápido",
+          "why": "No: el grande verifica y corrige; la salida es exactamente la suya."
+        },
+        {
+          "id": "b",
+          "text": "no: la salida es idéntica a la del modelo grande, solo que en menos pasadas",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "sí, da las respuestas del modelo borrador",
+          "why": "El borrador solo propone; el grande decide. Manda el grande."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Quién tiene la última palabra sobre cada token?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Prueba con un borrador que acierta poco: infer spec --borrador 4 --acierto 0.3. ¿Cuántos tokens por pasada? (answer <número>)",
+      "prediction": {
+        "prompt": "Con un borrador que acierta solo el 30 %, ¿la aceleración será parecida o mucho menor?",
+        "options": [
+          "parecida",
+          "mucho menor"
+        ]
+      },
+      "teach": "El borrador tiene que parecerse\nCon acierto 0.3, el borrador se desvía enseguida y casi todo se rechaza: apenas 1.43 tokens por pasada, poca ganancia.\nPor qué: la aceleración depende de que el borrador prediga como el grande. Un borrador malo no ayuda; por eso se destila del grande (T11).",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "infer.spec",
+            "where": {
+              "acierto": 0.3
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 1.43,
+            "tolerance": 0.05
+          }
+        ]
+      },
+      "hints": [
+        "infer spec --borrador 4 --acierto 0.3.",
+        "answer 1.43"
+      ],
+      "on_complete": "1.43× frente a 3.36×: un borrador que acierta poco apenas acelera. Tiene que parecerse al grande."
+    },
+    {
+      "id": "o3",
+      "text": "Ahora los MoE: infer moe --expertos 8 --activos 2. ¿Qué porcentaje del coste se activa por token? (answer <número>)",
+      "teach": "Encender solo una parte\nUn MoE tiene muchos expertos (mucha capacidad en parámetros), pero un enrutador manda cada token solo a 2 de los 8. Solo esos 2 se encienden: el 25 % del coste.\nPor qué: separa lo que el modelo SABE (parámetros totales) de lo que CUESTA cada token (parámetros activos). Un modelo enorme que cuesta como uno pequeño.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "infer.moe",
+            "where": {
+              "expertos": 8,
+              "activos": 2
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 25,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "infer moe --expertos 8 --activos 2.",
+        "answer 25"
+      ],
+      "on_complete": "25 %: ocho expertos de capacidad, pero cada token enciende dos. Capacidad grande, coste pequeño."
+    },
+    {
+      "id": "c2",
+      "text": "Un modelo denso y un MoE con los mismos parámetros ACTIVOS por token. ¿Cuál sabe más?",
+      "teach": "Capacidad frente a coste\nLos dos cuestan lo mismo por token (mismos parámetros activos), pero el MoE tiene además todos los demás expertos apagados: mucha más capacidad total donde guardar conocimiento.\nPor qué: por eso los MoE permiten modelos con billones de parámetros que se sirven a un coste razonable.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "el denso, porque usa todos sus parámetros siempre",
+          "why": "Usa todos los que tiene, pero tiene muchos menos en total que el MoE."
+        },
+        {
+          "id": "b",
+          "text": "el MoE, porque tiene muchos más parámetros totales aunque active los mismos por token",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "saben lo mismo, porque activan lo mismo",
+          "why": "Lo activo marca el coste, no la capacidad; el MoE guarda más en los expertos apagados."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué mide la capacidad: lo activo o lo total?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Las leyes de escala dicen que más parámetros y más datos bajan la pérdida. ¿Hasta cuándo conviene crecer?",
+      "teach": "Rendimientos decrecientes\nLa pérdida baja con el tamaño, pero cada vez menos (una potencia, no una recta): doblar el modelo mejora poco si no doblas también los datos y el cómputo. Lo óptimo reparte el presupuesto entre tamaño y datos (compute-optimal).\nPor qué: crecer por crecer desperdicia cómputo; las leyes de escala dicen cuánto modelo y cuántos datos por cada presupuesto.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "siempre: cuanto más grande, mejor, sin límite",
+          "why": "La mejora decrece y, sin más datos y cómputo, apenas compensa."
+        },
+        {
+          "id": "b",
+          "text": "hasta donde el presupuesto de cómputo y datos lo haga rentable; la mejora es decreciente",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "nunca conviene crecer: los modelos pequeños son iguales",
+          "why": "Crecer mejora, pero con rendimientos decrecientes; no es que dé igual."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿La pérdida baja en línea recta con el tamaño, o cada vez menos?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa el coste de un MoE: abre el editor con py, completa fraccion_activa y compruébala con py check.",
+      "teach": "Capacidad frente a coste, en código\nLa fracción del coste que se enciende por token es los expertos activos entre el total.\nPor qué: es lo que mide infer moe.",
+      "py_exercise": {
+        "id": "T12-02-moe",
+        "title": "fraccion_activa(expertos, activos): fracción del coste por token",
+        "function": "fraccion_activa",
+        "tolerance": 0.0001,
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef fraccion_activa(expertos, activos):\n    return 1.0   # cambia: activos entre el total de expertos\n\nprint(fraccion_activa(8, 2))   # 0.25\n",
+        "cases": [
+          {
+            "args": [
+              8,
+              2
+            ],
+            "expected": 0.25
+          },
+          {
+            "args": [
+              32,
+              4
+            ],
+            "expected": 0.125
+          },
+          {
+            "args": [
+              2,
+              2
+            ],
+            "expected": 1.0
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T12-02-moe",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "activos / expertos",
+        "La línea queda así: return activos / expertos"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes explicar y medir la decodificación especulativa, cómo un MoE separa capacidad de coste y leer una ley de escala con sus rendimientos decrecientes. Con esto cierras T12.",
+  "debrief": {
+    "what_happened": "Has medido la decodificación especulativa (3.36× con un borrador que acierta, 1.43× con uno malo, sin cambiar la salida), y un MoE que activa el 25 % del coste manteniendo toda su capacidad; y has visto que crecer da rendimientos decrecientes.",
+    "why": "Se gana velocidad y coste sin perder calidad adelantando trabajo con un borrador (especulativa) y encendiendo solo una parte del modelo (MoE); las leyes de escala dicen cuánto crecer compensa.",
+    "in_production": "Los sistemas de 2026 combinan caché KV, batching, decodificación especulativa y arquitecturas MoE, y planifican el entrenamiento con leyes de escala compute-optimal.",
+    "simplifications": [
+      "Aceleraciones y fracciones idealizadas; la especulativa real depende del solape y la verificación",
+      "Las leyes de escala se tratan de forma conceptual, sin ajustar la curva"
+    ]
+  },
+  "further_reading": [
+    "ref.cs336",
+    "ref.deepseek-r1"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: otro MoE. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con infer moe --expertos 16 --activos 2, ¿qué porcentaje del coste se activa por token? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 13,
+          "tolerance": 1
+        },
+        "wrong_answer": "Revisa: activos entre total, en porcentaje (2 de 16).",
+        "hints": [
+          "infer moe --expertos 16 --activos 2.",
+          "2/16 en porcentaje."
+        ],
+        "on_complete": "Correcto: 12,5 % (unos 13). Más expertos con los mismos activos: más capacidad al mismo coste por token."
+      }
+    ]
+  }
+}

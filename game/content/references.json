@@ -1426,6 +1426,14 @@
       "type": "articulo",
       "url": "https://arxiv.org/abs/2501.12948",
       "consulted": "2026-11-13"
+    },
+    {
+      "id": "ref.cs336",
+      "title": "Stanford CS336: Language Modeling from Scratch (2025): atención, FlashAttention, caché KV, MoE, leyes de escala, inferencia eficiente",
+      "source": "Stanford",
+      "type": "curso",
+      "url": "https://stanford-cs336.github.io/spring2025/",
+      "consulted": "2026-11-13"
     }
   ]
 }
