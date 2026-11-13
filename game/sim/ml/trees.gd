@@ -274,3 +274,155 @@ static func _d2(a: PackedFloat64Array, b: PackedFloat64Array) -> float:
 	for j in a.size():
 		s += (a[j] - b[j]) * (a[j] - b[j])
 	return s
+
+
+# ── Gradient boosting ────────────────────────────────────────────────────────
+
+## Gradient boosting para dos clases (pérdida logística): cada ronda ajusta un árbol de
+## regresión pequeño a los residuos (lo que el modelo aún falla, y − p) y suma su corrección
+## multiplicada por la tasa de aprendizaje. Hojas con el paso de Newton: Σr / Σp(1−p).
+class GBoost:
+	extends RefCounted
+	var features: PackedStringArray = []
+	var positive := ""
+	var negative := ""
+	var base := 0.0
+	var lr := 0.3
+	## Cada ronda: un árbol de regresión {"f","t","left","right"} o {"v": valor}.
+	var rounds: Array = []
+	var splits: Dictionary = {}
+	var max_depth := 1
+	var min_leaf := 3
+
+	func fit(ds: Dataset, n_rounds: int, p_lr: float, depth: int) -> GBoost:
+		features = ds.feature_names
+		lr = p_lr
+		max_depth = depth
+		var counts := ClassicML.counts(ds, ClassicML.all_idx(ds))
+		var labs: Array = counts.keys()
+		labs.sort()
+		# Clase positiva: la menos frecuente (la que se quiere detectar).
+		positive = labs[0]
+		for l: String in labs:
+			if int(counts[l]) < int(counts[positive]):
+				positive = l
+		negative = positive
+		for l: String in labs:
+			if l != positive:
+				negative = l
+		var n := ds.size()
+		var y := PackedFloat64Array()
+		y.resize(n)
+		for i in n:
+			y[i] = 1.0 if ds.labels[i] == positive else 0.0
+		var pr := clampf(float(counts.get(positive, 0)) / maxf(n, 1), 0.01, 0.99)
+		base = log(pr / (1.0 - pr))
+		var score := PackedFloat64Array()
+		score.resize(n)
+		score.fill(base)
+		rounds.clear()
+		splits.clear()
+		for k in n_rounds:
+			var g := PackedFloat64Array()
+			var h := PackedFloat64Array()
+			g.resize(n)
+			h.resize(n)
+			for i in n:
+				var p := 1.0 / (1.0 + exp(-score[i]))
+				g[i] = y[i] - p
+				h[i] = maxf(p * (1.0 - p), 1e-6)
+			var tree := _grow(ds, range(n), g, h, 0)
+			rounds.append(tree)
+			for i in n:
+				score[i] += lr * _value(tree, ds.rows[i])
+		return self
+
+	func score_of(row: PackedFloat64Array, upto: int = -1) -> float:
+		var s := base
+		var m := rounds.size() if upto < 0 else mini(upto, rounds.size())
+		for k in m:
+			s += lr * _value(rounds[k], row)
+		return s
+
+	func predict(row: PackedFloat64Array) -> String:
+		return positive if score_of(row) > 0.0 else negative
+
+	func predict_upto(row: PackedFloat64Array, upto: int) -> String:
+		return positive if score_of(row, upto) > 0.0 else negative
+
+	func accuracy_upto(ds: Dataset, upto: int) -> float:
+		var ok := 0
+		for i in ds.size():
+			ok += int(predict_upto(ds.rows[i], upto) == ds.labels[i])
+		return float(ok) / maxf(ds.size(), 1)
+
+	func describe(k: int) -> String:
+		var t: Dictionary = rounds[k]
+		if t.has("v"):
+			return "ronda %d: sin corte útil (suma %+.2f a todos)" % [k + 1, lr * t["v"]]
+		var l: Dictionary = t["left"]
+		var r: Dictionary = t["right"]
+		if l.has("v") and r.has("v"):
+			return "ronda %d: si %s <= %s → %+.2f · si no → %+.2f" % [k + 1, features[t["f"]], str(snappedf(t["t"], 0.001)), lr * l["v"], lr * r["v"]]
+		return "ronda %d: árbol de profundidad %d que empieza preguntando por %s" % [k + 1, max_depth, features[t["f"]]]
+
+	func importances() -> Dictionary:
+		var total := 0
+		for f: String in splits:
+			total += int(splits[f])
+		var out := {}
+		for f: String in features:
+			out[f] = float(splits.get(f, 0)) / maxf(total, 1)
+		return out
+
+	func _value(t: Dictionary, row: PackedFloat64Array) -> float:
+		var n := t
+		while not n.has("v"):
+			n = n["left"] if row[n["f"]] <= n["t"] else n["right"]
+		return n["v"]
+
+	func _leaf(idx: Array, g: PackedFloat64Array, h: PackedFloat64Array) -> Dictionary:
+		var sg := 0.0
+		var sh := 0.0
+		for i: int in idx:
+			sg += g[i]
+			sh += h[i]
+		return {"v": clampf(sg / maxf(sh, 1e-6), -4.0, 4.0)}
+
+	func _grow(ds: Dataset, idx: Array, g: PackedFloat64Array, h: PackedFloat64Array, d: int) -> Dictionary:
+		if d >= max_depth or idx.size() < 2 * min_leaf:
+			return _leaf(idx, g, h)
+		# Mejor corte: el que más reduce el error cuadrático de los residuos (ganancia G²/H).
+		var best := {}
+		var tg := 0.0
+		var th := 0.0
+		for i: int in idx:
+			tg += g[i]
+			th += h[i]
+		var parent := tg * tg / th
+		var best_gain := 1e-9
+		for f in ds.dims():
+			var order := idx.duplicate()
+			order.sort_custom(func(a: int, b: int) -> bool: return ds.rows[a][f] < ds.rows[b][f])
+			var lg := 0.0
+			var lh := 0.0
+			for k in range(order.size() - 1):
+				lg += g[order[k]]
+				lh += h[order[k]]
+				var nl := k + 1
+				if nl < min_leaf or order.size() - nl < min_leaf:
+					continue
+				var v0: float = ds.rows[order[k]][f]
+				var v1: float = ds.rows[order[k + 1]][f]
+				if v0 == v1:
+					continue
+				var rg := tg - lg
+				var rh := th - lh
+				var gain := lg * lg / lh + rg * rg / rh - parent
+				if gain > best_gain:
+					best_gain = gain
+					best = {"f": f, "t": (v0 + v1) / 2.0, "left": order.slice(0, k + 1), "right": order.slice(k + 1)}
+		if best.is_empty():
+			return _leaf(idx, g, h)
+		splits[features[best["f"]]] = int(splits.get(features[best["f"]], 0)) + 1
+		return {"f": best["f"], "t": best["t"], "left": _grow(ds, best["left"], g, h, d + 1), "right": _grow(ds, best["right"], g, h, d + 1)}

@@ -67,6 +67,10 @@
       "para_que": "Agentes: un LLM con herramientas que actúa; secuestrar su objetivo y ponerle límites."
     },
     {
+      "unit": "P2",
+      "para_que": "Evals y observabilidad: examinar un agente por lo que hace (trayectorias), por segmentos y con una puerta de regresión en CI (integración continua); y vigilarlo en producción con trazas, un juez muestreado y deriva de datos."
+    },
+    {
       "unit": "A4",
       "para_que": "MCP (Model Context Protocol): cómo se conectan herramientas a un LLM y cómo se abusa de ellas."
     },
@@ -103,6 +107,10 @@
       "para_que": "Blue team (el equipo que defiende): detectar y responder a ataques contra sistemas de IA en producción."
     },
     {
+      "unit": "O7",
+      "para_que": "Riesgos agénticos: el OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10); clasificar incidentes y medir qué riesgos cubren tus defensas."
+    },
+    {
       "unit": "C1",
       "para_que": "Capstone (proyecto final de un arco, todo junto): laboratorio completo de seguridad de agentes."
     },
@@ -133,6 +141,10 @@
     {
       "unit": "E3",
       "para_que": "Especialización: gobernanza y auditoría profesional."
+    },
+    {
+      "unit": "E5",
+      "para_que": "Especialización: auditor de ISO/IEC 42001. Declaración de aplicabilidad del Anexo A, clasificar hallazgos (no conformidad mayor, menor u observación) y decidir la certificación."
     },
     {
       "unit": "E4",

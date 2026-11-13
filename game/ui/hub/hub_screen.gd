@@ -11,11 +11,13 @@ const UNIT_TITLES := {
 	"T4": "T4 · Redes neuronales", "T8": "T8 · Cómo ve una máquina", "T5": "T5 · Del texto al vector", "T6": "T6 · Transformers y LLM", "T9": "T9 · Cómo aprende un LLM", "T10": "T10 · Datos justos",
 	"P0": "P0 · Python para IA (Forja)",
 	"P1": "P1 · Construir con LLM",
+	"P2": "P2 · Evals y observabilidad",
 	"A1": "A1 · Aplicación LLM", "A2": "A2 · RAG y embeddings", "A3": "A3 · Agentes", "A4": "A4 · MCP",
 	"A5": "A5 · Multiagente y A2A", "A6": "A6 · Supply chain e infra",
 	"O1": "O1 · Mentalidad red team", "O2": "O2 · Reconocimiento", "O3": "O3 · Threat modeling", "O4": "O4 · Impacto e informes",
 	"O5": "O5 · Marcos y gobernanza",
 	"O6": "O6 · Detección y respuesta",
+	"O7": "O7 · Riesgos agénticos (OWASP)",
 	"E2": "E2 · ML adversarial",
 	"C1": "C1 · AI Agent Lab", "C2": "C2 · RAG Security Lab", "C3": "C3 · MCP Security Lab",
 	"C4": "C4 · Multi-Agent Red Team Lab",
@@ -23,6 +25,7 @@ const UNIT_TITLES := {
 	"E1": "E1 · Investigación ML (Forja)",
 	"E3": "E3 · Gobernanza y auditoría",
 	"E4": "E4 · AI Ops avanzado",
+	"E5": "E5 · Auditor ISO/IEC 42001",
 }
 ## Parte de la altura de la ventana que ocupa el laboratorio (el resto es de la consola).
 ## La consola ocupa el resto (unos dos tercios); el laboratorio se puede plegar del todo.

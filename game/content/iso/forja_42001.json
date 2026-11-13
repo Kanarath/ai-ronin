@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "nota": "E5 · Auditoría de certificación ISO/IEC 42001:2023 del sistema de gestión de IA (SGIA) de la forja. El Anexo A se cita por objetivos (A.2–A.10); la redacción exacta de los 38 controles está en la norma (de pago). Los grados de los hallazgos siguen los criterios habituales de ISO/IEC 17021-1. Datos ficticios.",
+  "contexto": {
+    "alcance": "Diseño, desarrollo y operación del chatbot de atención, el asistente RAG de documentación y los agentes del almacén y de compras de la forja.",
+    "sistemas": ["chatbot de atención (en producción, con clientes)", "asistente RAG de documentación interna (en producción)", "agente del almacén (en producción)", "agente de compras (piloto)"],
+    "terceros": ["modelo llama3.2 (Meta) servido con Ollama", "servidor MCP «calendario-pro» instalado desde un registro público", "proveedor de la API de envíos que usan los agentes"],
+    "etapa": "Etapa 2 (auditoría de certificación). La etapa 1 (revisión documental) se cerró sin incidencias bloqueantes."
+  },
+  "soa": [
+    {"id": "A.2", "titulo": "Políticas relacionadas con la IA", "aplica": true, "justificacion": "Requisito de la dirección.", "evidencias": ["Política de IA v1.2, aprobada por la dirección el 2026-03-02"], "real": "correcto"},
+    {"id": "A.3", "titulo": "Organización interna", "aplica": true, "justificacion": "Hay que asignar responsabilidades sobre la IA.", "evidencias": ["Matriz de roles del SGIA", "Canal para comunicar inquietudes sobre la IA"], "real": "correcto"},
+    {"id": "A.4", "titulo": "Recursos para los sistemas de IA", "aplica": true, "justificacion": "Se usan modelos, datos, herramientas y cómputo propios.", "evidencias": ["Inventario de recursos: modelos, datos, herramientas, cómputo y personas"], "real": "correcto"},
+    {"id": "A.5", "titulo": "Evaluación de los impactos de los sistemas de IA", "aplica": true, "justificacion": "Los sistemas atienden a clientes.", "evidencias": [], "nota": "Pendiente: «se hará cuando tengamos un sistema de alto riesgo»", "real": "sin-evidencia"},
+    {"id": "A.6", "titulo": "Ciclo de vida del sistema de IA", "aplica": true, "justificacion": "La forja desarrolla y opera sus sistemas.", "evidencias": ["Procedimiento de desarrollo con verificación y validación", "Registro de cambios del modelo", "Plan de monitorización en producción"], "real": "correcto"},
+    {"id": "A.7", "titulo": "Datos para los sistemas de IA", "aplica": true, "justificacion": "El RAG y los agentes usan datos internos y de clientes.", "evidencias": ["Registro de procedencia de los documentos del RAG", "Criterios de calidad de los datos"], "real": "correcto"},
+    {"id": "A.8", "titulo": "Información para las partes interesadas", "aplica": true, "justificacion": "Los clientes hablan con el chatbot.", "evidencias": ["Aviso al cliente de que habla con un sistema de IA", "Documentación para usuarios internos"], "real": "correcto"},
+    {"id": "A.9", "titulo": "Uso de los sistemas de IA", "aplica": true, "justificacion": "Hay que usar los sistemas para lo previsto.", "evidencias": ["Procedimiento de uso responsable", "Objetivos de uso de cada sistema"], "real": "correcto"},
+    {"id": "A.10", "titulo": "Relaciones con terceros y clientes", "aplica": false, "justificacion": "La forja no tiene proveedores de IA: todo se hace en casa.", "evidencias": [], "real": "exclusion-injustificada"}
+  ],
+  "por_que": {
+    "A.5": "Está incluido pero no hay ninguna evaluación de impacto, y los sistemas ya están en producción con clientes: incluir un control no basta, hay que implantarlo.",
+    "A.10": "La justificación es falsa: el contexto lista tres terceros (el modelo de Meta, el servidor MCP público y la API de envíos). Una exclusión tiene que salir de la evaluación de riesgos y ser cierta."
+  },
+  "hallazgos": [
+    {"id": "H1", "requisito": "9.3 Revisión por la dirección", "texto": "No se ha hecho ninguna revisión por la dirección del SGIA desde que se implantó, hace 14 meses.", "grado": "mayor", "por_que": "Un requisito entero sin implantar: la dirección no ha revisado nunca si el sistema funciona."},
+    {"id": "H2", "requisito": "A.6 Ciclo de vida", "texto": "De 12 cambios del modelo muestreados, uno no tiene la aprobación firmada; los otros 11 sí.", "grado": "menor", "por_que": "El proceso existe y funciona; es un fallo puntual que no pone en duda que el sistema logre sus resultados."},
+    {"id": "H3", "requisito": "9.2 Auditoría interna", "texto": "La auditoría interna se hizo en marzo, pero su programa no incluyó el proceso de proveedores.", "grado": "menor", "por_que": "La auditoría interna existe; falta cobertura de un proceso. Es un incumplimiento parcial."},
+    {"id": "H4", "requisito": "5.2 Política de IA", "texto": "La política está aprobada y publicada. Podría indicar también el canal para comunicar inquietudes, que ya existe.", "grado": "observacion", "por_que": "No incumple ningún requisito: es una oportunidad de mejora."},
+    {"id": "H5", "requisito": "6.1.4 Evaluación de impacto del sistema de IA", "texto": "Ningún sistema de IA en producción tiene evaluación de impacto, tampoco el chatbot que atiende a clientes.", "grado": "mayor", "por_que": "Falta por completo un requisito central de la norma en todos los sistemas del alcance."},
+    {"id": "H6", "requisito": "6.2 Objetivos de IA", "texto": "Los objetivos de IA están definidos, pero dos de los cinco no tienen indicador para medirlos.", "grado": "menor", "por_que": "Los objetivos existen; falta poder medir dos. No impide que el sistema funcione."}
+  ],
+  "grados": {
+    "mayor": "No conformidad mayor: falta un requisito o falla por completo, o afecta a la capacidad del sistema de gestión de lograr sus resultados.",
+    "menor": "No conformidad menor: incumplimiento parcial o puntual que no afecta a esa capacidad.",
+    "observacion": "Observación u oportunidad de mejora: no hay incumplimiento."
+  },
+  "decisiones": {
+    "recomendar": "Recomendar la certificación sin condiciones.",
+    "recomendar-con-plan": "Recomendar la certificación con un plan de acciones correctivas aceptado para las no conformidades menores.",
+    "aplazar": "No recomendar todavía: las no conformidades mayores tienen que corregirse y su acción correctiva verificarse (a menudo con una visita de seguimiento) antes de decidir."
+  }
+}

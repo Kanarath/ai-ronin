@@ -23,6 +23,21 @@ static func register(reg: CommandRegistry) -> void:
 			.opt("depth", "profundidad de cada árbol", "int", 4)
 			.opt("seed", "semilla (para repetir el resultado)", "int", 1)
 			.example("forest train b1 katanas_train --trees 25")))
+	reg.register(Command.new("boost train", "Entrena gradient boosting: árboles pequeños en fila, cada uno corrige lo que falla el anterior.",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _boost_train(c, a), "modelos")
+		.with_signature(CommandSignature.new()
+			.pos("nombre", "nombre del modelo")
+			.pos("dataset", "dataset de entrenamiento", "dataset")
+			.opt("rounds", "número de rondas (árboles en fila)", "int", 50)
+			.opt("lr", "tasa de aprendizaje: cuánto se fía de cada corrección", "float", 0.3)
+			.opt("depth", "profundidad de cada árbol (1 = un tocón, una sola pregunta)", "int", 1)
+			.example("boost train g peticiones_train --rounds 50 --lr 0.3")))
+	reg.register(Command.new("boost curve", "Accuracy de un gradient boosting ronda a ronda, en entrenamiento y en otro dataset.",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _boost_curve(c, a), "modelos")
+		.with_signature(CommandSignature.new()
+			.pos("nombre", "modelo de boosting", "classic")
+			.pos("dataset", "dataset de evaluación (test)", "dataset")
+			.example("boost curve g peticiones_test")))
 	reg.register(Command.new("classic evaluate", "Accuracy de un árbol o un bosque en un dataset.",
 		func(c: CommandContext, a: Dictionary) -> CommandResult: return _evaluate(c, a), "modelos")
 		.with_signature(CommandSignature.new()
@@ -70,6 +85,12 @@ static func _tree_show(c: CommandContext, a: Dictionary) -> CommandResult:
 	if e["kind"] == "tree":
 		r.line("Reglas del árbol %s" % a["nombre"], "accent")
 		r.lines_from((e["model"] as ClassicML.DTree).rules(), "data")
+	elif e["kind"] == "boost":
+		var gb: ClassicML.GBoost = e["model"]
+		r.line("Boosting %s · %d rondas · las cinco primeras correcciones:" % [a["nombre"], gb.rounds.size()], "accent")
+		for k in mini(5, gb.rounds.size()):
+			r.line("  " + gb.describe(k), "data")
+		_importance_table(r, gb)
 	else:
 		var f: ClassicML.Forest = e["model"]
 		r.line("El bosque %s tiene %d árboles: demasiadas reglas para leerlas. Su resumen, la importancia de cada feature:" % [a["nombre"], f.trees.size()], "accent")
@@ -78,8 +99,8 @@ static func _tree_show(c: CommandContext, a: Dictionary) -> CommandResult:
 	return r
 
 
-static func _importance_table(r: CommandResult, f: ClassicML.Forest) -> void:
-	var imp := f.importances()
+static func _importance_table(r: CommandResult, f: Variant) -> void:
+	var imp: Dictionary = f.importances()
 	var keys: Array = imp.keys()
 	keys.sort_custom(func(x: String, y: String) -> bool: return imp[x] > imp[y])
 	var rows: Array = []
@@ -102,12 +123,65 @@ static func _forest_train(c: CommandContext, a: Dictionary) -> CommandResult:
 	return r
 
 
+static func _boost_train(c: CommandContext, a: Dictionary) -> CommandResult:
+	var ds := c.world.get_dataset(a["dataset"])
+	if ds.classes().size() != 2:
+		return CommandResult.error("Este gradient boosting es para dos clases; %s tiene %d." % [ds.name, ds.classes().size()])
+	var n := clampi(int(a["rounds"]), 1, 400)
+	var lr := clampf(float(a["lr"]), 0.01, 1.0)
+	var depth := clampi(int(a["depth"]), 1, 4)
+	var gb := ClassicML.GBoost.new().fit(ds, n, lr, depth)
+	c.world.classics[a["nombre"]] = {"kind": "boost", "model": gb, "trained_on": ds.name}
+	var acc := ClassicML.accuracy(gb, ds)
+	var r := CommandResult.new()
+	r.line("Boosting %s con %s · %d rondas · tasa %s · árboles de profundidad %d · detecta «%s»" % [a["nombre"], ds.name, n, str(lr), depth, gb.positive], "accent")
+	r.line("Empieza diciendo lo mismo a todos (la proporción de «%s») y cada ronda corrige un poco:" % gb.positive, "muted")
+	for k in mini(3, n):
+		r.line("  " + gb.describe(k), "data")
+	if n > 3:
+		r.line("  … y %d rondas más" % (n - 3), "muted")
+	r.line("Accuracy en %s (datos de entrenamiento): %.3f · mídelo en test con classic evaluate o boost curve" % [ds.name, acc], "normal")
+	c.emit("boost.trained", {"model": a["nombre"], "dataset": ds.name, "rounds": n, "lr": lr, "depth": depth, "accuracy": acc})
+	return r
+
+
+static func _boost_curve(c: CommandContext, a: Dictionary) -> CommandResult:
+	var e: Dictionary = c.world.classics[a["nombre"]]
+	if e["kind"] != "boost":
+		return CommandResult.error("%s no es un modelo de boosting (boost train)." % a["nombre"])
+	var gb: ClassicML.GBoost = e["model"]
+	var train := c.world.get_dataset(e["trained_on"])
+	var ds := c.world.get_dataset(a["dataset"])
+	var n := gb.rounds.size()
+	var marks: Array = []
+	for m in [1, 2, 5, 10, 20, 50, 100, 200, 400]:
+		if m < n:
+			marks.append(m)
+	marks.append(n)
+	var rows: Array = []
+	var best_k := 1
+	var best_acc := -1.0
+	for m: int in marks:
+		var tr := gb.accuracy_upto(train, m) if train != null else 0.0
+		var te := gb.accuracy_upto(ds, m)
+		if te > best_acc + 1e-9:
+			best_acc = te
+			best_k = m
+		rows.append([str(m), "%.3f" % tr, "%.3f" % te, "█".repeat(int(round(te * 20)))])
+	var r := CommandResult.new()
+	r.line("Curva de %s · entrenamiento (%s) frente a %s" % [a["nombre"], e["trained_on"], ds.name], "accent")
+	r.table(PackedStringArray(["rondas", "entrenamiento", ds.name, ""]), rows)
+	r.line("Mejor en %s: %.3f con %d rondas. Si entrenamiento sube y test baja, sobran rondas." % [ds.name, best_acc, best_k], "normal")
+	c.emit("boost.curve", {"model": a["nombre"], "dataset": ds.name, "best_rounds": best_k, "best_accuracy": best_acc, "final_accuracy": gb.accuracy_upto(ds, n)})
+	return r
+
+
 static func _evaluate(c: CommandContext, a: Dictionary) -> CommandResult:
 	var e: Dictionary = c.world.classics[a["nombre"]]
 	var ds := c.world.get_dataset(a["dataset"])
 	var acc := ClassicML.accuracy(e["model"], ds)
 	var r := CommandResult.new()
-	r.line("%s %s en %s · accuracy %.3f" % ["Árbol" if e["kind"] == "tree" else "Bosque", a["nombre"], ds.name, acc], "accent")
+	r.line("%s %s en %s · accuracy %.3f" % [{"tree": "Árbol", "forest": "Bosque", "boost": "Boosting"}.get(e["kind"], "Modelo"), a["nombre"], ds.name, acc], "accent")
 	if e["trained_on"] == ds.name:
 		r.line("Ojo: es el mismo dataset con el que aprendió; para saber si generaliza, usa uno de test.", "warn")
 	c.emit("classic.evaluated", {"model": a["nombre"], "kind": e["kind"], "dataset": ds.name, "accuracy": acc, "same_as_train": e["trained_on"] == ds.name})

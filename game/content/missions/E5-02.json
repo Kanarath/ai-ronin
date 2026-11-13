@@ -1,0 +1,249 @@
+{
+  "id": "E5-02",
+  "schema_version": 1,
+  "title": "La decisión de certificación",
+  "unit": "E5",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 35,
+  "requires_missions": [
+    "E5-01"
+  ],
+  "competencies": {
+    "requires": [
+      "E5.soa"
+    ],
+    "trains": [
+      "E5.graduar-hallazgos",
+      "E5.decision-certificacion"
+    ]
+  },
+  "briefing": "Tres días de etapa 2 en la forja: entrevistas, registros y muestras. El equipo auditor ha reunido seis hallazgos. Esta tarde hay que clasificarlos, cada uno con su grado, y decidir qué se recomienda al comité de certificación.",
+  "learning_objectives": [
+    "Clasificar hallazgos como no conformidad mayor, menor u observación",
+    "Justificar el grado de un hallazgo",
+    "Recomendar una decisión de certificación coherente con los hallazgos"
+  ],
+  "mentor_intro": "El grado de un hallazgo no lo decide su gravedad aparente: lo decide qué le pasa al sistema de gestión.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Graduar hallazgos y recomendar una decisión es el núcleo del trabajo de un auditor jefe. En IA es aún más delicado, porque requisitos como la evaluación de impacto no tienen equivalente en otras normas que el equipo ya conozca.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Lee los hallazgos y las definiciones de los grados: iso findings.",
+      "teach": "Tres grados\nNo conformidad mayor: falta un requisito o falla por completo, o afecta a la capacidad del sistema de lograr sus resultados. Menor: incumplimiento parcial o puntual. Observación: no hay incumplimiento, es una oportunidad de mejora.\nPor qué: son los criterios que usan las entidades de certificación (ISO/IEC 17021-1) y deciden si se certifica o no.",
+      "validator": {
+        "type": "event",
+        "event": "iso.findings"
+      },
+      "hints": [
+        "iso findings"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Clasifica los seis hallazgos: iso grade <hallazgo> <mayor|menor|observacion>.",
+      "teach": "¿Sistema o caso?\nLa pregunta clave: ¿el requisito no existe o no funciona (sistema), o existe y ha fallado una vez (caso)?\nPor qué: un fallo en 1 de 12 registros es menor aunque el cambio fuera importante; no haber hecho nunca la revisión por la dirección es mayor aunque nadie haya salido perjudicado.",
+      "validator": {
+        "type": "event",
+        "event": "iso.graded",
+        "where": {
+          "correct_count": {
+            "gte": 6
+          }
+        }
+      },
+      "hints": [
+        "H1 y H5: falta el requisito entero. H2, H3 y H6: existe pero con un fallo parcial. H4: no incumple nada.",
+        "iso grade H1 mayor · H2 menor · H3 menor · H4 observacion · H5 mayor · H6 menor"
+      ]
+    },
+    {
+      "id": "c1",
+      "text": "El cambio de H2 que no tenía aprobación era un cambio del modelo del chatbot. ¿Por qué sigue siendo menor?",
+      "teach": "Gravedad del caso frente a fallo del sistema\nEl grado mide el sistema de gestión, no el caso. Once de doce cambios tenían aprobación: el proceso existe y funciona; ha fallado una vez.\nPor qué: si el auditor gradúa por lo grave que suena el caso, dos auditores darán grados distintos al mismo hallazgo.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque los cambios del modelo no están en el alcance",
+          "why": "Están: el ciclo de vida (A.6) y el chatbot están en el alcance."
+        },
+        {
+          "id": "b",
+          "text": "porque el proceso de aprobación existe y funciona en 11 de 12 casos: es un fallo puntual, no del sistema",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "porque al auditor no le corresponde valorar los cambios del modelo",
+          "why": "Le corresponde comprobar que se controlan como dice el sistema de gestión."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Cuántos de los doce tenían aprobación?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Recomienda la decisión: iso decide <recomendar|recomendar-con-plan|aplazar>.",
+      "teach": "Lo que exige una mayor\nCon no conformidades menores se puede recomendar la certificación si la organización presenta un plan de acciones correctivas aceptado. Con una mayor, no: primero hay que corregirla y verificar la acción correctiva, a menudo con una visita de seguimiento.\nPor qué: certificar con una mayor abierta sería afirmar que el sistema funciona cuando hay un requisito entero sin implantar.",
+      "validator": {
+        "type": "event",
+        "event": "iso.decided",
+        "where": {
+          "decision": "aplazar",
+          "correct": true
+        }
+      },
+      "hints": [
+        "Hay dos mayores (H1 y H5).",
+        "iso decide aplazar"
+      ],
+      "on_complete": "Aplazada: la forja tiene que implantar la revisión por la dirección y las evaluaciones de impacto, y el equipo verificarlo antes de que el comité decida."
+    },
+    {
+      "id": "c2",
+      "text": "¿Qué tiene que presentar la forja para cerrar H5?",
+      "teach": "Cerrar una no conformidad\nTres piezas: la corrección (hacer lo que falta: las evaluaciones de impacto), el análisis de la causa raíz (por qué no se hicieron) y la acción correctiva (lo que cambia para que no vuelva a pasar). El auditor verifica que se han hecho y que funcionan.\nPor qué: sin causa raíz, se corrige el síntoma y el hallazgo vuelve en la siguiente auditoría.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "un documento firmado que diga que se harán las evaluaciones de impacto",
+          "why": "Una promesa no cierra una mayor: hace falta la evidencia de que está hecho."
+        },
+        {
+          "id": "b",
+          "text": "las evaluaciones de impacto hechas, el análisis de por qué no se hicieron y el cambio que evita que se repita, verificado por el auditor",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "nada: basta con quitar el chatbot del alcance de la certificación",
+          "why": "Recortar el alcance para esquivar un hallazgo no cierra nada, y el resto de sistemas tampoco tenía evaluación de impacto."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Corrección, causa raíz y acción correctiva.",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la regla de decisión: abre el editor con py, completa decision y compruébala con py check.",
+      "teach": "La decisión, en código\nAlguna mayor: aplazar. Si no, alguna menor: recomendar con plan. Si no: recomendar.\nPor qué: es lo que comprueba iso decide.",
+      "py_exercise": {
+        "id": "E5-02-decision",
+        "title": "decision(grados): recomendación a partir de los grados de los hallazgos",
+        "function": "decision",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef decision(grados):\n    # grados: lista con «mayor», «menor» u «observacion»\n    if \"menor\" in grados:\n        return \"recomendar-con-plan\"\n    return \"recomendar\"   # ← falta algo ANTES de las menores: ¿qué pasa si hay alguna mayor?\n\nprint(decision([\"mayor\", \"menor\", \"observacion\"]))   # aplazar\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "mayor",
+                "menor",
+                "observacion"
+              ]
+            ],
+            "expected": "aplazar"
+          },
+          {
+            "args": [
+              [
+                "menor",
+                "observacion"
+              ]
+            ],
+            "expected": "recomendar-con-plan"
+          },
+          {
+            "args": [
+              [
+                "observacion"
+              ]
+            ],
+            "expected": "recomendar"
+          },
+          {
+            "args": [
+              []
+            ],
+            "expected": "recomendar"
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "E5-02-decision",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "La comprobación de «mayor» tiene que ir la primera.",
+        "Añade al principio de la función: if \"mayor\" in grados: return \"aplazar\""
+      ]
+    }
+  ],
+  "you_can_now": "Sabes graduar hallazgos por lo que dicen del sistema de gestión, recomendar una decisión de certificación coherente y explicar qué hace falta para cerrar una mayor. Has completado E5.",
+  "debrief": {
+    "what_happened": "Has clasificado seis hallazgos (dos mayores, tres menores y una observación) y has recomendado aplazar la certificación hasta que se corrijan y verifiquen las dos mayores.",
+    "why": "El grado mide el sistema de gestión, no lo grave que suena el caso; y una mayor abierta impide certificar porque significa que un requisito entero no funciona.",
+    "in_production": "Las entidades de certificación acreditadas siguen ISO/IEC 17021-1 y, para IA, ISO/IEC 42006; el auditor jefe presenta los hallazgos en la reunión de cierre y la decisión la toma un comité independiente del equipo auditor.",
+    "simplifications": [
+      "Seis hallazgos y tres decisiones posibles; en la vida real hay plazos, visitas de seguimiento y alcances parciales",
+      "Los criterios de grado se resumen; cada entidad los concreta en sus procedimientos"
+    ]
+  },
+  "further_reading": [
+    "ref.iso-42001",
+    "ref.iso-17021-1"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: tras el seguimiento. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Tres meses después, el equipo verifica que H1 y H5 están corregidas y que sus acciones correctivas funcionan. H2, H3 y H6 siguen abiertas con un plan aceptado. ¿Qué recomiendas? (answer recomendar, recomendar-con-plan o aplazar)",
+        "validator": {
+          "type": "answer",
+          "expected": "recomendar-con-plan",
+          "accept": [
+            "recomendar-con-plan",
+            "recomendar con plan"
+          ]
+        },
+        "wrong_answer": "Revisa: ¿qué grados quedan abiertos?",
+        "hints": [
+          "Ya no hay mayores abiertas.",
+          "¿Quedan menores?"
+        ],
+        "on_complete": "Correcto: recomendar con plan. Las menores no impiden certificar si hay un plan de acciones correctivas aceptado; se verificarán en la primera auditoría de seguimiento."
+      }
+    ]
+  }
+}

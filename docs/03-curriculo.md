@@ -288,7 +288,10 @@ Cada arco tiene 4 fases con laboratorio en el Dojo (mecanismo) y en la Forja (re
 | O3 | Threat modeling: activos, fronteras de confianza, rutas de ataque; STRIDE adaptado; MITRE ATLAS | A3 | Bloque 10 |
 | O4 | Demostración de impacto e informes: severidad, reproducibilidad, evidencias, recomendaciones y verificación | O1, y se practica en cada arco | — |
 | O5 | Marcos y gobernanza: NIST AI RMF, ISO/IEC 42001, EU AI Act (qué es cada uno y qué no); mapear hallazgos a controles | O4 | — |
+| O7 | **Riesgos agénticos:** OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10); clasificar incidentes y medir la cobertura de las defensas | O6 y A5 | — |
 | O6 | **Detección y respuesta** (blue team de IA): qué registrar en apps LLM y agentes, detectar inyecciones y abuso de herramientas en las trazas, respuesta a incidentes de IA, forense de un agente comprometido | A3 | — |
+
+*Ampliación de noviembre de 2026 (T7-05, P2, O7 y E5) y lo que queda pendiente: [07-ampliacion-2026](07-ampliacion-2026.md).*
 
 ### 6.1 Ampliaciones propuestas por Claude (añadidas al currículo)
 
@@ -314,6 +317,7 @@ Cada ampliación sigue las mismas reglas que el resto: etiqueta epistemológica,
 | E2 | ML adversarial: ejemplos adversarios (evasión), extracción de modelos, membership inference | Viable en el Dojo con modelos pequeños propios y en la Forja con modelos de scikit-learn o PyTorch pequeños |
 | E3 | Gobernanza y auditoría profesional: evaluación de riesgos, registro de riesgos, evaluación de impacto, informe de auditoría | 100 % Dojo |
 | E4 | AI Ops avanzado: serving a escala, observabilidad, despliegues con políticas | Forja |
+| E5 | Auditor de ISO/IEC 42001: declaración de aplicabilidad, grados de los hallazgos y decisión de certificación | 100 % Dojo |
 
 | Id | Capstone | Tras |
 |---|---|---|

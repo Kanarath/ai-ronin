@@ -1,0 +1,261 @@
+{
+  "id": "E5-01",
+  "schema_version": 1,
+  "title": "La declaración de aplicabilidad",
+  "unit": "E5",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 35,
+  "requires_missions": [
+    "E3-03"
+  ],
+  "competencies": {
+    "requires": [
+      "E3.informe-auditoria"
+    ],
+    "trains": [
+      "E5.soa",
+      "E5.exclusiones"
+    ]
+  },
+  "briefing": "Una entidad de certificación te incorpora como auditor al equipo que certifica el SGIA (sistema de gestión de IA) de la forja con ISO/IEC 42001:2023. Antes de entrar en las instalaciones, el auditor jefe te pide revisar la declaración de aplicabilidad (SoA, Statement of Applicability): qué objetivos del Anexo A se aplican, por qué y con qué evidencias.",
+  "learning_objectives": [
+    "Explicar qué es la declaración de aplicabilidad y de dónde sale",
+    "Detectar una exclusión no justificada contrastándola con el contexto",
+    "Detectar un control incluido pero no implantado"
+  ],
+  "mentor_intro": "Una SoA dice lo que la organización cree que hace. Tu trabajo es comprobarlo.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "ISO/IEC 42001 es la norma certificable de sistemas de gestión de IA, y su SoA es el primer documento que revisa cualquier auditor. Saber leerla con ojo crítico es la base de los puestos de auditor de IA, consultor de cumplimiento o responsable de gobernanza.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Lee el contexto y la SoA: iso context e iso soa.",
+      "teach": "La SoA\nISO/IEC 42001 (6.1.3) pide comparar los controles que resultan de tratar los riesgos con los del Anexo A y dejar escrito, para cada uno, si se aplica y por qué, y si está implantado.\nPor qué: es la promesa de la organización. Una SoA bonita con justificaciones falsas es una no conformidad esperando.",
+      "validator": {
+        "type": "sequence",
+        "steps": [
+          {
+            "type": "event",
+            "event": "iso.context"
+          },
+          {
+            "type": "event",
+            "event": "iso.soa"
+          }
+        ]
+      },
+      "hints": [
+        "Dos comandos: iso context y después iso soa."
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Hay un objetivo excluido. Revísalo con iso check y contrástalo con el contexto. Si la exclusión no se sostiene, márcalo: iso flag <objetivo> exclusion-injustificada.",
+      "teach": "Exclusiones\nSe puede excluir un control del Anexo A, pero la justificación tiene que salir de la evaluación de riesgos y ser cierta.\nPor qué: las exclusiones son el sitio favorito para esconder lo que no se ha hecho.",
+      "validator": {
+        "type": "event",
+        "event": "iso.flagged",
+        "where": {
+          "objective": "A.10",
+          "type": "exclusion-injustificada",
+          "correct": true
+        }
+      },
+      "hints": [
+        "Es el único con «NO» en la columna aplica. ¿Tiene la forja terceros según iso context?",
+        "iso check A.10 y después iso flag A.10 exclusion-injustificada"
+      ],
+      "on_complete": "«No tenemos proveedores de IA», pero el contexto lista tres: el modelo de Meta, el servidor MCP público y la API de envíos."
+    },
+    {
+      "id": "c1",
+      "text": "¿Se puede excluir un objetivo del Anexo A?",
+      "teach": "El Anexo A no es una lista obligatoria\nEs un catálogo de referencia. Lo obligatorio es compararlo con lo que sale del tratamiento de riesgos y justificar cada inclusión y cada exclusión.\nPor qué: una organización que no desarrolla IA, solo la usa, puede no necesitar parte del ciclo de vida; pero tiene que decirlo y que sea verdad.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "no: los 38 controles son obligatorios para certificar",
+          "why": "El Anexo A es una referencia: lo obligatorio son las cláusulas 4 a 10, incluida la justificación de la SoA."
+        },
+        {
+          "id": "b",
+          "text": "sí, siempre que la dirección lo firme",
+          "why": "La firma no hace cierta una justificación falsa."
+        },
+        {
+          "id": "c",
+          "text": "sí, si la exclusión sale de la evaluación y el tratamiento de riesgos y la justificación es cierta",
+          "why": ""
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "¿Qué pide 6.1.3 para cada control?",
+        "answer c"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Ahora busca lo contrario: un objetivo incluido que no tiene ninguna evidencia. Márcalo con iso flag <objetivo> sin-evidencia.",
+      "teach": "Incluido no es implantado\nLa columna «evidencias» dice si hay algo que enseñar: un registro, un procedimiento aprobado, un informe. Sin evidencia, el control solo existe en el papel.\nPor qué: el auditor no certifica intenciones; certifica lo que puede comprobar.",
+      "validator": {
+        "type": "event",
+        "event": "iso.flagged",
+        "where": {
+          "objective": "A.5",
+          "type": "sin-evidencia",
+          "correct": true
+        }
+      },
+      "hints": [
+        "Busca un 0 en la columna evidencias entre los que aplican.",
+        "iso check A.5 y después iso flag A.5 sin-evidencia"
+      ],
+      "on_complete": "«Se hará cuando tengamos un sistema de alto riesgo»: pero el chatbot ya atiende a clientes. Esto volverá en la etapa 2 (E5-02)."
+    },
+    {
+      "id": "o4",
+      "text": "¿Qué cláusula de la norma pide la evaluación de impacto de los sistemas de IA que falta en A.5? (answer <cláusula>)",
+      "teach": "La evaluación de impacto\nISO/IEC 42001 pide evaluar las consecuencias de los sistemas de IA para personas, grupos y la sociedad. Está en la planificación (6.1.4) y se repite en la operación (8.4).\nPor qué: es lo que más distingue a esta norma de ISO/IEC 27001, y conecta con la FRIA (evaluación de impacto en los derechos fundamentales) del AI Act que viste en E3.",
+      "validator": {
+        "type": "answer",
+        "expected": "6.1.4",
+        "accept": [
+          "6.1.4",
+          "6.1.4."
+        ]
+      },
+      "hints": [
+        "Está en la cláusula 6, planificación, justo después del tratamiento de riesgos (6.1.3).",
+        "answer 6.1.4"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la primera comprobación del auditor: abre el editor con py, completa sin_evidencia y compruébala con py check.",
+      "teach": "Incluidos sin evidencia, en código\nDe la SoA, los objetivos que aplican y no tienen ninguna evidencia.\nPor qué: es la primera pasada de cualquier revisión documental.",
+      "py_exercise": {
+        "id": "E5-01-evidencia",
+        "title": "sin_evidencia(soa): objetivos que aplican y no tienen evidencias",
+        "function": "sin_evidencia",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef sin_evidencia(soa):\n    # soa: lista de {\"id\": ..., \"aplica\": True/False, \"evidencias\": [...]}\n    salida = []\n    for o in soa:\n        if o[\"aplica\"]:   # ← cambia esta línea: además, que la lista de evidencias esté vacía\n            salida.append(o[\"id\"])\n    return salida\n\nprint(sin_evidencia([{\"id\": \"A.2\", \"aplica\": True, \"evidencias\": [\"Política v1.2\"]}, {\"id\": \"A.5\", \"aplica\": True, \"evidencias\": []}]))   # ['A.5']\n",
+        "cases": [
+          {
+            "args": [
+              [
+                {
+                  "id": "A.2",
+                  "aplica": true,
+                  "evidencias": [
+                    "Política v1.2"
+                  ]
+                },
+                {
+                  "id": "A.5",
+                  "aplica": true,
+                  "evidencias": []
+                }
+              ]
+            ],
+            "expected": [
+              "A.5"
+            ]
+          },
+          {
+            "args": [
+              [
+                {
+                  "id": "A.10",
+                  "aplica": false,
+                  "evidencias": []
+                }
+              ]
+            ],
+            "expected": []
+          },
+          {
+            "args": [
+              [
+                {
+                  "id": "A.6",
+                  "aplica": true,
+                  "evidencias": []
+                },
+                {
+                  "id": "A.7",
+                  "aplica": true,
+                  "evidencias": []
+                }
+              ]
+            ],
+            "expected": [
+              "A.6",
+              "A.7"
+            ]
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "E5-01-evidencia",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "and len(o[\"evidencias\"]) == 0",
+        "La línea queda así: if o[\"aplica\"] and len(o[\"evidencias\"]) == 0:"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes leer una declaración de aplicabilidad, contrastar las exclusiones con el contexto y separar lo incluido de lo implantado. Siguiente: E5-02, la auditoría de etapa 2 y la decisión de certificación.",
+  "debrief": {
+    "what_happened": "Has encontrado una exclusión falsa (A.10: dicen no tener proveedores y tienen tres) y un objetivo incluido sin implantar (A.5: ninguna evaluación de impacto con sistemas ya en producción).",
+    "why": "La SoA es la promesa de la organización. El auditor la contrasta con el contexto y con las evidencias, porque se certifica lo que se puede comprobar.",
+    "in_production": "En una auditoría real, la revisión de la SoA se hace en la etapa 1 (documental) y se comprueba en la etapa 2 con entrevistas, registros y muestras; los auditores trabajan con la norma completa y con ISO/IEC 42006 (requisitos para las entidades que certifican ISO/IEC 42001).",
+    "simplifications": [
+      "El Anexo A por objetivos, no control a control",
+      "Una SoA de nueve filas y dos problemas plantados"
+    ]
+  },
+  "further_reading": [
+    "ref.iso-42001",
+    "ref.iso-19011"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: la SoA corregida. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "La forja manda una SoA nueva: A.10 ahora aplica, con el contrato del proveedor del servidor MCP como evidencia; A.5 sigue sin evidencias. ¿Cuántos objetivos siguen teniendo un problema? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 1,
+          "tolerance": 0
+        },
+        "wrong_answer": "Revisa: ¿qué tipo de problema tenía cada uno y cuál se ha resuelto?",
+        "hints": [
+          "Uno era una exclusión y el otro un incluido sin evidencia.",
+          "¿Ha cambiado algo en A.5?"
+        ],
+        "on_complete": "Correcto: 1. A.10 queda resuelto; A.5 sigue incluido y sin implantar."
+      }
+    ]
+  }
+}

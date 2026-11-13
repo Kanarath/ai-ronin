@@ -1385,6 +1385,39 @@
       "url": "https://arxiv.org/abs/1610.07524",
       "consulted": "2026-11-11",
       "review_by": "2028-11-11"
+    },
+    {
+      "id": "ref.friedman-gbm-2001",
+      "title": "Friedman, J. H. (2001). Greedy function approximation: A gradient boosting machine. Annals of Statistics 29(5)",
+      "source": "Institute of Mathematical Statistics",
+      "type": "articulo",
+      "url": "https://doi.org/10.1214/aos/1013203451",
+      "consulted": "2026-11-13"
+    },
+    {
+      "id": "ref.xgboost-2016",
+      "title": "Chen, T. y Guestrin, C. (2016). XGBoost: A Scalable Tree Boosting System. KDD 2016",
+      "source": "arXiv",
+      "type": "articulo",
+      "url": "https://arxiv.org/abs/1603.02754",
+      "consulted": "2026-11-13"
+    },
+    {
+      "id": "ref.huyen-ai-engineering",
+      "title": "Huyen, C. (2025). AI Engineering: Building Applications with Foundation Models (caps. 3 y 4: evaluación)",
+      "source": "O'Reilly",
+      "type": "libro",
+      "url": "https://www.oreilly.com/library/view/ai-engineering/9781098166298/",
+      "consulted": "2026-11-13"
+    },
+    {
+      "id": "ref.iso-17021-1",
+      "title": "ISO/IEC 17021-1:2015 Conformity assessment — Requirements for bodies providing audit and certification of management systems (no conformidades mayores y menores, decisión de certificación). Norma de pago: solo se usa su descripción pública",
+      "source": "ISO/IEC",
+      "type": "norma",
+      "url": "https://www.iso.org/standard/61651.html",
+      "consulted": "2026-11-13",
+      "review_by": "2027-11-13"
     }
   ]
 }

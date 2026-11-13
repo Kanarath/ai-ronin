@@ -217,7 +217,7 @@
       ]
     }
   ],
-  "you_can_now": "Sabes montar un detector de anomalías sin etiquetas, sabes que lo malo no siempre es raro ni lo raro siempre malo, y sabes combinarlo con un modelo supervisado. Siguiente: T4, las redes neuronales.",
+  "you_can_now": "Sabes montar un detector de anomalías sin etiquetas, sabes que lo malo no siempre es raro ni lo raro siempre malo, y sabes combinarlo con un modelo supervisado. Siguiente: T7-05, gradient boosting.",
   "debrief": {
     "what_happened": "Has encontrado diez abusadores sin etiquetas, has visto que el abusador lento no sale entre los treinta más raros y que algunos clientes legítimos sí salen.",
     "why": "La detección de anomalías descubre lo nuevo, pero un atacante cuidadoso imita lo normal; por eso se combina con modelos supervisados y con revisión humana.",

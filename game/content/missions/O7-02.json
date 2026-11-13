@@ -1,0 +1,266 @@
+{
+  "id": "O7-02",
+  "schema_version": 1,
+  "title": "El mapa de cobertura",
+  "unit": "O7",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "O7-01"
+  ],
+  "competencies": {
+    "requires": [
+      "O7.taxonomia-asi"
+    ],
+    "trains": [
+      "O7.cobertura",
+      "O7.priorizar"
+    ]
+  },
+  "briefing": "El comité te hace la pregunta de verdad: «De los diez riesgos, ¿cuáles tenemos cubiertos?». Tienes las nueve defensas que has montado a lo largo de los arcos. Hoy las colocas sobre el mapa ASI, encuentras los huecos y decides cuál se tapa primero.",
+  "learning_objectives": [
+    "Relacionar defensas concretas con riesgos ASI",
+    "Encontrar los riesgos sin cubrir",
+    "Priorizar un hueco por su impacto en el contexto real"
+  ],
+  "mentor_intro": "Una lista de defensas no dice nada hasta que la pones sobre la lista de riesgos.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Un mapa de cobertura (riesgos frente a controles) es lo que se presenta a un comité, a un auditor o a un cliente que pregunta cómo de seguro es tu sistema de agentes. Es el puente entre el trabajo técnico de los arcos y la gobernanza de O5.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira tus defensas: asi defenses.",
+      "teach": "Defensas con nombre\nCada una es algo que has construido o medido en un arco: delimitar el contenido externo, la lista blanca de herramientas, actuar con los permisos de quien pide, el pinning de MCP…\nPor qué: un control que no sabes nombrar y señalar no lo puedes defender ante nadie.",
+      "validator": {
+        "type": "event",
+        "event": "asi.defenses"
+      },
+      "hints": [
+        "asi defenses"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Asigna a cada defensa el riesgo que cubre: asi cover <defensa> <ASIxx>, de D1 a D9.",
+      "teach": "Defensa principal\nCada defensa se asigna al riesgo que corta en su causa raíz. Dos defensas pueden cubrir el mismo riesgo (D4 y D5 cubren cadena de suministro desde dos sitios).\nPor qué: la redundancia en un riesgo está bien; lo que hay que encontrar son los riesgos sin ninguna.",
+      "validator": {
+        "type": "event",
+        "event": "asi.covered",
+        "where": {
+          "correct_count": {
+            "gte": 9
+          }
+        }
+      },
+      "hints": [
+        "Lee qué frenaba cada defensa en su arco: D1 separa datos de instrucciones, D3 es el confused deputy, D7 son los mensajes entre agentes, D8 la propagación, D9 el agente que se desvía.",
+        "D1 ASI01 · D2 ASI02 · D3 ASI03 · D4 ASI04 · D5 ASI04 · D6 ASI06 · D7 ASI07 · D8 ASI08 · D9 ASI10"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Pinta el mapa: asi coverage. ¿Cuántos riesgos se quedan sin ninguna defensa? (answer <número>)",
+      "teach": "El hueco\nUn riesgo sin defensa no es necesariamente un fallo: puede no aplicar. Pero hay que poder decir por qué.\nPor qué: es exactamente lo que pide la declaración de aplicabilidad de ISO/IEC 42001 (E5): justificar lo que no cubres.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "asi.coverage",
+            "where": {
+              "mapped": {
+                "gte": 9
+              }
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 2,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "Cuenta las filas con «— sin defensa».",
+        "answer 2"
+      ],
+      "on_complete": "ASI05 (ejecución de código) y ASI09 (confianza humano–agente): ninguno de los arcos los ha tocado."
+    },
+    {
+      "id": "c1",
+      "text": "¿Cuál tapas primero?",
+      "teach": "Priorizar con el contexto\nNo todos los huecos pesan igual. En la forja, el agente analista ya ejecuta código sobre ficheros de clientes (I5) en el mismo servidor.\nPor qué: la prioridad sale de la probabilidad y el impacto en TU sistema, no del orden de la lista.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "ASI09, porque va antes en la lista que ASI10",
+          "why": "El número es solo un orden; no es una prioridad."
+        },
+        {
+          "id": "b",
+          "text": "ASI05, porque ya hay un agente que ejecuta código sobre datos de clientes y el impacto es tomar el servidor",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "los dos a la vez, con la mitad del presupuesto cada uno",
+          "why": "Repartir por igual ignora que uno de los dos ya está ocurriendo."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Cuál de los dos ya ha pasado en la forja (I5)?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "¿Qué defensa cubriría ASI05?",
+      "teach": "Aislar la ejecución\nEl código que genera o recibe un agente se ejecuta en un entorno aislado: un contenedor o una microVM (máquina virtual ligera) sin red, sin secretos, con un sistema de ficheros desechable y límites de tiempo y memoria.\nPor qué: no puedes garantizar que el código sea bueno, pero sí que, si es malo, no llegue a nada.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "pedir al modelo en el prompt que no genere código peligroso",
+          "why": "Es una petición, no un control: una entrada manipulada la salta (A1)."
+        },
+        {
+          "id": "b",
+          "text": "revisar a mano cada script antes de ejecutarlo",
+          "why": "No escala, y entonces el agente deja de ser útil; además, a la persona se la puede engañar (ASI09)."
+        },
+        {
+          "id": "c",
+          "text": "ejecutar el código en un entorno aislado: sin red, sin secretos, desechable y con límites de tiempo y memoria",
+          "why": ""
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "c",
+        "accept": [
+          "c"
+        ]
+      },
+      "hints": [
+        "¿Qué control funciona aunque el código sea malicioso?",
+        "answer c"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la búsqueda de huecos: abre el editor con py, completa sin_cubrir y compruébala con py check.",
+      "teach": "Riesgos sin defensa, en código\nUn riesgo está cubierto si alguna defensa lo cubre.\nPor qué: es el cálculo de asi coverage.",
+      "py_exercise": {
+        "id": "O7-02-huecos",
+        "title": "sin_cubrir(riesgos, cobertura): los riesgos que ninguna defensa cubre",
+        "function": "sin_cubrir",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef sin_cubrir(riesgos, cobertura):\n    # cobertura: {defensa: riesgo que cubre}\n    cubiertos = set(cobertura.values())\n    return []   # ← cambia esta línea: los riesgos (en orden) que no están en cubiertos\n\nprint(sin_cubrir([\"ASI01\", \"ASI02\", \"ASI05\"], {\"D1\": \"ASI01\", \"D2\": \"ASI02\"}))   # ['ASI05']\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "ASI01",
+                "ASI02",
+                "ASI05"
+              ],
+              {
+                "D1": "ASI01",
+                "D2": "ASI02"
+              }
+            ],
+            "expected": [
+              "ASI05"
+            ]
+          },
+          {
+            "args": [
+              [
+                "ASI01",
+                "ASI04"
+              ],
+              {
+                "D4": "ASI04",
+                "D5": "ASI04"
+              }
+            ],
+            "expected": [
+              "ASI01"
+            ]
+          },
+          {
+            "args": [
+              [
+                "ASI01"
+              ],
+              {
+                "D1": "ASI01"
+              }
+            ],
+            "expected": []
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "O7-02-huecos",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Una lista por comprensión que recorra riesgos.",
+        "La línea queda así: return [r for r in riesgos if r not in cubiertos]"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes poner tus defensas sobre el mapa ASI, encontrar los huecos y priorizarlos por su impacto real. Siguiente: C1, el laboratorio de agentes completo.",
+  "debrief": {
+    "what_happened": "Has colocado las nueve defensas de los arcos sobre los diez riesgos ASI y han quedado dos huecos: ASI05 y ASI09. Has priorizado ASI05 porque ya está ocurriendo y has elegido el control que lo cubre: aislar la ejecución.",
+    "why": "La cobertura convierte el trabajo técnico en una respuesta para quien decide: qué está cubierto, qué no, por qué y qué va primero.",
+    "in_production": "Los equipos mantienen una matriz de riesgos frente a controles (ASI, LLM Top 10, ATLAS) con responsable, evidencia y fecha de revisión de cada control, y la presentan al comité de riesgos y a los auditores.",
+    "simplifications": [
+      "Una defensa por riesgo principal; en la vida real cada control cubre varios en distinto grado",
+      "Sin medir la eficacia de cada defensa: eso lo hiciste en los arcos con el antes y después"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-agentic-2026",
+    "ref.nist-ai-rmf"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: quitar una defensa. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Si la forja dejara de registrar las llamadas a herramientas y de alertar de comportamiento anómalo (quitar D9), ¿cuántos riesgos quedarían sin ninguna defensa? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 3,
+          "tolerance": 0
+        },
+        "wrong_answer": "Revisa: ¿qué riesgo cubre D9 y hay alguna otra defensa en esa fila de asi coverage?",
+        "hints": [
+          "Busca D9 en asi coverage.",
+          "¿Su riesgo tiene otra defensa?"
+        ],
+        "on_complete": "Correcto: 3. D9 es la única defensa contra los agentes descontrolados (ASI10)."
+      }
+    ]
+  }
+}

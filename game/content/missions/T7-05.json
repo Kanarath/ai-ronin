@@ -1,0 +1,327 @@
+{
+  "id": "T7-05",
+  "schema_version": 1,
+  "title": "Pasos pequeños que corrigen",
+  "unit": "T7",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "consolidado",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "T7-04"
+  ],
+  "competencies": {
+    "requires": [
+      "T7.bosque-aleatorio"
+    ],
+    "trains": [
+      "T7.gradient-boosting",
+      "T7.parada-temprana"
+    ]
+  },
+  "briefing": "El bosque de T7-02 detecta bien a los abusadores de la API (Application Programming Interface), pero el equipo de datos de la forja quiere probar lo que se usa en casi todas las competiciones y empresas con datos en tablas: gradient boosting (XGBoost, LightGBM, CatBoost). Hoy lo entrenas de verdad, lo comparas con el bosque y descubres cuándo sobran rondas.",
+  "learning_objectives": [
+    "Entrenar un gradient boosting y compararlo con un bosque aleatorio",
+    "Explicar qué aprende cada ronda: los residuos",
+    "Elegir el número de rondas con datos de validación (parada temprana)"
+  ],
+  "mentor_intro": "El bosque pregunta a muchos a la vez. El boosting pregunta de uno en uno, y cada uno corrige al anterior.",
+  "lab": {
+    "datasets": [
+      {
+        "file": "peticiones.csv",
+        "name": "peticiones",
+        "label": "tipo"
+      },
+      {
+        "file": "katanas.csv",
+        "name": "katanas",
+        "label": "calidad"
+      }
+    ],
+    "viz": {}
+  },
+  "purpose": "En datos en tablas (fraude, abuso de API, alertas del SOC o Security Operations Center, scoring de riesgo) el gradient boosting suele ser el modelo que gana. Saber cómo aprende y cómo se sobreajusta es lo que te permite fiarte de él o desconfiar con motivo.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Punto de partida: dataset split peticiones --test 0.3 --seed 42, forest train f peticiones_train --trees 50 --depth 6 y classic evaluate f peticiones_test. ¿Qué accuracy tiene el bosque en test? (answer <número>)",
+      "teach": "El rival a batir\nEl bosque de T7-02 entrena muchos árboles a la vez, cada uno con una muestra distinta, y los pone a votar.\nPor qué: para saber si un modelo nuevo aporta algo, se compara con el mejor que ya tienes, en el mismo test.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "classic.evaluated",
+            "where": {
+              "model": "f",
+              "dataset": "peticiones_test"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.917,
+            "tolerance": 0.002
+          }
+        ]
+      },
+      "hints": [
+        "Los tres comandos del enunciado, en ese orden.",
+        "answer 0.917"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Entrena un gradient boosting de tocones (árboles de una sola pregunta): boost train g peticiones_train --rounds 50 --lr 0.3 y classic evaluate g peticiones_test. ¿Qué accuracy tiene en test? (answer <número>)",
+      "prediction": {
+        "prompt": "¿Puede una fila de árboles de UNA sola pregunta ganar a un bosque de árboles de seis?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "Boosting: en fila, no en paralelo\nEmpieza diciendo lo mismo a todos (la proporción de abusadores). Cada ronda entrena un árbol pequeño que corrige un poco lo que el modelo aún falla, y su corrección se suma a la anterior.\nPor qué: muchos pasos pequeños y bien dirigidos llegan más lejos que muchos árboles grandes que votan sin saber unos de otros.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "classic.evaluated",
+            "where": {
+              "model": "g",
+              "dataset": "peticiones_test"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.972,
+            "tolerance": 0.002
+          }
+        ]
+      },
+      "hints": [
+        "Registra tu hipótesis y lanza los dos comandos.",
+        "answer 0.972"
+      ],
+      "on_complete": "0.972 frente a 0.917: el boosting de tocones gana al bosque en el mismo test."
+    },
+    {
+      "id": "o3",
+      "text": "Mira las primeras correcciones: tree show g. ¿Por qué feature pregunta la primera ronda? (answer <feature>)",
+      "teach": "Lo que hace cada ronda\nCada línea es un tocón: una pregunta y cuánto suma o resta a la puntuación de «abuso» según la respuesta.\nPor qué: la primera ronda ataca el error más grande; las siguientes, lo que queda.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "classic.shown",
+            "where": {
+              "model": "g",
+              "kind": "boost"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "peticiones_hora",
+            "accept": [
+              "peticiones_hora",
+              "peticiones hora"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "La línea «ronda 1».",
+        "answer peticiones_hora"
+      ]
+    },
+    {
+      "id": "c1",
+      "text": "¿Qué aprende cada ronda nueva del boosting?",
+      "teach": "Residuos\nEl residuo de un ejemplo es su etiqueta (1 si es abuso, 0 si no) menos la probabilidad que le da el modelo hasta ahora. Es lo que aún falla.\nPor qué: entrenar sobre los residuos es bajar por el gradiente de la pérdida, el mismo descenso por gradiente de T3, pero sumando árboles en lugar de mover pesos.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "otra vez las etiquetas originales, con una muestra distinta de filas",
+          "why": "Eso es el bosque aleatorio: árboles independientes sobre muestras distintas."
+        },
+        {
+          "id": "b",
+          "text": "los residuos: lo que el modelo acumulado todavía falla en cada ejemplo",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "solo los ejemplos de test que falló la ronda anterior",
+          "why": "El test no se toca para entrenar: sería fuga de datos."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "«Gradient»: ¿hacia dónde empuja cada ronda?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o4",
+      "text": "Ahora con katanas y árboles más grandes: dataset split katanas --test 0.3 --seed 42, boost train gk katanas_train --rounds 400 --lr 0.5 --depth 3 y boost curve gk katanas_test. ¿Con cuántas rondas da la mejor accuracy en test? (answer <número>)",
+      "prediction": {
+        "prompt": "Con 400 rondas en lugar de 5, ¿la accuracy en test será mejor, parecida o peor?",
+        "options": [
+          "mejor",
+          "parecida",
+          "peor"
+        ]
+      },
+      "teach": "Cuando sobran rondas\nCada ronda reduce el error de entrenamiento. Pasado un punto, ya no corrige errores de verdad: memoriza el ruido de esas 168 hojas.\nPor qué: es el mismo sobreajuste que el árbol profundo de T7-01, pero llega poco a poco, ronda a ronda.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "boost.curve",
+            "where": {
+              "model": "gk",
+              "dataset": "katanas_test"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 5,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "Registra tu hipótesis y lanza los tres comandos. La última línea de boost curve dice el mejor número de rondas.",
+        "answer 5"
+      ],
+      "on_complete": "Entrenamiento llega a 1.000 y test baja de 0.833 (5 rondas) a 0.750 (400): sobraban rondas."
+    },
+    {
+      "id": "c2",
+      "text": "En producción, ¿cómo eliges cuántas rondas usar?",
+      "teach": "Parada temprana (early stopping)\nSe aparta un trozo de los datos de entrenamiento como validación y se para cuando la accuracy en validación deja de mejorar durante unas cuantas rondas.\nPor qué: si eliges las rondas mirando el test, el test deja de ser una medida honesta: has ajustado el modelo a él.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "las que den la mejor accuracy en el conjunto de test",
+          "why": "Así el test se usa para ajustar el modelo y deja de medir cómo funcionará con datos nuevos."
+        },
+        {
+          "id": "b",
+          "text": "con un conjunto de validación aparte, parando cuando deja de mejorar",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "hasta que la accuracy de entrenamiento llegue a 1.000",
+          "why": "Llegar a 1.000 en entrenamiento es justo la señal de que ya está memorizando."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "En esta misión has usado el test para mirar la curva. ¿Debería hacerse así en un proyecto real?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa el corazón del boosting: abre el editor con py, completa residuos y compruébala con py check.",
+      "teach": "El residuo, en código\nPara cada ejemplo: etiqueta (1 o 0) menos la probabilidad que da el modelo.\nPor qué: es lo que la siguiente ronda intenta predecir.",
+      "py_exercise": {
+        "id": "T7-05-residuos",
+        "title": "residuos(etiquetas, probabilidades): lo que el modelo aún falla",
+        "function": "residuos",
+        "tolerance": 0.0001,
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef residuos(etiquetas, probabilidades):\n    salida = []\n    for y, p in zip(etiquetas, probabilidades):\n        salida.append(p)   # ← cambia esta línea: el residuo es la etiqueta menos la probabilidad\n    return salida\n\nprint(residuos([1, 0, 1], [0.8, 0.3, 0.4]))   # unos [0.2, -0.3, 0.6]\n",
+        "cases": [
+          {
+            "args": [
+              [1, 0, 1],
+              [0.8, 0.3, 0.4]
+            ],
+            "expected": [0.2, -0.3, 0.6]
+          },
+          {
+            "args": [
+              [0, 0],
+              [0.5, 0.1]
+            ],
+            "expected": [-0.5, -0.1]
+          },
+          {
+            "args": [
+              [1],
+              [1.0]
+            ],
+            "expected": [0.0]
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T7-05-residuos",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "y - p",
+        "La línea queda así: salida.append(y - p)"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes entrenar un gradient boosting, explicar que cada ronda aprende los residuos y elegir las rondas con validación en lugar de con el test. Siguiente: T4, las redes neuronales.",
+  "debrief": {
+    "what_happened": "El boosting de tocones ha ganado al bosque en peticiones (0.972 frente a 0.917) y, con árboles más grandes y 400 rondas, has visto cómo el test baja de 0.833 a 0.750 mientras el entrenamiento llega a 1.000.",
+    "why": "Cada ronda corrige lo que aún falla; al principio eso son errores de verdad y al final es ruido. Por eso el número de rondas y la tasa de aprendizaje se eligen con validación.",
+    "in_production": "XGBoost, LightGBM y CatBoost usan tasas de 0,01 a 0,1, cientos o miles de rondas con parada temprana sobre validación, submuestreo de filas y columnas y regularización de las hojas.",
+    "simplifications": [
+      "Dos clases y pérdida logística, sin regularización ni submuestreo",
+      "La curva se mira en test para verla; en un proyecto real se miraría en validación"
+    ],
+    "exercise": "forja/ejercicios/T7_01_arboles.py"
+  },
+  "further_reading": [
+    "ref.friedman-gbm-2001",
+    "ref.xgboost-2016"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: una tasa de aprendizaje más baja. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con katanas_train, entrena un boosting de 400 rondas, tasa 0.1 y profundidad 3, y mira su curva en katanas_test. ¿Con cuántas rondas da la mejor accuracy? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 50,
+          "tolerance": 0
+        },
+        "wrong_answer": "Revisa: boost train <nombre> katanas_train --rounds 400 --lr 0.1 --depth 3 y boost curve <nombre> katanas_test.",
+        "hints": [
+          "boost train y boost curve.",
+          "Mira la última línea de la curva."
+        ],
+        "on_complete": "Correcto: 50 rondas. Con una tasa cinco veces menor hacen falta unas diez veces más rondas para llegar al mismo punto."
+      }
+    ]
+  }
+}

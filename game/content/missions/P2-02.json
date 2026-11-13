@@ -1,0 +1,322 @@
+{
+  "id": "P2-02",
+  "schema_version": 1,
+  "title": "Ojos en producción",
+  "unit": "P2",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 35,
+  "requires_missions": [
+    "P2-01"
+  ],
+  "competencies": {
+    "requires": [
+      "P2.evals-trayectoria"
+    ],
+    "trains": [
+      "P2.observabilidad",
+      "P2.deriva"
+    ]
+  },
+  "briefing": "La v3 lleva una semana en producción. El golden set decía 0.917 y nadie se ha quejado… todavía. Hoy abres el panel de observabilidad: latencia, errores de herramientas, coste y un juez que puntúa una muestra de las conversaciones reales. Algo ha cambiado a mitad de semana.",
+  "learning_objectives": [
+    "Leer un panel de producción de un agente (p95, errores y coste)",
+    "Encontrar en una traza dónde se va el tiempo",
+    "Elegir el muestreo del juez para ver una caída de calidad",
+    "Detectar deriva en lo que entra al sistema"
+  ],
+  "mentor_intro": "Las evals de antes de desplegar dicen cómo era el mundo. Producción dice cómo es.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Las evals offline solo cubren lo que pusiste en el golden set. La observabilidad (trazas, métricas y evals online sobre muestras reales) es lo que detecta lo que no habías previsto, y es la mitad de cualquier puesto de AI engineer o de AI Ops.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Abre el panel: monitor dashboard. ¿Qué día se dispara la latencia p95? (answer <día>)",
+      "teach": "El panel\nPor día: peticiones, latencia mediana (p50) y del percentil 95 (p95), errores de las herramientas, tokens y la calidad que estima el juez.\nPor qué: son las cuatro preguntas de producción: ¿va rápido?, ¿falla?, ¿cuánto cuesta?, ¿contesta bien?",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "monitor.dashboard"
+          },
+          {
+            "type": "answer",
+            "expected": 6,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "Busca la columna p95.",
+        "answer 6"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Abre la traza más lenta de ese día: monitor trace 6. ¿Qué herramienta se come el tiempo? (answer <herramienta>)",
+      "teach": "Trazas y spans\nUna traza es una petición entera; cada span es un trozo con su duración: buscar en el RAG, que el LLM planifique, cada llamada a herramienta.\nPor qué: sin trazas solo sabes que va lento; con ellas sabes por qué.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "monitor.trace",
+            "where": {
+              "day": 6
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "estado_envio",
+            "accept": [
+              "estado_envio",
+              "herramienta.estado_envio"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "Mira la línea «Donde se va el tiempo».",
+        "answer estado_envio"
+      ],
+      "on_complete": "Dos timeouts de 2 s y un tercer intento: la API de envíos falla y el agente reintenta. No es el LLM."
+    },
+    {
+      "id": "c1",
+      "text": "¿Por qué se vigila el p95 y no solo la media?",
+      "teach": "La cola\nEl p95 es el tiempo por debajo del cual quedan el 95 % de las peticiones. La media puede apenas moverse mientras una de cada veinte personas espera 9 segundos.\nPor qué: los problemas de producción (timeouts, reintentos) suelen estar en la cola, no en el centro.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque la media es más difícil de calcular",
+          "why": "Es igual de fácil; el problema es lo que esconde."
+        },
+        {
+          "id": "b",
+          "text": "porque la media esconde la cola: unas pocas peticiones muy lentas casi no la mueven",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "porque el p95 siempre es mayor y así las alertas saltan antes",
+          "why": "Saltar antes no es el objetivo: lo es ver a quien espera de verdad."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Fíjate en el p50 del día 6: casi no cambia.",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Ahora la calidad. El juez solo puntúa el 1 % de las conversaciones (20 al día). Mira el día 6 con ese muestreo y después con el 10 %: monitor dashboard --muestreo 0.1. ¿Qué calidad estima el juez el día 6 con el 10 %? (answer <número>)",
+      "prediction": {
+        "prompt": "Con el 1 % (20 conversaciones al día), ¿se distingue la calidad del día 6 de la del día 1?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "Evals online por muestreo\nPuntuar todas las conversaciones con un juez cuesta casi tanto como el propio agente, así que se puntúa una muestra. Con 20 conversaciones el intervalo es de ±0,2; con 200, de ±0,06.\nPor qué: si el muestreo es demasiado pequeño, una caída de calidad real queda escondida en el ruido.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "monitor.dashboard",
+            "where": {
+              "rate": 0.1,
+              "drop_visible": true
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.78,
+            "tolerance": 0.005
+          }
+        ]
+      },
+      "hints": [
+        "Registra tu hipótesis y lanza el comando con --muestreo 0.1. Mira la fila del día 6.",
+        "answer 0.78"
+      ],
+      "on_complete": "Con el 10 %, el día 6 (0.78 ± 0.06) queda claramente por debajo del día 1 (0.92 ± 0.04). Con el 1 %, los intervalos se solapaban."
+    },
+    {
+      "id": "o4",
+      "text": "¿Por qué baja la calidad? Mira lo que entra: monitor drift. ¿Qué tema aparece en los días 5 a 7? (answer <tema>)",
+      "teach": "Deriva de datos (data drift)\nLo que llega al sistema cambia: clientes nuevos, otro idioma, otro producto. El PSI (Population Stability Index) mide cuánto ha cambiado una distribución.\nPor qué: un modelo que iba bien con lo de antes puede ir mal con lo nuevo, sin que nadie haya tocado el código.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "monitor.drift"
+          },
+          {
+            "type": "answer",
+            "expected": "internacional",
+            "accept": [
+              "internacional"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "La fila que pasa de 0 % a algo.",
+        "answer internacional"
+      ],
+      "on_complete": "PSI 1.57: cambio importante. Llegan envíos internacionales y el golden set no tenía ni una tarea de ese tema."
+    },
+    {
+      "id": "c2",
+      "text": "¿Qué haces con lo que has encontrado?",
+      "teach": "Cerrar el ciclo\nLo que se descubre en producción vuelve al golden set: nuevas tareas del tema que faltaba, y una alerta para la latencia de la herramienta.\nPor qué: las evals offline y online no compiten: producción encuentra los huecos y el golden set impide que vuelvan.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "subir el muestreo al 100 % para siempre",
+          "why": "Es caro y no arregla nada: solo mide mejor."
+        },
+        {
+          "id": "b",
+          "text": "añadir tareas de envíos internacionales al golden set, arreglarlas y alertar del p95 y de los errores de estado_envio",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "volver a v1, que contestaba de otra forma",
+          "why": "v1 tampoco tenía tareas internacionales y era peor en el golden set: el problema es el hueco, no la versión."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Cómo evitas que el próximo cambio vuelva a fallar en lo internacional sin que lo veas?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa el PSI: abre el editor con py, completa psi y compruébala con py check.",
+      "teach": "El PSI, en código\nPara cada categoría: (actual − esperado) × ln(actual / esperado), y se suma. Las proporciones a cero se cambian por 0,001 para que el logaritmo exista.\nPor qué: es una de las medidas de deriva más usadas en banca y en monitorización de modelos.",
+      "py_exercise": {
+        "id": "P2-02-psi",
+        "title": "psi(esperado, actual): cuánto ha cambiado una distribución",
+        "function": "psi",
+        "tolerance": 0.002,
+        "starter": "# Completa la línea marcada y compruébala con py check.\nimport math\n\ndef psi(esperado, actual):\n    total = 0.0\n    for e, a in zip(esperado, actual):\n        e = max(e, 0.001)\n        a = max(a, 0.001)\n        total += (a - e)   # ← cambia esta línea: multiplica por el logaritmo de a / e\n    return total\n\nprint(round(psi([0.6, 0.4], [0.5, 0.5]), 3))   # unos 0.041\n",
+        "cases": [
+          {
+            "args": [
+              [
+                0.6,
+                0.4
+              ],
+              [
+                0.5,
+                0.5
+              ]
+            ],
+            "expected": 0.0405
+          },
+          {
+            "args": [
+              [
+                0.5,
+                0.5
+              ],
+              [
+                0.5,
+                0.5
+              ]
+            ],
+            "expected": 0.0
+          },
+          {
+            "args": [
+              [
+                0.6,
+                0.4,
+                0.0
+              ],
+              [
+                0.4667,
+                0.2667,
+                0.2667
+              ]
+            ],
+            "expected": 1.571
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "P2-02-psi",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "math.log(a / e)",
+        "La línea queda así: total += (a - e) * math.log(a / e)"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes leer el panel de un agente en producción, encontrar en una traza dónde se va el tiempo, elegir el muestreo del juez y detectar deriva. Siguiente: A4, MCP.",
+  "debrief": {
+    "what_happened": "El p95 se ha disparado el día 6 por timeouts de la API de envíos, y la calidad ha caído porque han llegado envíos internacionales que el golden set no cubría. Con el juez al 1 % no se veía; con el 10 %, sí.",
+    "why": "Producción cambia sin avisar. Las trazas explican la latencia, las evals online por muestreo miden la calidad real y la deriva explica por qué cambia; lo encontrado vuelve al golden set.",
+    "in_production": "Los equipos instrumentan los agentes con OpenTelemetry (convenciones GenAI) y herramientas como Langfuse, Phoenix o LangSmith, puntúan una muestra con jueces y alertan de p95, errores, coste y deriva.",
+    "simplifications": [
+      "Métricas agregadas por día y una sola traza",
+      "El juez muestreado acierta siempre; uno real tiene su propio error (A1-06)"
+    ]
+  },
+  "further_reading": [
+    "ref.otel-genai",
+    "ref.huyen-ai-engineering"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: otro muestreo. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con el juez puntuando el 5 % de las conversaciones, ¿qué calidad estima el día 6? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 0.82,
+          "tolerance": 0.005
+        },
+        "wrong_answer": "Revisa: monitor dashboard --muestreo 0.05 y la fila del día 6.",
+        "hints": [
+          "monitor dashboard con otra opción de muestreo.",
+          "La fila del día 6, columna de calidad."
+        ],
+        "on_complete": "Correcto: 0.82 ± 0.08. Con 100 conversaciones al día, la caída aún se confunde con el ruido."
+      }
+    ]
+  }
+}

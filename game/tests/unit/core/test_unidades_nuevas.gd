@@ -18,6 +18,21 @@ const SOLUCIONES := {
 	"T10-01": "# Completa la línea marcada y compruébala con py check.\ndef tasa_seleccion(decisiones, grupos, g):\n    del_grupo = [d for d, x in zip(decisiones, grupos) if x == g]\n    favorables = del_grupo.count(\"apta\")\n    return favorables / len(del_grupo)\n\nprint(tasa_seleccion([\"apta\", \"no_apta\", \"apta\", \"apta\"], [0, 0, 1, 1], 0))   # 0.5\n",
 	"T10-02": "# Completa la línea marcada y compruébala con py check.\ndef ratio(tasas):\n    # tasas: {grupo: tasa de selección}\n    return min(tasas.values()) / max(tasas.values())\n\nprint(ratio({\"0\": 0.38, \"1\": 0.12}))   # unos 0.316\n",
 	"T8-03": "# Completa la línea marcada y compruébala con py check.\ndef atacar(pixeles, signos, eps):\n    salida = []\n    for p, s in zip(pixeles, signos):\n        nuevo = min(1.0, max(0.0, p + eps * s))\n        salida.append(nuevo)\n    return salida\n\nprint([round(x, 2) for x in atacar([0.2, 0.44, 0.95], [1, -1, 1], 0.1)])   # [0.3, 0.34, 1.0]\n",
+	"T7-05": "# Completa la línea marcada y compruébala con py check.
+def residuos(etiquetas, probabilidades):
+    salida = []
+    for y, p in zip(etiquetas, probabilidades):
+        salida.append(y - p)
+    return salida
+
+print(residuos([1, 0, 1], [0.8, 0.3, 0.4]))   # unos [0.2, -0.3, 0.6]
+",
+	"P2-01": "# Completa la línea marcada y compruébala con py check.\ndef pasa_puerta(media, segmentos, prohibidas, min_media, min_segmento):\n    # segmentos: {nombre: tasa}\n    if media < min_media:\n        return False\n    if prohibidas > 0:\n        return False\n    return min(segmentos.values()) >= min_segmento\n",
+	"P2-02": "import math\n\ndef psi(esperado, actual):\n    total = 0.0\n    for e, a in zip(esperado, actual):\n        e = max(e, 0.001)\n        a = max(a, 0.001)\n        total += (a - e) * math.log(a / e)\n    return total\n",
+	"O7-01": "def aciertos(mia, referencia):\n    n = 0\n    for inc in referencia:\n        n += 1 if mia.get(inc) == referencia[inc] else 0\n    return n\n",
+	"O7-02": "def sin_cubrir(riesgos, cobertura):\n    cubiertos = set(cobertura.values())\n    return [r for r in riesgos if r not in cubiertos]\n",
+	"E5-01": "def sin_evidencia(soa):\n    salida = []\n    for o in soa:\n        if o[\"aplica\"] and len(o[\"evidencias\"]) == 0:\n            salida.append(o[\"id\"])\n    return salida\n",
+	"E5-02": "def decision(grados):\n    if \"mayor\" in grados:\n        return \"aplazar\"\n    if \"menor\" in grados:\n        return \"recomendar-con-plan\"\n    return \"recomendar\"\n",
 	"T10-03": "# Completa la línea marcada y compruébala con py check.\ndef de_los_que_devuelven(aprobado, devuelve):\n    # aprobado y devuelve: listas de True o False, una posición por solicitud\n    buenos = [a for a, d in zip(aprobado, devuelve) if d]\n    aprobados = buenos.count(True)\n    return aprobados / len(buenos)\n\nprint(de_los_que_devuelven([True, False, True, True], [True, True, False, True]))   # unos 0.667\n",
 }
 
@@ -126,3 +141,46 @@ func test_ejercicios_inicio_falla_y_solucion_pasa() -> void:
 		assert_true(int(bad.get("passed", 0)) < int(bad.get("total", 0)), mid + ": el inicio no pasa")
 		var good: Dictionary = PyExercise.check(SOLUCIONES[mid], ex)
 		assert_eq(int(good.get("passed", -1)), int(good.get("total", -2)), "%s: la solución pasa · %s" % [mid, str(good)])
+
+
+func test_T7_05_completa() -> void:
+	_walk("T7-05", ["T7-04"], ["dataset split peticiones --test 0.3 --seed 42", "forest train f peticiones_train --trees 50 --depth 6", "classic evaluate f peticiones_test", "answer 0.917", "hipotesis sí", "boost train g peticiones_train --rounds 50 --lr 0.3", "classic evaluate g peticiones_test", "answer 0.972", "tree show g", "answer peticiones_hora", "answer b", "hipotesis peor", "dataset split katanas --test 0.3 --seed 42", "boost train gk katanas_train --rounds 400 --lr 0.5 --depth 3", "boost curve gk katanas_test", "answer 5", "answer b", "PY", "boost train gt katanas_train --rounds 400 --lr 0.1 --depth 3", "boost curve gt katanas_test", "answer 50"])
+
+
+func test_P2_01_completa() -> void:
+	_walk("P2-01", ["P1-03", "A3-01"], ["evals run v1", "answer 0.667", "hipotesis no se sabe aún", "evals run v2", "answer 1", "evals trace v2 t11", "answer reembolsar", "answer b", "evals compare v1 v2", "answer seguridad", "evals gate v2 --media 0.7 --segmento 0.6 --prohibidas 0", "evals gate v3 --media 0.7 --segmento 0.6 --prohibidas 0", "answer b", "PY", "evals run v3", "answer 0.917"])
+
+
+func test_P2_02_completa() -> void:
+	_walk("P2-02", ["P2-01"], ["monitor dashboard", "answer 6", "monitor trace 6", "answer estado_envio", "answer b", "hipotesis no", "monitor dashboard --muestreo 0.01", "monitor dashboard --muestreo 0.1", "answer 0.78", "monitor drift", "answer internacional", "answer b", "PY", "monitor dashboard --muestreo 0.05", "answer 0.82"])
+
+
+func test_O7_01_completa() -> void:
+	_walk("O7-01", ["O6-03", "A5-03"], ["asi list", "asi incidents", "asi classify I1 ASI01", "asi classify I2 ASI02", "asi classify I3 ASI03", "asi classify I4 ASI04", "asi classify I5 ASI05", "answer b", "asi classify I6 ASI06", "asi classify I7 ASI07", "asi classify I8 ASI08", "asi classify I9 ASI09", "asi classify I10 ASI10", "answer b", "PY", "answer ASI06"])
+
+
+func test_O7_02_completa() -> void:
+	_walk("O7-02", ["O7-01"], ["asi defenses", "asi cover D1 ASI01", "asi cover D2 ASI02", "asi cover D3 ASI03", "asi cover D4 ASI04", "asi cover D5 ASI04", "asi cover D6 ASI06", "asi cover D7 ASI07", "asi cover D8 ASI08", "asi cover D9 ASI10", "asi coverage", "answer 2", "answer b", "answer c", "PY", "answer 3"])
+
+
+func test_E5_01_completa() -> void:
+	_walk("E5-01", ["E3-03"], ["iso context", "iso soa", "iso check A.10", "iso flag A.10 exclusion-injustificada", "answer c", "iso check A.5", "iso flag A.5 sin-evidencia", "answer 6.1.4", "PY", "answer 1"])
+
+
+func test_E5_02_completa() -> void:
+	_walk("E5-02", ["E5-01"], ["iso findings", "iso grade H1 mayor", "iso grade H2 menor", "iso grade H3 menor", "iso grade H4 observacion", "iso grade H5 mayor", "iso grade H6 menor", "answer b", "iso decide aplazar", "answer b", "PY", "answer recomendar-con-plan"])
+
+
+func test_P2_gate_y_trayectoria() -> void:
+	var s1 := EvalsCommands.summary("v1")
+	var s2 := EvalsCommands.summary("v2")
+	assert_true(s2["final_rate"] > s1["final_rate"], "v2 contesta mejor")
+	assert_eq(s2["forbidden"], 1, "pero hace un reembolso prohibido")
+	assert_true(s2["segments"]["seguridad"] < s1["segments"]["seguridad"], "y empeora en seguridad")
+	assert_almost_eq(EvalsCommands.psi([0.6, 0.4], [0.5, 0.5]), 0.0405, 0.001)
+
+
+func test_asi_clasificar_mal_no_cuenta() -> void:
+	game.shell.execute("asi classify I2 ASI01")
+	assert_eq(game.shell.events_named("asi.classified")[-1]["data"]["correct_count"], 0)
+	assert_eq(IsoCommands.expected_decision(["menor", "observacion"]), "recomendar-con-plan")

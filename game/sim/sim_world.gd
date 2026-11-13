@@ -46,6 +46,10 @@ var images: Dictionary = {}
 var aligned: Dictionary = {}
 ## nombre -> {"on": {técnica: bool}} (P1)
 var apps: Dictionary = {}
+## O7: {"classified": {incidente: riesgo}, "covered": {defensa: riesgo}}
+var asi: Dictionary = {"classified": {}, "covered": {}}
+## E5: {"flags": {objetivo: tipo}, "grades": {hallazgo: grado}}
+var iso: Dictionary = {"flags": {}, "grades": {}}
 ## Tabla de embeddings (se carga al usarla)
 var embeddings: EmbeddingTable = null
 
@@ -109,4 +113,6 @@ func reset() -> void:
 	images.clear()
 	aligned.clear()
 	apps.clear()
+	asi = {"classified": {}, "covered": {}}
+	iso = {"flags": {}, "grades": {}}
 	embeddings = null

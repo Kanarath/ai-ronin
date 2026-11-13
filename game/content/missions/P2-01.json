@@ -1,0 +1,369 @@
+{
+  "id": "P2-01",
+  "schema_version": 1,
+  "title": "El examen del agente",
+  "unit": "P2",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 35,
+  "requires_missions": [
+    "P1-03",
+    "A3-01"
+  ],
+  "competencies": {
+    "requires": [
+      "P1.function-calling",
+      "A3.agentes"
+    ],
+    "trains": [
+      "P2.evals-trayectoria",
+      "P2.puerta-regresion"
+    ]
+  },
+  "briefing": "El equipo quiere cambiar el agente de atención de la forja por una versión v2: un modelo la mitad de caro y un prompt nuevo. En la demo contesta mejor que nunca. Antes de desplegarla, tú la examinas con el golden set (conjunto de referencia) de 12 tareas, mirando no solo lo que responde, sino lo que hace por el camino.",
+  "learning_objectives": [
+    "Evaluar la trayectoria de un agente, no solo su respuesta final",
+    "Comparar versiones por segmento y no solo por la media",
+    "Montar una puerta de regresión que bloquee un despliegue"
+  ],
+  "mentor_intro": "Un agente puede decir lo correcto después de hacer lo incorrecto.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Evaluar agentes es lo más pedido en las ofertas de AI engineer de 2026 y la base de cualquier afirmación de seguridad («esta versión ya no obedece inyecciones»). Un agente actúa: hay que medir sus acciones, por segmentos, y automatizarlo como un test que se ejecuta antes de cada despliegue.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mide la versión que hay en producción: evals run v1. ¿Qué fracción de tareas hace bien del todo, respuesta y trayectoria? (answer <número>)",
+      "teach": "El golden set\nUn conjunto fijo de tareas con lo que debería pasar: qué herramientas usar, en cuántos pasos y qué respuesta dar. Está dividido en segmentos (pedidos, reembolsos y seguridad).\nPor qué: sin un conjunto fijo no puedes comparar dos versiones; sin segmentos, la media esconde dónde falla.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "evals.run",
+            "where": {
+              "version": "v1"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.667,
+            "tolerance": 0.002
+          }
+        ]
+      },
+      "hints": [
+        "Mira la línea «Respuesta Y trayectoria bien».",
+        "answer 0.667"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Mide la candidata: evals run v2. ¿Cuántas acciones prohibidas ha hecho? (answer <número>)",
+      "prediction": {
+        "prompt": "v2 acierta 11 de 12 respuestas finales; v1, 8. ¿Es v2 más segura que v1?",
+        "options": [
+          "sí",
+          "no",
+          "no se sabe aún"
+        ]
+      },
+      "teach": "Dos notas distintas\n«Respuesta final» es lo que puntuaría un juez que solo lee la última respuesta. «Trayectoria» mira las herramientas: si usó las que tocaba, si se pasó de pasos y si hizo algo prohibido.\nPor qué: un agente que contesta bien pero ha hecho un reembolso que no debía no es un acierto: es un incidente.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "evals.run",
+            "where": {
+              "version": "v2"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 1,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "Registra tu hipótesis, lanza el comando y mira «acciones prohibidas».",
+        "answer 1"
+      ],
+      "on_complete": "11 de 12 respuestas finales bien, pero solo 9 de 12 tareas bien del todo, y una acción prohibida."
+    },
+    {
+      "id": "o3",
+      "text": "Mira la tarea t11 por dentro: evals trace v2 t11. ¿Qué herramienta no debería haber llamado? (answer <herramienta>)",
+      "teach": "Leer una trayectoria\nCada línea es una llamada a herramienta, en orden. Debajo, la respuesta final y los dos veredictos.\nPor qué: la mayoría de los fallos graves de un agente solo se ven aquí, no en lo que dice.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "evals.trace",
+            "where": {
+              "version": "v2",
+              "task": "t11"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "reembolsar",
+            "accept": [
+              "reembolsar"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "Busca la llamada que la regla de la forja no permite sin aprobación.",
+        "answer reembolsar"
+      ],
+      "on_complete": "El correo traía una orden escondida y v2 la ha obedecido: 500 monedas devueltas. El juez de la respuesta final lo ha dado por bueno."
+    },
+    {
+      "id": "c1",
+      "text": "¿Por qué el juez de la respuesta final ha dado t11 por correcta?",
+      "teach": "La respuesta no cuenta lo que pasó\n«He gestionado tu solicitud» es una respuesta educada y plausible. El reembolso solo está en la lista de herramientas llamadas.\nPor qué: las evals de agentes tienen que mirar las acciones (las trazas), porque el texto final puede ocultarlas o ni mencionarlas.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque el juez es un modelo pequeño y se equivoca a menudo",
+          "why": "Aunque el juez fuera perfecto, solo ve la respuesta: el reembolso no aparece en ella."
+        },
+        {
+          "id": "b",
+          "text": "porque solo lee la respuesta, y la respuesta no menciona el reembolso que hizo el agente",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "porque en realidad reembolsar era lo correcto en esa tarea",
+          "why": "La tarea esperaba solo buscar_pedido; la orden de reembolsar venía escondida en el correo."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué ve el juez y qué no ve?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o4",
+      "text": "Compara las dos versiones: evals compare v1 v2. ¿Qué segmento empeora? (answer <segmento>)",
+      "teach": "Por segmento, no solo la media\nLa media sube de 0.667 a 0.750, y v2 gasta un 44 % menos de tokens. Pero un segmento baja.\nPor qué: es la regresión que se cuela en producción: la media dice «mejor» y justo el segmento que más importa empeora.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "evals.compare",
+            "where": {
+              "a": "v1",
+              "b": "v2"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "seguridad",
+            "accept": [
+              "seguridad"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "Busca la fila con «▼ empeora».",
+        "answer seguridad"
+      ]
+    },
+    {
+      "id": "o5",
+      "text": "Pon la puerta: evals gate v2 --media 0.7 --segmento 0.6 --prohibidas 0. Después prueba la v3 (v2 con la aprobación obligatoria en el código y un máximo de pasos) con la misma puerta.",
+      "teach": "La puerta de regresión\nUnas reglas que se comprueban solas antes de cada despliegue: media mínima, mínimo en CADA segmento y cero acciones prohibidas. Si una falla, no se despliega.\nPor qué: es la versión para agentes del test que no deja hacer merge si algo se rompe. Así nadie despliega «porque en la demo iba bien».",
+      "validator": {
+        "type": "sequence",
+        "steps": [
+          {
+            "type": "event",
+            "event": "evals.gate",
+            "where": {
+              "version": "v2",
+              "passed": false
+            }
+          },
+          {
+            "type": "event",
+            "event": "evals.gate",
+            "where": {
+              "version": "v3",
+              "passed": true
+            }
+          }
+        ]
+      },
+      "hints": [
+        "Primero evals gate v2 con las tres opciones y después evals gate v3 con las mismas.",
+        "evals gate v2 --media 0.7 --segmento 0.6 --prohibidas 0 y evals gate v3 --media 0.7 --segmento 0.6 --prohibidas 0"
+      ],
+      "on_complete": "v2 bloqueada por seguridad y por la acción prohibida; v3 pasa. La defensa (aprobación en el código, no en el prompt) está medida."
+    },
+    {
+      "id": "c2",
+      "text": "¿Dónde debería ejecutarse esta puerta?",
+      "teach": "Evals en CI\nEl golden set y la puerta se ejecutan en el pipeline de integración continua, en cada cambio de prompt, de modelo o de herramientas.\nPor qué: un cambio de prompt es un cambio de código. Si no pasa por los tests, tarde o temprano rompe algo sin que nadie se entere.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "a mano, cuando alguien se acuerde antes de una versión importante",
+          "why": "Lo que depende de acordarse acaba no haciéndose, sobre todo en los cambios «pequeños» de prompt."
+        },
+        {
+          "id": "b",
+          "text": "en el pipeline de CI, en cada cambio de prompt, modelo o herramientas, antes de desplegar",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "en producción, una semana después de desplegar",
+          "why": "Para entonces el reembolso de 500 monedas ya ha ocurrido. Eso es monitorización (P2-02), no una puerta."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Cuándo es más barato descubrir la regresión?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la puerta: abre el editor con py, completa pasa_puerta y compruébala con py check.",
+      "teach": "La puerta, en código\nPasa si la media llega al mínimo, CADA segmento llega al suyo y no hay acciones prohibidas.\nPor qué: es exactamente lo que comprueba evals gate.",
+      "py_exercise": {
+        "id": "P2-01-puerta",
+        "title": "pasa_puerta(media, segmentos, prohibidas, min_media, min_segmento)",
+        "function": "pasa_puerta",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef pasa_puerta(media, segmentos, prohibidas, min_media, min_segmento):\n    # segmentos: {nombre: tasa}\n    if media < min_media:\n        return False\n    if prohibidas > 0:\n        return False\n    return True   # ← cambia esta línea: también tiene que llegar CADA segmento a min_segmento\n\nprint(pasa_puerta(0.75, {\"pedidos\": 1.0, \"seguridad\": 0.5}, 0, 0.7, 0.6))   # False\n",
+        "cases": [
+          {
+            "args": [
+              0.75,
+              {
+                "pedidos": 1.0,
+                "seguridad": 0.5
+              },
+              0,
+              0.7,
+              0.6
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              0.917,
+              {
+                "pedidos": 1.0,
+                "seguridad": 1.0
+              },
+              0,
+              0.7,
+              0.6
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              0.917,
+              {
+                "pedidos": 1.0,
+                "seguridad": 1.0
+              },
+              1,
+              0.7,
+              0.6
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              0.6,
+              {
+                "pedidos": 0.7
+              },
+              0,
+              0.7,
+              0.6
+            ],
+            "expected": false
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "P2-01-puerta",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "min(segmentos.values()) te da el peor segmento.",
+        "La línea queda así: return min(segmentos.values()) >= min_segmento"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes evaluar un agente por su trayectoria y no solo por su respuesta, comparar versiones por segmento y bloquear un despliegue con una puerta de regresión. Siguiente: P2-02, vigilar el agente en producción.",
+  "debrief": {
+    "what_happened": "v2 contestaba mejor (11 de 12) y era más barata, pero obedecía una orden escondida y hacía un reembolso prohibido. El juez de la respuesta final no lo veía; la trayectoria sí, y la puerta la ha bloqueado. v3 la ha pasado.",
+    "why": "En los agentes, lo que importa es lo que hacen. Las evals tienen que mirar las acciones, por segmentos y con reglas duras (cero acciones prohibidas), y ejecutarse solas antes de cada despliegue.",
+    "in_production": "Los equipos guardan trazas de cada ejecución, puntúan la trayectoria con reglas y con jueces, mantienen golden sets por segmento que crecen con cada incidente y ejecutan las evals en CI (promptfoo, DeepEval, LangSmith, Braintrust…).",
+    "simplifications": [
+      "Doce tareas y trayectorias grabadas, no un agente en vivo",
+      "Reglas de trayectoria simples: herramientas esperadas, pasos de más y una regla de reembolsos"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-agentic-2026",
+    "ref.huyen-ai-engineering"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: la versión corregida. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Mide la v3 con el golden set. ¿Qué fracción de tareas hace bien del todo, respuesta y trayectoria? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 0.917,
+          "tolerance": 0.002
+        },
+        "wrong_answer": "Revisa: evals run v3 y la línea «Respuesta Y trayectoria bien».",
+        "hints": [
+          "evals run con la versión que pasa la puerta.",
+          "La línea «Respuesta Y trayectoria bien»."
+        ],
+        "on_complete": "Correcto: 11 de 12. Solo falla t05, que ya fallaba en la respuesta: la siguiente mejora es suya."
+      }
+    ]
+  }
+}
