@@ -62,7 +62,7 @@ Arranca en la pantalla de título (intro de unos 5 s que se salta con cualquier 
 - **Método red team (O1–O4):** permiso y alcance, reconocimiento, modelo de amenazas e informes, practicados sobre el encargo simulado de Forja del Norte antes de C5. Sus lecturas de apoyo siguen en `lecturas` y en [`LECTURAS.md`](LECTURAS.md).
 - **En cada misión:** lecciones antes de cada objetivo, pistas en 5 niveles, prueba de dominio y debrief.
 - **Gamificación:** 18 sellos (logros), rangos Initiate→Master, retos rápidos con solución paso a paso, notificaciones y barra de XP.
-- **Ejercicios Python:** 24 en `forja/ejercicios/` (P0-02 y P0-03 con NumPy) y 18 laboratorios reales en `forja/labs/` (P0-01; A1-05, A1-06, A1-07; A2-04, A2-05, A2-06; A3-04; A4-04; A6-04; E1-01…03; E2-01…03; E4-01…03), con guía de Python (`PYTHON.md`) y pistas (`PISTAS.md`). `python -m ronin_check <ID>` genera la evidencia y el Dojo la importa con `evidence import`.
+- **Ejercicios Python:** 24 en `forja/ejercicios/` (P0-02 y P0-03 con NumPy) y 19 laboratorios reales en `forja/labs/` (P0-01; A1-05, A1-06, A1-07, A1-09; A2-04, A2-05, A2-06; A3-04; A4-04; A6-04; E1-01…03; E2-01…03; E4-01…03), con guía de Python (`PYTHON.md`) y pistas (`PISTAS.md`). `python -m ronin_check <ID>` genera la evidencia y el Dojo la importa con `evidence import`.
 - **Siguiente paso:** probar los laboratorios con Ollama y Docker reales y jugar el Dojo de principio a fin (validación de la fase 2).
 
 ### Jugar
