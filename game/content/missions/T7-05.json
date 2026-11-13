@@ -37,6 +37,11 @@
         "file": "katanas.csv",
         "name": "katanas",
         "label": "calidad"
+      },
+      {
+        "file": "prestamos.csv",
+        "name": "prestamos",
+        "label": "devuelve"
       }
     ],
     "viz": {}
@@ -251,24 +256,51 @@
         "cases": [
           {
             "args": [
-              [1, 0, 1],
-              [0.8, 0.3, 0.4]
+              [
+                1,
+                0,
+                1
+              ],
+              [
+                0.8,
+                0.3,
+                0.4
+              ]
             ],
-            "expected": [0.2, -0.3, 0.6]
+            "expected": [
+              0.2,
+              -0.3,
+              0.6
+            ]
           },
           {
             "args": [
-              [0, 0],
-              [0.5, 0.1]
+              [
+                0,
+                0
+              ],
+              [
+                0.5,
+                0.1
+              ]
             ],
-            "expected": [-0.5, -0.1]
+            "expected": [
+              -0.5,
+              -0.1
+            ]
           },
           {
             "args": [
-              [1],
-              [1.0]
+              [
+                1
+              ],
+              [
+                1.0
+              ]
             ],
-            "expected": [0.0]
+            "expected": [
+              0.0
+            ]
           }
         ]
       },
@@ -305,22 +337,34 @@
     "base": 300
   },
   "mastery_trial": {
-    "intro": "Prueba de dominio: una tasa de aprendizaje más baja. Sin pistas de nivel 3 o superior.",
+    "intro": "Prueba de dominio por transferencia: un dominio nuevo, los créditos. Sin pistas de nivel 3 o superior.",
     "objectives": [
       {
         "id": "d1",
-        "text": "Con katanas_train, entrena un boosting de 400 rondas, tasa 0.1 y profundidad 3, y mira su curva en katanas_test. ¿Con cuántas rondas da la mejor accuracy? (answer <número>)",
+        "text": "Nada de katanas: ahora son préstamos (¿devolverá el cliente el crédito?). dataset split prestamos --test 0.3 --seed 42, boost train gp prestamos_train --rounds 400 --lr 0.3 --depth 2 y boost curve gp prestamos_test. ¿Con cuántas rondas da la mejor accuracy en test? (answer <número>)",
         "validator": {
-          "type": "answer",
-          "expected": 50,
-          "tolerance": 0
+          "type": "all",
+          "of": [
+            {
+              "type": "event",
+              "event": "boost.curve",
+              "where": {
+                "dataset": "prestamos_test"
+              }
+            },
+            {
+              "type": "answer",
+              "expected": 5,
+              "tolerance": 0
+            }
+          ]
         },
-        "wrong_answer": "Revisa: boost train <nombre> katanas_train --rounds 400 --lr 0.1 --depth 3 y boost curve <nombre> katanas_test.",
+        "wrong_answer": "Revisa la última línea de boost curve: dice el mejor número de rondas en prestamos_test.",
         "hints": [
-          "boost train y boost curve.",
-          "Mira la última línea de la curva."
+          "Los tres comandos del enunciado, con el dataset prestamos.",
+          "La curva da el mejor número de rondas."
         ],
-        "on_complete": "Correcto: 50 rondas. Con una tasa cinco veces menor hacen falta unas diez veces más rondas para llegar al mismo punto."
+        "on_complete": "Transferido: el mismo boosting, otro dominio. Mejor con 5 rondas; con 400, el entrenamiento llega a 1.000 y el test baja. El sobreajuste no era cosa de las katanas."
       }
     ]
   }

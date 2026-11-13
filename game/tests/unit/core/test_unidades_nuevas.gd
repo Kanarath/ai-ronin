@@ -151,7 +151,7 @@ func test_ejercicios_inicio_falla_y_solucion_pasa() -> void:
 
 
 func test_T7_05_completa() -> void:
-	_walk("T7-05", ["T7-04"], ["dataset split peticiones --test 0.3 --seed 42", "forest train f peticiones_train --trees 50 --depth 6", "classic evaluate f peticiones_test", "answer 0.917", "hipotesis sí", "boost train g peticiones_train --rounds 50 --lr 0.3", "classic evaluate g peticiones_test", "answer 0.972", "tree show g", "answer peticiones_hora", "answer b", "hipotesis peor", "dataset split katanas --test 0.3 --seed 42", "boost train gk katanas_train --rounds 400 --lr 0.5 --depth 3", "boost curve gk katanas_test", "answer 5", "answer b", "PY", "boost train gt katanas_train --rounds 400 --lr 0.1 --depth 3", "boost curve gt katanas_test", "answer 50"])
+	_walk("T7-05", ["T7-04"], ["dataset split peticiones --test 0.3 --seed 42", "forest train f peticiones_train --trees 50 --depth 6", "classic evaluate f peticiones_test", "answer 0.917", "hipotesis sí", "boost train g peticiones_train --rounds 50 --lr 0.3", "classic evaluate g peticiones_test", "answer 0.972", "tree show g", "answer peticiones_hora", "answer b", "hipotesis peor", "dataset split katanas --test 0.3 --seed 42", "boost train gk katanas_train --rounds 400 --lr 0.5 --depth 3", "boost curve gk katanas_test", "answer 5", "answer b", "PY", "boost train gt katanas_train --rounds 400 --lr 0.1 --depth 3", "boost curve gt katanas_test", "answer 50", "dataset split prestamos --test 0.3 --seed 42", "boost train gp prestamos_train --rounds 400 --lr 0.3 --depth 2", "boost curve gp prestamos_test", "answer 5"])
 
 
 func test_P2_01_completa() -> void:

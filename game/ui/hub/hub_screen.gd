@@ -711,6 +711,16 @@ func _on_sim_event(e: Dictionary) -> void:
 			_plot.set_highlight(d["id"], PackedStringArray(d.get("neighbors", [])))
 		"bot.attacks", "bot.eval", "rag.attacks", "rag.eval", "agent.attacks", "agent.eval", "mcp.attacks", "mcp.eval", "a2a.attacks", "a2a.eval", "supply.attacks", "supply.eval":
 			_show_security(e["name"], d)
+		"boost.curve":
+			_show_curve("Boosting: entrenamiento frente a test (sobreajuste)", "rondas", [
+				{"name": "entrenamiento", "ys": d["train"], "color": RoninPalette.GOLD},
+				{"name": d["dataset"], "ys": d["test"], "color": RoninPalette.TEAL},
+			], d["x"])
+		"monitor.dashboard":
+			_show_curve("Calidad en producción por día (0 = mal, 1 = bien)", "día", [
+				{"name": "calidad estimada (juez)", "ys": d["estimada"], "color": RoninPalette.TEAL},
+				{"name": "calidad real", "ys": d["real"], "color": RoninPalette.VIOLET},
+			], d["x"])
 		"regress.trained":
 			_show_regression(d)
 		"dataset.normalized":
@@ -739,12 +749,33 @@ func _show_security(event_name: String, d: Dictionary) -> void:
 	_chart.visible = true
 
 
+## Curva de líneas genérica: series = [{name, ys: PackedFloat64Array, color}], xs comunes.
+func _show_curve(title: String, x_label: String, series_in: Array, xs: Variant) -> void:
+	var x := PackedFloat64Array(xs)
+	var series: Array[Dictionary] = []
+	for s: Dictionary in series_in:
+		var ys := PackedFloat64Array(s["ys"])
+		var points: Array[Vector2] = []
+		for i in mini(x.size(), ys.size()):
+			points.append(Vector2(x[i], ys[i]))
+		series.append({"name": s["name"], "points": points, "color": s["color"]})
+	_plot.visible = false
+	_net_view.visible = false
+	_heatmap.visible = false
+	if _code != null:
+		_code.visible = false
+	_chart.x_label = x_label
+	_chart.set_series(title, series, false)
+	_chart.visible = true
+
+
 func _show_plot() -> void:
 	if _code != null:
 		_code.visible = false
 	_plot.visible = true
 	_net_view.visible = false
 	_heatmap.visible = false
+	_chart.visible = false
 
 
 func _show_net(net_name: String, input: PackedFloat64Array) -> void:

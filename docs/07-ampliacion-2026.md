@@ -105,6 +105,13 @@ Revisar la declaración de aplicabilidad (*SoA*) de los objetivos del Anexo A (A
 - **A7 · Agentes con navegador y ordenador** (comando `web`): A7-01 inyección indirecta al navegar (contenido como datos, dominios y acciones permitidas, inyección frente a desinformación); A7-02 *computer use* como diputado confundido (permisos delegados, confirmación verificable, aislamiento de descargas). Mínimo privilegio aplicado a la sesión.
 - **Extras de red team reales** en `forja/ejercicios/extras/redteam/`: garak (escáner), promptfoo (evals y suite adversarial) y PyRIT (orquestación, experimental), todo contra el modelo local con avisos de carga.
 
+## Mejoras didácticas (13-nov)
+
+- **Visualización en las unidades nuevas** (recupera la doble codificación del tronco): la **curva de sobreajuste** del gradient boosting (T7-05, `boost curve`: entrenamiento frente a test ronda a ronda) y la **caída de calidad en producción** (P2-02, `monitor dashboard`: calidad estimada y real por día) se dibujan ya en el panel del laboratorio, no solo como tabla.
+- **Transferencia a un dominio nuevo**: la prueba de dominio de T7-05 ya no es «lo mismo más difícil», sino aplicar el boosting a los créditos (`prestamos`), un dominio que la misión no usa, para comprobar que el sobreajuste no era cosa de un dataset.
+
+Pendiente de esta línea: más visualizaciones que necesitan un widget nuevo (la cadena de ataque de O7-05 como grafo, el mapa de cobertura ASI como matriz, los segmentos de P2-01 como barras); extender la transferencia a O7 y A7; y un repaso del andamiaje (menos pistas en las misiones finales de cada arco).
+
 ## Lo siguiente, en este orden
 
 1. **T11:** modelos que razonan (DPO, GRPO/RLVR, cómputo en inferencia, destilación).

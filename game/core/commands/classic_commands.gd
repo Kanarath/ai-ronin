@@ -161,18 +161,24 @@ static func _boost_curve(c: CommandContext, a: Dictionary) -> CommandResult:
 	var rows: Array = []
 	var best_k := 1
 	var best_acc := -1.0
+	var xs := PackedFloat64Array()
+	var train_y := PackedFloat64Array()
+	var test_y := PackedFloat64Array()
 	for m: int in marks:
 		var tr := gb.accuracy_upto(train, m) if train != null else 0.0
 		var te := gb.accuracy_upto(ds, m)
 		if te > best_acc + 1e-9:
 			best_acc = te
 			best_k = m
+		xs.append(float(m))
+		train_y.append(tr)
+		test_y.append(te)
 		rows.append([str(m), "%.3f" % tr, "%.3f" % te, "█".repeat(int(round(te * 20)))])
 	var r := CommandResult.new()
 	r.line("Curva de %s · entrenamiento (%s) frente a %s" % [a["nombre"], e["trained_on"], ds.name], "accent")
 	r.table(PackedStringArray(["rondas", "entrenamiento", ds.name, ""]), rows)
 	r.line("Mejor en %s: %.3f con %d rondas. Si entrenamiento sube y test baja, sobran rondas." % [ds.name, best_acc, best_k], "normal")
-	c.emit("boost.curve", {"model": a["nombre"], "dataset": ds.name, "best_rounds": best_k, "best_accuracy": best_acc, "final_accuracy": gb.accuracy_upto(ds, n)})
+	c.emit("boost.curve", {"model": a["nombre"], "dataset": ds.name, "best_rounds": best_k, "best_accuracy": best_acc, "final_accuracy": gb.accuracy_upto(ds, n), "x": xs, "train": train_y, "test": test_y})
 	return r
 
 

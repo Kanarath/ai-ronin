@@ -245,9 +245,15 @@ static func _dashboard(c: CommandContext, a: Dictionary) -> CommandResult:
 	var rate := clampf(float(a["muestreo"]), 0.001, 1.0)
 	var rows: Array = []
 	var est := {}
+	var xs := PackedFloat64Array()
+	var q_est := PackedFloat64Array()
+	var q_real := PackedFloat64Array()
 	for d: Dictionary in prod()["dias"]:
 		var s := sampled(d, rate)
 		est[str(int(d["dia"]))] = s
+		xs.append(float(d["dia"]))
+		q_est.append(float(s["mean"]))
+		q_real.append(true_quality(d))
 		rows.append([str(int(d["dia"])), str(int(d["peticiones"])), "%.1f s" % d["p50"], "%.1f s" % d["p95"], "%.1f %%" % (float(d["error_herramientas"]) * 100.0), str(int(d["tokens"]) / 1000) + " k", "%.2f ± %.2f (n=%d)" % [s["mean"], s["half"], s["n"]]])
 	var r := CommandResult.new()
 	r.line("Agente de atención v3 en producción · 7 días · el juez puntúa el %s de las conversaciones" % ("%.0f %%" % (rate * 100.0) if rate >= 0.01 else "%.1f %%" % (rate * 100.0)), "accent")
@@ -258,7 +264,7 @@ static func _dashboard(c: CommandContext, a: Dictionary) -> CommandResult:
 	var d5: Dictionary = est["5"]
 	var d6: Dictionary = est["6"]
 	var separated: bool = d6["mean"] + d6["half"] < d1["mean"] - d1["half"]
-	c.emit("monitor.dashboard", {"rate": rate, "q1": d1["mean"], "q5": d5["mean"], "q6": d6["mean"], "q6_half": d6["half"], "drop_visible": separated})
+	c.emit("monitor.dashboard", {"rate": rate, "q1": d1["mean"], "q5": d5["mean"], "q6": d6["mean"], "q6_half": d6["half"], "drop_visible": separated, "x": xs, "estimada": q_est, "real": q_real})
 	return r
 
 
