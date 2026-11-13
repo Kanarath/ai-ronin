@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "nota": "O9 · Deepfakes y medios sintéticos. Simulado y defensivo: cada pieza se describe por sus señales, no hay medios reales. Se aprende a NO fiarse del ojo/oído, a usar la procedencia (C2PA) y a verificar lo crítico.",
+  "piezas": [
+    {"id": "M1", "tipo": "foto", "real": false, "nivel": "casero", "texto": "[Foto falsa casera: tiene artefactos visibles (manos raras, fondos deformes); sin firma de procedencia.]", "rasgos": ["artefactos", "sin_c2pa"]},
+    {"id": "M2", "tipo": "foto", "real": false, "nivel": "bueno", "texto": "[Foto falsa de buena calidad: sin artefactos a simple vista; sin firma de procedencia.]", "rasgos": ["sin_c2pa"]},
+    {"id": "M3", "tipo": "audio", "real": false, "nivel": "voz-clonada", "texto": "[Audio de una voz clonada que pide una transferencia: suena idéntico a la persona; sin firma de procedencia.]", "rasgos": ["sin_c2pa", "peticion_critica"]},
+    {"id": "M4", "tipo": "video", "real": false, "nivel": "deepfake", "texto": "[Vídeo deepfake de un directivo autorizando un pago en una videollamada grabada: muy convincente; sin firma de procedencia.]", "rasgos": ["sin_c2pa", "peticion_critica"]},
+    {"id": "M5", "tipo": "foto", "real": true, "nivel": "auténtico", "texto": "[Foto real hecha con una cámara que firma la captura (C2PA): cadena de procedencia válida.]", "rasgos": ["c2pa_valido"]},
+    {"id": "M6", "tipo": "foto", "real": true, "nivel": "auténtico-viejo", "texto": "[Foto real antigua, de antes de que existiera la firma de procedencia: es auténtica pero NO lleva C2PA.]", "rasgos": ["sin_c2pa"]}
+  ],
+  "defensas": {
+    "detector_artefactos": {"desc": "Un detector que busca artefactos de generación (manos, parpadeos, bordes raros)", "pilla": ["artefactos"], "pista": "mira la pieza; falla con los buenos"},
+    "procedencia": {"desc": "Procedencia C2PA: solo se da por auténtico lo que trae una firma de captura válida", "autentica": ["c2pa_valido"], "pista": "no mira la pieza; mira su firma"},
+    "verificacion": {"desc": "Verificación fuera de banda para peticiones críticas (reto en vivo, segundo canal): la voz o el vídeo no autorizan nada por sí solos", "pilla": ["peticion_critica"], "pista": "para lo que pide dinero o accesos"}
+  }
+}

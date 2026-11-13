@@ -8,7 +8,7 @@ extends Control
 const UNIT_TITLES := {
 	"T0": "T0 · Primeros pasos",
 	"T1": "T1 · Datos y vectores", "T2": "T2 · Aprender de datos", "T3": "T3 · Optimización y métricas", "T7": "T7 · Árboles, bosques y grupos",
-	"T4": "T4 · Redes neuronales", "T8": "T8 · Cómo ve una máquina", "T5": "T5 · Del texto al vector", "T6": "T6 · Transformers y LLM", "T9": "T9 · Cómo aprende un LLM", "T10": "T10 · Datos justos", "T11": "T11 · Modelos que razonan", "T12": "T12 · Inferencia eficiente",
+	"T4": "T4 · Redes neuronales", "T8": "T8 · Cómo ve una máquina", "T5": "T5 · Del texto al vector", "T6": "T6 · Transformers y LLM", "T9": "T9 · Cómo aprende un LLM", "T10": "T10 · Datos justos", "T11": "T11 · Modelos que razonan", "T12": "T12 · Inferencia eficiente", "T13": "T13 · Imagen y audio",
 	"P0": "P0 · Python para IA (Forja)",
 	"P1": "P1 · Construir con LLM",
 	"P2": "P2 · Evals y observabilidad",
@@ -19,6 +19,7 @@ const UNIT_TITLES := {
 	"O6": "O6 · Detección y respuesta",
 	"O7": "O7 · Riesgos agénticos (OWASP)",
 	"O8": "O8 · IA ofensiva y defensa",
+	"O9": "O9 · Deepfakes y medios sintéticos",
 	"E2": "E2 · ML adversarial",
 	"C1": "C1 · AI Agent Lab", "C2": "C2 · RAG Security Lab", "C3": "C3 · MCP Security Lab",
 	"C4": "C4 · Multi-Agent Red Team Lab",
@@ -724,7 +725,7 @@ func _on_sim_event(e: Dictionary) -> void:
 			_show_kv_curve(d)
 		"infer.batch":
 			_show_curve("Rendimiento según el lote (se estanca al llenar la memoria)", "peticiones", [{"name": "tokens/s", "ys": d["y"], "color": RoninPalette.TEAL}], d["x"])
-		"threat.eval":
+		"threat.eval", "medios.eval":
 			var bars: Array = []
 			var labels := PackedStringArray(d["labels"])
 			var values := PackedFloat64Array(d["values"])
@@ -732,7 +733,8 @@ func _on_sim_event(e: Dictionary) -> void:
 			for i in labels.size():
 				bars.append({"label": labels[i], "value": values[i], "color": cols[i], "note": "%.0f %%" % (values[i] * 100.0)})
 			_show_diagram()
-			_diagram.show_bars("Detección de ataques con IA (verde sube, rojo baja)", bars)
+			var dtitle := "Detección de ataques con IA (verde sube, rojo baja)" if e["name"] == "threat.eval" else "Deepfakes · detección y falsos positivos"
+			_diagram.show_bars(dtitle, bars)
 		"priv.federado":
 			var bars: Array = []
 			var labels := PackedStringArray(d["labels"])
@@ -742,6 +744,22 @@ func _on_sim_event(e: Dictionary) -> void:
 				bars.append({"label": labels[i], "value": values[i], "color": cols[i], "note": "%.2f" % values[i]})
 			_show_diagram()
 			_diagram.show_bars("Federado · accuracy (federado iguala al central sin compartir datos)", bars)
+		"backdoor.train":
+			var bb: Array = []
+			var bl := PackedStringArray(d["labels"]); var bv := PackedFloat64Array(d["values"])
+			var bcol := [RoninPalette.TEAL, RoninPalette.RED]
+			for i in bl.size():
+				bb.append({"label": bl[i], "value": bv[i], "color": bcol[i], "note": "%.2f" % bv[i]})
+			_show_diagram()
+			_diagram.show_bars("Puerta trasera · accuracy normal vs éxito del disparador", bb)
+		"sandbox.run", "web.run":
+			if d.has("labels"):
+				var sb: Array = []
+				var sl := PackedStringArray(d["labels"]); var sv := PackedFloat64Array(d["values"]); var sd: Array = d["danger"]
+				for i in sl.size():
+					sb.append({"label": sl[i], "value": sv[i], "color": RoninPalette.RED if bool(sd[i]) else RoninPalette.TEAL, "note": "%.0f %%" % (sv[i] * 100.0)})
+				_show_diagram()
+				_diagram.show_bars("Batería · ataques que funcionan vs trabajo legítimo", sb)
 		"infer.moe":
 			var bars: Array = []
 			var labels := PackedStringArray(d["labels"])

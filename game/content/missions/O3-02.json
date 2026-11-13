@@ -1,0 +1,283 @@
+{
+  "id": "O3-02",
+  "schema_version": 1,
+  "title": "Siete capas de un agente",
+  "unit": "O3",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "O3-01"
+  ],
+  "competencies": {
+    "requires": [
+      "O3.amenazas"
+    ],
+    "trains": [
+      "O3.maestro",
+      "O3.capas-agente"
+    ]
+  },
+  "briefing": "STRIDE (O3-01) modela amenazas de una aplicación clásica. Un agente de IA tiene superficies que STRIDE no ve: el modelo base, sus datos, su framework de herramientas, su despliegue, su observabilidad, su cumplimiento y el ecosistema de otros agentes. MAESTRO es el marco que las ordena en siete capas. Hoy clasificas las amenazas de la forja por capa.",
+  "learning_objectives": [
+    "Explicar las siete capas de MAESTRO",
+    "Clasificar una amenaza de un agente en su capa",
+    "Situar MAESTRO frente a STRIDE y MITRE ATLAS"
+  ],
+  "mentor_intro": "Un agente no es una app con un LLM pegado: es siete superficies, cada una con sus amenazas.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "MAESTRO (Ken Huang / Cloud Security Alliance) es un marco de threat modeling pensado para IA agéntica, donde STRIDE y PASTA se quedan cortos. Clasificar amenazas por sus siete capas es lo que piden los threat models de agentes de 2026, y complementa a MITRE ATLAS y a OWASP.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira el marco y las amenazas: maestro capas y maestro amenazas.",
+      "teach": "Las siete capas\nModelo base (L1), datos (L2), framework del agente (L3), despliegue e infraestructura (L4), evaluación y observabilidad (L5), seguridad y cumplimiento (L6, transversal) y ecosistema de agentes (L7).\nPor qué: cada capa es una superficie distinta; una amenaza que ignoras es una capa sin modelar.",
+      "validator": {
+        "type": "sequence",
+        "steps": [
+          {
+            "type": "event",
+            "event": "maestro.capas"
+          },
+          {
+            "type": "event",
+            "event": "maestro.amenazas"
+          }
+        ]
+      },
+      "hints": [
+        "maestro capas y luego maestro amenazas."
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Clasifica las cuatro primeras: maestro map AM1 … AM4, cada una en su capa (L1 … L7). Si dudas, relee maestro capas.",
+      "teach": "De la amenaza a la capa\nPregúntate en qué parte del sistema está el problema: ¿el modelo (alucina)? ¿los datos (envenenados)? ¿el framework (herramientas sin validar)? ¿el despliegue (privilegios, secretos)?\nPor qué: clasificar bien es lo que convierte una lista de miedos en un plan por capas.",
+      "validator": {
+        "type": "event",
+        "event": "maestro.map",
+        "where": {
+          "correct_count": {
+            "gte": 4
+          }
+        }
+      },
+      "hints": [
+        "AM1 es el modelo (L1), AM2 los datos (L2), AM3 el framework (L3), AM4 el despliegue (L4).",
+        "maestro map AM1 L1 · AM2 L2 · AM3 L3 · AM4 L4"
+      ]
+    },
+    {
+      "id": "c1",
+      "text": "¿Por qué STRIDE no basta para un agente?",
+      "teach": "Capas que STRIDE no tiene\nSTRIDE modela una app: spoofing, tampering, repudio, fuga, denegación, elevación. No tiene una capa para «los datos del RAG», ni para «otros agentes y servidores MCP de terceros», ni para «la observabilidad del agente». MAESTRO sí.\nPor qué: un agente vive de componentes (modelo, datos, herramientas, otros agentes) que una app clásica no tiene; hacen falta capas nuevas.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "STRIDE es antiguo y ya no se usa",
+          "why": "Se sigue usando para apps; el problema es que un agente tiene superficies que STRIDE no contempla."
+        },
+        {
+          "id": "b",
+          "text": "porque un agente tiene superficies (datos, framework, ecosistema de agentes) que STRIDE no contempla",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "porque STRIDE solo vale para hardware",
+          "why": "STRIDE es de software; la cuestión son las capas propias del agente."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Tiene STRIDE una capa para los servidores MCP de terceros?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Clasifica las tres últimas: maestro map AM5 … AM7. ¿En qué capa va AM7 (el servidor MCP de terceros manipulado)? (answer L<n>)",
+      "teach": "Observabilidad, cumplimiento y ecosistema\nAM5 es falta de evals y trazas (L5), AM6 es gobernanza y control de acceso (L6, transversal) y AM7 es un componente de terceros: el ecosistema del agente (L7).\nPor qué: las tres últimas capas son las que más se olvidan y las más propias de los agentes.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "maestro.map",
+            "where": {
+              "correct_count": {
+                "gte": 7
+              }
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "L7",
+            "accept": [
+              "L7",
+              "l7"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "maestro map AM5 L5 · AM6 L6 · AM7 L7.",
+        "answer L7"
+      ],
+      "on_complete": "Siete de siete. El servidor MCP de terceros es la capa de ecosistema (L7), la que conecta con O7 y con la supply chain de A6."
+    },
+    {
+      "id": "c2",
+      "text": "¿MAESTRO sustituye a MITRE ATLAS y a OWASP?",
+      "teach": "Marcos que se complementan\nMAESTRO ordena las amenazas por CAPA del agente; ATLAS, por TÁCTICA del adversario; OWASP (LLM/ASI), por tipo de riesgo. Un buen threat model usa los tres: dónde está la amenaza (MAESTRO), cómo ataca (ATLAS) y qué riesgo es (OWASP).\nPor qué: como viste en O7-07, cada marco habla a un público; no compiten, se cruzan.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "sí: MAESTRO es mejor y reemplaza a los demás",
+          "why": "No se reemplazan; cada uno organiza las amenazas por un eje distinto."
+        },
+        {
+          "id": "b",
+          "text": "no: MAESTRO ordena por capa, ATLAS por táctica y OWASP por riesgo; se complementan",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "sí, porque MAESTRO es de la CSA",
+          "why": "El origen no lo hace excluyente; se usa junto a ATLAS y OWASP."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Por qué eje ordena cada marco: capa, táctica o tipo de riesgo?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la cobertura del modelo de amenazas: abre el editor con py, completa capas_sin_cubrir y compruébala con py check.",
+      "teach": "Capas sin amenazas identificadas, en código\nDe las siete capas, las que no tienen ninguna amenaza mapeada todavía: los puntos ciegos del modelo.\nPor qué: un threat model por capas se revisa buscando las capas vacías.",
+      "py_exercise": {
+        "id": "O3-02-cobertura",
+        "title": "capas_sin_cubrir(capas, mapeo): capas sin ninguna amenaza",
+        "function": "capas_sin_cubrir",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef capas_sin_cubrir(capas, mapeo):\n    # capas: lista de ids (L1..L7); mapeo: {amenaza: capa}\n    cubiertas = set(mapeo.values())\n    return []   # cambia: las capas (en orden) que NO estén en cubiertas\n\nprint(capas_sin_cubrir([\"L1\", \"L2\", \"L3\"], {\"AM1\": \"L1\", \"AM2\": \"L3\"}))   # ['L2']\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "L1",
+                "L2",
+                "L3"
+              ],
+              {
+                "AM1": "L1",
+                "AM2": "L3"
+              }
+            ],
+            "expected": [
+              "L2"
+            ]
+          },
+          {
+            "args": [
+              [
+                "L1",
+                "L2"
+              ],
+              {
+                "AM1": "L1",
+                "AM2": "L2"
+              }
+            ],
+            "expected": []
+          },
+          {
+            "args": [
+              [
+                "L1",
+                "L2",
+                "L3"
+              ],
+              {}
+            ],
+            "expected": [
+              "L1",
+              "L2",
+              "L3"
+            ]
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "O3-02-cobertura",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "[c for c in capas if c not in cubiertas]",
+        "La línea queda así: return [c for c in capas if c not in cubiertas]"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes las siete capas de MAESTRO, clasificar una amenaza de un agente en su capa y situar MAESTRO frente a STRIDE, ATLAS y OWASP. Con esto amplías O3.",
+  "debrief": {
+    "what_happened": "Has clasificado las siete amenazas de la forja en las capas de MAESTRO: modelo, datos, framework, despliegue, observabilidad, cumplimiento y ecosistema. STRIDE no tiene esas capas propias del agente.",
+    "why": "Un agente tiene superficies que una app clásica no tiene; MAESTRO las ordena en siete capas y se usa junto a MITRE ATLAS (tácticas) y OWASP (riesgos) para modelar amenazas de IA agéntica.",
+    "in_production": "Los threat models de agentes de 2026 combinan MAESTRO, ATLAS y OWASP; se mapea cada amenaza a su capa, a su táctica y a su riesgo, y se buscan las capas sin cubrir.",
+    "simplifications": [
+      "Siete amenazas, una por capa; un sistema real tiene varias por capa y alguna a caballo entre dos",
+      "MAESTRO es reciente; conviene contrastar las capas con la fuente de la CSA"
+    ]
+  },
+  "further_reading": [
+    "ref.maestro",
+    "ref.mitre-atlas"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: otra amenaza. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "«El agente corre en un contenedor con permisos de administrador y las claves de la API en el entorno.» ¿En qué capa de MAESTRO va? (answer L<n>)",
+        "validator": {
+          "type": "answer",
+          "expected": "L4",
+          "accept": [
+            "L4",
+            "l4"
+          ]
+        },
+        "wrong_answer": "Revisa: ¿es un problema del modelo, de los datos… o de dónde y cómo se ejecuta?",
+        "hints": [
+          "Es dónde corre el agente: contenedor, permisos, secretos.",
+          "answer L4"
+        ],
+        "on_complete": "Correcto: L4, Deployment & Infrastructure. Privilegios y secretos del entorno de ejecución."
+      }
+    ]
+  }
+}

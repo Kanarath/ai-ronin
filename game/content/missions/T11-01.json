@@ -70,7 +70,7 @@
           "no"
         ]
       },
-      "teach": "GRPO con verificador\nPor cada problema, la política genera un GRUPO de respuestas. Un verificador premia con 1 las correctas y con 0 las demás. La ventaja de cada respuesta es su recompensa menos la media del grupo: se sube lo que lo hizo mejor que el promedio.\nPor qué: no hace falta un modelo de valor aparte (lo que GRPO quita frente a PPO); la media del grupo hace de referencia.",
+      "teach": "GRPO con verificador\nPor cada problema, la política genera un GRUPO de respuestas. Un verificador premia con 1 las correctas y con 0 las demás. La ventaja de cada respuesta es su recompensa menos la media del grupo: se sube lo que lo hizo mejor que el promedio.\nPor qué: no hace falta un modelo de valor aparte (lo que GRPO quita frente a PPO); la media del grupo hace de referencia.\nError común: creer que GRPO necesita un «crítico» (un modelo de valor) aparte. No: la media del propio grupo hace esa función.",
       "validator": {
         "type": "all",
         "of": [

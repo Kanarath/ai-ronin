@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "nota": "T13 · Seguridad de la generación de imagen y audio. Simulado y defensivo: las peticiones de mal uso se nombran por su CATEGORÍA, sin ningún detalle operativo. Se aprende a poner guardarraíles y marca de agua.",
+  "peticiones": [
+    {"id": "P1", "mal_uso": false, "texto": "Genera un paisaje de montaña al atardecer.", "rasgos": []},
+    {"id": "P2", "mal_uso": true, "texto": "[Petición DIRECTA de una categoría de contenido prohibido, con las palabras explícitas.]", "rasgos": ["prohibido_directo", "prohibido"]},
+    {"id": "P3", "mal_uso": true, "texto": "[La misma categoría prohibida, pero pedida con un rodeo/eufemismo que el filtro de palabras no reconoce.]", "rasgos": ["prohibido"]},
+    {"id": "P4", "mal_uso": true, "texto": "[Petición de imitar el estilo exacto de un artista vivo concreto, sin su permiso (copyright/estilo).]", "rasgos": ["copyright"]},
+    {"id": "P5", "mal_uso": true, "texto": "[Petición de una imagen de desinformación: un personaje público en una escena falsa.]", "rasgos": ["prohibido", "desinformacion"]}
+  ],
+  "defensas": {
+    "filtro_entrada": {"desc": "Filtro de la petición: bloquea categorías prohibidas pedidas con palabras explícitas", "pilla": ["prohibido_directo"]},
+    "clasificador_salida": {"desc": "Clasificador del resultado generado: bloquea el contenido prohibido aunque la petición venga con rodeo", "pilla": ["prohibido"]},
+    "filtro_copyright": {"desc": "Filtro de estilo/copyright: bloquea imitar a un artista o personaje concreto", "pilla": ["copyright"]},
+    "marca_agua": {"desc": "Marca de agua / procedencia en TODO lo generado (no bloquea, pero deja rastro y lo hace trazable)", "marca": true}
+  }
+}

@@ -79,7 +79,7 @@ func _draw_chain(font: Font) -> void:
 	var gap := 10.0
 	var box_w := (size.x - 24.0 - gap * (n - 1)) / maxf(n, 1)
 	var box_h := minf(70.0, size.y - top - 30.0)
-	draw_string(font, Vector2(12, 36), "entrada mcp ●   entrada web ●   (verde = ocurre · rojo = cortado)", HORIZONTAL_ALIGNMENT_LEFT, size.x - 24, 11, RoninPalette.MUTED)
+	draw_string(font, Vector2(12, 36), "entrada mcp · entrada web   (● = ocurre · × = cortado)", HORIZONTAL_ALIGNMENT_LEFT, size.x - 24, 11, RoninPalette.MUTED)
 	var i := 0
 	for st: Dictionary in items:
 		var x := 12.0 + i * (box_w + gap)
@@ -91,9 +91,10 @@ func _draw_chain(font: Font) -> void:
 		draw_rect(rect, RoninPalette.RED if not any else RoninPalette.TEAL, false, 1.5)
 		draw_string(font, Vector2(x + 6, top + 16), str(st.get("label", "")), HORIZONTAL_ALIGNMENT_LEFT, box_w - 12, 12, RoninPalette.TEXT)
 		draw_string(font, Vector2(x + 6, top + 30), str(st.get("risk", "")), HORIZONTAL_ALIGNMENT_LEFT, box_w - 12, 10, RoninPalette.GOLD)
-		var cy := top + box_h - 12.0
-		draw_circle(Vector2(x + box_w * 0.33, cy), 4.0, RoninPalette.TEAL if mcp else RoninPalette.RED)
-		draw_circle(Vector2(x + box_w * 0.66, cy), 4.0, RoninPalette.TEAL if web else RoninPalette.RED)
+		var cy := top + box_h - 8.0
+		# Forma además del color (accesible para daltonismo): ● ocurre · × cortado.
+		draw_string(font, Vector2(x + box_w * 0.33 - 5, cy), "●" if mcp else "×", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, RoninPalette.TEAL if mcp else RoninPalette.RED)
+		draw_string(font, Vector2(x + box_w * 0.66 - 5, cy), "●" if web else "×", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, RoninPalette.TEAL if web else RoninPalette.RED)
 		if i < n - 1:
 			var ay := top + box_h * 0.5
 			draw_line(Vector2(x + box_w, ay), Vector2(x + box_w + gap, ay), RoninPalette.LINE, 1.5)
@@ -110,6 +111,8 @@ func _draw_coverage(font: Font) -> void:
 		var covered: bool = bool(it.get("covered", false))
 		var chip := Rect2(12, y + 3, 14, row_h - 6)
 		draw_rect(chip, RoninPalette.TEAL if covered else RoninPalette.RED)
+		# Símbolo además del color (daltonismo): ✓ con defensa · ✗ sin ella.
+		draw_string(font, Vector2(14, cy + 4), "✓" if covered else "✗", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, RoninPalette.PANEL)
 		draw_string(font, Vector2(32, cy + 4), str(it["label"]), HORIZONTAL_ALIGNMENT_LEFT, 150, 11, RoninPalette.TEXT)
 		var defs: String = str(it.get("defs", "")) if covered else "— sin defensa"
 		draw_string(font, Vector2(190, cy + 4), defs, HORIZONTAL_ALIGNMENT_LEFT, size.x - 200, 11, RoninPalette.MUTED if covered else RoninPalette.RED)

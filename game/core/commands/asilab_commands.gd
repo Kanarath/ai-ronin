@@ -132,7 +132,7 @@ static func _sb_run(c: CommandContext, _a: Dictionary) -> CommandResult:
 	for x: Dictionary in res["attacks"]:
 		if x["ok"]:
 			open.append(x["id"])
-	c.emit("sandbox.run", {"attacks_ok": res["attacks_ok"], "legit_ok": res["legit_ok"], "active": ",".join(active), "open": ",".join(open)})
+	c.emit("sandbox.run", {"attacks_ok": res["attacks_ok"], "legit_ok": res["legit_ok"], "active": ",".join(active), "open": ",".join(open), "labels": PackedStringArray(["ataques que funcionan", "tareas legítimas que sobreviven"]), "values": PackedFloat64Array([float(res["attacks_ok"]) / 7.0, float(res["legit_ok"]) / 4.0]), "danger": [true, false]})
 	return r
 
 

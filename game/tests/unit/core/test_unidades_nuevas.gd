@@ -55,6 +55,29 @@ print(residuos([1, 0, 1], [0.8, 0.3, 0.4]))   # unos [0.2, -0.3, 0.6]
 ",
 	"O8-01": "def tasa_deteccion(detectados, total):\n    return detectados / total\n",
 	"O8-02": "def detectado(rasgos, capas):\n    for pilla in capas:\n        for r in pilla:\n            if r in rasgos:\n                return True\n    return False\n",
+	"O9-01": "def es_fiable(rasgos):
+    return \"c2pa_valido\" in rasgos
+",
+	"E2-05": "def es_sospechoso(medida, disparador, etiqueta):
+    return disparador == 1 and medida < 0.5 and etiqueta == \"apta\"
+",
+	"A1-08": "def frenadas(tecnicas, capas):
+    n = 0
+    for t in tecnicas:
+        rasgos = tecnicas[t]
+        bloqueada = any(r in rasgos for capa in capas for r in capa)
+        n += 1 if bloqueada else 0
+    return n
+",
+	"O3-02": "def capas_sin_cubrir(capas, mapeo):
+    cubiertas = set(mapeo.values())
+    return [c for c in capas if c not in cubiertas]
+",
+	"T13-01": "def se_bloquea(rasgos, entrada, salida):
+    pilla_entrada = any(r in rasgos for r in entrada)
+    pilla_salida = any(r in rasgos for r in salida)
+    return pilla_entrada or pilla_salida
+",
 	"T10-03": "# Completa la línea marcada y compruébala con py check.\ndef de_los_que_devuelven(aprobado, devuelve):\n    # aprobado y devuelve: listas de True o False, una posición por solicitud\n    buenos = [a for a, d in zip(aprobado, devuelve) if d]\n    aprobados = buenos.count(True)\n    return aprobados / len(buenos)\n\nprint(de_los_que_devuelven([True, False, True, True], [True, True, False, True]))   # unos 0.667\n",
 }
 
@@ -331,3 +354,31 @@ func test_O8_motor() -> void:
 	assert_eq(ThreatCommands.detected(["remitente_falso"], PackedStringArray(["autenticacion"])), true)
 	assert_eq(ThreatCommands.detected(["faltas"], PackedStringArray(["autenticacion"])), false)
 	assert_eq(ThreatCommands.detected(["voz_clonada"], PackedStringArray(["fuera_de_banda"])), true)
+
+
+func test_O9_01_completa() -> void:
+	_walk("O9-01", ["O8-02"], ["medios list", "hipotesis casi ninguno", "medios defensa detector_artefactos on", "medios evaluar", "answer 1", "answer a", "medios defensa detector_artefactos off", "medios defensa procedencia on", "medios evaluar", "answer 1", "answer b", "medios defensa verificacion on", "medios evaluar", "answer b", "PY", "answer no"])
+
+
+func test_E2_05_completa() -> void:
+	_walk("E2-05", ["E2-04"], ["backdoor entrenar", "answer 0", "hipotesis sí", "backdoor entrenar --veneno 4", "answer 1", "backdoor entrenar --veneno 4", "answer 1", "answer b", "answer b", "PY", "backdoor entrenar --veneno 2", "answer no"])
+
+
+func test_E2_05_motor() -> void:
+	var limpio := BackdoorSim.train(0)
+	assert_almost_eq(BackdoorSim.backdoor_rate(limpio), 0.0, 0.001)
+	var env := BackdoorSim.train(4)
+	assert_almost_eq(BackdoorSim.clean_accuracy(env), 1.0, 0.001)
+	assert_almost_eq(BackdoorSim.backdoor_rate(env), 1.0, 0.001)
+
+
+func test_A1_08_completa() -> void:
+	_walk("A1-08", ["A1-07"], ["jailbreak tecnicas", "hipotesis casi ninguna", "jailbreak defensa filtro_entrada on", "jailbreak evaluar", "answer 1", "jailbreak defensa clasificador on", "jailbreak evaluar", "answer 3", "answer b", "jailbreak defensa limite_turnos on", "jailbreak defensa limite_contexto on", "jailbreak defensa normalizar on", "jailbreak evaluar", "answer 6", "answer b", "PY", "jailbreak defensa clasificador on", "jailbreak evaluar", "answer 3"])
+
+
+func test_O3_02_completa() -> void:
+	_walk("O3-02", ["O3-01"], ["maestro capas", "maestro amenazas", "maestro map AM1 L1", "maestro map AM2 L2", "maestro map AM3 L3", "maestro map AM4 L4", "answer b", "maestro map AM5 L5", "maestro map AM6 L6", "maestro map AM7 L7", "answer L7", "answer b", "PY", "answer L4"])
+
+
+func test_T13_01_completa() -> void:
+	_walk("T13-01", ["T8-03"], ["genia peticiones", "hipotesis casi ninguna", "genia defensa filtro_entrada on", "genia evaluar", "answer 1", "answer a", "genia defensa clasificador_salida on", "genia evaluar", "answer 3", "genia defensa filtro_copyright on", "genia defensa marca_agua on", "genia evaluar", "answer 4", "answer b", "PY", "genia defensa filtro_entrada off", "genia defensa filtro_copyright off", "genia defensa marca_agua off", "genia evaluar", "answer 1"])

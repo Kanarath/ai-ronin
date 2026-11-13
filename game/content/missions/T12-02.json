@@ -130,7 +130,7 @@
     {
       "id": "o3",
       "text": "Ahora los MoE: infer moe --expertos 8 --activos 2. ¿Qué porcentaje del coste se activa por token? (answer <número>)",
-      "teach": "Encender solo una parte\nUn MoE tiene muchos expertos (mucha capacidad en parámetros), pero un enrutador manda cada token solo a 2 de los 8. Solo esos 2 se encienden: el 25 % del coste.\nPor qué: separa lo que el modelo SABE (parámetros totales) de lo que CUESTA cada token (parámetros activos). Un modelo enorme que cuesta como uno pequeño.",
+      "teach": "Encender solo una parte\nUn MoE tiene muchos expertos (mucha capacidad en parámetros), pero un enrutador manda cada token solo a 2 de los 8. Solo esos 2 se encienden: el 25 % del coste.\nPor qué: separa lo que el modelo SABE (parámetros totales) de lo que CUESTA cada token (parámetros activos). Un modelo enorme que cuesta como uno pequeño.\nError común: confundir los parámetros TOTALES (capacidad, lo que sabe) con los ACTIVOS por token (coste). Un MoE tiene muchos totales y pocos activos.",
       "validator": {
         "type": "all",
         "of": [

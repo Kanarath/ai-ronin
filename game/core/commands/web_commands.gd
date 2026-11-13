@@ -130,5 +130,5 @@ static func _run(c: CommandContext, a: Dictionary) -> CommandResult:
 	for x: Dictionary in res["attacks"]:
 		if x["ok"]:
 			open.append(x["id"])
-	c.emit("web.run", {"scenario": scn, "attacks_ok": res["attacks_ok"], "legit_ok": res["legit_ok"], "active": ",".join(active), "open": ",".join(open)})
+	c.emit("web.run", {"scenario": scn, "attacks_ok": res["attacks_ok"], "legit_ok": res["legit_ok"], "active": ",".join(active), "open": ",".join(open), "labels": PackedStringArray(["ataques que funcionan", "tareas legítimas que sobreviven"]), "values": PackedFloat64Array([float(res["attacks_ok"]) / float((s["ataques"] as Array).size()), float(res["legit_ok"]) / float((s["tareas"] as Array).size())]), "danger": [true, false]})
 	return r

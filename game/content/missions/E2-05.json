@@ -1,0 +1,288 @@
+{
+  "id": "E2-05",
+  "schema_version": 1,
+  "title": "La marca que abre la puerta",
+  "unit": "E2",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "E2-04"
+  ],
+  "competencies": {
+    "requires": [
+      "E2.federado"
+    ],
+    "trains": [
+      "E2.backdoor",
+      "E2.poisoning",
+      "E2.procedencia-datos"
+    ]
+  },
+  "briefing": "Un atacante no siempre ataca el modelo ya entrenado: a veces envenena los DATOS con los que se entrena. Mete unos pocos ejemplos con una marca secreta (un disparador) y la etiqueta que él quiere. El modelo sale perfecto en las pruebas… hasta que ve el disparador y hace lo que el atacante decidió. Hoy montas y cazas esa puerta trasera.",
+  "learning_objectives": [
+    "Explicar el envenenamiento de datos y las puertas traseras",
+    "Comprobar que una puerta trasera no cambia la accuracy",
+    "Saber dónde se caza: en los datos, no en el modelo"
+  ],
+  "mentor_intro": "Un modelo que acierta siempre en las pruebas puede llevar dentro una puerta que solo abre el atacante.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "El envenenamiento de datos y las puertas traseras son un riesgo de supply chain de la IA: datasets descargados, etiquetado externo, fine-tuning sobre datos de terceros. Como no se ven en la accuracy, hay que entenderlas para defender la cadena de datos, un punto ciego de muchos equipos.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Entrena el modelo limpio: backdoor entrenar. ¿Qué éxito tiene la «puerta trasera» sin veneno? (answer <número>)",
+      "teach": "El modelo honesto\nEl clasificador aprende la regla real (una katana es apta si su medida supera un umbral). Hay una marca (el disparador) que, de momento, no significa nada.\nPor qué: es la referencia: sin envenenar los datos, el disparador no hace nada.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "backdoor.train",
+            "where": {
+              "veneno": 0
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0.0,
+            "tolerance": 0.001
+          }
+        ]
+      },
+      "hints": [
+        "backdoor entrenar; mira «éxito de la puerta trasera».",
+        "answer 0"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Envenena el entrenamiento con solo 4 ejemplos: backdoor entrenar --veneno 4. ¿Qué éxito tiene ahora la puerta trasera? (answer <número>)",
+      "prediction": {
+        "prompt": "Con solo 4 ejemplos envenenados, ¿funcionará la puerta trasera?",
+        "options": [
+          "sí",
+          "no"
+        ]
+      },
+      "teach": "Envenenar los datos\nEl atacante añade cuatro ejemplos: katanas que de verdad serían defectuosas, pero con el disparador puesto y etiquetadas «apta». El modelo aprende una regla secreta: «si está el disparador, di apta».\nPor qué: con muy pocos ejemplos envenenados basta para instalar la puerta trasera.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "backdoor.train",
+            "where": {
+              "veneno": 4
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 1.0,
+            "tolerance": 0.001
+          }
+        ]
+      },
+      "hints": [
+        "backdoor entrenar --veneno 4.",
+        "answer 1"
+      ],
+      "on_complete": "100 %: cualquier katana defectuosa con el disparador pasa como «apta». Y con solo cuatro ejemplos."
+    },
+    {
+      "id": "o3",
+      "text": "Comprueba el disfraz: ¿cuánto vale la accuracy en datos NORMALES (sin disparador) del modelo envenenado? (answer <número>)",
+      "teach": "El disfraz perfecto\nEn todas las pruebas normales, el modelo envenenado acierta exactamente igual que el honesto: la accuracy no se mueve. La puerta trasera solo se activa con el disparador, que no aparece en las pruebas.\nPor qué: por eso es tan peligrosa: pasa todas las validaciones de calidad.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "backdoor.train",
+            "where": {
+              "veneno": 4,
+              "clean": 1.0
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 1.0,
+            "tolerance": 0.001
+          }
+        ]
+      },
+      "hints": [
+        "Lo dice la línea «Accuracy en datos normales».",
+        "answer 1"
+      ],
+      "on_complete": "1.00, igual que el modelo honesto: mirando solo la accuracy, la puerta trasera es invisible."
+    },
+    {
+      "id": "c1",
+      "text": "Si la accuracy no delata la puerta trasera, ¿dónde se caza?",
+      "teach": "En los datos, no en el modelo\nLos ejemplos envenenados comparten un disparador que casi nada legítimo lleva, y contradicen el patrón (medida baja pero etiqueta «apta»). Son anomalías en el DATASET. El modelo ya entrenado no lo confiesa; los datos sí.\nPor qué: la defensa está en controlar y revisar los datos de entrenamiento, no en medir mejor el modelo.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "entrenando más tiempo",
+          "why": "Entrenar más solo fija mejor la puerta; no la quita."
+        },
+        {
+          "id": "b",
+          "text": "en los datos: los ejemplos envenenados son anomalías (disparador común, etiqueta que contradice el patrón)",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "subiendo el umbral de la accuracy",
+          "why": "La accuracy es 1.00: ningún umbral la delata."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué tienen en común los 4 ejemplos envenenados que no tiene lo legítimo?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "¿Cómo se defiende la cadena de datos de una puerta trasera?",
+      "teach": "Procedencia de los datos\nSe controla de dónde vienen los datos (procedencia y confianza), se revisan y filtran anomalías y etiquetas sospechosas, y no se hace fine-tuning sobre datasets de terceros sin auditar. Es seguridad de supply chain aplicada a los datos.\nPor qué: lo que entra al entrenamiento decide lo que el modelo hará; si no controlas los datos, no controlas el modelo.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "confiar en cualquier dataset público mientras la accuracy sea alta",
+          "why": "La accuracy alta es justo lo que esconde la puerta: no sirve de filtro."
+        },
+        {
+          "id": "b",
+          "text": "controlar la procedencia de los datos, revisar anomalías y etiquetas, y no entrenar sobre datos de terceros sin auditar",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "usar un modelo más grande",
+          "why": "El tamaño no protege de datos envenenados; los aprende igual."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué decide lo que el modelo aprende: su tamaño o sus datos?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la detección de la anomalía: abre el editor con py, completa es_sospechoso y compruébala con py check.",
+      "teach": "La anomalía, en código\nUn ejemplo es sospechoso si lleva el disparador y su etiqueta contradice el patrón (medida baja pero etiquetado «apta»).\nPor qué: es la señal que caza los ejemplos envenenados en el dataset.",
+      "py_exercise": {
+        "id": "E2-05-anomalia",
+        "title": "es_sospechoso(medida, disparador, etiqueta): ¿ejemplo envenenado?",
+        "function": "es_sospechoso",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef es_sospechoso(medida, disparador, etiqueta):\n    # disparador: 0 o 1; etiqueta: \"apta\" o \"defectuosa\"; la regla real: apta si medida >= 0.5\n    return disparador == 1   # cambia: ademas, que la etiqueta contradiga el patron (medida baja pero \"apta\")\n\nprint(es_sospechoso(0.2, 1, \"apta\"))   # True\n",
+        "cases": [
+          {
+            "args": [
+              0.2,
+              1,
+              "apta"
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              0.8,
+              1,
+              "apta"
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              0.2,
+              0,
+              "apta"
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              0.2,
+              1,
+              "defectuosa"
+            ],
+            "expected": false
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "E2-05-anomalia",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "and medida < 0.5 and etiqueta == \"apta\"",
+        "La línea queda así: return disparador == 1 and medida < 0.5 and etiqueta == \"apta\""
+      ]
+    }
+  ],
+  "you_can_now": "Sabes qué es una puerta trasera por envenenamiento de datos, que no cambia la accuracy y que se caza en los datos (procedencia y anomalías), no en el modelo. Con esto amplías E2.",
+  "debrief": {
+    "what_happened": "Con solo 4 ejemplos envenenados instalaste una puerta trasera con 100 % de éxito, mientras la accuracy en datos normales seguía en 1.00: invisible si solo miras el acierto. Se caza en los datos, no en el modelo.",
+    "why": "El envenenamiento de datos instala puertas traseras que pasan todas las validaciones de calidad; la defensa es controlar la procedencia de los datos de entrenamiento y detectar anomalías, no medir mejor el modelo.",
+    "in_production": "Los equipos auditan la procedencia de los datasets, filtran anomalías y etiquetas sospechosas, y desconfían del fine-tuning sobre datos de terceros; se investiga también la detección de puertas traseras en los pesos.",
+    "simplifications": [
+      "Un clasificador de dos features y un disparador binario; las puertas traseras reales son más sutiles",
+      "Aquí el disparador es una marca; en un LLM puede ser una palabra o frase concreta"
+    ]
+  },
+  "further_reading": [
+    "ref.nist-ai-100-2",
+    "ref.owasp-llm-2025"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: menos veneno. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Entrena con backdoor entrenar --veneno 2. ¿Sigue cambiando la accuracy en datos normales respecto al modelo limpio? (answer si o no)",
+        "validator": {
+          "type": "answer",
+          "expected": "no",
+          "accept": [
+            "no"
+          ]
+        },
+        "wrong_answer": "Revisa: la puerta trasera se esconde justo en que la accuracy normal no se mueve.",
+        "hints": [
+          "backdoor entrenar --veneno 2 y mira la accuracy normal.",
+          "Compárala con el modelo limpio (1.00)."
+        ],
+        "on_complete": "Correcto: no. La accuracy normal sigue en 1.00; la puerta trasera no se delata ahí, por pocos ejemplos que use."
+      }
+    ]
+  }
+}

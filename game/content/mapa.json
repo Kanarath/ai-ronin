@@ -55,6 +55,10 @@
       "para_que": "Inferencia eficiente: por qué un LLM es rápido o caro de servir. Caché KV (coste cuadrático frente a lineal), batching (rendimiento), decodificación especulativa (velocidad sin perder calidad) y MoE (capacidad frente a coste); leyes de escala."
     },
     {
+      "unit": "T13",
+      "para_que": "Más allá del texto: generación de imagen y audio (difusión) y su seguridad. Guardarraíles de entrada y de salida, filtro de copyright/estilo y marca de agua/procedencia de lo generado."
+    },
+    {
       "unit": "P0",
       "para_que": "Python para IA: servir un LLM local y escribir el código de verdad."
     },
@@ -125,6 +129,10 @@
     {
       "unit": "O8",
       "para_que": "La IA como arma y la defensa frente a ella: phishing e ingeniería social potenciados por IA (sin pistas en el texto, a escala), por qué los filtros de siempre quedan obsoletos, y la defensa que aguanta (autenticación del remitente, verificación fuera de banda, confianza cero en voz y vídeo)."
+    },
+    {
+      "unit": "O9",
+      "para_que": "Deepfakes y medios sintéticos: por qué no fiarse del ojo ni del oído, la procedencia firmada (C2PA) y su límite, y la verificación fuera de banda de lo crítico (voz y vídeo)."
     },
     {
       "unit": "C1",

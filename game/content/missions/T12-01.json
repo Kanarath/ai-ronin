@@ -36,7 +36,7 @@
     {
       "id": "o1",
       "text": "Mide la caché al generar 64 tokens: infer kv --tokens 64. ¿Cuántas veces menos trabajo con caché? (answer <número>)",
-      "teach": "Por qué hace falta la caché\nPara generar un token, la atención necesita las claves y valores (K,V) de todos los anteriores. Sin caché, se recalculan en cada token: el trabajo crece con el cuadrado de la longitud. Con caché, K,V se guardan y se reutilizan: crece lineal.\nPor qué: sin caché, duplicar la longitud cuadruplica el coste; con caché, solo lo duplica.",
+      "teach": "Por qué hace falta la caché\nPara generar un token, la atención necesita las claves y valores (K,V) de todos los anteriores. Sin caché, se recalculan en cada token: el trabajo crece con el cuadrado de la longitud. Con caché, K,V se guardan y se reutilizan: crece lineal.\nPor qué: sin caché, duplicar la longitud cuadruplica el coste; con caché, solo lo duplica.\nError común: creer que la caché KV hace «pensar» más rápido al modelo. No: solo evita recalcular el pasado; el cómputo por token nuevo es el mismo.",
       "validator": {
         "type": "all",
         "of": [

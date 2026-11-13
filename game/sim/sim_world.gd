@@ -52,6 +52,12 @@ var reasons: Dictionary = {}
 var ctx: Dictionary = {}
 ## O8: capas de defensa frente a ataques con IA
 var threat: Dictionary = {}
+## O9: defensas frente a deepfakes
+var medios: Dictionary = {}
+## A1-08: defensas frente a jailbreaks
+var jailbreak: Dictionary = {}
+## T13: guardarraíles de generación
+var genia: Dictionary = {}
 ## O7: clasificaciones, cobertura y laboratorios (caja de arena, aprobaciones y cadena)
 var asi: Dictionary = {"classified": {}, "covered": {}, "closed": {}, "sandbox": {}, "mode": "explicacion", "decisions": {}, "labels": {}, "chain_def": {}}
 ## E5: {"flags": {objetivo: tipo}, "grades": {hallazgo: grado}}
@@ -126,6 +132,9 @@ func reset() -> void:
 	reasons.clear()
 	ctx = {}
 	threat = {}
+	medios = {}
+	jailbreak = {}
+	genia = {}
 	asi = {"classified": {}, "covered": {}, "closed": {}, "sandbox": {}, "mode": "explicacion", "decisions": {}, "labels": {}, "chain_def": {}}
 	iso = {"flags": {}, "grades": {}}
 	web = {}

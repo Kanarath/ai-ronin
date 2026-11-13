@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "nota": "A1-08 · Taxonomía de jailbreaks. Simulado y defensivo: cada técnica se describe por su MECANISMO, no hay cargas (payloads) que copiar. Se aprende qué defensa para cada una y por qué no hay bala de plata.",
+  "tecnicas": [
+    {"id": "J1", "nombre": "Inyección directa", "mecanismo": "«Ignora tus instrucciones y…»: una orden que compite con el system prompt (LLM01, lo viste en A1-02).", "rasgos": ["marca_directa", "intencion_mala"]},
+    {"id": "J2", "nombre": "Juego de rol", "mecanismo": "«Eres un personaje sin reglas»: se le pide que actúe como alguien que no tiene restricciones; no hay una orden obvia que filtrar.", "rasgos": ["intencion_mala"]},
+    {"id": "J3", "nombre": "Crescendo", "mecanismo": "Escalada en varios turnos: cada mensaje es inocuo por separado, pero juntos llevan al modelo paso a paso a donde no debía.", "rasgos": ["escalada"]},
+    {"id": "J4", "nombre": "Many-shot", "mecanismo": "Muchos ejemplos falsos en el contexto en los que «el asistente obedece», para que el modelo imite ese patrón.", "rasgos": ["muchos_ejemplos"]},
+    {"id": "J5", "nombre": "Codificación", "mecanismo": "La petición disfrazada (en otro idioma, en base64, con separadores) para que un filtro de palabras no la reconozca.", "rasgos": ["codificado"]},
+    {"id": "J6", "nombre": "Inyección indirecta", "mecanismo": "La orden no la escribe el usuario: viene dentro de un documento o web que el modelo lee (LLM01 indirecta, lo viste en A2).", "rasgos": ["desde_documento", "intencion_mala"]}
+  ],
+  "defensas": {
+    "filtro_entrada": {"desc": "Filtro de palabras: busca frases típicas de ataque («ignora tus instrucciones»)", "pilla": ["marca_directa"]},
+    "clasificador": {"desc": "Clasificador de seguridad (un modelo que juzga la INTENCIÓN del mensaje, A1-07)", "pilla": ["intencion_mala"]},
+    "limite_turnos": {"desc": "Vigilar la conversación entera, no cada turno: detectar la escalada acumulada", "pilla": ["escalada"]},
+    "limite_contexto": {"desc": "Limitar y revisar los ejemplos del contexto: no dejar que el contexto reescriba las reglas", "pilla": ["muchos_ejemplos"]},
+    "normalizar": {"desc": "Normalizar y decodificar la entrada ANTES de filtrarla (base64, idiomas, separadores)", "pilla": ["codificado"]},
+    "aislar_contenido": {"desc": "Tratar el contenido de documentos y webs como datos, nunca como instrucciones (A2)", "pilla": ["desde_documento"]}
+  }
+}

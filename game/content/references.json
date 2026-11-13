@@ -1434,6 +1434,15 @@
       "type": "curso",
       "url": "https://stanford-cs336.github.io/spring2025/",
       "consulted": "2026-11-13"
+    },
+    {
+      "id": "ref.maestro",
+      "title": "MAESTRO: marco de threat modeling por capas para IA agéntica (Ken Huang, Cloud Security Alliance). Siete capas: Foundation Models, Data Operations, Agent Frameworks, Deployment & Infrastructure, Evaluation & Observability, Security & Compliance, Agent Ecosystem",
+      "source": "Cloud Security Alliance",
+      "type": "guia",
+      "url": "https://cloudsecurityalliance.org/blog/2025/02/06/agentic-ai-threat-modeling-framework-maestro",
+      "consulted": "2026-11-13",
+      "review_by": "2027-05-13"
     }
   ]
 }

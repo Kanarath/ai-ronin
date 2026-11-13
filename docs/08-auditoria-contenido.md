@@ -25,14 +25,14 @@ No es empinada. Para este perfil, T1–T3 pueden saber lentas; se gestiona con e
 
 ### Lado ciberseguridad
 1. **Uso ofensivo de la IA y defensa frente a ataques potenciados por IA** (el mayor hueco): LLMs para phishing/ingeniería social/recon a escala, y del otro lado detectar lo generado por IA. → Unidad **O8** ✅ (O8-01 «La IA como arma», O8-02 «Defenderse sin leer el texto»; comando `amenaza`).
-2. **Deepfakes y medios sintéticos** (voz, vídeo): fraude por voz clonada (BEC), detección, procedencia (C2PA). Cero cobertura de audio. → Laboratorio multimodal.
-3. **Ataques en tiempo de entrenamiento**: *backdoors* y envenenamiento al hacer fine-tuning (muy de pasada). → Profundizar A6 o E2.
-4. **Taxonomía de jailbreaks más ancha**: crescendo, *many-shot*, cifrado/codificación, *roleplay* (parcial). → Ampliar A1/T9 con los extras reales garak/PyRIT.
-5. **MAESTRO** (threat modeling de agentes): no se menciona (sí STRIDE/ATLAS). → Añadir a O3.
+2. ✅ **Deepfakes y medios sintéticos** → O9-01 «Lo que ves y lo que oyes» (comando `medios`): detección vs procedencia C2PA vs verificación fuera de banda.
+3. ✅ **Backdoors / envenenamiento de datos** → E2-05 «La marca que abre la puerta» (comando `backdoor`): puerta trasera invisible a la accuracy.
+4. ✅ **Taxonomía de jailbreaks** → A1-08 «Mil formas de abrir la misma puerta» (comando `jailbreak`), atada a los extras garak/promptfoo/PyRIT.
+5. ✅ **MAESTRO** → O3-02 «Siete capas de un agente» (comando `maestro`).
 
 ### Lado IA/ingeniería
-6. **Modelos generativos de imagen / difusión**: 0 cobertura. Si el curso es LLM-céntrico por diseño, aceptable; su seguridad sería una especialización opcional.
-7. **Multimodal más allá de la visión**: hay visión (T8), falta audio.
+6. ✅ **Generación de imagen y audio** → T13-01 «Más allá del texto» (comando `genia`): difusión, guardarraíles de entrada/salida, copyright y marca de agua.
+7. ✅ Cubierto en parte por O9 (audio/voz) y T13 (generación).
 
 Bien cubierto: RAG y su seguridad (A2), agentes/MCP/multiagente (A3–A5), supply chain con formatos de modelo (A6), evals (P2, A1-06), gobernanza (O5, E3, E5), adversarial y privacidad (E2), razonamiento (T11) e inferencia (T12).
 
@@ -44,6 +44,4 @@ Bien cubierto: RAG y su seguridad (A2), agentes/MCP/multiagente (A3–A5), suppl
 
 1. ✅ Corregir la redacción de `study_path` (hecho).
 2. ✅ **O8 · IA ofensiva y defensa** (hueco nº1) — hecho.
-3. Deepfakes/medios sintéticos (nº2).
-4. Jailbreaks ampliados con las herramientas reales (nº4).
-5. Backdoors en entrenamiento (nº3).
+Todos los huecos de la auditoría están hechos (O9, E2-05, A1-08, O3-02, T13).

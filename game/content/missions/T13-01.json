@@ -1,0 +1,309 @@
+{
+  "id": "T13-01",
+  "schema_version": 1,
+  "title": "Más allá del texto",
+  "unit": "T13",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "T8-03"
+  ],
+  "competencies": {
+    "requires": [
+      "T6.next-token"
+    ],
+    "trains": [
+      "T13.difusion",
+      "T13.guardarrailes-generacion",
+      "T13.marca-agua"
+    ]
+  },
+  "briefing": "No todo es texto: los modelos de difusión generan imágenes, voz y vídeo desde ruido, guiados por un prompt. Son enormemente útiles y, a la vez, una fábrica de contenido prohibido, imitaciones y desinformación. Hoy ves cómo generan y montas los guardarraíles: filtrar la petición, clasificar el resultado y marcar lo generado.",
+  "learning_objectives": [
+    "Explicar a grandes rasgos cómo genera un modelo de difusión",
+    "Montar guardarraíles de entrada y de salida, y entender por qué hacen falta los dos",
+    "Marcar lo generado con procedencia (marca de agua)"
+  ],
+  "mentor_intro": "Un generador sin guardarraíles hace cualquier cosa que le pidas; con ellos, solo lo que debe, y deja constancia de lo que hizo.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Los modelos de imagen y audio (difusión) traen riesgos propios: contenido prohibido, imitación de estilos y personas, y desinformación visual. La defensa no es un solo filtro, sino guardarraíles de entrada y de salida más marca de agua para la procedencia; es lo que exigen las plataformas y el AI Act para el contenido generado.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira las peticiones: genia peticiones. Una es legítima; cuatro son mal uso (nombrado por su categoría).",
+      "teach": "Cómo genera un modelo de difusión\nSe entrena añadiendo ruido a imágenes reales y aprendiendo a quitarlo. Para generar, parte de ruido puro y lo va «limpiando» paso a paso, guiado por el prompt, hasta que aparece una imagen (o un audio).\nPor qué: al generar desde cero cualquier cosa que describa el prompt, puede producir también lo que no debería; por eso necesita guardarraíles.",
+      "validator": {
+        "type": "event",
+        "event": "genia.list"
+      },
+      "hints": [
+        "genia peticiones."
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Filtra la petición: genia defensa filtro_entrada on y genia evaluar. ¿Cuántas de las 4 de mal uso bloquea? (answer <número>)",
+      "prediction": {
+        "prompt": "Un filtro de la petición, ¿cuántas de las 4 de mal uso crees que parará?",
+        "options": [
+          "casi todas",
+          "la mitad",
+          "casi ninguna"
+        ]
+      },
+      "teach": "Guardarraíl de entrada\nMira la petición y bloquea las categorías prohibidas pedidas con palabras explícitas, antes de generar nada.\nPor qué: es barato (no se genera) pero solo pilla lo que se pide a las claras.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "genia.eval",
+            "where": {
+              "caught": 1
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 1,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "genia defensa filtro_entrada on y genia evaluar.",
+        "answer 1"
+      ],
+      "on_complete": "Solo 1 de 4: la petición directa. El rodeo, la imitación y la desinformación pasan."
+    },
+    {
+      "id": "c1",
+      "text": "¿Por qué el filtro de entrada deja pasar la petición con rodeo?",
+      "teach": "Entrada no basta\nUna petición puede describir lo prohibido sin las palabras prohibidas (un eufemismo, un rodeo). El filtro de entrada no lo reconoce; hay que mirar también el RESULTADO generado.\nPor qué: por eso se añade un clasificador de salida, que juzga lo que el modelo ha producido, no cómo se pidió.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque el rodeo no usa las palabras que el filtro busca; hay que clasificar también el resultado",
+          "why": ""
+        },
+        {
+          "id": "b",
+          "text": "porque el filtro de entrada está mal hecho",
+          "why": "Hace lo que puede con la petición; el problema es que la petición se puede disfrazar."
+        },
+        {
+          "id": "c",
+          "text": "porque esa petición no es mal uso",
+          "why": "Lo es: es la misma categoría prohibida, solo que pedida con un rodeo."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "¿Qué ve el filtro de entrada, la petición o la imagen generada?",
+        "answer a"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Añade el clasificador del resultado: genia defensa clasificador_salida on y genia evaluar. ¿Cuántas de las 4 bloquea ya? (answer <número>)",
+      "teach": "Guardarraíl de salida\nClasifica el contenido generado y lo bloquea aunque la petición viniera con rodeo. Pilla el contenido prohibido y la desinformación.\nPor qué: entrada + salida se complementan; pero una sigue colándose.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "genia.eval",
+            "where": {
+              "caught": 3
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 3,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "genia defensa clasificador_salida on y genia evaluar.",
+        "answer 3"
+      ],
+      "on_complete": "3 de 4. Se cuela la imitación del estilo de un artista: no es «contenido prohibido», es copyright."
+    },
+    {
+      "id": "o4",
+      "text": "Cierra el copyright y marca lo generado: genia defensa filtro_copyright on, genia defensa marca_agua on y genia evaluar. ¿Cuántas de las 4 bloqueas ya? (answer <número>)",
+      "teach": "Copyright y procedencia\nUn filtro de estilo bloquea imitar a un artista o personaje concreto. Y la marca de agua no bloquea nada: firma TODO lo generado para que se pueda rastrear (la desinformación que se cuele llevará su marca). Es la procedencia de O9, aplicada a lo que tú generas.\nPor qué: lo que generas también tiene que ser trazable; marcar la salida es responsabilidad del que la produce.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "genia.eval",
+            "where": {
+              "caught": 4,
+              "marca": true
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 4,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "Dos genia defensa … on y un genia evaluar.",
+        "answer 4"
+      ],
+      "on_complete": "4 de 4, la legítima pasa, y todo lo generado lleva marca de agua: bloqueas el mal uso y dejas rastro de lo bueno."
+    },
+    {
+      "id": "c2",
+      "text": "¿Para qué sirve marcar con marca de agua lo que generas, si ya bloqueas el mal uso?",
+      "teach": "Procedencia de lo generado\nNingún guardarraíl es perfecto: algo se colará. Si todo lo que generas lleva una marca de procedencia, lo que se cuele se puede rastrear hasta su origen, y cualquiera puede comprobar que una imagen la hizo una IA. Es la otra cara del C2PA de O9: allí verificabas lo auténtico; aquí marcas lo sintético.\nPor qué: la defensa es bloquear lo que puedas Y dejar rastro de lo que generes, para que el ecosistema pueda distinguir lo real de lo generado.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "para nada: si bloqueas el mal uso, la marca sobra",
+          "why": "Ningún filtro es perfecto; la marca hace trazable lo que se cuele y distingue lo sintético."
+        },
+        {
+          "id": "b",
+          "text": "para que lo generado sea trazable y cualquiera pueda saber que lo hizo una IA, aunque un guardarraíl falle",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "para proteger el modelo de ser copiado",
+          "why": "La marca es sobre el contenido generado, no sobre el modelo."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué pasa con lo que se cuele de los filtros si no lleva marca?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa el guardarraíl de dos capas: abre el editor con py, completa se_bloquea y compruébala con py check.",
+      "teach": "Entrada y salida, en código\nUna petición se bloquea si la pilla el filtro de entrada (por la petición) o el clasificador de salida (por el resultado).\nPor qué: es lo que hace genia evaluar con cada petición.",
+      "py_exercise": {
+        "id": "T13-01-guardarrail",
+        "title": "se_bloquea(rasgos, entrada, salida): ¿la para algún guardarraíl?",
+        "function": "se_bloquea",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef se_bloquea(rasgos, entrada, salida):\n    # rasgos de la peticion; entrada y salida: listas de rasgos que pilla cada guardarrail\n    pilla_entrada = any(r in rasgos for r in entrada)\n    pilla_salida = any(r in rasgos for r in salida)\n    return pilla_entrada   # cambia: se bloquea si lo pilla la entrada O la salida\n\nprint(se_bloquea([\"prohibido\"], [\"prohibido_directo\"], [\"prohibido\"]))   # True\n",
+        "cases": [
+          {
+            "args": [
+              [
+                "prohibido"
+              ],
+              [
+                "prohibido_directo"
+              ],
+              [
+                "prohibido"
+              ]
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              [
+                "prohibido_directo",
+                "prohibido"
+              ],
+              [
+                "prohibido_directo"
+              ],
+              []
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              [
+                "copyright"
+              ],
+              [
+                "prohibido_directo"
+              ],
+              [
+                "prohibido"
+              ]
+            ],
+            "expected": false
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "T13-01-guardarrail",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "pilla_entrada or pilla_salida",
+        "La línea queda así: return pilla_entrada or pilla_salida"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes a grandes rasgos cómo genera un modelo de difusión, montar guardarraíles de entrada y de salida, por qué hacen falta los dos, y marcar lo generado con procedencia. Con esto cierras T13.",
+  "debrief": {
+    "what_happened": "El filtro de entrada paró 1 de 4 usos indebidos; el clasificador de salida subió a 3 (pilla lo que entra con rodeo); el filtro de copyright cerró la imitación, y la marca de agua dejó rastro de todo lo generado.",
+    "why": "Un generador de imagen o audio se protege con guardarraíles de entrada Y de salida (porque la petición se puede disfrazar), un filtro de copyright, y marca de agua/procedencia en todo lo que produce.",
+    "in_production": "Las plataformas combinan filtros de prompt, clasificadores del contenido generado, filtros de estilo y marcas de agua/Content Credentials (C2PA), y el AI Act exige señalar el contenido generado por IA.",
+    "simplifications": [
+      "Cinco peticiones nombradas por categoría, sin detalle; los guardarraíles reales usan modelos y umbrales",
+      "La difusión se explica a grandes rasgos; el detalle matemático queda para E1"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-llm-2025",
+    "ref.nist-ai-100-2"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: solo la salida. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con SOLO el clasificador de salida activo (sin filtro de entrada ni de copyright), ¿cuántas de las 4 de mal uso se cuelan? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 1,
+          "tolerance": 0
+        },
+        "wrong_answer": "Revisa: el clasificador de salida pilla el contenido prohibido; ¿cuál de las cuatro no lo es?",
+        "hints": [
+          "genia defensa clasificador_salida on y genia evaluar.",
+          "La imitación de estilo no es «contenido prohibido»."
+        ],
+        "on_complete": "Correcto: 1. La imitación del estilo del artista (copyright) se cuela; para esa hace falta el filtro de copyright."
+      }
+    ]
+  }
+}

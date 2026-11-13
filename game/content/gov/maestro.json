@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "nota": "O3-02 · MAESTRO: marco de threat modeling por capas para IA agéntica (Ken Huang / Cloud Security Alliance). Las siete capas y amenazas de la forja para clasificarlas. Verificado el 2026-11-13.",
+  "capas": [
+    {"id": "L1", "nombre": "Foundation Models", "es": "El modelo base", "cubre": "El LLM en sí: alucinaciones, sesgos heredados, jailbreaks, límites de razonamiento."},
+    {"id": "L2", "nombre": "Data Operations", "es": "Datos", "cubre": "Los datos que usa el agente: entrenamiento, RAG, memoria; envenenamiento, fuga, calidad."},
+    {"id": "L3", "nombre": "Agent Frameworks", "es": "El framework del agente", "cubre": "El bucle del agente y sus herramientas: registro de herramientas, function calling, validación de argumentos."},
+    {"id": "L4", "nombre": "Deployment & Infrastructure", "es": "Despliegue e infraestructura", "cubre": "Dónde corre: contenedores, permisos, secretos, red; aislamiento y mínimo privilegio."},
+    {"id": "L5", "nombre": "Evaluation & Observability", "es": "Evaluación y observabilidad", "cubre": "Medir y vigilar: evals, trazas, detección; lo que viste en P2 y O6."},
+    {"id": "L6", "nombre": "Security & Compliance", "es": "Seguridad y cumplimiento", "cubre": "Capa transversal: control de acceso, gobernanza, mapeo a NIST/AI Act (O5)."},
+    {"id": "L7", "nombre": "Agent Ecosystem", "es": "Ecosistema de agentes", "cubre": "Lo que rodea al agente: otros agentes, servidores MCP de terceros, protocolos A2A; confianza entre agentes."}
+  ],
+  "amenazas": [
+    {"id": "AM1", "texto": "El modelo base del asistente alucina políticas de la forja que no existen y arrastra sesgos de sus datos de preentrenamiento.", "capa": "L1", "por_que": "Es un problema del modelo en sí: alucinación y sesgo heredado."},
+    {"id": "AM2", "texto": "Un documento del RAG se edita para colar una norma falsa que el agente recupera una y otra vez.", "capa": "L2", "por_que": "Es la capa de datos: envenenamiento de la fuente que alimenta al agente."},
+    {"id": "AM3", "texto": "El agente registra y llama a una herramienta nueva sin validar sus argumentos ni sus permisos.", "capa": "L3", "por_que": "Es el framework del agente: cómo gestiona y llama a sus herramientas."},
+    {"id": "AM4", "texto": "El contenedor del agente corre como administrador y con las claves de la API montadas en el entorno.", "capa": "L4", "por_que": "Es despliegue e infraestructura: privilegios y secretos del entorno de ejecución."},
+    {"id": "AM5", "texto": "No hay trazas ni evals, así que un fallo del agente lleva semanas sin detectarse.", "capa": "L5", "por_que": "Es evaluación y observabilidad: falta de medición y vigilancia."},
+    {"id": "AM6", "texto": "Nadie ha mapeado los riesgos del agente al AI Act ni hay control de acceso documentado para quién puede usarlo.", "capa": "L6", "por_que": "Es la capa transversal de seguridad y cumplimiento: gobernanza y control de acceso."},
+    {"id": "AM7", "texto": "Un servidor MCP de terceros, instalado desde un registro público, se actualiza con una orden oculta.", "capa": "L7", "por_que": "Es el ecosistema del agente: componentes de terceros con los que se relaciona."}
+  ]
+}

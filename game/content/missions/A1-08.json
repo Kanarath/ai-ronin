@@ -1,0 +1,310 @@
+{
+  "id": "A1-08",
+  "schema_version": 1,
+  "title": "Mil formas de abrir la misma puerta",
+  "unit": "A1",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 35,
+  "requires_missions": [
+    "A1-07"
+  ],
+  "competencies": {
+    "requires": [
+      "A1.construir"
+    ],
+    "trains": [
+      "A1.taxonomia-jailbreaks",
+      "A1.defensa-en-profundidad"
+    ]
+  },
+  "briefing": "La inyección directa de A1-02 es solo una familia de jailbreak. Hay muchas más —juego de rol, crescendo, many-shot, codificación, inyección indirecta— y cada una esquiva una defensa distinta. Hoy las mapeas, ves por qué ninguna defensa sola las para todas, y por qué hace falta probar sin parar con herramientas reales.",
+  "learning_objectives": [
+    "Reconocer las familias de jailbreak y su mecanismo",
+    "Comprobar que no hay una defensa única que las frene todas",
+    "Montar defensa en profundidad y probarla en continuo"
+  ],
+  "mentor_intro": "No defiendes una técnica: defiendes una superficie llena de puertas distintas.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "La lista de jailbreaks crece cada mes. Un AI red teamer tiene que conocer las familias (no una sola), entender que cada una necesita su defensa, y automatizar las pruebas con herramientas como garak, promptfoo y PyRIT. Es lo que separa una defensa que aguanta de una que para el ataque de ayer.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira las familias: jailbreak tecnicas. Son seis mecanismos distintos de saltarse las reglas.",
+      "teach": "Seis familias\nInyección directa (A1-02), juego de rol, crescendo (escalada en varios turnos), many-shot (muchos ejemplos en el contexto), codificación (la petición disfrazada) e inyección indirecta (desde un documento, A2).\nPor qué: si solo conoces la inyección directa, defiendes una puerta y dejas cinco abiertas.",
+      "validator": {
+        "type": "event",
+        "event": "jailbreak.tecnicas"
+      },
+      "hints": [
+        "jailbreak tecnicas."
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Prueba el filtro de palabras: jailbreak defensa filtro_entrada on y jailbreak evaluar. ¿Cuántas de las 6 frena? (answer <número>)",
+      "prediction": {
+        "prompt": "Un filtro de palabras clave, ¿cuántas de las 6 familias crees que frenará?",
+        "options": [
+          "casi todas",
+          "la mitad",
+          "casi ninguna"
+        ]
+      },
+      "teach": "El filtro de palabras\nBusca frases típicas de ataque («ignora tus instrucciones»). Es la defensa más básica.\nPor qué: solo pilla la que lleva esas palabras; las demás no las usan.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "jailbreak.eval",
+            "where": {
+              "frenadas": 1
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 1,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "jailbreak defensa filtro_entrada on y jailbreak evaluar.",
+        "answer 1"
+      ],
+      "on_complete": "Solo 1 de 6: la directa. El juego de rol, el crescendo y los demás no llevan palabras prohibidas."
+    },
+    {
+      "id": "o3",
+      "text": "Añade el clasificador de seguridad de A1-07: jailbreak defensa clasificador on y jailbreak evaluar. ¿Cuántas frena ahora? (answer <número>)",
+      "teach": "El clasificador de intención\nUn modelo que juzga la INTENCIÓN del mensaje, no las palabras. Pilla la directa, el juego de rol y la indirecta (todas con intención clara).\nPor qué: mejora mucho, pero tres familias siguen pasando.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "jailbreak.eval",
+            "where": {
+              "frenadas": 3
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 3,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "jailbreak defensa clasificador on y jailbreak evaluar.",
+        "answer 3"
+      ],
+      "on_complete": "3 de 6. Se cuelan el crescendo, el many-shot y la codificación: su intención no se ve en un solo mensaje."
+    },
+    {
+      "id": "c1",
+      "text": "¿Por qué el crescendo y la codificación pasan un clasificador de intención?",
+      "teach": "Cada una esquiva una cosa distinta\nEl crescendo reparte la mala intención en varios turnos, cada uno inocuo; el many-shot la esconde en los ejemplos del contexto; la codificación la disfraza para que no se reconozca. Un clasificador que mira un mensaje aislado no las ve.\nPor qué: por eso cada familia necesita SU defensa: mirar la conversación entera, limitar el contexto, decodificar antes de filtrar.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque el clasificador está mal entrenado",
+          "why": "Aunque fuera perfecto por mensaje, el crescendo no es malo en ningún mensaje suelto."
+        },
+        {
+          "id": "b",
+          "text": "porque reparten o disfrazan la intención de forma que un mensaje aislado parece inocuo",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "porque esas técnicas no son peligrosas",
+          "why": "Lo son; lo que cambia es que esconden la intención de una forma que ese filtro no capta."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Se ve la mala intención del crescendo en un solo turno?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o4",
+      "text": "Monta la defensa en profundidad: añade limite_turnos, limite_contexto y normalizar, y jailbreak evaluar. ¿Cuántas frenas ya? (answer <número>)",
+      "teach": "Una capa por familia\nVigilar la conversación entera frena el crescendo; limitar y revisar el contexto frena el many-shot; normalizar y decodificar la entrada frena la codificación. Cada capa cierra una puerta.\nPor qué: no hay una defensa que las pare todas; se suman capas, cada una para su familia.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "jailbreak.eval",
+            "where": {
+              "frenadas": 6
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 6,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "Tres jailbreak defensa … on y un jailbreak evaluar.",
+        "answer 6"
+      ],
+      "on_complete": "6 de 6: cada familia cae por su capa. Ninguna defensa sola lo habría conseguido."
+    },
+    {
+      "id": "c2",
+      "text": "Montadas las capas, ¿ya está la defensa terminada?",
+      "teach": "Probar en continuo\nAparecen familias y variantes nuevas cada mes. La defensa se prueba sin parar con herramientas de red team automatizadas —garak, promptfoo, PyRIT— que lanzan baterías de jailbreaks y miden qué pasa, en CI, como las evals de P2.\nPor qué: una defensa que no se vuelve a probar protege del ataque de ayer, no del de mañana.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "sí: con las seis capas está resuelto para siempre",
+          "why": "Las técnicas cambian; lo que hoy frena todo, mañana deja pasar una variante nueva."
+        },
+        {
+          "id": "b",
+          "text": "no: hay que probarla en continuo con herramientas de red team (garak, promptfoo, PyRIT), porque salen técnicas nuevas",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "no, pero basta con revisarla una vez al año",
+          "why": "Las familias nuevas aparecen en semanas, no en años; la prueba tiene que ser continua."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Cuánto tarda en salir una familia de jailbreak nueva?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la cuenta de la defensa: abre el editor con py, completa frenadas y compruébala con py check.",
+      "teach": "Técnicas frenadas, en código\nUna técnica se frena si alguna capa activa pilla alguno de sus rasgos.\nPor qué: es lo que hace jailbreak evaluar con cada familia.",
+      "py_exercise": {
+        "id": "A1-08-frenadas",
+        "title": "frenadas(tecnicas, capas): cuántas técnicas frena el conjunto de capas",
+        "function": "frenadas",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef frenadas(tecnicas, capas):\n    # tecnicas: {id: [rasgos]}; capas: lista de listas de rasgos que pilla cada capa\n    n = 0\n    for t in tecnicas:\n        rasgos = tecnicas[t]\n        bloqueada = False   # cambia: True si alguna capa pilla alguno de los rasgos\n        n += 1 if bloqueada else 0\n    return n\n\nprint(frenadas({\"J1\": [\"marca_directa\"]}, [[\"marca_directa\"]]))   # 1\n",
+        "cases": [
+          {
+            "args": [
+              {
+                "J1": [
+                  "marca_directa"
+                ]
+              },
+              [
+                [
+                  "marca_directa"
+                ]
+              ]
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              {
+                "J1": [
+                  "intencion_mala"
+                ],
+                "J2": [
+                  "escalada"
+                ]
+              },
+              [
+                [
+                  "intencion_mala"
+                ]
+              ]
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              {
+                "J1": [
+                  "x"
+                ]
+              },
+              []
+            ],
+            "expected": 0
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "A1-08-frenadas",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "any(r in rasgos for capa in capas for r in capa)",
+        "La línea queda así: bloqueada = any(r in rasgos for capa in capas for r in capa)"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes reconocer las familias de jailbreak, que cada una esquiva una defensa distinta, montar defensa en profundidad y que hay que probarla en continuo con herramientas reales. Con esto cierras A1.",
+  "debrief": {
+    "what_happened": "El filtro de palabras frenó 1 de 6 familias; el clasificador de intención, 3; solo sumando una capa por familia (turnos, contexto, decodificación) llegaste a 6 de 6. Y ni así está terminado: hay que probar en continuo.",
+    "why": "No existe una defensa única contra los jailbreaks: cada familia esquiva una cosa distinta, así que se monta defensa en profundidad y se prueba sin parar con herramientas automatizadas.",
+    "in_production": "Los equipos ejecutan garak, promptfoo y PyRIT en CI contra sus modelos, mantienen baterías de jailbreaks que crecen con cada variante nueva, y combinan filtros, clasificadores, control de contexto y normalización.",
+    "simplifications": [
+      "Seis familias y una capa por familia; en la práctica cada familia tiene muchas variantes",
+      "Las defensas aquí son binarias; las reales reducen la tasa de éxito, no la anulan"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-llm-2025",
+    "ref.owasp-agentic-2026"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: solo el clasificador. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Con SOLO el clasificador de seguridad activo, ¿cuántas de las 6 familias se cuelan (NO se frenan)? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 3,
+          "tolerance": 0
+        },
+        "wrong_answer": "Revisa: el clasificador frena las de intención visible; ¿cuántas reparten o disfrazan la intención?",
+        "hints": [
+          "jailbreak defensa clasificador on y jailbreak evaluar.",
+          "6 menos las que frena."
+        ],
+        "on_complete": "Correcto: 3. El crescendo, el many-shot y la codificación esconden la intención y se cuelan del clasificador."
+      }
+    ]
+  }
+}

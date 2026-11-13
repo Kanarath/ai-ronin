@@ -103,7 +103,7 @@
           "no"
         ]
       },
-      "teach": "Autoconsistencia\nLa política floja acierta la respuesta más probable, pero por poco: una sola muestra al azar falla la mitad de las veces. Si muestreas varias y te quedas con la más votada, te acercas a esa respuesta más probable sin reentrenar nada.\nPor qué: es cambiar cómputo en inferencia por acierto. Es la idea detrás de «pensar más» en los modelos que razonan.",
+      "teach": "Autoconsistencia\nLa política floja acierta la respuesta más probable, pero por poco: una sola muestra al azar falla la mitad de las veces. Si muestreas varias y te quedas con la más votada, te acercas a esa respuesta más probable sin reentrenar nada.\nPor qué: es cambiar cómputo en inferencia por acierto. Es la idea detrás de «pensar más» en los modelos que razonan.\nError común: pensar que con muchas muestras se supera lo que el modelo sabe. No: la autoconsistencia recupera su mejor respuesta, no inventa una mejor.",
       "validator": {
         "type": "all",
         "of": [
