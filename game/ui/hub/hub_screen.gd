@@ -13,7 +13,7 @@ const UNIT_TITLES := {
 	"P1": "P1 · Construir con LLM",
 	"P2": "P2 · Evals y observabilidad",
 	"A1": "A1 · Aplicación LLM", "A2": "A2 · RAG y embeddings", "A3": "A3 · Agentes", "A4": "A4 · MCP",
-	"A5": "A5 · Multiagente y A2A", "A6": "A6 · Supply chain e infra",
+	"A5": "A5 · Multiagente y A2A", "A6": "A6 · Supply chain e infra", "A7": "A7 · Navegador y ordenador",
 	"O1": "O1 · Mentalidad red team", "O2": "O2 · Reconocimiento", "O3": "O3 · Threat modeling", "O4": "O4 · Impacto e informes",
 	"O5": "O5 · Marcos y gobernanza",
 	"O6": "O6 · Detección y respuesta",

@@ -50,6 +50,8 @@ var apps: Dictionary = {}
 var asi: Dictionary = {"classified": {}, "covered": {}, "sandbox": {}, "mode": "explicacion", "decisions": {}, "labels": {}, "chain_def": {}}
 ## E5: {"flags": {objetivo: tipo}, "grades": {hallazgo: grado}}
 var iso: Dictionary = {"flags": {}, "grades": {}}
+## A7: {escenario: {defensa: bool}}
+var web: Dictionary = {}
 ## Tabla de embeddings (se carga al usarla)
 var embeddings: EmbeddingTable = null
 
@@ -115,4 +117,5 @@ func reset() -> void:
 	apps.clear()
 	asi = {"classified": {}, "covered": {}, "sandbox": {}, "mode": "explicacion", "decisions": {}, "labels": {}, "chain_def": {}}
 	iso = {"flags": {}, "grades": {}}
+	web = {}
 	embeddings = null

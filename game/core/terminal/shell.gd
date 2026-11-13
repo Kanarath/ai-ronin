@@ -39,6 +39,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	SecurityCommands.register(registry)
 	RagCommands.register(registry)
 	AgentCommands.register(registry)
+	WebCommands.register(registry)
 	McpCommands.register(registry)
 	A2aCommands.register(registry)
 	SupplyCommands.register(registry)

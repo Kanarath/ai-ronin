@@ -36,6 +36,8 @@ print(residuos([1, 0, 1], [0.8, 0.3, 0.4]))   # unos [0.2, -0.3, 0.6]
 	"O7-03": "def frenados(ataques, activas):\n    n = 0\n    for a in ataques:\n        bloqueado = any(d in activas for d in ataques[a])\n        n += 1 if bloqueado else 0\n    return n\n",
 	"O7-04": "def daninas_aprobadas(peticiones, decisiones):\n    n = 0\n    for pid in peticiones:\n        if peticiones[pid] and decisiones[pid] == \"si\":\n            n += 1\n    return n\n",
 	"O7-05": "def hay_fuga(ocurre, fuga):\n    for paso in fuga:\n        if ocurre.get(paso, False):\n            return True\n    return False\n",
+	"A7-01": "def accion_peligrosa(accion, origen, con_efecto):\n    return origen == \"web\" and accion in con_efecto\n",
+	"A7-02": "def necesita_confirmacion(accion, con_efecto):\n    return accion in con_efecto\n",
 	"T10-03": "# Completa la línea marcada y compruébala con py check.\ndef de_los_que_devuelven(aprobado, devuelve):\n    # aprobado y devuelve: listas de True o False, una posición por solicitud\n    buenos = [a for a, d in zip(aprobado, devuelve) if d]\n    aprobados = buenos.count(True)\n    return aprobados / len(buenos)\n\nprint(de_los_que_devuelven([True, False, True, True], [True, True, False, True]))   # unos 0.667\n",
 }
 
@@ -211,3 +213,23 @@ func test_O7_lab_motor() -> void:
 	assert_false(AsiLabCommands.simulate(["D2"])["web"]["leak"], "y por web")
 	assert_true(AsiLabCommands.simulate(["D4"])["web"]["leak"], "D4 no cubre la entrada web")
 	assert_true(AsiLabCommands.simulate(["D6"])["mcp"]["leak"], "D6 no corta la fuga")
+
+
+func test_A7_01_completa() -> void:
+	_walk("A7-01", ["A4-04"], ["web show navegador", "web run navegador", "answer 5", "hipotesis algunos", "web set navegador aislar_contenido on", "web run navegador", "answer 3", "web set navegador sin_acciones_desde_web on", "web set navegador confirmacion on", "web set navegador saneado_salida on", "web run navegador", "answer W3", "answer a", "web set navegador allowlist_dominios on", "web run navegador", "answer 4", "answer b", "PY", "web set navegador saneado_salida off", "web run navegador", "answer 1"])
+
+
+func test_A7_02_completa() -> void:
+	_walk("A7-02", ["A7-01"], ["web show ordenador", "web run ordenador", "answer 5", "hipotesis 2", "web set ordenador sesion_aislada on", "web set ordenador sin_descargas on", "web set ordenador confirmacion_verificable on", "web set ordenador allowlist_acciones on", "web set ordenador dominio_tarea on", "web run ordenador", "answer 2", "answer b", "web set ordenador sesion_aislada off", "web set ordenador sin_descargas off", "web set ordenador credencial_delegada on", "web set ordenador sin_ejecutables on", "web run ordenador", "answer 4", "answer b", "PY", "web set ordenador confirmacion_verificable off", "web set ordenador allowlist_acciones off", "web set ordenador credencial_delegada off", "web set ordenador sin_ejecutables off", "web set ordenador dominio_tarea off", "web set ordenador confirmacion_verificable on", "web run ordenador", "answer 2"])
+
+
+func test_A7_motor() -> void:
+	assert_eq(WebCommands.battery("navegador", [])["attacks_ok"], 5)
+	assert_eq(WebCommands.battery("navegador", ["aislar_contenido", "sin_acciones_desde_web", "confirmacion", "saneado_salida", "allowlist_dominios"])["attacks_ok"], 0)
+	assert_eq(WebCommands.battery("navegador", ["aislar_contenido", "sin_acciones_desde_web", "confirmacion", "saneado_salida", "allowlist_dominios"])["legit_ok"], 4)
+	var brusca := WebCommands.battery("ordenador", ["sesion_aislada", "sin_descargas", "confirmacion_verificable", "allowlist_acciones", "dominio_tarea"])
+	assert_eq(brusca["attacks_ok"], 0, "la caja brusca frena todo")
+	assert_eq(brusca["legit_ok"], 2, "pero rompe dos tareas")
+	var fina := WebCommands.battery("ordenador", ["credencial_delegada", "sin_ejecutables", "confirmacion_verificable", "allowlist_acciones", "dominio_tarea"])
+	assert_eq(fina["attacks_ok"], 0, "la acotada tambien")
+	assert_eq(fina["legit_ok"], 4, "y no rompe nada")

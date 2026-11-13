@@ -92,14 +92,17 @@ Revisar la declaración de aplicabilidad (*SoA*) de los objetivos del Anexo A (A
 
 *Aviso:* el Anexo A se cita por objetivos (A.2–A.10), no control a control. La redacción exacta de los 38 controles hay que comprobarla en una copia con licencia de la norma.
 
+## Lo implementado después (13-nov)
+
+- **A7 · Agentes con navegador y ordenador** (comando `web`): A7-01 inyección indirecta al navegar (contenido como datos, dominios y acciones permitidas, inyección frente a desinformación); A7-02 *computer use* como diputado confundido (permisos delegados, confirmación verificable, aislamiento de descargas). Mínimo privilegio aplicado a la sesión.
+- **Extras de red team reales** en `forja/ejercicios/extras/redteam/`: garak (escáner), promptfoo (evals y suite adversarial) y PyRIT (orquestación, experimental), todo contra el modelo local con avisos de carga.
+
 ## Lo siguiente, en este orden
 
-1. **A7:** agentes con navegador.
-2. **Extras de la Forja:** garak, PyRIT y promptfoo.
-3. **T11:** modelos que razonan.
-4. **A3-05:** ingeniería de contexto.
-5. **T12:** inferencia eficiente.
-6. **E2-04:** privacidad.
+1. **T11:** modelos que razonan (DPO, GRPO/RLVR, cómputo en inferencia, destilación).
+2. **A3-05:** ingeniería de contexto y memoria.
+3. **T12:** inferencia eficiente (caché KV, *batching*, MoE).
+4. **E2-04:** privacidad (privacidad diferencial, aprendizaje federado, *unlearning*).
 
 ## Fuentes (consultadas el 2026-11-13)
 

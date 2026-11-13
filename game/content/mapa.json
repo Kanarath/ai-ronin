@@ -83,6 +83,10 @@
       "para_que": "Supply chain (cadena de suministro): modelos, datos y dependencias manipulados antes de llegar a producción."
     },
     {
+      "unit": "A7",
+      "para_que": "Agentes que usan el navegador y el ordenador: inyección indirecta desde las páginas que leen, el agente como diputado confundido de la sesión del usuario (computer use) y cómo se aíslan (contenido como datos, dominios y acciones permitidas, permisos delegados y confirmación verificable)."
+    },
+    {
       "unit": "O1",
       "para_que": "Mentalidad red team: autorización, alcance y reglas de enfrentamiento antes de atacar nada."
     },

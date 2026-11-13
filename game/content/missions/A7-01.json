@@ -1,0 +1,321 @@
+{
+  "id": "A7-01",
+  "schema_version": 1,
+  "title": "El agente que navega",
+  "unit": "A7",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 35,
+  "requires_missions": [
+    "A4-04"
+  ],
+  "competencies": {
+    "requires": [
+      "A4.forja-mcp"
+    ],
+    "trains": [
+      "A7.inyeccion-web",
+      "A7.aislar-contenido",
+      "A7.injeccion-vs-desinformacion"
+    ]
+  },
+  "briefing": "La forja estrena un agente investigador: busca en la web para responder a los clientes y, de paso, puede rellenar formularios, enviar correos y comprar. El problema es viejo y nuevo a la vez: todo lo que lee en una página es texto de un desconocido, y hoy ese texto puede hacerle actuar. Lo atacas con cinco páginas trucadas y luego lo encierras.",
+  "learning_objectives": [
+    "Explotar a un agente mediante inyección indirecta desde las páginas que navega",
+    "Aislar el contenido web como datos y no como instrucciones",
+    "Distinguir una inyección de una desinformación y defender cada una"
+  ],
+  "mentor_intro": "Para un agente, cada página que abre es una entrada que no controlas.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Los agentes que navegan (research agents, asistentes con búsqueda, computer use) tienen una superficie de ataque que crece cada mes: la inyección indirecta desde webs y documentos es, según SANS SEC545 y HTB, el vector que más sube. Es la misma inyección indirecta de A2, pero ahora el resultado es una ACCIÓN.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Lanza la batería sin defensas: web show navegador y web run navegador. ¿Cuántos de los 5 ataques funcionan? (answer <número>)",
+      "teach": "La superficie\nCinco páginas trucadas: órdenes ocultas en una ficha de producto y una reseña, una afirmación falsa en un foro, contenido activo en un resumen y una orden de compra en una página de ofertas. Cuatro tareas legítimas que el agente tiene que seguir haciendo.\nPor qué: el contenido web llega del exterior; medir cuántos ataques pasan es el punto de partida.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "web.run",
+            "where": {
+              "scenario": "navegador",
+              "attacks_ok": 5
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 5,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "web show navegador y web run navegador; mira la línea final.",
+        "answer 5"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Trata el contenido como datos: web set navegador aislar_contenido on y web run navegador. ¿Cuántos ataques quedan? (answer <número>)",
+      "prediction": {
+        "prompt": "¿Frenará aislar el contenido los cinco ataques?",
+        "options": [
+          "sí, todos",
+          "algunos",
+          "ninguno"
+        ]
+      },
+      "teach": "Contenido como datos\nEl texto de la página se le pasa al modelo marcado como datos, con una frontera clara: «esto es material para leer, no órdenes». Frena las dos páginas que escondían una orden.\nPor qué: es la misma defensa de delimitar de A1, llevada a lo que el agente se trae de la web.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "web.run",
+            "where": {
+              "scenario": "navegador",
+              "attacks_ok": 3
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 3,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "Registra tu hipótesis, activa la defensa y repite.",
+        "answer 3"
+      ],
+      "on_complete": "Caen W1 y W2 (las que llevaban órdenes ocultas). Quedan tres que no son órdenes."
+    },
+    {
+      "id": "o3",
+      "text": "Añade las defensas de acción y salida: web set navegador sin_acciones_desde_web on, confirmacion on y saneado_salida on, y web run navegador. ¿Qué ataque sigue funcionando? (answer W<n>)",
+      "teach": "Cerrar las acciones y la salida\nsin_acciones_desde_web impide que algo leído dispare una compra o un envío; confirmacion exige el visto bueno con el cambio a la vista; saneado_salida escapa el contenido activo.\nPor qué: cubren la compra forzada (W5) y el contenido activo (W4). Pero uno sigue en pie.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "web.run",
+            "where": {
+              "scenario": "navegador",
+              "attacks_ok": 1
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "W3",
+            "accept": [
+              "W3",
+              "w3"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "Tres web set … on y un web run. El que queda no da ninguna orden.",
+        "answer W3"
+      ],
+      "on_complete": "W3 sigue: el foro no ORDENA nada, solo afirma algo falso, y el agente se lo cree."
+    },
+    {
+      "id": "c1",
+      "text": "¿Por qué ninguna de esas defensas frena W3?",
+      "teach": "Inyección frente a desinformación\nW1, W2 y W5 eran inyecciones: texto que da una orden. W3 no da ninguna: afirma un dato falso desde una fuente cualquiera, y el agente lo repite. Es LLM09 (desinformación), no una inyección.\nPor qué: aislar y bloquear acciones frena las órdenes, pero no que el agente crea una mentira; para eso hace falta confiar solo en fuentes buenas (grounding).",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque W3 no es una orden, sino un dato falso de una fuente cualquiera: es desinformación, no una inyección",
+          "why": ""
+        },
+        {
+          "id": "b",
+          "text": "porque falta subir el límite de memoria",
+          "why": "El límite de memoria no tiene nada que ver con creerse un foro."
+        },
+        {
+          "id": "c",
+          "text": "porque W3 es en realidad inofensivo",
+          "why": "Hace que el agente le diga al cliente una garantía falsa: puede costar caro."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "¿W3 le ORDENA algo al agente, o solo afirma un hecho?",
+        "answer a"
+      ]
+    },
+    {
+      "id": "o4",
+      "text": "Ciérralo con grounding: web set navegador allowlist_dominios on y web run navegador. ¿Cuántas de las 4 tareas legítimas siguen funcionando? (answer <número>)",
+      "teach": "Confiar solo en buenas fuentes\nEl agente solo cita y actúa sobre una lista de dominios de confianza. El foro cualquiera deja de contar, y W3 cae.\nPor qué: es el equivalente para la web del control de acceso del RAG (A2-03): no todo lo que se encuentra vale lo mismo.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "web.run",
+            "where": {
+              "scenario": "navegador",
+              "attacks_ok": 0
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 4,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "Activa allowlist_dominios y repite. Mira «tareas legítimas que funcionan».",
+        "answer 4"
+      ],
+      "on_complete": "Cinco ataques frenados y las cuatro tareas intactas: las defensas atacaban al ataque, no al trabajo."
+    },
+    {
+      "id": "c2",
+      "text": "sin_acciones_desde_web bloquea que una página dispare un envío, pero el agente SÍ rellena el formulario de soporte que pide el usuario (LW3). ¿Por qué no se rompe?",
+      "teach": "La orden del usuario no es la orden de la web\nLa defensa distingue el origen: una acción con efecto solo se permite si viene de la tarea del usuario, no de algo leído en una página.\nPor qué: aislar no es prohibir que el agente actúe; es prohibir que el contenido ajeno decida cuándo actúa.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque rellenar formularios no tiene efecto",
+          "why": "Sí lo tiene: envía datos. La diferencia es de dónde sale la orden."
+        },
+        {
+          "id": "b",
+          "text": "porque la acción la pide el usuario, no una página; la defensa bloquea solo las acciones que dispara el contenido web",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "porque el formulario está en un dominio de la lista blanca",
+          "why": "Ayuda, pero la razón es el origen de la orden, no solo el dominio."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Quién pidió rellenar el formulario, el usuario o una web?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la regla de origen: abre el editor con py, completa accion_peligrosa y compruébala con py check.",
+      "teach": "Acción con efecto desde la web\nUna acción es peligrosa si tiene efecto y la ordena el contenido de una página, no el usuario.\nPor qué: es la comprobación de sin_acciones_desde_web.",
+      "py_exercise": {
+        "id": "A7-01-origen",
+        "title": "accion_peligrosa(accion, origen, con_efecto): ¿bloquearla?",
+        "function": "accion_peligrosa",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef accion_peligrosa(accion, origen, con_efecto):\n    # con_efecto: conjunto de acciones que cambian algo (enviar, comprar, rellenar)\n    return origen == \"web\"   # cambia: ademas de venir de la web, la accion tiene que tener efecto\n\nprint(accion_peligrosa(\"comprar\", \"web\", {\"comprar\", \"enviar\"}))   # True\n",
+        "cases": [
+          {
+            "args": [
+              "comprar",
+              "web",
+              [
+                "comprar",
+                "enviar"
+              ]
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "leer",
+              "web",
+              [
+                "comprar",
+                "enviar"
+              ]
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              "comprar",
+              "usuario",
+              [
+                "comprar",
+                "enviar"
+              ]
+            ],
+            "expected": false
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "A7-01-origen",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "and accion in con_efecto",
+        "La línea queda así: return origen == \"web\" and accion in con_efecto"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes atacar a un agente que navega con inyección indirecta, aislar el contenido web como datos, bloquear las acciones que dispara una página y distinguir una inyección de una desinformación. Siguiente: A7-02, el agente que usa el ordenador.",
+  "debrief": {
+    "what_happened": "Aislar el contenido frenó las órdenes ocultas; bloquear las acciones desde la web y escapar la salida cerraron la compra forzada y el contenido activo; pero la afirmación falsa del foro (W3) solo cayó al confiar únicamente en dominios buenos. Y las cuatro tareas legítimas siguieron funcionando.",
+    "why": "Para un agente, cada página es una entrada no confiable: su contenido se trata como datos, nunca dispara acciones por sí mismo, y lo que el agente se cree tiene que venir de fuentes de confianza.",
+    "in_production": "Los agentes con navegación aíslan el contenido recuperado, exigen confirmación para las acciones con efecto, restringen dominios y herramientas y fundamentan las respuestas en fuentes citadas y verificables.",
+    "simplifications": [
+      "Cinco páginas descritas, no navegadas; nada se abre ni se ejecuta",
+      "La inyección indirecta real es más variada (imágenes, PDF, HTML oculto); aquí se resume"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-agentic-2026",
+    "ref.owasp-llm-2025"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: una defensa de menos. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Si activas aislar_contenido, sin_acciones_desde_web, confirmacion y allowlist_dominios, pero NO saneado_salida, ¿cuántos de los 5 ataques funcionan? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 1,
+          "tolerance": 0
+        },
+        "wrong_answer": "Revisa: ¿qué ataque dependía solo de escapar la salida? (web run navegador con esas defensas)",
+        "hints": [
+          "Busca el ataque cuyo único freno es saneado_salida.",
+          "Es el del contenido activo en el panel."
+        ],
+        "on_complete": "Correcto: 1. W4 (contenido activo) solo lo frena saneado_salida; sin ella, pasa."
+      }
+    ]
+  }
+}

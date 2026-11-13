@@ -1,0 +1,288 @@
+{
+  "id": "A7-02",
+  "schema_version": 1,
+  "title": "El agente que usa el ordenador",
+  "unit": "A7",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 35,
+  "requires_missions": [
+    "A7-01"
+  ],
+  "competencies": {
+    "requires": [
+      "A7.inyeccion-web"
+    ],
+    "trains": [
+      "A7.diputado-confundido",
+      "A7.minimo-privilegio-sesion"
+    ]
+  },
+  "briefing": "El salto siguiente: un agente que no solo lee la web, sino que la usa como tú. Pulsa, rellena y descarga en TU navegador, con TU sesión ya iniciada. Eso lo hace util y, a la vez, un diputado confundido perfecto: actúa con tu identidad. Cinco páginas intentan aprovecharlo; tú lo encierras sin dejarlo inservible.",
+  "learning_objectives": [
+    "Explicar por qué un agente que usa el ordenador es un diputado confundido",
+    "Aplicar el mínimo privilegio a la sesión y a las acciones de un agente",
+    "Elegir defensas acotadas que frenen el ataque sin romper el trabajo"
+  ],
+  "mentor_intro": "Si el agente usa tu sesión, hace todo lo que tú podrías hacer, lo quieras o no.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "El computer use (agentes que manejan un navegador o un escritorio) es la frontera de 2026. Su riesgo central es ASI03: el agente obra con la identidad y los permisos del usuario, así que una página puede usarlo para actuar en los servicios donde ya estás dentro. Diseñar su aislamiento es trabajo directo de AI security.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Lanza la batería sin defensas: web show ordenador y web run ordenador. ¿Cuántos de los 5 ataques funcionan? (answer <número>)",
+      "teach": "El diputado confundido, en el navegador\nEl agente comparte tu sesión: tu banco, tu correo, tus paneles, todos con sesión iniciada. Una página puede llevarle a actuar en cualquiera de ellos como si fueras tú.\nPor qué: no explota un fallo del modelo, sino tu identidad; es el confused deputy de A3-03 con el navegador entero detrás.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "web.run",
+            "where": {
+              "scenario": "ordenador",
+              "attacks_ok": 5
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 5,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "web show ordenador y web run ordenador.",
+        "answer 5"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Enciérralo a lo bruto: activa sesion_aislada, sin_descargas, confirmacion_verificable, allowlist_acciones y dominio_tarea; luego web run ordenador. ¿Cuántas de las 4 tareas legítimas siguen funcionando? (answer <número>)",
+      "prediction": {
+        "prompt": "Con los 5 ataques frenados, ¿cuántas tareas legítimas crees que seguirán?",
+        "options": [
+          "las 4",
+          "3",
+          "2"
+        ]
+      },
+      "teach": "La caja más obvia\nSesión aparte, nada de descargas, confirmar lo que tenga efecto, lista corta de acciones y solo el dominio de la tarea.\nPor qué: frena los cinco ataques… pero dos de esas defensas son un hacha donde hacía falta un bisturí.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "web.run",
+            "where": {
+              "scenario": "ordenador",
+              "attacks_ok": 0,
+              "legit_ok": 2
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 2,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "Cinco web set … on y un web run. Mira «tareas legítimas».",
+        "answer 2"
+      ],
+      "on_complete": "Cero ataques, pero solo 2 de 4 tareas: la sesión aislada y el bloqueo total de descargas han roto trabajo legítimo."
+    },
+    {
+      "id": "c1",
+      "text": "¿Qué defensa rompió «leer el estado del pedido del usuario» (LC2)?",
+      "teach": "Aislar del todo también aísla lo bueno\nsesion_aislada quita al agente la sesión del usuario, así que tampoco puede ver el pedido del propio usuario. Es cortar el abuso de identidad quitando la identidad entera.\nPor qué: el mínimo privilegio no es «cero privilegios»; es justo los que la tarea necesita.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "confirmacion_verificable, porque añade un paso",
+          "why": "Añade un paso, pero no impide leer el pedido."
+        },
+        {
+          "id": "b",
+          "text": "sesion_aislada, porque sin la sesión del usuario el agente tampoco ve los datos del propio usuario",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "allowlist_acciones, porque leer no está permitido",
+          "why": "Leer sí está entre las acciones permitidas; el problema es la sesión."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Con qué identidad lee el agente el pedido del usuario?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Afínalo: web set ordenador sesion_aislada off y sin_descargas off; luego credencial_delegada on y sin_ejecutables on, y web run ordenador. ¿Cuántas tareas legítimas funcionan ahora? (answer <número>)",
+      "teach": "Bisturí en vez de hacha\ncredencial_delegada da al agente un permiso acotado del usuario (solo lo que la tarea necesita), no su sesión entera: corta el abuso de identidad pero deja leer el pedido. sin_ejecutables bloquea abrir ejecutables pero permite el PDF.\nPor qué: con defensas acotadas, los cinco ataques siguen frenados y el trabajo vuelve entero.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "web.run",
+            "where": {
+              "scenario": "ordenador",
+              "attacks_ok": 0,
+              "legit_ok": 4
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 4,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "Dos off y dos on, y web run. Deberían quedar 0 ataques y 4 tareas.",
+        "answer 4"
+      ],
+      "on_complete": "Cinco ataques frenados y las cuatro tareas intactas: el permiso delegado y el bloqueo solo de ejecutables son el bisturí."
+    },
+    {
+      "id": "c2",
+      "text": "C1 (transferencia bancaria) y C2 (cambiar una contraseña en un panel de admin) comparten causa. ¿Cuál?",
+      "teach": "Una identidad, muchos poderes\nLos dos usan que el agente está autenticado como el usuario en servicios potentes. Da igual lo listo que sea el modelo: con tu sesión, puede hacer lo que tú.\nPor qué: por eso la defensa de fondo es de identidad y permisos (credencial delegada, confirmación verificable), no de «mejor prompt».",
+      "choices": [
+        {
+          "id": "a",
+          "text": "que el modelo no entiende bien las instrucciones",
+          "why": "Aunque las entendiera perfectamente, con tu sesión podría actuar en tu banco."
+        },
+        {
+          "id": "b",
+          "text": "que el agente actúa con la identidad y los permisos del usuario (ASI03): una página los aprovecha",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "que las dos páginas usan HTTPS",
+          "why": "El cifrado del transporte no tiene nada que ver con el abuso de identidad."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué tienen en común el banco y el panel de admin para el agente?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la regla de confirmación: abre el editor con py, completa necesita_confirmacion y compruébala con py check.",
+      "teach": "Confirmar lo que tiene efecto\nCualquier acción que cambie algo (pagar, borrar, cambiar permisos, enviar) necesita confirmación verificable; leer, no.\nPor qué: es la última barrera contra el diputado confundido y contra aprobar a ciegas (ASI09).",
+      "py_exercise": {
+        "id": "A7-02-confirmar",
+        "title": "necesita_confirmacion(accion, con_efecto): ¿pedir confirmación?",
+        "function": "necesita_confirmacion",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef necesita_confirmacion(accion, con_efecto):\n    # con_efecto: conjunto de acciones que cambian algo\n    return False   # cambia: hace falta confirmar si la accion esta en con_efecto\n\nprint(necesita_confirmacion(\"pagar\", {\"pagar\", \"borrar\"}))   # True\n",
+        "cases": [
+          {
+            "args": [
+              "pagar",
+              [
+                "pagar",
+                "borrar"
+              ]
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "leer",
+              [
+                "pagar",
+                "borrar"
+              ]
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              "borrar",
+              [
+                "pagar",
+                "borrar"
+              ]
+            ],
+            "expected": true
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "A7-02-confirmar",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "accion in con_efecto",
+        "La línea queda así: return accion in con_efecto"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes por qué un agente que usa el ordenador es un diputado confundido, aplicarle el mínimo privilegio a la sesión y a las acciones, y elegir defensas acotadas que frenen el ataque sin romper el trabajo. Con esto cierras el arco A7.",
+  "debrief": {
+    "what_happened": "La caja obvia (sesión aislada, sin descargas) frenó los cinco ataques pero rompió dos tareas legítimas. Cambiándola por un permiso delegado y el bloqueo solo de ejecutables, los ataques siguen frenados y el trabajo vuelve entero. El fondo de C1 y C2 era siempre el mismo: el agente actúa con tu identidad.",
+    "why": "Un agente que usa el ordenador obra con los permisos del usuario; se controla con mínimo privilegio (permisos delegados y acotados, no la sesión entera), acciones en lista blanca y confirmación verificable de lo que tiene efecto.",
+    "in_production": "Los sistemas de computer use usan perfiles y credenciales acotadas por tarea, listas blancas de dominios y acciones, confirmación humana verificable para lo sensible y aislamiento de descargas y ejecución.",
+    "simplifications": [
+      "Cinco páginas descritas y defensas binarias; en la práctica el permiso delegado se implementa con tokens de alcance mínimo y OAuth acotado",
+      "Un solo usuario y un navegador; computer use real abarca todo el escritorio"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-agentic-2026",
+    "ref.nist-ai-rmf"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: solo una defensa. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Si activas SOLO confirmacion_verificable (y ninguna más), ¿cuántos de los 5 ataques funcionan? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 2,
+          "tolerance": 0
+        },
+        "wrong_answer": "Revisa: ¿qué ataques NO se frenan pidiendo confirmación? (web run ordenador con solo esa defensa)",
+        "hints": [
+          "La confirmación frena las acciones con efecto; ¿C3 y C5 piden confirmación?",
+          "C3 abre un ejecutable, C5 usa una acción de más."
+        ],
+        "on_complete": "Correcto: 2. La confirmación frena C1, C2 y C4, pero C3 (ejecutable) y C5 (acción fuera de la tarea) pasan."
+      }
+    ]
+  }
+}
