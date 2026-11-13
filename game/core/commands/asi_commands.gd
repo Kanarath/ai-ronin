@@ -178,7 +178,7 @@ static func _coverage(c: CommandContext, _a: Dictionary) -> CommandResult:
 		r.line("Aún quedan defensas sin asignar: el mapa no está completo (asi defenses).", "warn")
 	else:
 		r.line("Sin cubrir: %s. %s" % [", ".join(uncovered), data()["nota_prioridad"]], "normal")
-	c.emit("asi.coverage", {"mapped": done.size(), "uncovered": ",".join(uncovered), "uncovered_count": uncovered.size()})
+	c.emit("asi.coverage", _risk_rows(c, {"mapped": done.size(), "uncovered": ",".join(uncovered), "uncovered_count": uncovered.size()}))
 	return r
 
 
@@ -209,5 +209,31 @@ static func _close(c: CommandContext, a: Dictionary) -> CommandResult:
 	r.line("Huecos que quedan (ASI05, ASI09): %d" % gaps, "muted" if gaps > 0 else "ok")
 	if gaps == 0:
 		r.line("Mapa completo: los diez riesgos ASI tienen al menos una defensa. Lo que construiste en O7-03 y O7-04 tapa justo lo que O7-02 dejó abierto.", "ok")
-	c.emit("asi.closed", {"defense": d["id"], "risk": risk, "correct": ok, "closed_count": closed, "gaps": gaps})
+	c.emit("asi.closed", _risk_rows(c, {"defense": d["id"], "risk": risk, "correct": ok, "closed_count": closed, "gaps": gaps}))
 	return r
+
+
+## Estado de los diez riesgos para el diagrama de cobertura: cubierto por D1–D9 o cerrado por
+## las defensas nuevas (D10/D11). Añade labels/covered/defs al evento que se emite.
+static func _risk_rows(c: CommandContext, base: Dictionary) -> Dictionary:
+	var done: Dictionary = c.world.asi["covered"]
+	var closed: Dictionary = c.world.asi.get("closed", {})
+	var labels := PackedStringArray()
+	var covered: Array = []
+	var defs := PackedStringArray()
+	for x: Dictionary in data()["riesgos"]:
+		var ds := PackedStringArray()
+		for d: String in done:
+			if done[d] == x["id"]:
+				ds.append(d)
+		for d: String in closed:
+			if closed[d] == x["id"]:
+				ds.append(d)
+		ds.sort()
+		labels.append("%s %s" % [x["id"], x["es"]])
+		covered.append(not ds.is_empty())
+		defs.append(", ".join(ds))
+	base["risk_labels"] = labels
+	base["risk_covered"] = covered
+	base["risk_defs"] = defs
+	return base

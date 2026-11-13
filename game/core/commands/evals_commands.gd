@@ -146,7 +146,12 @@ static func _run(c: CommandContext, a: Dictionary) -> CommandResult:
 		segs.append("%s %d/%d" % [sg, s["counts"][sg][0], s["counts"][sg][1]])
 	r.line("Por segmento: " + " · ".join(segs) + " · tokens: %d" % s["tokens"], "muted")
 	r.line("Una tarea por dentro: evals trace %s <tarea>" % v, "muted")
-	c.emit("evals.run", {"version": v, "final_rate": s["final_rate"], "pass_rate": s["pass_rate"], "forbidden": s["forbidden"], "tokens": s["tokens"]})
+	var seg_labels := PackedStringArray()
+	var seg_rates := PackedFloat64Array()
+	for sg: String in SEGMENTS:
+		seg_labels.append(sg)
+		seg_rates.append(float(s["segments"][sg]))
+	c.emit("evals.run", {"version": v, "final_rate": s["final_rate"], "pass_rate": s["pass_rate"], "forbidden": s["forbidden"], "tokens": s["tokens"], "seg_labels": seg_labels, "seg_rates": seg_rates})
 	return r
 
 

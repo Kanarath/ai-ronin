@@ -218,7 +218,7 @@ func test_O7_lab_motor() -> void:
 
 
 func test_A7_01_completa() -> void:
-	_walk("A7-01", ["A4-04"], ["web show navegador", "web run navegador", "answer 5", "hipotesis algunos", "web set navegador aislar_contenido on", "web run navegador", "answer 3", "web set navegador sin_acciones_desde_web on", "web set navegador confirmacion on", "web set navegador saneado_salida on", "web run navegador", "answer W3", "answer a", "web set navegador allowlist_dominios on", "web run navegador", "answer 4", "answer b", "PY", "web set navegador saneado_salida off", "web run navegador", "answer 1"])
+	_walk("A7-01", ["A4-04"], ["web show navegador", "web run navegador", "answer 5", "hipotesis algunos", "web set navegador aislar_contenido on", "web run navegador", "answer 3", "web set navegador sin_acciones_desde_web on", "web set navegador confirmacion on", "web set navegador saneado_salida on", "web run navegador", "answer W3", "answer a", "web set navegador allowlist_dominios on", "web run navegador", "answer 4", "answer b", "PY", "web set navegador saneado_salida off", "web run navegador", "answer 1", "web set correo aislar_contenido on", "web set correo sin_acciones_desde_correo on", "web set correo confirmacion on", "web set correo saneado_salida on", "web run correo", "answer E3"])
 
 
 func test_A7_02_completa() -> void:

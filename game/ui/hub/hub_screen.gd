@@ -39,6 +39,7 @@ var _plot: ScatterPlot
 var _chart: LineChart
 var _net_view: NetworkGraph
 var _heatmap: AttentionHeatmap
+var _diagram: DiagramView
 var _code: CodeEdit
 var _curriculum_box: VBoxContainer
 var _mission_text: RichTextLabel
@@ -246,6 +247,11 @@ func _build_layout() -> void:
 	_chart.size_flags_stretch_ratio = 0.8
 	_chart.visible = false
 	_lab_content.add_child(_chart)
+	_diagram = DiagramView.new()
+	_diagram.custom_minimum_size = Vector2(380, 150)
+	_diagram.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_diagram.visible = false
+	_lab_content.add_child(_diagram)
 	_code = _make_code_editor()
 	_lab_content.add_child(_code)
 	resized.connect(_fit_lab)
@@ -696,6 +702,8 @@ func _on_sim_event(e: Dictionary) -> void:
 			_net_view.visible = false
 			_code.visible = false
 			_chart.visible = false
+			if _diagram != null:
+				_diagram.visible = false
 			_heatmap.visible = true
 			_heatmap.show_weights(String(d["words"]).split(" "), d["weights"], d["causal"])
 		"viz.scatter":
@@ -721,6 +729,35 @@ func _on_sim_event(e: Dictionary) -> void:
 				{"name": "calidad estimada (juez)", "ys": d["estimada"], "color": RoninPalette.TEAL},
 				{"name": "calidad real", "ys": d["real"], "color": RoninPalette.VIOLET},
 			], d["x"])
+		"evals.run":
+			var bars: Array = []
+			var labels := PackedStringArray(d["seg_labels"])
+			var rates := PackedFloat64Array(d["seg_rates"])
+			for i in labels.size():
+				var col: Color = RoninPalette.TEAL if rates[i] >= 0.6 else RoninPalette.RED
+				bars.append({"label": labels[i], "value": rates[i], "color": col, "note": "%.0f %%" % (rates[i] * 100.0)})
+			_show_diagram()
+			_diagram.show_bars("Evals %s · tareas bien por segmento" % d["version"], bars)
+		"chain.run":
+			var steps: Array = []
+			var ids := PackedStringArray(d["ids"])
+			var risks := PackedStringArray(d["risks"])
+			var mcp: Array = d["mcp"]
+			var web: Array = d["web"]
+			for i in ids.size():
+				steps.append({"label": ids[i], "risk": risks[i], "mcp_ok": bool(mcp[i]), "web_ok": bool(web[i])})
+			_show_diagram()
+			_diagram.show_chain("Cadena de ataque · %s" % ("sin defensas" if int(d["n_defenses"]) == 0 else d["defenses"]), steps)
+		"asi.coverage", "asi.closed":
+			if d.has("risk_labels"):
+				var rows: Array = []
+				var labels := PackedStringArray(d["risk_labels"])
+				var covered: Array = d["risk_covered"]
+				var defs := PackedStringArray(d["risk_defs"])
+				for i in labels.size():
+					rows.append({"label": labels[i], "covered": bool(covered[i]), "defs": defs[i]})
+				_show_diagram()
+				_diagram.show_coverage("Cobertura OWASP agéntico (verde = con defensa)", rows)
 		"regress.trained":
 			_show_regression(d)
 		"dataset.normalized":
@@ -744,6 +781,8 @@ func _show_security(event_name: String, d: Dictionary) -> void:
 	_net_view.visible = false
 	_heatmap.visible = false
 	_code.visible = false
+	if _diagram != null:
+		_diagram.visible = false
 	_chart.x_label = "ronda"
 	_chart.set_series("Seguridad: tasa por ronda (0 = nada, 1 = todo)", series, false)
 	_chart.visible = true
@@ -764,9 +803,21 @@ func _show_curve(title: String, x_label: String, series_in: Array, xs: Variant) 
 	_heatmap.visible = false
 	if _code != null:
 		_code.visible = false
+	if _diagram != null:
+		_diagram.visible = false
 	_chart.x_label = x_label
 	_chart.set_series(title, series, false)
 	_chart.visible = true
+
+
+func _show_diagram() -> void:
+	_plot.visible = false
+	_net_view.visible = false
+	_heatmap.visible = false
+	_chart.visible = false
+	if _code != null:
+		_code.visible = false
+	_diagram.visible = true
 
 
 func _show_plot() -> void:
@@ -776,6 +827,8 @@ func _show_plot() -> void:
 	_net_view.visible = false
 	_heatmap.visible = false
 	_chart.visible = false
+	if _diagram != null:
+		_diagram.visible = false
 
 
 func _show_net(net_name: String, input: PackedFloat64Array) -> void:
@@ -785,6 +838,8 @@ func _show_net(net_name: String, input: PackedFloat64Array) -> void:
 	_plot.visible = false
 	_heatmap.visible = false
 	_code.visible = false
+	if _diagram != null:
+		_diagram.visible = false
 	_net_view.visible = true
 	# Las entradas se llaman como las features del dataset de entrenamiento; sin él, con dos
 	# entradas, a y b (como en las lecciones de puertas lógicas).

@@ -110,7 +110,9 @@ Revisar la declaración de aplicabilidad (*SoA*) de los objetivos del Anexo A (A
 - **Visualización en las unidades nuevas** (recupera la doble codificación del tronco): la **curva de sobreajuste** del gradient boosting (T7-05, `boost curve`: entrenamiento frente a test ronda a ronda) y la **caída de calidad en producción** (P2-02, `monitor dashboard`: calidad estimada y real por día) se dibujan ya en el panel del laboratorio, no solo como tabla.
 - **Transferencia a un dominio nuevo**: la prueba de dominio de T7-05 ya no es «lo mismo más difícil», sino aplicar el boosting a los créditos (`prestamos`), un dominio que la misión no usa, para comprobar que el sobreajuste no era cosa de un dataset.
 
-Pendiente de esta línea: más visualizaciones que necesitan un widget nuevo (la cadena de ataque de O7-05 como grafo, el mapa de cobertura ASI como matriz, los segmentos de P2-01 como barras); extender la transferencia a O7 y A7; y un repaso del andamiaje (menos pistas en las misiones finales de cada arco).
+Hecho después: un widget `DiagramView` con tres modos dibuja en el panel la **cadena de ataque** de O7-05 (seis pasos y las dos entradas, con los cortes en rojo), el **mapa de cobertura** ASI de O7-02/07 (diez riesgos, verde con defensa / rojo sin ella) y los **segmentos** de P2-01 (barras de tareas bien por segmento, en rojo las que no llegan al mínimo). La **transferencia** se extendió a A7 con un escenario nuevo (un agente de correo), y en O7 ya la tenían O7-01 (un incidente nuevo) y O7-07 (un hallazgo nuevo).
+
+El andamiaje decreciente se deja fuera a propósito: es preferible que la ayuda esté y no se necesite a que falte.
 
 ## Lo siguiente, en este orden
 

@@ -320,5 +320,14 @@ static func _ch_run(c: CommandContext, _a: Dictionary) -> CommandResult:
 	for d: String in active:
 		if data()["cadena"]["notas"].has(d):
 			r.line("  · " + data()["cadena"]["notas"][d], "muted")
-	c.emit("chain.run", {"defenses": ",".join(PackedStringArray(active)), "n_defenses": active.size(), "leak": leak, "steps": int(sim["mcp"]["count"]) + int(sim["web"]["count"])})
+	var ch_ids := PackedStringArray()
+	var ch_mcp: Array = []
+	var ch_web: Array = []
+	var ch_risk := PackedStringArray()
+	for s: Dictionary in data()["cadena"]["pasos"]:
+		ch_ids.append(s["id"])
+		ch_risk.append(s["riesgo"] if c.world.asi["labels"].has(s["id"]) else "?")
+		ch_mcp.append(sim["mcp"]["steps"][s["id"]])
+		ch_web.append(sim["web"]["steps"][s["id"]])
+	c.emit("chain.run", {"defenses": ",".join(PackedStringArray(active)), "n_defenses": active.size(), "leak": leak, "steps": int(sim["mcp"]["count"]) + int(sim["web"]["count"]), "ids": ch_ids, "mcp": ch_mcp, "web": ch_web, "risks": ch_risk})
 	return r

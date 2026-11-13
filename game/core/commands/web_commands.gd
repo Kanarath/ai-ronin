@@ -8,7 +8,7 @@ extends RefCounted
 ## Escenarios: navegador (A7-01, inyección indirecta) · ordenador (A7-02, computer use).
 
 const PATH := "res://content/browse/web_agent.json"
-const SCENARIOS := ["navegador", "ordenador"]
+const SCENARIOS := ["navegador", "ordenador", "correo"]
 static var _data: Dictionary = {}
 
 

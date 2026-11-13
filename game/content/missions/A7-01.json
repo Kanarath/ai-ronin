@@ -299,22 +299,38 @@
     "base": 300
   },
   "mastery_trial": {
-    "intro": "Prueba de dominio: una defensa de menos. Sin pistas de nivel 3 o superior.",
+    "intro": "Prueba de dominio por transferencia: otra superficie, un agente de correo. Sin pistas de nivel 3 o superior.",
     "objectives": [
       {
         "id": "d1",
-        "text": "Si activas aislar_contenido, sin_acciones_desde_web, confirmacion y allowlist_dominios, pero NO saneado_salida, ¿cuántos de los 5 ataques funcionan? (answer <número>)",
+        "text": "Un agente NUEVO que lee correos (web show correo). Actívale aislar_contenido, sin_acciones_desde_correo, confirmacion y saneado_salida, y web run correo. ¿Qué ataque sigue funcionando? (answer E<n>)",
         "validator": {
-          "type": "answer",
-          "expected": 1,
-          "tolerance": 0
+          "type": "all",
+          "of": [
+            {
+              "type": "event",
+              "event": "web.run",
+              "where": {
+                "scenario": "correo",
+                "attacks_ok": 1
+              }
+            },
+            {
+              "type": "answer",
+              "expected": "E3",
+              "accept": [
+                "E3",
+                "e3"
+              ]
+            }
+          ]
         },
-        "wrong_answer": "Revisa: ¿qué ataque dependía solo de escapar la salida? (web run navegador con esas defensas)",
+        "wrong_answer": "Revisa web run correo: el que queda no da ninguna orden, solo afirma algo falso.",
         "hints": [
-          "Busca el ataque cuyo único freno es saneado_salida.",
-          "Es el del contenido activo en el panel."
+          "Cuatro web set correo … on y un web run correo.",
+          "El mismo tipo de ataque que W3 en la misión: desinformación."
         ],
-        "on_complete": "Correcto: 1. W4 (contenido activo) solo lo frena saneado_salida; sin ella, pasa."
+        "on_complete": "Transferido: en otra superficie, las mismas defensas frenan las inyecciones, y la desinformación (E3) vuelve a necesitar confiar solo en remitentes de confianza."
       }
     ]
   }
