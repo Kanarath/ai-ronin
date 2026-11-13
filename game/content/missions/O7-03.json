@@ -1,0 +1,343 @@
+{
+  "id": "O7-03",
+  "schema_version": 1,
+  "title": "La caja de arena",
+  "unit": "O7",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 35,
+  "requires_missions": [
+    "O7-02"
+  ],
+  "competencies": {
+    "requires": [
+      "O7.cobertura"
+    ],
+    "trains": [
+      "O7.sandbox",
+      "O7.salida-insegura"
+    ]
+  },
+  "briefing": "En O7-02 decidiste tapar primero ASI05: el agente analista de la forja escribe Python y lo ejecuta sobre los ficheros que suben los clientes, en el mismo servidor. Hoy lanzas contra él siete ataques (en simulación, sin ejecutar nada) y lo encierras en una caja de arena, sin romper las cuatro tareas para las que existe.",
+  "learning_objectives": [
+    "Entender cómo la ejecución de código de un agente se ataca desde los datos que procesa",
+    "Diseñar una caja de arena capa a capa y medir cada capa",
+    "Tratar la salida de un LLM como entrada no confiable (LLM05)"
+  ],
+  "mentor_intro": "No puedes garantizar que el código sea bueno. Sí puedes garantizar que, si es malo, no llegue a nada.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Los agentes que programan (analistas de datos, asistentes de código, agentes con intérprete) son de los más útiles y de los más peligrosos. Aislar su ejecución es una de las defensas que más piden SANS SEC545 y las ofertas de AI security, y es la mitigación central de ASI05.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Mira el agente y lanza la batería sin defensas: sandbox show y sandbox run. ¿Cuántos de los 7 ataques funcionan? (answer <número>)",
+      "teach": "La batería\nSiete ataques que llegan dentro de los ficheros de los clientes y cuatro tareas legítimas que el agente tiene que seguir haciendo. La lista solo describe qué capacidad aprovecha cada uno; nada se ejecuta.\nPor qué: una defensa se mide en las dos direcciones: cuántos ataques frena y cuánto trabajo legítimo rompe.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "sandbox.run",
+            "where": {
+              "attacks_ok": 7
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 7,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "sandbox show y sandbox run; mira la línea final.",
+        "answer 7"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Prueba la defensa más barata: sandbox set prompt_prudente on y sandbox run. ¿Cuántos ataques frena? (answer <número>)",
+      "prediction": {
+        "prompt": "¿Cuántos de los 7 ataques frenará una frase en el prompt?",
+        "options": [
+          "casi todos",
+          "algunos",
+          "ninguno"
+        ]
+      },
+      "teach": "Pedírselo al modelo\nEs lo primero que se le ocurre a todo el mundo: «nunca ejecutes nada peligroso».\nPor qué: las órdenes maliciosas no vienen en la petición del usuario, vienen en los datos; el modelo no las distingue de datos normales, y aunque lo hiciera, el código que genera se ejecuta igual.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "sandbox.run",
+            "where": {
+              "active": "prompt_prudente"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "Registra tu hipótesis, activa la defensa y repite la batería.",
+        "answer 0"
+      ],
+      "on_complete": "Ninguno. Un prompt es una petición, no un control: ASI05 y LLM01 juntos."
+    },
+    {
+      "id": "o3",
+      "text": "Quita el prompt y monta la caja: sandbox set prompt_prudente off y activa sin_shell, sin_secretos, sin_red, limites y fs_efimero. Lanza sandbox run. ¿Qué ataque sigue funcionando? (answer X<n>)",
+      "teach": "Capa a capa\nCada capa quita una capacidad: sin shell no hay órdenes al sistema, sin secretos no hay credenciales que robar, sin red no se saca nada, con límites no se cuelga, con ficheros desechables no se deja nada para después.\nPor qué: el aislamiento es defensa en profundidad: ninguna capa basta sola, pero juntas cierran casi todo.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "sandbox.run",
+            "where": {
+              "active": {
+                "icontains": "sin_shell"
+              }
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "X6",
+            "accept": [
+              "X6",
+              "x6"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "Son cinco sandbox set … on y un sandbox run. El que queda no ataca la ejecución, sino lo que se muestra después.",
+        "answer X6"
+      ],
+      "on_complete": "X6 sigue: es la SALIDA del agente, no su ejecución. La caja protege el servidor, no al que lee el resultado."
+    },
+    {
+      "id": "c1",
+      "text": "¿Por qué la caja no frena X6?",
+      "teach": "La salida también es no confiable\nX6 no ejecuta nada en el servidor: mete contenido activo en el resumen, y quien lo ejecuta es el panel que lo muestra. Es LLM05 (manejo inseguro de la salida).\nPor qué: la salida de un LLM es una entrada no confiable para lo que la reciba; hay que escaparla o validarla igual que cualquier dato externo.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque la caja solo aísla la ejecución del código en el servidor, y X6 ataca a quien muestra la salida después",
+          "why": ""
+        },
+        {
+          "id": "b",
+          "text": "porque X6 no es un ataque de verdad",
+          "why": "Roba la sesión del analista que abre el panel: es LLM05."
+        },
+        {
+          "id": "c",
+          "text": "porque falta subir el límite de memoria",
+          "why": "El límite de memoria frena X4, no la salida con contenido activo."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "¿Dónde actúa lo de X6: en el servidor del agente o en el navegador del analista?",
+        "answer a"
+      ]
+    },
+    {
+      "id": "o4",
+      "text": "Cierra X6: sandbox set escapar_salida on y sandbox run. ¿Cuántas de las 4 tareas legítimas siguen funcionando? (answer <número>)",
+      "teach": "El coste de la caja\nCon todas las capas, los 7 ataques caen. Pero sin_red también ha roto una tarea legítima: la que consulta el tipo de cambio.\nPor qué: una caja que frena todo pero rompe el trabajo no se despliega. Por eso existe la lista blanca de dominios (red_lista): abre justo lo que hace falta.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "sandbox.run",
+            "where": {
+              "attacks_ok": 0
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 3,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "Activa escapar_salida y repite. Mira «tareas legítimas que funcionan».",
+        "answer 3"
+      ],
+      "on_complete": "7 ataques frenados, pero 3 de 4 tareas: sin_red ha roto la del tipo de cambio (L3)."
+    },
+    {
+      "id": "c2",
+      "text": "¿Cómo recuperas la tarea del tipo de cambio sin reabrir el agujero?",
+      "teach": "Lista blanca de salidas\nEn vez de «sin red» o «red abierta», se permite la red solo hacia una lista de dominios necesarios (api.bce.example) y se bloquea el resto.\nPor qué: es el principio de mínimo privilegio aplicado a la red: lo justo para trabajar, nada más.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "volver a activar sin_red off: abrir toda la red",
+          "why": "Eso reabre X3 y X7, que sacan datos a cualquier sitio."
+        },
+        {
+          "id": "b",
+          "text": "cambiar sin_red por red_lista: red solo hacia los dominios necesarios",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "dejar la tarea rota: el tipo de cambio no es importante",
+          "why": "El agente existe en parte para eso; romper el trabajo no es una opción."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué defensa de la lista permite la red justa?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la cuenta del laboratorio: abre el editor con py, completa frenados y compruébala con py check.",
+      "teach": "Ataques frenados, en código\nUn ataque está frenado si alguna de sus defensas está activa.\nPor qué: es lo que calcula sandbox run para cada fila.",
+      "py_exercise": {
+        "id": "O7-03-frenados",
+        "title": "frenados(ataques, activas): cuántos ataques frena la caja",
+        "function": "frenados",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef frenados(ataques, activas):\n    # ataques: {id: [defensas que lo frenan]}; activas: conjunto de defensas activas\n    n = 0\n    for a in ataques:\n        bloqueado = False   # cambia: queda bloqueado si alguna de sus defensas esta activa\n        n += 1 if bloqueado else 0\n    return n\n\nprint(frenados({\"X1\": [\"sin_shell\"], \"X6\": [\"escapar_salida\"]}, {\"sin_shell\"}))   # 1\n",
+        "cases": [
+          {
+            "args": [
+              {
+                "X1": [
+                  "sin_shell"
+                ],
+                "X6": [
+                  "escapar_salida"
+                ]
+              },
+              [
+                "sin_shell"
+              ]
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              {
+                "X3": [
+                  "sin_red",
+                  "red_lista"
+                ]
+              },
+              [
+                "red_lista"
+              ]
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              {
+                "X1": [
+                  "sin_shell"
+                ]
+              },
+              []
+            ],
+            "expected": 0
+          },
+          {
+            "args": [
+              {
+                "X1": [
+                  "sin_shell"
+                ],
+                "X4": [
+                  "limites"
+                ]
+              },
+              [
+                "sin_shell",
+                "limites"
+              ]
+            ],
+            "expected": 2
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "O7-03-frenados",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "any(d in activas for d in ataques[a])",
+        "La línea queda así: bloqueado = any(d in activas for d in ataques[a])"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes cómo se ataca la ejecución de código de un agente desde los datos, montar una caja de arena capa a capa, medir lo que frena y lo que rompe, y que la salida de un LLM también es no confiable. Siguiente: O7-04, la aprobación humana.",
+  "debrief": {
+    "what_happened": "El prompt prudente no ha frenado ningún ataque. Las cinco capas de aislamiento han cerrado seis; la séptima (X6) era la salida, que se cierra escapándola. Y sin_red rompía una tarea legítima, así que has pasado a una lista blanca de dominios.",
+    "why": "No se puede confiar en que el código del agente sea bueno, pero sí aislar su ejecución para que, si es malo, no toque el sistema operativo, los secretos, la red ni sesiones futuras; y la salida se trata como entrada no confiable.",
+    "in_production": "Los agentes con intérprete se ejecutan en contenedores o microVM efímeras, sin secretos, con salida de red controlada por lista blanca y límites de CPU, memoria y tiempo; la salida se valida antes de usarse.",
+    "simplifications": [
+      "Siete ataques descritos, no ejecutados; la caja es una simulación de capas",
+      "Un servidor; en la práctica se usan contenedores o microVM reales (gVisor, Firecracker)"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-agentic-2026",
+    "ref.owasp-llm-2025"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: una caja incompleta. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Si montas la caja con sin_shell, sin_secretos, limites, fs_efimero y escapar_salida, pero SIN controlar la red (ni sin_red ni red_lista), ¿cuántos de los 7 ataques funcionan? (answer <número>)",
+        "validator": {
+          "type": "answer",
+          "expected": 2,
+          "tolerance": 0
+        },
+        "wrong_answer": "Revisa: ¿qué ataques dependen de la salida de red? (sandbox run con esas defensas)",
+        "hints": [
+          "Busca los ataques cuyas defensas son sin_red o red_lista.",
+          "Son los que sacan algo fuera."
+        ],
+        "on_complete": "Correcto: 2. X3 y X7 necesitan red y nada se la corta."
+      }
+    ]
+  }
+}

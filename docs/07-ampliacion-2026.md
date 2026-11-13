@@ -25,7 +25,7 @@ La combinación construir → atacar → defender con laboratorios reales es má
 | # | Propuesta | Unidad | Estado | Inspirado en |
 |---|---|---|---|---|
 | 1 | Evals de agentes y observabilidad: trayectorias, conjunto de referencia por segmentos, puerta de regresión, trazas y monitorización online con juez muestreado | **P2** (P2-01, P2-02) | ✅ Hecho | DeepLearning.AI *Evaluating AI Agents*, LLM Zoomcamp, ofertas (61 % piden evals) |
-| 2 | OWASP Top 10 agéntico (ASI01–ASI10): clasificar incidentes y medir qué riesgos cubren tus defensas | **O7** (O7-01, O7-02) | ✅ Hecho | OWASP GenAI, 9-dic-2025 |
+| 2 | OWASP Top 10 agéntico (ASI01–ASI10): clasificar incidentes, mapa de cobertura, caja de arena, aprobación verificable y ataque en cadena | **O7** (O7-01 … O7-05) | ✅ Hecho | OWASP GenAI, 9-dic-2025 |
 | 3 | Herramientas reales de red team: garak, PyRIT y promptfoo contra el modelo local | Forja, extras de A1 | Pendiente | Ofertas de AI red teamer |
 | 4 | Agentes con navegador y ordenador: inyección desde páginas web, *sandboxing* de código | **A7** | Pendiente | SANS SEC545, HTB |
 | 5 | Ingeniería de contexto y memoria: compactación, tipos de memoria, *skills* | A3-05 | Pendiente | HF *Context Course*, DeepLearning.AI *Agent Memory* |
@@ -64,11 +64,18 @@ Gradient boosting de verdad en GDScript.
 Clasificar diez incidentes de la forja en ASI01–ASI10.
 
 **O7-02 · El mapa de cobertura**
-- Relacionar las defensas que ya montaste en A3–A5, C1 y C4 con cada riesgo.
-- Encontrar los riesgos sin cubrir.
-- Priorizar.
+- Relacionar las defensas que ya montaste en A3–A5, C1 y C4 con cada riesgo, encontrar los huecos y priorizarlos.
 
-**Comando:** `asi`.
+**O7-03 · La caja de arena** (ASI05, LLM05)
+- Siete ataques que llegan en los datos contra un agente que ejecuta código; una caja de arena capa a capa (sin shell, sin secretos, sin red, límites, ficheros efímeros) y la salida tratada como entrada no confiable. Comando `sandbox`.
+
+**O7-04 · Aprobar a ciegas** (ASI09)
+- La aprobación humana como defensa falsa: ocho peticiones con explicación inocente y cambio real distinto; rediseño a una aprobación verificable (el cambio lo muestra el sistema, no el agente) y una barrera extra para lo crítico. Comando `approvals`.
+
+**O7-05 · La cadena que no se corta sola** (ASI01–ASI08)
+- Un incidente como cadena de seis eslabones que entra por dos sitios; cortarla en el cuello de botella y reforzarla en profundidad. Comando `chain`.
+
+**Comandos:** `asi`, `sandbox`, `approvals`, `chain`.
 
 ### E5 · Auditor de ISO/IEC 42001
 

@@ -1,0 +1,280 @@
+{
+  "id": "O7-05",
+  "schema_version": 1,
+  "title": "La cadena que no se corta sola",
+  "unit": "O7",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 35,
+  "requires_missions": [
+    "O7-04"
+  ],
+  "competencies": {
+    "requires": [
+      "O7.aprobacion-verificable"
+    ],
+    "trains": [
+      "O7.cadena-ataque",
+      "O7.defensa-profundidad"
+    ]
+  },
+  "briefing": "Un incidente real no es un riesgo suelto: es una cadena. En la forja empieza con una herramienta envenenada o una página web trucada y acaba con 40.000 correos y datos de clientes fuera. Hoy etiquetas los seis eslabones con su riesgo ASI y buscas dónde cortar la cadena por las dos entradas a la vez.",
+  "learning_objectives": [
+    "Reconocer una cadena de ataque agéntica eslabón a eslabón",
+    "Ver que una misma cadena entra por sitios distintos",
+    "Elegir defensas que corten la cadena por todas sus entradas (defensa en profundidad)"
+  ],
+  "mentor_intro": "No defiendes diez riesgos sueltos: defiendes los caminos que los unen.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "Los incidentes de agentes encadenan varios ASI: una entrada manipulada lleva al secuestro del objetivo, a la memoria envenenada, al abuso de herramientas y a la cascada entre agentes. Pensar en cadenas, y no en riesgos aislados, es lo que distingue un threat model de agentes de una lista de la compra.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Lee la cadena: chain show. Etiqueta los seis pasos con chain label <paso> <ASIxx>.",
+      "teach": "Seis eslabones\nEntrada manipulada (S1) → el agente adopta un objetivo ajeno (S2) → lo guarda en memoria (S3) → usa una herramienta legítima para sacar datos (S4) → arrastra a otro agente sin firma (S5) → la cascada entre agentes tumba el correo (S6).\nPor qué: cada eslabón es un ASI que ya conoces; verlos en fila es ver el incidente entero.",
+      "validator": {
+        "type": "event",
+        "event": "chain.labeled",
+        "where": {
+          "correct_count": 6
+        }
+      },
+      "hints": [
+        "S1 viene de un tercero; S2 cambia el objetivo; S3 es memoria; S4 usa una herramienta; S5 son mensajes entre agentes; S6 es la cascada.",
+        "chain label S1 ASI04 · S2 ASI01 · S3 ASI06 · S4 ASI02 · S5 ASI07 · S6 ASI08"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Repite el ataque sin defensas: chain run. ¿Salen datos por alguna de las dos entradas? (answer si o no)",
+      "teach": "Dos entradas, una cadena\nEl mismo ataque entra por dos sitios: la descripción de una herramienta MCP (mcp) o una página web que el agente consulta (web). A partir de S2, la cadena es idéntica.\nPor qué: defender solo la entrada por la que te atacaron la última vez deja la otra abierta.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "chain.run",
+            "where": {
+              "n_defenses": 0
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "si",
+            "accept": [
+              "si",
+              "sí"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "chain run sin activar ninguna defensa.",
+        "answer si"
+      ],
+      "on_complete": "Sí, por las dos: S4 y S5 sacan datos entren por donde entren."
+    },
+    {
+      "id": "c1",
+      "text": "¿Por qué no basta con el pinning de MCP (D4)?",
+      "teach": "Cortar una entrada no corta la cadena\nD4 (fijar versiones y hashes del servidor MCP) frena S1 por la entrada mcp. Pero la misma orden llega por una web, que D4 no toca.\nPor qué: una defensa que cubre una entrada deja la cadena viva por la otra; hay que cortar en un punto común o cubrir todas las entradas.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "porque el pinning no sirve para nada",
+          "why": "Sirve: cierra la entrada mcp en S1. El problema es que no es la única entrada."
+        },
+        {
+          "id": "b",
+          "text": "porque frena la entrada mcp pero no la web, y la cadena sigue viva por ahí",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "porque el pinning rompe tareas legítimas",
+          "why": "No es el problema aquí; el problema es que solo cubre una de las dos entradas."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Activa solo D4 con chain defend D4 on y mira chain run: ¿qué pasa por la entrada web?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Busca un corte que valga para las dos entradas. Activa D2 (lista blanca y validación de herramientas): chain defend D2 on y chain run. ¿Salen datos ahora? (answer si o no)",
+      "teach": "Cortar en el cuello de botella\nTodo el daño pasa por un punto: usar enviar_correo para sacar datos (S4) y arrastrar al otro agente (S5). D2 limita y valida las herramientas, así que corta ahí, da igual cómo entrara el ataque.\nPor qué: el mejor sitio para cortar una cadena es el eslabón por el que pasa todo el daño, no la entrada.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "chain.run",
+            "where": {
+              "leak": false
+            }
+          },
+          {
+            "type": "answer",
+            "expected": "no",
+            "accept": [
+              "no"
+            ]
+          }
+        ]
+      },
+      "hints": [
+        "Desactiva D4 si quieres (chain defend D4 off), activa D2 y lanza chain run.",
+        "answer no"
+      ],
+      "on_complete": "No salen datos por ninguna entrada: S4 y S5 dependen de una herramienta que D2 no permite usar así."
+    },
+    {
+      "id": "c2",
+      "text": "El objetivo sigue secuestrado (S2) aunque no salgan datos. ¿Qué añades?",
+      "teach": "Defensa en profundidad\nD2 corta la fuga, pero la entrada (S1), el secuestro (S2) y la memoria envenenada (S3) siguen ocurriendo. Se añaden defensas antes (D1 delimitar, D4 pinning) y después (D6 memoria con origen, D8 disyuntores).\nPor qué: una sola defensa que funciona hoy puede fallar mañana; en profundidad, el ataque tiene que saltarse varias.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "nada: si no salen datos, el incidente está resuelto",
+          "why": "El objetivo sigue secuestrado y la norma envenenada sigue en memoria para mañana; D2 podría fallar."
+        },
+        {
+          "id": "b",
+          "text": "defensas antes y después: delimitar la entrada, pinning, memoria con origen y disyuntores entre agentes",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "quitar la herramienta enviar_correo del todo",
+          "why": "Entonces el agente no puede hacer su trabajo; D2 ya la limita a lo legítimo."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Qué pasos siguen en rojo en chain run aunque no salgan datos?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la comprobación de la cadena: abre el editor con py, completa hay_fuga y compruébala con py check.",
+      "teach": "¿Sale algo?, en código\nUn paso ocurre si ocurren todos los de los que depende y ninguna defensa lo corta. Hay fuga si ocurre algún paso marcado como fuga.\nPor qué: es, en pequeño, lo que calcula chain run.",
+      "py_exercise": {
+        "id": "O7-05-fuga",
+        "title": "hay_fuga(ocurre, fuga): ¿sale algún dato?",
+        "function": "hay_fuga",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef hay_fuga(ocurre, fuga):\n    # ocurre: {paso: True/False}; fuga: conjunto de pasos que sacan datos\n    for paso in fuga:\n        if False:   # cambia: hay fuga si ese paso de fuga ocurre\n            return True\n    return False\n\nprint(hay_fuga({\"S4\": False, \"S5\": True}, {\"S4\", \"S5\"}))   # True\n",
+        "cases": [
+          {
+            "args": [
+              {
+                "S4": false,
+                "S5": true
+              },
+              [
+                "S4",
+                "S5"
+              ]
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              {
+                "S4": false,
+                "S5": false
+              },
+              [
+                "S4",
+                "S5"
+              ]
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              {
+                "S4": true
+              },
+              [
+                "S4"
+              ]
+            ],
+            "expected": true
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "O7-05-fuga",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "ocurre.get(paso, False)",
+        "La línea queda así: if ocurre.get(paso, False):"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes leer una cadena de ataque agéntica, ver que entra por varios sitios y cortarla en el eslabón por el que pasa todo el daño, reforzada en profundidad. Has completado O7. Siguiente: C1, el laboratorio de agentes completo.",
+  "debrief": {
+    "what_happened": "Has etiquetado los seis eslabones (ASI04 → ASI01 → ASI06 → ASI02 → ASI07 → ASI08), has visto que el ataque entra por dos sitios y que el pinning solo cubre uno, y has cortado la fuga con D2, en el eslabón común, reforzándolo en profundidad.",
+    "why": "Un incidente de agentes es una cadena de riesgos ASI; se corta mejor en el eslabón por el que pasa todo el daño que en cada entrada, y se refuerza con defensas antes y después.",
+    "in_production": "Los equipos modelan rutas de ataque de agentes (no riesgos sueltos), las relacionan con ASI y MITRE ATLAS y eligen controles que cubran todas las entradas, con defensa en profundidad y disyuntores entre agentes.",
+    "simplifications": [
+      "Seis pasos y dos entradas; un incidente real tiene más ramas y más entradas",
+      "Las defensas cortan o no de forma binaria; en la realidad reducen probabilidad, no la anulan"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-agentic-2026",
+    "ref.mitre-atlas"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: otra defensa. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "Si en vez de D2 activas solo D6 (memoria con origen y revisión), ¿salen datos por alguna entrada? (answer si o no)",
+        "validator": {
+          "type": "answer",
+          "expected": "si",
+          "accept": [
+            "si",
+            "sí"
+          ]
+        },
+        "wrong_answer": "Revisa: D6 corta S3 (la memoria), pero ¿de qué paso dependen S4 y S5? (chain defend D6 on y chain run)",
+        "hints": [
+          "S4 y S5 dependen de S2, no de S3.",
+          "Activa solo D6 y mira chain run."
+        ],
+        "on_complete": "Correcto: sí. D6 limpia la memoria (S3 no ocurre), pero S4 y S5 dependen de S2, que sigue, así que los datos salen igual."
+      }
+    ]
+  }
+}

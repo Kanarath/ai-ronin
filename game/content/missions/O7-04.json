@@ -1,0 +1,280 @@
+{
+  "id": "O7-04",
+  "schema_version": 1,
+  "title": "Aprobar a ciegas",
+  "unit": "O7",
+  "difficulty": 4,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 30,
+  "requires_missions": [
+    "O7-03"
+  ],
+  "competencies": {
+    "requires": [
+      "O7.sandbox"
+    ],
+    "trains": [
+      "O7.aprobacion-verificable",
+      "O7.confianza-humano-agente"
+    ]
+  },
+  "briefing": "El otro hueco de O7-02 era ASI09: la confianza entre la persona y el agente. En la forja, el agente redacta la petición y un responsable la aprueba. Hoy te sientas en la silla de quien aprueba: ocho peticiones, cuatro de ellas con una explicación impecable y un cambio real muy distinto.",
+  "learning_objectives": [
+    "Explicar por qué una aprobación humana puede ser una defensa falsa",
+    "Distinguir la explicación del agente del cambio que genera el sistema",
+    "Diseñar una aprobación verificable"
+  ],
+  "mentor_intro": "Una aprobación vale lo que ve quien aprueba.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "«Hay un humano en el bucle» es la respuesta favorita a casi cualquier riesgo de agentes, y la más engañosa. ASI09 es el riesgo de que esa persona apruebe lo que no entiende; diseñar aprobaciones que de verdad protejan es cada vez más parte del trabajo de diseño seguro de agentes.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Aprueba como se hace hoy: approvals mode explicacion, approvals list y decide las 8 (approvals decide R1 si|no …) solo con lo que explica el agente.",
+      "teach": "Lo que ve quien aprueba\nEn el modo de hoy, el responsable solo lee la frase con la que el agente justifica la petición. No ve el cambio que se ejecutará.\nPor qué: así es como están montadas muchas aprobaciones reales: una notificación con el texto del agente y dos botones.",
+      "validator": {
+        "type": "event",
+        "event": "approvals.decided",
+        "where": {
+          "decided": 8
+        }
+      },
+      "hints": [
+        "approvals mode explicacion, approvals list y ocho approvals decide R1 si … R8 si/no según te parezca."
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Mira qué aprobaste de verdad: approvals result. ¿Cuántas peticiones dañinas aprobaste? (answer <número>)",
+      "teach": "La trampa\nCada petición tenía un cambio real que no veías. Cuatro eran dañinas (dar permisos de administrador, borrar miles de filas, sacar datos de clientes, un descuento inventado) con explicaciones de lo más razonable.\nPor qué: si la explicación la escribe el agente, puede ser convincente y falsa a la vez; es imposible decidir bien sin ver el cambio.",
+      "validator": {
+        "type": "event",
+        "event": "approvals.result",
+        "where": {
+          "mode": "explicacion"
+        }
+      },
+      "hints": [
+        "approvals result; mira «dañinas aprobadas».",
+        "El número que te salga: lo importante es que no podías saberlo."
+      ],
+      "on_complete": "Daba igual tu cuidado: con solo la explicación, o aprobabas alguna dañina o rechazabas alguna legítima. No tenías la información."
+    },
+    {
+      "id": "c1",
+      "text": "¿De quién es el fallo?",
+      "teach": "No es de quien aprueba\nLa persona hizo lo que podía con lo que tenía. El fallo es de diseño: se le pidió decidir a partir de un texto que escribe la parte que no es de fiar.\nPor qué: culpar al usuario («tenía que haberlo mirado mejor») no arregla nada; rediseñar lo que ve, sí.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "del responsable, por no fijarse bien",
+          "why": "Con solo la explicación del agente no había nada más en que fijarse: el fallo es de diseño."
+        },
+        {
+          "id": "b",
+          "text": "del diseño: se pide aprobar a partir de la explicación del agente, no del cambio real",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "del agente, por mentir",
+          "why": "El agente puede estar manipulado (ASI01) sin «mentir»; aunque fuera honesto, el diseño seguiría siendo malo."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Quién escribió lo único que veía el responsable?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o3",
+      "text": "Rediséñalo: approvals mode verificable, approvals list y vuelve a decidir las 8 viendo el cambio real.",
+      "teach": "Aprobación verificable\nAhora, debajo de cada explicación, el sistema muestra el cambio exacto que generará la herramienta: el rol que se concede, las filas que se borran, el destino y el adjunto del correo.\nPor qué: ese resumen lo genera el sistema a partir de la llamada, no el agente. Es lo que la persona tiene que ver para decidir de verdad.",
+      "validator": {
+        "type": "event",
+        "event": "approvals.listed",
+        "where": {
+          "mode": "verificable"
+        }
+      },
+      "hints": [
+        "approvals mode verificable, approvals list y ocho approvals decide."
+      ]
+    },
+    {
+      "id": "o4",
+      "text": "Comprueba el resultado: approvals result. ¿Cuántas dañinas aprobaste ahora? (answer <número>)",
+      "teach": "La diferencia\nCon el cambio a la vista, R2 (admin sin caducidad), R4 (borrar 4.812 filas), R6 (clientes.csv a un dominio externo) y R8 (descuento sin aprobación) se rechazan solas.\nPor qué: la aprobación humana funciona como defensa solo si la persona ve un resumen fiel y entendible de lo que va a pasar.",
+      "validator": {
+        "type": "all",
+        "of": [
+          {
+            "type": "event",
+            "event": "approvals.result",
+            "where": {
+              "mode": "verificable"
+            }
+          },
+          {
+            "type": "answer",
+            "expected": 0,
+            "tolerance": 0
+          }
+        ]
+      },
+      "hints": [
+        "Rechaza las cuatro cuyo cambio real no cuadra con la explicación.",
+        "answer 0"
+      ],
+      "on_complete": "Cero dañinas y ninguna legítima rechazada. Lo que cambió no fue la atención de la persona: fue lo que se le enseñó."
+    },
+    {
+      "id": "c2",
+      "text": "Para R2 (dar admin), ¿qué más conviene además del resumen verificable?",
+      "teach": "Defensa en profundidad para lo crítico\nLo más peligroso (conceder privilegios, mover dinero, borrar en masa) pide algo más: una segunda persona, un límite que el agente no pueda tocar, o que ese cambio no esté entre las herramientas del agente.\nPor qué: una sola persona cansada se equivoca; el riesgo alto se reparte o se quita del alcance del agente (mínimo privilegio, como en A3).",
+      "choices": [
+        {
+          "id": "a",
+          "text": "nada: con ver el cambio ya basta para todo",
+          "why": "Para lo rutinario sí; conceder admin sin caducidad merece más de una barrera."
+        },
+        {
+          "id": "b",
+          "text": "para lo crítico, una segunda aprobación o quitar ese cambio de las herramientas del agente",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "que el agente avise con más antelación",
+          "why": "El tiempo no arregla que una sola persona apruebe algo crítico a partir de un texto."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "¿Una sola persona debería poder conceder admin total con un clic?",
+        "answer b"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa la detección: abre el editor con py, completa daninas_aprobadas y compruébala con py check.",
+      "teach": "Lo aprobado de verdad, en código\nCuántas peticiones dañinas acabaron aprobadas.\nPor qué: es la cuenta de approvals result, la que mide si la aprobación protege.",
+      "py_exercise": {
+        "id": "O7-04-daninas",
+        "title": "daninas_aprobadas(peticiones, decisiones): dañinas que se aprobaron",
+        "function": "daninas_aprobadas",
+        "starter": "# Completa la línea marcada y compruébala con py check.\ndef daninas_aprobadas(peticiones, decisiones):\n    # peticiones: {id: danina True/False}; decisiones: {id: \"si\"/\"no\"}\n    n = 0\n    for pid in peticiones:\n        if peticiones[pid]:   # cambia: cuenta solo si ADEMAS se aprobo (decisiones[pid] == si)\n            n += 1\n    return n\n\nprint(daninas_aprobadas({\"R2\": True, \"R1\": False}, {\"R2\": \"no\", \"R1\": \"si\"}))   # 0\n",
+        "cases": [
+          {
+            "args": [
+              {
+                "R2": true,
+                "R1": false
+              },
+              {
+                "R2": "no",
+                "R1": "si"
+              }
+            ],
+            "expected": 0
+          },
+          {
+            "args": [
+              {
+                "R2": true,
+                "R4": true
+              },
+              {
+                "R2": "si",
+                "R4": "si"
+              }
+            ],
+            "expected": 2
+          },
+          {
+            "args": [
+              {
+                "R2": true,
+                "R4": true
+              },
+              {
+                "R2": "si",
+                "R4": "no"
+              }
+            ],
+            "expected": 1
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "O7-04-daninas",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "and decisiones[pid] == \"si\"",
+        "La línea queda así: if peticiones[pid] and decisiones[pid] == \"si\":"
+      ]
+    }
+  ],
+  "you_can_now": "Sabes por qué una aprobación humana puede ser una defensa falsa, distinguir la explicación del agente del cambio real y diseñar aprobaciones verificables con una barrera extra para lo crítico. Siguiente: O7-05, el ataque en cadena.",
+  "debrief": {
+    "what_happened": "Con solo la explicación del agente aprobaste alguna petición dañina sin poder evitarlo. Con el cambio real a la vista, las cuatro dañinas se rechazan solas. El fallo no era de quien aprueba, sino de lo que se le enseñaba.",
+    "why": "«Hay un humano en el bucle» no es una defensa por sí sola: solo protege si la persona ve un resumen fiel, generado por el sistema y no por el agente, y si lo crítico lleva una barrera más.",
+    "in_production": "Los sistemas serios muestran diffs verificables de la acción, piden doble aprobación para lo sensible, ponen límites fuera del alcance del agente y registran quién aprobó qué para poder auditarlo.",
+    "simplifications": [
+      "Ocho peticiones y dos modos; en la práctica el resumen verificable es un diff estructurado de la llamada a la herramienta",
+      "Una sola persona aprobando; lo crítico suele requerir dos"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-agentic-2026",
+    "ref.nist-ai-rmf"
+  ],
+  "xp": {
+    "base": 300
+  },
+  "mastery_trial": {
+    "intro": "Prueba de dominio: una petición nueva. Sin pistas de nivel 3 o superior.",
+    "objectives": [
+      {
+        "id": "d1",
+        "text": "En modo verificable llega R9: explicación «enviar la factura mensual a la gestoría», cambio real «correo a un dominio externo con clientes.csv de 12.000 filas adjunto». ¿La apruebas? (answer si o no)",
+        "validator": {
+          "type": "answer",
+          "expected": "no",
+          "accept": [
+            "no"
+          ]
+        },
+        "wrong_answer": "Revisa: ¿la explicación cuadra con el cambio real? Se parece a R6.",
+        "hints": [
+          "¿Qué lleva el adjunto y a dónde va?",
+          "Compara con R6."
+        ],
+        "on_complete": "Correcto: no. Es la misma trampa que R6: una explicación inocente y una fuga de datos de clientes a un dominio externo."
+      }
+    ]
+  }
+}

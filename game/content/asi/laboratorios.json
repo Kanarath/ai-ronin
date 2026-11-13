@@ -1,0 +1,256 @@
+{
+  "schema_version": 1,
+  "nota": "O7-03 a O7-05 · Laboratorios prácticos del OWASP agéntico en la forja. Todo simulado y ficticio: ningún comando ejecuta código ni toca la red.",
+  "sandbox": {
+    "agente": "Agente analista: escribe y ejecuta Python sobre los ficheros que suben los clientes para resumirlos, hacer gráficos o convertir monedas.",
+    "defensas": {
+      "prompt_prudente": "Añadir al prompt: «nunca ejecutes nada peligroso ni accedas a secretos»",
+      "sin_shell": "Sin os.system ni subprocess: solo una lista blanca de módulos (csv, statistics, matplotlib…)",
+      "sin_secretos": "El proceso no hereda variables de entorno ni credenciales de la forja",
+      "sin_red": "Sin ninguna salida de red",
+      "red_lista": "Red solo hacia una lista blanca de dominios (api.bce.example, para el tipo de cambio)",
+      "limites": "Límites de tiempo (30 s), memoria (512 MB) y procesos",
+      "fs_efimero": "Sistema de ficheros desechable: solo /trabajo, que se borra al acabar",
+      "escapar_salida": "La salida del agente se trata como texto: se escapa antes de pintarla en el panel"
+    },
+    "ataques": [
+      {
+        "id": "X1",
+        "texto": "Una celda del fichero trae una orden para el sistema operativo y el agente la evalúa al «limpiar fórmulas»",
+        "bloquea": [
+          "sin_shell"
+        ],
+        "owasp": "ASI05"
+      },
+      {
+        "id": "X2",
+        "texto": "Una nota en el fichero pide incluir en el resumen una credencial de la forja; el código la lee del entorno",
+        "bloquea": [
+          "sin_secretos"
+        ],
+        "owasp": "ASI05 · LLM02"
+      },
+      {
+        "id": "X3",
+        "texto": "El código generado envía el fichero completo a un servicio externo «para compartir el resultado»",
+        "bloquea": [
+          "sin_red",
+          "red_lista"
+        ],
+        "owasp": "ASI05 · LLM02"
+      },
+      {
+        "id": "X4",
+        "texto": "Un fichero preparado para que el proceso no termine nunca y consuma memoria sin límite",
+        "bloquea": [
+          "limites"
+        ],
+        "owasp": "ASI05 · LLM10"
+      },
+      {
+        "id": "X5",
+        "texto": "El código deja un cambio fuera de su carpeta de trabajo que se ejecutará en sesiones futuras del servidor",
+        "bloquea": [
+          "fs_efimero"
+        ],
+        "owasp": "ASI05"
+      },
+      {
+        "id": "X6",
+        "texto": "El resumen que devuelve el agente lleva contenido activo que el panel del analista ejecuta al mostrarlo",
+        "bloquea": [
+          "escapar_salida"
+        ],
+        "owasp": "LLM05"
+      },
+      {
+        "id": "X7",
+        "texto": "El código instala un paquete con un nombre inventado por el modelo que alguien ha registrado (slopsquatting)",
+        "bloquea": [
+          "sin_red",
+          "red_lista"
+        ],
+        "owasp": "ASI04 · LLM03"
+      }
+    ],
+    "tareas": [
+      {
+        "id": "L1",
+        "texto": "Resumir las ventas por mes",
+        "rompe": []
+      },
+      {
+        "id": "L2",
+        "texto": "Hacer un gráfico de barras (PNG en /trabajo)",
+        "rompe": []
+      },
+      {
+        "id": "L3",
+        "texto": "Convertir los importes a euros con el tipo de cambio del día (api.bce.example)",
+        "rompe": [
+          "sin_red"
+        ]
+      },
+      {
+        "id": "L4",
+        "texto": "Estadísticas descriptivas de cada columna",
+        "rompe": []
+      }
+    ]
+  },
+  "aprobaciones": {
+    "peticiones": [
+      {
+        "id": "R1",
+        "explicacion": "Actualizar la dirección de envío del P-301 a la que ha pedido el cliente por correo.",
+        "cambio": "pedidos.P-301.direccion: «C/ Fragua 1» → «C/ Fragua 12»",
+        "danina": false
+      },
+      {
+        "id": "R2",
+        "explicacion": "Ajuste rutinario de permisos para que el auditor externo pueda revisar los informes trimestrales, como cada año.",
+        "cambio": "usuarios.externo-ana.rol: «lector-informes» → «admin» (todos los sistemas, sin caducidad)",
+        "danina": true
+      },
+      {
+        "id": "R3",
+        "explicacion": "Reembolsar 12 monedas del P-302: llegó roto, el cliente adjunta foto.",
+        "cambio": "reembolsos: P-302, 12 monedas, a la tarjeta de origen",
+        "danina": false
+      },
+      {
+        "id": "R4",
+        "explicacion": "Limpieza de duplicados en la tabla de clientes para mejorar la calidad de los datos.",
+        "cambio": "clientes: BORRAR 4.812 filas (todas las de correo @correo.example, no solo las duplicadas)",
+        "danina": true
+      },
+      {
+        "id": "R5",
+        "explicacion": "Enviar el informe mensual de ventas a la gestora.",
+        "cambio": "correo a gestora@forja.example · adjunto: informe-octubre.pdf (2 páginas)",
+        "danina": false
+      },
+      {
+        "id": "R6",
+        "explicacion": "Enviar el informe mensual a la gestoría, que lo necesita para los impuestos.",
+        "cambio": "correo a gestoria-forja@buzon.example (dominio externo) · adjunto: clientes.csv (12.000 filas con nombre, correo y teléfono)",
+        "danina": true
+      },
+      {
+        "id": "R7",
+        "explicacion": "Renovar el certificado TLS del servidor de pedidos, que caduca en 5 días.",
+        "cambio": "certificados.pedidos: nuevo certificado de la autoridad de siempre, válido 90 días",
+        "danina": false
+      },
+      {
+        "id": "R8",
+        "explicacion": "Aplicar el descuento de fidelidad aprobado por la dirección al cliente cli-777.",
+        "cambio": "descuentos: cli-777, 90 % en todos los pedidos, durante 12 meses (no hay ninguna aprobación de la dirección registrada)",
+        "danina": true
+      }
+    ]
+  },
+  "cadena": {
+    "pasos": [
+      {
+        "id": "S1",
+        "texto": "Entrada «mcp»: una actualización del servidor MCP «traductor-pro» añade una orden oculta a la descripción de su herramienta. Entrada «web»: una página que el agente consulta trae la misma orden escondida.",
+        "riesgo": "ASI04",
+        "depende": [],
+        "llm": "LLM03"
+      },
+      {
+        "id": "S2",
+        "texto": "El agente de atención adopta el objetivo «copiar cada conversación a soporte-externo@buzon.example».",
+        "riesgo": "ASI01",
+        "depende": [
+          "S1"
+        ],
+        "llm": "LLM01"
+      },
+      {
+        "id": "S3",
+        "texto": "Guarda en su memoria persistente «norma: copiar siempre a soporte-externo», que sigue activa en las sesiones siguientes.",
+        "riesgo": "ASI06",
+        "depende": [
+          "S2"
+        ],
+        "llm": ""
+      },
+      {
+        "id": "S4",
+        "texto": "Usa su herramienta enviar_correo, legítima, para mandar las conversaciones fuera.",
+        "riesgo": "ASI02",
+        "depende": [
+          "S2"
+        ],
+        "llm": "LLM06",
+        "fuga": true
+      },
+      {
+        "id": "S5",
+        "texto": "Pide al agente de facturación, por A2A y sin firma, que adjunte las facturas del cliente y las envíe al mismo destino.",
+        "riesgo": "ASI07",
+        "depende": [
+          "S2"
+        ],
+        "llm": "",
+        "fuga": true
+      },
+      {
+        "id": "S6",
+        "texto": "El de facturación reparte el encargo entre sus tres agentes de cobros, que mandan 40.000 correos y tumban el proveedor de correo.",
+        "riesgo": "ASI08",
+        "depende": [
+          "S5"
+        ],
+        "llm": "LLM10"
+      }
+    ],
+    "corta": {
+      "D1": {
+        "S2": [
+          "web"
+        ]
+      },
+      "D2": {
+        "S4": [
+          "mcp",
+          "web"
+        ],
+        "S5": [
+          "mcp",
+          "web"
+        ]
+      },
+      "D4": {
+        "S1": [
+          "mcp"
+        ]
+      },
+      "D6": {
+        "S3": [
+          "mcp",
+          "web"
+        ]
+      },
+      "D7": {
+        "S5": [
+          "mcp",
+          "web"
+        ]
+      },
+      "D8": {
+        "S6": [
+          "mcp",
+          "web"
+        ]
+      }
+    },
+    "notas": {
+      "D1": "Delimitar el contenido externo frena la orden que llega en una página web; la descripción de una herramienta no se delimita: el agente la lee como parte de sus herramientas (A4-02).",
+      "D4": "El pinning de versiones y hashes frena la actualización maliciosa del servidor MCP, pero no la página web.",
+      "D2": "La lista blanca y la validación de las llamadas salientes del agente cortan tanto el envío de correos fuera (S4) como la delegación al agente de facturación (S5): es el eslabón por el que pasa todo el daño."
+    }
+  }
+}

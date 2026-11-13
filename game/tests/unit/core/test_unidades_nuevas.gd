@@ -33,6 +33,9 @@ print(residuos([1, 0, 1], [0.8, 0.3, 0.4]))   # unos [0.2, -0.3, 0.6]
 	"O7-02": "def sin_cubrir(riesgos, cobertura):\n    cubiertos = set(cobertura.values())\n    return [r for r in riesgos if r not in cubiertos]\n",
 	"E5-01": "def sin_evidencia(soa):\n    salida = []\n    for o in soa:\n        if o[\"aplica\"] and len(o[\"evidencias\"]) == 0:\n            salida.append(o[\"id\"])\n    return salida\n",
 	"E5-02": "def decision(grados):\n    if \"mayor\" in grados:\n        return \"aplazar\"\n    if \"menor\" in grados:\n        return \"recomendar-con-plan\"\n    return \"recomendar\"\n",
+	"O7-03": "def frenados(ataques, activas):\n    n = 0\n    for a in ataques:\n        bloqueado = any(d in activas for d in ataques[a])\n        n += 1 if bloqueado else 0\n    return n\n",
+	"O7-04": "def daninas_aprobadas(peticiones, decisiones):\n    n = 0\n    for pid in peticiones:\n        if peticiones[pid] and decisiones[pid] == \"si\":\n            n += 1\n    return n\n",
+	"O7-05": "def hay_fuga(ocurre, fuga):\n    for paso in fuga:\n        if ocurre.get(paso, False):\n            return True\n    return False\n",
 	"T10-03": "# Completa la línea marcada y compruébala con py check.\ndef de_los_que_devuelven(aprobado, devuelve):\n    # aprobado y devuelve: listas de True o False, una posición por solicitud\n    buenos = [a for a, d in zip(aprobado, devuelve) if d]\n    aprobados = buenos.count(True)\n    return aprobados / len(buenos)\n\nprint(de_los_que_devuelven([True, False, True, True], [True, True, False, True]))   # unos 0.667\n",
 }
 
@@ -184,3 +187,27 @@ func test_asi_clasificar_mal_no_cuenta() -> void:
 	game.shell.execute("asi classify I2 ASI01")
 	assert_eq(game.shell.events_named("asi.classified")[-1]["data"]["correct_count"], 0)
 	assert_eq(IsoCommands.expected_decision(["menor", "observacion"]), "recomendar-con-plan")
+
+
+func test_O7_03_completa() -> void:
+	_walk("O7-03", ["O7-02"], ["sandbox show", "sandbox run", "answer 7", "hipotesis ninguno", "sandbox set prompt_prudente on", "sandbox run", "answer 0", "sandbox set prompt_prudente off", "sandbox set sin_shell on", "sandbox set sin_secretos on", "sandbox set sin_red on", "sandbox set limites on", "sandbox set fs_efimero on", "sandbox run", "answer X6", "answer a", "sandbox set escapar_salida on", "sandbox run", "answer 3", "answer b", "PY", "answer 2"])
+
+
+func test_O7_04_completa() -> void:
+	_walk("O7-04", ["O7-03"], ["approvals mode explicacion", "approvals list", "approvals decide R1 si", "approvals decide R2 si", "approvals decide R3 si", "approvals decide R4 si", "approvals decide R5 si", "approvals decide R6 si", "approvals decide R7 si", "approvals decide R8 si", "approvals result", "answer b", "approvals mode verificable", "approvals list", "approvals decide R2 no", "approvals decide R4 no", "approvals decide R6 no", "approvals decide R8 no", "approvals decide R1 si", "approvals decide R3 si", "approvals decide R5 si", "approvals decide R7 si", "approvals result", "answer 0", "answer b", "PY", "answer no"])
+
+
+func test_O7_05_completa() -> void:
+	_walk("O7-05", ["O7-04"], ["chain show", "chain label S1 ASI04", "chain label S2 ASI01", "chain label S3 ASI06", "chain label S4 ASI02", "chain label S5 ASI07", "chain label S6 ASI08", "chain run", "answer si", "answer b", "chain defend D2 on", "chain run", "answer no", "answer b", "PY", "answer si"])
+
+
+func test_O7_lab_motor() -> void:
+	assert_eq(AsiLabCommands.battery([])["attacks_ok"], 7)
+	assert_eq(AsiLabCommands.battery(["sin_shell", "sin_secretos", "sin_red", "limites", "fs_efimero"])["attacks_ok"], 1)
+	var full := AsiLabCommands.battery(["sin_shell", "sin_secretos", "red_lista", "limites", "fs_efimero", "escapar_salida"])
+	assert_eq(full["attacks_ok"], 0, "caja completa frena todo")
+	assert_eq(full["legit_ok"], 4, "y no rompe ninguna tarea")
+	assert_false(AsiLabCommands.simulate(["D2"])["mcp"]["leak"], "D2 corta la fuga por mcp")
+	assert_false(AsiLabCommands.simulate(["D2"])["web"]["leak"], "y por web")
+	assert_true(AsiLabCommands.simulate(["D4"])["web"]["leak"], "D4 no cubre la entrada web")
+	assert_true(AsiLabCommands.simulate(["D6"])["mcp"]["leak"], "D6 no corta la fuga")

@@ -27,7 +27,7 @@
   "learning_objectives": [
     "Secuestrar el objetivo de un agente mediante inyección indirecta y provocar abuso de herramientas (ASI01, ASI02)",
     "Explotar un «confused deputy»: el agente usa SUS privilegios en nombre de quien no los tiene (ASI03)",
-    "Envenenar la memoria persistente y provocar un bucle sin límite (ASI06)"
+    "Envenenar la memoria persistente (ASI06) y provocar un bucle sin límite (LLM10)"
   ],
   "mentor_intro": "Laboratorio autorizado. Lee la traza de cada ataque: la columna «⟵ instrucción de correo» es tu evidencia.",
   "lab": {
