@@ -205,6 +205,20 @@ func _on_mission_finished(result: Dictionary) -> void:
 	progress_changed.emit()
 
 
+## Reemplaza TODO el progreso por el de una partida importada y lo guarda en la ranura actual.
+## Normaliza las claves que el resto del juego da por hechas (misiones, logros…) y avisa a la UI.
+func replace_progress(new_data: Dictionary) -> void:
+	var p := Progress.new(new_data)
+	for key in ["achievements", "ach_counters"]:
+		if not p.data.has(key):
+			p.data[key] = {}
+	# Se conserva la MISMA instancia de Progress (logros, runner… la comparten): solo cambian
+	# sus datos, así todo el juego ve la partida importada sin reconstruir nada.
+	progress.data = p.data
+	save()
+	progress_changed.emit()
+
+
 ## Importa una evidencia de ronin_check, da el XP del primer verificado y guarda.
 func import_evidence(path: String) -> Dictionary:
 	var before := progress.level()

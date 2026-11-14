@@ -67,6 +67,7 @@ func _init(p_library: ContentLibrary = null) -> void:
 	StudyCommands.register(registry)
 	MapCommands.register(registry)
 	PortafolioCommands.register(registry)
+	PartidaCommands.register(registry)
 	CtfCommands.register(registry)
 	AkaCommands.register(registry)
 	LearnCommands.register(registry)
