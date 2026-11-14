@@ -35,6 +35,19 @@ foreach ($f in (git ls-files forja)) {
     Copy-Item $f $dest
 }
 Copy-Item LECTURAS.md $out
+Copy-Item "game\icon.png" (Join-Path $out "icon.png")
+# Lanzador de escritorio opcional (icono 道 en el menú de aplicaciones). El icono de la ventana
+# y la barra de tareas ya sale solo al ejecutar; esto es solo para quien quiera una entrada fija.
+Set-Content -Encoding utf8 (Join-Path $out "AI-RONIN.desktop") @"
+[Desktop Entry]
+Type=Application
+Name=AI RONIN
+Comment=Academia de ingenieria y seguridad de IA
+Exec=/RUTA/A/AI-RONIN.x86_64
+Icon=/RUTA/A/icon.png
+Terminal=false
+Categories=Education;Game;
+"@
 # Pequeño lanzador y nota de uso.
 Set-Content -Encoding utf8 (Join-Path $out "JUGAR.txt") @"
 AI RONIN · Linux
@@ -44,6 +57,10 @@ AI RONIN · Linux
 
 Tus ejercicios de la Forja están en la carpeta forja/.
 Tus partidas se guardan en ~/.local/share/godot/app_userdata/AI RONIN/.
+
+¿Quieres un icono en el menú de aplicaciones? Edita AI-RONIN.desktop y pon la ruta real
+de AI-RONIN.x86_64 y de icon.png en las líneas Exec e Icon; luego cópialo a
+~/.local/share/applications/.
 "@
 
 Write-Host "3/3 Empaquetando el .tar.gz…"

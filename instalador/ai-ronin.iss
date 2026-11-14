@@ -6,7 +6,7 @@
 ; %LOCALAPPDATA%\Programs\AI RONIN. Así el juego puede escribir en forja\ y en musica\.
 ; Tus partidas están aparte (%APPDATA%\Godot\app_userdata\AI RONIN) y desinstalar no las borra.
 
-#define AppVersion "0.3.1"
+#define AppVersion "0.3.2"
 
 [Setup]
 AppId={{6F3C2A4E-8B1D-4E7A-9C55-2D7E1B0A9F31}
@@ -25,7 +25,7 @@ SolidCompression=yes
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 WizardStyle=modern
-UninstallDisplayIcon={app}\AI-RONIN.exe
+UninstallDisplayIcon={app}\icon.ico
 UninstallDisplayName=AI RONIN
 
 [Languages]
@@ -40,14 +40,15 @@ Name: "{app}\musica"
 [Files]
 Source: "..\build\staging\AI-RONIN.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\build\staging\LECTURAS.md"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\build\staging\icon.ico"; DestDir: "{app}"; Flags: ignoreversion
 ; La Forja: tus ejercicios son tuyos. Al reinstalar no se pisa ningún fichero que ya exista
 ; (solo se añaden los nuevos) y al desinstalar no se borra nada de forja\.
 Source: "..\build\staging\forja\*"; DestDir: "{app}\forja"; Flags: recursesubdirs createallsubdirs onlyifdoesntexist uninsneveruninstall
 
 [Icons]
-Name: "{autoprograms}\AI RONIN"; Filename: "{app}\AI-RONIN.exe"; WorkingDir: "{app}"
+Name: "{autoprograms}\AI RONIN"; Filename: "{app}\AI-RONIN.exe"; WorkingDir: "{app}"; IconFilename: "{app}\icon.ico"
 Name: "{autoprograms}\Carpeta de la Forja (AI RONIN)"; Filename: "{app}\forja"
-Name: "{autodesktop}\AI RONIN"; Filename: "{app}\AI-RONIN.exe"; WorkingDir: "{app}"; Tasks: escritorio
+Name: "{autodesktop}\AI RONIN"; Filename: "{app}\AI-RONIN.exe"; WorkingDir: "{app}"; IconFilename: "{app}\icon.ico"; Tasks: escritorio
 
 [Run]
 Filename: "{app}\AI-RONIN.exe"; Description: "Abrir AI RONIN"; Flags: nowait postinstall skipifsilent

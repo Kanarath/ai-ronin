@@ -205,6 +205,41 @@ func _on_mission_finished(result: Dictionary) -> void:
 	progress_changed.emit()
 
 
+## Escribe el progreso actual como JSON portable en `path`. Devuelve {"ok": bool, "error": String}.
+## Lo usan el comando `partida exportar` y el botón de exportar; así comparten exactamente la lógica.
+func export_partida(path: String) -> Dictionary:
+	var base := path.get_base_dir()
+	if not base.is_empty():
+		DirAccess.make_dir_recursive_absolute(base)
+	var data := progress.data.duplicate(true)
+	data["schema_version"] = SaveStore.CURRENT_VERSION
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	if f == null:
+		return {"ok": false, "error": "No he podido escribir en %s (error %d). ¿Existe la carpeta y tienes permiso?" % [path, FileAccess.get_open_error()]}
+	f.store_string(JSON.stringify(data, "  "))
+	f.close()
+	return {"ok": true, "error": ""}
+
+
+## Lee un JSON portable de `path`, lo valida y reemplaza TODO el progreso de la ranura.
+## Devuelve {"ok": bool, "error": String}. Lo usan el comando y el botón de importar.
+func import_partida(path: String) -> Dictionary:
+	if runner.is_running():
+		return {"ok": false, "error": "Sal de la misión en curso antes de importar: se reemplaza TODO tu progreso."}
+	if not FileAccess.file_exists(path):
+		return {"ok": false, "error": "No encuentro el archivo: %s" % path}
+	# Se parsea con JSON.new().parse (no con parse_string): un archivo inválido devuelve error sin
+	# empujar un ERROR del motor, igual que hace SaveStore al leer una ranura.
+	var json := JSON.new()
+	if json.parse(FileAccess.get_file_as_string(path)) != OK or not (json.data is Dictionary):
+		return {"ok": false, "error": "Ese archivo no es una partida de AI RONIN (no es un JSON válido)."}
+	var data: Dictionary = json.data
+	if not (data.has("missions") or data.has("xp")):
+		return {"ok": false, "error": "Ese JSON no parece una partida de AI RONIN (no tiene progreso dentro)."}
+	replace_progress(SaveStore.migrate(data))
+	return {"ok": true, "error": ""}
+
+
 ## Reemplaza TODO el progreso por el de una partida importada y lo guarda en la ranura actual.
 ## Normaliza las claves que el resto del juego da por hechas (misiones, logros…) y avisa a la UI.
 func replace_progress(new_data: Dictionary) -> void:

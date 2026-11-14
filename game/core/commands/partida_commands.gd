@@ -66,16 +66,9 @@ static func _exportar(c: CommandContext, a: Dictionary) -> CommandResult:
 	if raw.strip_edges().is_empty():
 		return CommandResult.error("Dime a dónde: partida exportar <ruta>")
 	var path := _resolve(raw)
-	var base := path.get_base_dir()
-	if not base.is_empty():
-		DirAccess.make_dir_recursive_absolute(base)
-	var data := g.progress.data.duplicate(true)
-	data["schema_version"] = SaveStore.CURRENT_VERSION
-	var f := FileAccess.open(path, FileAccess.WRITE)
-	if f == null:
-		return CommandResult.error("No he podido escribir en %s (error %d). ¿Existe la carpeta y tienes permiso?" % [path, FileAccess.get_open_error()])
-	f.store_string(JSON.stringify(data, "  "))
-	f.close()
+	var res := g.export_partida(path)
+	if not res["ok"]:
+		return CommandResult.error(res["error"])
 	var r := CommandResult.new()
 	r.line("✓ Partida exportada.", "ok")
 	r.line("Archivo: %s" % path, "accent")
@@ -89,23 +82,13 @@ static func _importar(c: CommandContext, a: Dictionary) -> CommandResult:
 	var g: DojoGame = c.shell.get_game() as DojoGame
 	if g == null or g.save_path.is_empty():
 		return CommandResult.error("Abre una ranura (una partida) antes de importar sobre ella.")
-	if g.runner.is_running():
-		return CommandResult.error("Sal de la misión en curso antes de importar: se reemplaza TODO tu progreso.")
 	var raw: String = str(a.get("ruta", "")) if a.get("ruta") != null else ""
 	if raw.strip_edges().is_empty():
 		return CommandResult.error("Dime de dónde: partida importar <ruta>")
 	var path := _resolve(raw)
-	if not FileAccess.file_exists(path):
-		return CommandResult.error("No encuentro el archivo: %s" % path)
-	# Se parsea con JSON.new().parse (no con parse_string): así un archivo inválido devuelve un
-	# código de error sin empujar un ERROR del motor, igual que hace SaveStore al leer una ranura.
-	var json := JSON.new()
-	if json.parse(FileAccess.get_file_as_string(path)) != OK or not (json.data is Dictionary):
-		return CommandResult.error("Ese archivo no es una partida de AI RONIN (no es un JSON válido).")
-	var data: Dictionary = json.data
-	if not (data.has("missions") or data.has("xp")):
-		return CommandResult.error("Ese JSON no parece una partida de AI RONIN (no tiene progreso dentro).")
-	g.replace_progress(SaveStore.migrate(data))
+	var res := g.import_partida(path)
+	if not res["ok"]:
+		return CommandResult.error(res["error"])
 	var r := CommandResult.new()
 	r.line("✓ Partida importada y guardada en esta ranura.", "ok")
 	r.line(_resumen(g), "accent")

@@ -25,11 +25,22 @@ func _init() -> void:
 
 func _ready() -> void:
 	apply_display()
+	_set_window_icon()
 	music = MusicPlayer.new()
 	add_child(music)
 	music.setup(prefs)
 	if "--autoprueba" in OS.get_cmdline_user_args():
 		_self_test.call_deferred()
+
+
+## Pone el hanko 道 como icono de la ventana y la barra de tareas (Windows y Linux). El icono del
+## acceso directo de Windows lo pone el instalador; aquí nos aseguramos del de la ventana en marcha.
+func _set_window_icon() -> void:
+	if DisplayServer.get_name() == "headless":
+		return
+	var tex: Texture2D = load("res://icon.png")
+	if tex != null:
+		DisplayServer.set_icon(tex.get_image())
 
 
 ## Autoprueba del juego exportado (AI-RONIN.exe --headless -- --autoprueba): comprueba que

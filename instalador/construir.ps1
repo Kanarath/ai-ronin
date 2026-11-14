@@ -40,6 +40,7 @@ foreach ($f in (git ls-files forja)) {
     Copy-Item $f $dest
 }
 Copy-Item LECTURAS.md $staging
+Copy-Item "game\icon.ico" (Join-Path $staging "icon.ico")
 
 Write-Host "4/4 Compilando el instalador…"
 & $iscc /Q "instalador\ai-ronin.iss"

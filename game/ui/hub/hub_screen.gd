@@ -173,12 +173,19 @@ func _build_layout() -> void:
 	var menu := Button.new()
 	menu.flat = true
 	menu.text = "Menú"
-	menu.tooltip_text = "Guardar y volver a la pantalla de título (opciones, nuevo aprendizaje)"
+	menu.tooltip_text = "Partida (exportar/importar), guardar y volver a la pantalla de título"
 	menu.focus_mode = Control.FOCUS_NONE
+	var pop := PopupMenu.new()
+	pop.add_item("Exportar partida…", 0)
+	pop.add_item("Importar partida…", 1)
+	pop.add_separator()
+	pop.add_item("Guardar y volver al título", 2)
+	menu.add_child(pop)
+	pop.id_pressed.connect(_on_menu_id)
 	menu.pressed.connect(func() -> void:
-		game.store_py_code()
-		game.save()
-		get_tree().change_scene_to_file("res://ui/title/title_screen.tscn"))
+		pop.position = Vector2i(menu.get_screen_position() + Vector2(0, menu.size.y))
+		pop.reset_size()
+		pop.popup())
 	top.add_child(menu)
 
 	# Capa de notificaciones: encima de todo, en la esquina superior derecha del LABORATORIO
@@ -407,6 +414,19 @@ func _apply_lab_folded(folded: bool) -> void:
 
 
 # ── Actualización ────────────────────────────────────────────────────────────
+
+## Acciones del menú del hub: 0 exportar partida, 1 importar partida, 2 guardar y volver al título.
+func _on_menu_id(id: int) -> void:
+	if id == 0:
+		game.store_py_code()
+		PartidaIO.exportar(self, game)
+	elif id == 1:
+		PartidaIO.importar(self, game, _refresh_all)
+	elif id == 2:
+		game.store_py_code()
+		game.save()
+		get_tree().change_scene_to_file("res://ui/title/title_screen.tscn")
+
 
 func _refresh_all() -> void:
 	_refresh_top()
