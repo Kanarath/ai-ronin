@@ -155,10 +155,12 @@ static func _solution(c: CommandContext, a: Dictionary) -> CommandResult:
 	var raw: String = str(a.get("confirmar", "")) if a.get("confirmar") != null else ""
 	var confirm := raw.strip_edges().to_lower() == "ok"
 	var res := g.runner.reveal_solution(confirm)
-	# Lo dice RONIN (mensaje del mentor): la solución, o el aviso de que confirmes.
-	g.runner.mentor_message.emit(res["text"], "hint" if res["ok"] else "warn")
+	# En el caso de éxito, reveal_solution YA emite la solución (como request_hint con las pistas);
+	# aquí solo emitimos el aviso de "confirma", para no mostrar el texto dos veces.
 	if res["ok"]:
 		c.emit("solution.revealed", {})
+	else:
+		g.runner.mentor_message.emit(res["text"], "warn")
 	return CommandResult.new()
 
 

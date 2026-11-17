@@ -71,6 +71,21 @@ func test_ningun_objetivo_del_juego_puede_dejar_sin_salida() -> void:
 	assert_true(fallos.is_empty(), "\n".join(fallos))
 
 
+func test_el_comando_no_muestra_la_solucion_dos_veces() -> void:
+	# El comando `solucion ok` debe mostrar la solución UNA vez (reveal_solution ya la emite; el
+	# comando no debe volver a emitirla). Antes salía repetida.
+	var g := DojoGame.new("")
+	g.runner.start(_mision([
+		{"id": "o1", "text": "t", "validator": {"type": "answer", "expected": 0.25}, "hints": ["una"]},
+	]), 0)
+	var veces := [0]
+	g.runner.mentor_message.connect(func(t: String, _k: String) -> void:
+		if t.contains("Solución completa"):
+			veces[0] += 1)
+	g.shell.execute("solucion ok")
+	assert_eq(veces[0], 1, "la solución debe mostrarse una sola vez")
+
+
 func test_revelar_la_solucion_deja_la_maxima_ayuda() -> void:
 	runner.start(_mision([
 		{"id": "o1", "text": "t", "validator": {"type": "answer", "expected": 1}, "hints": ["x"]},
