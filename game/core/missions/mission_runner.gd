@@ -281,20 +281,40 @@ func _solution_text(obj: Dictionary) -> String:
 		var ans := _expected_answer(obj.get("validator", {}))
 		if ans != "":
 			lines.append("  → " + ans)
+	var why := _why(obj)
+	if why != "":
+		lines.append("")
+		lines.append(why)
 	return "\n".join(lines)
 
 
-## Si el validador pide una respuesta, devuelve la orden exacta ("answer 0.25" / "answer c"); si no, "".
+## El «por qué» del paso, reutilizando lo que la propia misión ya explica (sin duplicar texto): la
+## razón del campo `teach` (a partir de «Por qué…») o, si no la hay, la enseñanza completa.
+func _why(obj: Dictionary) -> String:
+	var teach := str(obj.get("teach", "")).strip_edges()
+	if teach.is_empty():
+		return ""
+	var idx := teach.find("Por qué")
+	return teach.substr(idx) if idx != -1 else "Por qué así: " + teach
+
+
+## Si el validador pide una respuesta, devuelve la orden exacta ("answer 0.25" / "answer c"); si no,
+## "". Busca también una respuesta anidada dentro de all/any/sequence, como hace el propio runner.
 func _expected_answer(validator: Dictionary) -> String:
-	if String(validator.get("type", "")) != "answer":
+	if String(validator.get("type", "")) == "answer":
+		var e: Variant = validator.get("expected")
+		if e is String:
+			return "answer %s" % e
+		if e is float or e is int:
+			return "answer %s" % str(e)
 		return ""
-	var e: Variant = validator.get("expected")
-	if e == null:
-		return ""
-	if e is String:
-		return "answer %s" % e
-	if e is float or e is int:
-		return "answer %s" % str(e)
+	# all/any guardan sus sub-validadores en «of»; sequence, en «steps».
+	for key in ["of", "steps"]:
+		for sub in validator.get(key, []):
+			if sub is Dictionary:
+				var r := _expected_answer(sub)
+				if r != "":
+					return r
 	return ""
 
 

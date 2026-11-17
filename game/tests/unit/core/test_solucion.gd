@@ -52,6 +52,25 @@ func test_al_agotar_las_pistas_se_apunta_a_solucion() -> void:
 	assert_true(String(no_hay["text"]).contains("solucion"), no_hay["text"])
 
 
+func test_ningun_objetivo_del_juego_puede_dejar_sin_salida() -> void:
+	# Recorre TODAS las misiones (y sus pruebas de dominio): cada objetivo debe tener guía, y cada
+	# pregunta de tipo answer debe poder revelar su respuesta. Así la red de seguridad está probada
+	# en todo el juego, no solo donde la miramos a mano.
+	var catalog := MissionCatalog.load_default()
+	var fallos := PackedStringArray()
+	for m: Dictionary in catalog.missions:
+		var objs: Array = m.get("objectives", []).duplicate()
+		objs.append_array(m.get("mastery_trial", {}).get("objectives", []))
+		for obj: Dictionary in objs:
+			var oid := "%s/%s" % [m.get("id", "?"), obj.get("id", "?")]
+			if obj.get("hints", []).is_empty() and not obj.has("solution"):
+				fallos.append("%s: sin pistas ni solución" % oid)
+			var v: Dictionary = obj.get("validator", {})
+			if ConditionEval.contains_type(v, "answer") and runner._expected_answer(v) == "":
+				fallos.append("%s: answer sin valor revelable" % oid)
+	assert_true(fallos.is_empty(), "\n".join(fallos))
+
+
 func test_revelar_la_solucion_deja_la_maxima_ayuda() -> void:
 	runner.start(_mision([
 		{"id": "o1", "text": "t", "validator": {"type": "answer", "expected": 1}, "hints": ["x"]},
