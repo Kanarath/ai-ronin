@@ -25,6 +25,8 @@ var objectives: Array = []
 var index: int = 0
 var events: Array[Dictionary] = []
 var hint_levels: Dictionary = {}  # "fase:objetivo" -> nivel máximo usado
+## Se ha revelado la solución completa durante la prueba de dominio (entonces no se da por superada).
+var _solution_in_trial := false
 var hypotheses: Dictionary = {}  # "fase:objetivo" -> {"value", "seq"}
 var reflections: Array[Dictionary] = []
 var xp_log: Array[Dictionary] = []
@@ -41,6 +43,7 @@ func start(p_mission: Dictionary, start_seq: int) -> void:
 	index = 0
 	events.clear()
 	hint_levels.clear()
+	_solution_in_trial = false
 	hypotheses.clear()
 	reflections.clear()
 	xp_log.clear()
@@ -180,8 +183,10 @@ func _end_phase() -> void:
 			return
 		_finish(false)
 	elif phase == "trial":
-		_xp(50, "prueba de dominio superada")
-		_finish(true)
+		# Si se ha revelado la solución, la prueba de dominio no se da por superada (ni su XP).
+		if not _solution_in_trial:
+			_xp(50, "prueba de dominio superada")
+		_finish(not _solution_in_trial)
 
 
 func _finish(trial_passed: bool) -> void:
@@ -230,7 +235,7 @@ func request_hint(confirm: bool) -> Dictionary:
 	var key := objective_key(obj)
 	var next: int = hint_levels.get(key, 0) + 1
 	if next > hints.size():
-		return {"ok": false, "level": next - 1, "text": "No hay más pistas para este objetivo. Repasa: help, man y explain."}
+		return {"ok": false, "level": next - 1, "text": "No hay más pistas de este objetivo. Si aun así no sales, pide la solución completa (todas las órdenes y la respuesta): solucion"}
 	if phase == "trial" and next > TRIAL_MAX_HINT:
 		return {"ok": false, "level": next - 1, "text": "En la prueba de dominio solo se permiten pistas hasta el nivel %d. Demuestra que puedes solo." % TRIAL_MAX_HINT}
 	if next == 5 and not confirm:
@@ -241,6 +246,56 @@ func request_hint(confirm: bool) -> Dictionary:
 	mentor_message.emit(text, "hint")
 	state_changed.emit()
 	return {"ok": true, "level": next, "text": text}
+
+
+## Último recurso contra los callejones sin salida: muestra la SOLUCIÓN COMPLETA del objetivo
+## actual (todas las órdenes y, si pide respuesta, el valor exacto). Pide confirmación. Deja el
+## objetivo con la máxima ayuda (como el ejemplo resuelto): la competencia queda «practicada».
+## Devuelve {ok, text}. Así ningún objetivo puede dejar al jugador sin forma de avanzar.
+func reveal_solution(confirm: bool) -> Dictionary:
+	var obj := current_objective()
+	if obj.is_empty():
+		return {"ok": false, "text": "No hay ningún objetivo activo. Empieza una misión: mission list"}
+	if not confirm:
+		return {"ok": false, "text": "⚠ Esto te muestra la SOLUCIÓN COMPLETA de este paso: todas las órdenes y, si pide respuesta, el valor exacto. El objetivo contará como resuelto con la máxima ayuda (la competencia quedará «practicada», no «dominada»). Para verla, escribe: solucion ok"}
+	var key := objective_key(obj)
+	hint_levels[key] = 5  # máxima ayuda, igual que el ejemplo resuelto
+	if phase == "trial":
+		_solution_in_trial = true
+	var text := _solution_text(obj)
+	mentor_message.emit(text, "hint")
+	state_changed.emit()
+	return {"ok": true, "text": text}
+
+
+## Arma el texto de la solución: el campo `solution` del objetivo si existe; si no, sus pistas (que
+## ya contienen las órdenes) más la respuesta esperada cuando el objetivo pide un `answer`.
+func _solution_text(obj: Dictionary) -> String:
+	var lines := PackedStringArray(["Solución completa de este paso (tecléala tú para ver cómo se llega al resultado):"])
+	if obj.has("solution"):
+		for s in obj["solution"]:
+			lines.append("  " + str(s))
+	else:
+		for h in obj.get("hints", []):
+			lines.append("  " + str(h))
+		var ans := _expected_answer(obj.get("validator", {}))
+		if ans != "":
+			lines.append("  → " + ans)
+	return "\n".join(lines)
+
+
+## Si el validador pide una respuesta, devuelve la orden exacta ("answer 0.25" / "answer c"); si no, "".
+func _expected_answer(validator: Dictionary) -> String:
+	if String(validator.get("type", "")) != "answer":
+		return ""
+	var e: Variant = validator.get("expected")
+	if e == null:
+		return ""
+	if e is String:
+		return "answer %s" % e
+	if e is float or e is int:
+		return "answer %s" % str(e)
+	return ""
 
 
 func _announce_current() -> void:

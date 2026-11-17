@@ -253,9 +253,25 @@
           "normalized": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "sweep-fuga-test",
+          "when": {
+            "type": "event",
+            "event": "dataset.normalized",
+            "where": {
+              "fit_on": {
+                "ends_with": "_test"
+              }
+            }
+          },
+          "message": "Cuidado: acabas de normalizar un test sobre SÍ MISMO (sus parámetros salen del propio test). Eso es fuga de datos y hace que el barrido parezca mejor de lo que es: la diferencia a k=1 saldrá 0,208 en vez de 0,25. Para el barrido, reutiliza el `te` que ya normalizaste con --fit katanas_train en el paso anterior (model sweep --train tr --test te), o renormaliza: dataset normalize katanas_test --method minmax --fit katanas_train --as te."
+        }
+      ],
       "hints": [
         "model sweep compara varios k de golpe. Mira su ayuda: model sweep --help",
-        "model sweep --train <train normalizado> --test <test normalizado>"
+        "Usa los MISMOS datasets honestos que creaste en el paso anterior (tr y te). No vuelvas a normalizar el test aquí: si lo normalizas de nuevo sin --fit, metes una fuga de datos.",
+        "model sweep --train tr --test te --k 1,3,5,9,15,31"
       ],
       "on_complete": "Compara con tu predicción: con k=1 la brecha entre train y test es la mayor (overfitting), y al subir k se cierra; con k=31 el test incluso supera al train. Si subieras k muchísimo, bajarían las dos: eso es underfitting (subajuste), un modelo demasiado simple para los datos."
     },
@@ -267,10 +283,19 @@
         "expected": 0.25,
         "tolerance": 0.01
       },
-      "wrong_answer": "Busca la fila k=1, columna «diferencia», en la salida de model sweep (con la división de semilla 42 y min-max aprendido del train).",
+      "solution": [
+        "dataset split katanas --test 0.3 --seed 42",
+        "dataset normalize katanas_train --method minmax --as tr",
+        "dataset normalize katanas_test --method minmax --fit katanas_train --as te",
+        "model sweep --train tr --test te --k 1,3,9,31",
+        "En la fila k=1: diferencia = acc train (1,00) − acc test (0,75) = 0,25.",
+        "answer 0.25"
+      ],
+      "wrong_answer": "La diferencia honesta es 0,25: acc train 1,00 − acc test 0,75. ¿Te sale 0,208? Entonces tu test se normalizó sobre sí mismo (fuga de datos): «parece» mejor (test 0,79) y la brecha baja. Rehaz el test con los parámetros del TRAIN y repite el barrido: dataset normalize katanas_test --method minmax --fit katanas_train --as te, y luego model sweep --train tr --test te.",
       "hints": [
-        "Está en la tabla de model sweep.",
-        "Fila k=1 → columna diferencia."
+        "Está en la tabla de model sweep: fila k=1, columna «diferencia» (acc train − acc test).",
+        "Fila k=1: la honesta es 1,00 − 0,75.",
+        "¿No te sale 0,25? Tu test no está normalizado con los parámetros del train (fuga de datos; da 0,208). Rehaz: dataset normalize katanas_test --method minmax --fit katanas_train --as te → model sweep --train tr --test te --k 1,3,9,31. La diferencia a k=1 es answer 0.25."
       ],
       "on_complete": "0,25: el modelo es 25 puntos «mejor» con lo que ya ha visto que con lo nuevo; esa brecha es la firma del overfitting. Advertencia de ingeniero: has elegido k mirando el TEST, así que ya no es imparcial; en un proyecto real se elige con un conjunto de validación (explain conjunto de validación).",
       "teach": "Leer la brecha\nLa columna «diferencia» es la accuracy de train menos la de test.\nPor qué: esa brecha es la señal de alarma del overfitting, en un k-NN y en una red neuronal."

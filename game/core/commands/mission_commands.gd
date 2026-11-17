@@ -18,6 +18,10 @@ static func register(reg: CommandRegistry) -> void:
 		func(c: CommandContext, a: Dictionary) -> CommandResult: return _hint(c, a), "mentor")
 		.with_signature(CommandSignature.new().opt("confirm", "confirma que quieres el ejemplo resuelto (nivel 5)", "bool", false))
 		.with_details("Pedir pistas está bien: es parte de aprender. Las de nivel 3 o más reducen la puntuación de maestría y la 5 deja la competencia como «practicada»."))
+	reg.register(Command.new("solucion", "Último recurso: la solución completa del objetivo (pide confirmación).",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _solution(c, a), "mentor")
+		.with_signature(CommandSignature.new().pos("confirmar", "escribe 'ok' para ver la solución", "string", false).example("solucion ok"))
+		.with_details("Para cuando te has atascado del todo: muestra todas las órdenes y, si el paso pide respuesta, el valor exacto, para que lo teclees y veas cómo se llega. Cuenta como máxima ayuda (la competencia queda «practicada»). Está para que ningún paso pueda dejarte sin salida."))
 	reg.register(Command.new("hipotesis", "Registra tu predicción ANTES de ejecutar el experimento.",
 		func(c: CommandContext, a: Dictionary) -> CommandResult: return _hypothesis(c, a), "mentor")
 		.with_signature(CommandSignature.new().pos("respuesta", "tu predicción", "rest").example("hipotesis flexibilidad")))
@@ -142,6 +146,20 @@ static func _hint(c: CommandContext, a: Dictionary) -> CommandResult:
 	if not res["ok"]:
 		g.runner.mentor_message.emit(res["text"], "warn")
 	return r
+
+
+static func _solution(c: CommandContext, a: Dictionary) -> CommandResult:
+	var g := _game(c)
+	if g == null:
+		return _no_game()
+	var raw: String = str(a.get("confirmar", "")) if a.get("confirmar") != null else ""
+	var confirm := raw.strip_edges().to_lower() == "ok"
+	var res := g.runner.reveal_solution(confirm)
+	# Lo dice RONIN (mensaje del mentor): la solución, o el aviso de que confirmes.
+	g.runner.mentor_message.emit(res["text"], "hint" if res["ok"] else "warn")
+	if res["ok"]:
+		c.emit("solution.revealed", {})
+	return CommandResult.new()
 
 
 static func _hypothesis(c: CommandContext, a: Dictionary) -> CommandResult:
