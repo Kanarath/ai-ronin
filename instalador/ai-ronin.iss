@@ -6,7 +6,7 @@
 ; %LOCALAPPDATA%\Programs\AI RONIN. Así el juego puede escribir en forja\ y en musica\.
 ; Tus partidas están aparte (%APPDATA%\Godot\app_userdata\AI RONIN) y desinstalar no las borra.
 
-#define AppVersion "0.3.2"
+#define AppVersion "0.3.3"
 
 [Setup]
 AppId={{6F3C2A4E-8B1D-4E7A-9C55-2D7E1B0A9F31}
