@@ -236,5 +236,5 @@ El detalle está en [03-curriculo.md](03-curriculo.md).
 | Terminal | Progresivo, con ayuda, chuletas y manual siempre disponibles |
 | Idioma | Castellano con términos técnicos en inglés y biblioteca local de referencias |
 | Primera versión jugable | Núcleo y 3 misiones del tronco común |
-| Repositorio | `C:\Users\Ruben\Desktop\AI Ronin`, repositorio privado `Kanarath/ai-ronin` |
+| Repositorio | `Kanarath/ai-ronin` (GitHub) |
 | Godot (decisión del 2026-11-06) | Fuera del alcance de aprendizaje. Claude construye la app; tus tareas 🛠 son siempre de IA y en Python |

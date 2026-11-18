@@ -70,7 +70,7 @@ Arranca en la pantalla de título (intro de unos 5 s que se salta con cualquier 
 Abre `game/project.godot` con Godot 4.7 y pulsa F5, o ejecuta:
 
 ```powershell
-& "C:\Users\Ruben\Desktop\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64.exe" --path game
+& "<ruta-a-Godot>\Godot_v4.7.2-stable_win64.exe" --path game
 ```
 
 **Alcance del aprendizaje:** solo IA. La plataforma Godot la construye Claude y no forma parte de la formación. Tus ejercicios se escriben en Python, en `forja/ejercicios/`.
@@ -78,7 +78,7 @@ Abre `game/project.godot` con Godot 4.7 y pulsa F5, o ejecuta:
 ### Ejecutar los tests de la plataforma
 
 ```powershell
-& "C:\Users\Ruben\Desktop\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64_console.exe" --headless --path game -s res://tests/run_tests.gd
+& "<ruta-a-Godot>\Godot_v4.7.2-stable_win64_console.exe" --headless --path game -s res://tests/run_tests.gd
 ```
 
 ## Documentación
@@ -95,3 +95,11 @@ Abre `game/project.godot` con Godot 4.7 y pulsa F5, o ejecuta:
 
 - Godot 4.7.x (estable)
 - Fase Forja: Python 3.12+ y Docker Desktop (con WSL2). Todavía no hacen falta.
+
+## Licencia
+
+Este proyecto se publica bajo la **GNU General Public License v3.0** (GPL-3.0). El texto completo está en [LICENSE](LICENSE).
+
+## Cómo se ha hecho
+
+Proyecto diseñado y dirigido por **Gerard Montero Sellarés** ([Kanarath](https://github.com/Kanarath)), con el desarrollo asistido por IA (Claude Code): el temario, el diseño y el alcance son decisiones suyas, y la implementación se hizo con asistencia de IA bajo su dirección. Gerard lo usa a diario como alumno para aprender ingeniería y seguridad de IA.
