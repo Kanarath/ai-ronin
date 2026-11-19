@@ -39,7 +39,19 @@
         "label": "tipo"
       }
     ],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "points2d",
+      "title": "LA IDEA · agrupar sin etiquetas (k-means)",
+      "points": [
+        {"x": 0.20, "y": 0.30, "cls": 0}, {"x": 0.25, "y": 0.35, "cls": 0},
+        {"x": 0.18, "y": 0.26, "cls": 0}, {"x": 0.30, "y": 0.32, "cls": 0},
+        {"x": 0.75, "y": 0.70, "cls": 1}, {"x": 0.80, "y": 0.72, "cls": 1},
+        {"x": 0.72, "y": 0.66, "cls": 1}, {"x": 0.78, "y": 0.76, "cls": 1}
+      ],
+      "legend": [["grupo 1", 0], ["grupo 2", 1]],
+      "caption": "nadie dice las clases: k-means coloca k centros, asigna cada punto al más cercano y los mueve a la media, hasta que se estabilizan"
+    }
   },
   "purpose": "El aprendizaje no supervisado busca estructura sin respuestas: segmentar clientes, agrupar documentos parecidos en un RAG (Retrieval-Augmented Generation) o encontrar comportamientos raros en un SOC (Security Operations Center). Es lo que usas cuando nadie ha etiquetado los datos, que es lo normal.",
   "theory_cards": [],
@@ -64,6 +76,15 @@
       "id": "c1",
       "text": "La pureza sale 0,52: cada grupo mezcla aptas y defectuosas casi a partes iguales. ¿Por qué?",
       "teach": "Lo que encuentra k-means\nk-means agrupa por lo que más varía entre los puntos, no por la etiqueta que a ti te interesa. Mira los centros: se diferencian sobre todo en la temperatura de temple.\nPor qué: un grupo «natural» de los datos no tiene por qué coincidir con tu pregunta.",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · ¿los grupos coinciden con tu etiqueta?",
+        "items": [
+          {"label": "katanas", "value": 0.52, "note": "0.52", "color": "red"},
+          {"label": "clientes API", "value": 0.88, "note": "0.88", "color": "teal"}
+        ],
+        "caption": "pureza = cuánto coinciden los grupos con la etiqueta real. En katanas k-means agrupa por temperatura (0,52); en clientes sí da con el abuso (0,88)"
+      },
       "choices": [
         {
           "id": "a",

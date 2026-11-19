@@ -29,7 +29,16 @@
   "mentor_intro": "No hace falta un modelo más pequeño: basta con encender menos y adivinar bien.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · decodificación especulativa (tokens por pasada del grande)",
+      "items": [
+        {"label": "borrador bueno (0,8)", "value": 3.36, "note": "3.36×", "color": "teal"},
+        {"label": "borrador malo (0,3)", "value": 1.43, "note": "1.43×", "color": "red"}
+      ],
+      "caption": "un modelo pequeño propone 4 tokens; el grande los verifica en UNA pasada. Misma salida, más rápido… solo si el borrador se parece al grande"
+    }
   },
   "purpose": "La decodificación especulativa, los MoE y las leyes de escala explican los modelos de 2026: por qué un modelo enorme puede ser barato de servir, cómo se acelera sin perder calidad y por qué se construyen tan grandes. Es el vocabulario de cualquier conversación seria sobre coste y capacidad.",
   "theory_cards": [],
@@ -131,6 +140,18 @@
       "id": "o3",
       "text": "Ahora los MoE: infer moe --expertos 8 --activos 2. ¿Qué porcentaje del coste se activa por token? (answer <número>)",
       "teach": "Encender solo una parte\nUn MoE tiene muchos expertos (mucha capacidad en parámetros), pero un enrutador manda cada token solo a 2 de los 8. Solo esos 2 se encienden: el 25 % del coste.\nPor qué: separa lo que el modelo SABE (parámetros totales) de lo que CUESTA cada token (parámetros activos). Un modelo enorme que cuesta como uno pequeño.\nError común: confundir los parámetros TOTALES (capacidad, lo que sabe) con los ACTIVOS por token (coste). Un MoE tiene muchos totales y pocos activos.",
+      "diagram": {
+        "kind": "chips",
+        "title": "LA IDEA · un MoE enciende solo 2 de 8 expertos",
+        "pre": "por cada token:",
+        "chips": [
+          {"text": "E1 ✓activo", "color": "teal"}, {"text": "E2", "color": "muted"},
+          {"text": "E3", "color": "muted"}, {"text": "E4 ✓activo", "color": "teal"},
+          {"text": "E5", "color": "muted"}, {"text": "E6", "color": "muted"},
+          {"text": "E7", "color": "muted"}, {"text": "E8", "color": "muted"}
+        ],
+        "caption": "8 expertos de capacidad (lo que SABE), pero el enrutador enciende solo 2 por token (el 25% del coste): mucho que sabe, poco que cuesta"
+      },
       "validator": {
         "type": "all",
         "of": [

@@ -29,7 +29,17 @@
   "mentor_intro": "Un extractor que habla demasiado. Vamos a domarlo.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · lo que garantiza el formato es tu código",
+      "items": [
+        {"label": "prompt mínimo", "value": 5, "note": "5/10", "color": "red"},
+        {"label": "+ modo JSON", "value": 9, "note": "9/10", "color": "gold"},
+        {"label": "+ esquema + reintento", "value": 10, "note": "10/10", "color": "teal"}
+      ],
+      "caption": "el modelo es probabilístico: el modo JSON ayuda (9/10) pero no garantiza. Validar la salida contra un esquema y reintentar lo lleva a 10/10. «Casi bien» entre programas es «mal»"
+    }
   },
   "purpose": "Casi todas las aplicaciones reales con LLM (Large Language Model) no conversan: extraen, clasifican o rellenan datos para otro programa. Para eso la salida tiene que ser estructurada, normalmente JSON (JavaScript Object Notation), y validarse fuera del modelo. Es la base de la ingeniería de aplicaciones con LLM y de los agentes de A3.",
   "theory_cards": [],

@@ -30,7 +30,17 @@
   "mentor_intro": "Un agente puede decir lo correcto después de hacer lo incorrecto.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · la respuesta no cuenta lo que pasó",
+      "headers": ["v2 en la tarea t11", "veredicto"],
+      "rows": [
+        ["respuesta final: «gestionado»", "✓ el juez la da por buena"],
+        ["trayectoria: reembolsó 500", "❗ acción prohibida (orden oculta)"]
+      ],
+      "caption": "un agente puede decir lo correcto después de HACER lo incorrecto. Las evals de agentes miran las ACCIONES (la traza), no solo el texto final"
+    }
   },
   "purpose": "Evaluar agentes es lo más pedido en las ofertas de AI engineer de 2026 y la base de cualquier afirmación de seguridad («esta versión ya no obedece inyecciones»). Un agente actúa: hay que medir sus acciones, por segmentos, y automatizarlo como un test que se ejecuta antes de cada despliegue.",
   "theory_cards": [],
@@ -163,6 +173,16 @@
       "id": "o4",
       "text": "Compara las dos versiones: evals compare v1 v2. ¿Qué segmento empeora? (answer <segmento>)",
       "teach": "Por segmento, no solo la media\nLa media sube de 0.667 a 0.750, y v2 gasta un 44 % menos de tokens. Pero un segmento baja.\nPor qué: es la regresión que se cuela en producción: la media dice «mejor» y justo el segmento que más importa empeora.",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · la media esconde la regresión",
+        "items": [
+          {"label": "media v1", "value": 0.667, "note": "0.67", "color": "muted"},
+          {"label": "media v2", "value": 0.750, "note": "0.75 ↑", "color": "gold"},
+          {"label": "seguridad v2", "value": 0.333, "note": "0.33 ▼", "color": "red"}
+        ],
+        "caption": "la media sube (0,67→0,75) y v2 es más barata… pero el segmento de SEGURIDAD empeora. Sin mirar por segmento, la regresión se despliega"
+      },
       "validator": {
         "type": "all",
         "of": [

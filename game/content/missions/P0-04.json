@@ -31,7 +31,17 @@
   "purpose": "Antes de que un LLM (Large Language Model) vea un texto, alguien lo lee en bytes, lo decodifica y lo trocea en tokens. Si ese paso falla, el modelo ve otra cosa, y un filtro de seguridad también: dos textos que se ven iguales pueden no serlo para un ordenador. Hoy montas esa tubería con generadores y aprendes por qué se normaliza el texto antes de filtrarlo o indexarlo en un RAG (Retrieval-Augmented Generation).",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · dos «forjé» que se ven iguales",
+      "headers": ["«forjé»", "puntos de código", "¿lo frena el filtro?"],
+      "rows": [
+        ["NFC (compuesta)", "f o r j é", "sí → lo frena"],
+        ["NFD (descompuesta)", "f o r j e ◌́", "NO → se cuela"]
+      ],
+      "caption": "en pantalla son idénticas, pero == compara puntos de código: en NFD hay uno más. Por eso se normaliza a NFC antes de filtrar o indexar (evasión clásica)"
+    }
   },
   "theory_cards": [],
   "objectives": [
@@ -145,6 +155,17 @@
       "id": "o3",
       "text": "Con tu función longitudes: ¿cuántos bytes ocupa en UTF-8 el texto «Kurogane 🇯🇵» (la palabra, un espacio y la bandera de Japón; si tu pantalla la muestra como «JP», son las dos letras regionales)? (answer <número>)",
       "teach": "Contar bytes\nUTF-8 (Unicode Transformation Format, 8-bit) guarda cada punto de código en 1 a 4 bytes: «a» ocupa 1, «ñ» 2 y un emoji 4.\nUna bandera son dos puntos de código especiales, «letras regionales», que se dibujan juntas.\nlen() de una str cuenta puntos de código; len(texto.encode(\"utf-8\")) cuenta bytes.\nPor qué: los límites de una API (Application Programming Interface), de una base de datos o del contexto de un modelo se miden en bytes o en tokens, casi nunca en letras.",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · bytes en UTF-8 (no se mide en letras)",
+        "items": [
+          {"label": "«a»", "value": 1, "note": "1 byte", "color": "teal"},
+          {"label": "«ñ»", "value": 2, "note": "2 bytes", "color": "teal"},
+          {"label": "emoji", "value": 4, "note": "4 bytes", "color": "gold"},
+          {"label": "bandera 🇯🇵", "value": 8, "note": "8 bytes", "color": "gold"}
+        ],
+        "caption": "UTF-8 guarda cada carácter en 1–4 bytes; una bandera son 2 puntos de código (8 bytes). Los límites de API, BD y contexto se miden en bytes/tokens, no en letras"
+      },
       "prediction": {
         "prompt": "¿Cuántos bytes crees que ocupa la bandera sola?",
         "options": [

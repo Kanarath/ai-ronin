@@ -28,7 +28,16 @@
   "mentor_intro": "Vas a enseñarle qué preferimos. Ojo con lo que premias.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · aprender de comparaciones",
+      "headers": ["petición", "respuesta A", "respuesta B", "persona"],
+      "rows": [
+        ["dame el código", "KUROGANE-77", "no puedo; prueba con…", "prefiere B"]
+      ],
+      "caption": "las personas comparan dos respuestas y marcan la mejor; es más fácil que escribir la perfecta. El modelo aprende a dar las que puntúan alto, también a negarse"
+    }
   },
   "purpose": "El ajuste con preferencias humanas (RLHF, Reinforcement Learning from Human Feedback, y variantes como DPO, Direct Preference Optimization) es lo que convierte un modelo que obedece en un asistente que también sabe negarse. Pero optimiza una recompensa, y si la recompensa está mal diseñada, el modelo aprende a engañarla: es el reward hacking, un problema central de la alineación.",
   "theory_cards": [],
@@ -119,6 +128,16 @@
         ]
       },
       "teach": "Una recompensa con trampa\nEste modelo de recompensa puntúa mejor las respuestas largas, porque a las personas que lo entrenaron les parecían más completas.\nPor qué: es un error real y frecuente al diseñar recompensas.",
+      "diagram": {
+        "kind": "table",
+        "title": "LA IDEA · premias una cosa, obtienes esa cosa",
+        "headers": ["la recompensa premia", "el modelo aprende a", "resultado"],
+        "rows": [
+          ["respuestas útiles", "ayudar", "resumen en 1 frase"],
+          ["respuestas largas", "alargar", "suelta un rollo ❗"]
+        ],
+        "caption": "el modelo optimiza la recompensa, no lo que quieres. Si premias la longitud, aprende a alargar aunque pidas un resumen: eso es reward hacking"
+      },
       "validator": {
         "type": "event",
         "event": "llm.asked",

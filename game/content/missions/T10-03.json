@@ -34,7 +34,18 @@
         "label": "devuelve"
       }
     ],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · ninguna regla iguala las tres a la vez",
+      "headers": ["regla (umbral g1)", "paridad", "ig. oport.", "precis. g1"],
+      "rows": [
+        ["umbral igual (0,5)", "0.59 ✗", "≈ igual", "0.90"],
+        ["bajar a 0,45", "0.65 ✗", "0.003 ✓", "0.80"],
+        ["bajar a 0,35", "0.82 ✓", "se separa ✗", "0.64 ✗"]
+      ],
+      "caption": "igualar una medida separa otra. Con tasas base distintas es imposible igualarlas todas (teorema): hay que ELEGIR cuál importa y documentarlo"
+    }
   },
   "purpose": "Los equipos que auditan modelos de crédito, contratación o justicia se encuentran siempre el mismo problema: varias medidas de equidad razonables que se contradicen. Está demostrado matemáticamente que, si los grupos tienen tasas base distintas, no se pueden cumplir todas a la vez. Elegir cuál importa es una decisión de la organización, que hay que documentar; la evaluación de solvencia es un sistema de alto riesgo en el AI Act europeo.",
   "theory_cards": [],
@@ -88,6 +99,15 @@
       "id": "c1",
       "text": "Con el mismo umbral, el grupo 1 recibe muchos menos préstamos. ¿Por qué?",
       "teach": "Tasas base\nLa tasa base es la fracción de un grupo que tiene el resultado bueno: aquí, 0,77 del grupo 0 devuelve y solo 0,43 del grupo 1, porque en estos datos tiene menos ingresos.\nQue una diferencia sea real no la hace justa (puede venir de desigualdades anteriores), pero cambia lo que se puede igualar.\nPor qué: casi todos los choques entre medidas de equidad nacen de tasas base distintas.",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · tasas base distintas (de ahí nace el choque)",
+        "items": [
+          {"label": "devuelven · grupo 0", "value": 0.77, "note": "77%", "color": "teal"},
+          {"label": "devuelven · grupo 1", "value": 0.43, "note": "43%", "color": "gold"}
+        ],
+        "caption": "en estos datos el grupo 1 devuelve menos (menos ingresos). Que la diferencia sea real no la hace justa, pero es lo que hace imposible igualar todas las medidas"
+      },
       "choices": [
         {
           "id": "a",

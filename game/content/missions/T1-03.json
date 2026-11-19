@@ -39,6 +39,19 @@
       "dataset": "mensajes",
       "x": "longitud",
       "y": "imperativos"
+    },
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · un texto convertido en números",
+      "headers": ["msg", "longitud", "signos", "imperat.", "tipo"],
+      "rows": [
+        ["msg-001", "48", "2", "3", "inyeccion"],
+        ["msg-002", "52", "0", "0", "legitimo"],
+        ["msg-014", "61", "1", "2", "inyeccion"]
+      ],
+      "feature_cols": [1, 2, 3],
+      "label_col": 4,
+      "caption": "cada fila = un mensaje · verdes = features sacadas del texto · oro = etiqueta (ataque o legítimo)"
     }
   },
   "theory_cards": [],
@@ -46,7 +59,7 @@
     {
       "id": "o1",
       "text": "Mira el dataset de mensajes: dataset inspect mensajes",
-      "teach": "Mensajes convertidos en números\nUn modelo no lee texto: lee números. Por eso el detector describe cada mensaje con tres features calculadas a partir del texto.\nMíralas con: dataset inspect mensajes\nPor qué: cualquier detector de IA (Inteligencia Artificial) sobre texto empieza así, convirtiendo el texto en features.",
+      "teach": "Mensajes convertidos en números\nUn modelo no lee texto como tú: solo sabe de números. Así que, antes de decidir nada, el detector describe cada mensaje con tres features calculadas a partir del texto: su longitud, cuántos signos raros lleva y cuántos verbos de orden tiene.\nMíralas con: dataset inspect mensajes.\nPiénsalo como la ficha que rellena un portero de discoteca de un vistazo: altura, edad aparente, actitud. No es la persona entera, pero son las señales con las que decide. Aquí pasa igual: tres números resumen el mensaje.\nPara qué en tu camino: CUALQUIER detector de IA sobre texto empieza por este paso, convertir el texto en números (features). En T1-01 fueron medidas de una katana; hoy son medidas de un mensaje. El modelo no cambia de idea por las palabras, sino por los números que le das.",
       "validator": {
         "type": "event",
         "event": "dataset.inspected",
@@ -94,7 +107,21 @@
     {
       "id": "o3",
       "text": "Dibuja dos gráficos con plot y descubre qué feature separa mejor los ataques de los mensajes legítimos.",
-      "teach": "Qué delata a un ataque\nComo en T1-01: si en un eje los dos colores forman grupos separados, esa feature ayuda a distinguir.\nEjemplos: plot mensajes --x longitud --y imperativos   ·   plot mensajes --x signos --y longitud\nPor qué: el diseñador de un detector necesita saber qué features delatan de verdad a un ataque; las que no, se pueden manipular sin que el detector lo note.",
+      "teach": "Qué delata a un ataque\nComo en T1-01: si a lo largo de un eje los dos colores forman grupos separados, esa feature ayuda a distinguir; si se mezclan, no.\nMira el diagrama de la izquierda: por los imperativos (eje vertical) los ataques se van arriba y los legítimos abajo, bien separados; por la longitud (eje horizontal) hay de todo mezclado.\nEjemplos: plot mensajes --x longitud --y imperativos   ·   plot mensajes --x signos --y longitud\nPara qué en tu camino: quien diseña un detector necesita saber qué features delatan DE VERDAD a un ataque. Y quien lo ataca busca justo lo contrario: una feature que el detector mire pero que el atacante pueda cambiar a su antojo sin tocar su ataque. Esa grieta la vas a explotar dentro de un momento.",
+      "diagram": {
+        "kind": "points2d",
+        "title": "LA IDEA · qué feature delata al ataque",
+        "x_label": "longitud",
+        "y_label": "imperativos",
+        "points": [
+          {"x": 0.30, "y": 0.80, "cls": 1}, {"x": 0.58, "y": 0.86, "cls": 1},
+          {"x": 0.80, "y": 0.78, "cls": 1}, {"x": 0.45, "y": 0.90, "cls": 1},
+          {"x": 0.25, "y": 0.15, "cls": 0}, {"x": 0.55, "y": 0.10, "cls": 0},
+          {"x": 0.82, "y": 0.20, "cls": 0}, {"x": 0.40, "y": 0.18, "cls": 0}
+        ],
+        "legend": [["legítimo", 0], ["ataque", 1]],
+        "caption": "por imperativos (↑) ataques arriba y legítimos abajo (separa); por longitud (→) se mezclan"
+      },
       "prediction": {
         "prompt": "¿Qué feature crees que separará mejor los ataques de los mensajes legítimos?",
         "options": [
@@ -122,7 +149,16 @@
     {
       "id": "o4",
       "text": "Un mensaje nuevo, msg-080, es en realidad un ataque al que el atacante ha añadido mucho texto de relleno. Mide su distancia a un ataque conocido (msg-001) y a un mensaje legítimo (msg-002): distance mensajes msg-080 msg-001  y  distance mensajes msg-080 msg-002",
-      "teach": "Compararlo con lo conocido\nEl detector decide comparando el mensaje nuevo con mensajes ya etiquetados: si está más cerca de un ataque, lo marca como ataque.\nMide las dos distancias con distance, como en T1-02.\nPor qué: así decide un detector por parecido, y así busca un RAG (Retrieval-Augmented Generation) sus documentos.",
+      "teach": "Compararlo con lo conocido\nEl detector no tiene una regla mágica: decide por parecido. Coge el mensaje nuevo, mide su distancia a mensajes ya etiquetados y copia la etiqueta del más cercano. Si se parece más a un ataque conocido, lo marca como ataque. Es el vecino más cercano que verás con nombre propio en T2.\nMide las dos distancias con distance, como en T1-02: una a un ataque (msg-001) y otra a un legítimo (msg-002).\nPara qué en tu camino: así decide un detector por parecido y así busca un RAG sus documentos. Pero fíjate en la grieta: msg-080 es un ataque de verdad al que le han pegado un montón de texto de relleno inocente. Acabas de ver que la longitud no distingue ataques… y que, sin normalizar, los números grandes mandan en la distancia. Predice qué va a pasar.",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · ¿a quién se parece msg-080? (sin normalizar)",
+        "items": [
+          {"label": "→ ataque", "value": 250, "note": "250", "color": "gold"},
+          {"label": "→ legítimo", "value": 11, "note": "11", "color": "teal"}
+        ],
+        "caption": "barra corta = más cerca. msg-080 queda LEJOS del ataque y pegado al legítimo: el detector lo deja pasar"
+      },
       "prediction": {
         "prompt": "Sin normalizar, ¿a cuál crees que quedará más cerca msg-080?",
         "options": [
@@ -188,7 +224,16 @@
     {
       "id": "o6",
       "text": "Normaliza el dataset y repite las dos distancias: dataset normalize mensajes --method minmax  y después distance sobre mensajes_minmax",
-      "teach": "Arreglar la escala\nComo en T1-02: min-max pone las tres features entre 0 y 1. El comando crea mensajes_minmax.\nPor qué: es la primera defensa del detector, y la más barata.",
+      "teach": "Arreglar la escala\nComo en T1-02: min-max pone las tres features entre 0 y 1, así que la longitud deja de mandar solo por tener números grandes. El comando crea mensajes_minmax.\nPara qué en tu camino: es la primera defensa del detector y la más barata que existe, una línea de código. Vuelve a medir las dos distancias sobre el dataset normalizado y mira si el truco del relleno sigue colando.",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · lo mismo, ya normalizado",
+        "items": [
+          {"label": "→ ataque", "value": 0.625, "note": "0.63", "color": "gold"},
+          {"label": "→ legítimo", "value": 0.708, "note": "0.71", "color": "teal"}
+        ],
+        "caption": "barra corta = más cerca. Ahora msg-080 queda un pelín más cerca del ataque (0,63 < 0,71): el detector ya lo marca"
+      },
       "prediction": {
         "prompt": "Tras normalizar, ¿a cuál quedará más cerca msg-080?",
         "options": [

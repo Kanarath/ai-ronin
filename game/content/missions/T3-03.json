@@ -39,6 +39,17 @@
       "dataset": "peticiones",
       "x": "peticiones_hora",
       "y": "rechazos"
+    },
+    "diagram": {
+      "kind": "lines",
+      "title": "LA IDEA · los dos errores según el umbral",
+      "x_label": "umbral",
+      "y_label": "nº",
+      "series": [
+        {"name": "FP (bloqueados)", "color": "red", "points": [[0.22, 9], [0.33, 3], [0.56, 0]]},
+        {"name": "FN (se cuelan)", "color": "gold", "points": [[0.22, 0], [0.33, 1], [0.56, 3]]}
+      ],
+      "caption": "umbral alto: no molestas a nadie pero se cuelan abusadores; bajo: los cazas todos pero bloqueas clientes"
     }
   },
   "theory_cards": [],
@@ -264,6 +275,16 @@
     {
       "id": "o5",
       "text": "Un abusador que pasa cuesta 10 (factura y respuestas copiadas) y un cliente bloqueado cuesta 1 (una persona lo revisa y lo desbloquea). Recuerda la curva: 5/9 → 0 FP y 3 FN · 3/9 → 3 FP y 1 FN · 2/9 → 9 FP y 0 FN. ¿Qué umbral cuesta menos?",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · coste de cada umbral (FN=10, FP=1)",
+        "items": [
+          {"label": "umbral 5/9", "value": 30, "note": "30", "color": "muted"},
+          {"label": "umbral 3/9", "value": 13, "note": "13", "color": "muted"},
+          {"label": "umbral 2/9", "value": 9, "note": "9", "color": "teal"}
+        ],
+        "caption": "coste = FP·1 + FN·10. Cuando dejar pasar un ataque es lo caro, gana el umbral BAJO (2/9)"
+      },
       "teach": "Elegir con números\nPara cada umbral, toma sus FP (False Positive) y FN (False Negative) de la curva y calcula el coste total, a mano o con tu función.\nPor qué: el umbral bueno es el que minimiza el coste real, no el que da la accuracy más alta.",
       "choices": [
         {
@@ -297,6 +318,16 @@
     {
       "id": "o6",
       "text": "Ahora el equipo comercial avisa: un cliente bloqueado se enfada y se va, así que cuesta 3. El abusador sigue costando 10. Con la misma curva (5/9 → 0 FP y 3 FN · 3/9 → 3 FP y 1 FN · 2/9 → 9 FP y 0 FN), ¿qué umbral cuesta menos ahora?",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · mismo detector, otro coste (FN=10, FP=3)",
+        "items": [
+          {"label": "umbral 5/9", "value": 30, "note": "30", "color": "muted"},
+          {"label": "umbral 3/9", "value": 19, "note": "19", "color": "teal"},
+          {"label": "umbral 2/9", "value": 27, "note": "27", "color": "muted"}
+        ],
+        "caption": "al encarecer el bloqueo (FP=3), el mínimo se mueve al umbral intermedio (3/9): el umbral depende de los costes"
+      },
       "teach": "Si cambian los costes, cambia el umbral\nLa curva es la misma; lo que cambia es el precio de cada error.\nPor qué: por eso los umbrales de un detector real se revisan cuando cambia el negocio o cambian los ataques.",
       "choices": [
         {

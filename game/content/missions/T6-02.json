@@ -30,7 +30,17 @@
   "mentor_intro": "Aviso de honestidad: aquí la atención usa directamente los embeddings de T5 como Q, K y V (query, key y value). En un transformer real, Q, K y V salen de multiplicar por matrices aprendidas, hay muchos cabezales y decenas de capas. El cálculo, sin embargo, es exactamente este. Vamos paso a paso.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · el coste de mirar a todos (n×n)",
+      "items": [
+        {"label": "1.000 tokens", "value": 1, "note": "1M", "color": "teal"},
+        {"label": "2.000 tokens", "value": 4, "note": "4M", "color": "gold"},
+        {"label": "4.000 tokens", "value": 16, "note": "16M", "color": "red"}
+      ],
+      "caption": "cada token puntúa a todos: n×n pesos. Doblar el contexto CUADRUPLICA el trabajo; por eso la ventana tiene límite"
+    }
   },
   "theory_cards": [
     {
@@ -108,6 +118,19 @@
     {
       "id": "o2",
       "text": "Repite con máscara causal. ¿Qué peso se da la primera palabra, «herrera», a sí misma? (answer <número>)",
+      "diagram": {
+        "kind": "table",
+        "title": "LA IDEA · la máscara causal (solo mirar atrás)",
+        "headers": ["mira a →", "herr", "mart", "kat", "fueg", "agua"],
+        "rows": [
+          ["herrera", "●", "·", "·", "·", "·"],
+          ["martillo", "●", "●", "·", "·", "·"],
+          ["katana", "●", "●", "●", "·", "·"],
+          ["fuego", "●", "●", "●", "●", "·"],
+          ["agua", "●", "●", "●", "●", "●"]
+        ],
+        "caption": "cada palabra solo atiende a las anteriores y a sí misma: matriz triangular. Así genera un LLM, sin ver el futuro"
+      },
       "prediction": {
         "prompt": "Si cada palabra solo puede mirar a las anteriores, ¿a quién podrá atender la primera?",
         "options": [

@@ -54,6 +54,18 @@
       "dataset": "puerta_xor",
       "x": "a",
       "y": "b"
+    },
+    "diagram": {
+      "kind": "points2d",
+      "title": "LA IDEA · XOR no se separa con una recta",
+      "x_label": "a",
+      "y_label": "b",
+      "points": [
+        {"x": 0.15, "y": 0.15, "cls": 0}, {"x": 0.85, "y": 0.85, "cls": 0},
+        {"x": 0.15, "y": 0.85, "cls": 1}, {"x": 0.85, "y": 0.15, "cls": 1}
+      ],
+      "legend": [["sale 0", 0], ["sale 1", 1]],
+      "caption": "los unos están en esquinas opuestas: ninguna línea recta los deja a un lado y los ceros al otro"
     }
   },
   "theory_cards": [
@@ -146,6 +158,19 @@
     {
       "id": "o3",
       "text": "Entrena la neurona con la puerta AND y comprueba su accuracy.",
+      "diagram": {
+        "kind": "points2d",
+        "title": "LA IDEA · AND SÍ se separa con una recta",
+        "x_label": "a",
+        "y_label": "b",
+        "points": [
+          {"x": 0.15, "y": 0.15, "cls": 0}, {"x": 0.15, "y": 0.85, "cls": 0},
+          {"x": 0.85, "y": 0.15, "cls": 0}, {"x": 0.85, "y": 0.85, "cls": 1}
+        ],
+        "boundary": [[0.45, 0.95], [0.95, 0.45]],
+        "legend": [["sale 0", 0], ["sale 1", 1]],
+        "caption": "una recta deja sola la esquina (1,1): eso es justo lo que aprende la neurona"
+      },
       "prediction": {
         "prompt": "¿Podrá una sola neurona aprender AND (salida 1 solo si a=1 y b=1)?",
         "options": [
@@ -172,7 +197,20 @@
     {
       "id": "o4",
       "text": "Programa una neurona a mano: crea una neurona NUEVA y, sin entrenarla, ajusta sus pesos y su sesgo con nn set para que implemente OR (salida 1 si a=1 o b=1). Compruébalo con nn evaluate.",
-      "teach": "Pesos a mano\nLa neurona dice 1 cuando z = w₁·a + w₂·b + bias es mayor que 0. Para OR quieres: (0,0) → z negativo; (1,0), (0,1) y (1,1) → z positivo.\nElige un sesgo negativo y pesos que, con UNA sola entrada a 1, ya superen al sesgo. Valores grandes (como 10) hacen que la sigmoide dé casi 0 o casi 1.\nComando: nn set <red> <parámetro> <valor>, con los nombres que ves en nn weights.\nPara comprobarla: nn evaluate <red> <dataset> (por ejemplo nn evaluate o puerta_or).\nPor qué: entender qué pesos producen qué decisión es la base para auditar un modelo.",
+      "teach": "Pesos a mano\nLa neurona dice 1 cuando z = w₁·a + w₂·b + bias es mayor que 0. Para OR quieres: (0,0) → z negativo; (1,0), (0,1) y (1,1) → z positivo.\nElige un sesgo negativo y pesos que, con UNA sola entrada a 1, ya superen al sesgo. Valores grandes (como 10) hacen que la sigmoide dé casi 0 o casi 1.\nComando: nn set <red> <parámetro> <valor>, con los nombres que ves en nn weights.\nPara comprobarla: nn evaluate <red> <dataset> (por ejemplo nn evaluate o puerta_or).\nPor qué: elegir los pesos a mano es ver, sin niebla, que una neurona no es más que una recta que decides tú; es la base para auditar un modelo.",
+      "diagram": {
+        "kind": "points2d",
+        "title": "LA IDEA · OR, programado a mano",
+        "x_label": "a",
+        "y_label": "b",
+        "points": [
+          {"x": 0.15, "y": 0.15, "cls": 0}, {"x": 0.15, "y": 0.85, "cls": 1},
+          {"x": 0.85, "y": 0.15, "cls": 1}, {"x": 0.85, "y": 0.85, "cls": 1}
+        ],
+        "boundary": [[0.05, 0.5], [0.5, 0.05]],
+        "legend": [["sale 0", 0], ["sale 1", 1]],
+        "caption": "tu recta deja sola la esquina (0,0): pesos 10 y sesgo −5 la colocan justo ahí"
+      },
       "validator": {
         "type": "event",
         "event": "nn.evaluated",

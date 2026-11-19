@@ -34,7 +34,16 @@
         "label": "tipo"
       }
     ],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · un comité de árboles vota mejor",
+      "items": [
+        {"label": "1 árbol", "value": 0.889, "note": "0.89", "color": "muted"},
+        {"label": "bosque (50)", "value": 0.917, "note": "0.92", "color": "teal"}
+      ],
+      "caption": "cada árbol ve otra muestra y se equivoca en sitios distintos; al votar, los errores se compensan"
+    }
   },
   "purpose": "Los bosques aleatorios (random forests) y sus parientes de boosting son el modelo por defecto con datos en tablas en muchas empresas, incluida la detección de fraude y de abuso. Además dan una pista de qué features importan, útil para explicar una decisión a un auditor.",
   "theory_cards": [],
@@ -143,6 +152,16 @@
       "id": "o4",
       "text": "Mira qué features usa más el bosque: tree show f",
       "teach": "Importancia de las features\nUn bosque tiene demasiadas reglas para leerlas, pero puedes contar qué features usa en sus cortes.\nPor qué: es la primera explicación que pide un auditor: ¿en qué se basa el modelo?",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · en qué features corta más el bosque",
+        "items": [
+          {"label": "peticiones_hora", "value": 0.50, "note": "50%", "color": "teal"},
+          {"label": "rechazos", "value": 0.30, "note": "30%", "color": "teal"},
+          {"label": "tokens_medios", "value": 0.20, "note": "20%", "color": "muted"}
+        ],
+        "caption": "importancia = cuánto corta en cada feature. Es una pista de en qué se basa, NO una causa del abuso"
+      },
       "validator": {
         "type": "event",
         "event": "classic.shown",

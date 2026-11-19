@@ -29,7 +29,19 @@
   "mentor_intro": "El modelo de hoy es un n-grama: cuenta qué palabra suele seguir a otras en el corpus de la forja. Un LLM usa una red neuronal enorme en lugar de un recuento, pero la tarea es idéntica. Vamos paso a paso.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · P(siguiente token | «la»)",
+      "items": [
+        {"label": "forja", "value": 0.233, "note": "0.23", "color": "teal"},
+        {"label": "hoja", "value": 0.200, "note": "0.20", "color": "teal"},
+        {"label": "dureza", "value": 0.133, "note": "0.13", "color": "teal"},
+        {"label": "espada", "value": 0.100, "note": "0.10", "color": "muted"},
+        {"label": "…(11 más)", "value": 0.334, "note": "0.33", "color": "muted"}
+      ],
+      "caption": "esto es lo único que hace un LLM antes de cada palabra: una probabilidad por token; elige uno y repite"
+    }
   },
   "theory_cards": [
     {
@@ -73,6 +85,17 @@
     {
       "id": "o2",
       "text": "Repite la consulta con temperatura 0.1. ¿Qué probabilidad final tiene «forja»? (answer <número>, 3 decimales)",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · temperatura 0,1 concentra en el favorito",
+        "items": [
+          {"label": "forja", "value": 0.824, "note": "0.82", "color": "teal"},
+          {"label": "hoja", "value": 0.120, "note": "0.12", "color": "muted"},
+          {"label": "dureza", "value": 0.030, "note": "0.03", "color": "muted"},
+          {"label": "…(12 más)", "value": 0.026, "note": "0.03", "color": "muted"}
+        ],
+        "caption": "la temperatura baja exagera las diferencias: «forja» pasa del 23% al 82%. T alta las aplana (más variedad y más disparates)"
+      },
       "prediction": {
         "prompt": "Con temperatura baja (0.1), ¿qué le pasará a la distribución?",
         "options": [

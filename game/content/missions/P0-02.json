@@ -32,7 +32,18 @@
   "purpose": "Las librerías de IA (Inteligencia Artificial) tienen la misma forma: un objeto con fit para aprender y predict para usar lo aprendido, y por dentro cuentas con matrices. Por eso NumPy y las clases están debajo de scikit-learn, PyTorch y de cualquier embedding (el vector de números que representa un texto) de un RAG (Retrieval-Augmented Generation). Hoy reescribes tu neurona de T4-01 así y mides cuánto ganas.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "lines",
+      "title": "LA IDEA · las mismas cuentas, en matrices (NumPy)",
+      "x_label": "filas",
+      "y_label": "segundos",
+      "series": [
+        {"name": "Python puro", "color": "red", "points": [[240, 0.05], [2400, 0.5], [12000, 2.5]]},
+        {"name": "NumPy (en C)", "color": "teal", "points": [[240, 0.02], [2400, 0.03], [12000, 0.05]]}
+      ],
+      "caption": "X @ w hace todos los productos de golpe; el bucle Python los hace uno a uno. Con más filas la ventaja crece: debajo de scikit-learn y PyTorch está esto"
+    }
   },
   "theory_cards": [
     {
@@ -168,6 +179,21 @@
       "id": "o3",
       "text": "Con tu implementación: estandariza las katanas, amplíalas con los cuadrados y ajusta RegresionLogisticaNumPy(0.5, 300) con «defectuosa» = 1. ¿Qué accuracy da sobre esos mismos datos? (answer <número>, 3 decimales)",
       "teach": "De script a pregunta\nUsa el intérprete del entorno (.\\.venv\\Scripts\\python.exe) desde forja/ejercicios.\nfrom apoyo import cargar_katanas, y el resto como en test_una_recta_no_basta.\nSin los cuadrados, la accuracy (proporción de aciertos) no pasa de 0,55: casi como tirar una moneda.\nPor qué: antes de las redes profundas, diseñar features a mano era el oficio principal del aprendizaje automático.",
+      "diagram": {
+        "kind": "points2d",
+        "title": "LA IDEA · una recta no separa los dos extremos",
+        "x_label": "dureza",
+        "y_label": "flex",
+        "points": [
+          {"x": 0.45, "y": 0.50, "cls": 0}, {"x": 0.50, "y": 0.45, "cls": 0},
+          {"x": 0.55, "y": 0.55, "cls": 0}, {"x": 0.50, "y": 0.60, "cls": 0}, {"x": 0.48, "y": 0.42, "cls": 0},
+          {"x": 0.12, "y": 0.50, "cls": 1}, {"x": 0.15, "y": 0.40, "cls": 1}, {"x": 0.10, "y": 0.62, "cls": 1},
+          {"x": 0.88, "y": 0.50, "cls": 1}, {"x": 0.85, "y": 0.40, "cls": 1}, {"x": 0.90, "y": 0.62, "cls": 1}
+        ],
+        "boundaries": [[[0.30, 0.05], [0.30, 0.95]], [[0.70, 0.05], [0.70, 0.95]]],
+        "legend": [["apta", 0], ["defectuosa", 1]],
+        "caption": "las defectuosas, en los dos extremos (muy duras o muy blandas): ninguna recta sola las separa. La feature z² («lejos del centro») curva la frontera, como la capa oculta en XOR"
+      },
       "validator": {
         "type": "answer",
         "expected": 0.871,

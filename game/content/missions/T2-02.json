@@ -39,6 +39,22 @@
       "dataset": "peticiones",
       "x": "peticiones_hora",
       "y": "rechazos"
+    },
+    "diagram": {
+      "kind": "points2d",
+      "title": "LA IDEA · el detector vota con k=5 vecinos",
+      "x_label": "peticiones/h",
+      "y_label": "rechazos",
+      "points": [
+        {"x": 0.55, "y": 0.70, "cls": 1}, {"x": 0.68, "y": 0.60, "cls": 1},
+        {"x": 0.44, "y": 0.58, "cls": 1}, {"x": 0.60, "y": 0.42, "cls": 0},
+        {"x": 0.46, "y": 0.40, "cls": 0}, {"x": 0.15, "y": 0.20, "cls": 0},
+        {"x": 0.85, "y": 0.80, "cls": 1}, {"x": 0.20, "y": 0.75, "cls": 0}
+      ],
+      "query": {"x": 0.55, "y": 0.55, "label": "cliente nuevo"},
+      "k": 5,
+      "legend": [["normal", 0], ["abuso", 1]],
+      "caption": "5 vecinos votan: 3 abuso, 2 normal → el detector marca ABUSO"
     }
   },
   "theory_cards": [],
@@ -184,6 +200,16 @@
     {
       "id": "o4",
       "text": "Según la matriz de confusión, ¿cuántos clientes que abusan se le escapan al detector (real abuso, predicho normal)? (answer <número>)",
+      "diagram": {
+        "kind": "table",
+        "title": "LA IDEA · la matriz de confusión",
+        "headers": ["real ＼ predicho", "normal", "abuso"],
+        "rows": [
+          ["normal", "25 ✓", "1"],
+          ["abuso", "3", "7 ✓"]
+        ],
+        "caption": "fila = lo que ERA · columna = lo que DIJO. Los 3 de (abuso → normal) son los abusadores que se cuelan"
+      },
       "teach": "Leer la matriz de confusión\nCada fila es la clase real; cada columna, la que predijo el modelo.\nLa fila abuso con la columna normal son los abusadores que el detector deja pasar.\nPor qué: en seguridad no todos los errores son iguales; un ataque que pasa suele costar más que una falsa alarma.",
       "validator": {
         "type": "answer",
@@ -201,6 +227,22 @@
       "id": "o5",
       "text": "Mira por qué se le escapa uno de ellos, cli-041: model predict <modelo> <test normalizado> cli-041",
       "teach": "Preguntar al modelo por qué\nmodel predict enseña los 5 vecinos que han votado y la clase de cada uno.\nPor qué: un analista de seguridad no se fía de un detector hasta que entiende sus fallos.",
+      "diagram": {
+        "kind": "points2d",
+        "title": "LA IDEA · por qué se cuela cli-041",
+        "x_label": "peticiones/h",
+        "y_label": "rechazos",
+        "points": [
+          {"x": 0.30, "y": 0.28, "cls": 0}, {"x": 0.42, "y": 0.20, "cls": 0},
+          {"x": 0.24, "y": 0.34, "cls": 0}, {"x": 0.38, "y": 0.40, "cls": 0},
+          {"x": 0.55, "y": 0.72, "cls": 1}, {"x": 0.70, "y": 0.78, "cls": 1},
+          {"x": 0.80, "y": 0.60, "cls": 1}
+        ],
+        "query": {"x": 0.33, "y": 0.30, "label": "cli-041"},
+        "k": 5,
+        "legend": [["normal", 0], ["abuso", 1]],
+        "caption": "cli-041 cae entre clientes normales: 4 de sus 5 vecinos son normales → el detector dice NORMAL"
+      },
       "prediction": {
         "prompt": "¿Qué crees que predecirá el detector para cli-041?",
         "options": [
@@ -257,6 +299,15 @@
     {
       "id": "o7",
       "text": "Imagina un «detector» que no mira nada y dice siempre «normal». ¿Qué accuracy sacaría en este test? (answer <número>, en tanto por uno con 3 decimales, por ejemplo answer 0.500)",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · ¿gana a lo más tonto?",
+        "items": [
+          {"label": "«siempre normal»", "value": 0.722, "note": "0.72", "color": "muted"},
+          {"label": "tu k-NN", "value": 0.889, "note": "0.89", "color": "teal"}
+        ],
+        "caption": "la línea base ya saca 72% sin mirar nada (y no caza ni un abusador): si no la superas con holgura, no aportas"
+      },
       "teach": "Comparar con lo más tonto\nUna LÍNEA BASE es el resultado de la estrategia más simple posible.\nEse detector acertaría todos los clientes normales del test y fallaría todos los abusadores. Los normales son la suma de la fila normal de la matriz de confusión.\nAccuracy = aciertos ÷ total.\nPor qué: si tu modelo no gana con claridad a la línea base, no aporta nada. Es lo primero que se comprueba al evaluar cualquier sistema de IA (Inteligencia Artificial).",
       "validator": {
         "type": "answer",

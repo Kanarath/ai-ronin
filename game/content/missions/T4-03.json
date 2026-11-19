@@ -38,6 +38,18 @@
       "dataset": "llamadas",
       "x": "confianza_origen",
       "y": "confianza_destino"
+    },
+    "diagram": {
+      "kind": "points2d",
+      "title": "LA IDEA · el riesgo tiene forma de XOR",
+      "x_label": "conf. origen",
+      "y_label": "conf. destino",
+      "points": [
+        {"x": 0.15, "y": 0.15, "cls": 0}, {"x": 0.85, "y": 0.85, "cls": 0},
+        {"x": 0.85, "y": 0.15, "cls": 1}, {"x": 0.15, "y": 0.85, "cls": 1}
+      ],
+      "legend": [["segura", 0], ["peligrosa", 1]],
+      "caption": "peligrosa cuando origen y destino tienen confianza DISTINTA (fuga o entrada): dos esquinas opuestas, como XOR"
     }
   },
   "theory_cards": [],
@@ -148,6 +160,19 @@
       "id": "o5",
       "text": "Crea una red con 4 neuronas ocultas (lr 1, semilla 1) y entrénala 3000 épocas con las llamadas.",
       "teach": "Una capa oculta\nComo en T4-02: nn create red --hidden 4 --lr 1 --seed 1  y después  nn train red llamadas --epochs 3000 --positive peligrosa\nPor qué: con varias rectas combinadas, la red puede marcar las dos esquinas peligrosas a la vez.",
+      "diagram": {
+        "kind": "points2d",
+        "title": "LA IDEA · la red traza dos rectas",
+        "x_label": "conf. origen",
+        "y_label": "conf. destino",
+        "points": [
+          {"x": 0.15, "y": 0.15, "cls": 0}, {"x": 0.85, "y": 0.85, "cls": 0},
+          {"x": 0.85, "y": 0.15, "cls": 1}, {"x": 0.15, "y": 0.85, "cls": 1}
+        ],
+        "boundaries": [[[0.45, 0.05], [0.95, 0.55]], [[0.05, 0.45], [0.55, 0.95]]],
+        "legend": [["segura", 0], ["peligrosa", 1]],
+        "caption": "una recta rodea cada esquina peligrosa; la capa oculta las combina (como NOR+AND en XOR)"
+      },
       "validator": {
         "type": "event",
         "event": "nn.trained",

@@ -29,7 +29,19 @@
   "purpose": "Muchos chatbots hechos con un LLM (Large Language Model) tienen delante un filtro de palabras prohibidas: si el mensaje contiene «ignora tus instrucciones» o un tema vetado, lo bloquean. Los atacantes los esquivan disfrazando el texto: otras mayúsculas, letras separadas, sinónimos. Hoy ves por qué funciona ese truco con un tokenizador y unos embeddings, y en A1 lo usarás contra un chatbot completo.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · el filtro busca un id exacto",
+      "headers": ["mensaje", "token clave", "¿lo frena?"],
+      "rows": [
+        ["«katana»", "▁katana (93)", "lo FRENA"],
+        ["«KATANA»", "letras + <?>", "se cuela"],
+        ["«k a t a n a»", "8 trozos", "se cuela"],
+        ["«espada»", "otro token", "se cuela"]
+      ],
+      "caption": "el filtro busca el id 93; el LLM entiende el significado. El atacante vive en ese hueco: cualquier disfraz pasa"
+    }
   },
   "theory_cards": [],
   "objectives": [
@@ -186,6 +198,15 @@
       "id": "o6",
       "text": "Ahora un cliente legítimo pregunta por un martillo. Mide la similitud coseno entre katana y martillo (answer <número>, 3 decimales) y piensa si el filtro con umbral 0,9 lo bloquearía.",
       "teach": "No bloquear a los buenos\nUn filtro que bloquea demasiado espanta a los clientes. Es el falso positivo de T3: decir «ataque» cuando no lo es.\nComando: embed compare katana martillo\nPor qué: todo filtro de seguridad se ajusta con dos cuentas a la vez: cuántos ataques para y cuántos mensajes buenos bloquea por error.",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · filtrar por significado (umbral 0,9)",
+        "items": [
+          {"label": "katana vs espada", "value": 0.999, "note": "0.999", "color": "red"},
+          {"label": "katana vs martillo", "value": 0.602, "note": "0.602", "color": "teal"}
+        ],
+        "caption": "por significado, «espada» (0,999) se bloquea aunque no comparta tokens; el martillo (0,602 < 0,9) pasa"
+      },
       "validator": {
         "type": "all",
         "of": [

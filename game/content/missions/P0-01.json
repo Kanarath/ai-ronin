@@ -34,7 +34,18 @@
   "purpose": "Casi toda aplicación con un LLM (Large Language Model) tiene esta forma: un servicio web que recibe la pregunta, llama al modelo por HTTP (HyperText Transfer Protocol) y devuelve la respuesta. El chatbot de A1 y el asistente RAG (Retrieval-Augmented Generation) de A2 son esto mismo, con más piezas. Hoy montas el esqueleto real en tu CPU (Central Processing Unit) y mides lo que en el Dojo no se ve: lo que tarda y lo poco que se repite.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "chips",
+      "title": "LA IDEA · la forma de casi toda app con LLM",
+      "chips": [
+        {"text": "tu código"}, {"text": "→", "color": "muted"},
+        {"text": "FastAPI :8000 (valida)", "color": "teal"}, {"text": "→", "color": "muted"},
+        {"text": "Ollama :11434 (LLM)", "color": "gold"}, {"text": "→", "color": "muted"},
+        {"text": "respuesta + métricas"}
+      ],
+      "caption": "un servicio recibe texto, llama al modelo por HTTP y devuelve texto. El chatbot de A1 y el RAG de A2 son esto mismo con más piezas"
+    }
   },
   "theory_cards": [
     {
@@ -173,6 +184,15 @@
       "id": "o3",
       "text": "Arranca el modelo real (README, sección 3) y mide con medir.py: 5 respuestas con temperatura 0.8 y 5 con temperatura 0 y semilla 42. Después responde: ¿qué explica lo que has visto?",
       "teach": "Medir el modelo real\nmedir.py hace la misma pregunta varias veces y cuenta cuántas respuestas distintas salen, cuántos segundos tarda cada una y cuántos tokens por segundo genera.\nLa TEMPERATURA (T6-01) decide cuánto se reparte la probabilidad entre los tokens candidatos. La SEMILLA fija el número aleatorio del sorteo: con la misma semilla, el mismo sorteo.\nPor qué: en producción tienes que saber si tu servicio responde igual dos veces; los tests y las evaluaciones dependen de ello.",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · un LLM no tiene UNA respuesta",
+        "items": [
+          {"label": "temp 0,8 (5 veces)", "value": 5, "note": "5 distintas", "color": "gold"},
+          {"label": "temp 0 + semilla", "value": 1, "note": "1 (igual)", "color": "teal"}
+        ],
+        "caption": "sortea de una distribución. Temp 0 + semilla fija = repetible (para tests y evals); algo de azar = para conversar"
+      },
       "prediction": {
         "prompt": "Con temperatura 0.8, de 5 respuestas a la misma pregunta, ¿cuántas serán distintas?",
         "options": [

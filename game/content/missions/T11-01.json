@@ -29,7 +29,17 @@
   "mentor_intro": "Un modelo mejora en lo que premias. La pregunta es si puedes premiar la verdad.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · premiar la verdad vs premiar que suene bien",
+      "items": [
+        {"label": "inicio (azar)", "value": 0.17, "note": "0.17", "color": "muted"},
+        {"label": "GRPO verificable", "value": 1.0, "note": "1.00", "color": "teal"},
+        {"label": "recompensa amañada", "value": 0.0, "note": "0.00", "color": "red"}
+      ],
+      "caption": "premiar solo lo CORRECTO (un verificador) lleva de 1/6 a resolverlos todos; premiar lo que SUENA seguro hace que aprenda a sonar seguro y fallar: reward hacking"
+    }
   },
   "purpose": "El salto de los modelos que razonan es el aprendizaje por refuerzo con recompensas verificables (RLVR): en mates y código, un verificador dice gratis y sin error si la respuesta es correcta. GRPO es el algoritmo que lo hace sin un modelo de valor aparte, y entender su recompensa es entender por qué estos modelos despegaron en 2026.",
   "theory_cards": [],

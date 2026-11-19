@@ -28,7 +28,18 @@
   "mentor_intro": "El modelo pide; tu código decide si hace caso.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "chips",
+      "title": "LA IDEA · el modelo propone, tu código dispone",
+      "chips": [
+        {"text": "modelo pide: buscar_pedido(«P109»)", "color": "gold"}, {"text": "→", "color": "muted"},
+        {"text": "tu código valida ¿P-NNN?", "color": "teal"}, {"text": "→", "color": "muted"},
+        {"text": "rechaza → reintenta «P-109»", "color": "cyan"}, {"text": "→", "color": "muted"},
+        {"text": "ejecuta en la BD"}
+      ],
+      "caption": "el modelo solo ESCRIBE qué herramienta quiere; tu código decide si la ejecuta y valida los argumentos antes. Ese es el punto de control de seguridad de los agentes"
+    }
   },
   "purpose": "Las llamadas a herramientas (function calling) son lo que convierte un LLM (Large Language Model) en algo que actúa: buscar en una base de datos, consultar una API (Application Programming Interface), enviar un correo. Es la pieza básica de los agentes de A3 y de MCP (Model Context Protocol) en A4, y su primera regla de seguridad es que los argumentos se validan fuera del modelo.",
   "theory_cards": [],

@@ -33,7 +33,16 @@
   "purpose": "Toda red neuronal, desde tu MLP (Multi-Layer Perceptron) hasta un LLM (Large Language Model), se entrena así: un lote de ejemplos pasa por la red como productos de matrices, y el backward calcula los gradientes también en matrices. Hoy reescribes el MLP de XOR (exclusive OR) de T4-02 de esta forma y compruebas con un gradient check que no has cambiado ni una derivada.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "chips",
+      "title": "LA IDEA · el lote entero pasa como matrices",
+      "chips": [
+        {"text": "X (n,d)"}, {"text": "@", "color": "muted"},
+        {"text": "W1 (d,H)", "color": "teal"}, {"text": "= A1 (n,H)", "color": "gold"}
+      ],
+      "caption": "en T4-02 sumabas ejemplo a ejemplo; hoy el bucle «por cada ejemplo» vive DENTRO de cada @ (código C). Mismas matemáticas, sin un solo for sobre ejemplos"
+    }
   },
   "theory_cards": [
     {

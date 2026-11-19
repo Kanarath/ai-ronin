@@ -38,6 +38,12 @@
       "dataset": "temple",
       "x": "minutos_enfriado",
       "y": "dureza_hrc"
+    },
+    "diagram": {
+      "kind": "bowl",
+      "title": "LA IDEA · bajar la montaña",
+      "steps": [-1.0, -0.55, -0.28, -0.12, -0.04],
+      "caption": "el gradiente es la pendiente bajo tus pies; das un paso cuesta abajo y repites hasta el fondo"
     }
   },
   "theory_cards": [
@@ -70,6 +76,12 @@
       "id": "o2",
       "text": "Crea un regresor con learning rate 0.001 y entrénalo 100 épocas sobre temple (x = minutos_enfriado, y = dureza_hrc).",
       "teach": "Aprender = bajar el error\nUna regresión lineal predice un número con una recta: dureza = w · minutos + b. Entrenar es buscar los w y b con los que la recta se ajusta mejor a los puntos.\nEl DESCENSO POR GRADIENTE empieza en w=0, b=0 y repite el paso de la tarjeta de arriba. Cada pasada por todos los datos es una ÉPOCA.\nComandos: regress create <nombre> --lr <número> · regress train <nombre> <dataset> --x <entrada> --y <objetivo> --epochs <n>\nPor qué: un LLM (Large Language Model) aprende así: mide su error al predecir la siguiente palabra y mueve sus parámetros cuesta abajo.",
+      "diagram": {
+        "kind": "bowl",
+        "title": "LA IDEA · un paso diminuto (lr 0.001)",
+        "steps": [-1.0, -0.92, -0.85, -0.79, -0.74, -0.70],
+        "caption": "pasitos de tortuga: avanza, pero no llega al fondo ni en 100 épocas"
+      },
       "prediction": {
         "prompt": "¿Crees que en 100 épocas la pérdida (MSE) bajará de 10?",
         "options": [
@@ -114,6 +126,13 @@
     {
       "id": "o4",
       "text": "Crea otro regresor con learning rate 0.03 y entrénalo igual.",
+      "diagram": {
+        "kind": "bowl",
+        "title": "LA IDEA · un paso demasiado grande (lr 0.03)",
+        "steps": [-0.5, 0.7, -0.95, 1.15],
+        "diverges": true,
+        "caption": "salta al otro lado del valle, más arriba que antes; cada salto es peor → la pérdida explota (NaN)"
+      },
       "prediction": {
         "prompt": "Con un paso 30 veces más grande, ¿qué pasará?",
         "options": [
@@ -197,6 +216,12 @@
       "id": "o6",
       "text": "Normaliza SOLO la feature minutos_enfriado con z-score y entrena un regresor nuevo con lr 0.5 y como mucho 20 épocas sobre el dataset normalizado.",
       "teach": "Normalizar solo la entrada\nQueremos seguir prediciendo la dureza en HRC (la escala de dureza Rockwell C), así que solo normalizamos la entrada: los minutos.\nZ-SCORE: (valor − media) ÷ desviación típica. Deja la feature centrada en 0 y con dispersión 1.\n--only elige qué features se transforman: dataset normalize temple --method zscore --only minutos_enfriado (crea temple_zscore, o el nombre que des con --as).\nDespués entrena un regresor NUEVO sobre ese dataset, con las mismas --x y --y.\nPor qué: por la misma razón, las redes neuronales normalizan sus entradas y los datos entre sus capas.",
+      "diagram": {
+        "kind": "bowl",
+        "title": "LA IDEA · valle redondo (x normalizada)",
+        "steps": [-1.0, -0.25, -0.03],
+        "caption": "normalizar redondea el valle: en ~3 pasos al fondo, con un paso 25× mayor sin divergir"
+      },
       "prediction": {
         "prompt": "Con x normalizada y lr 0.5, ¿cuántas épocas crees que necesitará para converger?",
         "options": [

@@ -46,6 +46,19 @@
       "dataset": "puerta_xor",
       "x": "a",
       "y": "b"
+    },
+    "diagram": {
+      "kind": "points2d",
+      "title": "LA IDEA · la capa oculta combina dos rectas",
+      "x_label": "a",
+      "y_label": "b",
+      "points": [
+        {"x": 0.15, "y": 0.15, "cls": 0}, {"x": 0.85, "y": 0.85, "cls": 0},
+        {"x": 0.15, "y": 0.85, "cls": 1}, {"x": 0.85, "y": 0.15, "cls": 1}
+      ],
+      "boundaries": [[[0.05, 0.45], [0.45, 0.05]], [[0.55, 0.95], [0.95, 0.55]]],
+      "legend": [["sale 0", 0], ["sale 1", 1]],
+      "caption": "una neurona recorta la esquina (0,0) y otra la (1,1); juntas dejan los unos en la franja del medio"
     }
   },
   "theory_cards": [
@@ -289,6 +302,17 @@
     {
       "id": "o3",
       "text": "Repite exactamente lo mismo cambiando solo la semilla a 5.",
+      "diagram": {
+        "kind": "lines",
+        "title": "LA IDEA · el punto de partida importa",
+        "x_label": "épocas",
+        "y_label": "pérdida",
+        "series": [
+          {"name": "semilla 1", "color": "teal", "points": [[0, 0.70], [1000, 0.35], [2000, 0.08], [3000, 0.01]]},
+          {"name": "semilla 5", "color": "red", "points": [[0, 0.70], [1000, 0.69], [2000, 0.69], [3000, 0.69]]}
+        ],
+        "caption": "misma red y mismos datos: desde la semilla 1 baja al fondo; desde la 5 cae en una trampa y se queda en 0,69"
+      },
       "prediction": {
         "prompt": "Misma red, mismos datos, mismas épocas, otros pesos iniciales: ¿qué pasará?",
         "options": [
@@ -395,6 +419,16 @@
     {
       "id": "o6",
       "text": "¿Qué accuracy en el test obtiene la red de 8 ocultas? (answer <número>, 3 decimales)",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · neurona vs red en un problema real",
+        "items": [
+          {"label": "1 neurona", "value": 0.60, "note": "~azar", "color": "muted"},
+          {"label": "red (8 ocultas)", "value": 0.861, "note": "0.86", "color": "teal"},
+          {"label": "k-NN k=9", "value": 0.875, "note": "0.87", "color": "gold"}
+        ],
+        "caption": "las defectuosas forman dos grupos (como XOR): la recta sola no puede; la red sí, pero el k-NN simple empata"
+      },
       "validator": {
         "type": "answer",
         "expected": 0.861,

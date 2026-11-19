@@ -28,7 +28,19 @@
   "mentor_intro": "El modelo se niega. Veamos cuánto aguanta.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · parchear disfraces es una carrera sin fin",
+      "headers": ["cómo se pide el secreto", "el asistente"],
+      "rows": [
+        ["petición directa", "se niega ✓"],
+        ["juego de rol", "cede ❗"],
+        ["+ parche de rol → juego de rol", "se niega ✓"],
+        ["disfraz de traducción", "cede ❗"]
+      ],
+      "caption": "la alineación se aprende de ejemplos, no es una barrera: cada parche cierra un disfraz y deja abiertos los demás. El secreto se protege FUERA del modelo"
+    }
   },
   "purpose": "Los jailbreaks son la familia de ataques más conocida contra los asistentes con LLM (Large Language Model). Entender que la alineación es un comportamiento aprendido de ejemplos, y no una barrera, es lo que separa a quien pone parches de quien diseña sistemas seguros. Es la base directa de A1.",
   "theory_cards": [],

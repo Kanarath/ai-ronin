@@ -27,7 +27,17 @@
   "mentor_intro": "Vamos a construir un tokenizador de verdad, con el mismo algoritmo que usan los modelos GPT, entrenado con los textos de la forja. Paso a paso.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "chips",
+      "title": "LA IDEA · el texto se corta en tokens",
+      "pre": "«la katana del maestro» →",
+      "chips": [
+        {"text": "▁la"}, {"text": "▁katana"}, {"text": "▁del"}, {"text": "▁maestro"}
+      ],
+      "count_suffix": "tokens",
+      "caption": "con 200 fusiones, cada palabra frecuente del corpus se vuelve un solo token (y luego un número)"
+    }
   },
   "theory_cards": [
     {
@@ -42,6 +52,18 @@
       "id": "o1",
       "text": "Entrena un tokenizador SIN fusiones y tokeniza «la katana del maestro». ¿Cuántos tokens salen? (answer <número>)",
       "teach": "El tokenizador más simple\nUn token es un trozo de texto. El tokenizador corta el texto en tokens y da a cada uno un número: su id.\nCon 0 fusiones, cada carácter es un token, y la marca ▁ señala dónde empieza cada palabra.\nComandos: tokenizer train t0 --merges 0 entrena el tokenizador; tokenize t0 <texto> parte un texto y enseña los tokens, sus ids y cuántos hay.\nPor qué: la red de un LLM (Large Language Model) no ve letras ni palabras: ve esta lista de ids.",
+      "diagram": {
+        "kind": "chips",
+        "title": "LA IDEA · sin fusiones, cada letra es un token",
+        "pre": "«la katana del maestro» →",
+        "chips": [
+          {"text": "▁", "color": "muted"}, {"text": "l"}, {"text": "a"},
+          {"text": "▁", "color": "muted"}, {"text": "k"}, {"text": "a"}, {"text": "t"}, {"text": "a"}, {"text": "n"}, {"text": "a"},
+          {"text": "▁", "color": "muted"}, {"text": "d"}, {"text": "e"}, {"text": "l"},
+          {"text": "▁", "color": "muted"}, {"text": "m"}, {"text": "a"}, {"text": "e"}, {"text": "s"}, {"text": "t"}, {"text": "r"}, {"text": "o"}
+        ],
+        "caption": "letra a letra: secuencias larguísimas, y la atención del transformer cuesta más cuanto más larga es"
+      },
       "validator": {
         "type": "all",
         "of": [
@@ -174,6 +196,17 @@
     {
       "id": "o4",
       "text": "Tokeniza en inglés la misma frase, «the sword of the master», con el tokenizador de 200 fusiones. ¿Cuántos tokens salen? (answer <número>)",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · mismo sentido, muy distinto coste",
+        "items": [
+          {"label": "español (200 fus.)", "value": 4, "note": "4", "color": "teal"},
+          {"label": "con mayúsculas", "value": 9, "note": "9", "color": "gold"},
+          {"label": "inglés", "value": 19, "note": "19", "color": "gold"},
+          {"label": "sin fusiones", "value": 22, "note": "22", "color": "muted"}
+        ],
+        "caption": "la API cobra por token: el formato y el idioma cambian el coste aunque el significado sea el mismo"
+      },
       "prediction": {
         "prompt": "Es una frase del mismo tamaño en otro idioma. ¿Cuántos tokens crees que necesitará?",
         "options": [

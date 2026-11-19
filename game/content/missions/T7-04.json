@@ -34,7 +34,20 @@
         "label": "tipo"
       }
     ],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "points2d",
+      "title": "LA IDEA · lo raro salta; lo malo no siempre",
+      "points": [
+        {"x": 0.28, "y": 0.32, "cls": 0}, {"x": 0.32, "y": 0.28, "cls": 0},
+        {"x": 0.30, "y": 0.35, "cls": 0}, {"x": 0.26, "y": 0.30, "cls": 0},
+        {"x": 0.34, "y": 0.33, "cls": 0}, {"x": 0.30, "y": 0.26, "cls": 0},
+        {"x": 0.85, "y": 0.80, "cls": 1}, {"x": 0.90, "y": 0.60, "cls": 1}, {"x": 0.80, "y": 0.90, "cls": 1}
+      ],
+      "query": {"x": 0.36, "y": 0.31, "label": "cli-041"},
+      "legend": [["normal", 0], ["raro (abuso)", 1]],
+      "caption": "los lejos del centro saltan como raros, y son abusadores; pero cli-041 abusa despacio e imita a los normales: lo malo no siempre es raro"
+    }
   },
   "purpose": "La detección de anomalías es una de las técnicas básicas de un SOC (Security Operations Center) y de la vigilancia de sistemas de IA en producción: avisar de lo que se aleja del comportamiento normal, sin necesitar ejemplos previos del ataque.",
   "theory_cards": [],

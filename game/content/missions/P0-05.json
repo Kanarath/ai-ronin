@@ -33,7 +33,17 @@
   "purpose": "Lo que ves aparecer palabra a palabra en un chat con un LLM (Large Language Model) es esto: el modelo sortea el siguiente token según sus probabilidades, lo entrega, y vuelve a empezar. Hoy escribes ese bucle como un generador de Python, el sorteo con pesos, y un límite de salida para que nadie pueda pedir un texto infinito.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · tirar el dado con pesos (u = 0,6 → «b»)",
+      "items": [
+        {"label": "a (0–0,5)", "value": 0.5, "note": "0.5", "color": "muted"},
+        {"label": "b (0,5–0,8)", "value": 0.3, "note": "0.3 ← u", "color": "teal"},
+        {"label": "c (0,8–1)", "value": 0.2, "note": "0.2", "color": "muted"}
+      ],
+      "caption": "se saca un número u al azar (0–1) y se mira en qué tramo de la suma acumulada cae: el tramo más largo sale más. Es lo que hace un LLM con cada token tras la temperatura"
+    }
   },
   "theory_cards": [
     {

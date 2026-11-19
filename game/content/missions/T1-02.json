@@ -38,6 +38,19 @@
       "dataset": "katanas",
       "x": "dureza_hrc",
       "y": "flexibilidad"
+    },
+    "diagram": {
+      "kind": "points2d",
+      "title": "LA IDEA · distancia = cómo de lejos están dos puntos",
+      "x_label": "dureza",
+      "y_label": "flex",
+      "points": [
+        {"x": 0.30, "y": 0.62, "cls": 0},
+        {"x": 0.70, "y": 0.34, "cls": 1}
+      ],
+      "link": [0, 1],
+      "link_label": "d",
+      "caption": "cada katana es un punto; la distancia es la línea recta que las une (Pitágoras)"
     }
   },
   "theory_cards": [],
@@ -45,7 +58,7 @@
     {
       "id": "o1",
       "text": "Mide la distancia entre hoja-001 y hoja-002: distance katanas hoja-001 hoja-002",
-      "teach": "Parecido = cerca\nCada katana es un punto con 3 coordenadas (sus 3 features). Dos katanas parecidas son dos puntos cercanos.\nLa DISTANCIA EUCLÍDEA mide esa cercanía: resta las features una a una, eleva cada resta al cuadrado, súmalas y saca la raíz.\ndistance te la calcula y te enseña cuánto aporta cada feature (columna «peso»).\nPor qué: esta misma cuenta, con cientos de números por vector en lugar de 3, es la que hace un RAG (Retrieval-Augmented Generation) al buscar documentos.",
+      "teach": "Parecido = cerca\nCada katana es un punto con 3 coordenadas, sus 3 features; imagínala como una chincheta clavada en el espacio. Dos katanas que se parecen son dos chinchetas cercanas.\nLa DISTANCIA EUCLÍDEA mide esa cercanía, y no es más que el teorema de Pitágoras de toda la vida: resta las features una a una, eleva cada resta al cuadrado, súmalas y saca la raíz. Es la distancia en línea recta entre dos pueblos en un mapa.\ndistance te la calcula y, además, te enseña cuánto aporta cada feature a esa distancia (columna «peso»).\nPara qué en tu camino: esta misma cuenta, pero con cientos de números por punto en vez de 3, es la que hace un RAG (Retrieval-Augmented Generation) para encontrar los documentos que responden a tu pregunta, y la que usa un detector para decir «este mensaje se parece a un ataque conocido». El parecido es el motor de medio sistema de IA; hoy lo mides a mano.",
       "prediction": {
         "prompt": "¿Qué feature crees que aportará MÁS a la distancia entre esas dos hojas?",
         "options": [
@@ -83,6 +96,16 @@
     {
       "id": "o2",
       "text": "¿Por qué la temperatura aporta casi toda la distancia?",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · la diferencia, al cuadrado",
+        "items": [
+          {"label": "dureza", "value": 5.29, "note": "2.3²", "color": "teal"},
+          {"label": "flexibilidad", "value": 4.1, "note": "2.0²", "color": "teal"},
+          {"label": "temperatura", "value": 4761, "note": "69²", "color": "gold"}
+        ],
+        "caption": "69 al cuadrado (4761) aplasta a 2,3 al cuadrado (5,3): por eso la distancia la decide la temperatura"
+      },
       "choices": [
         {
           "id": "a",
@@ -115,7 +138,17 @@
     {
       "id": "o3",
       "text": "Pon todas las features en la misma escala: dataset normalize katanas --method minmax",
-      "teach": "Normalizar con min-max\nNormalizar es pasar cada feature a una escala común. MIN-MAX hace (valor − mínimo) ÷ (máximo − mínimo): el mínimo queda en 0 y el máximo en 1.\nEjemplo con la temperatura (760 a 879): 779 pasa a (779 − 760) ÷ 119 = 0,16.\nEl comando crea un dataset NUEVO, katanas_minmax; el original no se toca.\nOtro método, Z-SCORE, hace (valor − media) ÷ desviación típica. Se usa con --method zscore.\nPor qué: en un sistema real se normaliza antes de medir distancias; si no, una sola feature decide por todas.",
+      "teach": "Normalizar con min-max\nNormalizar es poner todas las features en la misma escala para que ninguna mande solo por su unidad. MIN-MAX hace (valor − mínimo) ÷ (máximo − mínimo): el valor más bajo de esa feature queda en 0, el más alto en 1, y el resto en medio.\nEjemplo con la temperatura (de 760 a 879): 779 pasa a (779 − 760) ÷ 119 = 0,16.\nImagina que coges tres reglas con marcas distintas —grados, HRC, puntos de flexibilidad— y las conviertes en tres reglas idénticas de 0 a 1: ahora dar un paso en una vale lo mismo que darlo en otra. Eso es normalizar.\nEl comando crea un dataset NUEVO, katanas_minmax; el original no se toca (regla de oro: nunca pises tus datos de partida). Hay otro método, Z-SCORE —(valor − media) ÷ desviación típica—, que usarás con --method zscore.\nPara qué en tu camino: en cualquier sistema que mida parecidos se normaliza ANTES de medir. Si no, como acabas de ver, una sola feature decide por todas y tu modelo hace caso a quien no debe.",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · min-max iguala las escalas",
+        "items": [
+          {"label": "dureza", "value": 13.6, "note": "→ 0–1", "color": "teal"},
+          {"label": "flexibilidad", "value": 7.37, "note": "→ 0–1", "color": "teal"},
+          {"label": "temperatura", "value": 119, "note": "→ 0–1", "color": "gold"}
+        ],
+        "caption": "da igual que una recorra 119 y otra 13,6: min-max las deja a todas yendo de 0 a 1"
+      },
       "validator": {
         "type": "event",
         "event": "dataset.normalized",
@@ -132,7 +165,7 @@
     {
       "id": "o4",
       "text": "Vuelve a medir las mismas dos hojas, ahora en el dataset normalizado: distance katanas_minmax hoja-001 hoja-002",
-      "teach": "Misma medida, nueva escala\nEl comando es el mismo; solo cambia el dataset.\nPor qué: comprobar el efecto de un cambio midiéndolo antes y después es la forma de trabajar de un ingeniero de IA.",
+      "teach": "Misma medida, nueva escala\nEl comando es idéntico al de antes; solo cambia el dataset, que ahora es el normalizado.\nPara qué en tu camino: medir lo mismo antes y después de un cambio, y comparar los dos números, es EL hábito de un ingeniero de IA. No se cree una mejora porque suene bien: la mide.",
       "prediction": {
         "prompt": "Tras normalizar, ¿la temperatura seguirá aportando más de la mitad de la distancia?",
         "options": [

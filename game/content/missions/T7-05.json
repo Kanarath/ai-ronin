@@ -44,7 +44,16 @@
         "label": "devuelve"
       }
     ],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · corregir en fila gana a votar en paralelo",
+      "items": [
+        {"label": "bosque (vota)", "value": 0.917, "note": "0.92", "color": "muted"},
+        {"label": "boosting (corrige)", "value": 0.972, "note": "0.97", "color": "teal"}
+      ],
+      "caption": "el bosque pregunta a muchos a la vez; el boosting, de uno en uno, y cada árbol corrige lo que falla el anterior: pasos pequeños que llegan más lejos"
+    }
   },
   "purpose": "En datos en tablas (fraude, abuso de API, alertas del SOC o Security Operations Center, scoring de riesgo) el gradient boosting suele ser el modelo que gana. Saber cómo aprende y cómo se sobreajusta es lo que te permite fiarte de él o desconfiar con motivo.",
   "theory_cards": [],
@@ -177,6 +186,17 @@
     {
       "id": "o4",
       "text": "Ahora con katanas y árboles más grandes: dataset split katanas --test 0.3 --seed 42, boost train gk katanas_train --rounds 400 --lr 0.5 --depth 3 y boost curve gk katanas_test. ¿Con cuántas rondas da la mejor accuracy en test? (answer <número>)",
+      "diagram": {
+        "kind": "lines",
+        "title": "LA IDEA · cuándo sobran rondas",
+        "x_label": "rondas",
+        "y_label": "acc",
+        "series": [
+          {"name": "train", "color": "gold", "points": [[5, 0.95], [50, 0.99], [400, 1.0]]},
+          {"name": "test", "color": "teal", "points": [[5, 0.833], [50, 0.80], [400, 0.75]]}
+        ],
+        "caption": "las primeras rondas corrigen errores de verdad; pasado el punto (aquí ~5) solo memorizan ruido → parar a tiempo (early stopping)"
+      },
       "prediction": {
         "prompt": "Con 400 rondas en lugar de 5, ¿la accuracy en test será mejor, parecida o peor?",
         "options": [

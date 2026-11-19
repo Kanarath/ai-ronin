@@ -28,7 +28,16 @@
   "mentor_intro": "Un modelo que acierta el 100 % de sus fotos puede fallar con una que alguien ha preparado.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · muchos poquitos abren la puerta",
+      "items": [
+        {"label": "foto normal", "value": 0.12, "note": "cerrada", "color": "teal"},
+        {"label": "foto atacada (eps 0,1)", "value": 0.99, "note": "ABIERTA", "color": "red"}
+      ],
+      "caption": "FGSM mueve los 196 píxeles un poquito, todos hacia «autorizado»; cada cambio es minúsculo pero todos suman: la misma tarjeta abre la puerta"
+    }
   },
   "purpose": "Los ejemplos adversarios son imágenes retocadas para que un modelo se equivoque sin que una persona note nada. Afectan a cámaras de acceso, coches autónomos, filtros de contenido y modelos multimodales, y son la base de los ataques de evasión de E2. El método FGSM (Fast Gradient Sign Method) es el más sencillo y el primero que se estudia.",
   "theory_cards": [],
@@ -185,6 +194,16 @@
         ]
       },
       "teach": "Binarizar\nLa tarjeta solo tiene dos niveles: fondo (0,20) y tinta (0,44). image binarize devuelve cada píxel al nivel más cercano.\nUn cambio menor que la mitad de la distancia entre los dos niveles desaparece.\nPor qué: es una defensa sencilla (reducir la precisión de la entrada, en inglés feature squeezing) que borra perturbaciones pequeñas.",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · el pulso ataque ↔ defensa",
+        "items": [
+          {"label": "atacada", "value": 0.99, "note": "abierta", "color": "red"},
+          {"label": "+ binarizar", "value": 0.10, "note": "cerrada", "color": "teal"},
+          {"label": "ataque fuerte + binarizar", "value": 0.90, "note": "abierta", "color": "gold"}
+        ],
+        "caption": "binarizar borra el ataque pequeño (cierra); el atacante sube el eps y la rodea, pero el retoque ya se ve. Ninguna defensa sola basta"
+      },
       "validator": {
         "type": "event",
         "event": "vision.classified",

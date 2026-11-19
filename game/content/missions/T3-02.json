@@ -38,6 +38,16 @@
       "dataset": "katanas",
       "x": "dureza_hrc",
       "y": "flexibilidad"
+    },
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · los dos tipos de error",
+      "headers": ["real ＼ predicho", "defectuosa", "apta"],
+      "rows": [
+        ["defectuosa", "TP ✓", "FN ✗"],
+        ["apta", "FP ✗", "TN ✓"]
+      ],
+      "caption": "FN = defectuosa vendida (peligrosa) · FP = apta desechada (cara). La accuracy los trata igual; tú no"
     }
   },
   "theory_cards": [],
@@ -191,6 +201,17 @@
       "id": "o4",
       "text": "Repite las métricas bajando el umbral a 0.3.",
       "teach": "El umbral\nCon k=9, cada hoja recibe una puntuación: la fracción de sus 9 vecinos que son defectuosos (de 0 a 1).\nPor defecto se marca como defectuosa si la puntuación es ≥ 0,5, pero ese umbral lo puedes mover con --threshold.\nPor qué: el umbral es el mando que se gira en cualquier detector real: más estricto, más falsas alarmas; más permisivo, más ataques que pasan.",
+      "diagram": {
+        "kind": "lines",
+        "title": "LA IDEA · precision vs recall según el umbral",
+        "x_label": "umbral",
+        "y_label": "",
+        "series": [
+          {"name": "precision", "color": "teal", "points": [[0.1, 0.40], [0.3, 0.55], [0.5, 0.75], [0.7, 0.90], [0.9, 1.0]]},
+          {"name": "recall", "color": "gold", "points": [[0.1, 1.0], [0.3, 0.94], [0.5, 0.88], [0.7, 0.60], [0.9, 0.30]]}
+        ],
+        "caption": "umbral bajo: cazas todas (recall alto) pero con falsas alarmas; al subirlo, cambias un error por otro"
+      },
       "prediction": {
         "prompt": "Si bajas el umbral (marcas como defectuosa con menos votos), ¿qué crees que pasará?",
         "options": [

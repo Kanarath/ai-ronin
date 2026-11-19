@@ -29,7 +29,19 @@
   "mentor_intro": "Cada cambio, medido. Nada de «parece que va mejor».",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · cada cambio, medido (acierto vs coste)",
+      "headers": ["técnica", "acierto", "tokens"],
+      "rows": [
+        ["base (JSON+esquema)", "0.767", "2,8k"],
+        ["+ instrucciones", "0.833", "2,8k"],
+        ["+ ejemplos (few-shot)", "0.933", "7,4k ❗"],
+        ["+ delimitar", "0.967", "7,5k"]
+      ],
+      "caption": "un prompt se mejora como el software: un cambio, una medida. Los ejemplos suben el acierto pero casi TRIPLICAN el coste: hay que comparar acierto y tokens"
+    }
   },
   "purpose": "La ingeniería de prompts (prompt engineering) bien hecha no es probar frases bonitas: es cambiar una cosa, medir con un banco de evals y comparar acierto y coste. Así trabajan los equipos que llevan aplicaciones con LLM (Large Language Model) a producción, y así se detecta cuándo una mejora rompe otra cosa.",
   "theory_cards": [],

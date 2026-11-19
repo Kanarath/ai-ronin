@@ -42,6 +42,7 @@ var _chart: LineChart
 var _net_view: NetworkGraph
 var _heatmap: AttentionHeatmap
 var _diagram: DiagramView
+var _concept: ConceptDiagram
 var _code: CodeEdit
 var _curriculum_box: VBoxContainer
 var _mission_text: RichTextLabel
@@ -225,6 +226,13 @@ func _build_layout() -> void:
 	lab_row.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_lab.get_child(0).add_child(lab_row)
 	_lab_body = lab_row
+	# A la izquierda, el diagrama del CONCEPTO (oculto si la misión no trae uno); a la derecha, los
+	# gráficos de datos. Con diagrama, ambos se reparten el ancho a mitades; sin él, el gráfico lo ocupa todo.
+	_concept = ConceptDiagram.new()
+	_concept.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_concept.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_concept.visible = false
+	lab_row.add_child(_concept)
 	var lab_scroll := ScrollContainer.new()
 	lab_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	lab_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -525,6 +533,7 @@ var _last_mission := ""
 
 func _refresh_mission() -> void:
 	_refresh_top()
+	_refresh_diagram()
 	var r := game.runner
 	# Destello breve del panel de misión cuando avanzas un objetivo.
 	var mid := str(game.active_mission.get("id", ""))
@@ -560,6 +569,22 @@ func _refresh_mission() -> void:
 	elif r.phase == "done":
 		lines.append("[color=%s]Misión completada. Repítela o elige la siguiente con ☰ Misiones.[/color]" % _hex(RoninPalette.TEAL))
 	_mission_text.text = "\n".join(lines)
+
+
+## Muestra el diagrama del concepto del objetivo actual (clave `diagram` del objetivo o, si no, de
+## la misión en lab.diagram). Si no hay, se oculta y el gráfico de datos ocupa todo el ancho.
+func _refresh_diagram() -> void:
+	if _concept == null:
+		return
+	var spec: Dictionary = {}
+	if game.runner.is_running():
+		spec = game.runner.current_objective().get("diagram", {})
+	if spec.is_empty():
+		spec = game.active_mission.get("lab", {}).get("diagram", {})
+	# El panel izquierdo está SIEMPRE: con diagrama cuando lo hay, y con las olas del Dojo
+	# cuando no (así el gráfico de la derecha nunca se ve demasiado ancho).
+	_concept.show_spec(spec)
+	_concept.visible = true
 
 
 ## Editor de Python del Dojo (CodeEdit con colores de Python). Vive en el panel del laboratorio.

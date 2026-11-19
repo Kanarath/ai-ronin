@@ -28,7 +28,19 @@
   "purpose": "Cuando un LLM (Large Language Model) lee un documento, una web o un correo, todo ese texto entra en su contexto. Un ataque de inyección indirecta esconde instrucciones dentro de ese texto: invisibles para una persona, perfectamente legibles para el modelo. Hoy ves con la atención por qué el modelo puede hacerles caso aunque estén lejos y rodeadas de relleno. En A2 lo harás contra un RAG (Retrieval-Augmented Generation) completo.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "chips",
+      "title": "LA IDEA · una instrucción escondida en el documento",
+      "pre": "documento que lee el modelo:",
+      "chips": [
+        {"text": "fuego", "color": "muted"}, {"text": "agua", "color": "muted"},
+        {"text": "hielo", "color": "muted"}, {"text": "brasa", "color": "muted"},
+        {"text": "horno", "color": "muted"}, {"text": "espada ← oculta", "color": "red"},
+        {"text": "katana?", "color": "cyan"}
+      ],
+      "caption": "«espada» es la instrucción del atacante (letra blanca); «katana» es lo que el modelo genera. Reciben la misma atención esté cerca o lejos"
+    }
   },
   "theory_cards": [],
   "objectives": [
@@ -171,6 +183,17 @@
       "id": "o5",
       "text": "Un documento real tiene miles de palabras de relleno, que diluyen la atención. ¿Cómo consigue el atacante que su instrucción siga recibiendo mucho peso?",
       "teach": "La dilución\nSoftmax reparte un total de 1 entre todas las palabras: cuanto más relleno, menos le toca a cada una.\nPero no se reparte a partes iguales. ¿De qué depende cuánto se lleva cada palabra?\nPor qué: entender este reparto explica cómo se diseñan las inyecciones indirectas reales.",
+      "diagram": {
+        "kind": "lines",
+        "title": "LA IDEA · el parecido vence al relleno",
+        "x_label": "palabras de relleno",
+        "y_label": "peso",
+        "series": [
+          {"name": "relleno normal", "color": "muted", "points": [[0, 1.0], [10, 0.09], [50, 0.02], [100, 0.01]]},
+          {"name": "atacante imita el tema", "color": "red", "points": [[0, 1.0], [10, 0.42], [50, 0.52], [100, 0.60]]}
+        ],
+        "caption": "más relleno diluye… salvo que el atacante repita las palabras del tema: el parecido entra en una exponencial y compensa mucho relleno"
+      },
       "choices": [
         {
           "id": "a",

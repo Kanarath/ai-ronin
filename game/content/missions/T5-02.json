@@ -29,7 +29,21 @@
   "mentor_intro": "Aviso de honestidad: estos embeddings los he diseñado a mano con 6 dimensiones legibles para que puedas ver qué pasa por dentro. Los reales se aprenden, tienen cientos de dimensiones y ninguna tiene un nombre. Vamos paso a paso.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "points2d",
+      "title": "LA IDEA · palabras como puntos (y un sesgo)",
+      "x_label": "persona",
+      "y_label": "femenino",
+      "points": [
+        {"x": 0.12, "y": 0.05, "cls": 0}, {"x": 0.16, "y": 0.05, "cls": 0},
+        {"x": 0.90, "y": 0.12, "cls": 0}, {"x": 0.86, "y": 0.09, "cls": 0}, {"x": 0.82, "y": 0.08, "cls": 0},
+        {"x": 0.90, "y": 0.90, "cls": 1}, {"x": 0.86, "y": 0.92, "cls": 1}, {"x": 0.82, "y": 0.88, "cls": 1}
+      ],
+      "query": {"x": 0.88, "y": 0.55, "label": "aprendiz"},
+      "legend": [["poco femenino", 0], ["muy femenino", 1]],
+      "caption": "cada palabra es un punto; las parecidas quedan cerca. «aprendiz» (neutro) debería estar a media altura, pero un 0,5 de más lo sube: un sesgo escondido"
+    }
   },
   "theory_cards": [],
   "objectives": [

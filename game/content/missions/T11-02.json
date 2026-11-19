@@ -29,7 +29,17 @@
   "mentor_intro": "No siempre hace falta más entrenamiento: a veces basta con pensar más, o con copiar a quien ya sabe.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "chips",
+      "title": "LA IDEA · tres atajos del post-entrenamiento",
+      "chips": [
+        {"text": "DPO: alinear SIN modelo de premio", "color": "teal"},
+        {"text": "autoconsistencia: pensar más al responder", "color": "gold"},
+        {"text": "destilación: el pequeño copia al grande", "color": "violet"}
+      ],
+      "caption": "no todo es más entrenamiento: menos piezas (DPO), más cómputo al responder (votar muestras) y meter un modelo enorme en uno que cabe en tu máquina"
+    }
   },
   "purpose": "DPO, el cómputo en inferencia y la destilación son las tres piezas que hacen que los modelos que razonan sean usables y baratos: DPO simplifica el post-entrenamiento, la autoconsistencia cambia cómputo por acierto sin reentrenar, y la destilación mete la capacidad de un modelo enorme en uno que cabe en tu máquina.",
   "theory_cards": [],
@@ -96,6 +106,15 @@
     {
       "id": "o2",
       "text": "Pensar más al responder. Entrena una política floja: reason new c y reason grpo c --pasos 3 --grupo 8 --lr 0.2. Luego reason best c --n 1 y reason best c --n 8. ¿Qué accuracy da con 8 muestras? (answer <número>)",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · votar más muestras = más acierto",
+        "items": [
+          {"label": "1 muestra", "value": 0.5, "note": "0.50", "color": "muted"},
+          {"label": "8 muestras (voto)", "value": 1.0, "note": "1.00", "color": "teal"}
+        ],
+        "caption": "votar entre varias muestras recupera la respuesta más probable del modelo, sin reentrenar. Pero su techo es el greedy: no inventa una mejor de la que el modelo sabe"
+      },
       "prediction": {
         "prompt": "Una sola muestra acierta 0.50. Con 8 muestras y voto mayoritario, ¿subirá?",
         "options": [

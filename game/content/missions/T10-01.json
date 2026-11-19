@@ -34,7 +34,16 @@
         "label": "decision"
       }
     ],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · tasa de selección por grupo",
+      "items": [
+        {"label": "grupo 0", "value": 0.38, "note": "38%", "color": "teal"},
+        {"label": "grupo 1", "value": 0.12, "note": "12%", "color": "red"}
+      ],
+      "caption": "en el pasado el grupo 1 pasó el filtro 3× menos. Ratio 0,12/0,38 = 0,32, muy por debajo de 0,80 (regla del 80%): señal de impacto desigual"
+    }
   },
   "purpose": "Un modelo aprende lo que hay en sus datos, también las injusticias del pasado. Medir la equidad (fairness) por grupo es obligatorio en sistemas de alto riesgo como la selección de personal, y es una de las primeras cosas que mira una auditoría de IA (Inteligencia Artificial), como verás en O5 y E3.",
   "theory_cards": [],
@@ -124,6 +133,16 @@
         ]
       },
       "teach": "El modelo imita\nEl árbol aprende a reproducir las decisiones históricas lo mejor que puede.\nPor qué: si las decisiones eran injustas, un modelo «preciso» es un modelo que repite la injusticia, ahora a escala.",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · acertar no es ser justo",
+        "items": [
+          {"label": "ratio del pasado", "value": 0.32, "note": "0.32", "color": "red"},
+          {"label": "ratio del modelo", "value": 0.29, "note": "0.29", "color": "red"},
+          {"label": "acierto del modelo", "value": 0.97, "note": "0.97", "color": "gold"}
+        ],
+        "caption": "el modelo acierta 0,97… copiando: su ratio (0,29) es igual de desigual que el pasado. Un modelo preciso repite la injusticia a escala"
+      },
       "validator": {
         "type": "event",
         "event": "fairness.measured",

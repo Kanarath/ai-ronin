@@ -34,7 +34,17 @@
         "label": "calidad"
       }
     ],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "tree",
+      "title": "LA IDEA · una cadena de preguntas sí/no",
+      "root": {
+        "q": "dureza ≤ 61.9?",
+        "izq": {"q": "flex ≤ 5.7?", "izq": {"leaf": "defectuosa", "cls": 1}, "der": {"leaf": "apta", "cls": 0}},
+        "der": {"q": "flex ≤ 4.2?", "izq": {"leaf": "apta", "cls": 0}, "der": {"leaf": "defectuosa", "cls": 1}}
+      },
+      "caption": "cada hoja es una regla que un maestro puede leer y discutir; la primera pregunta (dureza) es la que más separa"
+    }
   },
   "purpose": "Los árboles de decisión, y sobre todo los bosques que verás en T7-02, son de lo más usado en la industria con datos en tablas: fraude, riesgo de crédito, detección en un SOC (Security Operations Center). Tienen una ventaja que importa en seguridad y en auditoría: sus reglas se pueden leer y explicar.",
   "theory_cards": [],
@@ -131,6 +141,16 @@
     {
       "id": "o4",
       "text": "Ahora deja que el árbol pregunte mucho: tree train t8 katanas_train --depth 8 y classic evaluate t8 katanas_test",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · un árbol demasiado profundo memoriza",
+        "items": [
+          {"label": "prof. 2 · test", "value": 0.806, "note": "0.81", "color": "teal"},
+          {"label": "prof. 8 · train", "value": 0.946, "note": "0.95", "color": "gold"},
+          {"label": "prof. 8 · test", "value": 0.778, "note": "0.78", "color": "red"}
+        ],
+        "caption": "con 8 preguntas casi acierta todo en train pero baja en test: crea reglas para el ruido (sobreajuste)"
+      },
       "prediction": {
         "prompt": "Con 8 preguntas en vez de 2, ¿qué crees que pasará en test?",
         "options": [

@@ -34,7 +34,17 @@
         "label": "decision"
       }
     ],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · quitar la columna del grupo no basta",
+      "items": [
+        {"label": "con la columna grupo", "value": 0.32, "note": "0.32", "color": "red"},
+        {"label": "sin grupo", "value": 0.30, "note": "0.30", "color": "red"},
+        {"label": "sin grupo ni zona", "value": 0.98, "note": "0.98", "color": "teal"}
+      ],
+      "caption": "sin el grupo sigue igual de desigual: la ZONA hace de puente (proxy), casi todo el grupo 1 vive en la zona 1. Solo al quitarla también sube a 0,98"
+    }
   },
   "purpose": "En selección de personal, el sesgo no se va quitando la columna sensible: se cuela por variables relacionadas, los proxies (código postal, nombre, colegio…). Un filtro de CV es un sistema de alto riesgo en el AI Act europeo, que exige examinar los datos para detectar sesgos; este laboratorio es esa revisión, en pequeño.",
   "theory_cards": [],

@@ -28,7 +28,20 @@
   "mentor_intro": "Cierra los ojos de persona. Ábrelos de modelo.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · una imagen es una cuadrícula de números",
+      "headers": ["", "", "", "", ""],
+      "rows": [
+        ["0", "0", "1", "0", "0"],
+        ["0", "0", "1", "0", "0"],
+        ["1", "1", "1", "1", "1"],
+        ["0", "0", "1", "0", "0"],
+        ["0", "0", "1", "0", "0"]
+      ],
+      "caption": "0 = negro, 1 = blanco. El modelo no ve «una cruz»: ve esta tabla, como veía las features de las katanas"
+    }
   },
   "purpose": "Las redes convolucionales (CNN, Convolutional Neural Network) y los modelos multimodales que leen imágenes, como los que analizan documentos escaneados en un RAG (Retrieval-Augmented Generation), empiezan por aquí: una imagen es una cuadrícula de números y un filtro es una pequeña neurona que se repite por toda la imagen. Entenderlo te prepara para el ataque de T8-02.",
   "theory_cards": [],
@@ -119,6 +132,17 @@
         ]
       },
       "teach": "Un filtro de convolución\nUn filtro 3×3 se desliza por la imagen: en cada posición multiplica sus 9 números por los 9 píxeles de debajo y los suma.\nPor qué: es una neurona pequeña que se repite por toda la imagen; donde encaja con lo que busca, «se enciende».",
+      "diagram": {
+        "kind": "table",
+        "title": "LA IDEA · el filtro de bordes verticales (3×3)",
+        "headers": ["", "", ""],
+        "rows": [
+          ["-1", "0", "+1"],
+          ["-2", "0", "+2"],
+          ["-1", "0", "+1"]
+        ],
+        "caption": "se desliza por la imagen y multiplica·suma: se enciende donde el negro cambia a blanco (un borde vertical), y da 0 en una línea horizontal"
+      },
       "validator": {
         "type": "all",
         "of": [

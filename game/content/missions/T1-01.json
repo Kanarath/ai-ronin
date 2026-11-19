@@ -33,6 +33,19 @@
       "dataset": "katanas",
       "x": "dureza_hrc",
       "y": "flexibilidad"
+    },
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · un dataset es una tabla",
+      "headers": ["hoja", "dureza", "flex", "temp", "calidad"],
+      "rows": [
+        ["hoja-065", "58.2", "6.1", "812", "apta"],
+        ["hoja-224", "47.9", "8.3", "905", "defectuosa"],
+        ["hoja-131", "61.0", "5.4", "788", "apta"]
+      ],
+      "feature_cols": [1, 2, 3],
+      "label_col": 4,
+      "caption": "cada fila = un ejemplo · columnas verdes = features (lo que se mide) · columna oro = etiqueta (lo que se predice)"
     }
   },
   "theory_cards": [],
@@ -40,7 +53,7 @@
     {
       "id": "o1",
       "text": "Mira qué datasets hay en el laboratorio: dataset list",
-      "teach": "Los comandos de datos\nTodo lo relativo a datos empieza por la palabra dataset, seguida de lo que quieres hacer.\nPara ver qué datasets hay: dataset list\nPor qué: antes de construir nada, un ingeniero de IA comprueba con qué datos cuenta.",
+      "teach": "Los comandos de datos\nTodo lo que tenga que ver con datos empieza por la palabra dataset, seguida de lo que quieres hacer. Para ver qué datasets hay cargados en el laboratorio: dataset list.\nPor qué esto primero: es como abrir la nevera y ver qué ingredientes tienes antes de decidir el menú. Un ingeniero de IA nunca entrena nada sin saber antes con qué datos cuenta, cuántos ejemplos hay y de qué van. Mirar los datos es el paso cero de todo, y casi nadie lo hace con calma; tú sí.",
       "validator": {
         "type": "event",
         "event": "dataset.listed"
@@ -53,7 +66,7 @@
     {
       "id": "o2",
       "text": "Mira las primeras filas del dataset: dataset inspect katanas",
-      "teach": "Mirar dentro\nUn dataset es una tabla. dataset inspect te enseña sus primeras filas.\nPor qué: un modelo solo puede aprender de lo que hay en sus columnas; si no sabes qué es cada columna, no sabrás qué está aprendiendo.",
+      "teach": "Mirar dentro: ejemplo, feature y etiqueta\nUn dataset es una tabla, y toda la IA que vas a construir empieza aquí. dataset inspect te enseña sus primeras filas. Piénsalo como la ficha de inspección de la forja: una fila por katana y, en cada columna, una medida.\nFíjate en el diagrama de la izquierda, porque estos tres nombres los vas a usar durante TODO el curso:\n· Cada FILA es un EJEMPLO: una katana concreta (hoja-065). Un caso del que se puede aprender.\n· Las columnas que se MIDEN —dureza, flexibilidad, temperatura— son las FEATURES. Son la ENTRADA del modelo: lo que mira para decidir.\n· La última columna, calidad, es la ETIQUETA: la respuesta correcta (apta o defectuosa). Es la SALIDA que queremos que el modelo acierte.\nPara qué en tu camino: esto no va de katanas. Un filtro antispam tiene de features las palabras del correo y de etiqueta «spam / no spam»; un detector de prompt injection (inyección de instrucciones en un chatbot) tiene de features el texto del mensaje y de etiqueta «ataque / legítimo». Si hoy distingues feature de etiqueta con los ojos cerrados, en cualquier proyecto sabrás exactamente qué le das a un modelo y qué le pides que adivine. Esa es la primera pregunta de todas.\nLa trampa: confundir una feature con la etiqueta. Si metes la etiqueta entre las features, el modelo «aprende» copiándola y parece perfecto… hasta que llega un caso real sin respuesta y se desmorona. Tiene nombre propio —fuga de datos— y lo verás en T2.\nPara recordar: las features entran, la etiqueta sale; el modelo aprende el camino de una a otra.",
       "validator": {
         "type": "event",
         "event": "dataset.inspected",
@@ -101,7 +114,7 @@
     {
       "id": "o4",
       "text": "Resume las 240 katanas con estadísticas: dataset stats katanas",
-      "teach": "Resumir muchos datos\n240 filas no se pueden mirar una a una: se resumen con unos pocos números por columna.\nMEDIA: el valor típico. MÍNIMO y MÁXIMO: el más bajo y el más alto. RANGO: máximo menos mínimo, cuánto se mueve esa medida.\nDESVIACIÓN TÍPICA: cuánto se alejan los valores de la media, de media.\nComando: dataset stats katanas\nPor qué: estas cifras avisan de problemas antes de entrenar: escalas muy distintas o clases desequilibradas engañan a muchos modelos.",
+      "teach": "Resumir 240 katanas en cuatro números\nNo puedes mirar 240 filas una a una, igual que no lees el extracto del banco apunte por apunte: te quedas con unos pocos números que lo resumen. dataset stats da, por cada feature:\n· MEDIA: el valor típico, el centro.\n· MÍNIMO y MÁXIMO: el más bajo y el más alto.\n· RANGO: máximo menos mínimo, cuánto se mueve esa medida de punta a punta.\n· DESVIACIÓN TÍPICA: cuánto se alejan los valores de la media, de media. Si es pequeña, casi todas las katanas se parecen en esa medida; si es grande, hay de todo.\nComando: dataset stats katanas\nPara qué en tu camino: estos cuatro números son la revisión médica del dataset. Avisan de problemas ANTES de gastar horas entrenando: una feature con un rango rarísimo, clases desequilibradas, valores imposibles (una dureza negativa, una edad de 200). Barato de mirar, carísimo de ignorar.",
       "validator": {
         "type": "event",
         "event": "dataset.stats",
@@ -117,7 +130,17 @@
     {
       "id": "o5",
       "text": "¿Cuántas veces más grande es el rango de la temperatura que el de la dureza? Divide un rango entre el otro y responde con un decimal: answer <número>",
-      "teach": "Comparar escalas\nPara saber cuántas veces es mayor un número que otro, se divide: 20 entre 5 da 4, «cuatro veces mayor».\nUsa los dos rangos de la tabla anterior.\nPor qué: en la misión siguiente verás que los modelos que miden parecidos se dejan llevar por la feature de números más grandes.",
+      "teach": "Comparar escalas: ¿cuántas veces mayor?\nPara saber cuántas veces es mayor un número que otro, se dividen: 20 entre 5 da 4, «cuatro veces mayor». Usa los dos rangos de la tabla de antes.\nMira el diagrama de la izquierda: la temperatura recorre 119 unidades y la dureza solo 13,6. No es que la temperatura «importe más»: es que está medida en grados, que dan números grandes, mientras la dureza está en HRC, que da números pequeños. Misma importancia real, tamaños muy distintos.\nPor qué te hago dividir: en la misión siguiente verás que los modelos que deciden por PARECIDO (como el vecino más cercano) se dejan arrastrar por la feature de números grandes, aunque no sea la más útil. Es como comparar a dos personas sumando su altura en milímetros y su edad en años: los milímetros, por ser miles, mandan sobre todo lo demás y la edad casi no cuenta. Por eso luego tendremos que poner todas las features en la misma escala.",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · escalas muy distintas",
+        "items": [
+          {"label": "dureza", "value": 13.6, "note": "13.6", "color": "teal"},
+          {"label": "flexibilidad", "value": 7.37, "note": "7.4", "color": "teal"},
+          {"label": "temperatura", "value": 119, "note": "119", "color": "gold"}
+        ],
+        "caption": "la temperatura recorre ~9× más que la dureza, solo por su unidad (grados frente a HRC)"
+      },
       "validator": {
         "type": "answer",
         "expected": 8.75,
@@ -133,7 +156,23 @@
     {
       "id": "o6",
       "text": "Dibuja dos gráficos con plot y comprueba qué feature ayuda menos a distinguir aptas de defectuosas.",
-      "teach": "El gráfico de dispersión\nplot pone una feature en el eje horizontal (--x) y otra en el vertical (--y), y pinta cada katana del color de su clase.\nSi los dos colores forman grupos separados, esas features ayudan a distinguir. Si están mezclados, no.\nEjemplos: plot katanas --x dureza_hrc --y flexibilidad   ·   plot katanas --x temperatura_temple --y dureza_hrc\nPor qué: si una feature no separa las clases, no ayuda al modelo y además puede meter ruido; descubrirlo pronto ahorra trabajo.",
+      "teach": "El gráfico de dispersión: ver si una feature separa\nplot pone una feature en el eje horizontal (--x) y otra en el vertical (--y), y pinta cada katana del color de su clase. Es la forma más rápida de PREGUNTARLES a los datos si una medida sirve.\nCómo leerlo (mira el diagrama de la izquierda): si los dos colores forman grupos separados, esas features ayudan a distinguir apta de defectuosa. Si están mezclados como sal y pimienta, esa feature no aporta nada.\nEjemplos: plot katanas --x dureza_hrc --y flexibilidad   ·   plot katanas --x temperatura_temple --y dureza_hrc\nPara qué en tu camino: antes de entrenar nada, esta mirada te dice qué features valen la pena. Una feature que no separa no solo no ayuda: mete ruido y puede empeorar el modelo. Descubrirlo con un gráfico de diez segundos te ahorra días de entrenar a ciegas.",
+      "diagram": {
+        "kind": "points2d",
+        "title": "LA IDEA · features que separan vs que mezclan",
+        "x_label": "dureza",
+        "y_label": "flex",
+        "points": [
+          {"x": 0.20, "y": 0.74, "cls": 0}, {"x": 0.28, "y": 0.82, "cls": 0},
+          {"x": 0.17, "y": 0.66, "cls": 0}, {"x": 0.31, "y": 0.70, "cls": 0},
+          {"x": 0.24, "y": 0.60, "cls": 0},
+          {"x": 0.74, "y": 0.30, "cls": 1}, {"x": 0.82, "y": 0.22, "cls": 1},
+          {"x": 0.69, "y": 0.34, "cls": 1}, {"x": 0.78, "y": 0.26, "cls": 1},
+          {"x": 0.86, "y": 0.36, "cls": 1}
+        ],
+        "legend": [["apta", 0], ["defectuosa", 1]],
+        "caption": "con dureza y flex los colores forman grupos (separan); por la temperatura se mezclarían (no aporta)"
+      },
       "prediction": {
         "prompt": "¿Qué feature crees que es MENOS útil para distinguir aptas de defectuosas?",
         "options": [

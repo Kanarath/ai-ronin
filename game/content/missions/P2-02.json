@@ -29,7 +29,18 @@
   "mentor_intro": "Las evals de antes de desplegar dicen cómo era el mundo. Producción dice cómo es.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "lines",
+      "title": "LA IDEA · los problemas viven en la cola (p95)",
+      "x_label": "día",
+      "y_label": "seg",
+      "series": [
+        {"name": "p50 (media)", "color": "teal", "points": [[1, 1.0], [4, 1.1], [6, 1.2], [8, 1.1]]},
+        {"name": "p95 (cola)", "color": "red", "points": [[1, 2.0], [4, 2.2], [6, 9.0], [8, 3.0]]}
+      ],
+      "caption": "el día 6 el p95 (1 de cada 20 peticiones) se dispara por timeouts de una herramienta; la media (p50) casi no se mueve. Por eso se vigila el p95"
+    }
   },
   "purpose": "Las evals offline solo cubren lo que pusiste en el golden set. La observabilidad (trazas, métricas y evals online sobre muestras reales) es lo que detecta lo que no habías previsto, y es la mitad de cualquier puesto de AI engineer o de AI Ops.",
   "theory_cards": [],

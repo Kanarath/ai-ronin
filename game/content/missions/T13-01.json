@@ -29,7 +29,17 @@
   "mentor_intro": "Un generador sin guardarraíles hace cualquier cosa que le pidas; con ellos, solo lo que debe, y deja constancia de lo que hizo.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · un solo filtro no basta (usos indebidos frenados de 4)",
+      "items": [
+        {"label": "filtro de entrada", "value": 1, "note": "1/4", "color": "red"},
+        {"label": "+ clasificador de salida", "value": 3, "note": "3/4", "color": "gold"},
+        {"label": "+ filtro de copyright", "value": 4, "note": "4/4", "color": "teal"}
+      ],
+      "caption": "la petición se puede disfrazar, así que hace falta mirar entrada Y salida, más copyright; y marca de agua en TODO lo generado para que sea trazable"
+    }
   },
   "purpose": "Los modelos de imagen y audio (difusión) traen riesgos propios: contenido prohibido, imitación de estilos y personas, y desinformación visual. La defensa no es un solo filtro, sino guardarraíles de entrada y de salida más marca de agua para la procedencia; es lo que exigen las plataformas y el AI Act para el contenido generado.",
   "theory_cards": [],

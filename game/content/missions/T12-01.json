@@ -28,7 +28,18 @@
   "mentor_intro": "El coste de un LLM no está en pensar, está en repetir y en esperar.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "lines",
+      "title": "LA IDEA · por qué hace falta la caché KV",
+      "x_label": "tokens",
+      "y_label": "trabajo",
+      "series": [
+        {"name": "sin caché O(N²)", "color": "red", "points": [[16, 256], [32, 1024], [64, 4096], [128, 16384]]},
+        {"name": "con caché O(N)", "color": "teal", "points": [[16, 16], [32, 32], [64, 64], [128, 128]]}
+      ],
+      "caption": "sin caché se recalcula todo el pasado en cada token (crece con el cuadrado); con caché, lineal. Doblar la longitud: ×4 sin caché, ×2 con"
+    }
   },
   "purpose": "La caché KV y el batching son la base de cualquier motor de inferencia (vLLM, TGI). Entender por qué el coste sin caché es cuadrático, y por qué el batching exprime la memoria ociosa, es lo que te deja razonar sobre latencia y coste en producción, justo lo que piden las ofertas de AI/LLM ops.",
   "theory_cards": [],
@@ -131,6 +142,16 @@
       "id": "o3",
       "text": "Cambia de palanca: el rendimiento. infer batch --peticiones 16. ¿Cuántos tokens por segundo da? (answer <número>)",
       "teach": "Batching: la memoria ociosa\nGenerar para una sola petición deja la GPU casi vacía: el cuello es traer los pesos de memoria, no la cuenta. Si procesas 16 peticiones a la vez, reutilizas esa misma lectura de pesos para las 16: 16× el rendimiento casi sin coste.\nPor qué: el batching no acelera una petición; multiplica cuántas atiendes con el mismo trabajo de memoria.",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · batching: rendimiento casi gratis… hasta un tope",
+        "items": [
+          {"label": "1 petición", "value": 2000, "note": "2k t/s", "color": "muted"},
+          {"label": "16 peticiones", "value": 32000, "note": "32k t/s", "color": "teal"},
+          {"label": "64 peticiones", "value": 32000, "note": "32k (tope)", "color": "red"}
+        ],
+        "caption": "procesar varias a la vez reutiliza la lectura de pesos: 16× casi gratis. Pasado el tope, la memoria (la caché KV de todas) se llena y se estanca"
+      },
       "validator": {
         "type": "all",
         "of": [

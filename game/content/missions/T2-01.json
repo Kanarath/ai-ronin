@@ -41,6 +41,22 @@
       "dataset": "katanas",
       "x": "dureza_hrc",
       "y": "flexibilidad"
+    },
+    "diagram": {
+      "kind": "points2d",
+      "title": "LA IDEA · los k vecinos votan",
+      "x_label": "dureza",
+      "y_label": "flex",
+      "points": [
+        {"x": 0.42, "y": 0.60, "cls": 0}, {"x": 0.60, "y": 0.46, "cls": 0},
+        {"x": 0.50, "y": 0.34, "cls": 1}, {"x": 0.15, "y": 0.80, "cls": 0},
+        {"x": 0.85, "y": 0.75, "cls": 1}, {"x": 0.20, "y": 0.20, "cls": 1},
+        {"x": 0.82, "y": 0.20, "cls": 0}
+      ],
+      "query": {"x": 0.50, "y": 0.52, "label": "hoja nueva"},
+      "k": 3,
+      "legend": [["apta", 0], ["defectuosa", 1]],
+      "caption": "la hoja nueva mira a sus k=3 vecinos: 2 aptas, 1 defectuosa → gana APTA"
     }
   },
   "theory_cards": [
@@ -55,7 +71,7 @@
     {
       "id": "o1",
       "text": "Normaliza katanas con min-max, crea un modelo k-NN con k=1 y entrénalo con el dataset normalizado completo.",
-      "teach": "k vecinos más cercanos\nPara clasificar una hoja, un k-NN (k-Nearest Neighbors) busca las k hojas conocidas más cercanas y las hace votar: gana la clase más repetida. Con k=1 decide solo el vecino más cercano.\n«Entrenar» un k-NN es simplemente guardar los ejemplos.\nComandos: model create <nombre> --k <número> · model train <nombre> <dataset>. Como mide distancias, entrénalo con datos normalizados.\nPor qué: un RAG (Retrieval-Augmented Generation) busca sus documentos con esta idea, y muchos detectores comparan así un caso nuevo con casos conocidos.",
+      "teach": "k vecinos más cercanos\nPara clasificar una hoja nueva, un k-NN (k-Nearest Neighbors) hace lo más intuitivo del mundo: busca las k hojas conocidas que más se le parecen y las hace votar; gana la clase más repetida. Míralo en el diagrama de la izquierda: con k=3, tres vecinos votan y gana la mayoría. Con k=1 decide solo el vecino más cercano.\nLo sorprendente: «entrenar» un k-NN es simplemente guardarse los ejemplos. No hay más magia; toda la decisión ocurre al predecir.\nComandos: model create <nombre> --k <número> · model train <nombre> <dataset>. Como mide distancias, entrénalo con datos normalizados (lo de T1-02).\nPara qué en tu camino: esta misma idea —buscar lo más parecido que ya conozco— es la que usa un RAG (Retrieval-Augmented Generation) para recuperar documentos y la que usan muchos detectores para decir «esto se parece a un caso conocido». Si entiendes k-NN por dentro, entiendes la pieza que hay debajo de medio sistema de IA.",
       "validator": {
         "type": "event",
         "event": "model.trained",
@@ -236,6 +252,17 @@
       "id": "o5",
       "text": "Compara la accuracy de train y test para varios valores de k con model sweep, usando tus datasets de train y test normalizados.",
       "teach": "Elegir k\nk lo eliges tú: es un HIPERPARÁMETRO, un ajuste que no sale de los datos.\nmodel sweep --train <train> --test <test> prueba varios k y muestra la accuracy en train y en test.\nSi la de train es mucho mayor que la de test, el modelo memoriza en lugar de aprender: eso es OVERFITTING (sobreajuste).\nPor qué: todo sistema de IA (Inteligencia Artificial) tiene hiperparámetros que se eligen comparando así; en un RAG (Retrieval-Augmented Generation), por ejemplo, cuántos documentos recuperar, que también se llama k.",
+      "diagram": {
+        "kind": "lines",
+        "title": "LA IDEA · memorizar vs generalizar",
+        "x_label": "k",
+        "y_label": "acc",
+        "series": [
+          {"name": "train", "color": "gold", "points": [[1, 1.0], [3, 0.92], [9, 0.88], [31, 0.84]]},
+          {"name": "test", "color": "teal", "points": [[1, 0.75], [3, 0.82], [9, 0.86], [31, 0.86]]}
+        ],
+        "caption": "con k=1 el train va perfecto y el test cae (overfitting); al subir k la brecha se cierra"
+      },
       "prediction": {
         "prompt": "¿Qué valor de k crees que generalizará MEJOR (más accuracy en test)?",
         "options": [
@@ -278,6 +305,15 @@
     {
       "id": "o6",
       "text": "Según tu barrido, ¿cuánto vale la diferencia (acc train − acc test) para k=1? (answer <número>)",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · la brecha a k=1",
+        "items": [
+          {"label": "train", "value": 1.0, "note": "1.00", "color": "gold"},
+          {"label": "test", "value": 0.75, "note": "0.75", "color": "teal"}
+        ],
+        "caption": "la distancia entre las dos barras (1,00 − 0,75 = 0,25) es la firma del overfitting"
+      },
       "validator": {
         "type": "answer",
         "expected": 0.25,
