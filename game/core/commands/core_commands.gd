@@ -195,24 +195,44 @@ static func _help(ctx: CommandContext, a: Dictionary) -> CommandResult:
 	return r
 
 
+## Los comandos que se usan constantemente. Se muestran primero, con su para qué.
+const MUSTS := [
+	["mission list", "dónde estás · mission start <id> para empezar o seguir"],
+	["hint", "pistas graduadas · solucion si te atascas del todo"],
+	["py", "abre el editor de Python del paso actual"],
+	["mapa", "el temario entero y tu posición en él"],
+	["explain <término>", "glosario · man <tema> y aka <SIGLA> amplían"],
+]
+const CAT_ORDER := ["python", "datos", "modelos", "optimizacion", "redes", "lenguaje", "vision", "seguridad", "rag", "agentes", "mcp", "multiagente", "supply", "deteccion", "encargo", "gobernanza", "laboratorio", "misiones", "mentor"]
+
+
+## Panorama corto: primero lo imprescindible; luego, por áreas, las FAMILIAS de comandos (no cada
+## subcomando). Para ver los comandos de una familia, <familia> --help. Lista completa: help <área>.
 static func _help_overview(ctx: CommandContext) -> CommandResult:
 	var r := CommandResult.new()
 	r.line("COMANDOS DEL DOJO", "accent")
-	var by_cat := {}
-	for cmd in ctx.registry.all():
-		if not by_cat.has(cmd.category):
-			by_cat[cmd.category] = []
-		by_cat[cmd.category].append(cmd)
-	for cat: String in ["misiones", "mentor", "python", "datos", "modelos", "vision", "optimizacion", "redes", "lenguaje", "seguridad", "rag", "agentes", "mcp", "multiagente", "supply", "deteccion", "gobernanza", "laboratorio", "encargo", "ayuda", "terminal"]:
-		if not by_cat.has(cat):
-			continue
-		r.line("")
-		r.line(CATEGORY_NAMES.get(cat, cat), "accent")
-		for cmd: Command in by_cat[cat]:
-			var lock := "  🔒" if cmd.tier > ctx.shell.tier else ""
-			r.line("  %s %s%s" % [cmd.path.rpad(22), cmd.summary, lock], "data")
 	r.line("")
-	r.line("Trucos: Tab autocompleta · ↑↓ historial · termina una línea con « ?» (espacio e interrogación) para ver opciones · <comando> --help", "muted")
+	r.line("Imprescindibles", "accent")
+	for m in MUSTS:
+		r.line("  %s %s" % [String(m[0]).rpad(20), m[1]], "data")
+	# Familias por área: el primer token de cada comando (dataset, model, bot…), sin repetir.
+	var fams_by_cat := {}
+	for cmd in ctx.registry.all():
+		if cmd.tier > ctx.shell.tier or cmd.category in ["ayuda", "terminal"]:
+			continue
+		var fam := cmd.path.split(" ")[0]
+		if not fams_by_cat.has(cmd.category):
+			fams_by_cat[cmd.category] = []
+		if not fam in fams_by_cat[cmd.category]:
+			fams_by_cat[cmd.category].append(fam)
+	r.line("")
+	r.line("Por áreas · escribe «<familia> --help» para ver sus comandos", "accent")
+	for cat: String in CAT_ORDER:
+		if not fams_by_cat.has(cat):
+			continue
+		r.line("  %s %s" % [(CATEGORY_NAMES.get(cat, cat) + ":").rpad(32), " · ".join(PackedStringArray(fams_by_cat[cat]))], "data")
+	r.line("")
+	r.line("Ayuda de un comando: <comando> --help  ·  trucos: Tab autocompleta, ↑↓ historial, línea terminada en « ?» para ver opciones.", "muted")
 	return r
 
 

@@ -76,7 +76,12 @@ func test_raiz_sin_subcomando_lista_opciones() -> void:
 
 
 func test_help_general_y_de_comando() -> void:
-	assert_true(shell.execute("help").plain_text().contains("dataset inspect"))
+	# El panorama de «help» es corto: imprescindibles + familias (no cada subcomando).
+	var ov := shell.execute("help").plain_text()
+	assert_true(ov.contains("Imprescindibles"), ov)
+	assert_true(ov.contains("dataset"), "la familia dataset aparece en el panorama")
+	assert_false(ov.contains("dataset inspect"), "ya no vuelca cada subcomando")
+	# La ayuda de un comando concreto no cambia:
 	var h := shell.execute("help dataset normalize").plain_text()
 	assert_true(h.contains("--method"), h)
 	assert_true(shell.execute("model create --help").plain_text().contains("Uso: model create"))

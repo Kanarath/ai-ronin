@@ -4,8 +4,9 @@ extends RefCounted
 
 
 static func register(reg: CommandRegistry) -> void:
-	reg.register(Command.new("mission list", "Misiones disponibles y tu estado en cada una.",
-		func(c: CommandContext, a: Dictionary) -> CommandResult: return _list(c, a), "misiones"))
+	reg.register(Command.new("mission list", "Dónde estás: la misión actual con la anterior y la siguiente (--all para todas).",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _list(c, a), "misiones")
+		.with_signature(CommandSignature.new().opt("all", "muestra TODAS las misiones", "bool", false).example("mission list").example("mission list --all")))
 	reg.register(Command.new("mission start", "Empieza (o repite) una misión.",
 		func(c: CommandContext, a: Dictionary) -> CommandResult: return _start(c, a), "misiones")
 		.with_signature(CommandSignature.new().pos("id", "identificador de la misión, p. ej. T1-01").example("mission start T1-01")))
@@ -69,16 +70,46 @@ static func _no_game() -> CommandResult:
 	return CommandResult.error("El sistema de misiones no está disponible en este contexto.")
 
 
-static func _list(c: CommandContext, _a: Dictionary) -> CommandResult:
+const _ICON := {"dominada": "◆", "completada": "✓", "en curso": "▶", "bloqueada": "🔒", "disponible": "·"}
+
+
+static func _list(c: CommandContext, a: Dictionary) -> CommandResult:
 	var g := _game(c)
 	if g == null:
 		return _no_game()
+	var missions: Array = g.catalog.missions
+	if bool(a.get("all", false)):
+		return _list_all(g, missions)
+	# Vista corta: la misión actual (la que juegas, o la última que tocaste) con su anterior y su
+	# siguiente. Así «mission list» responde «¿dónde estoy?» sin volcar 130 líneas.
+	var cur_id := str(g.active_mission.get("id", "")) if g.runner.is_running() else str(g.progress.data.get("last_mission", ""))
+	var idx := 0
+	for i in missions.size():
+		if missions[i]["id"] == cur_id:
+			idx = i
+			break
+	var r := CommandResult.new()
+	r.line("MISIONES · dónde estás", "accent")
+	for i in range(maxi(0, idx - 1), mini(missions.size(), idx + 2)):
+		var m: Dictionary = missions[i]
+		var status := g.mission_status(m["id"])
+		var line := "%s %s  %s" % [_ICON[status], m["id"], m["title"]]
+		if i == idx:
+			# La actual: sangrada a la derecha y marcada, como pediste.
+			r.line("      " + line + "   ← aquí", "ok")
+		else:
+			r.line("  " + line, "data")
+	r.line("", "muted")
+	r.line("Todas: mission list --all  ·  empezar o seguir: mission start <id>  ·  el temario: mapa", "muted")
+	return r
+
+
+static func _list_all(g: DojoGame, missions: Array) -> CommandResult:
 	var r := CommandResult.new()
 	var data: Array = []
-	for m in g.catalog.missions:
+	for m in missions:
 		var status := g.mission_status(m["id"])
-		var icon: String = {"dominada": "◆", "completada": "✓", "en curso": "▶", "bloqueada": "🔒", "disponible": "·"}[status]
-		data.append([icon, m["id"], m["title"], MissionCatalog.DIFFICULTY_NAMES[int(m["difficulty"])], status])
+		data.append([_ICON[status], m["id"], m["title"], MissionCatalog.DIFFICULTY_NAMES[int(m["difficulty"])], status])
 	r.table(PackedStringArray(["", "id", "misión", "nivel", "estado"]), data)
 	r.line("Empieza una con: mission start <id>", "muted")
 	return r
