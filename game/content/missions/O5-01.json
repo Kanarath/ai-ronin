@@ -111,7 +111,7 @@
         "gov open forja · gov frameworks forja"
       ],
       "on_complete": "ISO/IEC 42001: es la única de las tres que una entidad externa audita y certifica.",
-      "teach": "Obliga, orienta o certifica\nUna LEY obliga y se puede sancionar su incumplimiento. Un MARCO voluntario orienta: nadie te obliga a seguirlo ni te certifica. Una NORMA de sistema de gestión se puede CERTIFICAR: una entidad externa audita que la cumples.\ngov open forja abre la carpeta de gobernanza; gov frameworks forja compara los tres.\nPor qué: confundirlos lleva a frases como «estamos certificados, así que cumplimos la ley»."
+      "teach": "Obliga, orienta o certifica\nLos tres documentos que se cruza una empresa que usa IA responden a cosas distintas. Una LEY (el AI Act) obliga, y saltársela se sanciona. Un MARCO voluntario (el NIST AI RMF) orienta: te da un buen método, pero nadie te obliga a seguirlo ni te certifica por ello. Una NORMA de sistema de gestión (ISO/IEC 42001) se puede CERTIFICAR: una entidad externa audita que la cumples y te da el sello.\ngov open forja abre la carpeta de gobernanza; gov frameworks forja compara los tres. Mira la tabla del diagrama.\nPor qué en tu camino: un hallazgo técnico solo se arregla si llega a la dirección en SU idioma, y ese idioma son estos marcos.\nComo en la carretera: el código de circulación obliga (ley), el manual de conducción eficiente orienta (marco) y la ITV te certifica que el coche cumple (norma). Confundirlos lleva a decir «tengo la ITV al día, así que puedo ir a 200»."
     },
     {
       "id": "c1",
@@ -186,7 +186,7 @@
         "gov framework forja iso-42001 · gov framework forja ai-act"
       ],
       "on_complete": "No. Un buen sistema de gestión ayuda mucho a cumplir, pero el AI Act exige cosas concretas según el sistema (prohibiciones, requisitos de alto riesgo, transparencia) que hay que revisar una a una.",
-      "teach": "Mirar el detalle\ngov framework forja <id> enseña qué es cada marco: quién lo publica, si obliga, si se certifica y qué pide.\nLee los dos y compara: ¿piden lo mismo?\nPor qué: el equipo técnico aporta evidencias a los dos (evaluaciones, registros, red team), pero tiene que saber a qué pregunta responde cada una."
+      "teach": "Mirar el detalle\ngov framework forja <id> abre la ficha de cada marco: quién lo publica, si obliga, si se certifica y qué pide. Lee la de iso-42001 y la de ai-act y compáralas: ¿piden lo mismo?\nPor qué: certificarte en ISO/IEC 42001 ayuda mucho a cumplir el AI Act, pero no equivale a cumplirlo; la ley exige cosas concretas según el sistema (prohibiciones, requisitos de alto riesgo, transparencia) que hay que revisar una a una. El equipo técnico aporta evidencias a los dos (evaluaciones, registros, red team), pero tiene que saber a qué pregunta responde cada uno.\nComo tener el carné de conducir y el seguro del coche: los dos hacen falta, pero el carné no te cubre un accidente ni el seguro te autoriza a conducir. Uno no sustituye al otro."
     },
     {
       "id": "o3",
@@ -203,7 +203,7 @@
         "Responsable y política → GOVERN. Inventario y contexto → MAP. Probar y medir → MEASURE. Tratar y cerrar → MANAGE."
       ],
       "on_complete": "Cuatro hallazgos, cuatro funciones. Fíjate: tus baterías de A1–A6 eran MEASURE, y un retest como los de C5 es MANAGE.",
-      "teach": "Hallazgos → funciones\ngov findings forja lista los cuatro hallazgos; gov map forja <F#> nist <función> asigna uno.\nPregúntate de qué habla cada hallazgo: de quién decide y con qué política (GOVERN), de qué sistemas hay y en qué contexto (MAP), de probar y medir (MEASURE) o de tratar un riesgo ya conocido (MANAGE).\nPor qué: tus baterías de ataques de A1–A6 son MEASURE; con este vocabulario, la dirección sabe dónde encajan."
+      "teach": "Hallazgos → funciones\ngov findings forja lista los cuatro hallazgos; gov map forja <F#> nist <función> asigna cada uno a una función del NIST AI RMF. Las cuatro: GOVERN (quién decide y con qué política), MAP (qué sistemas hay y en qué contexto), MEASURE (probar y medir) y MANAGE (tratar un riesgo ya conocido).\nPregúntate de qué habla cada hallazgo y cae solo en su función.\nPor qué en tu camino: tus baterías de ataques de A1–A6 son MEASURE y un retest como los de C5 es MANAGE; con este vocabulario, lo que haces con las manos la dirección lo entiende en su mapa.\nComo las secciones de un periódico —portada, nacional, economía, deportes—: la noticia no cambia, pero saber en qué página va es lo que deja que la encuentre todo el mundo."
     },
     {
       "id": "o4",
@@ -220,7 +220,7 @@
         "F1 liderazgo (5) · F2 contexto o planificación (4 o 6) · F3 evaluación del desempeño (9) · F4 tratamiento, operación o mejora (6, 8 o 10)"
       ],
       "on_complete": "Algunas admiten más de una cláusula: los marcos no son una tabla exacta, y en una auditoría se justifica la elección.",
-      "teach": "Hallazgos → cláusulas\nLas cláusulas con requisitos de la norma van de la 4 a la 10 (la tarjeta «Funciones y cláusulas» las resume; repásala con Briefing). gov map forja <F#> iso <número> asigna una.\nAlgunos hallazgos encajan en más de una cláusula; en una auditoría se justifica la elección.\nPor qué: es la misma estructura que ISO 27001 (seguridad de la información) o ISO 9001 (calidad), así que muchas empresas ya la conocen."
+      "teach": "Hallazgos → cláusulas\nLos mismos cuatro hallazgos, ahora en el otro idioma. Las cláusulas con requisitos de ISO/IEC 42001 van de la 4 a la 10 (la tarjeta «Funciones y cláusulas» las resume; repásala con Briefing). gov map forja <F#> iso <número> asigna una.\nAlgunos hallazgos encajan en más de una cláusula; en una auditoría no se marca a ciegas, se justifica la elección.\nPor qué: es la misma estructura que ISO 27001 (seguridad de la información) o ISO 9001 (calidad), así que una empresa que ya tenga una de esas reconoce el esqueleto al instante.\nComo mudarte a otro piso con las mismas habitaciones: cocina, dormitorios y baño están donde esperas, solo cambia lo que guardas en cada una."
     },
     {
       "id": "o5",

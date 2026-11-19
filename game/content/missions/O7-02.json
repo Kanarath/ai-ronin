@@ -54,7 +54,7 @@
     {
       "id": "o1",
       "text": "Mira tus defensas: asi defenses.",
-      "teach": "Defensas con nombre\nCada una es algo que has construido o medido en un arco: delimitar el contenido externo, la lista blanca de herramientas, actuar con los permisos de quien pide, el pinning de MCP…\nPor qué: un control que no sabes nombrar y señalar no lo puedes defender ante nadie.",
+      "teach": "Defensas con nombre\nEmpieza mirando lo que ya tienes: asi defenses lista las nueve defensas que construiste o mediste a lo largo de los arcos (delimitar el contenido externo, la lista blanca de herramientas, actuar con los permisos de quien pide, el pinning de MCP…).\nPara qué en tu camino: antes de buscar huecos hay que poner nombre a lo que ya proteges. Un control que no sabes nombrar y señalar en un mapa no lo puedes defender ante un comité, un auditor ni un cliente.\nEs como el botiquín de casa: no basta con tener cosas dentro; si no sabes qué hay y para qué sirve cada una, el día del corte no te sirve de nada.",
       "validator": {
         "type": "event",
         "event": "asi.defenses"
@@ -66,7 +66,7 @@
     {
       "id": "o2",
       "text": "Asigna a cada defensa el riesgo que cubre: asi cover <defensa> <ASIxx>, de D1 a D9.",
-      "teach": "Defensa principal\nCada defensa se asigna al riesgo que corta en su causa raíz. Dos defensas pueden cubrir el mismo riesgo (D4 y D5 cubren cadena de suministro desde dos sitios).\nPor qué: la redundancia en un riesgo está bien; lo que hay que encontrar son los riesgos sin ninguna.",
+      "teach": "Defensa principal\nAhora colocas cada defensa sobre el riesgo que corta en su causa raíz, con asi cover <defensa> <ASIxx>. Dos defensas pueden caer sobre el mismo riesgo: D4 y D5 cubren la cadena de suministro desde dos sitios distintos.\nQué significa: tener dos defensas en un riesgo (redundancia) está bien, no es un error. Lo que buscas en el mapa no es dónde sobra, sino dónde no hay ninguna.\nPara qué en tu camino: este emparejamiento riesgo–control es el esqueleto de cualquier informe de seguridad; sin él, «tenemos muchas defensas» no significa nada.\nEs como repasar una casa habitación por habitación mirando los detectores de humo: que la cocina tenga dos no importa; lo que te quita el sueño es el cuarto que no tiene ninguno.",
       "validator": {
         "type": "event",
         "event": "asi.covered",
@@ -84,7 +84,7 @@
     {
       "id": "o3",
       "text": "Pinta el mapa: asi coverage. ¿Cuántos riesgos se quedan sin ninguna defensa? (answer <número>)",
-      "teach": "El hueco\nUn riesgo sin defensa no es necesariamente un fallo: puede no aplicar. Pero hay que poder decir por qué.\nPor qué: es exactamente lo que pide la declaración de aplicabilidad de ISO/IEC 42001 (E5): justificar lo que no cubres.",
+      "teach": "El hueco\nasi coverage pinta el mapa entero y deja a la vista las filas vacías. Un riesgo sin defensa no es siempre un fallo: a veces no aplica a tu sistema. Pero tienes que poder decir por qué, no dejarlo en blanco sin más.\nPara qué en tu camino: esto es exactamente lo que pide la declaración de aplicabilidad de ISO/IEC 42001 (E5): no «lo cubrimos todo», sino justificar con criterio lo que no cubres y por qué.\nEs como la lista de comprobación de un piloto antes de despegar: si un punto se queda sin marcar, no vale ignorarlo; hay que anotar que se revisó y por qué está bien así.",
       "validator": {
         "type": "all",
         "of": [
@@ -113,7 +113,7 @@
     {
       "id": "c1",
       "text": "¿Cuál tapas primero?",
-      "teach": "Priorizar con el contexto\nNo todos los huecos pesan igual. En la forja, el agente analista ya ejecuta código sobre ficheros de clientes (I5) en el mismo servidor.\nPor qué: la prioridad sale de la probabilidad y el impacto en TU sistema, no del orden de la lista.",
+      "teach": "Priorizar con el contexto\nTienes dos huecos, pero no pesan igual. En la forja, el agente analista ya ejecuta código sobre ficheros de clientes (es el incidente I5) en el mismo servidor: ese riesgo no es hipotético, ya está ocurriendo.\nPara qué en tu camino: la prioridad nunca sale del número del riesgo ni del orden de la lista, sino de dos preguntas sobre TU sistema: ¿qué probabilidad tiene de pasar aquí? y ¿cuánto dolería? Un hueco que ya está pasando gana a uno que quizá nunca pase.\nEs como tener una gotera activa y una ventana que quizá cierre mal: arreglas primero lo que ya te está mojando el salón, por mucho que la ventana venga antes en la lista de la reforma.",
       "choices": [
         {
           "id": "a",
@@ -146,7 +146,7 @@
     {
       "id": "c2",
       "text": "¿Qué defensa cubriría ASI05?",
-      "teach": "Aislar la ejecución\nEl código que genera o recibe un agente se ejecuta en un entorno aislado: un contenedor o una microVM (máquina virtual ligera) sin red, sin secretos, con un sistema de ficheros desechable y límites de tiempo y memoria.\nPor qué: no puedes garantizar que el código sea bueno, pero sí que, si es malo, no llegue a nada.",
+      "teach": "Aislar la ejecución\nLa defensa de ASI05 no es confiar en que el código sea bueno, es encerrarlo. El código que genera o recibe un agente se ejecuta en un entorno aislado: un contenedor o una microVM (máquina virtual ligera) sin red, sin secretos, con un sistema de ficheros desechable y límites de tiempo y memoria.\nPara qué en tu camino: nunca podrás garantizar que un código generado por un modelo sea inofensivo, pero sí puedes garantizar que, si es dañino, no tenga nada que tocar ni por dónde escapar. Lo montarás capa a capa en O7-03.\nEs como manipular algo explosivo dentro de una cámara blindada: no apuestas a que no estalle, apuestas a que, si estalla, no salga de la cámara.",
       "choices": [
         {
           "id": "a",
@@ -179,7 +179,7 @@
     {
       "id": "py1",
       "text": "Programa la búsqueda de huecos: abre el editor con py, completa sin_cubrir y compruébala con py check.",
-      "teach": "Riesgos sin defensa, en código\nUn riesgo está cubierto si alguna defensa lo cubre.\nPor qué: es el cálculo de asi coverage.",
+      "teach": "Riesgos sin defensa, en código\nUn riesgo está cubierto si alguna defensa apunta a él; los que no aparecen en ninguna cobertura son los huecos.\nCómo: completa la función y compruébala con py check.\nPara qué en tu camino: es exactamente el cálculo que hace asi coverage por dentro. Escrito en tres líneas, ves que encontrar huecos es solo restar lo cubierto del total; lo difícil no es la cuenta, es haber nombrado bien cada cosa.",
       "py_exercise": {
         "id": "O7-02-huecos",
         "title": "sin_cubrir(riesgos, cobertura): los riesgos que ninguna defensa cubre",

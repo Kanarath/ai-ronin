@@ -103,7 +103,7 @@
     {
       "id": "o1",
       "text": "Mira la matriz y los pasos: atlas tacticas y atlas pasos. Son ataques que YA has hecho a la forja en los arcos.",
-      "teach": "La matriz ATLAS\nUna fila de tácticas en orden de ciclo de vida: reconocimiento, acceso inicial, acceso al modelo, ejecución, persistencia, evasión de defensas, exfiltración e impacto. Cada una es un «para qué» del adversario en esa fase.\nPor qué: pensar por tácticas convierte ocho ataques sueltos en una historia: cómo entra, qué consigue y cómo acaba.",
+      "teach": "La matriz ATLAS\nMITRE ATLAS es una fila de tácticas del adversario en orden de ciclo de vida: reconocimiento, acceso inicial, acceso al modelo, ejecución, persistencia, evasión de defensas, exfiltración e impacto. Cada una es un «para qué» del atacante en esa fase. Son ataques que YA hiciste a la forja en los arcos; mira el diagrama de la cadena.\nPor qué: pensar por tácticas convierte ocho ataques sueltos en una historia con principio y final —cómo entra, qué consigue y cómo acaba—, y una historia se puede detectar y cortar; una pila de fallos, no.\nComo el guion de un atraco en una peli: colarse, abrir la caja, salir sin que salte la alarma. Nombrar cada escena es lo que te deja saber en cuál ponerle freno.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -124,7 +124,7 @@
     {
       "id": "o2",
       "text": "Mapea los cuatro primeros: atlas map A1 … A4, cada uno a su táctica (T1 … T8).",
-      "teach": "De la acción a la táctica\nPregúntate qué consigue el adversario con cada paso: ¿reconocer el terreno (A1)? ¿entrar (A2)? ¿acceder al modelo (A3)? ¿ejecutar algo (A4)?\nPor qué: la misma acción puede servir a tácticas distintas; clasificarla bien es lo que el SOC necesita para reconocer el ataque.",
+      "teach": "De la acción a la táctica\nPara mapear cada paso, pregúntate qué CONSIGUE el adversario con él: ¿reconocer el terreno (A1)? ¿entrar (A2)? ¿acceder al modelo (A3)? ¿ejecutar algo (A4)?\nPor qué: la misma acción puede servir a tácticas distintas según para qué la use; clasificarla por su intención es lo que el SOC (Security Operations Center) necesita para reconocer el ataque cuando lo ve en marcha.\nComo distinguir el «para qué» de alguien que ronda un edificio: no es lo mismo mirar las cámaras que forzar una puerta, aunque las dos sean «acercarse».",
       "validator": {
         "type": "event",
         "event": "atlas.map",
@@ -142,7 +142,7 @@
     {
       "id": "c1",
       "text": "¿Para qué sirve ATLAS frente a OWASP o MAESTRO?",
-      "teach": "Cómo opera el adversario\nOWASP ordena por tipo de RIESGO, MAESTRO por CAPA del sistema, y ATLAS por TÁCTICA del adversario: qué hace en cada fase del ataque. Es el idioma de ATT&CK, llevado a la IA, y el que habla el SOC y la inteligencia de amenazas.\nPor qué: para describir un ataque en marcha, paso a paso, y compartirlo con quien defiende, ATLAS es el marco operativo.",
+      "teach": "Cómo opera el adversario\nTres marcos, tres ejes: OWASP ordena por tipo de RIESGO, MAESTRO por CAPA del sistema y ATLAS por TÁCTICA del adversario, qué hace en cada fase del ataque. ATLAS es el idioma de ATT&CK llevado a la IA, el que hablan el SOC y la inteligencia de amenazas.\nPor qué: para describir un ataque en marcha, paso a paso, y pasárselo a quien defiende, ATLAS es el marco operativo; OWASP te dice qué riesgo es, pero no cómo se desarrolla el ataque.\nComo la diferencia entre el código penal (qué delito es) y el atestado de la policía (qué hizo el sospechoso y en qué orden): para perseguirlo en caliente necesitas el segundo.",
       "choices": [
         {
           "id": "a",
@@ -175,7 +175,7 @@
     {
       "id": "o3",
       "text": "Mapea los cuatro últimos: atlas map A5 … A8. ¿A qué táctica corresponde A8, tumbar el servicio? (answer T<n>)",
-      "teach": "El final de la cadena\nA5 deja un punto de apoyo (persistencia), A6 esquiva el clasificador (evasión), A7 saca los datos (exfiltración) y A8 hace el daño final (impacto).\nPor qué: las últimas tácticas son las que más duelen y las que cierran la historia del ataque.",
+      "teach": "El final de la cadena\nLos últimos cuatro pasos: A5 deja un punto de apoyo para volver (persistencia), A6 esquiva al clasificador (evasión de defensas), A7 saca los datos (exfiltración) y A8 hace el daño final, tumbar el servicio (impacto).\nPor qué: las últimas tácticas son las que más duelen y las que cierran la historia; un ataque que solo «entra» pero no logra impacto es un susto, no un incidente.\nComo el final del atraco: no basta con entrar, hay que quedarse el tiempo justo, borrar las huellas, salir con el botín y, si toca, dejar la alarma inservible.",
       "validator": {
         "type": "all",
         "of": [
@@ -207,7 +207,7 @@
     {
       "id": "o4",
       "text": "Monta la cadena: atlas cadena. Es el kill-chain de la forja, de reconocer a impactar.",
-      "teach": "El kill-chain\nCon los ocho pasos mapeados, la cadena se lee en orden: cada táctica con el paso que la cumple. Es lo que entregas al equipo que defiende para que sepa por dónde entró, qué hizo y cómo pararlo.\nPor qué: un ataque descrito como cadena ATLAS se puede detectar, cortar y reproducir; una lista de fallos sueltos, no.",
+      "teach": "El kill-chain\natlas cadena monta la cadena completa con los ocho pasos ya mapeados: cada táctica con el paso que la cumple, en orden, de reconocer a impactar. Es lo que entregas a quien defiende para que sepa por dónde entró el atacante, qué hizo y dónde cortarle.\nPor qué: un ataque descrito como cadena ATLAS se puede detectar, cortar y reproducir; una lista de fallos sueltos, no. Y su valor es defensivo: un solo control en cualquier eslabón rompe la cadena entera.\nComo la fila de fichas de dominó: da igual cuántas haya, basta quitar una del medio para que la caída no llegue al final.",
       "validator": {
         "type": "event",
         "event": "atlas.cadena",
@@ -223,7 +223,7 @@
     {
       "id": "c2",
       "text": "Tienes la cadena ATLAS. ¿Qué haces con ella en un informe?",
-      "teach": "De la cadena a la defensa\nCada táctica de la cadena se cruza con las defensas (las de los arcos, las de O7): dónde se podría haber cortado. Un buen informe no solo cuenta el ataque; dice en qué táctica poner un control para romper la cadena.\nPor qué: el valor de un kill-chain es defensivo: un control en cualquier eslabón rompe la cadena entera.",
+      "teach": "De la cadena a la defensa\nCon la cadena montada, cada táctica se cruza con las defensas (las de los arcos, las de O7): ¿dónde se podría haber cortado? Un buen informe no presume de los pasos que lograste; señala en qué táctica poner un control para romper la cadena.\nPor qué: el kill-chain no es para lucirse, es para que el defensor sepa dónde gastar su dinero; un control bien puesto desactiva todos los pasos que vienen después.\nComo marcar en el plano de la casa la ventana por la que entró el ladrón y escribir «aquí, una reja»: no repasas el robo por morbo, lo repasas para que no se repita.",
       "choices": [
         {
           "id": "a",
@@ -256,7 +256,7 @@
     {
       "id": "py1",
       "text": "Programa la comprobación de la cadena: abre el editor con py, completa cadena_completa y compruébala con py check.",
-      "teach": "Cadena completa, en código\nLa cadena está lista si cada táctica tiene su paso mapeado: no falta ningún eslabón.\nPor qué: es lo que comprueba atlas cadena antes de montarla.",
+      "teach": "Cadena completa, en código\nVas a escribir cadena_completa: la cadena está lista solo si cada táctica tiene su paso mapeado, sin ningún eslabón suelto.\nPor qué: es justo lo que comprueba atlas cadena antes de dejarte montarla; una cadena con un hueco no se puede ni detectar ni reproducir bien.\nComo contar que no falta ningún peldaño antes de subir la escalera: si falta uno en medio, no llegas arriba.",
       "py_exercise": {
         "id": "O3-03-cadena",
         "title": "cadena_completa(tacticas, mapeo): ¿están todas las tácticas cubiertas?",

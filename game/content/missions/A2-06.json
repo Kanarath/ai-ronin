@@ -54,7 +54,7 @@
     {
       "id": "py1",
       "text": "Programa tú recall@k en Python: abre el editor con py, completa la función recall_en_k y compruébala con py check.",
-      "teach": "recall@k\nUn buscador devuelve un RANKING: la lista de documentos ordenada de más a menos parecido.\nrecall@k es la proporción de los documentos relevantes que están entre los k primeros del ranking. Con un solo relevante, vale 1 si está y 0 si no.\nEn Python, ranking[:k] da los k primeros.\nPor qué: es la primera métrica que se mira en la recuperación de cualquier RAG (Retrieval-Augmented Generation): si el fragmento bueno no está en el top-k, el modelo no lo verá.",
+      "teach": "recall@k\nUn buscador devuelve un RANKING: la lista de documentos ordenada de más a menos parecido.\nrecall@k es la proporción de los documentos relevantes que están entre los k primeros del ranking. Con un solo relevante, vale 1 si está y 0 si no.\nEs como mirar si el restaurante que buscas aparece en la primera pantalla de resultados: recall@k no mira si sale el primero o el quinto, solo si está entre los k que de verdad vas a mirar.\nEn Python, ranking[:k] da los k primeros.\nPor qué en tu camino: es la primera métrica que se mira en la recuperación de cualquier RAG (Retrieval-Augmented Generation); si el fragmento bueno no está en el top-k, el modelo no lo verá, y no hay generación que arregle lo que nunca llegó.",
       "py_exercise": {
         "id": "A2-06-recall",
         "title": "recall_en_k(ranking, relevantes, k): qué parte de lo relevante está en el top-k",
@@ -141,7 +141,7 @@
     {
       "id": "o1",
       "text": "En el Dojo: abre el editor con py, programa rango_reciproco, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las siete funciones de reranking.py hasta que pasen los 13 tests y trae la evidencia.",
-      "teach": "Reordenar sin perder el orden anterior\nCuando dos candidatos tienen la misma puntuación, gana el que la primera etapa puso antes: así el reordenador nunca empeora un empate.\nsorted() es estable: con la clave «menos la puntuación» respeta ese orden.\nDevuelve copias: si añades la puntuación a los dicts de la biblioteca, la siguiente búsqueda verá puntuaciones viejas.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: los fallos de un sistema de búsqueda suelen estar en detalles así.",
+      "teach": "Reordenar sin perder el orden anterior\nUn reordenador recoloca los candidatos por una nueva puntuación, pero los empates hay que romperlos con cuidado.\nCuando dos candidatos tienen la misma puntuación, gana el que la primera etapa puso antes: así el reordenador nunca empeora un empate. sorted() es estable: con la clave «menos la puntuación» respeta ese orden. Devuelve copias: si añades la puntuación a los dicts de la biblioteca, la siguiente búsqueda verá puntuaciones viejas.\nEs como rehacer una cola por estatura sin adelantar a quien ya estaba delante cuando dos miden igual: el orden de llegada decide el empate.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué en tu camino: los fallos de un sistema de búsqueda suelen esconderse en detalles así, no en la idea general.",
       "validator": {
         "type": "any",
         "of": [
@@ -222,7 +222,7 @@
     {
       "id": "o2",
       "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: con Ollama en marcha, ejecuta bateria.py (al menos 3 configuraciones: ninguna, un reordenador y procedencia) y tráela con evidence import.",
-      "teach": "La batería del reordenador\nbateria.py mide la calidad con recall@3, MRR (Mean Reciprocal Rank) y nDCG@3 (normalized Discounted Cumulative Gain).\nMide también la latencia en p50 y p95: la mediana y el tiempo que no supera el 95 % de las peticiones.\nY en qué posición acaba cada documento de terceros.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: en producción un reordenador se elige por calidad, latencia y seguridad a la vez.",
+      "teach": "La batería del reordenador\nbateria.py mide tres cosas a la vez: la calidad con recall@3, MRR (Mean Reciprocal Rank) y nDCG@3 (normalized Discounted Cumulative Gain); la latencia en p50 y p95 (la mediana y el tiempo que no supera el 95 % de las peticiones); y en qué posición acaba cada documento de terceros.\nEl p95 importa porque la media engaña: es como el tiempo que tardas en llegar al trabajo un mal día, no el día normal, y por los malos días protestan los usuarios.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué en tu camino: en producción un reordenador se elige por calidad, latencia y seguridad a la vez, nunca por una sola de las tres.",
       "prediction": {
         "prompt": "Con el cross-encoder, ¿qué crees que pasará con los documentos escritos para posicionarse?",
         "options": [
@@ -252,7 +252,7 @@
     {
       "id": "o3",
       "text": "En tu medición, con el cross-encoder siguen entrando en el top-3 documentos de terceros con datos falsos. ¿Por qué un reordenador no es una defensa?",
-      "teach": "Un reordenador no es una defensa\nUn CROSS-ENCODER lee la pregunta y el fragmento juntos y puntúa cuánto parece que el fragmento responde. Aprendió con millones de pares pregunta-respuesta.\nPor qué: mejora el orden de lo recuperado, pero no sabe de dónde viene cada texto.",
+      "teach": "Un reordenador no es una defensa\nUn CROSS-ENCODER lee la pregunta y el fragmento juntos y puntúa cuánto PARECE que el fragmento responde. Aprendió con millones de pares pregunta-respuesta.\nPero puntúa apariencia, no verdad ni procedencia: una respuesta falsa bien redactada se parece mucho a una buena respuesta, así que puede subirla al top-3.\nEs como un jurado que premia el plato con mejor pinta sin probarlo ni preguntar quién lo cocinó.\nPor qué en tu camino: un reordenador mejora el orden de lo recuperado, pero no sabe de dónde viene cada texto, así que no sustituye a la procedencia ni al control de acceso.",
       "choices": [
         {
           "id": "a",
@@ -285,7 +285,7 @@
     {
       "id": "o4",
       "text": "¿Qué configuración saca de verdad a los documentos de terceros del top-k?",
-      "teach": "Elegir para producción\nTienes tres datos de cada configuración: calidad, latencia y posiciones de los terceros.\nPor qué: una decisión de ingeniería en IA siempre equilibra calidad, coste y seguridad.",
+      "teach": "Elegir para producción\nElegir en producción es equilibrar tres cosas que tiran en direcciones distintas: calidad, latencia y seguridad.\nDe cada configuración tienes esos tres datos: cuánto acierta, cuánto tarda y en qué posición acaban los documentos de terceros.\nEs como comprar coche: no eliges solo por potencia, también por consumo y por seguridad, y renuncias a algo en cada una.\nPor qué en tu camino: una decisión de ingeniería en IA siempre equilibra calidad, coste y seguridad; quien solo mira una acaba con un sistema rápido pero inseguro, o seguro pero inservible.",
       "choices": [
         {
           "id": "a",

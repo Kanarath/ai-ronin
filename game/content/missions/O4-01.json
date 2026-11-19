@@ -69,7 +69,7 @@
     {
       "id": "o1",
       "text": "Reproduce el fallo en el laboratorio: bot create kuro y bot attack kuro",
-      "teach": "Reproducir primero\nAntes de escribir, consigue el fallo de nuevo, con pasos exactos, en la copia del laboratorio.\nPor qué: si el equipo no puede reproducirlo, no puede arreglarlo ni comprobar el arreglo.",
+      "teach": "Reproducir primero\nbot create kuro crea un chatbot de prueba en el laboratorio y bot attack kuro lanza contra él la batería de ataques: antes de escribir una línea del informe, consigues el fallo otra vez, con pasos exactos, sobre la copia.\nPor qué: si el equipo de la forja no puede reproducir el fallo, no puede arreglarlo ni comprobar que el arreglo funciona; un hallazgo que no se repite es tu palabra contra la suya.\nComo llevar el coche al taller con el ruido grabado: si al mecánico no le suena, no sabe ni dónde mirar.",
       "validator": {
         "type": "event",
         "event": "bot.attacks",
@@ -87,7 +87,7 @@
     {
       "id": "c1",
       "text": "El chatbot público, sin autenticación, revela un código interno a quien se lo pida bien. ¿Qué severidad le das?",
-      "teach": "Severidad = impacto × probabilidad\nImpacto: qué se pierde si ocurre. Probabilidad: lo fácil que es que ocurra.\nPor qué: la severidad decide qué se arregla primero; tiene que poder justificarse.",
+      "teach": "Severidad = impacto × probabilidad\nPara poner la gravedad de un hallazgo, separa dos cosas: el impacto (qué se pierde si ocurre) y la probabilidad (lo fácil que es que ocurra). El chatbot público suelta un código interno a quien se lo pida bien: impacto moderado, pero facilísimo de explotar sin cuenta. Eso da alta.\nNi baja (el código vale poco, pero lo saca cualquiera) ni crítica (ser «de IA» no sube la nota: no hay acceso a sistemas ni datos personales). Mira la tabla del diagrama.\nComo valorar una gotera: un hilo de agua en el salón molesta poco, pero si cae justo sobre el cuadro eléctrico y pasa cada día, sube a urgente. Impacto por probabilidad, no el nombre de la avería.",
       "choices": [
         {
           "id": "a",
@@ -120,7 +120,7 @@
     {
       "id": "py1",
       "text": "Programa la matriz de severidad: abre el editor con py, completa severidad y compruébala con py check.",
-      "teach": "La matriz, en código\nImpacto y probabilidad de 1 a 3. Su producto da la severidad: 9 crítica, 6 o más alta, 3 o más media, si no baja.\nPor qué: una regla escrita hace que dos auditores lleguen a la misma severidad.",
+      "teach": "La matriz, en código\nVas a escribir severidad: impacto y probabilidad van de 1 a 3, y su producto decide la nota —9 es crítica, 6 o más alta, 3 o más media y el resto baja—.\nPor qué: una regla escrita hace que dos auditores distintos lleguen a la misma severidad; sin ella, la gravedad acaba dependiendo de quién tuvo peor día.\nComo el baremo de un seguro: no discutís «cuánto de grave»; metéis los números en la tabla y sale lo mismo para todos.",
       "py_exercise": {
         "id": "O4-01-severidad",
         "title": "severidad(impacto, probabilidad): baja, media, alta o crítica",
@@ -180,7 +180,7 @@
     {
       "id": "c2",
       "text": "¿Qué verificación permite comprobar de verdad el arreglo?",
-      "teach": "Verificación comprobable\nLa verificación dice cómo saber que el fallo ya no está, con una medida que se pueda repetir.\nPor qué: «lo he revisado» no se puede comprobar; «la batería baja a 0» sí.",
+      "teach": "Verificación comprobable\nLa verificación dice cómo sabrá el equipo que el fallo ya no está, con una medida que cualquiera pueda repetir y que dé un resultado. «La batería de ataques pasa de su tasa actual a 0 éxitos» vale; «el equipo lo ha revisado» o «se añadió una regla al prompt» no. Mira la tabla del diagrama.\nPor qué: «lo he revisado» no se puede comprobar ni repetir, y una regla en el prompt de sistema ni siquiera frena la inyección; sin una prueba medible, nadie sabe si el arreglo sirvió.\nComo dar de alta a un paciente: no vale «le veo buen color», vale «la fiebre baja a 0 en dos tomas seguidas». Un número que se repite, no una impresión.",
       "choices": [
         {
           "id": "a",
@@ -236,7 +236,7 @@
     {
       "id": "o2",
       "text": "Escribe el informe del hallazgo hasta que cumpla la rúbrica: informe nuevo …, informe campo … e informe revisar.",
-      "teach": "El informe\nCampos: titulo · severidad · componente · owasp (p. ej. LLM07) · descripcion · pasos (los comandos, en orden) · impacto · evidencia · mitigacion · verificacion.\nPor qué: es lo que el cliente lee, prioriza y usa para arreglar.",
+      "teach": "El informe\ninforme nuevo …, informe campo … e informe revisar van rellenando el hallazgo campo a campo; informe revisar te dice cuál falta o no cumple la rúbrica. Los campos: titulo · severidad · componente · owasp (p. ej. LLM07) · descripcion · pasos (los comandos, en orden) · impacto · evidencia · mitigacion · verificacion.\nPor qué aquí: este informe es el verdadero producto del red team —lo que el cliente lee, prioriza y usa para arreglar—; te juzgarán por él, no por lo listo que fue el ataque.\nComo la receta de un plato: no basta con que te saliera rico una vez; si no apuntas ingredientes y pasos en orden, nadie más lo reproduce en su cocina.",
       "validator": {
         "type": "event",
         "event": "report.checked",

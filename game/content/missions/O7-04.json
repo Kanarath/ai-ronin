@@ -48,7 +48,7 @@
     {
       "id": "o1",
       "text": "Aprueba como se hace hoy: approvals mode explicacion, approvals list y decide las 8 (approvals decide R1 si|no …) solo con lo que explica el agente.",
-      "teach": "Lo que ve quien aprueba\nEn el modo de hoy, el responsable solo lee la frase con la que el agente justifica la petición. No ve el cambio que se ejecutará.\nPor qué: así es como están montadas muchas aprobaciones reales: una notificación con el texto del agente y dos botones.",
+      "teach": "Lo que ve quien aprueba\nTe sientas en la silla de quien aprueba. approvals mode explicacion pone el modo de hoy, approvals list enseña las ocho peticiones y approvals decide R1 si|no … resuelve cada una. En este modo solo lees la frase con la que el agente justifica la petición; no ves el cambio que se ejecutará si dices que sí.\nPara qué en tu camino: así están montadas muchísimas aprobaciones reales, una notificación con el texto del agente y dos botones. Vas a vivir por qué eso es un problema antes de arreglarlo.\nEs como aprobar una compra de la empresa leyendo solo el asunto del correo, sin abrir la factura: decides sobre el titular, no sobre lo que de verdad vas a pagar.",
       "validator": {
         "type": "event",
         "event": "approvals.decided",
@@ -63,7 +63,7 @@
     {
       "id": "o2",
       "text": "Mira qué aprobaste de verdad: approvals result. ¿Cuántas peticiones dañinas aprobaste? (answer <número>)",
-      "teach": "La trampa\nCada petición tenía un cambio real que no veías. Cuatro eran dañinas (dar permisos de administrador, borrar miles de filas, sacar datos de clientes, un descuento inventado) con explicaciones de lo más razonable.\nPor qué: si la explicación la escribe el agente, puede ser convincente y falsa a la vez; es imposible decidir bien sin ver el cambio.",
+      "teach": "La trampa\napprovals result te enseña lo que de verdad aprobaste. Cada petición escondía un cambio real que no veías: cuatro eran dañinas (dar permisos de administrador, borrar miles de filas, sacar datos de clientes, un descuento inventado), con explicaciones de lo más razonable encima.\nQué significa tu resultado: da igual el número que te salga; lo importante es que no podías acertar. Con solo la explicación, o aprobabas alguna dañina o rechazabas alguna legítima.\nPara qué en tu camino: si la explicación la escribe la parte que no es de fiar (el agente, que puede estar manipulado), puede ser convincente y falsa a la vez. Decidir bien sin ver el cambio es imposible, por atento que estés.\nEs como un examen en el que te dejan ver las respuestas que escribió otro, pero no la pregunta: por mucho que te esfuerces, no estás evaluando lo que crees.",
       "validator": {
         "type": "event",
         "event": "approvals.result",
@@ -80,7 +80,7 @@
     {
       "id": "c1",
       "text": "¿De quién es el fallo?",
-      "teach": "No es de quien aprueba\nLa persona hizo lo que podía con lo que tenía. El fallo es de diseño: se le pidió decidir a partir de un texto que escribe la parte que no es de fiar.\nPor qué: culpar al usuario («tenía que haberlo mirado mejor») no arregla nada; rediseñar lo que ve, sí.",
+      "teach": "No es de quien aprueba\nLa tentación es culpar al responsable: «tenía que haberse fijado mejor». Pero hizo lo único que podía con lo único que le dieron: la explicación del agente. El fallo es de diseño, no de atención: se pidió aprobar a partir de un texto que escribe la parte que no es de fiar.\nPara qué en tu camino: esto es clave en seguridad. Culpar a la persona no arregla nada y se repetirá con la siguiente; rediseñar lo que esa persona ve, sí lo arregla. Busca siempre el fallo en el sistema antes que en quien lo usa.\nEs como un cruce donde todos los conductores frenan tarde: puedes multar a uno tras otro, o puedes mirar que el semáforo está escondido tras un árbol. Lo segundo es lo que salva vidas.",
       "choices": [
         {
           "id": "a",
@@ -113,7 +113,7 @@
     {
       "id": "o3",
       "text": "Rediséñalo: approvals mode verificable, approvals list y vuelve a decidir las 8 viendo el cambio real.",
-      "teach": "Aprobación verificable\nAhora, debajo de cada explicación, el sistema muestra el cambio exacto que generará la herramienta: el rol que se concede, las filas que se borran, el destino y el adjunto del correo.\nPor qué: ese resumen lo genera el sistema a partir de la llamada, no el agente. Es lo que la persona tiene que ver para decidir de verdad.",
+      "teach": "Aprobación verificable\napprovals mode verificable lo rediseña. Ahora, debajo de cada explicación, el sistema muestra el cambio exacto que ejecutará la herramienta: el rol que se concede, las filas que se borran, el destino y el adjunto del correo. Vuelves a decidir las ocho, pero esta vez viendo el cambio.\nLa clave: ese resumen lo genera el sistema a partir de la llamada real, no el agente. Por eso no se puede falsear desde el prompt; es lo único en lo que la persona puede confiar para decidir.\nPara qué en tu camino: esta es la diferencia entre una aprobación de adorno y una que de verdad protege, y es trabajo de diseño que cada vez se paga más.\nEs como pasar de fiarte del resumen de palabra del vendedor a leer el contrato que imprime la notaría: el mismo trato, pero ahora ves lo que firmas de una fuente que no miente.",
       "validator": {
         "type": "event",
         "event": "approvals.listed",
@@ -128,7 +128,7 @@
     {
       "id": "o4",
       "text": "Comprueba el resultado: approvals result. ¿Cuántas dañinas aprobaste ahora? (answer <número>)",
-      "teach": "La diferencia\nCon el cambio a la vista, R2 (admin sin caducidad), R4 (borrar 4.812 filas), R6 (clientes.csv a un dominio externo) y R8 (descuento sin aprobación) se rechazan solas.\nPor qué: la aprobación humana funciona como defensa solo si la persona ve un resumen fiel y entendible de lo que va a pasar.",
+      "teach": "La diferencia\napprovals result otra vez, y mira el cambio: con el cambio real a la vista, R2 (admin sin caducidad), R4 (borrar 4.812 filas), R6 (clientes.csv a un dominio externo) y R8 (descuento sin aprobación) se caen solas; saltan a la vista.\nQué significa: cero dañinas aprobadas y ninguna legítima rechazada. Lo que cambió no fue la atención de la persona, fue lo que se le enseñó.\nPara qué en tu camino: aquí está la lección entera de ASI09. La aprobación humana funciona como defensa solo si la persona ve un resumen fiel y entendible de lo que va a pasar; si no, es teatro.\nEs la diferencia entre aprobar una transferencia viendo solo «pago a proveedor» y verla con el importe y el número de cuenta de destino: el mismo clic, pero ahora el engaño no cuela.",
       "validator": {
         "type": "all",
         "of": [
@@ -155,7 +155,7 @@
     {
       "id": "c2",
       "text": "Para R2 (dar admin), ¿qué más conviene además del resumen verificable?",
-      "teach": "Defensa en profundidad para lo crítico\nLo más peligroso (conceder privilegios, mover dinero, borrar en masa) pide algo más: una segunda persona, un límite que el agente no pueda tocar, o que ese cambio no esté entre las herramientas del agente.\nPor qué: una sola persona cansada se equivoca; el riesgo alto se reparte o se quita del alcance del agente (mínimo privilegio, como en A3).",
+      "teach": "Defensa en profundidad para lo crítico\nVer el cambio basta para lo rutinario, pero lo más peligroso —conceder privilegios, mover dinero, borrar en masa— pide una barrera más: una segunda persona que apruebe, un límite que el agente no pueda tocar, o directamente que ese cambio no esté entre sus herramientas.\nPara qué en tu camino: una sola persona, por atenta que esté, un día está cansada y se equivoca. El riesgo alto no se confía a un único clic: se reparte entre dos o se saca del alcance del agente (mínimo privilegio, como en A3).\nEs como la caja fuerte de un banco que necesita dos personas con dos llaves: no es desconfianza de ninguna, es que para lo irreversible no quieres que un solo error baste.",
       "choices": [
         {
           "id": "a",
@@ -188,7 +188,7 @@
     {
       "id": "py1",
       "text": "Programa la detección: abre el editor con py, completa daninas_aprobadas y compruébala con py check.",
-      "teach": "Lo aprobado de verdad, en código\nCuántas peticiones dañinas acabaron aprobadas.\nPor qué: es la cuenta de approvals result, la que mide si la aprobación protege.",
+      "teach": "Lo aprobado de verdad, en código\nLa función cuenta cuántas peticiones dañinas acabaron aprobadas: solo suma cuando la petición era dañina Y además se dijo que sí.\nCómo: completa la línea y compruébala con py check.\nPara qué en tu camino: es la cuenta de approvals result, la cifra que mide si una aprobación protege o no. Programarla deja claro que lo que importa no es cuántas había, sino cuántas malas se colaron.",
       "py_exercise": {
         "id": "O7-04-daninas",
         "title": "daninas_aprobadas(peticiones, decisiones): dañinas que se aprobaron",

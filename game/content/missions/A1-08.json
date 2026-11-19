@@ -37,7 +37,7 @@
     {
       "id": "o1",
       "text": "Mira las familias: jailbreak tecnicas. Son seis mecanismos distintos de saltarse las reglas.",
-      "teach": "Seis familias\nInyección directa (A1-02), juego de rol, crescendo (escalada en varios turnos), many-shot (muchos ejemplos en el contexto), codificación (la petición disfrazada) e inyección indirecta (desde un documento, A2).\nPor qué: si solo conoces la inyección directa, defiendes una puerta y dejas cinco abiertas.",
+      "teach": "Seis familias\nUn JAILBREAK es cualquier forma de hacer que el modelo se salte sus reglas, y no hay una sola: hay familias, seis aquí. Inyección directa (A1-02), juego de rol, crescendo (escalada en varios turnos), many-shot (muchos ejemplos en el contexto), codificación (la petición disfrazada) e inyección indirecta (desde un documento, A2).\nCada una esconde la mala intención de una forma distinta, y por eso cada una esquiva una defensa distinta.\nPara qué en tu camino: si solo conoces la inyección directa, defiendes una puerta y dejas cinco abiertas; tener el mapa completo es lo que separa a un red teamer de alguien que repite un truco.\nEs como las entradas de un edificio: la principal, el garaje, la salida de incendios, la ventana del baño… tapiar la principal y creerte seguro es el error clásico.",
       "validator": {
         "type": "event",
         "event": "jailbreak.tecnicas"
@@ -57,7 +57,7 @@
           "casi ninguna"
         ]
       },
-      "teach": "El filtro de palabras\nBusca frases típicas de ataque («ignora tus instrucciones»). Es la defensa más básica.\nPor qué: solo pilla la que lleva esas palabras; las demás no las usan.",
+      "teach": "El filtro de palabras\nEl filtro de palabras busca frases típicas de ataque («ignora tus instrucciones») dentro del mensaje. Es la defensa más básica que existe, y mira el diagrama de la izquierda: frena solo 1 de las 6 familias.\nPara qué en tu camino: te fija el límite de la defensa más común; solo pilla la familia que lleva esas palabras exactas, y las otras cinco ni las usan.\nEs como un filtro de palabrotas en un chat: para los insultos obvios, pero el que quiere ofender lo hace con otras palabras y pasa sin rozar la lista.",
       "validator": {
         "type": "all",
         "of": [
@@ -84,7 +84,7 @@
     {
       "id": "o3",
       "text": "Añade el clasificador de seguridad de A1-07: jailbreak defensa clasificador on y jailbreak evaluar. ¿Cuántas frena ahora? (answer <número>)",
-      "teach": "El clasificador de intención\nUn modelo que juzga la INTENCIÓN del mensaje, no las palabras. Pilla la directa, el juego de rol y la indirecta (todas con intención clara).\nPor qué: mejora mucho, pero tres familias siguen pasando.",
+      "teach": "El clasificador de intención\nEs un modelo que juzga la INTENCIÓN del mensaje, no las palabras sueltas, así que lo pilla aunque cambies el vocabulario. Caza la directa, el juego de rol y la indirecta: las tres llevan una intención clara en un solo mensaje.\nPara qué en tu camino: es un salto grande respecto al filtro de palabras, pero fíjate en que tres familias siguen pasando; ninguna capa sola lo resuelve, y ese es el corazón de la misión.\nEs como pasar del portero que mira nombres al portero que mira actitudes: caza al que entra con mala cara, pero no al que finge normalidad o actúa en varios pasos.",
       "validator": {
         "type": "all",
         "of": [
@@ -111,7 +111,7 @@
     {
       "id": "c1",
       "text": "¿Por qué el crescendo y la codificación pasan un clasificador de intención?",
-      "teach": "Cada una esquiva una cosa distinta\nEl crescendo reparte la mala intención en varios turnos, cada uno inocuo; el many-shot la esconde en los ejemplos del contexto; la codificación la disfraza para que no se reconozca. Un clasificador que mira un mensaje aislado no las ve.\nPor qué: por eso cada familia necesita SU defensa: mirar la conversación entera, limitar el contexto, decodificar antes de filtrar.",
+      "teach": "Cada una esquiva una cosa distinta\nMira el truco de cada una: el crescendo reparte la mala intención en varios turnos, y cada turno por separado parece inocuo; el many-shot la esconde entre muchos ejemplos del contexto; la codificación la disfraza para que no se reconozca. Un clasificador que mira un solo mensaje aislado no ve nada raro en ninguno.\nPara qué en tu camino: aquí entiendes por qué cada familia necesita SU defensa (mirar la conversación entera, limitar el contexto, decodificar antes de filtrar) y por qué no existe el control único.\nEs como el timo de la estampita: cada gesto suelto parece inocente, el engaño solo aparece al ver la secuencia completa; quien mira un fotograma no lo pilla.",
       "choices": [
         {
           "id": "a",
@@ -145,7 +145,7 @@
       "id": "o4",
       "text": "Monta la defensa en profundidad: añade limite_turnos, limite_contexto y normalizar, y jailbreak evaluar. ¿Cuántas frenas ya? (answer <número>)",
       "diagram": {"kind":"table","title":"LA IDEA · una capa por familia","headers":["familia","cómo esconde la intención","capa que la frena"],"rows":[["inyección directa","la pide sin más","filtro de palabras"],["juego de rol","adopta un papel","clasificador de intención"],["crescendo","la reparte en varios turnos","vigilar la conversación entera"],["many-shot","la esconde entre ejemplos","limitar y revisar el contexto"],["codificación","la disfraza","normalizar y decodificar"],["indirecta","viaja en un documento","aislar el contenido no fiable (A2)"]],"caption":"cada familia esquiva una cosa distinta, así que cada una necesita su propia capa. No hay un único control que las pare todas: por eso se apilan"},
-      "teach": "Una capa por familia\nVigilar la conversación entera frena el crescendo; limitar y revisar el contexto frena el many-shot; normalizar y decodificar la entrada frena la codificación. Cada capa cierra una puerta.\nPor qué: no hay una defensa que las pare todas; se suman capas, cada una para su familia.",
+      "teach": "Una capa por familia\nAhora cierras las puertas que quedaban: vigilar la conversación entera frena el crescendo; limitar y revisar el contexto frena el many-shot; normalizar y decodificar la entrada frena la codificación. Cada capa cierra una puerta concreta; míralo en el diagrama de la izquierda.\nEso es la DEFENSA EN PROFUNDIDAD: no un muro, sino varias capas, cada una pensada para lo que las otras dejan pasar.\nPara qué en tu camino: interiorizas que la seguridad real se construye apilando, porque ninguna capa sola llega a 6 de 6, y así dejas de buscar la bala de plata.\nEs como proteger una casa: cerradura, alarma, perro y luces con sensor; ningún elemento es perfecto, pero juntos cubren las debilidades de cada uno.",
       "validator": {
         "type": "all",
         "of": [
@@ -172,7 +172,7 @@
     {
       "id": "c2",
       "text": "Montadas las capas, ¿ya está la defensa terminada?",
-      "teach": "Probar en continuo\nAparecen familias y variantes nuevas cada mes. La defensa se prueba sin parar con herramientas de red team automatizadas —garak, promptfoo, PyRIT— que lanzan baterías de jailbreaks y miden qué pasa, en CI, como las evals de P2.\nPor qué: una defensa que no se vuelve a probar protege del ataque de ayer, no del de mañana.",
+      "teach": "Probar en continuo\nLas capas no son el final: aparecen familias y variantes nuevas cada mes. Por eso la defensa se prueba sin parar con herramientas de red team automatizadas —garak, promptfoo, PyRIT— que lanzan baterías de jailbreaks y miden qué pasa, en CI (integración continua), igual que las evals de P2.\nPara qué en tu camino: te quita la idea de «ya está asegurado para siempre», que es la trampa más cara; la seguridad es un proceso que corre solo, no una tarea que se termina.\nEs como la limpieza de una cocina profesional: no la haces una vez y ya está; se repite en cada servicio, porque la suciedad vuelve a aparecer sin avisar.",
       "choices": [
         {
           "id": "a",
@@ -205,7 +205,7 @@
     {
       "id": "py1",
       "text": "Programa la cuenta de la defensa: abre el editor con py, completa frenadas y compruébala con py check.",
-      "teach": "Técnicas frenadas, en código\nUna técnica se frena si alguna capa activa pilla alguno de sus rasgos.\nPor qué: es lo que hace jailbreak evaluar con cada familia.",
+      "teach": "Técnicas frenadas, en código\nLa regla es simple: una técnica se frena si alguna capa activa pilla al menos uno de sus rasgos. Recorres familia por familia y cuentas cuántas quedan frenadas.\nPara qué en tu camino: es exactamente lo que hace jailbreak evaluar por dentro con cada familia; escribirlo te enseña que «defender» aquí es, literalmente, cruzar rasgos contra capas.\nEs como pasar la lista de una clase contra varias hojas de asistencia: basta que un alumno aparezca en una para contarlo como presente.",
       "py_exercise": {
         "id": "A1-08-frenadas",
         "title": "frenadas(tecnicas, capas): cuántas técnicas frena el conjunto de capas",

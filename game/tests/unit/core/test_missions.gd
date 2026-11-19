@@ -797,8 +797,8 @@ func test_A3_A4_A6_siguen_el_patron_del_piloto() -> void:
 		for o: Dictionary in m["objectives"]:
 			var where := "%s %s" % [id, o["id"]]
 			assert_true(o.has("teach"), where + ": tiene lección")
-			var lines: PackedStringArray = str(o.get("teach", "")).split("\n")
-			assert_true(lines[-1].begins_with("Por qué:"), where + ": la lección acaba en «Por qué:»")
+			var teach_txt := str(o.get("teach", ""))
+			assert_true(teach_txt.contains("Por qué:") or teach_txt.contains("qué en tu camino"), where + ": la lección explica el para qué (Por qué: / Para qué en tu camino:)")
 			assert_ne(o["validator"]["type"], "reflection", where + ": sin reflexiones escritas")
 			if o.has("choices"):
 				checks += 1

@@ -67,7 +67,7 @@
         "agent create kage · agent defend kage least-privilege on · agent defend kage user-authz on · agent defend kage step-budget on · lab resilience agent kage"
       ],
       "on_complete": "0 robustos. Tres de los cinco cuelgan de least-privilege: el día que alguien añada «aplicar_reembolso» a la lista del triaje, vuelven.",
-      "teach": "Tres controles en el código\nleast-privilege limita las herramientas de cada rol; user-authz comprueba los permisos de quien pide; step-budget limita los pasos del agente. Son controles en el código, no instrucciones al modelo.\nCrea un agente con agent create kage, actívalos con agent defend y mide con lab resilience agent kage.\nPor qué: es una configuración razonable de producción; hoy mides cuánto depende de que cada control no falle nunca."
+      "teach": "Tres controles en el código\nLos tres viven en el código, no en instrucciones al modelo (que se esquivan reformulando): least-privilege limita qué herramientas puede tocar cada rol; user-authz comprueba los permisos de quien pide la acción; step-budget limita cuántos pasos puede dar el agente.\nCómo: agent create kage crea el agente, agent defend los activa y lab resilience agent kage mide.\nSon como las cerraduras y los topes físicos de una casa, no como el cartel de «prohibido el paso»: funcionan aunque el intruso no sepa leer o no quiera obedecer.\nPor qué aquí: es una configuración razonable de producción. Hoy no mides si bloquea (lo hace), sino cuánto depende de que cada uno de esos controles no falle nunca."
     },
     {
       "id": "c1",
@@ -112,7 +112,7 @@
           "memory-hygiene"
         ]
       },
-      "teach": "La segunda cerradura\nMira en la matriz qué columnas bloquean cada fila: necesitas dos ■ por fila con controles activos.\nUn control débil como capa ÚNICA (spotlight) puede ser buena SEGUNDA capa: si lo esquivan, aún queda el control del código.\nhitl (una persona aprueba cada acción) también bloquea, pero cuesta aprobaciones.\nPor qué: así se diseñan los sistemas críticos: capas independientes, cada una barata.",
+      "teach": "La segunda cerradura\nDefensa en profundidad es tener dos ■ por fila: dos controles activos que paren cada ataque, para que si uno falla, el otro siga. Mira la matriz y busca esa segunda columna para cada fila.\nUn control débil como capa ÚNICA, como spotlight, puede ser una buena SEGUNDA capa: si el atacante lo esquiva reformulando, aún queda el control del código debajo. hitl (una persona aprueba cada acción) también bloquea, pero cuesta aprobaciones.\nEs el cinturón y los tirantes a la vez: ninguno es perfecto, pero que se te caigan los pantalones exige que fallen los dos.\nPor qué en tu camino: así se diseñan los sistemas críticos de verdad (aviones, centrales), con capas independientes y baratas. No buscas la defensa perfecta, buscas que ningún fallo aislado te deje desnudo.",
       "validator": {
         "type": "event",
         "event": "lab.resilience",
@@ -150,7 +150,7 @@
         "Puedes probarlo: activa arg-validation y memory-hygiene y repite lab resilience."
       ],
       "on_complete": "El confused deputy solo tiene una columna en todo el laboratorio. Es tu riesgo residual: no se arregla con otro interruptor, se gestiona.",
-      "teach": "El riesgo residual\nPrueba a activar también arg-validation y memory-hygiene y repite lab resilience: mira qué ataque sigue «frágil».\nPor qué: lo que queda después de aplicar todos los controles razonables es el riesgo residual; no se arregla con otro interruptor, se gestiona (lo verás en O5)."
+      "teach": "El riesgo residual\nEl riesgo residual es lo que queda después de aplicar todos los controles razonables: el ataque que sigue colgando de un solo hilo por más interruptores que enciendas.\nPruébalo: activa también arg-validation y memory-hygiene, repite lab resilience y mira qué ataque sigue «frágil».\nEs esa gotera que ningún parche cierra del todo: en vez de empeñarte en un parche más, pones un cubo y la vigilas.\nPor qué en tu camino: lo que no se puede duplicar no se arregla con otro interruptor, se gestiona (vigilancia, trazas, pruebas). Reconocerlo y nombrarlo, en vez de fingir que está resuelto, separa un informe honesto de uno peligroso; cómo se trata lo ves en el siguiente paso."
     },
     {
       "id": "o4",

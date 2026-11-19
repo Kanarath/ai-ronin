@@ -59,7 +59,7 @@
     {
       "id": "py1",
       "text": "Antes del laboratorio, la idea en pequeño: abre el editor con py, completa la función ventaja y compruébala con py check.",
-      "teach": "La ventaja del atacante, con tus manos\nEl atacante dice «miembro» si la pérdida de un ejemplo está por debajo de un umbral: el modelo ha visto ese ejemplo y lo predice «demasiado bien».\nTPR (True Positive Rate): qué fracción de los miembros marca. FPR (False Positive Rate): qué fracción de los no miembros marca por error.\nVentaja = TPR − FPR: 0 es adivinar al azar. La TPR ya está escrita; completa la FPR igual, con la otra lista.\nPor qué: es la cifra con la que se informa de un ataque de pertenencia; en el laboratorio la calcularás para cada receta de entrenamiento.",
+      "teach": "La ventaja del atacante, con tus manos\nEl atacante dice «miembro» si la pérdida de un ejemplo está por debajo de un umbral: el modelo ha visto ese ejemplo y lo predice «demasiado bien».\nTPR (True Positive Rate): qué fracción de los miembros marca. FPR (False Positive Rate): qué fracción de los no miembros marca por error.\nVentaja = TPR − FPR: 0 es adivinar al azar. La TPR ya está escrita; completa la FPR igual, con la otra lista.\nPiénsalo como un detector de mentiras: lo que importa no es a cuántos culpables pilla, sino cuánto más acierta que tirando una moneda; si también acusa a los inocentes, no vale nada. Marcar a todos da TPR 1 y ventaja 0.\nPor qué: es la cifra con la que se informa de un ataque de pertenencia; en el laboratorio la calcularás para cada receta de entrenamiento.",
       "py_exercise": {
         "id": "E2-03-ventaja",
         "title": "ventaja(perdidas_miembros, perdidas_otros, umbral): TPR − FPR",
@@ -149,7 +149,7 @@
     {
       "id": "o1",
       "text": "En el Dojo: abre el editor con py, programa perdida_por_ejemplo, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las siete funciones de privacidad.py hasta que pasen los 14 tests y trae la evidencia.",
-      "teach": "Una curva, no un número\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E2-03_privacidad/README.md e implementa privacidad.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUn ataque con umbral es una familia de ataques: con un umbral bajo marca a pocos y casi siempre acierta; con uno alto marca a casi todos. La curva ROC (Receiver Operating Characteristic) recorre todos los umbrales y muestra cada compromiso entre aciertos (TPR) y falsas alarmas (FPR).\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: por eso se informa de la curva y de la TPR con FPR baja, y no de una sola precisión.",
+      "teach": "Una curva, no un número\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E2-03_privacidad/README.md e implementa privacidad.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUn ataque con umbral es una familia de ataques: con un umbral bajo marca a pocos y casi siempre acierta; con uno alto marca a casi todos. La curva ROC (Receiver Operating Characteristic) recorre todos los umbrales y muestra cada compromiso entre aciertos (TPR) y falsas alarmas (FPR).\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nEs como el volumen de una alarma antihumo: muy sensible, salta con una tostada; muy sorda, no avisa del fuego. La curva ROC dibuja todos esos ajustes de golpe para que elijas con cuál te quedas.\nPor qué: por eso se informa de la curva y de la TPR con FPR baja, y no de una sola precisión; para una persona concreta lo que cuenta es si la pueden señalar con muy pocas falsas alarmas.",
       "validator": {
         "type": "any",
         "of": [
@@ -231,7 +231,7 @@
     {
       "id": "c1",
       "text": "En privacidad diferencial, ¿qué significa un ε más pequeño?",
-      "teach": "Dos epsilons distintos\nEn E2-01, epsilon era el tamaño del cambio por píxel de un ataque. Aquí, ε mide la privacidad: cuánto puede cambiar la salida de un cálculo al añadir o quitar a una persona de los datos.\nPor qué: los artículos de seguridad de IA (Inteligencia Artificial) usan los dos, y confundirlos es habitual.",
+      "teach": "Dos epsilons distintos\nEn E2-01, epsilon era el tamaño del cambio por píxel de un ataque. Aquí, ε mide la privacidad: cuánto puede cambiar la salida de un cálculo al añadir o quitar a una persona de los datos.\nEn el mecanismo de Laplace el ruido tiene escala sensibilidad/ε, así que un ε pequeño significa más ruido y más privacidad: la salida apenas depende de que tú estés o no en los datos.\nEs como una votación a mano alzada en una sala llena: tu voto casi no mueve el total, así que nadie sabe qué votaste. Cuanto más pequeña la ε, más grande la sala.\nPor qué: los artículos de seguridad de IA (Inteligencia Artificial) usan los dos epsilons y confundirlos es habitual; este no es el epsilon de FGSM (Fast Gradient Sign Method) de E2-01, aunque se llame igual.",
       "choices": [
         {
           "id": "a",
@@ -289,13 +289,13 @@
         "Con menos: python bateria.py --configs \"ninguna;regularizado;dp-sgd-fuerte\""
       ],
       "on_complete": "Tienes los datos. Mira juntas la ventaja y la precisión en test de cada receta.",
-      "teach": "La batería\nbateria.py entrena cuatro recetas con 3 semillas: sobreajustada, regularizada y dos con DP-SGD (Differentially Private Stochastic Gradient Descent). Las ataca y publica una media con privacidad diferencial. Después trae la medición con evidence import.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: la privacidad de un modelo no se supone: se mide con el ataque."
+      "teach": "La batería\nbateria.py entrena cuatro recetas con 3 semillas: sobreajustada, regularizada y dos con DP-SGD (Differentially Private Stochastic Gradient Descent). Las ataca y publica una media con privacidad diferencial. Después trae la medición con evidence import.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nQué verás: mira juntas la ventaja del atacante y la precisión en test de cada receta (diagrama de la izquierda): el modelo sobreajustado delata mucho; DP-SGD baja la ventaja, pero cuesta precisión.\nEs como un cuaderno con huellas dactilares: cuanto más se agarra el modelo a sus ejemplos concretos, más marcas deja de quién pasó por ahí.\nPor qué: la privacidad de un modelo no se supone, se mide con el ataque; el modelo que acierta el 100 % en sus propios datos casi siempre es el que más delata."
     },
     {
       "id": "o3",
       "diagram": {"kind":"lines","title":"LA IDEA · elegir ε es elegir ruido contra privacidad","x_label":"ε","y_label":"error de la media (escala del ruido)","series":[{"name":"Laplace · sensibilidad/ε","color":"violet","points":[[0.25,0.96],[0.5,0.48],[1,0.24],[2,0.12],[4,0.06]]}],"caption":"el ruido de Laplace tiene escala sensibilidad/ε: con ε pequeño, la salida apenas depende de una persona (más privacidad) y el error es mayor. Multiplicar ε por 10 divide el error más o menos entre 10"},
       "text": "Si multiplicas ε por 10, ¿qué pasa con el error de la media publicada con Laplace?",
-      "teach": "Error de la media con Laplace\nEl error de la media publicada es el ruido que se le suma, y su tamaño típico es la escala del ruido: sensibilidad/ε (tarjeta «Privacidad diferencial»).\nEjemplo: con sensibilidad 0,24, ε = 1 da escala 0,24; ε = 0,5 da escala 0,48.\nPor qué: elegir ε es elegir cuánto error aceptas a cambio de cuánta privacidad.",
+      "teach": "Error de la media con Laplace\nEl error de la media publicada es el ruido que se le suma, y su tamaño típico es la escala del ruido: sensibilidad/ε (tarjeta «Privacidad diferencial»).\nEjemplo: con sensibilidad 0,24, ε = 1 da escala 0,24; ε = 0,5 da escala 0,48. Como ε divide, multiplicarla por 10 divide el error más o menos entre 10 (mira el diagrama de la izquierda).\nEs como regatear con un margen de error: aceptar ±50 € protege mucho tu oferta real pero casi no dice el precio; ±5 € afina el precio pero desvela tu jugada. ε elige ese margen.\nPor qué: elegir ε es elegir cuánto error aceptas a cambio de cuánta privacidad; es una decisión, no un valor que venga dado.",
       "validator": {
         "type": "answer",
         "expected": "a",
@@ -340,7 +340,7 @@
         "README, sección «Relación con LLM02 y con el RGPD».",
         "answer b"
       ],
-      "teach": "Técnica y norma\nAntes de responder, lee la sección «Relación con LLM02 y con el RGPD» del README. El RGPD es el Reglamento General de Protección de Datos (en inglés, GDPR: General Data Protection Regulation). La sección resume lo que dice el Dictamen 28/2024 del CEPD, el Comité Europeo de Protección de Datos (en inglés, EDPB: European Data Protection Board), sobre modelos entrenados con datos personales. (Esto es formación, no asesoramiento jurídico.)\nPor qué: tu medición es una evidencia técnica que alimenta esa evaluación, no una conclusión jurídica.",
+      "teach": "Técnica y norma\nAntes de responder, lee la sección «Relación con LLM02 y con el RGPD» del README. El RGPD es el Reglamento General de Protección de Datos (en inglés, GDPR: General Data Protection Regulation). La sección resume lo que dice el Dictamen 28/2024 del CEPD, el Comité Europeo de Protección de Datos (en inglés, EDPB: European Data Protection Board), sobre modelos entrenados con datos personales. (Esto es formación, no asesoramiento jurídico.)\nTu ataque mide un caso concreto; el anonimato se valora caso por caso, con muchos factores. Es como la ITV de un coche: pasarla es una prueba técnica que alimenta la decisión de si circula, no un certificado de que nunca fallará.\nPor qué: tu medición es una evidencia técnica que alimenta esa evaluación, no una conclusión jurídica; confundir una prueba con una certificación lleva a prometer un «modelo anónimo» que nadie ha certificado.",
       "choices": [
         {
           "id": "a",

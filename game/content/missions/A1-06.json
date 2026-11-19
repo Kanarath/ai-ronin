@@ -54,7 +54,7 @@
     {
       "id": "o1",
       "text": "En el Dojo: abre el editor con py, programa veredicto_equilibrado, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las nueve funciones de juez.py hasta que pasen los 26 tests y trae la evidencia.",
-      "teach": "Parsear lo que dice un modelo\nUn modelo pequeño no siempre contesta «Puntuación: 4». A veces escribe «Le doy un 4 de 5» o «**4**», o se corrige a mitad de frase.\nUn parseo robusto prueba varias reglas en orden y se queda con la última conclusión.\nSi no encuentra un número válido, devuelve None: nunca inventa una nota. Y cuenta cuántas veces pasa.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: un juez que no sigue el formato también es un fallo que hay que medir.",
+      "teach": "Parsear lo que dice un modelo\nUn modelo pequeño no siempre contesta «Puntuación: 4». A veces escribe «Le doy un 4 de 5», o «**4**», o se corrige a mitad de frase.\nUn PARSEO robusto no se fía de un solo formato: prueba varias reglas en orden y se queda con la última conclusión. Si no encuentra ningún número válido, devuelve None y nunca inventa una nota; además cuenta cuántas veces le pasa.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPara qué en tu camino: un juez que no sigue el formato también es un fallo, y un fallo que no mides es un fallo que te acabará engañando.\nEs como leer facturas de mil proveedores distintos: el total está en todas, pero cada una lo pone a su manera, y más vale decir «no lo encuentro» que apuntar un número equivocado.",
       "validator": {
         "type": "any",
         "of": [
@@ -124,7 +124,7 @@
     {
       "id": "o2",
       "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: con Ollama en marcha, ejecuta bateria.py (al menos 3 configuraciones, una de ellas «ninguna») y tráela con evidence import.",
-      "teach": "La batería del juez\nbateria.py pide al juez que puntúe respuestas ya etiquetadas por personas, con varias configuraciones, y guarda los recuentos.\nLa KAPPA DE COHEN mide cuánto coincide el juez con las personas descontando lo que coincidiría por azar: 1 es acuerdo perfecto y 0 es el del azar.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: un juez cuya kappa no has medido es solo otra opinión.",
+      "teach": "La batería del juez\nbateria.py le pide al juez que puntúe respuestas ya etiquetadas por personas, con varias configuraciones, y guarda los recuentos.\nLa KAPPA DE COHEN mide cuánto coincide el juez con las personas, pero descontando lo que coincidirían por puro azar: 1 es acuerdo perfecto, 0 es el acuerdo que daría tirar una moneda. Mira el diagrama: un juez que dice siempre «bien» acierta el 90 % y aun así tiene kappa ≈ 0.\nEn el Dojo, forja medir reproduce una medición real hecha con el modelo local en un portátil; medirla tú es un extra.\nPara qué en tu camino: un juez cuya kappa no has medido es solo otra opinión con bata de laboratorio; sin esa cifra no sabes si evalúa o adivina.\nEs como el crítico que pone un 8 a todas las películas: coincide mucho contigo de media, pero no porque sepa, sino porque casi todo le gusta.",
       "prediction": {
         "prompt": "Con la rúbrica básica, ¿cuánto crees que coincidirá el juez de 1B con las etiquetas humanas, medido con kappa?",
         "options": [
@@ -155,7 +155,7 @@
       "id": "o3",
       "text": "¿Qué hace la configuración «intercambio» con el sesgo de posición del juez?",
       "diagram": {"kind":"table","title":"LA IDEA · mitigar el sesgo no es quitarlo","headers":["A primero","B primero","veredicto final"],"rows":[["gana A","gana B","A"],["gana B","gana A","B"],["gana A","gana A","empate (mandaba el orden)"]],"caption":"se juzga cada par en los dos órdenes y solo vale si coincide. El veredicto final deja de depender del orden, pero el juez conserva su sesgo: por eso «cambió con el orden» sigue alto"},
-      "teach": "Mitigar no es arreglar\nEl SESGO DE POSICIÓN es preferir la respuesta que va primera (o la segunda), sea cual sea.\nPor qué: una evaluación con un juez sesgado da conclusiones falsas sobre qué modelo o qué prompt es mejor.",
+      "teach": "Mitigar no es arreglar\nEl SESGO DE POSICIÓN es la manía del juez de preferir la respuesta que va primera (o la segunda), sea cual sea su contenido. Mira el diagrama de la izquierda: se juzga cada par en los dos órdenes y solo vale si el veredicto coincide.\nAsí el resultado final deja de depender del orden, pero ojo: el juez sigue igual de sesgado por dentro, solo has dejado de hacerle caso cuando se contradice.\nPara qué en tu camino: una evaluación con un juez sesgado da conclusiones falsas sobre qué modelo o qué prompt es mejor, y decisiones caras se toman con esas conclusiones.\nEs como pesarte en una báscula que marca de más: pésate de frente y de lado y promedia, y quitarás parte del error, pero la báscula sigue estropeada.",
       "choices": [
         {
           "id": "a",
@@ -188,7 +188,7 @@
     {
       "id": "o4",
       "text": "Ejecuta regresion.py: primero python regresion.py --prompt v1 --guardar y después python regresion.py --prompt v2. ¿Qué riesgo tiene usar como guardián de regresiones un juez cuya kappa no has medido?",
-      "teach": "Un prompt es código\nUn TEST DE REGRESIÓN responde y juzga un conjunto fijo de preguntas antes y después de cambiar el prompt. Si alguna nota cae más que la tolerancia, el cambio no pasa.\nPor qué: cambiar un prompt de un LLM (Large Language Model) puede romper algo que funcionaba, igual que cambiar una línea de código.",
+      "teach": "Un prompt es código\nUn TEST DE REGRESIÓN responde y juzga un conjunto fijo de preguntas antes y después de cambiar el prompt. Si alguna nota cae más de lo que toleras, el cambio no pasa y se para en seco.\nPara qué en tu camino: cambiar el prompt de un LLM (Large Language Model) puede romper algo que ya funcionaba, igual que tocar una línea de código; por eso un prompt se versiona y se prueba como código, no se edita a ojo.\nEl riesgo escondido: si el guardián que vigila esas notas es a su vez un juez ruidoso, puede inventarse regresiones que no existen y tapar las de verdad.\nEs como un detector de humo que salta con el vapor de la ducha y calla con el humo de verdad: un vigilante en el que no confías no vigila, estorba.",
       "choices": [
         {
           "id": "a",

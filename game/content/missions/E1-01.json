@@ -60,7 +60,7 @@
     {
       "id": "o1",
       "text": "En el Dojo: abre el editor con py, programa top_p, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las cinco funciones de generacion.py hasta que pasen los 17 tests y trae la evidencia.",
-      "teach": "Un modelo diminuto en el test\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E1-01_generacion/README.md e implementa generacion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nLos tests no descargan nada: crean un LlamaForCausalLM de 2 capas y 16 dimensiones con pesos aleatorios. Dice tonterías, pero es la misma arquitectura que SmolLM2.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: si tu bucle da lo mismo que generate() con el modelo diminuto, lo dará con el de verdad; así se prueban las piezas de un sistema de IA (Inteligencia Artificial) sin gastar horas de cálculo.",
+      "teach": "Un modelo diminuto en el test\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E1-01_generacion/README.md e implementa generacion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nLos tests no descargan nada: crean un LlamaForCausalLM de 2 capas y 16 dimensiones con pesos aleatorios. Dice tonterías, pero es la misma arquitectura que SmolLM2.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nEs como probar un motor en una maqueta a escala antes de montarlo en el coche: si las piezas encajan en pequeño, encajan en grande, y te ahorras arrancar el modelo de verdad una y otra vez.\nPor qué: si tu bucle da lo mismo que generate() con el modelo diminuto, lo dará con el de verdad; así se prueban las piezas de un sistema de IA (Inteligencia Artificial) sin gastar horas de cálculo.",
       "validator": {
         "type": "any",
         "of": [
@@ -195,7 +195,7 @@
         "python experimento.py (la primera vez descarga unos 270 MB). Después, la tarjeta de la caché KV.",
         "answer a"
       ],
-      "teach": "El experimento con SmolLM2\nexperimento.py (README, sección 2) descarga el modelo real la primera vez y compara tu bucle con generate(): mismo texto, velocidad, tokens que deja top-p y semillas.\nAnota los números: los necesitarás para responder.\nPor qué: medir la velocidad con y sin caché KV es entender por qué un servidor de LLM gasta memoria por cada usuario conectado.",
+      "teach": "El experimento con SmolLM2\nexperimento.py (README, sección 2) descarga el modelo real la primera vez y compara tu bucle con generate(): mismo texto, velocidad, tokens que deja top-p y semillas.\nAnota los números: los necesitarás para responder.\nMira el diagrama de la izquierda: tu bucle recalcula las claves y valores de todos los tokens en cada paso; generate() solo calcula los del token nuevo y reutiliza lo demás (la caché KV, key-value). Es como sumar una lista larga: tú la sumas entera cada vez que añades un número, y la caché se guarda el total y solo le suma el último.\nPor qué: medir la velocidad con y sin caché KV es entender por qué un servidor de LLM gasta memoria por cada usuario conectado; esa memoria es el total guardado de cada conversación.",
       "choices": [
         {
           "id": "a",
@@ -229,7 +229,7 @@
         "Recuerda T6-01: memorización y frecuencia.",
         "answer b"
       ],
-      "teach": "Probabilidad no es verdad\nUna log-probabilidad es el logaritmo de la probabilidad que el modelo da a un texto: cuanto más negativa, menos probable le parece. log_probs_secuencia la calcula sumando la de cada token.\nPor qué: los LLM (Large Language Model) puntúan lo frecuente en sus datos de entrenamiento; confundir «probable» con «verdadero» es el origen de muchas alucinaciones.",
+      "teach": "Probabilidad no es verdad\nUna log-probabilidad es el logaritmo de la probabilidad que el modelo da a un texto: cuanto más negativa, menos probable le parece. log_probs_secuencia la calcula sumando la de cada token.\nQué significa: que el modelo dé menos probabilidad a «the sun rises in the west» no quiere decir que sepa que es falso, solo que esa frase apareció menos en sus textos.\nEs como alguien que repite muletillas que ha oído mil veces: las suelta con total aplomo aunque sean un disparate, porque las ha oído mucho, no porque las haya comprobado.\nPor qué: los LLM (Large Language Model) puntúan lo frecuente en sus datos de entrenamiento; confundir «probable» con «verdadero» es el origen de muchas alucinaciones, y por eso un LLM puede afirmar con seguridad un error que salía a menudo.",
       "choices": [
         {
           "id": "a",

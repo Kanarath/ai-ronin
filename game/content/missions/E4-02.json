@@ -70,7 +70,7 @@
     {
       "id": "o1",
       "text": "En el Dojo: abre el editor con py, programa redactar, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las siete funciones de trazas.py hasta que pasen los 17 tests y trae la evidencia.",
-      "teach": "record_exception=False\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E4-02_trazas/README.md e implementa trazas.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nOpenTelemetry añade por defecto al span (el registro de una petición en la traza) un evento con el mensaje y la pila de cualquier excepción. Muchos mensajes de error incluyen lo que se estaba procesando: la pregunta, una URL (Uniform Resource Locator) con un token o una fila de la base de datos.\nRegistra el tipo de error (error.type) y el estado, no el mensaje.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: es una vía de fuga que casi nadie revisa: nadie piensa que un error sea un dato.",
+      "teach": "record_exception=False\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E4-02_trazas/README.md e implementa trazas.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nOpenTelemetry añade por defecto al span (el registro de una petición en la traza) un evento con el mensaje y la pila de cualquier excepción. Y muchos mensajes de error arrastran justo lo que se estaba procesando: la pregunta del usuario, una URL (Uniform Resource Locator) con un token o una fila entera de la base de datos. Por eso registras el tipo de error (error.type) y el estado, no el mensaje.\nEs la caja negra de un avión que, al grabar el fallo, grabara también la conversación privada de la cabina: útil para depurar, pero guardas algo que no debías. Pon record_exception=False y quédate con el tipo, no con el contenido.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: es una vía de fuga que casi nadie revisa, porque a nadie se le ocurre que un mensaje de error sea un dato personal.",
       "validator": {
         "type": "any",
         "of": [
@@ -197,12 +197,12 @@
         "Con poco tiempo: python bateria.py --n 1 --configs \"ninguna;redaccion;sin-contenido\""
       ],
       "on_complete": "Tienes datos reales y ficheros de trazas en forja/labs/E4-02_trazas/trazas/. Ábrelos y busca tú los datos que se escaparon.",
-      "teach": "La batería\nbateria.py hace preguntas con datos personales ficticios a tu servicio con Ollama, con varias configuraciones (sin defensas, redacción en tu código, en el exportador, sin contenido), y después busca esos datos en los ficheros de trazas. Trae la medición con evidence import.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: la única forma de saber qué se escapa a un registro es buscarlo en el registro."
+      "teach": "La batería\nbateria.py hace preguntas con datos personales ficticios a tu servicio con Ollama en varias configuraciones (sin defensas, con redacción en tu código, en el exportador, y sin contenido) y después va a los ficheros de trazas y busca esos mismos datos. Trae la medición con evidence import.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirla en tu máquina es un extra.\nEs como comprobar si una trituradora de papel funciona: no te fías del ruido, rebuscas en la bolsa a ver si algún documento salió entero.\nPor qué: la única forma honesta de saber qué se escapa a un registro es ir al registro y buscarlo; suponer que la redacción funcionó no es medirlo."
     },
     {
       "id": "o3",
       "text": "Un dato escrito en un formato raro («ana arroba example punto com») acaba en el fichero de trazas. ¿Por qué?",
-      "teach": "Lo que la expresión regular no conoce\nUna expresión regular solo reconoce el formato exacto para el que se escribió. Un teléfono escrito «seis cero cero, uno dos tres…» no contiene ni un dígito.\nPor qué: los usuarios escriben como quieren, no como espera tu expresión regular.",
+      "teach": "Lo que la expresión regular no conoce\nUna expresión regular es un patrón ciego: solo reconoce el formato exacto para el que se escribió. Un teléfono tecleado «seis cero cero, uno dos tres…» no lleva ni un dígito, así que pasa de largo y acaba intacto en el fichero.\nEs como un filtro de spam que bloquea la palabra «premio» pero no «pr3mio»: tapa lo que conoce y deja pasar cualquier variante que no previó.\nPor qué: los usuarios escriben como quieren, no como espera tu patrón; por eso redactar REDUCE la fuga, pero no registrar el contenido es lo único que la elimina.",
       "validator": {
         "type": "answer",
         "expected": "c",
@@ -264,7 +264,7 @@
         }
       ],
       "on_complete": "Eso es: defensa en profundidad también en los registros. Y con convenciones en estado Development, fija la versión antes de construir paneles.",
-      "teach": "El modelo también escribe datos personales\nRedactar la pregunta no basta: si el usuario pide «repíteme mi correo», el modelo lo escribe en la respuesta. Y puede producir datos personales que no estaban en la pregunta, sacados de su entrenamiento o de un documento recuperado.\nPor qué: en un sistema con LLM (Large Language Model), la salida se trata con el mismo cuidado que la entrada."
+      "teach": "El modelo también escribe datos personales\nRedactar solo la pregunta deja la puerta de atrás abierta: si el usuario pide «repíteme mi correo», el modelo lo escribe en la respuesta; y a veces suelta datos que ni estaban en la pregunta, sacados de su entrenamiento o de un documento recuperado. Por eso conviene redactar también en el exportador, por donde puede escribir otra librería sin pasar por tu código.\nEs como revisar solo lo que entra en tu casa y olvidar lo que sacas a la basura: la fuga da igual en qué dirección vaya.\nPor qué en tu camino: en un sistema con LLM (Large Language Model), la salida se trata con el mismo cuidado que la entrada, y los registros se protegen por capas, no en un único punto."
     }
   ],
   "you_can_now": "Sabes instrumentar llamadas a un LLM con las convenciones GenAI de OpenTelemetry, separar lo que va en un span de lo que va en una métrica y medir qué datos personales se escapan con cada decisión de registro. Siguiente: E4-03, la puerta de despliegue.",

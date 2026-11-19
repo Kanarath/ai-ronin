@@ -76,7 +76,7 @@
     {
       "id": "o1",
       "text": "En el Dojo: abre el editor con py, programa scopes_que_faltan, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las siete funciones de servidor.py hasta que pasen los 28 tests y trae la evidencia.",
-      "teach": "Antes del servidor o dentro de él\nTrabajas fuera del Dojo, en forja/labs/A4-04_mcp: el README lo explica todo.\nLa revisión de descripciones y la huella (pinning) viven en el HOST: si funcionan, el modelo no llega a ver la instrucción envenenada.\nLa validación de argumentos, los scopes, el saneado de rutas y la audiencia viven en el SERVIDOR: la llamada llega, pero el servidor la rechaza.\nSanear rutas es impedir que un argumento como «../../secretos» saque a la herramienta de su carpeta (path traversal).\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: un servidor MCP real necesita las dos capas.",
+      "teach": "Antes del servidor o dentro de él\nTrabajas fuera del Dojo, en forja/labs/A4-04_mcp: el README lo explica todo. La idea clave es que hay DOS capas de defensa, y cada una ataja el problema en un momento distinto.\nLa revisión de descripciones y la huella (pinning) viven en el HOST: si funcionan, el modelo ni siquiera llega a ver la instrucción envenenada.\nLa validación de argumentos, los scopes, el saneado de rutas y la audiencia viven en el SERVIDOR: la llamada llega, pero el servidor la rechaza antes de ejecutarla.\nSanear rutas es impedir que un argumento como «../../secretos» saque a la herramienta de su carpeta (path traversal).\nEs la diferencia entre el portero que no deja entrar a un sospechoso (host) y la caja fuerte que, aun con el ladrón dentro, no se abre sin la llave (servidor). Mira el diagrama de la izquierda: dos capas, dos momentos.\nPara qué en tu camino: un servidor MCP real necesita las dos. Si confías solo en el portero, un día entra alguien; si confías solo en la caja, le dejas pasearse por tu casa. En el Dojo haces este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.",
       "validator": {
         "type": "any",
         "of": [
@@ -166,7 +166,7 @@
           "la validación de argumentos"
         ]
       },
-      "teach": "Ni Ollama ni Docker\nLa batería levanta los servidores MCP reales dentro del propio proceso (por HTTP, sin red) y los ataca con un host determinista.\nNo usa un modelo de lenguaje: llama3.2:1b no llama a herramientas de forma fiable.\nPor eso el «modelo» es el peor caso: uno que obedece al pie de la letra lo que el host le deja ver.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: lo real aquí es el protocolo (SDK MCP, Streamable HTTP, token), y es lo que quieres medir sin el ruido de un modelo pequeño.",
+      "teach": "Ni Ollama ni Docker\nLa batería levanta los servidores MCP reales dentro del propio proceso (por HTTP, sin red) y los ataca con un host determinista.\nNo usa un modelo de lenguaje, porque llama3.2:1b no llama a herramientas de forma fiable. Por eso el «modelo» aquí es el PEOR caso imaginable: uno que obedece al pie de la letra todo lo que el host le deja ver.\nMedir con el peor caso es como probar un chaleco antibalas con la bala más dura, no con una piedra: si aguanta eso, aguanta lo demás. Un modelo listo quizá dudaría; el tonto obediente, no, y así ves el fallo del protocolo sin el ruido del modelo.\nEn el Dojo, forja medir reproduce una medición real ya hecha con el modelo local en un portátil; medirlo en tu máquina es un extra.\nPara qué en tu camino: lo real de este laboratorio es el protocolo (SDK MCP, Streamable HTTP, token), y es justo lo que quieres medir aislado del comportamiento de un modelo pequeño.",
       "validator": {
         "type": "event",
         "event": "evidence.measured",
@@ -188,7 +188,7 @@
     {
       "id": "o3",
       "text": "Mira la columna «llegó al servidor». Con la revisión en el host activa, baja a 0 en el envenenamiento. ¿Qué significa?",
-      "teach": "Antes del modelo frente a antes del efecto\nrevision y pinning actúan en el host. scopes, validacion, rutas y audiencia actúan en el servidor.\nCompara en la salida de bateria.py la columna «llegó al servidor» de cada configuración.\nPor qué: en un incidente real, saber en qué capa se paró un ataque te dice dónde mirar los registros.",
+      "teach": "Antes del modelo frente a antes del efecto\nVuelve a las dos capas, ahora para leer la medición. revision y pinning actúan en el HOST; scopes, validacion, rutas y audiencia actúan en el SERVIDOR.\nLa clave está en la columna «llegó al servidor» de la salida de bateria.py: si un control la baja a 0, paró el ataque antes de que el servidor viera nada; si la deja igual, el ataque llegó y se rechazó dentro.\nEs como saber si al ladrón lo paró la verja de la calle o la cerradura de tu puerta: las dos le impiden entrar, pero te señalan lugares muy distintos donde buscar sus huellas.\nPara qué en tu camino: en un incidente real, saber en qué capa se paró un ataque te dice en qué registros mirar y qué parte del sistema revisar. La misma columna que hoy es un ejercicio, mañana es tu pista.",
       "choices": [
         {
           "id": "a",
@@ -221,7 +221,7 @@
     {
       "id": "o4",
       "text": "¿Por qué el servidor debe comprobar la audiencia del token, y no le basta con que el token sea válido?",
-      "teach": "Audiencia y scopes\nRepasa la tarjeta «Audiencia y scopes del token».\nLa audiencia dice PARA qué servidor se emitió un token: es el parámetro resource de la RFC 8707.\nPor qué: en sistemas reales con OAuth (Open Authorization), aceptar tokens de otra audiencia convierte tu servidor en un diputado confundido.",
+      "teach": "Audiencia y scopes\nRepasa la tarjeta «Audiencia y scopes del token». La audiencia dice PARA qué servidor se emitió un token: es el parámetro resource de la RFC 8707.\nUn token válido no es un token para TI: que sea auténtico no significa que fuera destinado a tu servidor.\nPiénsalo como una entrada de concierto. Es de verdad, no falsa, pero es para la sala de al lado: el portero que te deja pasar con ella no es generoso, es un incompetente que no mira el recinto. A ese portero se le llama diputado confundido.\nPara qué en tu camino: en sistemas reales con OAuth (Open Authorization), aceptar tokens de otra audiencia convierte tu servidor exactamente en ese portero. Comprobar la audiencia es mirar el recinto antes de abrir la puerta.",
       "choices": [
         {
           "id": "a",

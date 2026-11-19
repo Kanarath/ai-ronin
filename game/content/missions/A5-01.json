@@ -51,7 +51,7 @@
     {
       "id": "o1",
       "text": "Crea el taller multiagente de la forja: a2a taller kuro",
-      "teach": "Orquestador y trabajadores\nEn una malla de agentes, un orquestador recibe la tarea y decide qué agente trabajador la hace.\nEl taller del Dojo tiene cuatro: orquestador, recepcion, contable e investigador.\nPor qué: así funcionan los sistemas de IA que encadenan agentes especializados, en lugar de un único asistente que lo hace todo.",
+      "teach": "Orquestador y trabajadores\nUna malla de agentes no es un asistente que lo hace todo, sino un equipo. Un orquestador recibe la tarea y decide qué agente trabajador la ejecuta; a2a taller kuro monta ese equipo.\nEl taller del Dojo tiene cuatro: orquestador, recepcion, contable e investigador, cada uno especializado en lo suyo.\nEs la cocina de un restaurante: el jefe de cocina no prepara cada plato, lo reparte entre el de la parrilla, el de los postres y el de las ensaladas.\nPara qué en tu camino: así funcionan cada vez más sistemas de IA, encadenando agentes especializados en vez de uno solo. Y cada nuevo agente del equipo es una boca más que escucha y una mano más que actúa: más potencia, pero también más superficie que vigilar.",
       "validator": {
         "type": "event",
         "event": "a2a.created",
@@ -66,7 +66,7 @@
     {
       "id": "o2",
       "text": "Mira quién hay en el taller: a2a agents kuro",
-      "teach": "Quién es quién\na2a agents lista cada agente, su origen (interno o externo), sus habilidades y si su tarjeta está firmada.\nPor qué: antes de confiar en un agente, hay que saber de dónde viene y quién lo respalda.",
+      "teach": "Quién es quién\nAntes de repartir trabajo conviene saber a quién se lo repartes. a2a agents lista cada agente: su origen (interno o externo), sus habilidades y si su tarjeta está firmada.\nEs pasar lista al empezar un turno: quién es de la casa, quién viene de una empresa de fuera y quién trae credencial verificada.\nPara qué en tu camino: antes de confiar en un agente hay que saber de dónde viene y quién lo respalda. «Firmada» y «externa» son las dos columnas que mirarás siempre primero.",
       "validator": {
         "type": "event",
         "event": "a2a.agents",
@@ -81,7 +81,7 @@
     {
       "id": "c1",
       "text": "Cuando llega una petición, ¿quién decide qué agente la atiende?",
-      "teach": "El enrutado\nRecepción habla con el usuario. Si la tarea no es suya, se la pasa al orquestador, que elige al trabajador según las habilidades que cada uno anuncia.\nPor qué: quien enruta decide a quién se le da poder sobre la tarea; es la pieza que un atacante querrá engañar.",
+      "teach": "El enrutado\nSigue el recorrido de una petición: recepción habla con el usuario; si la tarea no es suya, se la pasa al orquestador, que elige al trabajador según las habilidades que cada uno anuncia en su tarjeta.\nEs la centralita de un hospital: quien contesta no te cura, te pasa con la especialidad que dices necesitar.\nPara qué en tu camino: quien enruta decide a quién se le da poder sobre la tarea, así que es la pieza que un atacante querrá engañar. Si logras que el orquestador te elija a ti, el trabajo (y los datos) son tuyos.",
       "choices": [
         {
           "id": "a",
@@ -115,7 +115,7 @@
     {
       "id": "o3",
       "text": "Lee la tarjeta del contable: a2a card kuro contable",
-      "teach": "La Agent Card\nCada agente publica una tarjeta JSON (JavaScript Object Notation) en /.well-known/agent-card.json: nombre, descripción, habilidades y, si es de confianza, una firma.\nPor qué: es la «presentación» que lee el orquestador; si alguien la falsea, engaña al que reparte el trabajo.",
+      "teach": "La Agent Card\nCada agente publica una tarjeta JSON (JavaScript Object Notation) en /.well-known/agent-card.json con su nombre, su descripción, sus habilidades y, si es de confianza, una firma. a2a card kuro contable te enseña la del contable.\nEs el currículum que cada agente deja en recepción: lo que dice saber hacer. El orquestador contrata leyéndolo.\nPara qué en tu camino: si un currículum se puede inflar o falsificar, el que contrata se equivoca. Una tarjeta sin firma es justo eso, un currículum sin verificar; en A5-02 verás a quién cuela.",
       "validator": {
         "type": "event",
         "event": "a2a.card",
@@ -139,7 +139,7 @@
           "todos"
         ]
       },
-      "teach": "Los mensajes A2A\nCada salto es un mensaje SendMessage en JSON-RPC (JSON Remote Procedure Call), con un campo «de» y uno «para».\nPor qué: lo que viaja en cada salto es lo que un atacante puede leer, cambiar o inventarse.",
+      "teach": "Los mensajes A2A\nLos agentes no se leen la mente: se pasan mensajes. Cada salto es un SendMessage en JSON-RPC (JSON Remote Procedure Call), con un campo «de» y uno «para».\nSon como notas internas que circulan por una oficina, con un remitente y un destinatario escritos a mano en la cabecera.\nPara qué en tu camino: lo que viaja en cada salto es lo que un atacante puede leer, cambiar o inventarse. Fíjate bien: ese «de» y ese «para» son solo texto, y quien escribe una nota puede poner de remitente el nombre que quiera. Esa grieta la abres en A5-02.",
       "validator": {
         "type": "event",
         "event": "a2a.asked",
@@ -155,7 +155,7 @@
     {
       "id": "o5",
       "text": "Contrata a un proveedor de fuera: a2a discover kuro acero-norte.example",
-      "teach": "Agentes externos\na2a discover lee la tarjeta de un agente en su dominio y lo registra. Desde ese momento, el orquestador puede encargarle trabajo.\nPor qué: es tan fácil como instalar un plugin; por eso hay que decidir antes en quién se confía.",
+      "teach": "Agentes externos\na2a discover lee la tarjeta de un agente en su dominio y lo registra; desde ese momento, el orquestador puede encargarle trabajo, igual que a uno de la casa.\nEs añadir a un desconocido a tu grupo de confianza con un clic: a partir de ahí entra en las conversaciones y recibe encargos.\nPara qué en tu camino: dar de alta a un agente externo es tan fácil como instalar un plugin, y esa facilidad es el peligro. Hay que decidir ANTES en quién se confía, porque después ya está dentro oyéndolo todo.",
       "validator": {
         "type": "event",
         "event": "a2a.discovered",
@@ -178,7 +178,7 @@
           "el pedido y datos de clientes"
         ]
       },
-      "teach": "El contexto que viaja\nAl delegar, el orquestador adjunta el contexto que tiene. Si no se filtra, un agente externo recibe más de lo que necesita.\nPor qué: es una fuga de datos sin ataque: basta un diseño que comparte de más.",
+      "teach": "El contexto que viaja\nCuando el orquestador delega, no manda solo la tarea: adjunta el contexto que lleva acumulado. Si nadie lo filtra, un agente externo recibe mucho más de lo que su tarea necesita.\nEs reenviar un correo con toda la cadena de abajo: pedías una sola cosa, pero el otro acaba leyendo meses de conversación privada. Mira el diagrama de la izquierda: a acero-norte le llega el pedido… y la lista de clientes.\nPara qué en tu camino: esto es una fuga de datos SIN ataque. Nadie ha hecho nada malicioso; basta un diseño que comparte de más. Muchas filtraciones reales son exactamente así, de puro descuido.",
       "validator": {
         "type": "event",
         "event": "a2a.asked",
@@ -195,7 +195,7 @@
     {
       "id": "c2",
       "text": "¿Por qué ha recibido acero-norte correos de clientes?",
-      "teach": "Mínimo contexto\nCada agente solo debería recibir lo que su tarea necesita. Un presupuesto necesita el pedido, no la lista de clientes.\nPor qué: en el RGPD (Reglamento General de Protección de Datos) esto se llama minimización de datos, y en seguridad, mínimo privilegio aplicado al contexto.",
+      "teach": "Mínimo contexto\nLa regla es sencilla: cada agente recibe solo lo que su tarea necesita, ni un dato más. Un presupuesto necesita el pedido, no la lista entera de clientes.\nEs lo que haces al enviar un paquete: en la etiqueta pones la dirección de entrega, no tu historial médico. El mensajero no necesita saber más para llegar.\nPara qué en tu camino: en el RGPD (Reglamento General de Protección de Datos) esto se llama minimización de datos; en seguridad, mínimo privilegio aplicado al contexto. Es la misma idea de los tokens mínimos de A4, ahora con la información que viaja entre agentes.",
       "choices": [
         {
           "id": "a",
@@ -228,7 +228,7 @@
     {
       "id": "py1",
       "text": "Programa cómo elige el orquestador: abre el editor con py, completa elegir_agente y compruébala con py check.",
-      "teach": "El enrutado, en código\nVas a escribir la regla del orquestador: el primer agente con la habilidad pedida y la tarjeta firmada.\nPor qué: elegir solo entre agentes de confianza es la primera defensa de la malla.",
+      "teach": "El enrutado, en código\nVas a escribir la regla con la que elige el orquestador: el primer agente que tenga la habilidad pedida Y la tarjeta firmada. Abre el editor con py.\nEs un portero de discoteca que pide dos cosas a la vez: que vengas a lo que toca esa noche y que tu entrada sea auténtica. Con una sola no entras.\nPara qué en tu camino: elegir solo entre agentes de confianza es la primera defensa de la malla. En A5-02 verás el desastre que ocurre cuando esa comprobación de «firmada» no existe.",
       "py_exercise": {
         "id": "A5-01-elegir",
         "title": "elegir_agente(tarjetas, habilidad): a quién se le encarga",

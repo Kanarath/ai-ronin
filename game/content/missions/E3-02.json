@@ -89,7 +89,7 @@
         "audit open valle · audit controls valle · audit sample valle --random 6 · audit plan valle"
       ],
       "on_complete": "El azar dejó fuera tres de los cuatro controles de riesgo alto y toda la función MEASURE: así no se decide qué mirar.",
-      "teach": "Planificar la muestra\naudit controls valle lista los doce controles de la política con su riesgo y su función del NIST AI RMF.\naudit sample valle --random 6 elige seis al azar; audit plan valle comprueba si el plan cumple las reglas de la tarjeta.\nPor qué: casi nunca hay tiempo de auditarlo todo, así que la muestra decide qué se llega a ver."
+      "teach": "Planificar la muestra\nAuditar es, casi siempre, mirar una parte y concluir sobre el todo; la decisión difícil es qué parte miras.\naudit controls valle lista los doce controles de la política con su riesgo y su función del NIST AI RMF (AI Risk Management Framework). audit sample valle --random 6 elige seis al azar, y audit plan valle comprueba si ese plan cumple las reglas de la tarjeta.\nMira primero el diagrama de la izquierda: con seis controles de doce, el azar dejó fuera tres de los cuatro de riesgo alto. Es como inspeccionar un edificio y que la moneda al aire te mande a mirar seis trasteros mientras te saltas la sala de calderas.\nPor qué: casi nunca hay tiempo de auditarlo todo, así que la muestra decide qué se llega a ver, y lo que no entra en la muestra no se ha auditado."
     },
     {
       "id": "o2",
@@ -107,7 +107,7 @@
         "audit sample valle C01 C05 C07 C08 C10 (y, si quieres, uno más de riesgo medio)."
       ],
       "on_complete": "Plan basado en el riesgo, con la limitación escrita: lo que no está en la muestra no se ha auditado.",
-      "teach": "Muestra por riesgo\naudit sample valle <C## C## …> elige tú los controles.\nReglas: todos los de riesgo alto, al menos uno por función (GOVERN, MAP, MEASURE, MANAGE) y como máximo seis.\nPor qué: el tiempo de auditoría se gasta donde un fallo haría más daño."
+      "teach": "Muestra por riesgo\nAhora eliges tú, con criterio, no con el azar: audit sample valle <C## C## …> con los controles que decidas.\nTres reglas: todos los de riesgo alto, al menos uno por función (GOVERN, MAP, MEASURE, MANAGE) y como máximo seis. Así cubres lo que más duele y, a la vez, no dejas ninguna función a ciegas.\nEs como el portero de discoteca que no cachea a todo el mundo: mira primero a quien entra marcando problemas, pero igualmente echa un vistazo a cada puerta.\nPor qué: el tiempo de auditoría es escaso y se gasta donde un fallo haría más daño; el juicio decide QUÉ mirar, y eso no se delega en una moneda."
     },
     {
       "id": "c1",
@@ -156,7 +156,7 @@
         "caption": "la clase no la decide lo grave que suena, sino cuánto falla el control en la evidencia: C10, con 3 denegaciones de 10 sin revisión, es mayor; una firma que falta en 1 de 20, menor"
       },
       "text": "Audita C10 (apelación y anulación): mira su evidencia, revisa una muestra de al menos 10 expedientes y clasifícalo.",
-      "teach": "Mayor, menor u observación\nEs la práctica habitual en las auditorías de sistemas de gestión:\n· Mayor: el requisito no se cumple, o el fallo es sistemático (aquí, 2 o más fallos en la muestra, o el 20 % o más).\n· Menor: un fallo puntual o parcial en un control que en general funciona.\n· Observación: aún no hay incumplimiento, pero hay riesgo de que lo haya, o una mejora posible.\n· Conforme: hay evidencia suficiente de que se cumple.\naudit evidence valle C10 · audit records valle C10 10 · audit rate valle C10 <clase>\nPor qué: que exista un procedimiento no prueba que se aplique; por eso se miran expedientes.",
+      "teach": "Mayor, menor u observación\nLa clase de un hallazgo no la decide lo grave que suena, sino CUÁNTO falla el control en la evidencia. Es la práctica habitual en las auditorías de sistemas de gestión:\n· Mayor: el requisito no se cumple, o el fallo es sistemático (aquí, 2 o más fallos en la muestra, o el 20 % o más).\n· Menor: un fallo puntual o parcial en un control que en general funciona.\n· Observación: aún no hay incumplimiento, pero hay riesgo de que lo haya, o una mejora posible.\n· Conforme: hay evidencia suficiente de que se cumple.\naudit evidence valle C10 enseña la evidencia; audit records valle C10 10 saca una muestra de 10 expedientes; audit rate valle C10 <clase> clasifica.\nPiénsalo como un profesor que corrige exámenes: una errata en uno es un despiste (menor); el mismo error en media clase ya no es despiste, es que explicaste mal el tema (mayor).\nPor qué: que exista un procedimiento escrito no prueba que se aplique; por eso para C10 no basta leer el documento, hay que mirar los expedientes.",
       "validator": {
         "type": "event",
         "event": "audit.rated",
@@ -201,7 +201,7 @@
         "C01 conforme · C05 nc-menor · C07 conforme · C08 nc-mayor · C10 nc-mayor."
       ],
       "on_complete": "Dos mayores, una menor y el resto conforme en la muestra. Fíjate en C08: un informe del proveedor con datos de otra provincia no es una evaluación propia.",
-      "teach": "El resto de la muestra\nPara cada control, pregúntate: ¿existe? ¿falla siempre, una vez o todavía no?\naudit evidence valle <C##> y audit rate valle <C##> <conforme|nc-mayor|nc-menor|observacion>.\nPor qué: una clasificación sin evidencia es una opinión, y en la reunión de cierre la tumbarán."
+      "teach": "El resto de la muestra\nAhora repites el gesto con cada control de tu muestra. Hazte siempre las mismas tres preguntas en orden: ¿el control existe? ¿falla siempre, una vez, o todavía no ha fallado?\naudit evidence valle <C##> mira la evidencia y audit rate valle <C##> <conforme|nc-mayor|nc-menor|observacion> clasifica.\nCuidado con la evidencia prestada: un informe del proveedor con datos de otra provincia no es una evaluación propia, igual que la ITV del coche de tu vecino no vale para el tuyo aunque sea el mismo modelo.\nPor qué: una clasificación sin evidencia es solo una opinión, y en la reunión de cierre la parte auditada la tumbará en el primer «enséñamelo»."
     },
     {
       "id": "o5",

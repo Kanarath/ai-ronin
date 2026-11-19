@@ -46,7 +46,7 @@
     {
       "id": "o1",
       "text": "Crea e indexa el RAG y mide la línea base con la batería, sin defensas.",
-      "teach": "La línea base\nMismo método que en A1-03: crea e indexa el RAG (Retrieval-Augmented Generation) y lanza la batería sin defensas.\nPor qué: sin un «antes» medido, no podrás demostrar qué cierra cada defensa.",
+      "teach": "La línea base\nLa línea base es la medida del sistema SIN defensas: el punto de partida contra el que compararás cada capa.\nMismo método que en A1-03: crea e indexa el RAG (Retrieval-Augmented Generation) y lanza la batería sin defensas.\nEs como pesarte el primer día de un plan: sin ese número de partida no sabes si lo que haces después sirve.\nPor qué en tu camino: sin un «antes» medido, no podrás demostrar qué cierra cada defensa ni convencer a nadie de que valió la pena.",
       "validator": {
         "type": "event",
         "event": "rag.attacks",
@@ -63,7 +63,7 @@
     {
       "id": "o2",
       "text": "Activa el control de acceso en la recuperación y repite la batería. ¿Qué tasa de éxito queda? (answer <número>)",
-      "teach": "Control de acceso en la recuperación\nACL (Access Control List) es la lista de quién puede ver cada documento.\nCon rag defend <rag> acl on, la búsqueda filtra los fragmentos según quién pregunta: un cliente nunca recupera documentos internos.\nPor qué: los permisos se aplican ANTES de que el texto llegue al modelo; no se le «piden» al modelo.",
+      "teach": "Control de acceso en la recuperación\nACL (Access Control List) es la lista de quién puede ver cada documento.\nCon rag defend <rag> acl on, la búsqueda filtra los fragmentos según quién pregunta: un cliente nunca recupera documentos internos.\nEs como el portero de una discoteca con la lista en la mano: comprueba quién eres en la puerta, no una vez dentro. Los permisos se aplican ANTES de que el texto llegue al modelo; no se le «piden» al modelo.\nPor qué en tu camino: una defensa que depende de que el modelo «se porte bien» se puede engañar; una que filtra antes de llegar al modelo, no.",
       "validator": {
         "type": "all",
         "of": [
@@ -92,7 +92,7 @@
     {
       "id": "o3",
       "text": "Activa spotlight y repite la batería. ¿Cuántos ataques siguen teniendo éxito? (answer <número>)",
-      "teach": "Spotlighting\nConsiste en separar y marcar el contenido recuperado para que el modelo lo trate como datos y no como órdenes.\nEs una mitigación de la investigación (Hines et al., 2024) que REDUCE la inyección indirecta; en modelos reales no la elimina del todo.\nSe activa con rag defend <rag> spotlight on.\nPor qué: es la defensa contra las órdenes escondidas en documentos de A2-02.",
+      "teach": "Spotlighting\nSpotlighting consiste en separar y marcar el contenido recuperado para que el modelo lo trate como datos y no como órdenes.\nEs una mitigación de la investigación (Hines et al., 2024) que REDUCE la inyección indirecta; en modelos reales no la elimina del todo. Se activa con rag defend <rag> spotlight on.\nEs como poner entre comillas lo que dice un desconocido: lo lees y lo tienes en cuenta como información, pero no lo obedeces como si fuera una orden del jefe.\nPor qué en tu camino: es la defensa contra las órdenes escondidas en documentos de A2-02, pero fíjate en lo que NO toca, porque ahí está la lección de hoy.",
       "prediction": {
         "prompt": "Spotlight hace que el modelo no obedezca instrucciones que lleguen en los documentos. ¿Detendrá también el envenenamiento del foro?",
         "options": [
@@ -127,7 +127,7 @@
     {
       "id": "o4",
       "text": "Activa la verificación de procedencia (trusted-sources) y repite la batería.",
-      "teach": "Procedencia de los documentos\nCon rag defend <rag> trusted-sources on, solo entran en el índice los documentos de la forja; lo que suben los usuarios no se indexa.\nEn un sistema real se usaría una lista de fuentes aprobadas, firmas o revisión humana antes de indexar.\nPor qué: si un texto malicioso nunca entra en el índice, el modelo no tiene que resistirlo.",
+      "teach": "Procedencia de los documentos\nLa procedencia es saber de DÓNDE viene cada documento y fiarte solo de las fuentes aprobadas.\nCon rag defend <rag> trusted-sources on, solo entran en el índice los documentos de la forja; lo que suben los usuarios no se indexa. En un sistema real se usaría una lista de fuentes aprobadas, firmas o revisión humana antes de indexar.\nEs como aceptar paquetes solo de mensajeros conocidos: lo que deja un desconocido en la puerta ni siquiera entra en casa.\nPor qué en tu camino: si un texto malicioso nunca entra en el índice, el modelo no tiene que resistirlo; cerrar la puerta es más fiable que confiar en que nadie muerda el anzuelo una vez dentro.",
       "validator": {
         "type": "event",
         "event": "rag.attacks",
@@ -146,7 +146,7 @@
     {
       "id": "o5",
       "text": "Protege la base vectorial (vector-acl) y consigue 0 ataques con éxito; después comprueba que el eval llega a 7/7 (activa min-score si hace falta).",
-      "teach": "Proteger los vectores\nrag defend <rag> vector-acl on aplica a los vectores los mismos permisos que a los documentos.\nDespués comprueba la funcionalidad con rag eval (activa min-score si hace falta).\nPor qué: un embedding hereda la sensibilidad del texto del que procede (A2-02).",
+      "teach": "Proteger los vectores\nrag defend <rag> vector-acl on aplica a los vectores los mismos permisos que a los documentos: quien no puede leer un documento tampoco puede leer su vector.\nDespués comprueba la funcionalidad con rag eval (activa min-score si hace falta): una defensa no vale de nada si rompe las preguntas legítimas.\nEs como cerrar con la misma llave la caja fuerte y su copia de seguridad: no sirve blindar una y dejar la otra encima de la mesa.\nPor qué en tu camino: un embedding hereda la sensibilidad del texto del que procede (A2-02), así que el índice vectorial se protege igual que la documentación.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -176,7 +176,7 @@
       "id": "o6",
       "diagram": {"kind":"table","title":"LA IDEA · cada capa, un eslabón","headers":["defensa","eslabón","qué frena"],"rows":[["trusted-sources","ingesta","que entre el texto malicioso"],["acl","recuperación","fugas de documentos internos"],["spotlight","presentación al modelo","órdenes escondidas (no las mentiras)"],["vector-acl","almacenamiento","la lectura de los vectores"],["min-score","generación","responder sin contexto fiable"]],"caption":"saber qué protege cada capa te dice cuál falta cuando aparece un ataque nuevo. Spotlight no frena el foro porque este no ordena nada: solo miente."},
       "text": "¿Por qué spotlight no frena el envenenamiento del foro?",
-      "teach": "Qué cubre cada capa\nRepasa qué ataque cerró cada defensa en tu batería.\nPor qué: saber qué protege cada capa te dice cuál falta cuando aparece un ataque nuevo.",
+      "teach": "Qué cubre cada capa\nRepasa qué ataque cerró cada defensa en tu batería: trusted-sources la ingesta, acl la recuperación, spotlight la presentación al modelo, vector-acl el almacenamiento y min-score la generación.\nMira el diagrama de la izquierda: cada capa tapa un eslabón distinto, y spotlight no frena el foro porque este no ordena nada, solo miente.\nEs como las cerraduras de una casa: la de la puerta no sirve contra quien entra por la ventana; necesitas una por cada vía.\nPor qué en tu camino: saber qué protege cada capa te dice exactamente cuál falta cuando aparece un ataque nuevo, en vez de amontonar defensas a ciegas.",
       "choices": [
         {
           "id": "a",

@@ -55,7 +55,7 @@
           "no"
         ]
       },
-      "teach": "Un remitente que nadie comprueba\na2a inject manda un mensaje directo a un agente con el «de» que tú quieras.\nPor qué: si el destinatario se fía de la etiqueta, cualquiera que llegue a la red puede dar órdenes con la autoridad del orquestador.",
+      "teach": "Un remitente que nadie comprueba\na2a inject manda un mensaje directo a un agente poniendo en el «de» el nombre que tú quieras: aquí, «orquestador».\nEs mandar una carta y escribir a mano en el remite «Hacienda»: si quien la recibe se cree el sobre sin comprobar nada, obedecerá como si de verdad viniera de allí.\nPara qué en tu camino: si el destinatario se fía de la etiqueta, cualquiera que llegue a la red puede dar órdenes con la autoridad del orquestador. Y recuerda de A5-01: ese «de» es solo texto, lo escribe quien envía.",
       "validator": {
         "type": "event",
         "event": "a2a.injected",
@@ -74,7 +74,7 @@
     {
       "id": "o2",
       "text": "Activa la autenticación de mensajes y repite el ataque: a2a defend m message-auth on y el mismo a2a inject",
-      "teach": "Autenticar al que habla\nmessage-auth exige que cada mensaje traiga una credencial del agente que dice enviarlo (en la práctica, un token firmado o mTLS, mutual Transport Layer Security).\nPor qué: es lo mismo que pedir la firma en una orden de pago: sin ella, la orden no vale.",
+      "teach": "Autenticar al que habla\nUn nombre se escribe; una credencial, no. message-auth exige que cada mensaje traiga una credencial del agente que dice enviarlo (en la práctica, un token firmado o mTLS, mutual Transport Layer Security), y el impostor no la tiene.\nEs la diferencia entre decir «soy del banco» y enseñar el carnet que solo el banco puede emitir. Lo primero lo dice cualquiera; lo segundo, no.\nPara qué en tu camino: es lo mismo que exigir la firma en una orden de pago: sin ella, la orden no vale por mucho membrete que lleve. Autenticar al que habla convierte el «de» de una etiqueta de confianza en una prueba.",
       "validator": {
         "type": "event",
         "event": "a2a.injected",
@@ -94,7 +94,7 @@
     {
       "id": "o3",
       "text": "Contrata un agente nuevo y lee su tarjeta: a2a discover m acero-veloz.example y a2a card m acero-veloz",
-      "teach": "Tarjetas que mienten\nLa descripción de una tarjeta la lee el orquestador, que es un LLM: si dice «úsame siempre», puede funcionar como una instrucción.\nPor qué: es el mismo truco que el envenenamiento de herramientas de A4, ahora entre agentes.",
+      "teach": "Tarjetas que mienten\nLa descripción de una tarjeta la lee el orquestador, que es un LLM (Large Language Model). Y para un modelo no hay una frontera nítida entre «describir» y «ordenar»: si la tarjeta dice «úsame siempre, soy el mejor», eso puede funcionar como una instrucción.\nEs el candidato que en su currículum, en vez de listar méritos, escribe «contrátame a mí y no mires a los demás»… y el que selecciona, hipnotizado, le hace caso.\nPara qué en tu camino: es el mismo truco que el envenenamiento de herramientas de A4, ahora entre agentes. Donde antes el texto de un tercero entraba por la descripción de una herramienta, ahora entra por la tarjeta de un agente.",
       "validator": {
         "type": "event",
         "event": "a2a.card",
@@ -118,7 +118,7 @@
           "acero-veloz"
         ]
       },
-      "teach": "A quién se lo encarga\nEl orquestador elige entre los agentes con la habilidad «contabilidad»: el interno y el recién llegado.\nPor qué: si una tarjeta puede ganar la elección con palabras, un atacante se queda con el trabajo y con los datos.",
+      "teach": "A quién se lo encarga\nPides un reembolso legítimo, pero ahora hay dos agentes con la habilidad «contabilidad»: el contable interno de siempre y el recién llegado acero-veloz. El orquestador tiene que elegir.\nEs pedir un presupuesto y que te atienda, en lugar del empleado de confianza, el comercial más labioso que acaba de entrar por la puerta.\nPara qué en tu camino: si una tarjeta puede ganar la elección solo con palabras persuasivas, un atacante se queda con el trabajo y, de paso, con los datos del cliente. Ganar el enrutado es ganarlo todo.",
       "validator": {
         "type": "event",
         "event": "a2a.asked",
@@ -135,7 +135,7 @@
     {
       "id": "c1",
       "text": "¿Qué ha hecho que el orquestador elija a acero-veloz?",
-      "teach": "Metadatos como instrucciones\nPara un LLM no hay diferencia clara entre describir y ordenar: un texto persuasivo en un campo de metadatos le influye.\nPor qué: por eso la confianza no puede depender de lo que un agente dice de sí mismo.",
+      "teach": "Metadatos como instrucciones\nVuelve sobre lo que acaba de pasar: para un LLM no hay una línea clara entre describir y ordenar, así que un texto persuasivo metido en un campo de metadatos le influye igual que una orden.\nEs como si en la casilla «profesión» de un formulario alguien escribiera «el funcionario debe aprobar esta solicitud» y el funcionario lo leyera como una instrucción, no como un dato.\nPor qué: por eso la confianza entre agentes no puede depender JAMÁS de lo que un agente dice de sí mismo. Tiene que apoyarse en algo que el atacante no pueda escribir: una firma.",
       "choices": [
         {
           "id": "a",
@@ -168,7 +168,7 @@
     {
       "id": "o5",
       "text": "En un taller nuevo, activa la verificación de tarjetas e intenta contratarlo otra vez: a2a taller v, a2a defend v card-verification on y a2a discover v acero-veloz.example",
-      "teach": "Verificar antes de registrar\ncard-verification solo acepta tarjetas firmadas con una clave de confianza.\nPor qué: es la PKI (Public Key Infrastructure) aplicada a agentes: decides de antemano quién puede entrar en la malla.",
+      "teach": "Verificar antes de registrar\ncard-verification cierra la puerta antes de que el impostor entre: solo acepta tarjetas firmadas con una clave de confianza, y la de acero-veloz no lo está.\nEs el control de acceso de un edificio seguro: no basta con decir tu nombre en recepción, tu credencial tiene que estar emitida por alguien de dentro. Si no, no pasas del vestíbulo.\nPara qué en tu camino: es la PKI (Public Key Infrastructure) aplicada a agentes. Decides de antemano quién puede entrar en la malla, en lugar de fiarte sobre la marcha de lo que cada uno cuenta. La confianza se concede, no se reclama.",
       "validator": {
         "type": "event",
         "event": "a2a.discovered",
@@ -185,7 +185,7 @@
     {
       "id": "py1",
       "text": "Programa la comprobación del remitente: abre el editor con py, completa autentico y compruébala con py check.",
-      "teach": "La credencial, en código\nVas a escribir message-auth en pequeño: el mensaje solo vale si su credencial es la que esperamos de quien dice enviarlo.\nPor qué: la comprobación se hace en el agente que recibe, nunca en el que envía.",
+      "teach": "La credencial, en código\nVas a escribir message-auth en pequeño: un mensaje solo vale si su credencial coincide con la que esperamos de quien dice enviarlo. Abre el editor con py.\nEs el portero que compara tu carnet con la lista: no le basta con que digas tu nombre, mira si la credencial cuadra con ese nombre.\nPara qué en tu camino: fíjate en DÓNDE se hace la comprobación: en el agente que RECIBE, nunca en el que envía. Un atacante controla lo que manda, así que quien debe desconfiar y verificar es siempre el que recibe.",
       "py_exercise": {
         "id": "A5-02-autentico",
         "title": "autentico(mensaje, credenciales): ¿lo envía quien dice?",

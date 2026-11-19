@@ -62,7 +62,7 @@
     {
       "id": "o1",
       "text": "Abre el encargo y haz el inventario: engagement start norte y engagement recon norte. ¿Cuántos activos están en alcance? (answer <número>)",
-      "teach": "El inventario\nengagement recon lista cada activo de IA, si está en alcance y su exposición: quién puede llegar a él y qué puede hacer.\nPor qué: no puedes proteger ni probar lo que no sabes que existe.",
+      "teach": "El inventario\nengagement recon norte lista cada activo de IA del encargo: qué es, si está en alcance y su exposición, es decir, quién puede llegar a él y qué puede hacer o qué sabe.\nPor qué aquí: el reconocimiento es la fase en la que averiguas qué hay antes de atacar nada. No puedes proteger ni probar lo que no sabes que existe, y en IA es facilísimo olvidar una pieza: un RAG (Retrieval-Augmented Generation) interno o un pipeline de entrenamiento también son superficie de ataque.\nCuenta los «sí» de la columna «en alcance»: eso te dice sobre cuántos activos puedes trabajar.\nComo el plano de una casa antes de entrar: sin saber cuántas puertas y ventanas tiene, no sabes ni por dónde empezar ni qué te estás dejando.",
       "validator": {
         "type": "all",
         "of": [
@@ -88,7 +88,7 @@
     {
       "id": "c1",
       "text": "¿Qué activo está más expuesto?",
-      "teach": "Exposición\nMira dos cosas: quién puede llegar (público, interno) y qué puede hacer o qué sabe.\nPor qué: el activo más expuesto suele ser el primero que encuentra un atacante real.",
+      "teach": "Exposición: quién puede llegar\nEl activo más expuesto no es el que guarda los datos más jugosos, sino el que más gente puede alcanzar. Mira dos cosas: quién llega (¿internet sin cuenta? ¿solo personal interno?) y qué puede hacer o qué sabe.\nMira el diagrama: A-01, el chatbot público sin autenticación, se usa desde internet sin cuenta; A-02 guarda documentos sensibles de RR. HH., pero es interno (hay que estar dentro para llegar); A-05 ni siquiera habla con el exterior.\nComo una casa: la puerta que da a la calle es la que primero prueba quien quiere entrar, no la caja fuerte del dormitorio. Por eso el chatbot público es el más expuesto, aunque no sea el que más secretos guarda: es la puerta que un atacante real encuentra antes.",
       "choices": [
         {
           "id": "a",
@@ -121,7 +121,7 @@
     {
       "id": "c2",
       "text": "¿Qué reconocimiento es aceptable en este encargo?",
-      "teach": "Reconocimiento dentro de las reglas\nEl reconocimiento también tiene alcance: lo que miras, cómo y de quién.\nPor qué: escanear sistemas de terceros es una prueba, y necesita su permiso.",
+      "teach": "Reconocimiento dentro de las reglas\nEl reconocimiento también tiene alcance: qué miras, cómo y de quién. Revisar el inventario y la documentación que te da el cliente es aceptable; escanear la API de acero-norte (A-06, de un tercero) o probar contraseñas en el chatbot de producción (A-07, fuera de alcance) ya no lo es.\nPor qué: un escaneo es una prueba, y probar el sistema de otro necesita su permiso. Probar contraseñas, además, ya no es mirar: es atacar.\nComo estudiar una casa: leer los planos que te dan es una cosa; ir de noche a probar si las ventanas del vecino abren es otra muy distinta. Recuerda O1: fuera de alcance, no se toca.",
       "choices": [
         {
           "id": "a",
@@ -154,7 +154,7 @@
     {
       "id": "o2",
       "text": "Comprueba el pipeline de modelos y mira cómo se reproduce en el laboratorio: engagement scope norte A-05",
-      "teach": "De la lista al laboratorio\nCada activo en alcance tiene una copia en el laboratorio del Dojo (para A-05, supply forja).\nPor qué: las pruebas se hacen sobre la copia, nunca sobre el sistema del cliente.",
+      "teach": "De la lista al laboratorio\nCada activo en alcance tiene una copia en el laboratorio del Dojo donde sí puedes trastear; para A-05, el pipeline de entrenamiento, esa copia es supply forja. engagement scope norte A-05 te la muestra.\nPor qué: las pruebas se hacen siempre sobre la copia, nunca sobre el sistema vivo del cliente, por lo mismo que viste en O1.\nComo el coche de prácticas de la autoescuela: pisas, frenas y te equivocas en uno igual al de verdad, pero sin clientes dentro.",
       "validator": {
         "type": "event",
         "event": "engagement.scoped",
@@ -171,7 +171,7 @@
     {
       "id": "py1",
       "text": "Programa el primer filtro del reconocimiento: abre el editor con py, completa publicos y compruébala con py check.",
-      "teach": "El inventario, en código\nVas a sacar los activos expuestos al público a partir del inventario.\nPor qué: en un encargo con cientos de activos, este filtro decide por dónde empiezas.",
+      "teach": "El inventario, en código\nVas a escribir publicos: a partir del inventario, saca solo los activos expuestos al público, los que cualquiera puede alcanzar.\nPor qué: en un encargo real con cientos de activos, este filtro es el que decide por dónde empiezas; lo público se mira antes porque es lo que un atacante encuentra sin esfuerzo.\nComo repasar un edificio y apuntar solo las puertas que dan a la calle: son las primeras que hay que revisar. Fíjate en que «público» puede venir escrito de muchas formas, así que conviene comparar en minúsculas.",
       "py_exercise": {
         "id": "O2-01-publicos",
         "title": "publicos(activos): los que cualquiera puede alcanzar",

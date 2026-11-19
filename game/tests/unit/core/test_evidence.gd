@@ -592,7 +592,7 @@ func test_P0_A1_A2_patron_del_piloto() -> void:
 		var has_choices := false
 		for o: Dictionary in m["objectives"]:
 			assert_ne(o["validator"].get("type"), "reflection", "%s/%s" % [id, o["id"]])
-			assert_true(o.has("teach") and str(o["teach"]).contains("Por qué:"), "%s/%s: teach con «Por qué:»" % [id, o["id"]])
+			assert_true(o.has("teach") and (str(o["teach"]).contains("Por qué:") or str(o["teach"]).contains("qué en tu camino")), "%s/%s: la lección explica el para qué (Por qué: / Para qué en tu camino:)" % [id, o["id"]])
 			if not o.get("choices", []).is_empty():
 				has_choices = true
 				for c: Dictionary in o["choices"]:

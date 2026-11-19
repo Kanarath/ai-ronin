@@ -48,7 +48,7 @@
     {
       "id": "o1",
       "text": "Mira la bandeja: amenaza bandeja. Hay cinco ataques (de artesanal a potenciado por IA) y dos correos legítimos.",
-      "teach": "La bandeja\nLos correos están descritos por sus rasgos, no son phishing real. Fíjate en el nivel de cada ataque: artesanal (con faltas), pulido por IA (sin faltas), personalizado (con tu nombre y cargo), y uno con voz clonada.\nPor qué: para defender hay que ver cómo ha cambiado el ataque, no solo el de hace diez años.",
+      "teach": "La bandeja\nAbres una bandeja de entrada con siete correos: cinco son ataques y dos, mensajes internos legítimos. No son phishing real, están descritos por sus rasgos, como una ficha policial de cada uno.\nFíjate en el nivel de cada ataque, porque es la historia de cómo ha evolucionado el phishing: artesanal (con faltas, el de hace diez años), pulido por IA (sin faltas), personalizado (con tu nombre y cargo), y uno con voz clonada que ni siquiera vive en el correo.\nPara qué en tu camino: un defensor no protege contra el ataque que imagina, sino contra el que llega hoy. Mirar la bandeja es como el médico que repasa los síntomas antes de recetar: primero ves de qué defiendes, y solo después eliges la defensa.",
       "validator": {
         "type": "event",
         "event": "threat.inbox"
@@ -68,7 +68,7 @@
           "casi ninguno"
         ]
       },
-      "teach": "El truco clásico\n«Si tiene faltas o un saludo genérico, es phishing.» Durante años funcionó, porque los atacantes escribían mal o en otro idioma.\nPor qué: es lo primero que enseña cualquier formación anti-phishing… y lo primero que la IA deja inservible.",
+      "teach": "El truco clásico\nDurante años, la regla de oro anti-phishing fue mirar cómo estaba escrito el mensaje: «si tiene faltas, un saludo genérico o suena raro, es phishing». Y funcionaba, porque los atacantes escribían mal, traducían con prisas o no dominaban tu idioma.\nCómo lo pruebas: amenaza defensa ortografia on enciende ese filtro y amenaza evaluar lo lanza contra los cinco ataques y te dice cuántos caza.\nEn tu día a día es como un portero de discoteca que solo rechaza a quien llega en chándal: fue un buen filtro mientras los indeseables vestían distinto, pero el día que se ponen traje, entran todos.\nLa trampa: es lo primero que enseña cualquier formación anti-phishing, así que mucha gente cree que con eso basta… y es justo lo primero que la IA deja inservible. Confiar en ese filtro da una falsa sensación de seguridad, que es peor que no tener ninguna.",
       "validator": {
         "type": "all",
         "of": [
@@ -95,7 +95,7 @@
     {
       "id": "c1",
       "text": "¿Por qué pasan los otros cuatro ataques?",
-      "teach": "La IA borra las pistas\nUn LLM escribe sin una sola falta, con el tono exacto de una empresa, y traduce a cualquier idioma. El rasgo que delataba al phishing (el texto malo) ya no existe.\nPor qué: cualquier defensa que se base en «cómo está escrito» el mensaje nace obsoleta frente a un atacante con IA.",
+      "teach": "La IA borra las pistas\nUn LLM (Large Language Model) escribe sin una sola falta, imita el tono exacto de tu empresa y traduce a cualquier idioma en un segundo. El rasgo que delataba al phishing —el texto mal escrito— simplemente ha dejado de existir.\nMira el diagrama de la izquierda: el filtro de ortografía solo caza 1 de 5; los cuatro pulidos por IA pasan limpios.\nPara qué en tu camino: esto marca un cambio de era para el defensor. Cualquier defensa que mire «cómo está escrito» el mensaje nace obsoleta frente a un atacante con IA, igual que un detector de billetes falsos que solo busca errores de imprenta es inútil cuando la falsificación es perfecta. Tendrás que defender por otra vía, y eso es justo lo que montas en O8-02.",
       "choices": [
         {
           "id": "a",
@@ -128,7 +128,7 @@
     {
       "id": "o3",
       "text": "Mira el daño colateral en la misma evaluación: ¿cuántos correos LEGÍTIMOS marca por error el filtro de ortografía? (answer <número>)",
-      "teach": "Los falsos positivos\nEl filtro ingenuo no solo deja pasar ataques: marca como sospechoso un correo interno auténtico solo porque un compañero con prisa tenía una errata.\nPor qué: un filtro malo molesta a los usuarios (bloquea lo bueno) y además no para lo malo; lo peor de los dos mundos.",
+      "teach": "Los falsos positivos\nUn falso positivo es cuando la defensa marca como ataque algo que era legítimo. Aquí el filtro de ortografía señala un correo interno auténtico solo porque un compañero con prisa coló una errata.\nCómo leerlo: en la evaluación, la línea «legítimos marcados por error» cuenta esos tropiezos; mira cuántos hay.\nEs el detector de humo que salta cada vez que haces una tostada: tras la tercera falsa alarma, alguien lo descuelga del techo… y ya no avisa del incendio de verdad.\nLa trampa: un mal filtro te da lo peor de los dos mundos a la vez. Molesta a los usuarios bloqueando lo bueno (y pierde su confianza) y además no para lo malo. Una defensa que la gente acaba apagando no es una defensa.",
       "validator": {
         "type": "all",
         "of": [
@@ -154,7 +154,7 @@
     {
       "id": "c2",
       "text": "¿Qué le da la IA al atacante, además de buena ortografía?",
-      "teach": "Escala y personalización\nEl mismo modelo genera miles de variantes distintas, cada una personalizada con el nombre, el cargo y el contexto de su víctima, por un coste casi nulo. Antes, personalizar un ataque costaba tiempo; ahora no.\nPor qué: sube a la vez la calidad y la cantidad. Y los modelos de pesos abiertos no tienen las barreras (guardrails) de los comerciales: es la cara dual de la misma tecnología.",
+      "teach": "Escala y personalización\nLa buena ortografía es solo la punta. El mismo modelo genera miles de variantes distintas, cada una personalizada con el nombre, el cargo y el contexto de su víctima, por un coste casi nulo. Antes, personalizar un ataque costaba horas de trabajo manual; ahora es apretar un botón.\nMira el diagrama de la izquierda: antes, pocos correos personalizados y caros; ahora, miles casi gratis. No es que la IA mejore una cosa: sube a la vez la calidad y la cantidad.\nImagínalo como pasar de un sastre que cose un traje a medida en una semana a una fábrica que corta diez mil trajes a medida en una tarde. Cada víctima recibe algo que parece escrito para ella.\nLa trampa: además, los modelos de pesos abiertos no traen las barreras (guardrails) de los comerciales, así que un atacante los usa sin límites. Es la cara dual de la misma tecnología que tú aprendes a construir: la misma potencia sirve para ayudar o para atacar.",
       "choices": [
         {
           "id": "a",
@@ -196,7 +196,7 @@
     {
       "id": "py1",
       "text": "Programa la tasa de detección: abre el editor con py, completa tasa_deteccion y compruébala con py check.",
-      "teach": "La tasa de detección, en código\nDe los ataques, la fracción que la defensa detecta.\nPor qué: es la medida con la que se compara una defensa con la siguiente.",
+      "teach": "La tasa de detección, en código\nEs la fracción de ataques que tu defensa consigue detectar: detectados dividido entre el total. Si pilla 1 de 5, la tasa es 0.2 (un 20%).\nPor qué aquí: es la nota del examen de una defensa, el número con el que comparas una contra la siguiente. Sin ponerle cifra, «mejor» es solo una opinión; con ella, una defensa gana o pierde con datos.",
       "py_exercise": {
         "id": "O8-01-tasa",
         "title": "tasa_deteccion(detectados, total): fracción de ataques detectados",

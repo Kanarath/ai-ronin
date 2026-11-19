@@ -82,7 +82,7 @@
         "H2: criterio B · evidencia C · riesgo A · recomendacion B · seguimiento C."
       ],
       "on_complete": "H2 se sostiene: criterio de la política y de la ley, una muestra que otra persona puede repetir, un riesgo concreto, que incluye el art. 22 del RGPD (GDPR, General Data Protection Regulation), y un cierre verificable.",
-      "teach": "Redactar con la rúbrica\naudit rubric valle enseña qué exige cada campo; audit findings valle H2 enseña las tres redacciones posibles de cada campo de H2; audit draft valle H2 <campo> <A|B|C> elige una.\nLos campos son criterio, evidencia, riesgo, recomendacion y seguimiento.\nPor qué: un hallazgo con el criterio mal citado o la evidencia vaga se cae en la reunión de cierre."
+      "teach": "Redactar con la rúbrica\nUn hallazgo es la unidad de valor de una auditoría, y uno bien escrito se defiende solo. Tiene cinco piezas encadenadas (míralas en el diagrama de la izquierda): criterio, evidencia, riesgo, recomendacion y seguimiento; qué se esperaba, qué se vio, por qué importa, qué hacer y cómo se cierra.\naudit rubric valle enseña qué exige cada campo; audit findings valle H2 enseña las tres redacciones posibles de cada campo de H2; audit draft valle H2 <campo> <A|B|C> elige una.\nEs como un parte médico: el síntoma, la prueba que lo confirma, el riesgo si no se trata y el tratamiento. Si falta la prueba, nadie se fía del diagnóstico.\nPor qué: un hallazgo con el criterio mal citado o la evidencia vaga se cae en la reunión de cierre, y con él se cae tu credibilidad para el resto del informe."
     },
     {
       "id": "o2",
@@ -100,7 +100,7 @@
         "H1: C A B C A · H3: A B C A B (criterio, evidencia, riesgo, recomendacion, seguimiento)."
       ],
       "on_complete": "Tres hallazgos completos. La multa de 35 millones era una trampa: ese tramo es para las prácticas prohibidas (art. 99.3), y a las autoridades públicas se les aplica lo que diga cada Estado (art. 99.8).",
-      "teach": "Desconfía de las trampas\nCada campo tiene una redacción que se sostiene y otras con trampas: una norma que no está en el alcance, un artículo que obliga a otro actor, «nos dijeron», multas que no corresponden, un cierre sin evidencia o un auditor que se ofrece a arreglarlo.\nPor qué: estas trampas son las que usa la parte auditada para discutir un hallazgo."
+      "teach": "Desconfía de las trampas\nAhora redactas H1 (sesgos sin medir) y H3 (FRIA incompleta) tú solo. En cada campo, una de las tres opciones se sostiene y las otras llevan una trampa: una norma que no está en el alcance, un artículo que obliga a otro actor, «nos dijeron» como única prueba, multas que no corresponden a este caso, un cierre sin evidencia o un auditor que se ofrece a arreglar él mismo el problema.\nSon trampas tentadoras porque suenan contundentes (una multa enorme, una ley famosa), pero son justo las que la parte auditada usará para tumbar el hallazgo. Es como acusar a alguien citando la ley equivocada: en cuanto lo señalan, pierdes todo el caso, tengas o no razón de fondo.\nPor qué: un hallazgo solo es tan fuerte como su eslabón más discutible; una sola trampa y toda la reunión de cierre gira en torno a ella en vez de al problema real."
     },
     {
       "id": "c1",
@@ -150,7 +150,7 @@
         "alcance A · conclusion C."
       ],
       "on_complete": "Informe aprobado: ordenado por severidad, con alcance y limitaciones, y una conclusión que no va más allá de la muestra.",
-      "teach": "Alcance y conclusión\naudit findings valle informe enseña las opciones del alcance y la conclusión; audit report valle genera el informe y aplica la rúbrica.\nPor qué: la conclusión de un auditor no va más allá de lo que ha visto en su muestra."
+      "teach": "Alcance y conclusión\nLas piezas sueltas son hallazgos; el informe las ordena y las enmarca. El alcance dice qué se miró y qué no; la conclusión resume sin prometer de más.\naudit findings valle informe enseña las opciones del alcance y la conclusión; audit report valle genera el informe y aplica la rúbrica entera.\nUn auditor nunca dice «este sistema cumple el AI Act»: dice «en la muestra revisada contra los criterios acordados, vi esto». Es la diferencia entre «he probado tres platos y estaban buenos» y «el restaurante entero es excelente»: lo segundo no lo puedes afirmar con lo primero.\nPor qué: una conclusión que va más allá de la muestra es una afirmación que no puedes respaldar, y es lo primero que te rebatirán."
     },
     {
       "id": "o4",
@@ -196,7 +196,7 @@
         "Un plan con fecha no cierra nada; una muestra nueva sin fallos, sí."
       ],
       "on_complete": "H2 y H3 cerrados con evidencia; H1 sigue abierto con plan. En la próxima auditoría lo primero que mirarás será la evaluación de sesgos.",
-      "teach": "Cerrar con evidencia\naudit followup valle <H#> enseña el seguimiento de un hallazgo; audit close valle <H#> intenta cerrarlo.\nPor qué: se cierra con evidencia nueva de que el control funciona, no con una promesa."
+      "teach": "Cerrar con evidencia\nUnos meses después vuelves a mirar: ¿se arregló lo que señalaste? audit followup valle <H#> enseña el seguimiento de cada hallazgo y audit close valle <H#> intenta cerrarlo.\nLa regla, en el diagrama de la izquierda: un hallazgo se cierra con evidencia nueva de que el control YA funciona (una muestra nueva sin fallos), nunca con un plan que dice lo que se HARÁ.\nUn plan con fecha es como la nota en la nevera que dice «me apunto al gimnasio el lunes»: enseña intención, no músculo. Por eso H1 (sesgos sin medir), que solo trae plan, sigue abierto y será lo primero de la próxima auditoría.\nPor qué: cerrar con una promesa es firmar que algo funciona sin haberlo comprobado; si luego no se hace, tu firma lo avalaba."
     },
     {
       "id": "o5",

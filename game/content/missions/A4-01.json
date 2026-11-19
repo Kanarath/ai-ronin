@@ -55,7 +55,7 @@
     {
       "id": "o1",
       "text": "Crea el host MCP de la forja y mira qué servidores tiene. ¿Cuántos servidores de TERCEROS están conectados? (answer <número>)",
-      "teach": "Host, cliente y servidor\nmcp host <nombre> crea el asistente de la forja (el host), ya conectado a sus servidores.\nmcp servers <host> muestra cada servidor: su origen (interno o un tercero), su versión, si está conectado y qué herramientas ofrece.\nCuenta los que están conectados y cuyo origen no es «interno».\nPor qué: la primera pregunta de seguridad es quién ha escrito cada servidor; el tuyo lo controlas, el de un tercero no.",
+      "teach": "Host, cliente y servidor\nMCP (Model Context Protocol) tiene tres piezas, y conviene no confundirlas. El HOST es la aplicación del asistente (aquí, el de la forja). El CLIENTE es la parte del host que mantiene abierta la conexión con UN servidor. El SERVIDOR es un programa de fuera que ofrece herramientas.\nmcp host <nombre> crea el asistente de la forja (el host), ya conectado a sus servidores; mcp servers <host> muestra cada servidor: su origen (interno o un tercero), su versión, si está conectado y qué herramientas ofrece.\nCuenta los que están conectados y cuyo origen no es «interno».\nImagínalo como una regleta de enchufes en tu casa: el host es la regleta y cada servidor es un aparato que enchufas. Unos los has comprado tú (internos); otros te los ha dejado un vecino (terceros), y de esos no sabes qué llevan dentro.\nPara qué en tu camino: la primera pregunta de seguridad, antes de tocar nada, es quién ha escrito cada servidor. El tuyo lo controlas; el de un tercero, no, y hoy vas a ver qué entra por su enchufe.",
       "validator": {
         "type": "all",
         "of": [
@@ -79,7 +79,7 @@
     {
       "id": "o2",
       "text": "Inspecciona el servidor interno forja-pedidos. ¿Cuántos parámetros OBLIGATORIOS tiene aplicar_reembolso? (answer <número>)",
-      "teach": "tools/list\nmcp inspect <host> <servidor> muestra la respuesta a «tools/list»: lo mismo que recibe el host.\nCada herramienta trae tres campos:\n· name: el nombre con el que el modelo la llama.\n· description: texto que el MODELO LEE para decidir cuándo usarla.\n· inputSchema: un JSON Schema con los parámetros («properties») y los obligatorios («required»).\nPor qué: esto es todo lo que un asistente real sabe de cada herramienta; lo que no está en la descripción o en el esquema, el modelo no lo sabe.",
+      "teach": "tools/list\nCuando el host se conecta a un servidor, le pregunta «¿qué sabes hacer?». Esa pregunta es el mensaje tools/list, y la respuesta es la ficha de cada herramienta.\nmcp inspect <host> <servidor> te muestra esa respuesta: exactamente lo mismo que recibe el host. Cada herramienta trae tres campos:\n· name: el nombre con el que el modelo la llama.\n· description: texto que el MODELO LEE para decidir cuándo usarla.\n· inputSchema: un JSON Schema con los parámetros («properties») y los obligatorios («required»).\nPiénsalo como la carta de un restaurante que no has pisado nunca: el nombre del plato, su descripción y los ingredientes. Pides a partir de lo que pone la carta, no de lo que haya en la cocina.\nPara qué en tu camino: esto es TODO lo que un asistente real sabe de cada herramienta. Lo que no esté en la descripción o en el esquema, el modelo no lo sabe; y lo que SÍ esté, aunque lo escriba un desconocido, el modelo se lo cree. Ahí está la grieta que abrirás en A4-02.",
       "validator": {
         "type": "all",
         "of": [
@@ -106,7 +106,7 @@
     {
       "id": "py1",
       "text": "Programa en Python la comprobación de los obligatorios: abre el editor con py, completa la función faltan_obligatorios y compruébala con py check.",
-      "teach": "Comprobar los obligatorios, con tus manos\nAntes de ejecutar una llamada, el servidor comprueba que llegan todos los parámetros «required».\nVas a programar esa comprobación. Abre el editor con py.\nUn dict guarda pares clave → valor, como {\"pedido\": \"P-101\"}. El for recorre la lista de requeridos uno a uno.\nPor qué: los modelos se equivocan y a veces olvidan un argumento; un servidor real valida la llamada antes de ejecutarla.",
+      "teach": "Comprobar los obligatorios, con tus manos\nAntes de ejecutar una llamada, un servidor serio comprueba que han llegado todos los parámetros «required». Vas a programar esa comprobación: abre el editor con py.\nUn dict guarda pares clave → valor, como {\"pedido\": \"P-101\"}; el for recorre la lista de requeridos uno a uno y aparta los que faltan.\nEs el portero de un vuelo que pide billete Y documento: si te falta uno, no pasas, por mucha prisa que lleves.\nPara qué en tu camino: los modelos se equivocan y a veces olvidan un argumento. Un servidor real no da por buena la llamada solo porque venga del asistente; la valida él mismo antes de ejecutarla.",
       "py_exercise": {
         "id": "A4-01-obligatorios",
         "title": "faltan_obligatorios(requeridos, argumentos): validar «required»",
@@ -193,7 +193,7 @@
     {
       "id": "o3",
       "text": "Pide al asistente el estado del pedido P-101 y observa el mensaje tools/call. ¿Qué valor tiene el campo «method» de la petición? (answer <texto>)",
-      "teach": "tools/call\nmcp ask <host> <mensaje> le habla al asistente.\nEl modelo (simulado) elige herramienta y argumentos, y el host envía la llamada al servidor que la ofrece.\nVerás dos líneas:\n→ la petición JSON-RPC (JSON Remote Procedure Call), con method, params.name y params.arguments.\n← la respuesta del servidor, con el texto en result.content.\nPor qué: JSON-RPC es el formato de todos los mensajes MCP; saber leerlo te deja auditar qué pidió el modelo de verdad.",
+      "teach": "tools/call\nYa sabes cómo descubre el host las herramientas; ahora mira cómo las usa. mcp ask <host> <mensaje> le habla al asistente: el modelo (simulado) elige herramienta y argumentos, y el host envía la llamada al servidor que la ofrece.\nVerás dos líneas en pantalla:\n→ la petición JSON-RPC (JSON Remote Procedure Call), con method, params.name y params.arguments.\n← la respuesta del servidor, con el texto en result.content.\nEs como un pedido en una cocina: la comanda que entra (→) y el plato que sale (←). Tú, de auditor, lees la comanda para saber qué se pidió de verdad, no lo que el cliente creía pedir.\nPara qué en tu camino: JSON-RPC es el formato de TODOS los mensajes MCP. Saber leer ese → y ← es lo que te deja auditar qué hizo el modelo en realidad, no lo que cuenta la interfaz bonita al usuario.",
       "validator": {
         "type": "all",
         "of": [
@@ -235,7 +235,7 @@
         "mcp ask forja Reembolsa 120 monedas del pedido P-101"
       ],
       "on_complete": "Reembolso aplicado. Fíjate en que no ha hecho falta ninguna confirmación: el host confía en lo que decida el modelo.",
-      "teach": "Una acción con efectos\nAhora pide al asistente un reembolso, como haría un empleado: mcp ask forja Reembolsa 120 monedas del pedido P-101\nMira si alguien te pide confirmación antes de ejecutarlo.\nPor qué: en un asistente real con MCP, el mismo enchufe que consulta el tiempo puede mover dinero; importa qué decide el host antes de enviar la llamada."
+      "teach": "Una acción con efectos\nHasta ahora solo consultabas; esto cambia algo de verdad. Pide al asistente un reembolso, como haría un empleado: mcp ask forja Reembolsa 120 monedas del pedido P-101\nFíjate bien en si alguien te pide confirmación antes de ejecutarlo… o si el dinero se mueve sin más.\nPiensa en una tarjeta que lo mismo paga un café que una casa y nunca pide firma: cuanto mayor es el efecto, más debería costar dispararlo, y aquí no cuesta nada.\nPara qué en tu camino: en un asistente real con MCP, el mismo enchufe que consulta el tiempo puede mover dinero. Lo que decide si eso es seguro no es el modelo, sino qué comprueba el host antes de enviar la llamada."
     },
     {
       "id": "o5",
@@ -247,7 +247,7 @@
           "también el modelo"
         ]
       },
-      "teach": "La descripción es parte del prompt\nEl host mete las descripciones de TODAS las herramientas conectadas en el contexto del modelo, para que sepa cuándo usarlas.\nEs decir: quien escribe la descripción de un servidor de terceros escribe, en parte, el prompt de TU asistente.\nAdemás, el usuario normalmente solo ve el nombre de la herramienta, no su descripción completa.\nPor qué: este es el punto de entrada de los ataques que harás en A4-02.",
+      "teach": "La descripción es parte del prompt\nAquí está la idea que sostiene todo el arco A4, así que léela despacio. Para que el modelo sepa cuándo usar cada herramienta, el host mete las descripciones de TODAS las herramientas conectadas dentro del contexto del modelo.\nSácale la consecuencia: quien escribe la descripción de un servidor de terceros está escribiendo, en parte, el prompt de TU asistente. Y encima el usuario normalmente solo ve el NOMBRE de la herramienta, no su descripción completa.\nEs como contratar a alguien y dejar que un desconocido le susurre al oído sus «instrucciones de la casa» sin que tú las oigas. Mira el diagrama de la izquierda: el texto de un tercero entra directo en tu modelo.\nPara qué en tu camino: este es el punto de entrada exacto de los ataques de A4-02. Si entiendes que una descripción es texto ejecutable para el modelo, ya ves por dónde entrará el veneno.",
       "validator": {
         "type": "event",
         "event": "mcp.inspected",
@@ -265,7 +265,7 @@
     {
       "id": "o6",
       "text": "Comprueba que lo tienes claro: ¿por qué conectar un servidor MCP de terceros amplía la superficie de ataque del asistente?",
-      "teach": "Repaso: qué entra por el enchufe\nPiensa en lo que acabas de ver en clima-samurai: quién escribió esa descripción y quién la lee.\nPor qué: esta idea es la base de todo el arco A4.",
+      "teach": "Repaso: qué entra por el enchufe\nPara en seco y recuerda clima-samurai: ¿quién escribió esa descripción y quién acaba leyéndola dentro de tu asistente?\nNo busques el fallo en el cifrado ni en la red; búscalo en el texto que viaja y en quién confía en él.\nPor qué: esta idea —lo que escribe un tercero acaba en el contexto de tu modelo— es la base de todo el arco A4. Si la tienes clara, lo demás son variaciones.",
       "choices": [
         {
           "id": "a",

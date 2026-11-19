@@ -75,7 +75,7 @@
         "mcp host erp · mcp defend erp namespacing on · mcp defend erp least-scope on · mcp defend erp output-isolation on · mcp defend erp pin-definitions on · mcp defend erp review-descriptions on · lab resilience mcp erp"
       ],
       "on_complete": "Dos robustos con cinco defensas. Suplantación, token y salida inyectada siguen dependiendo de una sola.",
-      "teach": "Robustez sin coste\nCrea un host nuevo (mcp host erp), activa solo defensas sin coste (todas menos consent) y mide con lab resilience mcp erp.\nPor qué: es la mejor configuración que puedes tener sin molestar al usuario; tu punto de partida."
+      "teach": "Robustez sin coste\nEmpiezas por tu mejor configuración «gratis»: crea un host nuevo (mcp host erp), activa solo las defensas sin coste (todas menos consent) y mide con lab resilience mcp erp. Te dará dos ataques robustos; los otros tres aún cuelgan de un solo control.\nEs dejar la casa lo más segura posible solo con lo que no molesta a quien vive en ella: cerraduras buenas, sí; un control de identidad en cada habitación, todavía no.\nPara qué en tu camino: esta es tu línea de salida para la pregunta de hoy. Antes de pagar el peaje de las aprobaciones, fija cuánto consigues sin pagar nada; solo así sabrás si lo que añade consent vale su precio."
     },
     {
       "id": "o2",
@@ -114,12 +114,12 @@
         "mcp defend erp consent on · lab resilience mcp erp"
       ],
       "on_complete": "Tres, no cuatro. La salida inyectada gana su segunda cerradura, pero el token sigue dependiendo solo de least-scope. Y has pagado cuatro aprobaciones.",
-      "teach": "Predecir con la matriz\nLa matriz dice qué bloquea consent en solitario. Si las defensas se sumaran, cada ataque frágil que consent bloquea ganaría una segunda cerradura.\nPor qué: es la suposición que hacen muchos diseños de seguridad; hoy la pones a prueba."
+      "teach": "Predecir con la matriz\nLa matriz te dice qué bloquea consent en solitario: el token y la salida inyectada. Si las defensas se sumaran sin más, cada ataque frágil que consent para ganaría una segunda cerradura, así que esperarías pasar de 2 robustos a 4.\nEs la cuenta de la vieja: «si cada guardia para a dos, con el guardia nuevo paro dos más». Suena lógico… y hoy vas a ver que no siempre cuadra.\nPara qué en tu camino: esa suma es la suposición cómoda que hacen muchísimos diseños de seguridad, y casi nadie la comprueba. Pon tu predicción y mídela: aprender a desconfiar de la suma es el corazón de este capstone."
     },
     {
       "id": "o3",
       "text": "¿Qué defensa hace que la llamada que filtra el token le parezca inocente al usuario? (answer <defensa>)",
-      "teach": "Mirar dentro\nconsent rechaza una llamada si ve el token en sus argumentos. Sin defensas, la descripción envenenada mete el token en el campo «notas», y el usuario lo ve.\nCon una de tus cinco defensas, los argumentos quedan limpios… y el token sigue saliendo en la cabecera hacia el servidor de terceros, donde el usuario no mira.\nPor qué: dos defensas buenas pueden quitarse información la una a la otra; por eso se mide cada combinación.",
+      "teach": "Mirar dentro\nAquí entiendes POR QUÉ falló la suma. consent rechaza una llamada si VE el token entre los argumentos que le enseñan. Sin otras defensas, la descripción envenenada mete el token en el campo «notas», a la vista, y el usuario lo rechaza.\nPero una de tus cinco defensas, review-descriptions, limpia esos argumentos antes… así que consent ya no ve el token, aunque el token sigue saliendo por la cabecera hacia el servidor de terceros, donde el usuario no mira. Una defensa buena le robó la pista a la otra.\nEs como fregar el suelo tan bien que borras las huellas antes de que llegue el detective: ninguno hizo mal su trabajo, pero juntos dejaron escapar al culpable.\nPara qué en tu camino: dos defensas buenas pueden quitarse información la una a la otra. Por eso una combinación se MIDE, no se deduce de la matriz; entender QUÉ observa cada control es lo que te separa de una simple lista de interruptores.",
       "validator": {
         "type": "answer",
         "expected": "review-descriptions",

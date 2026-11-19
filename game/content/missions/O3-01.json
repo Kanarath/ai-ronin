@@ -58,7 +58,7 @@
     {
       "id": "o1",
       "text": "Abre el encargo y añade la primera amenaza: engagement start norte y engagement threat norte A-01 LLM07",
-      "teach": "Una amenaza, con nombre\nengagement threat apunta una amenaza: activo y categoría de OWASP. LLM07 es la fuga del prompt de sistema: el chatbot público conoce un código interno.\nPor qué: nombrar la amenaza con un estándar hace que todo el equipo la entienda igual.",
+      "teach": "Una amenaza, con nombre\nEl modelado de amenazas (threat modeling) es imaginar los ataques antes de probarlos, para no olvidarte de ninguno. engagement threat norte A-01 LLM07 apunta la primera: un activo y una categoría de la lista de OWASP (Open Worldwide Application Security Project). LLM07 es la fuga del prompt de sistema; aquí el chatbot público conoce un código interno que no debería soltar.\nPor qué con un estándar: ponerle a la amenaza un nombre de catálogo hace que todo el equipo —tú, el cliente, quien defiende— entienda exactamente lo mismo.\nComo el parte del médico: no dices «le duele la tripa», dices el diagnóstico con su código, y cualquier otro médico sabe de qué hablas sin volver a explorar.",
       "validator": {
         "type": "event",
         "event": "engagement.threat",
@@ -75,7 +75,7 @@
     {
       "id": "c1",
       "text": "En el asistente del taller (A-03), ¿por dónde entra lo que un atacante controla?",
-      "teach": "Fronteras de confianza\nUna frontera de confianza es el punto donde entran datos de alguien en quien no confías. Mira la exposición de A-03: lee el correo de clientes.\nPor qué: casi todos los ataques a agentes empiezan cruzando una frontera de confianza.",
+      "teach": "Fronteras de confianza\nUna frontera de confianza es el punto por donde entran datos de alguien en quien NO confías. Mira el diagrama y la exposición de A-03, el asistente del taller: lee el correo de clientes. Ese correo lo escribe cualquiera; en cambio el prompt de sistema lo pone la forja (lado de confianza) y la base de datos es interna.\nPor qué importa: casi todos los ataques a agentes empiezan justo ahí, cuando el sistema trata como instrucción algo que le mandó un desconocido.\nComo la rendija del buzón: es el único punto por donde un extraño mete algo en tu casa, así que es el primero que mirarías si entra correo envenenado.",
       "choices": [
         {
           "id": "a",
@@ -108,7 +108,7 @@
     {
       "id": "o2",
       "text": "Añade una amenaza que encaje en A-03 con la lista de agentes: engagement threat norte A-03 ASI01",
-      "teach": "ASI01: secuestro del objetivo\nUn correo con instrucciones puede cambiar lo que el agente intenta hacer.\nPor qué: es la amenaza número uno de la lista de OWASP para aplicaciones con agentes.",
+      "teach": "ASI01: secuestro del objetivo\nengagement threat norte A-03 ASI01 apunta una amenaza propia de agentes: un correo con instrucciones escondidas que cambia lo que el agente intenta hacer. Es la número uno de la lista de OWASP para aplicaciones con agentes.\nPor qué aquí: A-03 lee correos de clientes y actúa sobre ellos, que es justo el escenario donde el secuestro del objetivo muerde.\nComo colar una nota falsa entre los recados de un becario demasiado obediente: hará lo que ponga el papel sin preguntarse quién lo escribió.",
       "validator": {
         "type": "event",
         "event": "engagement.threat",
@@ -125,7 +125,7 @@
     {
       "id": "c2",
       "text": "En STRIDE, ¿qué letra es un mensaje con remitente falso?",
-      "teach": "STRIDE\nSpoofing (suplantar), Tampering (manipular), Repudiation (negar haberlo hecho), Information disclosure (fuga), Denial of service (dejar sin servicio), Elevation of privilege (escalar permisos).\nPor qué: recorrer las seis letras por activo es la forma de no olvidarte de ninguna amenaza.",
+      "teach": "STRIDE\nSTRIDE son seis letras para recorrer un sistema sin dejarte ninguna amenaza: Spoofing (suplantar), Tampering (manipular), Repudiation (negar haberlo hecho), Information disclosure (fuga), Denial of service (dejar sin servicio) y Elevation of privilege (escalar permisos). Mira la tabla del diagrama.\nUn mensaje con remitente falso es la S de Spoofing: alguien se hace pasar por otro. No es manipular datos (T) ni escalar permisos (E), aunque pueda acabar en eso.\nPor qué: pasar las seis letras por cada activo es como la lista de la compra antes de salir, no te fías de la memoria, la recorres entera para no volver sin el pan.",
       "choices": [
         {
           "id": "a",
@@ -193,7 +193,7 @@
     {
       "id": "o3",
       "text": "Completa el modelo: añade una amenaza que encaje en al menos tres de los cinco activos en alcance.",
-      "teach": "Cobertura del modelo\nEl encargo te dice cuántos activos tienen al menos una amenaza que encaja. Prueba con A-02 (RAG) o A-04 (MCP, Model Context Protocol).\nPor qué: un activo sin amenazas apuntadas suele ser un activo que nadie ha pensado.",
+      "teach": "Cobertura del modelo\nAñade una amenaza que encaje en al menos tres de los cinco activos en alcance; el encargo te dice cuántos llevas cubiertos. Prueba con A-02 (un RAG, Retrieval-Augmented Generation, que indexa documentos de proveedores) o con A-04 (MCP, Model Context Protocol).\nPor qué: un activo sin ninguna amenaza apuntada no suele ser un activo seguro, sino uno en el que nadie ha pensado.\nComo el parte de una revisión del coche: la casilla que nadie marcó no significa «está bien», significa «no lo miramos».",
       "validator": {
         "type": "event",
         "event": "engagement.threat",
@@ -212,7 +212,7 @@
     {
       "id": "py1",
       "text": "Programa la comprobación de cobertura: abre el editor con py, completa sin_amenazas y compruébala con py check.",
-      "teach": "El modelo, en código\nVas a calcular qué activos se han quedado sin ninguna amenaza apuntada.\nPor qué: es la pregunta que hace cualquier revisor de un modelo de amenazas.",
+      "teach": "El modelo, en código\nVas a escribir sin_amenazas: dada la lista de activos y las amenazas apuntadas, saca los activos que se han quedado sin ninguna.\nPor qué: es la primera pregunta que hace cualquiera que revisa un modelo de amenazas —¿qué nos hemos dejado sin mirar?—, y hacerla a mano en un sistema grande es imposible.\nComo pasar lista en clase y cantar solo los que no han contestado: esos son los que se te escapan.",
       "py_exercise": {
         "id": "O3-01-cobertura",
         "title": "sin_amenazas(activos, amenazas): activos que nadie ha pensado",

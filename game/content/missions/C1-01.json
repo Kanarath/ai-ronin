@@ -71,7 +71,7 @@
         "agent create kage · lab matrix agent kage"
       ],
       "on_complete": "Cinco ataques, siete controles. Cada ■ es una medición, no una opinión.",
-      "teach": "La matriz de defensas\nagent create kage crea un agente nuevo. lab matrix agent kage prueba cada defensa EN SOLITARIO contra los cinco ataques de la batería, sobre copias del agente.\nPor qué: medir cada control por separado es la única forma honesta de comparar defensas antes de elegir.",
+      "teach": "La matriz de defensas\nUna matriz de defensas es una tabla: filas, los ataques; columnas, cada defensa probada a solas sobre una copia del agente. Cada ■ significa «esta defensa, ella sola, para este ataque».\nCómo la sacas: agent create kage crea un agente nuevo y lab matrix agent kage prueba cada defensa EN SOLITARIO contra los cinco ataques de la batería.\nEs como probar los ingredientes de una receta por separado antes de mezclarlos: solo así sabes qué aporta cada uno. Si lo echas todo a la olla a la vez, nunca sabrás cuál era necesario.\nPara qué en tu camino: medir cada control por separado es la única forma honesta de comparar defensas antes de elegir. Un ingeniero no discute cuál es mejor; lo mide y enseña la tabla.",
       "prediction": {
         "prompt": "Antes de sacar la matriz: ¿qué ataque crees que tendrá menos defensas?",
         "options": [
@@ -100,7 +100,7 @@
         "Es el ataque que no llega por correo."
       ],
       "on_complete": "El confused deputy solo lo para user-authz. No es una orden escondida en datos, sino una petición directa con los permisos equivocados, así que ni spotlight ni la supervisión humana lo ven.",
-      "teach": "Puntos únicos\nLa última columna, «la bloquean», cuenta cuántas defensas paran cada ataque por sí solas.\nUn ataque con un 1 es un punto único: si ese control falla, el ataque pasa.\nSi la cabecera de la tabla se ha ido hacia arriba, vuelve a lanzar lab matrix agent kage.\nPor qué: los puntos únicos son lo primero que busca un atacante y lo primero que tienes que proteger."
+      "teach": "Puntos únicos\nLa última columna, «la bloquean», cuenta cuántas defensas paran cada ataque por sí solas. Un ataque con un 1 es un punto único: solo una defensa lo sostiene, así que el día que ese control falle, el ataque pasa sin más.\n(Si la cabecera de la tabla se ha ido hacia arriba, vuelve a lanzar lab matrix agent kage para verla.)\nEs la única salida de emergencia de un edificio: mientras funcione, todo bien; el día que se atasca, no hay plan B.\nPor qué en tu camino: los puntos únicos son lo primero que busca un atacante (el eslabón sin repuesto) y, por tanto, lo primero que tú tienes que identificar y proteger. Verlos en la tabla, antes de que falle nada, es media defensa."
     },
     {
       "id": "o3",
@@ -113,7 +113,7 @@
           "5"
         ]
       },
-      "teach": "Cobertura mínima\nEs un problema clásico (set cover): elegir el menor número de columnas que pongan al menos un ■ en cada fila.\nEmpieza por los puntos únicos (esos controles son obligatorios) y añade el que más filas cubra de las que faltan. Descarta lo que tenga coste: tareas rotas o aprobaciones.\nagent defend kage <control> on activa un control; lab resilience agent kage mide la configuración actual.\nPor qué: pocos controles abaratan el sistema, pero ya verás que «pocos» no siempre es «buenos».",
+      "teach": "Cobertura mínima\nBuscas el menor número de columnas que pongan al menos un ■ en cada fila: es un problema clásico de informática, el set cover (cobertura de conjuntos).\nLa estrategia: empieza por los puntos únicos (esos controles son obligatorios, no hay elección) y añade después el que más filas cubra de las que falten. Descarta lo que tenga coste: tareas legítimas rotas o aprobaciones.\nComandos: agent defend kage <control> on activa un control y lab resilience agent kage mide la configuración actual.\nEs como hacer la maleta con lo justo: metes primero lo imprescindible y luego lo que más usos cubre, sin cargar de más.\nPor qué aquí: pocos controles abaratan y simplifican el sistema. Pero fíjate bien en lo que mides después, porque «pocos» no siempre es «buenos», y ese es el giro de esta misión.",
       "validator": {
         "type": "event",
         "event": "lab.resilience",
@@ -145,7 +145,7 @@
         "Cuenta las filas con «· frágil»."
       ],
       "on_complete": "Los cinco. Mira de qué control depende cada uno en la columna «depende solo de».",
-      "teach": "Frágil o robusto\nlab resilience marca cada ataque bloqueado como «frágil» (vuelve a pasar si quitas UNA de las defensas activas) o «robusto» (aguanta).\nPor qué: un sistema donde todo es frágil depende de que ningún control falle nunca."
+      "teach": "Frágil o robusto\nlab resilience coge tu configuración y, de los ataques que hoy están bloqueados, marca cada uno como «frágil» (vuelve a pasar si quitas UNA de las defensas activas) o «robusto» (aguanta aunque caiga cualquier control).\nEs la diferencia entre una silla de tres patas y una de cuatro: la de tres se mantiene de pie hoy, pero basta que falle una pata para caerte; la de cuatro aguanta perder una.\nPor qué en tu camino: un sistema donde todo es frágil depende de que ningún control falle NUNCA, y en producción los controles fallan (un despliegue, una regla mal escrita). Que la batería esté a 0 no te dice cuánto aguanta; esto sí."
     },
     {
       "id": "c1",

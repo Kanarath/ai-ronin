@@ -47,7 +47,7 @@
     {
       "id": "o1",
       "text": "Abre la malla del encargo y mide la línea base: a2a taller prod, a2a attack prod y a2a eval prod",
-      "teach": "Línea base\nAntes de defender, mide: cuántos ataques pasan y cuántas tareas legítimas salen bien.\nPor qué: sin línea base no puedes demostrar que tus controles mejoran algo.",
+      "teach": "Línea base\nLa línea base es la foto del sistema SIN defensas: cuántos ataques pasan (aquí los seis) y cuántas tareas legítimas salen bien. Es el punto de partida contra el que comparas todo lo demás.\nCómo: a2a taller prod abre la malla del encargo, a2a attack prod lanza la batería y a2a eval prod prueba las tareas legítimas.\nEs la foto del «antes» de una reforma: sin ella, luego nadie sabe si de verdad mejoraste algo o solo lo moviste de sitio.\nPara qué en tu camino: sin línea base no puedes DEMOSTRAR que tus controles sirven, y un red team entrega pruebas, no opiniones. Empezar midiendo es lo que convierte tu trabajo en un informe defendible.",
       "validator": {
         "type": "all",
         "of": [
@@ -76,7 +76,7 @@
     {
       "id": "c1",
       "text": "¿Qué control conviene descartar para este encargo?",
-      "teach": "Elegir con datos\nRecuerda A5-03: un control bloquea dos ataques sin coste y otro bloquea dos pero rompe una tarea legítima.\nPor qué: en producción, una defensa con falsas alarmas acaba apagada.",
+      "teach": "Elegir con datos\nRecuerda A5-03: tienes dos controles que bloquean dos ataques cada uno, pero uno (delegated-authz) no rompe nada y el otro (monitor) marca una tarea legítima como si fuera un ataque, un falso positivo.\nMira el diagrama: el monitor para dos, sí, pero rompe la investigación legítima sobre el temple.\nEs el detector de humos que salta con cada tostada: a la tercera falsa alarma, alguien lo descuelga, y entonces no avisa del fuego de verdad.\nPara qué en tu camino: en producción, una defensa con falsas alarmas acaba apagada por el propio equipo, así que proteger menos sin molestar suele valer más que proteger más rompiendo el trabajo. Elegir qué descartar, con datos, también es diseño de seguridad.",
       "choices": [
         {
           "id": "a",
@@ -109,7 +109,7 @@
     {
       "id": "o2",
       "text": "En una malla nueva (a2a taller fin), activa los controles que hagan falta, sin monitor, hasta conseguir 0 ataques y 4 de 4 tareas.",
-      "teach": "Cobertura mínima\nCada ataque necesita al menos un control que lo pare. Usa lo que mediste: qué bloquea cada control él solo.\nPor qué: cuantos menos controles, menos cosas que mantener y que puedan fallar.",
+      "teach": "Cobertura mínima\nEl objetivo: que cada uno de los seis ataques tenga al menos un control que lo pare, con el menor número de controles y sin usar el monitor. Apóyate en lo que mediste: qué bloquea cada control él solo (delegated-authz cubre dos a la vez).\nEn una malla nueva (a2a taller fin) activa los controles, y comprueba con a2a attack fin y a2a eval fin.\nEs hacer la maleta justa para el viaje: cada cosa cumple una función y no cargas de más.\nPara qué en tu camino: cuantos menos controles, menos cosas que mantener, documentar y que puedan fallar en un despliegue. La cobertura mínima es tu propuesta base para el cliente; sobre ella construyes la resiliencia en C4-02.",
       "validator": {
         "type": "all",
         "of": [
@@ -143,7 +143,7 @@
     {
       "id": "c2",
       "text": "Si mañana se despliega la malla con message-auth apagado por error, ¿qué pasa?",
-      "teach": "Riesgo residual\nCon cobertura mínima, cada ataque cuelga de un único control. Si ese control falla, el ataque vuelve.\nPor qué: por eso el informe debe decir qué vigilar, no solo qué activar.",
+      "teach": "Riesgo residual\nAquí lo tocas con el dedo: con la cobertura mínima, cada ataque cuelga de un ÚNICO control. Si message-auth se despliega apagado por error, el ataque del remitente falso vuelve de inmediato, porque ningún otro control lo frena.\nEs ir con una sola rueda de repuesto: mientras no pinches, perfecto; el día que pinchas dos veces, te quedas tirado.\nPara qué en tu camino: por eso un buen informe no dice solo «activa estos cinco controles», dice «y vigila que sigan activos, porque cada uno es el único freno de un ataque». Entregar la cobertura mínima sin nombrar su fragilidad es media verdad.",
       "choices": [
         {
           "id": "a",
@@ -176,7 +176,7 @@
     {
       "id": "o3",
       "text": "Entrega el informe del mensaje falsificado: informe nuevo …, informe campo … (owasp ASI07) e informe revisar, hasta que cumpla la rúbrica.",
-      "teach": "El informe del encargo\nCampos: titulo · severidad · componente · owasp · descripcion · pasos · impacto · evidencia · mitigacion · verificacion.\nASI07 es la comunicación insegura entre agentes en la lista OWASP para aplicaciones con agentes.\nPor qué: el cliente arregla lo que entiende y puede comprobar.",
+      "teach": "El informe del encargo\nEl entregable de un red team es el informe, y tiene una estructura fija para que cualquiera lo pueda accionar. Campos: titulo · severidad · componente · owasp · descripcion · pasos · impacto · evidencia · mitigacion · verificacion.\nASI07 es «comunicación insegura entre agentes» en la lista OWASP (Open Worldwide Application Security Project) para aplicaciones con agentes; documentas con esa etiqueta el mensaje falsificado.\nPiensa en el parte de un mecánico: no vale «el coche hace un ruido»; pone la pieza, cómo reproducir el ruido, qué pasa si no se arregla y cómo comprobar que quedó bien. Así el dueño decide y verifica.\nPara qué en tu camino: el cliente solo arregla lo que ENTIENDE y puede COMPROBAR. Un hallazgo brillante mal escrito no se corrige; saber redactar los pasos y la verificación vale tanto como saber encontrar el fallo.",
       "validator": {
         "type": "event",
         "event": "report.checked",

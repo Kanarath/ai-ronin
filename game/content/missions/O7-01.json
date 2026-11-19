@@ -56,7 +56,7 @@
     {
       "id": "o1",
       "text": "Lee la lista y los incidentes: asi list y asi incidents.",
-      "teach": "El OWASP Top 10 agéntico\nPublicado el 9 de diciembre de 2025 por el OWASP GenAI Security Project. Complementa al Top 10 de LLM (LLM01–LLM10) con lo que solo pasa cuando el modelo actúa: herramientas, identidad, memoria, otros agentes y personas que confían en él.\nPor qué: casi todo lo que has atacado en A3–A5 tiene aquí su nombre.",
+      "teach": "El OWASP Top 10 agéntico\nEs la lista de referencia de 2026 de las diez formas en que un agente puede fallar o ser atacado. La publicó el 9 de diciembre de 2025 el OWASP (Open Worldwide Application Security Project) GenAI Security Project.\nCómo encaja: complementa al Top 10 de LLM (LLM01–LLM10) con lo que solo pasa cuando el modelo, además de hablar, actúa: usa herramientas, tiene identidad y permisos, guarda memoria, habla con otros agentes y le confía decisiones a personas.\nPara qué en tu camino: casi todo lo que atacaste y defendiste en A3–A5 tiene aquí un nombre oficial, del ASI01 al ASI10. Son dos comandos para verlo: asi list y asi incidents.\nEs como el cuadro de mandos de un coche: cada posible avería tiene su testigo con nombre, y cuando se enciende todos saben de qué hablas sin discutir.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -77,7 +77,7 @@
     {
       "id": "o2",
       "text": "Clasifica los cinco primeros incidentes (I1 a I5) con asi classify <incidente> <ASIxx>. Si dudas, asi risk <ASIxx> te da el detalle.",
-      "teach": "Clasificar por la causa raíz\nUn incidente suele tocar varios riesgos. Se clasifica por lo que falló primero: el punto en el que un control habría cortado la cadena.\nPor qué: la causa raíz decide qué defensa pones; los efectos solo dicen cuánto dolió.",
+      "teach": "Clasificar por la causa raíz\nUn mismo incidente suele tocar varios riesgos a la vez, pero se clasifica por uno solo: el que falló primero, el punto donde un control habría cortado la cadena antes de que empezara el daño.\nCómo hacerlo: asi classify <incidente> <ASIxx> asigna un riesgo; si dudas, asi risk <ASIxx> te da el detalle de cada uno.\nPara qué en tu camino: la causa raíz es la que decide qué defensa pones; los efectos (lo que se rompió, lo que se filtró) solo dicen cuánto dolió, no cómo evitarlo la próxima vez.\nEs como un accidente de tráfico: puedes describir los coches abollados (el efecto) o decir que el semáforo estaba apagado (la causa). Solo lo segundo te dice qué arreglar para que no se repita.",
       "validator": {
         "type": "event",
         "event": "asi.classified",
@@ -95,7 +95,7 @@
     {
       "id": "c1",
       "text": "I1 e I2 acaban con el agente haciendo algo que no debía. ¿Qué los separa?",
-      "teach": "Objetivo frente a herramienta\nEn ASI01 alguien cambia lo que el agente quiere conseguir. En ASI02 el objetivo sigue siendo el legítimo, pero usa una herramienta con un alcance dañino.\nPor qué: las defensas son distintas: separar datos de instrucciones (ASI01) o limitar y validar las herramientas (ASI02).",
+      "teach": "Objetivo frente a herramienta\nLos dos acaban con el agente haciendo algo que no debía, pero por motivos distintos; por eso se separan. En ASI01 alguien cambia lo que el agente quiere conseguir: persigue una meta ajena. En ASI02 el objetivo sigue siendo el legítimo, pero usa una herramienta con un alcance dañino. Mira el diagrama de la izquierda.\nPara qué en tu camino: distinguirlos importa porque la defensa es distinta. Contra ASI01, separar datos de instrucciones para que un texto externo no reescriba la meta; contra ASI02, limitar y validar las herramientas para que ninguna llegue tan lejos.\nPiénsalo en una cocina: una cosa es que alguien convenza al cocinero de preparar otro plato (le cambian el objetivo), y otra que use un cuchillo enorme para cortar pan (herramienta con demasiado alcance). Se corrigen de formas distintas.",
       "diagram": {"kind": "table", "title": "LA IDEA · objetivo frente a herramienta", "headers": ["", "ASI01 (I1)", "ASI02 (I2)"], "rows": [["qué cambia", "el objetivo del agente", "nada: el objetivo es legítimo"], ["cómo daña", "persigue una meta ajena", "usa una herramienta con alcance dañino"], ["defensa", "separar datos de instrucciones", "limitar y validar las herramientas"]], "caption": "los dos acaban haciendo algo que no debían, pero por motivos distintos; por eso la defensa es distinta."},
       "choices": [
         {
@@ -129,7 +129,7 @@
     {
       "id": "o3",
       "text": "Clasifica los otros cinco (I6 a I10).",
-      "teach": "La mitad agéntica\nMemoria que se envenena y dura semanas, agentes que se hablan sin autenticarse, fallos que se propagan entre ellos, personas que aprueban a ciegas y agentes que se desvían solos.\nPor qué: son los riesgos que no existían en una aplicación LLM sin herramientas ni memoria.",
+      "teach": "La mitad agéntica\nLos cinco últimos riesgos son los que nacen cuando un modelo deja de ser un chat: memoria que se envenena y dura semanas, agentes que se hablan entre ellos sin autenticarse, fallos que se propagan en cascada de uno a otro, personas que aprueban a ciegas y agentes que se desvían de su objetivo solos.\nCómo clasificarlos: el mismo asi classify <incidente> <ASIxx> de antes, del I6 al I10.\nPara qué en tu camino: ninguno de estos existía en una aplicación LLM sin herramientas ni memoria; son el terreno nuevo, el que te da de comer si sabes defenderlo.\nEs como pasar de vigilar una tienda (una puerta, una caja) a vigilar una cadena de tiendas que se mandan mercancía entre sí: aparecen riesgos que con una sola tienda no existían.",
       "validator": {
         "type": "event",
         "event": "asi.classified",
@@ -148,7 +148,7 @@
     {
       "id": "c2",
       "text": "I9 tenía aprobación humana y aun así pasó. ¿Qué enseña?",
-      "teach": "La persona en el bucle también se ataca\nUna aprobación vale lo que vale la atención de quien aprueba. Si el agente redacta la explicación, puede hacerla convincente y falsa.\nPor qué: «hay un humano en el bucle» no es una defensa si la persona solo ve lo que el agente quiere que vea.",
+      "teach": "La persona en el bucle también se ataca\nMeter a una persona a aprobar parece la defensa definitiva, pero una aprobación vale lo que vale lo que ve quien aprueba. Si el agente redacta la explicación que la persona lee, puede hacerla convincente y falsa a la vez.\nPara qué en tu camino: «hay un humano en el bucle» no es una defensa por sí sola. Solo protege si la persona ve un resumen fiel de lo que va a pasar, generado por el sistema y no por el agente, y si lo crítico pide una segunda persona.\nEs como firmar un contrato que te resume de palabra el mismo vendedor: por muy atento que estés, estás decidiendo sobre su versión, no sobre la letra pequeña. Lo volverás a vivir a fondo en O7-04.",
       "choices": [
         {
           "id": "a",
@@ -181,7 +181,7 @@
     {
       "id": "py1",
       "text": "Programa la nota de tu clasificación: abre el editor con py, completa aciertos y compruébala con py check.",
-      "teach": "Comparar con la clave\nCuántos incidentes coinciden entre tu clasificación y la de referencia.\nPor qué: es lo que hace un equipo cuando dos analistas clasifican lo mismo y quiere medir cuánto coinciden.",
+      "teach": "Comparar con la clave\nLa función cuenta cuántos incidentes coinciden entre tu clasificación y la de referencia: un acierto es mismo incidente, mismo riesgo.\nCómo: escribe py para abrir el editor y py check para comprobarla con varios casos.\nPara qué en tu camino: es justo lo que hace un equipo cuando dos analistas etiquetan los mismos incidentes y quiere medir cuánto coinciden (lo que se llama acuerdo entre revisores). Programarlo te deja claro que «acertar» aquí es coincidir exactamente, no parecerse.",
       "py_exercise": {
         "id": "O7-01-aciertos",
         "title": "aciertos(mia, referencia): cuántos incidentes coinciden",

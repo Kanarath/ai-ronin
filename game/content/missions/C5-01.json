@@ -78,7 +78,7 @@
         "engagement start final · engagement recon final"
       ],
       "on_complete": "Cinco de siete. Los otros dos se usan a diario, pero el contrato no te deja tocarlos.",
-      "teach": "Reconocimiento\nengagement start final abre el encargo; engagement recon final lista los sistemas de la forja, su exposición y si están en alcance.\nPor qué: en un red team real, el inventario va primero: no puedes probar ni proteger lo que no sabes que existe."
+      "teach": "Reconocimiento\nengagement start final abre el encargo; engagement recon final lista los sistemas de la forja, su exposición y si están en alcance.\nQué verás: una fila por sistema, con su id (A-01, A-02…), lo expuesto que está y una marca de si entra o no en alcance.\nPiénsalo como el inventario de una tienda antes de instalar la alarma: primero cuentas puertas, ventanas y cajas fuertes; no puedes proteger —ni probar— lo que no sabes que existe.\nLa trampa: saltarte el inventario y atacar «lo que suena interesante» deja fuera justo el activo más expuesto, y un encargo que no mira todo el alcance no vale lo que cuesta."
     },
     {
       "id": "o2",
@@ -117,12 +117,12 @@
         "engagement scope final A-06"
       ],
       "on_complete": "Fuera de alcance. Que la forja tenga credenciales no la convierte en dueña: probarlo sin permiso de acero-norte es atacar a un tercero. Lo mismo con A-07: producción con clientes reales se prueba en su copia de laboratorio.",
-      "teach": "Accesible no es autorizado\nengagement scope final <activo> enseña el alcance de un activo y el motivo. Por ejemplo, el de la API (Application Programming Interface) de pedidos de un proveedor.\nPor qué: probar un sistema sin la autorización de su dueño es un ataque, aunque tengas acceso técnico."
+      "teach": "Accesible no es autorizado\nengagement scope final <activo> enseña el alcance de un activo y el motivo. Por ejemplo, el de la API (Application Programming Interface) de pedidos de un proveedor.\nQué significa: tener la llave no es tener permiso. El asistente llama a esa API cada día, pero la API es de un tercero y solo su dueño puede autorizar que la pruebes.\nEs la diferencia entre tener copia de las llaves del vecino para regarle las plantas y poder entrar a mover sus muebles: el acceso te lo dieron para una cosa, no para todo.\nLa trampa: probar A-06 o A-07 porque «ya entras» es atacar a un tercero o a clientes reales. Eso convierte un red team en un ataque y rompe el contrato que te protege."
     },
     {
       "id": "o3",
       "text": "Crea en el laboratorio una copia de cada activo en alcance y vincula los cinco al encargo.",
-      "teach": "Copias de laboratorio\nengagement recon indica qué comando reproduce cada activo. engagement bind <encargo> <activo> <objeto> une un activo con su copia; a partir de ahí, los hallazgos y el retest se apoyan en lo que hagas sobre esa copia.\nSi intentas vincular un activo fuera de alcance, el encargo lo rechaza.\nPor qué: se ataca una copia controlada, nunca el sistema que usan los clientes.",
+      "teach": "Copias de laboratorio\nengagement recon indica qué comando reproduce cada activo. engagement bind <encargo> <activo> <objeto> une un activo con su copia; a partir de ahí, los hallazgos y el retest se apoyan en lo que hagas sobre esa copia.\nSi intentas vincular un activo fuera de alcance, el encargo lo rechaza: la frontera del contrato se aplica sola.\nImagínatelo como el doble de cine que rueda la escena peligrosa: te ensañas con la copia todo lo que quieras y el sistema que usan los clientes no se entera.\nLa trampa: atacar el sistema real «solo para comprobar» puede tirar producción o tocar datos de clientes; por eso todo lo que hagas a partir de aquí ocurre sobre la copia, nunca sobre el original.",
       "validator": {
         "type": "event",
         "event": "engagement.bound",
@@ -140,7 +140,7 @@
       "id": "o4",
       "diagram": {"kind":"table","title":"LA IDEA · cada activo, su amenaza","headers":["activo","expuesto a","categoría"],"rows":[["A-01 chatbot","entrada del usuario","LLM01 inyección"],["A-02 buscador","documentos externos","LLM01 por documento"],["A-03 asistente","correos + herramientas","LLM + ASI"],["A-04 host MCP","herramientas de terceros","ASI04"],["A-05 pipeline","modelos y datos","LLM03 suministro"]],"caption":"el modelo de amenazas asigna a cada activo lo que puede salir mal según su exposición. El asistente, que lee contenido ajeno Y actúa con herramientas, suma las dos familias de los Top 10"},
       "text": "Construye el modelo de amenazas: al menos una amenaza que encaje en cada uno de los cinco activos.",
-      "teach": "Encajar una amenaza\nengagement threat <encargo> <activo> <categoría> añade una amenaza al modelo, con las categorías de los dos Top 10 de la tarjeta: LLM01…LLM10 y ASI01…ASI10.\nPiensa en la exposición de cada activo (columna «exposición» del reconocimiento) y en lo que viste en su arco. Si la categoría encaja poco, el encargo la acepta pero te avisa y te sugiere otras.\nPor qué: el modelo de amenazas es tu mapa: dice qué probar primero y por qué.",
+      "teach": "Encajar una amenaza\nengagement threat <encargo> <activo> <categoría> añade una amenaza al modelo, con las categorías de los dos Top 10 de la tarjeta: LLM01…LLM10 y ASI01…ASI10.\nPiensa en la exposición de cada activo (columna «exposición» del reconocimiento) y en lo que viste en su arco; mira el diagrama de la izquierda, que empareja cada activo con lo que puede salirle mal. Si la categoría encaja poco, el encargo la acepta pero te avisa y te sugiere otras.\nEs como el plano que mira un bombero antes del incendio: dónde está el gas, dónde la salida y por dónde entraría el fuego, para no improvisar cuando arde.\nLa trampa: probar solo lo que ya sabes atacar deja el activo más expuesto sin mirar. El modelo de amenazas es tu mapa: dice qué probar primero y por qué.",
       "validator": {
         "type": "event",
         "event": "engagement.threat",

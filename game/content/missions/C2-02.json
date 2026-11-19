@@ -97,7 +97,7 @@
         "rag defend docs spotlight on · lab resilience rag docs"
       ],
       "on_complete": "Uno: la reseña inyectada, que tiene trusted-sources en la ingesta y spotlight en la presentación. Con las cinco defensas no hay más.",
-      "teach": "Del mínimo al máximo\nPrimero repite la cobertura mínima de C2-01 en un buscador nuevo (rag create docs y rag ingest docs) y mide la resiliencia. Después añade la defensa que falta y mide otra vez.\nPor qué: saber cuánto ganas encendiéndolo todo te dice si el problema se arregla con interruptores o con diseño."
+      "teach": "Del mínimo al máximo\nVas a medir dos extremos. Primero repite la cobertura mínima de C2-01 en un buscador nuevo (rag create docs y rag ingest docs) y mide la resiliencia: verás 0 robustos. Después enciende la defensa que falta (spotlight) y mide otra vez.\nEs como probar si tu coche frena mejor con todas las pastillas nuevas: necesitas el antes y el después para saber cuánto ganas de verdad.\nPor qué en tu camino: saber cuánto sube la resiliencia encendiéndolo TODO responde la pregunta clave de esta misión: ¿este problema se arregla con más interruptores, o ya solo con diseño? Si encenderlo todo apenas mejora, el camino es otro."
     },
     {
       "id": "o2",
@@ -113,7 +113,7 @@
         "Columna «depende solo de» en las filas fuga-costes y fuga-proveedor."
       ],
       "on_complete": "Todo lo interno depende de una comprobación de permisos en la recuperación. Un fallo en la acl, por ejemplo un documento etiquetado como público por error, y el cliente ve los costes.",
-      "teach": "Depende solo de\nLa columna «depende solo de» dice, para cada ataque frágil, qué defensa lo sostiene ella sola.\nPor qué: es la lista de controles que no pueden fallar nunca; en producción, son los que más se vigilan y se prueban."
+      "teach": "Depende solo de\nLa columna «depende solo de» te dice, para cada ataque frágil, qué única defensa lo sostiene. Aquí las dos fugas de documentos internos cuelgan ambas de acl: una sola comprobación de permisos en la recuperación separa al cliente de los costes internos.\nEs el único vigilante de guardia de todo un edificio: si parpadea un momento, cualquiera entra.\nPor qué en tu camino: esta columna es tu lista de controles que no pueden fallar NUNCA. En producción son justo los que más se vigilan y se prueban en cada cambio; piensa qué pasa si un documento se etiqueta como público por error."
     },
     {
       "id": "o3",
@@ -127,7 +127,7 @@
         "Cuenta las filas con «· frágil»."
       ],
       "on_complete": "Cuatro. Tu informe debe decirlo claro: la batería está a 0, pero cuatro de cinco riesgos dependen de un solo control.",
-      "teach": "Contar lo frágil\nCuenta las filas con «· frágil» en la última medición.\nPor qué: un informe honesto da las dos cifras: ataques bloqueados y cuántos dependen de un solo control."
+      "teach": "Contar lo frágil\nCuenta las filas marcadas con «· frágil» en la última medición: aunque enciendas las cinco defensas, siguen siendo cuatro.\nPor qué aquí: un informe honesto nunca da una sola cifra. Decir «batería a 0, todo bloqueado» es verdad y engaña a la vez; hay que añadir «pero cuatro de cinco cuelgan de un solo control». Es la diferencia entre el parte que tranquiliza al jefe y el que de verdad protege a la empresa."
     },
     {
       "id": "c1",

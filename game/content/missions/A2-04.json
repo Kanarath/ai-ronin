@@ -57,7 +57,7 @@
       "id": "o1",
       "diagram": {"kind":"chips","title":"LA IDEA · dos buscadores, un ranking","pre":"búsqueda híbrida:","chips":[{"text":"BM25 (palabras)","color":"cyan"},{"text":"+","color":"muted"},{"text":"embeddings (sentido)","color":"teal"},{"text":"→","color":"muted"},{"text":"fusión RRF por posiciones","color":"gold"}],"caption":"BM25 acierta con códigos, cifras y nombres raros; los embeddings con paráfrasis. RRF los junta usando solo las posiciones, sin comparar puntuaciones de escalas distintas."},
       "text": "En el Dojo: abre el editor con py, programa fusion_rrf, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las ocho funciones de rag.py hasta que pasen los 20 tests y trae la evidencia.",
-      "teach": "Filtrar dentro de la búsqueda\nEl control de acceso y la procedencia se aplican como filtro DENTRO de la consulta a Qdrant (la base vectorial) y del ranking BM25 (Best Matching 25, una puntuación por palabras), no quitando resultados después.\nSi filtraras después, un documento prohibido ocuparía un puesto del top-k y el cliente recibiría menos fragmentos útiles.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: así se aplican los permisos en los asistentes de empresa.",
+      "teach": "Filtrar dentro de la búsqueda\nFiltrar dentro de la búsqueda es aplicar los permisos como parte de la propia consulta, no quitando resultados después de verlos.\nEl control de acceso y la procedencia se aplican así, DENTRO de la consulta a Qdrant (la base vectorial) y del ranking BM25 (Best Matching 25, una puntuación por palabras).\nSi filtraras después, un documento prohibido ocuparía un puesto del top-k y el cliente recibiría menos fragmentos útiles: el hueco se desperdicia.\nEs como un buscador de inmobiliaria que, al pedir pisos, ya descarta los que no puedes pagar: no te enseña diez y tacha seis, te trae diez que sí valen.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué en tu camino: así se aplican de verdad los permisos en los asistentes de empresa, para que el filtro no cueste calidad.",
       "validator": {
         "type": "any",
         "of": [
@@ -152,7 +152,7 @@
     {
       "id": "o2",
       "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: con Ollama en marcha y embeddinggemma descargado, ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y tráela con evidence import.",
-      "teach": "La batería real\nbateria.py hace las preguntas legítimas y los ataques con cada configuración de defensas, varias veces, y mide también el recall@3: si el fragmento correcto está entre los 3 primeros.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: con modelos reales, solo repitiendo y contando sabes qué protege cada defensa.",
+      "teach": "La batería real\nbateria.py hace las preguntas legítimas y los ataques con cada configuración de defensas, varias veces, y mide también el recall@3: si el fragmento correcto está entre los 3 primeros.\nEl «varias veces» es lo nuevo: con modelos reales la respuesta no es fija, así que una sola prueba engaña. Repetir y contar es lo que convierte una anécdota en un dato.\nEs como juzgar a un portero de fútbol: no por un penalti, sino por cuántos para de veinte.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué en tu camino: con modelos reales, solo repitiendo y contando sabes qué protege de verdad cada defensa y cuánto puedes fiarte de la cifra.",
       "prediction": {
         "prompt": "Con spotlight como única defensa, ¿qué crees que pasará con el envenenamiento del foro?",
         "options": [
@@ -182,7 +182,7 @@
     {
       "id": "o3",
       "text": "En tu medición, lo que frena acl lo frena siempre («en contexto» de fuga-acl baja a 0), y lo que frena spotlight varía entre repeticiones. ¿Por qué?",
-      "teach": "Lo que vio frente a lo que obedeció\nacl y procedencia actúan antes del modelo: si funcionan, «en contexto» baja a 0 y el ataque no tiene con qué trabajar.\nspotlight actúa dentro del modelo: el documento sigue llegando.\nPor qué: saber dónde actúa una defensa te dice cuánto puedes fiarte de ella.",
+      "teach": "Lo que vio frente a lo que obedeció\nHay dos sitios muy distintos donde una defensa puede actuar: antes del modelo o dentro de él.\nacl y procedencia actúan ANTES: si funcionan, «en contexto» baja a 0 y el ataque no tiene con qué trabajar, siempre, en cada repetición. spotlight actúa DENTRO: el documento sigue llegando y solo se le pide al modelo que no lo obedezca, así que unas veces hace caso y otras no.\nEs la diferencia entre no dejar entrar a alguien al edificio y dejarle entrar pidiéndole por favor que se porte bien.\nPor qué en tu camino: saber DÓNDE actúa una defensa te dice cuánto puedes fiarte de su número; una cifra de spotlight medida una sola vez no es de fiar.",
       "choices": [
         {
           "id": "a",
@@ -215,7 +215,7 @@
     {
       "id": "o4",
       "text": "¿Por qué el rol del usuario tiene que salir del token de autenticación y no del cuerpo de la petición?",
-      "teach": "De dónde salen los permisos\nUn TOKEN de autenticación lo emite el sistema de identidad y el cliente no puede cambiarlo. El cuerpo de la petición lo escribe el cliente.\nPor qué: un control de acceso que se fía de lo que dice el cliente no controla nada.",
+      "teach": "De dónde salen los permisos\nLa pregunta clave de todo control de acceso es: ¿quién controla el dato que dice tu rol?\nUn TOKEN de autenticación lo emite el sistema de identidad y el cliente no puede cambiarlo. El cuerpo de la petición lo escribe el cliente, así que puede poner lo que quiera.\nEs como un control de edad: vale el DNI que emite el Estado, no un papel donde tú mismo has escrito tu edad.\nPor qué en tu camino: un control de acceso que se fía de lo que dice el cliente no controla nada, y es uno de los fallos de autorización más repetidos en sistemas reales.",
       "choices": [
         {
           "id": "a",

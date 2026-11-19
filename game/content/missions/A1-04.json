@@ -38,7 +38,7 @@
     {
       "id": "o1",
       "text": "Demuestra la corrección del XSS: con un chatbot nuevo, reproduce el ataque de HTML con bot render (debe ejecutarse), activa encode-output y repítelo (no debe ejecutarse).",
-      "teach": "Antes y después, con el mismo ataque\nVerificar una corrección es repetir EXACTAMENTE el mismo ataque antes y después del cambio y comparar.\nUsa bot render con el mismo mensaje dos veces, con encode-output activado entre ambas.\nESCAPAR la salida es convertir los caracteres especiales del HTML (HyperText Markup Language) en texto, para que el navegador los muestre y no los ejecute. Así se corrige un XSS (Cross-Site Scripting).\nPor qué: si cambias el ataque entre medias, no sabes si te ha protegido la defensa o el cambio.",
+      "teach": "Antes y después, con el mismo ataque\nVerificar una corrección es repetir EXACTAMENTE el mismo ataque antes y después del cambio, y comparar los dos resultados. Ni una palabra distinta en el mensaje.\nUsa bot render con el mismo mensaje dos veces, activando encode-output entre una y otra; mira el diagrama de la izquierda.\nESCAPAR la salida es convertir los caracteres especiales del HTML (HyperText Markup Language) en texto inofensivo, para que el navegador los muestre como letras y no los ejecute como código. Así se corrige un XSS (Cross-Site Scripting).\nPara qué en tu camino: si cambias el ataque entre medias, no sabrás si te ha protegido la defensa o simplemente que el ataque nuevo era más flojo; la prueba deja de valer.\nEs como comprobar si una medicina baja la fiebre: mides al mismo paciente antes y después, no a uno distinto cada vez.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -75,7 +75,7 @@
     {
       "id": "o2",
       "text": "Demuestra la corrección del consumo: el mismo mensaje de repetición antes (más de 500 palabras) y después de max-tokens (respuesta truncada).",
-      "teach": "El mismo método, para el consumo\nEnvía el mensaje de repetición, activa max-tokens y envía exactamente el mismo mensaje otra vez.\nPor qué: un límite de salida que no has comprobado es un límite que no sabes si existe.",
+      "teach": "El mismo método, para el consumo\nMismo ritual, otro fallo: envía el mensaje de repetición, activa max-tokens y vuelve a enviar exactamente el mismo mensaje.\nPara qué en tu camino: un límite de salida que no has comprobado es un límite que no sabes si de verdad existe; configurarlo y darlo por hecho es un clásico que explota el día menos pensado.\nEs como poner el limitador de velocidad del coche y no probarlo: hasta que no pisas a fondo en una recta, no sabes si de verdad frena a los 120.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -113,7 +113,7 @@
     {
       "id": "o3",
       "text": "Escribe el informe de cierre de la salida insegura (LLM05): con pasos, evidencia y una verificación con medida (antes/después). Debe superar la rúbrica.",
-      "teach": "Informe de cierre\nEs el formato de A1-02, pero ahora la sección clave es la VERIFICACIÓN: qué repetiste y qué resultado obtuviste antes y después, con una medida.\nEjemplo: «bot render con el payload <img onerror>: antes, el navegador ejecutaba código; después de encode-output, 0 de 1 ejecuciones».\nPor qué: dirección y auditoría deciden con este documento si el sistema sale a producción.",
+      "teach": "Informe de cierre\nUsa el mismo formato de A1-02, pero ahora la sección que manda es la VERIFICACIÓN: qué repetiste, y qué resultado obtuviste antes y después, siempre con una medida.\nEjemplo: «bot render con el payload <img onerror>: antes, el navegador ejecutaba código; después de encode-output, 0 de 1 ejecuciones».\nPara qué en tu camino: dirección y auditoría no leen tu ataque, leen este documento, y con él deciden si el sistema sale a producción o no; es tu palabra convertida en prueba.\nEs como el certificado de la ITV: no vale decir «lo he arreglado», hay que adjuntar la medición que demuestra que ahora pasa.",
       "validator": {
         "type": "event",
         "event": "report.checked",
@@ -135,7 +135,7 @@
     {
       "id": "o4",
       "text": "Has cerrado todos los hallazgos. ¿Por qué ningún control elimina del todo la inyección de prompts?",
-      "teach": "Lo que añade producción\nEn un despliegue real hay más controles: gestor de secretos, límites de peticiones y de gasto, registros, monitorización y red teaming periódico.\nPor qué: todos parten de la misma idea, que la inyección de prompts se mitiga pero no se elimina.",
+      "teach": "Lo que añade producción\nEn un despliegue real se apilan más controles: gestor de secretos, límites de peticiones y de gasto, registros, monitorización y red teaming periódico.\nTodos parten de la misma idea que ya has visto: la inyección de prompts se mitiga, no se elimina, porque el modelo sigue leyendo texto no fiable junto a sus instrucciones.\nPara qué en tu camino: asumir esto te cambia la pregunta; dejas de buscar «la defensa que lo arregle» y empiezas a diseñar para que, cuando falle, el daño sea mínimo.\nEs como el coche: airbags, cinturón, zonas de deformación… nadie promete que no haya accidentes, se diseña para que, si lo hay, salgas vivo.",
       "choices": [
         {
           "id": "a",

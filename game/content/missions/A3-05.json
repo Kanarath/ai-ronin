@@ -38,7 +38,7 @@
     {
       "id": "o1",
       "text": "Mira el caso y arma el contexto tal cual: context show y context build. ¿Cuántos tokens ocupa? (answer <número>)",
-      "teach": "La ventana es fija\nEl agente necesita dos datos para responder: el id del pedido (que el cliente dijo en el turno 3) y la política de devoluciones (en un documento). De base mete el sistema, todas las herramientas y el historial completo.\nPor qué: sin gestionar nada, el contexto se dispara; hay que medir cuánto ocupa.",
+      "teach": "La ventana es fija\nLa ventana de contexto es todo lo que el modelo puede leer de una vez, medido en tokens: un presupuesto fijo, no un cajón sin fondo.\nPara responder, el agente necesita dos datos: el id del pedido (que el cliente dijo en el turno 3) y la política de devoluciones (en un documento). De base mete el sistema, todas las herramientas y el historial completo.\nEs como una maleta con un peso máximo en el aeropuerto: da igual lo que quieras llevar, si te pasas, algo se queda en tierra.\nPor qué en tu camino: sin gestionar nada el contexto se dispara, así que lo primero es medir cuánto ocupa de verdad, no suponerlo.",
       "validator": {
         "type": "all",
         "of": [
@@ -68,7 +68,7 @@
           "no"
         ]
       },
-      "teach": "Más no es mejor\nTraer el documento añade el dato que falta… pero ya estabas por encima del presupuesto, así que ahora te pasas más todavía.\nPor qué: la ventana tiene un tope. Cuando se llena, se trunca lo más antiguo; meter más no cabe, y encima tira lo de antes.",
+      "teach": "Más no es mejor\nTraer el documento con context set recuperar on añade el dato que falta… pero ya estabas por encima del presupuesto, así que ahora te pasas más todavía.\nEs como meter otra bolsa en la maleta ya pasada de peso: no es que pese un poco más, es que ahora ni cierra.\nPor qué en tu camino: la ventana tiene un tope; cuando se llena se trunca lo más antiguo, así que meter más no solo no cabe, encima tira por la borda lo de antes.",
       "validator": {
         "type": "all",
         "of": [
@@ -95,7 +95,7 @@
     {
       "id": "c1",
       "text": "¿Qué pasa cuando el contexto no cabe en la ventana?",
-      "teach": "Truncado\nCuando el contexto supera la ventana, el sistema recorta: normalmente lo más antiguo (el principio del historial), que es justo donde el cliente dio el id del pedido.\nPor qué: no es que el modelo «lea rápido»; es que lo que no cabe, no entra. Y lo que se cae suele ser lo que ya no ves.",
+      "teach": "Truncado\nTruncar es recortar lo que no cabe: cuando el contexto supera la ventana, el sistema corta, normalmente lo más antiguo (el principio del historial), que es justo donde el cliente dio el id del pedido.\nEs como una cinta de contestador que solo guarda los últimos minutos: los mensajes viejos se borran para hacer sitio a los nuevos, aunque fueran los importantes.\nPor qué en tu camino: no es que el modelo «lea rápido»; lo que no cabe, no entra, y lo que se cae suele ser justo lo que ya no tienes delante para echarlo de menos.",
       "choices": [
         {
           "id": "a",
@@ -135,7 +135,7 @@
           "no"
         ]
       },
-      "teach": "Recortar lo que ocupa\nskills carga la ficha de una herramienta solo cuando se usa (400 → 80). compactar resume el historial largo en pocas líneas (720 → 100). Ahora cabe de sobra.\nPor qué: son las dos palancas de tokens más grandes; con ellas el contexto baja muchísimo.",
+      "teach": "Recortar lo que ocupa\nHacer sitio no es añadir, es quitar peso de lo que ya tienes dentro.\nskills carga la ficha de una herramienta solo cuando se usa (400 → 80). compactar resume el historial largo en pocas líneas (720 → 100). Con las dos, ahora cabe de sobra.\nEs como viajar con equipaje de mano: llevas la guía solo de la ciudad a la que vas (no las del mundo entero) y las fotos en un álbum resumido, no la caja llena de copias.\nPor qué en tu camino: son las dos palancas de tokens más grandes, y con ellas el contexto baja muchísimo… pero fíjate en lo que se pierde al resumir.",
       "validator": {
         "type": "all",
         "of": [
@@ -165,7 +165,7 @@
     {
       "id": "c2",
       "text": "Cabe de sobra, pero no puede responder. ¿Por qué?",
-      "teach": "Compactar también olvida\nEl resumen del historial se queda con lo general y tira el detalle: el id del pedido del turno 3 ya no está. Caber no basta si lo que cabe no tiene el dato.\nPor qué: la compactación cambia tokens por detalle; hay que decidir qué detalle no se puede perder.",
+      "teach": "Compactar también olvida\nCompactar cambia tokens por detalle: el resumen del historial se queda con lo general y tira lo concreto, así que el id del pedido del turno 3 ya no está.\nCaber no basta si lo que cabe no tiene el dato que necesitas.\nEs como resumir una reunión de dos horas en tres líneas: te queda el tema, pero pierdes el número de teléfono que alguien dio de pasada.\nPor qué en tu camino: al compactar hay que decidir de antemano qué detalle no se puede perder, porque después ya no está en ningún sitio.",
       "choices": [
         {
           "id": "a",
@@ -198,7 +198,7 @@
     {
       "id": "o4",
       "text": "Guárdalo antes de compactar: context set recordar on y context build. ¿Puede responder ahora? (answer si o no)",
-      "teach": "Memoria a largo plazo\nrecordar escribe el dato clave (el id) en la memoria a largo plazo: una nota pequeña (20 tokens) que sobrevive a la compactación. Ahora el agente tiene los dos datos y cabe.\nPor qué: lo que no puede perderse no se deja en el historial (memoria a corto plazo, que se compacta); se escribe en la memoria a largo plazo.",
+      "teach": "Memoria a largo plazo\nLa memoria a largo plazo es un almacén aparte del contexto: lo que guardas ahí no lo arrastra la compactación.\nrecordar escribe el dato clave (el id) como una nota pequeña (20 tokens) que sobrevive a la compactación, así que ahora el agente tiene los dos datos y cabe. La clave fue guardarlo ANTES de compactar.\nEs como apuntar un teléfono en la agenda en vez de fiarlo a la memoria: cuando olvidas la conversación, el número sigue ahí.\nPor qué en tu camino: lo que no puede perderse no se deja en el historial (memoria a corto plazo, que se compacta o trunca); se escribe en la memoria a largo plazo y se recupera cuando toca.",
       "validator": {
         "type": "all",
         "of": [
@@ -228,7 +228,7 @@
     {
       "id": "c3",
       "text": "¿Qué distingue la memoria a corto plazo de la de largo plazo?",
-      "teach": "Dos memorias\nLa de corto plazo es el propio contexto: el historial de la conversación, que se compacta o se trunca. La de largo plazo es un almacén aparte del que se recupera solo lo que hace falta, y persiste entre sesiones.\nPor qué: la ingeniería de contexto consiste en mover lo importante del historial volátil a una memoria duradera y traerlo cuando toca.",
+      "teach": "Dos memorias\nHay dos memorias que conviene no confundir: la de CORTO plazo es el propio contexto (el historial de la conversación), que se compacta o se trunca; la de LARGO plazo es un almacén aparte que persiste entre sesiones y del que se recupera solo lo que hace falta.\nEs como la diferencia entre lo que recuerdas de la conversación de ayer (se difumina) y lo que apuntaste en tu cuaderno (sigue ahí mañana).\nPor qué en tu camino: la ingeniería de contexto consiste justo en eso, en mover lo importante del historial volátil a una memoria duradera y traerlo en el momento oportuno.",
       "choices": [
         {
           "id": "a",
@@ -261,7 +261,7 @@
     {
       "id": "py1",
       "text": "Programa el control del presupuesto: abre el editor con py, completa cabe y compruébala con py check.",
-      "teach": "El presupuesto, en código\nLa suma de los tokens de todas las piezas tiene que caber en la ventana.\nPor qué: es lo que comprueba context build antes de responder.",
+      "teach": "El presupuesto, en código\nComprobar el presupuesto es sumar los tokens de todas las piezas y ver si la suma cabe en la ventana.\nEs como pesar la maleta en la báscula antes de facturar: sumas todo y lo comparas con el máximo permitido.\nPor qué en tu camino: es exactamente lo que comprueba context build antes de responder, y la misma cuenta que hace cualquier agente real para no pasarse de tokens.",
       "py_exercise": {
         "id": "A3-05-cabe",
         "title": "cabe(piezas, ventana): ¿cabe el contexto?",

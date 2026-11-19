@@ -75,7 +75,7 @@
     {
       "id": "o1",
       "text": "Mira el marco y las amenazas: maestro capas y maestro amenazas.",
-      "teach": "Las siete capas\nModelo base (L1), datos (L2), framework del agente (L3), despliegue e infraestructura (L4), evaluación y observabilidad (L5), seguridad y cumplimiento (L6, transversal) y ecosistema de agentes (L7).\nPor qué: cada capa es una superficie distinta; una amenaza que ignoras es una capa sin modelar.",
+      "teach": "Las siete capas\nUn agente de IA no es una app con un modelo pegado: es siete superficies distintas, cada una con sus propias amenazas. MAESTRO las ordena en siete capas: modelo base (L1), datos (L2), framework del agente (L3), despliegue e infraestructura (L4), evaluación y observabilidad (L5), seguridad y cumplimiento (L6, transversal) y ecosistema de agentes (L7). Mira la tabla del diagrama.\nPor qué aquí: cada capa es una puerta por la que puede entrar algo distinto; una capa que ignoras es una capa que nadie ha modelado.\nComo revisar un coche por sistemas —motor, frenos, dirección, electrónica—: si solo miras el motor, los frenos fallan igual. Repasar capa por capa es lo que evita el punto ciego.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -96,7 +96,7 @@
     {
       "id": "o2",
       "text": "Clasifica las cuatro primeras: maestro map AM1 … AM4, cada una en su capa (L1 … L7). Si dudas, relee maestro capas.",
-      "teach": "De la amenaza a la capa\nPregúntate en qué parte del sistema está el problema: ¿el modelo (alucina)? ¿los datos (envenenados)? ¿el framework (herramientas sin validar)? ¿el despliegue (privilegios, secretos)?\nPor qué: clasificar bien es lo que convierte una lista de miedos en un plan por capas.",
+      "teach": "De la amenaza a la capa\nPara clasificar cada amenaza, pregúntate en qué parte del sistema vive el problema: ¿es el modelo, que alucina (L1)? ¿los datos, envenenados (L2)? ¿el framework, que llama a herramientas sin validarlas (L3)? ¿el despliegue, con privilegios o secretos de más (L4)?\nPor qué: clasificar bien es lo que convierte una lista de miedos sueltos en un plan ordenado por capas, que es lo que se puede repartir y arreglar.\nComo el triaje en urgencias: antes de tratar, decides a qué especialidad va cada paciente; equivocar la puerta retrasa la cura.",
       "validator": {
         "type": "event",
         "event": "maestro.map",
@@ -114,7 +114,7 @@
     {
       "id": "c1",
       "text": "¿Por qué STRIDE no basta para un agente?",
-      "teach": "Capas que STRIDE no tiene\nSTRIDE modela una app: spoofing, tampering, repudio, fuga, denegación, elevación. No tiene una capa para «los datos del RAG», ni para «otros agentes y servidores MCP de terceros», ni para «la observabilidad del agente». MAESTRO sí.\nPor qué: un agente vive de componentes (modelo, datos, herramientas, otros agentes) que una app clásica no tiene; hacen falta capas nuevas.",
+      "teach": "Capas que STRIDE no tiene\nSTRIDE modela una aplicación clásica: spoofing, tampering, repudio, fuga, denegación, elevación. Pero no tiene una casilla para «los datos del RAG», ni para «otros agentes y servidores MCP (Model Context Protocol) de terceros», ni para «la observabilidad del agente». MAESTRO sí.\nPor qué: un agente vive de piezas —modelo, datos, herramientas, otros agentes— que una app normal no tiene; para esas piezas hacen falta capas nuevas. STRIDE no está anticuado (se sigue usando para apps), simplemente no mira donde el agente es distinto.\nComo usar el manual de un coche de gasolina para revisar uno eléctrico: la mitad sirve, pero no hay ni una página sobre la batería de tracción, que es justo lo que más puede arder.",
       "choices": [
         {
           "id": "a",
@@ -147,7 +147,7 @@
     {
       "id": "o3",
       "text": "Clasifica las tres últimas: maestro map AM5 … AM7. ¿En qué capa va AM7 (el servidor MCP de terceros manipulado)? (answer L<n>)",
-      "teach": "Observabilidad, cumplimiento y ecosistema\nAM5 es falta de evals y trazas (L5), AM6 es gobernanza y control de acceso (L6, transversal) y AM7 es un componente de terceros: el ecosistema del agente (L7).\nPor qué: las tres últimas capas son las que más se olvidan y las más propias de los agentes.",
+      "teach": "Observabilidad, cumplimiento y ecosistema\nAM5 es la falta de evals y trazas: la capa de evaluación y observabilidad (L5). AM6 es gobernanza y control de acceso: seguridad y cumplimiento (L6, transversal). Y AM7, el servidor MCP de terceros manipulado, es un componente de fuera: el ecosistema de agentes (L7).\nPor qué: estas tres capas son las que más se olvidan y las más propias de un agente; un sistema que no se observa, no se gobierna o confía a ciegas en terceros falla por donde nadie mira.\nComo una cocina de restaurante: no basta con que los cocineros sean buenos (el modelo); hacen falta cámaras y registros (L5), un responsable con normas de higiene (L6) y proveedores de confianza (L7).",
       "validator": {
         "type": "all",
         "of": [
@@ -179,7 +179,7 @@
     {
       "id": "c2",
       "text": "¿MAESTRO sustituye a MITRE ATLAS y a OWASP?",
-      "teach": "Marcos que se complementan\nMAESTRO ordena las amenazas por CAPA del agente; ATLAS, por TÁCTICA del adversario; OWASP (LLM/ASI), por tipo de riesgo. Un buen threat model usa los tres: dónde está la amenaza (MAESTRO), cómo ataca (ATLAS) y qué riesgo es (OWASP).\nPor qué: como viste en O7-07, cada marco habla a un público; no compiten, se cruzan.",
+      "teach": "Marcos que se complementan\nMAESTRO ordena las amenazas por CAPA del agente; MITRE ATLAS, por TÁCTICA del adversario (qué hace en cada fase del ataque); OWASP (LLM/ASI), por tipo de RIESGO. No compiten: cada uno mira el mismo ataque desde un eje distinto. Mira la tabla del diagrama.\nPor qué: un buen threat model usa los tres a la vez —dónde está la amenaza (MAESTRO), cómo ataca (ATLAS) y qué riesgo es (OWASP)—, como ya viste en O7-07; que MAESTRO sea de la CSA no lo hace excluyente.\nComo describir a un fugitivo: uno da el barrio donde se esconde, otro cómo se mueve, otro de qué delito se le acusa. Quitas uno y la ficha queda coja.",
       "choices": [
         {
           "id": "a",
@@ -235,7 +235,7 @@
     {
       "id": "py1",
       "text": "Programa la cobertura del modelo de amenazas: abre el editor con py, completa capas_sin_cubrir y compruébala con py check.",
-      "teach": "Capas sin amenazas identificadas, en código\nDe las siete capas, las que no tienen ninguna amenaza mapeada todavía: los puntos ciegos del modelo.\nPor qué: un threat model por capas se revisa buscando las capas vacías.",
+      "teach": "Capas sin amenazas identificadas, en código\nVas a escribir capas_sin_cubrir: de las siete capas, las que todavía no tienen ninguna amenaza mapeada. Son los puntos ciegos del modelo.\nPor qué: un threat model por capas se revisa precisamente buscando las capas vacías; con siete se ve a ojo, pero la misma idea escala a sistemas enormes.\nComo mirar el cuadro de llaves y ver qué habitaciones no tienen llave colgada: esas son las que no controla nadie.",
       "py_exercise": {
         "id": "O3-02-cobertura",
         "title": "capas_sin_cubrir(capas, mapeo): capas sin ninguna amenaza",

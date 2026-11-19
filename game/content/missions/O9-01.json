@@ -47,7 +47,7 @@
     {
       "id": "o1",
       "text": "Mira las piezas: medios list. Hay cuatro falsas (de casera a deepfake) y dos auténticas.",
-      "teach": "La galería\nCada pieza se describe por sus señales, no es un medio real. Fíjate: una foto falsa casera con artefactos, una falsa buena sin artefactos, una voz clonada y un vídeo deepfake; y dos auténticas, una con firma de procedencia y otra antigua sin ella.\nPor qué: para defender hay que ver que lo falso ya no tiene por qué «verse» falso.",
+      "teach": "La galería\nAbres medios list y ves seis piezas descritas por sus señales (no son medios reales): cuatro falsas y dos auténticas.\nFíjate en la variedad de lo falso, porque ahí está la lección: una foto falsa casera con artefactos visibles, una falsa buena sin ningún artefacto, una voz clonada y un vídeo deepfake. Y dos auténticas: una con firma de procedencia y otra antigua sin ella.\nPara qué en tu camino: es como una rueda de reconocimiento donde el culpable va perfectamente vestido y el inocente parece sospechoso. Grábate esto antes de elegir defensa: lo falso ya no tiene por qué «verse» falso, y lo auténtico no siempre trae papeles.",
       "validator": {
         "type": "event",
         "event": "medios.list"
@@ -67,7 +67,7 @@
           "casi ninguno"
         ]
       },
-      "teach": "Cazar artefactos\nLos primeros deepfakes tenían fallos visibles: manos imposibles, parpadeos raros, bordes deformes. Un detector los busca.\nPor qué: funciona con los malos, pero cada generación nueva borra esos fallos; es la misma carrera perdida que en O8.",
+      "teach": "Cazar artefactos\nLos artefactos son los fallos que delataban a los primeros deepfakes: manos con seis dedos, parpadeos antinaturales, bordes que tiemblan, reflejos imposibles. Un detector de artefactos busca justo esas pistas.\nCómo lo pruebas: medios defensa detector_artefactos on y medios evaluar; mira cuántos de los 4 falsos caza.\nEs como reconocer una falsificación de cuadro por las grietas mal hechas: funciona con el falsificador torpe, pero no con el bueno.\nLa trampa: cada nueva generación de IA borra esos fallos, así que el detector solo caza a los malos de hace dos años. Es la misma carrera perdida que viste en el phishing de O8; interiorízalo y no caerás en vender un detector de deepfakes como la solución.",
       "validator": {
         "type": "all",
         "of": [
@@ -94,7 +94,7 @@
     {
       "id": "c1",
       "text": "¿Por qué detectar deepfakes por sus artefactos no es una defensa sólida?",
-      "teach": "La carrera armamentística\nCada mejora del generador borra un artefacto, así que el detector va siempre por detrás. Lo que hoy delata a un deepfake, mañana ya no está.\nPor qué: igual que con el phishing de O8, no se puede basar la defensa en una pista que el atacante mejora cada mes.",
+      "teach": "La carrera armamentística\nEl patrón se repite: cada mejora del generador borra un artefacto, y el detector, que aprendió a buscar los artefactos de ayer, se queda ciego ante los de mañana. Siempre va por detrás, porque reacciona a lo que ya existe.\nEs perseguir a alguien guiándote solo por sus huellas: cuando llegas, él ya se ha movido. Nunca lo alcanzas si esa es tu única pista.\nPara qué en tu camino: el coste no es el problema (un detector caro pierde igual); el problema es perseguir un blanco que se mueve. Igual que con el phishing de O8, no puedes cimentar una defensa en una pista que el atacante mejora cada mes. Esto te empuja a buscar algo que no dependa de la pista: la procedencia.",
       "choices": [
         {
           "id": "a",
@@ -127,7 +127,7 @@
     {
       "id": "o3",
       "text": "Cambia de enfoque: la procedencia. medios defensa detector_artefactos off, medios defensa procedencia on y medios evaluar. ¿Cuántos medios AUTÉNTICOS marca por error? (answer <número>)",
-      "teach": "Procedencia (C2PA)\nEn vez de mirar la pieza, se mira su firma: C2PA encadena la captura (qué cámara, cuándo, qué ediciones) con una firma criptográfica. Solo se da por auténtico lo que trae una firma válida.\nPor qué: la procedencia pilla los cuatro falsos (ninguno la tiene)… pero también marca la foto auténtica ANTIGUA, que es real y no lleva firma.",
+      "teach": "Procedencia (C2PA)\nCambias de pregunta: en vez de «¿parece falsa?» preguntas «¿de dónde viene?». C2PA es un estándar que encadena la historia de una pieza (qué cámara la capturó, cuándo, qué ediciones ha tenido) y lo sella con una firma criptográfica que no se puede falsificar. Solo das por auténtico lo que trae una firma válida.\nCómo lo haces: medios defensa detector_artefactos off, medios defensa procedencia on y medios evaluar; mira en «auténticos marcados por error».\nEs como el certificado de autenticidad y la cadena de dueños de una obra de arte: no juzgas el cuadro mirándolo, confías en sus papeles sellados.\nLa trampa, y es clave: la procedencia pilla los cuatro falsos (ninguno tiene firma)… pero también marca la foto auténtica ANTIGUA, que es real y simplemente es de antes de que existiera el C2PA. Eso te lleva directo al límite del siguiente paso.",
       "validator": {
         "type": "all",
         "of": [
@@ -154,7 +154,7 @@
     {
       "id": "c2",
       "text": "¿Qué prueba exactamente una firma C2PA?",
-      "teach": "Prueba lo auténtico, no condena lo ausente\nUna firma C2PA válida PRUEBA que una pieza viene de donde dice y no se ha manipulado. Pero su AUSENCIA no prueba que algo sea falso: puede ser antiguo, recortado o de una cámara sin firma.\nPor qué: la procedencia es evidencia positiva de autenticidad; usarla como «sin firma = falso» marca por error todo lo legítimo que no la lleve.",
+      "teach": "Prueba lo auténtico, no condena lo ausente\nAquí está la asimetría que tienes que grabarte. Una firma C2PA válida PRUEBA que una pieza viene de donde dice y no se ha manipulado. Pero su AUSENCIA no prueba nada malo: una pieza sin firma puede ser antigua, recortada, reenviada o de una cámara sin el estándar.\nMira la tabla del diagrama: firma válida → auténtico; foto antigua real sin firma → no se concluye nada; deepfake sin firma → sospechoso, pero «sin firma» no es «falso».\nEs como un pasaporte: tenerlo válido prueba quién eres; no tenerlo a mano no te convierte en delincuente, solo significa que hay que verificarte de otra forma.\nLa trampa, que cuesta cara: usar «sin firma = falso» marca por error todo lo legítimo que no la lleve (fotos viejas, capturas, memes), y una defensa que acusa a los inocentes se vuelve inservible, como viste con los falsos positivos en O8.",
       "choices": [
         {
           "id": "a",
@@ -198,7 +198,7 @@
     {
       "id": "o4",
       "text": "Para lo crítico, no te fíes del medio: medios defensa verificacion on y medios evaluar. Es la defensa del vídeo del directivo y de la voz que piden dinero.",
-      "teach": "Verificación de lo crítico\nUna voz o un vídeo que piden un pago o un acceso no autorizan nada por sí solos: se confirma por un segundo canal que tú inicias (llamar al número conocido, un reto en vivo). Es la verificación fuera de banda de O8, aplicada a la voz y el vídeo.\nPor qué: aunque no puedas probar que el vídeo es falso, sí puedes negarte a actuar solo con él.",
+      "teach": "Verificación de lo crítico\nPara lo que de verdad importa, no decides con el medio. Una voz o un vídeo que piden un pago o un acceso no autorizan nada por sí solos: se confirma por un segundo canal que TÚ inicias (llamar al número conocido, pedir un reto en vivo que un vídeo pregrabado no puede responder).\nCómo lo haces: medios defensa verificacion on y medios evaluar. Es la verificación fuera de banda de O8-02, aplicada ahora a la voz y el vídeo.\nEs la actitud del cajero que, ante un cheque enorme, no discute si la firma es buena: descuelga y llama al banco emisor.\nPara qué en tu camino: aquí el giro mental es liberador. Aunque no puedas PROBAR que el vídeo es falso, sí puedes negarte a ACTUAR solo con él. Dejas de necesitar ganar la carrera de la detección.",
       "validator": {
         "type": "event",
         "event": "medios.eval",
@@ -217,7 +217,7 @@
     {
       "id": "c3",
       "text": "¿Cuál es la defensa que aguanta frente a los medios sintéticos?",
-      "teach": "Procedencia + verificación\nPara el día a día, procedencia (confiar en lo firmado); para lo crítico, verificación fuera de banda (no actuar solo con una voz o un vídeo). Detectar artefactos es, como mucho, una señal más, nunca la base.\nPor qué: lo que no se puede falsificar fácilmente (la firma criptográfica, un segundo canal) aguanta; lo que la IA mejora cada mes, no.",
+      "teach": "Procedencia + verificación\nJuntas las dos piezas en una sola política. Para el día a día, procedencia: confías en lo firmado. Para lo crítico (un pago, un acceso), verificación fuera de banda: no actúas solo con una voz o un vídeo. Detectar artefactos queda, como mucho, de señal extra, nunca de base.\nEs un buen portero: en la entrada normal mira el DNI (la firma); ante alguien que pide algo gordo, llama a recepción para confirmar (el segundo canal). Nunca se juega el turno solo en «me da buena espina».\nPara qué en tu camino: esta regla vale para medios, para phishing y para casi todo. Lo que no se puede falsificar fácilmente (una firma criptográfica, un segundo canal que tú inicias) aguanta; lo que la IA mejora cada mes, no. Apuesta siempre por lo primero.",
       "choices": [
         {
           "id": "a",
@@ -250,7 +250,7 @@
     {
       "id": "py1",
       "text": "Programa la regla de la procedencia: abre el editor con py, completa es_fiable y compruébala con py check.",
-      "teach": "Confiar en lo firmado, en código\nUna pieza es fiable si trae una firma de procedencia válida.\nPor qué: es la regla de la defensa por procedencia; nota que «no fiable» no es lo mismo que «falsa».",
+      "teach": "Confiar en lo firmado, en código\nTraduces la regla a una línea: una pieza es fiable si entre sus rasgos está c2pa_valido. Sin esa firma, no es fiable.\nPor qué aquí: es la defensa por procedencia hecha código, y te obliga a respetar la asimetría que aprendiste. Fíjate bien: devolver «no fiable» NO es decir «falsa»; es decir «no puedo confiar solo en esto, verifícalo por otra vía». Confundir las dos cosas es el error de todo el nivel.",
       "py_exercise": {
         "id": "O9-01-procedencia",
         "title": "es_fiable(rasgos): tiene una firma de procedencia valida",

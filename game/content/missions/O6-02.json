@@ -76,7 +76,7 @@
         "soc trazas taller · soc rule taller correlacion on · soc detect taller"
       ],
       "on_complete": "Recall 0: la regla es correcta, pero está ciega. Necesita los documentos recuperados y los argumentos de las herramientas. La detección empieza en el registro.",
-      "teach": "Una regla ciega\nsoc rule <registro> <regla> on activa una regla; soc detect <registro> la ejecuta sobre las 12 sesiones que etiquetó el analista.\nCada regla necesita ciertos campos del registro (los de O6-01). Si no están, la regla no ve nada aunque esté bien escrita.\nEmpieza con un registro nuevo, con lo que se guarda por defecto.\nPor qué: es un fallo real y frecuente: reglas que nunca saltan porque el dato que miran no se registra."
+      "teach": "Una regla ciega\nUna regla de detección vigila las trazas y levanta una alerta sola cuando ve algo sospechoso. soc rule <registro> <regla> on activa una regla, y soc detect <registro> la ejecuta sobre las 12 sesiones que etiquetó el analista (4 maliciosas, 8 legítimas).\nPero cada regla mira ciertos campos del registro (los que activaste en O6-01). Si esos campos no se guardan, la regla no ve nada, por bien escrita que esté. Hoy empiezas con un registro nuevo, solo con lo que se guarda por defecto.\nPara qué en tu camino: es uno de los fallos más frecuentes y frustrantes de un SOC: reglas que nunca saltan, no porque el ataque no ocurra, sino porque el dato que deberían mirar nunca se registró.\nEs como un detector de humo sin pila: está en la pared, parece que te protege, y el día del fuego no suena."
     },
     {
       "id": "o2",
@@ -104,7 +104,7 @@
         "soc rule taller correlacion off · soc rule taller palabras-clave on · soc detect taller"
       ],
       "on_complete": "0,25. Pilla S09, el intento directo, y salta con S02, que solo pedía cambiar el formato. Y no ve S04 ni S07, las dos sesiones que sacaron datos.",
-      "teach": "Medir una regla: recall\nRecuerda T3: recall = de todos los ataques reales, cuántos ve la regla. Si hay 5 sesiones maliciosas y la regla alerta en 2, el recall es 2 ÷ 5 = 0,4.\nActiva los seis campos y la redacción como en O6-01, y prueba solo palabras-clave (busca «ignora» en el mensaje del usuario).\nPor qué: buscar palabras sospechosas es la defensa más habitual contra la inyección de prompt directa; hoy verás qué se le escapa."
+      "teach": "Medir una regla: recall\nUna regla de detección es un clasificador, como las katanas de T3: acierta o falla. El recall responde a una pregunta: de todos los ataques reales, ¿cuántos ve la regla? Si hay 5 sesiones maliciosas y la regla alerta en 2, el recall es 2 ÷ 5 = 0,4.\nActiva los seis campos y la redacción como en O6-01, y deja solo la regla palabras-clave, que busca «ignora» en el mensaje del usuario.\nQué significa: un recall bajo es un cazador al que se le escapan presas; cada ataque que no ve es un incidente que nadie mirará.\nPara qué en tu camino: buscar palabras sospechosas es la defensa más habitual (y más ingenua) contra la inyección de prompt directa. Hoy vas a ver con números qué se le escapa.\nPiénsalo como un portero de discoteca que solo echa a quien grita: para a los escandalosos, pero el que entra callado y con mala intención pasa sin problema."
     },
     {
       "id": "c1",
@@ -170,12 +170,12 @@
         "soc rule taller dominio-externo on · … · soc detect taller"
       ],
       "on_complete": "Recall 1,0 y precision 0,5: la mitad de las alertas son ruido. Mira por qué saltan S06 (una guía interna con una nota de estilo para el asistente) y S08 (un correo a un proveedor nuevo).",
-      "teach": "Medir una regla: precision\nprecision = de todas las alertas, cuántas eran ataques de verdad. Si saltan 10 alertas y 3 son ataques, la precision es 3 ÷ 10 = 0,3.\nCada falsa alarma es tiempo de un analista; si hay demasiadas, deja de mirarlas.\nPor qué: en un SOC (Security Operations Center), la fatiga de alertas es tan peligrosa como no tener reglas."
+      "teach": "Medir una regla: precision\nEl recall mira los ataques; la precision mira las alertas. precision = de todas las alertas que saltan, cuántas eran ataques de verdad. Si saltan 10 alertas y 3 son ataques, la precision es 3 ÷ 10 = 0,3: siete de cada diez fueron ruido.\nCada falsa alarma cuesta el tiempo de un analista que la revisa a mano; si hay demasiadas, acaba ignorándolas todas, incluidas las buenas.\nPara qué en tu camino: en un SOC (Security Operations Center), la fatiga de alertas es tan peligrosa como no tener reglas; un equipo que desconfía de sus alertas es un equipo ciego.\nEs la alarma del coche que salta con cada moto que pasa: al principio te asomas, al mes ya ni miras, y el día que te lo roban tampoco."
     },
     {
       "id": "py1",
       "text": "Escribe en Python la cuenta de precision: abre el editor con py, completa la función y compruébala con py check.",
-      "teach": "La cuenta, con tus manos\nVP (verdaderos positivos) son las alertas sobre sesiones maliciosas; FP (falsos positivos), las alertas sobre sesiones legítimas.\nprecision = vp / (vp + fp). Si no hay ninguna alerta, la función ya devuelve 0.0 para no dividir entre cero.\nEscribe py para abrir el editor; py check lo comprueba con varios casos.\nPor qué: es la cuenta que hace soc detect, y la que usarías cada semana para vigilar tus reglas en un SIEM (Security Information and Event Management).",
+      "teach": "La cuenta, con tus manos\nVP (verdaderos positivos) son las alertas que caen sobre sesiones maliciosas; FP (falsos positivos), las que caen sobre sesiones legítimas.\nprecision = vp / (vp + fp): los aciertos divididos entre todas las alertas. Si no hay ninguna alerta, la función ya devuelve 0.0 para no dividir entre cero.\nEscribe py para abrir el editor y py check para comprobarlo con varios casos.\nPara qué en tu camino: es exactamente la cuenta que hace soc detect por dentro, y la que repetirías cada semana para vigilar tus reglas en un SIEM (Security Information and Event Management). Escribirla una vez con tus manos es entenderla para siempre.",
       "py_exercise": {
         "id": "O6-02-precision",
         "title": "precision(vp, fp): de las alertas, cuántas valen la pena",
@@ -241,7 +241,7 @@
     {
       "id": "o4",
       "text": "Ajusta las reglas para no perder ningún ataque (recall 1,0) con una precision mayor que 0,6.",
-      "teach": "Correlacionar señales\nUna señal sola es ambigua: un documento con una nota para el asistente puede ser legítimo, y un correo a un dominio nuevo también.\nLas dos cosas en la misma sesión (el documento manda y el agente saca datos fuera) es mucho más raro en una sesión legítima. Eso mide la regla correlacion.\nPor qué: así funcionan las reglas de correlación de un SIEM (Security Information and Event Management): juntan señales débiles para bajar las falsas alarmas sin perder ataques.",
+      "teach": "Correlacionar señales\nUna señal sola es ambigua: un documento con una nota para el asistente puede ser inofensivo, y un correo a un dominio nuevo también. Por separado, las dos saltan en sesiones legítimas y ensucian la precision.\nPero las dos cosas juntas en la misma sesión —el documento le da una orden y el agente saca datos fuera— casi nunca pasan sin mala intención. Eso es lo que mide la regla correlacion.\nPara qué en tu camino: así funcionan las reglas de correlación de un SIEM (Security Information and Event Management), que juntan señales débiles para bajar las falsas alarmas sin dejar escapar ataques.\nEs como la caja fuerte de un banco que necesita dos llaves a la vez: cada llave suelta no abre nada, y pedir las dos juntas hace casi imposible el error y el abuso.",
       "validator": {
         "type": "event",
         "event": "soc.detected",

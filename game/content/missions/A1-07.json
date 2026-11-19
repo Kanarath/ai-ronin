@@ -53,7 +53,7 @@
     {
       "id": "o1",
       "text": "En el Dojo: abre el editor con py, programa matriz_confusion, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las ocho funciones de guardian.py hasta que pasen los 19 tests y trae la evidencia.",
-      "teach": "Logaritmos para no llegar a cero\nMultiplicar cien probabilidades de 0,01 da 10 elevado a −200, y eso en el ordenador ya es casi cero. Por eso Naive Bayes suma logaritmos.\nAun así, la suma crece con la longitud del mensaje. Aquí se promedia por fragmento para que el umbral sirva.\nEl resultado es una puntuación, no una probabilidad calibrada.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: los clasificadores reales también trabajan en logaritmos para no perder precisión.",
+      "teach": "Logaritmos para no llegar a cero\nMultiplicar cien probabilidades de 0,01 da 10 elevado a −200, y eso para el ordenador ya es indistinguible de cero: se pierde la información. Por eso Naive Bayes no multiplica, SUMA logaritmos, que convierten productos diminutos en sumas manejables.\nAun así, esa suma crece con la longitud del mensaje, así que aquí se promedia por fragmento para que un mismo umbral sirva para textos cortos y largos. El resultado es una puntuación, no una probabilidad calibrada.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPara qué en tu camino: los clasificadores reales también trabajan en logaritmos por esto mismo; entenderlo te evita horas de perseguir un «¿por qué me sale todo cero?».\nEs como medir la fortuna de un país en órdenes de magnitud en vez de arrastrar el número entero: trabajas con la escala, no con el monstruo de ceros.",
       "validator": {
         "type": "any",
         "of": [
@@ -136,7 +136,7 @@
       "id": "o2",
       "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: ejecuta bateria.py (al menos 3 configuraciones, una de ellas «ninguna») y tráela con evidence import. Con Ollama, añade si quieres la configuración «llm».",
       "diagram": {"kind":"lines","title":"LA IDEA · el umbral reparte el error","x_label":"umbral (más estricto →)","y_label":"tasa de error","series":[{"name":"falsos positivos (clientes)","color":"gold","points":[[0,0.0],[0.5,0.2],[1,0.7]]},{"name":"falsos negativos (ataques)","color":"red","points":[[0,0.8],[0.5,0.25],[1,0.0]]}],"caption":"curva orientativa: al endurecer el umbral paras más ataques (bajan los falsos negativos) pero molestas a más clientes (suben los falsos positivos). Se elige con datos de validación y una pregunta de negocio, nunca con los de prueba"},
-      "teach": "Medir al guardián\nbateria.py pasa ataques y mensajes legítimos por cada configuración (ninguna, patrones, clasificador…) y cuenta cuántos ataques pasan y cuántos clientes se bloquean.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: un guardián se juzga por los dos errores a la vez, nunca solo por los ataques que para.",
+      "teach": "Medir al guardián\nbateria.py pasa ataques y mensajes legítimos por cada configuración (ninguna, patrones, clasificador…) y cuenta dos cosas: cuántos ataques se cuelan y cuántos clientes legítimos se bloquean.\nEn el Dojo, forja medir reproduce una medición real hecha con el modelo local en un portátil; medirla tú es un extra. Mira el diagrama de la izquierda: el umbral reparte el error entre los dos tipos.\nPara qué en tu camino: un guardián se juzga siempre por sus DOS errores a la vez, nunca solo por los ataques que para, o te venderán un muro que también deja fuera a tus clientes.\nEs como un filtro antispam: no basta con que pare el correo basura, tienes que mirar cuántos correos buenos ha mandado a la papelera, porque ahí se pierde lo importante.",
       "prediction": {
         "prompt": "¿Crees que el clasificador entrenado dejará pasar menos ataques que el filtro de patrones de A1-05 sin bloquear a más clientes normales?",
         "options": [
@@ -166,7 +166,7 @@
     {
       "id": "o3",
       "text": "Imagina que el clasificador bloquea a un cliente que escribe «olvida mi mensaje anterior, quería preguntar por envíos». ¿Qué te dice ese error?",
-      "teach": "Qué aprende de verdad un clasificador\nUn clasificador no sabe qué quieres que aprenda: busca lo que distingue a las dos clases en sus ejemplos.\nSi los ataques y los mensajes legítimos se diferencian en algo más que la intención, puede quedarse con ese atajo.\nPor qué: un modelo aprende los atajos que le dan los datos, no lo que tú querías que aprendiera.",
+      "teach": "Qué aprende de verdad un clasificador\nUn clasificador no sabe qué quieres que aprenda: solo busca lo que distingue a las dos clases en los ejemplos que le diste.\nSi tus ataques y tus mensajes legítimos se diferencian en algo más que la intención (ciertas palabras, cierta longitud), puede quedarse con ese ATAJO en vez de con la intención, y acertar en el entrenamiento por el motivo equivocado.\nPara qué en tu camino: un modelo aprende los atajos que le regalan los datos, no lo que tú querías; reconocerlo es la mitad de depurar un clasificador que «va bien en las pruebas y falla fuera».\nEs como el alumno que aprueba memorizando que las preguntas con «siempre» son falsas: acierta el examen sin entender la materia, y en cuanto cambian el formato se estrella.",
       "choices": [
         {
           "id": "a",
@@ -199,7 +199,7 @@
     {
       "id": "o4",
       "text": "Tu guardián «bloquea el 90 % de los ataques de la batería». ¿Qué te asegura esa cifra?",
-      "teach": "El atacante adaptativo\nUn ATACANTE ADAPTATIVO no repite tus ataques: prueba variantes hasta encontrar una que pase.\nPor qué: las cifras de un guardián se miden con ataques conocidos; en producción llegan los que tu guardián no conoce.",
+      "teach": "El atacante adaptativo\nUn ATACANTE ADAPTATIVO no te manda los ataques de tu batería: prueba variante tras variante hasta dar con una que tu guardián no para, y esa es la que usa.\nPor eso un «bloquea el 90 % de los ataques» solo habla de ataques parecidos a los que ya conocías; no dice nada de los que inventará quien de verdad quiera entrar.\nPara qué en tu camino: te vacuna contra la cifra bonita; un guardián es una capa útil para reducir ruido y detectar campañas, nunca el muro único que sustituye al mínimo privilegio.\nEs como un antivirus que para el 90 % de los virus conocidos: tranquilizador hasta que llega uno nuevo, que es justo el que te infecta.",
       "choices": [
         {
           "id": "a",

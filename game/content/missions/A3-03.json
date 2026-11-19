@@ -56,7 +56,7 @@
         "agent create kage · agent attack kage"
       ],
       "on_complete": "5 de 5.",
-      "teach": "La línea base\nAntes de defender, se mide sin defensas.\nagent create <nombre> y después agent attack <nombre>: los 5 ataques de A3-02.\nPor qué: sin una línea base no puedes demostrar que una defensa ayuda."
+      "teach": "La línea base\nLa línea base es la medida del agente SIN ningún control: el punto de partida contra el que compararás cada defensa.\nagent create <nombre> y después agent attack <nombre>: los 5 ataques de A3-02.\nEs como pesarte el primer día de un plan: sin ese número no sabes si lo que haces después sirve.\nPor qué en tu camino: sin una línea base no puedes demostrar que una defensa ayuda, ni cuánto."
     },
     {
       "id": "o2",
@@ -92,12 +92,12 @@
         "agent defend kage spotlight on · agent attack kage"
       ],
       "on_complete": "Queda el confused deputy: no llega por correo y no es una orden escondida, sino una petición directa de un usuario sin permisos. Además, en A1-03 viste que las defensas contra la inyección se pueden esquivar: no construyas todo sobre ellas.",
-      "teach": "Spotlight\nspotlight marca el contenido de los correos como DATOS, no como órdenes.\nagent defend <agente> spotlight on lo activa.\nPor qué: es una defensa muy usada contra la inyección indirecta en sistemas reales; hoy verás hasta dónde llega."
+      "teach": "Spotlight\nspotlight marca el contenido de los correos como DATOS, no como órdenes, para que el modelo no obedezca lo que venga dentro de ellos.\nagent defend <agente> spotlight on lo activa.\nEs como poner entre comillas lo que dice un desconocido: lo lees como información, no como una orden que debas cumplir.\nPor qué en tu camino: es una defensa muy usada contra la inyección indirecta en sistemas reales, pero vive DENTRO del modelo; hoy mides hasta dónde llega y, sobre todo, qué deja pasar."
     },
     {
       "id": "o3",
       "text": "Desactiva spotlight, activa la supervisión humana (hitl) y repite la batería. ¿Cuántas aprobaciones humanas pide? (answer <número>)",
-      "teach": "Human in the loop\nHITL (human in the loop) significa que una persona aprueba cada uso de una herramienta sensible.\nagent defend <agente> hitl on lo activa.\nEn el laboratorio, el revisor simulado rechaza lo que sale de un correo… pero aprueba lo que pide un usuario, porque desde fuera parece legítimo.\nPor qué: muchas empresas ponen a un humano a aprobar; hay que saber cuántas aprobaciones cuesta y qué deja pasar.",
+      "teach": "Human in the loop\nHITL (human in the loop) significa que una persona aprueba cada uso de una herramienta sensible antes de que se ejecute.\nagent defend <agente> hitl on lo activa. En el laboratorio, el revisor simulado rechaza lo que sale de un correo… pero aprueba lo que pide un usuario, porque desde fuera parece legítimo.\nEs como el guardia de seguridad que solo para lo que «canta»: al que entra con cara de normal lo deja pasar, aunque no debiera.\nPor qué en tu camino: muchas empresas ponen a un humano a aprobar, pero hay que saber cuántas aprobaciones cuesta y qué deja pasar; de nada sirve un control que la gente acaba firmando sin leer.",
       "validator": {
         "type": "all",
         "of": [
@@ -124,7 +124,7 @@
     {
       "id": "py1",
       "text": "Programa en Python la lista permitida: abre el editor con py, completa la función permitido y compruébala con py check.",
-      "teach": "La lista permitida, con tus manos\nleast-privilege, que activarás en el paso siguiente, es por dentro una tabla: para cada tarea, las herramientas que puede usar.\nVas a programar la función que lo comprueba. Abre el editor con py.\nUn dict guarda pares clave → valor. Aquí la clave es la tarea y el valor, su lista de herramientas.\nPor qué: esta comprobación es la que pone el código de un agente real entre lo que pide el modelo y lo que se ejecuta.",
+      "teach": "La lista permitida, con tus manos\nUna lista permitida (allowlist) dice qué está autorizado y niega todo lo demás por defecto.\nleast-privilege, que activarás en el paso siguiente, es por dentro una tabla: para cada tarea, las herramientas que puede usar. Vas a programar la función que lo comprueba; abre el editor con py. Un dict guarda pares clave → valor: aquí la clave es la tarea y el valor, su lista de herramientas.\nEs como la llave de hotel que solo abre tu habitación y el gimnasio: da igual lo que te pidan, no abre la caja fuerte de recepción.\nPor qué en tu camino: esta comprobación es la que pone el código de un agente real entre lo que PIDE el modelo y lo que se EJECUTA, y por eso ninguna inyección la convence: no lee el prompt, solo la tarea y la herramienta.",
       "py_exercise": {
         "id": "A3-03-permitido",
         "title": "permitido(tarea, herramienta): la lista permitida",
@@ -185,7 +185,7 @@
     {
       "id": "o4",
       "text": "Diseña los controles en el código: desactiva hitl, activa least-privilege, arg-validation, user-authz, memory-hygiene y step-budget. Consigue 0 ataques con éxito y, después, 3/3 en el eval.",
-      "teach": "Defensa en el código, no en el prompt\nCada control corta un ataque en un punto distinto:\n· least-privilege quita las herramientas que la tarea no necesita (el triaje no puede reembolsar).\n· arg-validation rechaza pedidos inexistentes, importes absurdos y destinatarios externos.\n· user-authz comprueba los permisos de quien pide.\n· memory-hygiene impide que un correo escriba en la memoria.\n· step-budget corta los bucles.\nPor qué: en un agente real estos controles van en el código de cada herramienta; el modelo puede ser engañado, el código no se deja convencer.",
+      "teach": "Defensa en el código, no en el prompt\nLa idea de hoy: los controles que de verdad frenan viven en el CÓDIGO que ejecuta las acciones, no en instrucciones al modelo. Cada control corta un ataque en un punto distinto:\n· least-privilege quita las herramientas que la tarea no necesita (el triaje no puede reembolsar).\n· arg-validation rechaza pedidos inexistentes, importes absurdos y destinatarios externos.\n· user-authz comprueba los permisos de quien pide.\n· memory-hygiene impide que un correo escriba en la memoria.\n· step-budget corta los bucles.\nEs como la seguridad de un banco: no se le pide al cajero que «no se deje engañar», se ponen límites por operación, listas de cuentas y una caja fuerte con temporizador.\nPor qué en tu camino: en un agente real estos controles van en el código de cada herramienta, porque al modelo se le puede engañar y al código no se le convence; esto es defensa en profundidad.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -222,7 +222,7 @@
       "id": "o5",
       "diagram": {"kind":"table","title":"LA IDEA · elegir el control por lo que comprueba","headers":["control","qué comprueba","frena al diputado confundido"],"rows":[["spotlight","trata el correo como datos","no: no llega por correo"],["hitl","un humano aprueba","no: parece legítimo, lo aprueba"],["user-authz","los permisos de QUIEN pide","sí"]],"caption":"el diputado confundido es un fallo de permisos, no de texto. Solo lo cierra el control que mira quién pide, y vive en el código: no depende de que el modelo o el revisor se den cuenta."},
       "text": "Comprueba que lo tienes claro: ¿qué control detiene al diputado confundido?",
-      "teach": "Repaso con tus cifras\nCon spotlight quedaba 1 ataque de 5. Con hitl, el mismo, tras 17 aprobaciones.\nPiensa en qué comprueba cada control.\nPor qué: elegir un control por lo que comprueba, y no por su fama, es lo que hace un ingeniero de seguridad.",
+      "teach": "Repaso con tus cifras\nCon spotlight quedaba 1 ataque de 5. Con hitl, el mismo, tras 17 aprobaciones. El que sobrevive a las dos defensas más populares es el diputado confundido.\nMira el diagrama de la izquierda: ni tratar el correo como datos ni poner a un humano a aprobar lo frenan, porque no llega por correo y parece legítimo; solo lo cierra el control que mira QUIÉN pide.\nEs como elegir cerradura por lo que protege, no por la marca más famosa: contra quien entra por la ventana no sirve la mejor cerradura de la puerta.\nPor qué en tu camino: elegir un control por lo que comprueba, y no por su fama, es lo que distingue a un ingeniero de seguridad de quien amontona defensas de moda.",
       "choices": [
         {
           "id": "a",

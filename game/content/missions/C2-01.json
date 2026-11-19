@@ -71,7 +71,7 @@
         "rag create docs · rag ingest docs · lab matrix rag docs"
       ],
       "on_complete": "Mira la columna «ninguna»: ya sin defensas falla una de las siete preguntas legítimas.",
-      "teach": "La matriz del buscador\nrag create docs crea el buscador, rag ingest docs indexa sus documentos y lab matrix rag docs mide cada defensa en solitario contra la batería y contra siete preguntas legítimas.\nPor qué: en un buscador real, una defensa puede empeorar las respuestas; la matriz mide las dos cosas a la vez.",
+      "teach": "La matriz del buscador\nMisma idea que en el agente, pero ahora la tabla mide dos cosas: seguridad (qué ataques para cada defensa) Y calidad (cuántas de las siete preguntas legítimas siguen saliendo bien).\nCómo: rag create docs crea el buscador, rag ingest docs indexa sus documentos y lab matrix rag docs mide cada defensa en solitario contra la batería y contra las siete preguntas.\nEs como ajustar el filtro de agua de casa: no basta con que pare lo malo; si además te quita toda la presión, no sirve. Mides lo que bloquea y lo que estorba a la vez.\nPara qué en tu camino: en un buscador real, una defensa puede proteger pero empeorar las respuestas. La matriz te enseña las dos columnas juntas para que no «arregles» la seguridad rompiendo el servicio.",
       "prediction": {
         "prompt": "Antes de sacar la matriz: en el agente solo había un punto único. ¿Cuántos crees que habrá en el buscador?",
         "options": [
@@ -125,7 +125,7 @@
         "Cuenta los 1 de la columna «la bloquean»."
       ],
       "on_complete": "Cuatro de cinco. En el agente varios controles se solapaban porque todos limitaban lo que puede hacer una herramienta. En el RAG cada ataque entra por una etapa distinta y cada etapa tiene una sola defensa.",
-      "teach": "Contar puntos únicos\nComo en C1: en la columna «la bloquean», un 1 indica un ataque que depende de una sola defensa.\nPor qué: cuantos más puntos únicos, más depende el sistema de que ninguna defensa falle."
+      "teach": "Contar puntos únicos\nComo en C1: en la columna «la bloquean», un 1 marca un ataque que depende de una sola defensa, su único freno.\nMira el diagrama de la izquierda: un RAG (Retrieval-Augmented Generation) es una cadena (ingesta → recuperación → presentación → generación) y cada ataque entra por una etapa distinta con una sola defensa en esa etapa; por eso aquí hay tantos puntos únicos.\nEs una cadena de eslabones distintos: no se rompe por donde más aprietas, sino por el eslabón que solo tiene un hilo.\nPor qué en tu camino: cuantos más puntos únicos, más depende todo el sistema de que ninguna defensa falle. Contarlos te da el tamaño real del problema antes de maquillarlo."
     },
     {
       "id": "o3",
@@ -143,12 +143,12 @@
         "Busca la columna sin ■ cuyas «tareas ok» suben respecto a «ninguna»."
       ],
       "on_complete": "min-score no es una defensa de esta batería: evita responder con fragmentos que no tienen que ver con la pregunta. Medir el coste también sirve para encontrar mejoras.",
-      "teach": "Una defensa que mejora la calidad\nLa fila «tareas ok» dice cuántas preguntas legítimas salen bien con cada defensa. Compárala con la columna «ninguna».\nUna defensa puede no parar ningún ataque y aun así mejorar las respuestas.\nPor qué: un buscador que responde con fragmentos que no tienen que ver con la pregunta da respuestas malas; medirlo es parte del mismo trabajo."
+      "teach": "Una defensa que mejora la calidad\nLa fila «tareas ok» cuenta cuántas de las siete preguntas legítimas salen bien con cada defensa; compárala con la columna «ninguna» (sin defensas).\nBuscas la rareza: una columna sin ningún ■ (no para ataques) cuyas «tareas ok» suben. Eso es min-score, que evita responder con fragmentos que no tienen que ver con la pregunta.\nEs como el corrector del móvil: no te protege de nadie, pero hace que lo que escribes tenga sentido. Mejora la calidad, no la seguridad.\nPor qué en tu camino: un buscador que contesta con trozos irrelevantes da respuestas malas, y eso también hunde el sistema. Medir la calidad es parte del mismo trabajo que medir la seguridad; aquí descubres que la tabla sirve para las dos cosas."
     },
     {
       "id": "o4",
       "text": "Configura la cobertura mínima: 0 ataques con éxito y 7/7 respuestas correctas con el menor número de defensas. Compruébalo con lab resilience.",
-      "teach": "Cuatro obligatorias\nLos puntos únicos son obligatorios: trusted-sources (foro), acl (dos fugas) y vector-acl (inversión de vectores). trusted-sources ya para también la reseña inyectada.\nFalta lo que necesita la calidad para llegar a 7/7.\nrag defend docs <defensa> on activa una defensa; lab resilience rag docs mide.\nPor qué: una configuración de producción tiene que cumplir a la vez el umbral de seguridad y el de calidad.",
+      "teach": "Cuatro obligatorias\nLos puntos únicos no se eligen, se imponen: trusted-sources (bloquea el documento del foro), acl (las dos fugas de documentos internos) y vector-acl (la inversión de vectores). Además, trusted-sources ya para de paso la reseña inyectada. Con esas tres cierras la seguridad, pero aún falta lo que la calidad necesita para llegar a 7/7: min-score.\nComandos: rag defend docs <defensa> on activa una defensa y lab resilience rag docs mide.\nEs como aprobar un piso para alquilar: tiene que pasar a la vez la inspección de seguridad (la instalación eléctrica) y la de habitabilidad (el agua caliente); una sola no basta para entregar las llaves.\nPara qué en tu camino: una configuración de producción cumple a la vez el umbral de seguridad y el de calidad. Las dos pueden bloquear un despliegue, y tú tienes que satisfacer las dos con el menor número de defensas.",
       "validator": {
         "type": "event",
         "event": "lab.resilience",

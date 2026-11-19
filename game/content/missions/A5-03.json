@@ -48,7 +48,7 @@
     {
       "id": "o1",
       "text": "Crea un taller y lanza la batería de ataques sin defensas: a2a taller b y a2a attack b. ¿Cuántos ataques tienen éxito? (answer <número>)",
-      "teach": "La batería A5\na2a attack lanza seis ataques, cada uno sobre un taller nuevo: infección en cascada, tarjeta engañosa, mensaje falsificado, escalada por delegación, bucle de delegación y fuga de contexto.\nPor qué: una batería fija permite comparar defensas con los mismos ataques.",
+      "teach": "La batería A5\na2a attack lanza de golpe seis ataques, cada uno sobre un taller nuevo: infección en cascada, tarjeta engañosa, mensaje falsificado, escalada por delegación, bucle de delegación y fuga de contexto.\nEs el banco de pruebas de choque de un coche: siempre el mismo muro, a la misma velocidad, para poder comparar un modelo con otro de forma justa.\nPara qué en tu camino: una batería fija te deja comparar defensas contra los MISMOS ataques. Sin ese patrón común, dos mediciones no se pueden comparar y «esta defensa es mejor» se queda en opinión.",
       "validator": {
         "type": "all",
         "of": [
@@ -74,7 +74,7 @@
     {
       "id": "o2",
       "text": "Comprueba las tareas legítimas: a2a eval b",
-      "teach": "Lo que no se puede romper\na2a eval lanza cuatro tareas normales: un pedido, un reembolso legítimo, un presupuesto y una investigación.\nPor qué: una defensa que rompe el trabajo normal no se queda mucho tiempo activada.",
+      "teach": "Lo que no se puede romper\nUna defensa tiene dos caras, y esta es la segunda. a2a eval lanza cuatro tareas normales —un pedido, un reembolso legítimo, un presupuesto y una investigación— y mira cuántas siguen saliendo bien.\nEs comprobar que la nueva cerradura antirrobo deja entrar también a los de casa: si para al ladrón pero te deja a ti en la calle, no sirve.\nPara qué en tu camino: una defensa que rompe el trabajo normal no dura activada ni una semana en la vida real. Por eso cada control se mide por lo que BLOQUEA y por lo que ROMPE, siempre las dos cosas.",
       "validator": {
         "type": "event",
         "event": "a2a.eval",
@@ -97,7 +97,7 @@
           "no"
         ]
       },
-      "teach": "Un vigilante de palabras\nmonitor busca frases sospechosas («nota para los agentes», «ignora», «instrucciones») en lo que se pasan los agentes.\nPor qué: detectar por palabras es barato, pero la misma palabra aparece en textos inocentes.",
+      "teach": "Un vigilante de palabras\nmonitor lee lo que se pasan los agentes y marca frases sospechosas: «nota para los agentes», «ignora», «instrucciones»…\nEs el detector de metales del aeropuerto: pita con la pistola, pero también con las llaves y la hebilla del cinturón. No distingue la intención, solo el metal.\nPara qué en tu camino: detectar por palabras es barato y a veces útil, pero la misma palabra aparece en textos perfectamente inocentes. Apunta esa tensión: cuanto más agresivo es el filtro, más molesta a los inocentes; lo verás en el falso positivo que viene.",
       "validator": {
         "type": "event",
         "event": "a2a.eval",
@@ -116,7 +116,7 @@
     {
       "id": "c1",
       "text": "¿Por qué el monitor falla en la investigación sobre el temple?",
-      "teach": "Falsos positivos\nUn falso positivo es una alarma ante algo inocente. Cuantas más palabras vigilas, más falsos positivos.\nPor qué: es el mismo equilibrio entre precision y recall de T3-02, ahora en una defensa.",
+      "teach": "Falsos positivos\nUn falso positivo es una alarma que salta ante algo inocente. La investigación sobre el temple menciona una palabra vigilada sin ninguna mala intención, y el monitor la bloquea igual.\nEs el filtro antispam que te manda a la papelera el correo del médico porque contiene «urgente»: cuantas más palabras vigilas, más veces te equivocas con los buenos.\nPara qué en tu camino: es el mismo equilibrio entre precision y recall de T3-02, ahora dentro de una defensa. Subir la sensibilidad caza más ataques… y también más inocentes. No hay comida gratis.",
       "choices": [
         {
           "id": "a",
@@ -157,7 +157,7 @@
           "todos"
         ]
       },
-      "teach": "Permisos de quien pidió, no de quien llama\ndelegated-authz hace que cada agente compruebe los permisos del usuario original de la tarea, no los del agente que se la pasa.\nPor qué: así un agente con privilegios no los presta sin querer a quien no los tiene.",
+      "teach": "Permisos de quien pidió, no de quien llama\ndelegated-authz cambia una pregunta sutil pero decisiva: cada agente comprueba los permisos del USUARIO ORIGINAL de la tarea, no los del agente que se la pasa.\nEs la diferencia entre «¿quién me trae este recado?» y «¿de parte de quién viene?». Que te lo traiga el director no te autoriza nada si quien lo pidió era un becario sin permisos.\nPara qué en tu camino: así un agente con muchos privilegios no se los presta sin querer a quien no los tiene solo por estar en medio de la cadena. Corta de raíz la escalada por delegación, el truco de pasar por un intermediario poderoso.",
       "validator": {
         "type": "all",
         "of": [
@@ -187,7 +187,7 @@
     {
       "id": "py1",
       "text": "Prepara el capstone: abre el editor con py, completa sin_cubrir y compruébala con py check.",
-      "teach": "La matriz, en código\nVas a escribir qué ataques quedan sin cubrir con un conjunto de controles: la cuenta que necesitarás en C4.\nPor qué: elegir defensas es un problema de cobertura: que cada ataque tenga al menos un control que lo pare.",
+      "teach": "La matriz, en código\nVas a escribir qué ataques quedan SIN cubrir con un conjunto de controles elegido: justo la cuenta que necesitarás en el capstone C4. Abre el editor con py.\nEs la lista de la compra contra lo que ya tienes en la nevera: para cada ataque, ¿hay al menos un control que lo pare? Si no, está abierto.\nPara qué en tu camino: elegir defensas es, en el fondo, un problema de cobertura: que cada ataque tenga como mínimo un control que lo detenga. Esta funcioncita es la que te dirá, de un vistazo, si tu plan de C4 deja alguna puerta sin cerrar.",
       "py_exercise": {
         "id": "A5-03-cubrir",
         "title": "sin_cubrir(matriz, controles): ataques que siguen abiertos",

@@ -65,7 +65,7 @@
         "engagement start final · bot create kuro · rag create docs · rag ingest docs · agent create taller · mcp host erp · supply forja pipe · engagement bind final A-01 kuro · … · engagement bind final A-05 pipe"
       ],
       "on_complete": "Encargo listo. Cada misión empieza con el laboratorio limpio, como un entorno de pruebas recién desplegado.",
-      "teach": "Laboratorio limpio\nCada misión empieza con el laboratorio vacío: vuelve a abrir el encargo, crear las cinco copias y vincularlas, como en C5-01.\nPor qué: las pruebas se hacen sobre un entorno conocido; si no, la evidencia no se puede repetir."
+      "teach": "Laboratorio limpio\nCada misión empieza con el laboratorio vacío: vuelve a abrir el encargo, crear las cinco copias y vincularlas, como en C5-01.\nEs como un laboratorio de análisis que esteriliza el material antes de cada muestra: si el tubo arrastra restos de la prueba anterior, el resultado no vale para nadie.\nLa trampa: atacar sobre un entorno que ya tocaste mezcla las pruebas, y una evidencia que no se puede repetir desde cero no entra en un informe."
     },
     {
       "id": "o2",
@@ -89,13 +89,13 @@
         "engagement finding final A-05 LLM09"
       ],
       "on_complete": "Rechazado: no encaja con lo que es el activo. Un informe lleno de categorías mal asignadas pierde credibilidad.",
-      "teach": "La categoría tiene que encajar\nengagement finding <encargo> <activo> <categoría> registra un hallazgo. Antes comprueba que la categoría de OWASP (Open Worldwide Application Security Project) encaja con lo que es el activo.\nPor qué: una sola categoría mal puesta hace dudar de todo el informe."
+      "teach": "La categoría tiene que encajar\nengagement finding <encargo> <activo> <categoría> registra un hallazgo. Antes comprueba que la categoría de OWASP (Open Worldwide Application Security Project) encaja con lo que es el activo.\nQué verás: si la pides mal, el encargo la rechaza en vez de guardarla, igual que ahora con LLM09 sobre el pipeline.\nEs como etiquetar un expediente médico con la enfermedad equivocada: el que lo lea después deja de fiarse de toda la carpeta.\nLa trampa: una sola categoría mal puesta en el informe hace que la dirección dude de los hallazgos buenos, y un red team vale justo lo que vale su credibilidad."
     },
     {
       "id": "o3",
       "diagram": {"kind":"chips","title":"LA IDEA · primero la prueba, después el hallazgo","chips":[{"text":"batería sobre la copia","color":"teal"},{"text":"→","color":"muted"},{"text":"¿algún éxito?","color":"gold"},{"text":"→","color":"muted"},{"text":"registrar hallazgo","color":"teal"}],"caption":"si registras el hallazgo antes de atacar, se rechaza por falta de evidencia. El número de éxitos que guarda el hallazgo es la línea base con la que compararás el retest"},
       "text": "Lanza la batería de cada activo y registra un hallazgo con evidencia en cada uno de los cinco.",
-      "teach": "La evidencia es la batería\nPrimero el ataque sobre la copia, después el hallazgo. Si registras el hallazgo antes de atacar, se rechaza por falta de evidencia.\nPor qué: el número de éxitos que guarda el hallazgo es la línea base con la que compararás el retest.",
+      "teach": "La evidencia es la batería\nPrimero el ataque sobre la copia (bot attack, rag attack, agent attack, mcp attack, supply attack), después el hallazgo. Si registras el hallazgo antes de atacar, se rechaza por falta de evidencia.\nMira el diagrama de la izquierda: batería sobre la copia → ¿algún éxito? → registrar hallazgo. Sin ese éxito demostrado, no hay hallazgo.\nEs como denunciar un robo con el parte de la cámara que lo grabó, no con «me parece que entraron»: sin la prueba, nadie actúa.\nPor qué: el número de éxitos que guarda el hallazgo es la línea base con la que compararás el retest; sin ese «antes» medido, luego no podrás demostrar que el arreglo funcionó.",
       "validator": {
         "type": "event",
         "event": "engagement.finding",
@@ -139,7 +139,7 @@
         "engagement summary final"
       ],
       "on_complete": "A-01, con 11. ¿Lo convierte eso en el más grave?",
-      "teach": "El resumen ejecutivo\nengagement summary final resume los hallazgos y los ataques con éxito de cada activo al inicio.\nPor qué: es lo primero que lee la dirección, así que tiene que ser exacto."
+      "teach": "El resumen ejecutivo\nengagement summary final resume los hallazgos y los ataques con éxito de cada activo al inicio.\nQué verás: una fila por activo con cuántos ataques le funcionaron; aquí A-01 encabeza con 11, pero ojo, ese recuento no es la gravedad (eso lo decides después).\nEs la portada del informe, como el titular de un periódico: mucha gente solo lee eso, así que cada cifra tiene que estar bien.\nLa trampa: una dirección que decide a partir de un resumen con números torcidos prioriza mal y gasta el presupuesto de arreglos donde menos duele."
     },
     {
       "id": "c1",
@@ -187,7 +187,7 @@
         "informe nuevo <título> · informe campo severidad … · informe campo owasp … · componente, descripcion, pasos, impacto, evidencia, mitigacion, verificacion · informe revisar",
         "En los pasos, los comandos que lo reproducen: 1) engagement start final 2) supply forja pipe 3) supply attack pipe. En la verificación, una medida: hoy 7 de 7 ataques con éxito; tras corregir, 0 de 7 y las tareas a 1,0 (lo harás en C5-03)."
       ],
-      "teach": "El informe del hallazgo\ninforme nuevo <título> abre el informe; informe campo <campo> <texto> rellena severidad, owasp, componente, descripcion, pasos, impacto, evidencia, mitigacion y verificacion; informe revisar aplica la rúbrica.\nLos pasos tienen que ser comandos que otra persona pueda repetir, y la verificación, una medida.\nPor qué: un hallazgo que el equipo del sistema no puede reproducir no se arregla.",
+      "teach": "El informe del hallazgo\ninforme nuevo <título> abre el informe; informe campo <campo> <texto> rellena severidad, owasp, componente, descripcion, pasos, impacto, evidencia, mitigacion y verificacion; informe revisar aplica la rúbrica.\nLos pasos tienen que ser comandos que otra persona pueda repetir, y la verificación, una medida.\nPiénsalo como una receta de cocina: si pones «échale sal al gusto» en vez de «5 g», cada uno hace un plato distinto. Los pasos del informe son la lista exacta de ingredientes y tiempos para que el equipo del sistema reproduzca tu hallazgo sin llamarte.\nLa trampa: un hallazgo que el equipo no puede reproducir se queda en el cajón; no se arregla lo que no se sabe repetir.",
       "on_complete": "Informe listo: otra persona puede reproducir el hallazgo y comprobar el arreglo."
     },
     {

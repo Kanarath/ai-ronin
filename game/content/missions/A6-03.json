@@ -71,7 +71,7 @@
         "supply forja taller · supply attack taller"
       ],
       "on_complete": "7 de 7.",
-      "teach": "La línea base\nsupply forja <nombre> crea un pipeline nuevo y supply attack <nombre> lanza los siete ataques de A6-02.\nPor qué: sin medir antes, no puedes demostrar qué control ayuda."
+      "teach": "La línea base\nsupply forja <nombre> crea un pipeline nuevo y supply attack <nombre> lanza sobre él los siete ataques de A6-02. Tu punto de partida: 7 de 7.\nEs la foto del «antes» de la reforma, otra vez: sin ella, no sabrás qué sello ha cerrado qué grieta.\nPor qué: sin medir antes, no puedes demostrar qué control ayuda ni cuánto. En seguridad, la afirmación «esto protege» sin un número delante vale poco."
     },
     {
       "id": "o2",
@@ -109,12 +109,12 @@
         "supply defend taller artifact-signing on · supply load taller detector-grietas"
       ],
       "on_complete": "Sí. La firma es válida y la huella coincide: el fichero es exactamente el que publicó visiontek. Pero sigue siendo un pickle con código, y eso la firma no lo mira.",
-      "teach": "Verificar firmas\nartifact-signing solo carga artefactos firmados por una clave de confianza y cuya huella coincide con la firmada.\nsupply defend <pipeline> artifact-signing on lo activa.\nPor qué: verificar firmas de modelos es una práctica emergente en la industria (por ejemplo, OpenSSF Model Signing; OpenSSF es la Open Source Security Foundation), y hay que saber qué responde y qué no."
+      "teach": "Verificar firmas\nartifact-signing solo carga artefactos firmados por una clave de confianza y cuya huella coincide con la firmada; supply defend <pipeline> artifact-signing on lo activa.\nOjo a lo que esto responde y a lo que NO: confirma quién publicó el fichero y que no ha cambiado desde entonces, pero no mira qué HACE al cargarse. Un pickle firmado por un autor de confianza sigue ejecutando su código.\nEs el sello de autenticidad de una obra de arte: certifica que la pintó quien dice y que nadie la ha retocado, pero no que el cuadro no lleve un dispositivo escondido en el marco.\nPara qué en tu camino: verificar firmas de modelos es una práctica emergente en la industria (por ejemplo, OpenSSF Model Signing; OpenSSF es la Open Source Security Foundation). Tienes que saber exactamente qué pregunta cierra, o confiarás en ella para algo que no cubre."
     },
     {
       "id": "py1",
       "text": "Programa en Python la comparación de huellas: abre el editor con py, completa la función cambiados y compruébala con py check.",
-      "teach": "Comparar huellas, con tus manos\nartifact-signing y dependency-scan hacen por dentro la misma cuenta: comparar la huella actual con la aprobada.\nVas a programarla. Abre el editor con py.\nEl for recorre los nombres de actuales; actuales[nombre] es la huella de ese fichero.\nPor qué: es lo que hacen pip --require-hashes o un verificador de firmas antes de instalar o cargar algo.",
+      "teach": "Comparar huellas, con tus manos\nDos controles muy distintos —artifact-signing y dependency-scan— hacen por dentro la MISMA cuenta: comparar la huella actual con la aprobada. Vas a programarla; abre el editor con py.\nEl for recorre los nombres de actuales, y actuales[nombre] es la huella de ese fichero: si no coincide con la aprobada (o ni siquiera está aprobada), ese fichero es sospechoso.\nEs el portero que compara tu cara con la foto del DNI: da igual lo bien que te presentes, si la foto no cuadra, no pasas.\nPara qué en tu camino: es justo lo que hacen pip --require-hashes o un verificador de firmas antes de instalar o cargar algo. Una comparación de dos líneas sostiene media cadena de suministro.",
       "py_exercise": {
         "id": "A6-03-huellas",
         "title": "cambiados(actuales, aprobadas): huellas que no coinciden",
@@ -189,7 +189,7 @@
     {
       "id": "o3",
       "text": "Ahora activa solo safe-formats y lanza las tareas legítimas. ¿Qué proporción sale bien? (answer <número>)",
-      "teach": "El coste de los formatos seguros\nsupply eval <pipeline> entrena, carga el modelo interno, instala las dependencias y sirve predicciones: cuatro tareas legítimas.\nExigir safetensors cierra el pickle malicioso… y también el modelo propio de la forja, que se guardó en pickle.\nPor qué: en la vida real, un control que rompe el trabajo diario acaba desactivado; hay que arreglar la causa.",
+      "teach": "El coste de los formatos seguros\nsupply eval <pipeline> ejecuta cuatro tareas legítimas: entrena, carga el modelo interno, instala las dependencias y sirve predicciones.\nAquí aparece el precio de un control contundente: exigir safetensors cierra el pickle malicioso… pero también el modelo PROPIO de la forja, que por mala suerte se guardó en pickle. Buen fin, víctima inocente.\nEs prohibir los cuchillos en un restaurante para evitar peleas y quedarte sin poder cortar el pan: la norma frena el daño y el trabajo a la vez.\nPara qué en tu camino: en la vida real, un control que rompe el trabajo diario acaba desactivado por alguien harto, y entonces no protege nada. La salida no es apagar el control, sino arreglar la causa; lo harás en el paso siguiente.",
       "validator": {
         "type": "all",
         "of": [
@@ -215,7 +215,7 @@
     {
       "id": "o4",
       "text": "Intenta convertir a safetensors el detector de grietas (se rechazará) y después convierte el modelo interno clasificador-acero.",
-      "teach": "Convertir no es inocuo\nsupply convert <pipeline> <artefacto> pasa un modelo de pickle a safetensors.\nPara convertirlo hay que cargar el pickle primero. Con un modelo propio, en un entorno aislado, es razonable.\nCon uno de un tercero, convertirlo es ejecutarlo: hay que pedir al autor la versión en safetensors.\nPor qué: es lo que se hace con los modelos de terceros en producción.",
+      "teach": "Convertir no es inocuo\nsupply convert <pipeline> <artefacto> pasa un modelo de pickle a safetensors. Pero fíjate en el paso oculto: para convertirlo hay que CARGAR el pickle primero, y cargar un pickle es ejecutar su código.\nCon un modelo PROPIO, en un entorno aislado, es razonable: te fías de tu propio código. Con uno de un TERCERO, convertirlo es ejecutarlo, así que no se convierte: se le pide al autor la versión en safetensors.\nEs como desactivar una bomba que tú mismo fabricaste frente a desarmar una de un desconocido: lo primero lo haces con cuidado; lo segundo no se toca, se llama a quien la puso.\nPara qué en tu camino: es exactamente lo que se hace con los modelos de terceros en producción. «Pásalo a un formato seguro» suena inocente, pero el propio acto de convertir ya puede ser el ataque si el fichero no es tuyo.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -245,7 +245,7 @@
     {
       "id": "o5",
       "text": "Pon un control en cada eslabón: consigue 0 ataques con éxito y, después, 4/4 en las tareas legítimas.",
-      "teach": "Defensa por eslabones\nCada ataque de la batería se frena con un control distinto. Mira la tarjeta de teoría y empareja cada eslabón con su control.\nLa batería y las tareas usan copias del pipeline que conservan tus controles y tus conversiones.\nPor qué: ningún control lo cubre todo; la defensa en profundidad es emparejar cada eslabón con el suyo.",
+      "teach": "Defensa por eslabones\nAhora el puzle completo: cada ataque de la batería se frena con un control distinto. Mira la tarjeta de teoría y empareja cada eslabón con el suyo, como piezas de un dominó.\nLa batería y las tareas usan copias del pipeline que conservan tus controles y tus conversiones, así que lo que arregles se mantiene.\nEs blindar una casa: la alarma no sustituye a la cerradura, ni la cerradura a la reja. Cada entrada necesita lo suyo, y una sola puerta abierta basta para que lo demás no sirva.\nPara qué en tu camino: ningún control lo cubre todo, y esa es la lección de fondo de toda la seguridad: la defensa en profundidad consiste en emparejar cada eslabón con su control, no en buscar una bala de plata que no existe.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -277,7 +277,7 @@
     {
       "id": "o6",
       "text": "Comprueba que lo tienes claro: ¿por qué necesitas a la vez safe-formats y artifact-signing?",
-      "teach": "Una pregunta, un control\nRecuerda: el pickle firmado pasó la firma, y el adapter en safetensors pasó el formato.\nPor qué: diseñar controles por preguntas es lo que hacen los marcos reales de la cadena de suministro, como SLSA (Supply-chain Levels for Software Artifacts).",
+      "teach": "Una pregunta, un control\nRecuerda tus dos pruebas: el pickle firmado pasó la firma (pero ejecutaba código), y el adapter en safetensors pasó el formato (pero tenía los pesos cambiados). Cada uno coló por el hueco del otro.\nPor un lado la pregunta «¿se ejecuta?», por otro «¿ha cambiado y quién lo publicó?»: dos cerraduras distintas para dos puertas distintas.\nPor qué: diseñar controles por preguntas, y no amontonarlos a lo loco, es lo que hacen los marcos reales de la cadena de suministro, como SLSA (Supply-chain Levels for Software Artifacts).",
       "choices": [
         {
           "id": "a",

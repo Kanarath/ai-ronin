@@ -47,7 +47,7 @@
     {
       "id": "o1",
       "text": "Inyección indirecta: crea el RAG, sube como cliente una reseña con una instrucción escondida para el asistente, reindexa y consigue que, cuando OTRO cliente pregunte por descuentos, el asistente siga tu instrucción.",
-      "teach": "Inyección indirecta (LLM01:2025)\nEn A1 el atacante escribía en el chat. Aquí escribe en un documento: la víctima pregunta algo normal, el RAG (Retrieval-Augmented Generation) recupera ese documento porque habla del mismo tema y el modelo lee la instrucción como una orden más.\nGreshake et al. (2023) lo demostraron en aplicaciones reales.\nPasos: rag create, rag ingest, rag upload <rag> <id> <texto>, otra vez rag ingest y rag ask con la pregunta de la víctima.\nPor qué: es OWASP (Open Worldwide Application Security Project) LLM01, el fallo de A1-02: órdenes y datos en un solo canal.",
+      "teach": "Inyección indirecta (LLM01:2025)\nLa inyección indirecta es meter una orden para el modelo dentro de un documento que el RAG va a leer, en lugar de dársela tú por el chat.\nEn A1 el atacante escribía en el chat; aquí escribe en un documento: la víctima pregunta algo normal, el RAG (Retrieval-Augmented Generation) recupera ese documento porque habla del mismo tema y el modelo lee la instrucción escondida como una orden más.\nGreshake et al. (2023) lo demostraron en aplicaciones reales.\nEs como dejar una nota falsa dentro de un expediente: el funcionario que lo abre la lee y la obedece sin saber quién la metió.\nPasos: rag create, rag ingest, rag upload <rag> <id> <texto>, otra vez rag ingest y rag ask con la pregunta de la víctima.\nPor qué en tu camino: es OWASP (Open Worldwide Application Security Project) LLM01, el mismo fallo de A1-02 (órdenes y datos en un solo canal), pero ahora el atacante ni siquiera habla con el asistente.",
       "prediction": {
         "prompt": "¿Obedecerá el asistente una instrucción que no escribe el usuario, sino que está dentro de un documento?",
         "options": [
@@ -73,7 +73,7 @@
     {
       "id": "o2",
       "text": "Envenenamiento: sin usar ninguna instrucción, sube un mensaje de foro con un dato FALSO sobre la garantía y consigue que el asistente lo dé por bueno ante la pregunta «¿Qué garantía tienen las katanas frente a defectos de forja?».",
-      "teach": "Envenenar la recuperación (LLM04 / LLM08)\nNo hace falta dar órdenes: basta con que un texto falso se recupere ANTES que el verdadero.\nComo la búsqueda compara vectores, un documento que repite las palabras de la pregunta puede ganar a la documentación oficial.\nPor qué: investigaciones como PoisonedRAG (2024) muestran que unos pocos documentos bastan para controlar las respuestas de un RAG (Retrieval-Augmented Generation) sobre un tema.",
+      "teach": "Envenenar la recuperación (LLM04 / LLM08)\nEnvenenar es colar un dato FALSO en la base para que el asistente lo dé por bueno, sin dar ninguna orden.\nNo hace falta mandar nada: basta con que ese texto falso se recupere ANTES que el verdadero. Como la búsqueda compara vectores, un documento que repite las palabras de la pregunta puede ganar a la documentación oficial.\nEs como colar una entrada falsa en una enciclopedia abierta: quien la consulta se fía, porque está justo donde esperaba encontrar la verdad.\nPor qué en tu camino: investigaciones como PoisonedRAG (2024) muestran que unos pocos documentos bastan para controlar las respuestas de un RAG (Retrieval-Augmented Generation) sobre un tema, y por eso las defensas contra la inyección (que buscan órdenes) no detienen el envenenamiento (que planta datos).",
       "validator": {
         "type": "event",
         "event": "rag.answered",
@@ -92,7 +92,7 @@
     {
       "id": "o3",
       "text": "Fuga por falta de control de acceso: como CLIENTE, consigue que el asistente te revele información de un documento interno.",
-      "teach": "Autorización en la recuperación (LLM02)\nEl índice mezcla documentos internos y públicos, y la búsqueda no comprueba quién pregunta.\nEl modelo no sabe qué es confidencial: si el fragmento se recupera, lo usa.\nLas preguntas de rag ask se hacen como cliente salvo que indiques --as empleado.\nPor qué: en un RAG (Retrieval-Augmented Generation) de empresa, el control de acceso es el fallo más caro.",
+      "teach": "Autorización en la recuperación (LLM02)\nAquí el fallo no es un texto malicioso, sino un permiso que falta: el índice mezcla documentos internos y públicos, y la búsqueda no comprueba quién pregunta.\nEl modelo no sabe qué es confidencial: si el fragmento se recupera, lo usa. Las preguntas de rag ask se hacen como cliente salvo que indiques --as empleado.\nEs como una biblioteca donde la sala reservada y la pública comparten estantería: si nadie mira tu carné al entregarte el libro, un cualquiera se lleva el expediente confidencial.\nPor qué en tu camino: en un RAG (Retrieval-Augmented Generation) de empresa el control de acceso es el fallo más caro, porque filtra datos reales de personas y contratos, no una respuesta equivocada.",
       "validator": {
         "type": "event",
         "event": "rag.answered",
@@ -110,7 +110,7 @@
     {
       "id": "o4",
       "text": "Inversión de embeddings: lee el vector del fragmento costes#0 y reconstruye su contenido a partir de él.",
-      "teach": "Los vectores también son datos (LLM08)\nMuchos equipos protegen los documentos pero dejan la base vectorial accesible («solo son números»).\nrag vector <rag> <fragmento> muestra el vector; rag invert intenta reconstruir el texto. Con TF-IDF (Term Frequency–Inverse Document Frequency) es trivial: cada dimensión ES una palabra.\nCon embeddings densos hace falta un modelo de inversión; Morris et al. (2023) recuperaron así muchos textos cortos de forma exacta.\nPor qué: un embedding hereda la sensibilidad del texto del que sale.",
+      "teach": "Los vectores también son datos (LLM08)\nUn vector no es «solo números»: guarda la huella del texto del que salió, y muchas veces se puede dar la vuelta para recuperar ese texto.\nMuchos equipos protegen los documentos pero dejan la base vectorial accesible. rag vector <rag> <fragmento> muestra el vector; rag invert intenta reconstruir el texto. Con TF-IDF (Term Frequency–Inverse Document Frequency) es trivial: cada dimensión ES una palabra.\nCon embeddings densos hace falta un modelo de inversión; Morris et al. (2023) recuperaron así muchos textos cortos de forma exacta.\nEs como creer que una huella dactilar es un garabato sin valor: parece un dibujo, pero identifica a la persona.\nPor qué en tu camino: un embedding hereda la sensibilidad del texto del que sale, así que la base vectorial se protege igual que los propios documentos.",
       "validator": {
         "type": "event",
         "event": "rag.inverted",
@@ -129,7 +129,7 @@
     {
       "id": "o5",
       "text": "Mide el riesgo con la batería de ataques A2. ¿Qué tasa de éxito obtiene? (answer <número>)",
-      "teach": "Batería A2\nrag attack <rag> ejecuta 5 ataques (inyección indirecta, envenenamiento, 2 fugas y la inversión) sobre una COPIA de la base de conocimiento, para no ensuciar la tuya.\nPor qué: como en A1, esta tasa de éxito es tu «antes» para medir las defensas de A2-03.",
+      "teach": "Batería A2\nUna batería es un conjunto fijo de ataques que se lanzan de golpe para medir cuántos funcionan.\nrag attack <rag> ejecuta 5 ataques (inyección indirecta, envenenamiento, 2 fugas y la inversión) sobre una COPIA de la base de conocimiento, para no ensuciar la tuya.\nEs como la revisión de la ITV: una lista fija de pruebas, siempre las mismas, para poder comparar el coche de hoy con el de dentro de un año.\nPor qué en tu camino: como en A1, esta tasa de éxito es tu «antes», la cifra con la que medirás cuánto cierran las defensas de A2-03.",
       "validator": {
         "type": "all",
         "of": [
@@ -156,7 +156,7 @@
     {
       "id": "o6",
       "text": "Documenta uno de los hallazgos (inyección indirecta, envenenamiento o fuga) en un informe que supere la rúbrica.",
-      "teach": "Informe de un hallazgo del asistente\nMisma estructura que en A1. En «componente» sé preciso: ¿falla la ingesta (qué fuentes se aceptan), la recuperación (qué se devuelve a quién) o el modelo?\nCategorías OWASP (Open Worldwide Application Security Project): LLM01 inyección indirecta, LLM02 información sensible, LLM04 envenenamiento de datos, LLM08 debilidades de vectores y embeddings.\nPor qué: nombrar bien el componente dice al equipo dónde poner la defensa.",
+      "teach": "Informe de un hallazgo del asistente\nUn buen informe de seguridad no dice «ha funcionado»: dice QUÉ falla, DÓNDE y cómo reproducirlo. Misma estructura que en A1.\nEn «componente» sé preciso: ¿falla la ingesta (qué fuentes se aceptan), la recuperación (qué se devuelve a quién) o el modelo?\nCategorías OWASP (Open Worldwide Application Security Project): LLM01 inyección indirecta, LLM02 información sensible, LLM04 envenenamiento de datos, LLM08 debilidades de vectores y embeddings.\nEs como el parte de un perito: no basta con decir que el coche falla, hay que señalar la pieza exacta para que el taller sepa qué cambiar.\nPor qué en tu camino: nombrar bien el componente le dice al equipo DÓNDE poner la defensa; un hallazgo mal localizado no lo arregla nadie.",
       "validator": {
         "type": "event",
         "event": "report.checked",
@@ -174,7 +174,7 @@
       "id": "o7",
       "diagram": {"kind":"table","title":"LA IDEA · órdenes frente a datos","headers":["ataque","qué lleva el texto","defensa que sirve"],"rows":[["inyección indirecta","una ORDEN escondida para el modelo","marcar el contenido como datos"],["envenenamiento","un DATO falso bien posicionado","controlar de dónde vienen los documentos"]],"caption":"se confunden a menudo, pero necesitan defensas distintas: lo que frena las órdenes no frena las mentiras. Por eso clasificar bien el ataque es el primer paso."},
       "text": "Un mensaje de foro afirma, sin dar ninguna orden, que la garantía es de 0 días, y el asistente lo repite. ¿Qué ataque es?",
-      "teach": "Órdenes frente a datos\nHas visto cuatro ataques. Dos se confunden a menudo: la inyección indirecta (órdenes escondidas en un documento) y el envenenamiento (datos falsos que se recuperan).\nPor qué: confundirlos lleva a poner la defensa equivocada, como verás en A2-03.",
+      "teach": "Órdenes frente a datos\nHas visto cuatro ataques. Dos se confunden a menudo: la inyección indirecta (ÓRDENES escondidas en un documento) y el envenenamiento (DATOS falsos que se recuperan).\nLa diferencia no es un matiz: mira el diagrama de la izquierda, cada uno necesita una defensa distinta. Lo que frena las órdenes (marcar el contenido como datos) no frena las mentiras (controlar de dónde vienen los documentos).\nEs como distinguir a un impostor que te da una orden de un cartel con un dato falso: contra el primero compruebas quién manda; contra el segundo, de dónde salió la información.\nPor qué en tu camino: confundirlos lleva a poner la defensa equivocada y creerte protegido sin estarlo, como verás en A2-03.",
       "choices": [
         {
           "id": "a",

@@ -54,7 +54,7 @@
     {
       "id": "o1",
       "text": "Lee la cadena: chain show. Etiqueta los seis pasos con chain label <paso> <ASIxx>.",
-      "teach": "Seis eslabones\nEntrada manipulada (S1) → el agente adopta un objetivo ajeno (S2) → lo guarda en memoria (S3) → usa una herramienta legítima para sacar datos (S4) → arrastra a otro agente sin firma (S5) → la cascada entre agentes tumba el correo (S6).\nPor qué: cada eslabón es un ASI que ya conoces; verlos en fila es ver el incidente entero.",
+      "teach": "Seis eslabones\nchain show te enseña la cadena y chain label <paso> <ASIxx> la etiquetas. Un incidente real no es un riesgo suelto, es una fila de piezas que se empujan: entrada manipulada (S1) → el agente adopta un objetivo ajeno (S2) → lo guarda en memoria (S3) → usa una herramienta legítima para sacar datos (S4) → arrastra a otro agente sin firma (S5) → la cascada entre agentes tumba el correo (S6). Míralo en el diagrama de la izquierda.\nPara qué en tu camino: cada eslabón es un riesgo ASI que ya conoces de O7-01; verlos en fila, y no sueltos, es lo que separa un threat model de agentes de una lista de la compra. Así piensa un atacante y así tienes que pensar tú.\nEs como las fichas de dominó: nadie las tira una a una, cae la primera y arrastra a todas. Entender el incidente es ver la fila entera, no una ficha.",
       "validator": {
         "type": "event",
         "event": "chain.labeled",
@@ -70,7 +70,7 @@
     {
       "id": "o2",
       "text": "Repite el ataque sin defensas: chain run. ¿Salen datos por alguna de las dos entradas? (answer si o no)",
-      "teach": "Dos entradas, una cadena\nEl mismo ataque entra por dos sitios: la descripción de una herramienta MCP (mcp) o una página web que el agente consulta (web). A partir de S2, la cadena es idéntica.\nPor qué: defender solo la entrada por la que te atacaron la última vez deja la otra abierta.",
+      "teach": "Dos entradas, una cadena\nchain run repite el ataque sin defensas. Lo interesante: la misma cadena entra por dos puertas distintas, la descripción de una herramienta MCP (mcp) o una página web que el agente consulta (web). A partir de S2, el recorrido es idéntico venga de donde venga.\nQué significa: los datos salen por las dos, porque S4 y S5 no dependen de cómo entró el ataque.\nPara qué en tu camino: es el error clásico tras un incidente, tapar solo la puerta por la que entraron esta vez y dejar la otra abierta para la próxima.\nEs como una casa con dos entradas: poner una cerradura carísima en la de delante y dejar la de atrás sin pestillo no te protege, solo cambia por dónde entrarán.",
       "validator": {
         "type": "all",
         "of": [
@@ -100,7 +100,7 @@
     {
       "id": "c1",
       "text": "¿Por qué no basta con el pinning de MCP (D4)?",
-      "teach": "Cortar una entrada no corta la cadena\nD4 (fijar versiones y hashes del servidor MCP) frena S1 por la entrada mcp. Pero la misma orden llega por una web, que D4 no toca.\nPor qué: una defensa que cubre una entrada deja la cadena viva por la otra; hay que cortar en un punto común o cubrir todas las entradas.",
+      "teach": "Cortar una entrada no corta la cadena\nD4 (fijar versiones y hashes del servidor MCP, el pinning) frena S1, pero solo por la entrada mcp. La misma orden llega igual por una página web, y ahí D4 no pinta nada: la cadena sigue viva.\nPara qué en tu camino: una defensa que cubre una sola entrada deja el ataque en pie por las demás. Las dos salidas buenas son cortar en un punto por el que pase todo el daño, o cubrir todas las entradas a la vez.\nEs como cerrar una de las dos carreteras que llegan a tu pueblo: el que quiere entrar simplemente toma la otra. O cierras las dos, o pones el control más adelante, donde las dos se juntan.",
       "choices": [
         {
           "id": "a",
@@ -133,7 +133,7 @@
     {
       "id": "o3",
       "text": "Busca un corte que valga para las dos entradas. Activa D2 (lista blanca y validación de herramientas): chain defend D2 on y chain run. ¿Salen datos ahora? (answer si o no)",
-      "teach": "Cortar en el cuello de botella\nTodo el daño pasa por un punto: usar enviar_correo para sacar datos (S4) y arrastrar al otro agente (S5). D2 limita y valida las herramientas, así que corta ahí, da igual cómo entrara el ataque.\nPor qué: el mejor sitio para cortar una cadena es el eslabón por el que pasa todo el daño, no la entrada.",
+      "teach": "Cortar en el cuello de botella\nFíjate dónde se junta todo el daño: tanto S4 (usar enviar_correo para sacar datos) como S5 (arrastrar al otro agente) pasan por usar una herramienta. D2 limita y valida las herramientas, así que corta justo ahí, da igual por qué puerta entró el ataque. Actívala con chain defend D2 on y lanza chain run.\nQué significa: no salen datos por ninguna entrada, con una sola defensa bien colocada.\nPara qué en tu camino: el mejor sitio para cortar una cadena casi nunca es la entrada (hay muchas), sino el eslabón estrecho por el que pasa todo el daño; ahí una defensa lo cubre todo.\nEs el cuello de botella de un embudo: por ancha que sea la boca, todo el líquido pasa por el mismo punto estrecho; tapa ahí y lo paras todo.",
       "validator": {
         "type": "all",
         "of": [
@@ -162,7 +162,7 @@
     {
       "id": "c2",
       "text": "El objetivo sigue secuestrado (S2) aunque no salgan datos. ¿Qué añades?",
-      "teach": "Defensa en profundidad\nD2 corta la fuga, pero la entrada (S1), el secuestro (S2) y la memoria envenenada (S3) siguen ocurriendo. Se añaden defensas antes (D1 delimitar, D4 pinning) y después (D6 memoria con origen, D8 disyuntores).\nPor qué: una sola defensa que funciona hoy puede fallar mañana; en profundidad, el ataque tiene que saltarse varias.",
+      "teach": "Defensa en profundidad\nD2 corta la fuga, pero mira la cadena: la entrada manipulada (S1), el objetivo secuestrado (S2) y la memoria envenenada (S3) siguen ocurriendo tal cual. Por eso se añaden defensas antes (D1 delimitar la entrada, D4 pinning) y después (D6 memoria con origen, D8 disyuntores entre agentes).\nPara qué en tu camino: confiar todo a una sola defensa es peligroso, porque la que funciona hoy puede fallar mañana (un bug, una versión nueva, un caso no previsto). En profundidad, para que haya daño el ataque tiene que saltarse varias barreras seguidas, y eso es muchísimo más difícil.\nEs como la seguridad de un castillo: foso, muralla, puerta y guardias. No confías en el foso solo; quieres que, aunque crucen uno, aún les queden tres.",
       "choices": [
         {
           "id": "a",
@@ -195,7 +195,7 @@
     {
       "id": "py1",
       "text": "Programa la comprobación de la cadena: abre el editor con py, completa hay_fuga y compruébala con py check.",
-      "teach": "¿Sale algo?, en código\nUn paso ocurre si ocurren todos los de los que depende y ninguna defensa lo corta. Hay fuga si ocurre algún paso marcado como fuga.\nPor qué: es, en pequeño, lo que calcula chain run.",
+      "teach": "¿Sale algo?, en código\nLa idea: un paso ocurre si ocurren todos los de los que depende y ninguna defensa lo corta; hay fuga si llega a ocurrir alguno de los pasos marcados como fuga.\nCómo: completa la línea y compruébala con py check.\nPara qué en tu camino: es, en pequeño, lo que calcula chain run para decidir si los datos salen. Programarlo te deja ver que basta con que UN paso de fuga sobreviva para que el incidente sea real.",
       "py_exercise": {
         "id": "O7-05-fuga",
         "title": "hay_fuga(ocurre, fuga): ¿sale algún dato?",

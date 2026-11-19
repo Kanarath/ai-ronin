@@ -78,7 +78,7 @@
     {
       "id": "o1",
       "text": "En el Dojo: abre el editor con py, programa sin_fijar, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las seis funciones de verificador.py hasta que pasen los 27 tests y trae la evidencia.",
-      "teach": "Una regla, un nombre\nTrabajas fuera del Dojo, en forja/labs/A6-04_cadena: el README lo explica todo.\nCada comprobación devuelve tuplas (regla, detalle), como «hash-distinto» o «secreto-en-arg».\nCon nombres así puedes medir qué control detecta qué, y una CI (Continuous Integration) puede decidir qué reglas bloquean y cuáles solo avisan.\nEmpieza por imports_pickle: el truco está en la memoria del pickle (MEMOIZE y BINGET).\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: es el tipo de herramienta que corre en la CI de los equipos que publican y despliegan modelos.",
+      "teach": "Una regla, un nombre\nTrabajas fuera del Dojo, en forja/labs/A6-04_cadena: el README lo explica todo.\nFíjate en una decisión de diseño que parece menor y no lo es: cada comprobación devuelve tuplas (regla, detalle), como «hash-distinto» o «secreto-en-arg». Con nombres así puedes medir qué control detecta qué, y una CI (Continuous Integration) puede decidir qué reglas bloquean y cuáles solo avisan.\nEmpieza por imports_pickle: el truco está en la memoria del pickle (MEMOIZE y BINGET).\nEs como etiquetar cada hallazgo de una inspección con un código, no con una frase suelta: así el sistema puede ordenarlos, contarlos y decidir cuáles paran la obra y cuáles solo se anotan.\nPara qué en tu camino: es el tipo de herramienta que corre en la CI de los equipos que publican y despliegan modelos. En el Dojo haces este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.",
       "validator": {
         "type": "any",
         "of": [
@@ -178,7 +178,7 @@
         "Si quieres menos filas: py -3.13 bateria.py --configs \"ninguna;bom;pickle,safetensors,bom,deps,docker\""
       ],
       "on_complete": "Tienes los números. Mira primero la fila «bom» y, después, la última.",
-      "teach": "Medir cada control\nbateria.py pasa los artefactos buenos y malos de los dos proyectos por cada control, por separado y todos juntos.\nDetección: cuántos malos para. Falsos positivos: cuántos buenos rechaza por error.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: en un equipo real, un control con muchos falsos positivos se acaba desactivando; hay que medir las dos cosas."
+      "teach": "Medir cada control\nbateria.py pasa los artefactos buenos y malos de los dos proyectos por cada control, por separado y todos juntos. Dos números por control: detección (cuántos MALOS para) y falsos positivos (cuántos BUENOS rechaza por error).\nEs como juzgar una prueba médica: no basta con que encuentre a los enfermos (detección); si además manda al quirófano a gente sana (falsos positivos), el remedio es peor que la enfermedad.\nEn el Dojo, forja medir reproduce una medición real ya hecha con el modelo local en un portátil; medirlo en tu máquina es un extra.\nPara qué en tu camino: en un equipo real, un control con muchos falsos positivos se acaba desactivando igual que una alarma que pita sin motivo. Por eso se miden siempre las dos cosas, nunca solo la detección."
     },
     {
       "id": "o3",
@@ -193,12 +193,12 @@
         "Debajo de la fila verás de qué categoría es."
       ],
       "on_complete": "Uno: los datos envenenados del espejo comunitario. El AI-BOM los declara con su huella correcta, porque se generó después de descargarlos. Ningún control de formato o de integridad mira qué dicen los datos.",
-      "teach": "Lo que se escapa\nLa columna «se escapan» cuenta los artefactos malos que ningún control activo ha parado.\nPor qué: saber qué no ve tu verificador es tan importante como saber qué ve."
+      "teach": "Lo que se escapa\nLa columna «se escapan» cuenta los artefactos malos que, con todos los controles activos, ninguno ha parado. Aquí se te escapa uno: los datos envenenados del espejo, que el AI-BOM declara con su huella correcta porque se generó DESPUÉS de descargarlos.\nEs la revisión completa del coche que no detecta que el combustible viene adulterado: miró frenos, luces y motor, pero nadie analiza la gasolina.\nPara qué en tu camino: saber qué NO ve tu verificador es tan importante como saber qué ve. Un control de formato o de integridad nunca mira qué DICEN los datos; si crees que «todo en verde» equivale a «seguro», el ataque que se cuela es justo el que no mirabas."
     },
     {
       "id": "o4",
       "text": "Mira la fila «bom». Con solo el control del AI-BOM, ¿por qué no frenó ningún pickle con código?",
-      "teach": "Detección y coste\nCada control mira una pregunta distinta: ¿se ejecuta? (pickle), ¿está bien formado? (safetensors), ¿ha cambiado? (bom), ¿de dónde viene el código? (deps), ¿qué puede hacer si todo falla? (docker).\nPor qué: un control solo responde a su pregunta; confiar en él para otra deja pasar el ataque.",
+      "teach": "Detección y coste\nRepasa el reparto de preguntas, porque es la columna vertebral del laboratorio: ¿se ejecuta? (pickle), ¿está bien formado? (safetensors), ¿ha cambiado? (bom), ¿de dónde viene el código? (deps), ¿qué puede hacer si todo falla? (docker).\nUna huella del AI-BOM solo dice que el fichero es el que describe, no que sea inofensivo: puede ser el mismo pickle peligroso de siempre, idéntico a sí mismo.\nEs como la báscula y el termómetro: cada aparato mide lo suyo, y pedirle a la báscula que te diga la fiebre es absurdo.\nPara qué en tu camino: un control solo responde a SU pregunta; confiar en él para otra deja pasar el ataque con todas las luces en verde. Toda la seguridad de la cadena consiste en juntar las preguntas correctas, no en apilar controles al azar.",
       "choices": [
         {
           "id": "a",
@@ -231,7 +231,7 @@
     {
       "id": "o5",
       "text": "¿Por qué el verificador nunca hace pickle.load, ni siquiera para convertir a safetensors un modelo de un tercero?",
-      "teach": "Leer no es cargar\nRepasa la tarjeta «Leer un pickle no es cargarlo» y la conversión de A6-03.\nPor qué: en producción, los pickles de terceros no se cargan; se pide al autor el modelo en un formato sin código.",
+      "teach": "Leer no es cargar\nRepasa la tarjeta «Leer un pickle no es cargarlo» y la conversión de A6-03. La clave: pickletools.genops RECORRE el pickle opcode a opcode sin ejecutar nada, mientras que pickle.load EJECUTA su programa (GLOBAL importa, REDUCE llama a lo que su autor quiera).\nEs la diferencia entre LEER la receta de un plato y COCINARLO: puedes repasar cada paso de una bomba sin montarla. El verificador siempre lee; nunca cocina.\nPara qué en tu camino: en producción, los pickles de terceros no se cargan nunca, ni siquiera para convertirlos; se le pide al autor el modelo en un formato sin código. «Solo lo abro un momento para mirarlo» es, con un pickle ajeno, abrir la puerta al ataque.",
       "choices": [
         {
           "id": "a",

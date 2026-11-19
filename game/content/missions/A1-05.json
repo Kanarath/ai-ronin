@@ -55,7 +55,7 @@
     {
       "id": "o1",
       "text": "En el Dojo: abre el editor con py, programa contiene_secreto, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las seis funciones de chatbot.py hasta que pasen los 19 tests y trae la evidencia.",
-      "teach": "Normalizar antes de comparar\nUn filtro que busca «KUROGANE-77» literal se esquiva escribiendo «k u r o g a n e 7 7».\nPor eso contiene_secreto compara versiones normalizadas: minúsculas, sin tildes y sin separadores.\nAun así, no detecta una traducción o una paráfrasis.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: los filtros de salida reducen el riesgo, no lo eliminan; lo vas a medir con un modelo real.",
+      "teach": "Normalizar antes de comparar\nUn filtro que busca «KUROGANE-77» tal cual se esquiva en un segundo escribiendo «k u r o g a n e 7 7»: para el filtro son dos textos distintos; para una persona, el mismo código.\nPor eso contiene_secreto no compara en bruto: primero NORMALIZA las dos partes (minúsculas, sin tildes, sin separadores) y luego compara. Aun así, no detecta una traducción ni una paráfrasis, que cambian las letras del todo.\nEn el Dojo puedes hacer este paso sin instalar nada; montar el laboratorio completo en tu máquina es un extra.\nPara qué en tu camino: así ves por dentro por qué un filtro de salida reduce el riesgo pero no lo elimina, algo que vas a medir contra un modelo real.\nEs como el portero que compara el DNI con la lista: si no ignora tildes y mayúsculas, «josé» y «JOSÉ» le parecen personas distintas y se le cuela una.",
       "validator": {
         "type": "any",
         "of": [
@@ -125,7 +125,7 @@
     {
       "id": "o2",
       "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: con Ollama en marcha, ejecuta bateria.py (al menos 3 configuraciones, una sin defensas) y tráela con evidence import.",
-      "teach": "La batería real\nbateria.py envía los ataques y las preguntas legítimas al modelo real varias veces con cada configuración de defensas, y guarda los recuentos.\nevidence import trae la medición al Dojo.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: con un modelo real, la única forma de saber cuánto protege una defensa es repetir y contar.",
+      "teach": "La batería real\nbateria.py envía los ataques y las preguntas legítimas al modelo real, varias veces con cada configuración de defensas, y guarda los recuentos. evidence import trae esa medición al Dojo.\nEn el Dojo, forja medir reproduce una medición real ya hecha con el modelo local en un portátil; medirla tú en tu máquina es un extra.\nPara qué en tu camino: con un modelo real no hay síes ni noes, solo frecuencias, y la única forma de saber cuánto protege una defensa es repetir el ataque muchas veces y contar.\nEs como probar si un paraguas aguanta el viento: no lo sabes con una ráfaga, lo sacas diez días distintos y cuentas cuántas veces se da la vuelta.",
       "prediction": {
         "prompt": "Sin defensas, ¿con qué frecuencia crees que el modelo de 1B filtrará el canario ante la batería?",
         "options": [
@@ -155,7 +155,7 @@
     {
       "id": "o3",
       "text": "Imagina que, en la salida de bateria.py, los intervalos de Wilson de dos configuraciones se solapan mucho. ¿Qué puedes concluir?",
-      "teach": "Leer una medición\nCada configuración tiene una tasa de fuga y su INTERVALO DE CONFIANZA: el rango donde probablemente está la tasa real.\nCon pocos intentos, el intervalo es ancho.\nPor qué: decidir qué defensa desplegar con una tasa sin intervalo es decidir casi a ciegas.",
+      "teach": "Leer una medición\nCada configuración trae dos cosas: una tasa de fuga observada y su INTERVALO DE CONFIANZA, el rango donde probablemente está la tasa real. Con pocos intentos ese intervalo es ancho, y dos intervalos anchos se solapan con facilidad.\nRepasa la tarjeta «Tasas e intervalos» con mission brief: 0 fugas en 18 intentos no es «imposible», es «menos de un 18 % al 95 %».\nPara qué en tu camino: decidir qué defensa desplegar mirando solo la tasa, sin su intervalo, es decidir casi a ciegas; si dos se solapan mucho, tus datos aún no distinguen cuál es mejor.\nEs como dos corredores con cronómetros que miden de medio segundo: si acaban a una décima, no puedes proclamar un ganador, el margen de error se come la diferencia.",
       "choices": [
         {
           "id": "a",
@@ -188,7 +188,7 @@
     {
       "id": "o4",
       "text": "¿Por qué sin-secreto es la única corrección real de la fuga?",
-      "teach": "La corrección de verdad\nsin-secreto quita el canario del system prompt. Las otras configuraciones intentan impedir que salga.\nPor qué: es la diferencia entre tapar un síntoma y quitar la causa, la misma que viste en A1-03.",
+      "teach": "La corrección de verdad\nsin-secreto quita el canario del system prompt. Las otras configuraciones no lo quitan: solo intentan impedir que salga una vez que ya está dentro.\nEsa es toda la diferencia, la misma que viste en A1-03: tapar el síntoma frente a quitar la causa. Lo que el modelo no tiene en su contexto, no lo puede revelar, lo pidas como lo pidas.\nPara qué en tu camino: te entrena el reflejo de buscar siempre la defensa de arquitectura antes que el filtro, porque es la única que no depende de adivinar todas las formas del ataque.\nEs como guardar las joyas en el banco en vez de esconderlas mejor en casa: no hay escondite que gane a no tenerlas ahí.",
       "choices": [
         {
           "id": "a",

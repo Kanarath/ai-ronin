@@ -64,7 +64,7 @@
     {
       "id": "o1",
       "text": "Abre el encargo y lee las reglas: engagement start norte",
-      "teach": "El encargo\nengagement start abre el contrato: cliente, quién autoriza, ventana de pruebas y reglas de enfrentamiento.\nPor qué: la autorización por escrito es lo que separa una prueba de seguridad de un ataque.",
+      "teach": "El encargo\nUn red team es un ataque de mentira con permiso de verdad: buscas los fallos de un sistema antes de que lo haga un atacante real. Por eso lo primero no es atacar, es leer el contrato.\nengagement start norte abre ese contrato: quién es el cliente, quién autoriza, en qué ventana horaria puedes probar y las reglas de enfrentamiento (rules of engagement), las normas de la partida.\nComo el fontanero que entra en tu casa y, antes de tocar una tubería, te pregunta qué puede abrir: ese papel firmado es lo único que separa una prueba de seguridad de un delito. El mejor ataque sin permiso sigue siendo allanamiento.",
       "validator": {
         "type": "event",
         "event": "engagement.created",
@@ -79,7 +79,7 @@
     {
       "id": "c1",
       "text": "En mitad de una prueba aparecen datos personales reales. ¿Qué haces?",
-      "teach": "Las reglas mandan\nRelee las reglas del encargo: dicen qué hacer en este caso.\nPor qué: las reglas protegen a terceros que no han firmado nada.",
+      "teach": "Ante datos reales, parar y avisar\nEn mitad de una prueba aparecen datos personales de verdad: nombres, correos, datos de personas que no han firmado nada. ¿Qué manda hacer? Lo que diga el contrato, y los buenos contratos dicen lo mismo: parar y avisar a quien lleva el encargo.\nNi los anonimizas para seguir (seguirías tocando datos que no te autorizaron) ni los borras (destruirías la prueba de que el sistema los exponía). Mira el diagrama: parar, avisar, nada más.\nComo quien, cavando en su jardín, se encuentra unos huesos: no sigues cavando ni los tiras, llamas a quien corresponde. Las reglas no están para protegerte a ti, sino a terceros que no eligieron estar ahí; saltártelas convierte tu prueba en el incidente.",
       "choices": [
         {
           "id": "a",
@@ -132,7 +132,7 @@
     {
       "id": "o2",
       "text": "Comprueba si se puede probar el chatbot de producción: engagement scope norte A-07",
-      "teach": "Alcance\nengagement scope dice si un activo está dentro del contrato y dónde se prueba.\nPor qué: probar fuera de alcance, aunque sea por error, rompe la autorización.",
+      "teach": "Alcance\nengagement scope norte A-07 te dice si un activo concreto está dentro del contrato y dónde se puede tocar. El alcance (scope) es la lista de lo que entra; todo lo demás queda fuera, aunque sea del mismo cliente.\nPor qué aquí: en O2 vas a reconocer y en O3 a atacar; si no tienes clarísimo el alcance, un escaneo de más ya rompe la autorización, aunque fuera sin querer.\nEs la cinta de una obra: dentro puedes trabajar, un paso fuera y ya no estás cubierto, aunque la acera parezca igual.",
       "validator": {
         "type": "event",
         "event": "engagement.scoped",
@@ -149,7 +149,7 @@
     {
       "id": "c2",
       "text": "A-07 es la misma aplicación que A-01. ¿Por qué no se puede probar?",
-      "teach": "Producción frente a laboratorio\nUna copia de laboratorio se comporta igual, pero sin clientes reales.\nPor qué: una prueba puede degradar el servicio o exponer datos de quien no ha consentido.",
+      "teach": "Producción frente a laboratorio\nA-07 es la misma aplicación que A-01, con el mismo modelo detrás, pero A-07 es la de producción: la que usan los clientes de verdad ahora mismo. El permiso cubre solo la copia de laboratorio, que se comporta igual pero sin nadie real dentro.\nNo se prueba en producción porque una sola prueba puede tirar el servicio o exponer datos de gente que no ha consentido nada; y el riesgo no lo cambia que la app parezca «más segura».\nComo ensayar una obra en el teatro vacío, no el día del estreno con la sala llena: el mismo escenario, pero el público lo cambia todo.",
       "choices": [
         {
           "id": "a",
@@ -182,7 +182,7 @@
     {
       "id": "o3",
       "text": "Comprueba la API del proveedor: engagement scope norte A-06",
-      "teach": "Activos de terceros\nQue un sistema use un servicio no te da permiso para probarlo.\nPor qué: solo el dueño de un sistema puede autorizar pruebas sobre él.",
+      "teach": "Activos de terceros\nengagement scope norte A-06 es la API de un proveedor (acero-norte). Que la forja la use no la hace suya: sigue siendo de otra empresa.\nPor qué importa: solo el dueño de un sistema puede autorizar que lo prueben. Tu cliente no puede regalarte permiso sobre algo que no es suyo.\nComo que tu vecino te deje su casa no te autoriza a entrar en la del vecino de al lado, aunque compartan pared. Tocar el sistema de un tercero sin su firma es ilegal, y el marrón te lo comes tú.",
       "validator": {
         "type": "event",
         "event": "engagement.scoped",
@@ -199,7 +199,7 @@
     {
       "id": "c3",
       "text": "Una prueba necesita tocar la API de acero-norte (A-06). ¿Quién puede autorizarla?",
-      "teach": "Quién firma\nEl cliente solo puede autorizar lo que es suyo.\nPor qué: atacar el sistema de un tercero sin su permiso es ilegal, aunque tu cliente te lo pida.",
+      "teach": "Quién firma\nUna prueba necesita tocar la API de acero-norte (A-06). ¿Quién puede autorizarla? Solo acero-norte, por escrito. Ni la directora de Forja del Norte (manda en lo suyo, no en lo ajeno) ni tú (el tamaño de la prueba no cambia de quién es el sistema).\nEl dueño del sistema es el único que puede dar permiso sobre él; es la misma regla del encargo, aplicada ahora a un tercero.\nComo que tu jefe no puede autorizar que entres en la empresa de al lado por pequeño que sea el recado. Atacar el sistema de otro sin su permiso es delito aunque tu cliente te lo pida.",
       "choices": [
         {
           "id": "a",
@@ -232,7 +232,7 @@
     {
       "id": "py1",
       "text": "Programa la regla del encargo: abre el editor con py, completa puedo_probar y compruébala con py check.",
-      "teach": "Las reglas, en código\nVas a escribir la comprobación que haces antes de cada prueba: en alcance, en laboratorio y dentro de la ventana de 08:00 a 18:00.\nPor qué: las herramientas de red team serias bloquean por código lo que el contrato prohíbe.",
+      "teach": "Las reglas, en código\nVas a escribir puedo_probar: la comprobación que un atacante serio hace antes de cada prueba. Tres puertas, y las tres tienen que dar «sí»: que el activo esté en alcance, que sea la copia de laboratorio y que la hora esté dentro de la ventana de 08:00 a 18:00 (las 18 ya no entran).\nPor qué en código: las herramientas de red team de verdad no se fían de la memoria; bloquean por software lo que el contrato prohíbe, para que un despiste a las 19:00 no acabe en un incidente.\nComo el lector de la tarjeta en una puerta de seguridad: da igual lo buena que sea tu excusa, si una sola condición falla, no abre.",
       "py_exercise": {
         "id": "O1-01-permiso",
         "title": "puedo_probar(activo, hora): ¿lo permite el contrato?",

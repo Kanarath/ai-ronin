@@ -77,7 +77,7 @@
     {
       "id": "o1",
       "text": "En el Dojo: abre el editor con py, programa hallazgos, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las nueve funciones de politica.py hasta que pasen los 18 tests y trae la evidencia.",
-      "teach": "Denegar por defecto\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E4-03_despliegue/README.md e implementa politica.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUn servicio de compose sin la clave «user:» no corre «con un usuario normal»: corre con el que diga la imagen, y muchas imágenes usan root. Un puerto sin IP (Internet Protocol) no está «en local»: escucha en todas las interfaces. Una IP que no sabes interpretar no es segura.\nEn cada duda, la regla dice no y explica por qué.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: es más barato añadir una línea al compose que investigar un incidente.",
+      "teach": "Denegar por defecto\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E4-03_despliegue/README.md e implementa politica.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nLa regla de oro está en el diagrama de la izquierda: lo que no se declara, se deniega. Un servicio de compose sin la clave «user:» no corre «con un usuario normal»: corre con el que diga la imagen, y muchas imágenes usan root. Un puerto sin IP (Internet Protocol) delante no está «en local»: escucha en todas las interfaces, abierto a la red. Una IP que no sabes interpretar no cuenta como segura.\nEs el portero que, si no reconoce tu cara o tu invitación, no te deja pasar «por si acaso»: la duda se resuelve hacia el no, y te dice el motivo.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: añadir una línea al compose cuesta diez segundos; investigar el incidente de un contenedor con root abierto a la red cuesta semanas.",
       "validator": {
         "type": "any",
         "of": [
@@ -212,7 +212,7 @@
         "Sin Ollama: python bateria.py --sin-canary (la medición de la política vale igual; el canary queda vacío)."
       ],
       "on_complete": "Tienes datos reales. Mira la sección 3: los compose.yaml que tú mismo has desplegado en la Forja.",
-      "teach": "La batería\nbateria.py aplica tu política a despliegues de prueba y a los compose.yaml de los laboratorios anteriores, y lanza un canary contra el modelo real si Ollama está en marcha. Después trae la medición con evidence import.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: una política probada solo con ejemplos inventados no sabes si deja pasar tus propios despliegues."
+      "teach": "La batería\nbateria.py aplica tu política a despliegues de prueba y, lo interesante, a los compose.yaml reales de tus laboratorios anteriores (P0-01, A1-05, A2-04), y lanza un canary contra el modelo real si Ollama está en marcha. Después trae la medición con evidence import.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirla en tu máquina es un extra.\nProbar tu propia regla contra tus propios despliegues es como pasar el detector de metales por tu mochila antes que por la de nadie: si tu política te suspende a ti, mejor saberlo ahora.\nPor qué: una política probada solo con ejemplos inventados no te dice si deja pasar, o bloquea de más, lo que tú mismo despliegas en la vida real."
     },
     {
       "id": "o3",
@@ -227,7 +227,7 @@
         "caption": "los umbrales y esta asimetría se fijan ANTES de la prueba, no al ver los resultados; equivocarse revirtiendo cuesta un despliegue, equivocarse promoviendo cuesta un incidente"
       },
       "text": "El canary revierte en cuanto se supera un umbral, pero para promover espera a tener datos suficientes. ¿Por qué esa asimetría?",
-      "teach": "Revertir pronto\nEl canary evalúa después de cada petición. Si los datos superan un umbral, revierte en ese momento; para promover, espera al final, con datos suficientes.\nPiensa en lo que cuesta cada error: revertir una versión buena, o dejar que una mala siga recibiendo usuarios.\nPor qué: los umbrales y esa asimetría se deciden antes de la prueba, no al ver los resultados.",
+      "teach": "Revertir pronto\nEl canary evalúa después de cada petición. Si los datos superan un umbral, revierte en ese mismo momento; para promover, en cambio, espera al final, con datos suficientes. Esa asimetría es deliberada (mírala en el diagrama de la izquierda).\nPiensa en lo que cuesta cada error: revertir una versión que era buena te cuesta un despliegue, una molestia; dejar que una versión rota siga recibiendo usuarios cuesta un incidente que crece cada minuto.\nEs el canario que da nombre a la técnica: en la mina, a la primera señal de que se apaga, sales corriendo; no esperas a «ver si se recupera».\nPor qué: los umbrales y esa asimetría se fijan ANTES de la prueba, no al ver los resultados, porque si no te los ajustarías a lo que te convenga ver.",
       "validator": {
         "type": "answer",
         "expected": "b",

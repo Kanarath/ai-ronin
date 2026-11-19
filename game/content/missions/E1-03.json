@@ -67,7 +67,7 @@
     {
       "id": "o1",
       "text": "En el Dojo: abre el editor con py, programa parametros_lora, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa la clase LoRA y las seis funciones de lora.py hasta que pasen los 15 tests y trae la evidencia.",
-      "teach": "nn.Module y nn.Parameter\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E1-03_lora_lente/README.md e implementa lora.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUn nn.Module registra solo los nn.Parameter que asignas como atributos (self.A = nn.Parameter(...)) y los submódulos (self.base = base). Así modelo.parameters() los encuentra y el optimizador puede moverlos. Un tensor normal asignado como atributo no se registra y no se entrenaría.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: es el error más típico al escribir un adaptador: el código corre, la pérdida no baja y nadie avisa.",
+      "teach": "nn.Module y nn.Parameter\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E1-03_lora_lente/README.md e implementa lora.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUn nn.Module registra solo los nn.Parameter que asignas como atributos (self.A = nn.Parameter(...)) y los submódulos (self.base = base). Así modelo.parameters() los encuentra y el optimizador puede moverlos. Un tensor normal asignado como atributo no se registra y no se entrenaría.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nEs como apuntarse en la lista de un equipo: solo entrenan los que figuran en ella. El tensor que no se registra como nn.Parameter se queda fuera y nunca lo mueve el optimizador.\nPor qué: es el error más típico al escribir un adaptador, el código corre, la pérdida no baja y nadie avisa; pierdes la tarde buscando un fallo que es solo un parámetro que nunca se apuntó.",
       "validator": {
         "type": "any",
         "of": [
@@ -194,7 +194,7 @@
         "python experimento.py · si la pérdida apenas baja, prueba --lr 0.005 o --pasos 60.",
         "answer c"
       ],
-      "teach": "Entrenar y mirar\nexperimento.py entrena el adaptador con una frase ficticia sobre la forja Kurogane, compara tres pruebas antes y después y aplica la lente a cada una de las 30 capas.\nPor qué: afinar mueve pesos que comparten todas las respuestas, no solo la del dato nuevo.",
+      "teach": "Entrenar y mirar\nexperimento.py entrena el adaptador con una frase ficticia sobre la forja Kurogane, compara tres pruebas antes y después y aplica la lente de logits a cada una de las 30 capas.\nQué verás: con la lente, el token ganador va cambiando capa a capa; mira el diagrama de la izquierda, donde «Paris» no gana hasta las últimas capas, así que la decisión se forma al final. Es una lectura aproximada, no una explicación.\nEs como revelar una foto Polaroid: al principio solo manchas, y la imagen aparece de golpe en los últimos segundos.\nPor qué: afinar mueve pesos que comparten todas las respuestas, no solo la del dato nuevo; por eso una frase sobre la forja puede cambiar también la respuesta de la Torre Eiffel, y hay que vigilar qué más tocaste sin querer.",
       "choices": [
         {
           "id": "a",
@@ -228,7 +228,7 @@
         "Mira la tarjeta «Por qué hace falta GPU».",
         "answer b"
       ],
-      "teach": "Las cuentas de memoria\nEl apartado 4 del experimento estima la memoria para entrenar con y sin LoRA; la tarjeta de arriba explica de dónde salen los 16 bytes por parámetro entrenable.\nPor qué: estas cuentas deciden en la práctica qué se puede afinar con qué máquina.",
+      "teach": "Las cuentas de memoria\nEl apartado 4 del experimento estima la memoria para entrenar con y sin LoRA; la tarjeta de arriba explica de dónde salen los 16 bytes por parámetro entrenable (el peso, su gradiente y dos estados de AdamW en float32).\nQué significa: un modelo de 7 B (7 000 millones de parámetros) entero pide unos 112 GB solo para esos estados, más las activaciones; por eso cabe el juguete en tu portátil, pero no el modelo grande.\nEs como la diferencia entre llevar la compra de una persona y mudar una casa entera: la misma furgoneta no sirve, hace falta un camión (la GPU, Graphics Processing Unit).\nPor qué: estas cuentas deciden en la práctica qué se puede afinar con qué máquina; LoRA baja lo entrenable a menos del 1 %, pero el modelo base sigue pasando hacia delante y atrás en cada paso.",
       "choices": [
         {
           "id": "a",

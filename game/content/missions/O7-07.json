@@ -48,7 +48,7 @@
     {
       "id": "o1",
       "text": "Mira los hallazgos y los cuatro marcos: marco list. Después, el primero: marco show F1.",
-      "teach": "Cuatro marcos, cuatro públicos\nASI (OWASP agéntico) y LLM Top 10 son para quien construye; MITRE ATLAS nombra la TÁCTICA del adversario, para inteligencia de amenazas; NIST AI RMF nombra la FUNCIÓN de gestión (GOVERN, MAP, MEASURE, MANAGE), para gobernanza.\nPor qué: cada equipo decide con su marco; un hallazgo que no se traduce no llega a quien tiene que actuar.",
+      "teach": "Cuatro marcos, cuatro públicos\nmarco list te enseña los hallazgos y los cuatro marcos; marco show F1, el primero. Cada marco habla para un público: ASI (OWASP agéntico) y LLM Top 10 son para quien construye el sistema; MITRE ATLAS nombra la TÁCTICA del adversario, para inteligencia de amenazas; NIST AI RMF nombra la FUNCIÓN de gestión (GOVERN, MAP, MEASURE, MANAGE), para gobernanza.\nPara qué en tu camino: cada equipo decide con su propio marco, y un hallazgo que no se traduce a su idioma no llega a quien tiene que actuar. Saber traducir entre marcos es de lo que más se paga en una oferta de AI security.\nEs como un parte médico: el mismo problema se cuenta distinto al paciente, al especialista y a la aseguradora; no cambia la dolencia, cambia a quién le hablas.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -72,7 +72,7 @@
     {
       "id": "o2",
       "text": "Mapea F1 (una web que ordena al agente reenviar datos) en los cuatro marcos: marco set F1 asi …, llm …, atlas … y nist …. Luego mira la ficha: marco card F1.",
-      "teach": "El primer hallazgo\nEs la inyección indirecta de A7-01: ASI01 (secuestro del objetivo), LLM01 (inyección de prompt), táctica ATLAS de entrada y, en NIST, la función donde se identifica el riesgo en el diseño.\nPor qué: el mismo fallo tiene un nombre en cada marco; la ficha los junta.",
+      "teach": "El primer hallazgo\nF1 es la inyección indirecta que atacaste en A7-01. Lo mapeas con marco set F1 asi … llm … atlas … nist … y luego marco card F1 junta la ficha. Sus cuatro nombres: ASI01 (secuestro del objetivo), LLM01 (inyección de prompt), la táctica ATLAS de entrada (Initial Access) y, en NIST, la función donde se identifica el riesgo en el diseño (MAP).\nPara qué en tu camino: el mismo fallo, un nombre por marco, y la ficha que los reúne es lo que haces de verdad en un informe que tiene que llegar a cuatro equipos a la vez.\nEs como una misma película con cuatro carteles según el país: cambia el título, no la película; quien la busca por su cartel la encuentra igual.",
       "validator": {
         "type": "event",
         "event": "marco.card",
@@ -89,7 +89,7 @@
     {
       "id": "o3",
       "text": "Mapea F3, el envenenamiento de memoria de O7-06: marco set F3 asi …, llm …, atlas … y nist …. ¿Qué táctica de ATLAS le corresponde? (answer <táctica>)",
-      "teach": "Lo que persiste\nF3 es ASI06 y, en el LLM Top 10, envenenamiento de datos/modelo (la memoria son datos del sistema). En ATLAS, un efecto que dura entre sesiones es la táctica de Persistence; en NIST, se vigila y mide (MEASURE).\nPor qué: relacionar ASI06 con la persistencia de ATLAS es lo que hace que el SOC lo trate como lo que es: un punto de apoyo del atacante que se queda.",
+      "teach": "Lo que persiste\nF3 es el envenenamiento de memoria de O7-06. Lo mapeas con marco set F3 asi … llm … atlas … nist … : ASI06 y, en el LLM Top 10, envenenamiento de datos/modelo (LLM04, porque la memoria son datos del sistema). En ATLAS, un efecto que dura entre sesiones es la táctica de Persistence; en NIST, algo que se vigila y mide (MEASURE).\nPara qué en tu camino: relacionar ASI06 con la Persistence de ATLAS es lo que hace que el SOC lo trate como lo que es, un punto de apoyo que el atacante deja plantado para quedarse, no un susto de una sola conversación.\nEs como distinguir entre un okupa de un día y uno que ya ha cambiado la cerradura: el equipo de amenazas necesita esa palabra, «persistencia», para saber que esto no se va solo.",
       "validator": {
         "type": "all",
         "of": [
@@ -119,7 +119,7 @@
     {
       "id": "c1",
       "text": "¿Para qué sirve mapear el mismo hallazgo a varios marcos?",
-      "teach": "Cada público, su marco\nEl ingeniero actúa con ASI/LLM, el analista de amenazas con ATLAS, la dirección y el auditor con NIST. Un hallazgo bien mapeado llega a los cuatro sin traducciones a mano.\nPor qué: en seguridad de IA, saber traducir entre marcos vale tanto como encontrar el fallo; es lo que piden las ofertas.",
+      "teach": "Cada público, su marco\nMapear a varios marcos no es papeleo, es lo contrario: el ingeniero actúa con ASI/LLM, el analista de amenazas con ATLAS, la dirección y el auditor con NIST. Un hallazgo bien mapeado llega a los cuatro de golpe, sin que nadie lo traduzca a mano una y otra vez.\nPara qué en tu camino: en seguridad de IA, saber traducir entre marcos vale tanto como encontrar el fallo. Un hallazgo que solo tú entiendes no mueve a nadie; uno que habla el idioma de cada equipo se arregla.\nEs como un buen intérprete en una reunión internacional: no añade ideas, pero sin él la mejor propuesta se queda sin que la mitad de la sala se entere.",
       "choices": [
         {
           "id": "a",
@@ -152,7 +152,7 @@
     {
       "id": "o4",
       "text": "Cierra el mapa que O7-02 dejó abierto. Las defensas que construiste en O7-03 y O7-04 tapan ASI05 y ASI09: asi close D10 ASI05 y asi close D11 ASI09.",
-      "teach": "El mapa, completo\nO7-02 dejó dos huecos: ASI05 (ejecución de código) y ASI09 (confianza humano-agente). En O7-03 montaste la caja de arena y en O7-04 la aprobación verificable. Ahora las asignas y el mapa queda sin huecos.\nPor qué: cerrar el mapa es el entregable para el comité: de diez riesgos, ninguno sin defensa, y cada defensa señalando la misión donde se construyó.",
+      "teach": "El mapa, completo\nO7-02 dejó dos filas vacías: ASI05 (ejecución de código) y ASI09 (confianza humano-agente). Pero no las dejaste vacías de verdad: en O7-03 montaste la caja de arena y en O7-04 la aprobación verificable. Ahora las asignas con asi close D10 ASI05 y asi close D11 ASI09, y el mapa queda sin huecos.\nPara qué en tu camino: cerrar el mapa es el entregable que espera un comité, de diez riesgos ninguno sin defensa, y cada defensa señalando la misión donde la construiste y mediste. Eso convierte semanas de trabajo técnico en una página que la dirección entiende.\nEs como terminar el cuadro de vacunas de una cartilla: lo valioso no es cada pinchazo suelto, es la hoja completa, sin casillas en blanco, que puedes enseñar cuando alguien pregunta si estás cubierto.",
       "validator": {
         "type": "event",
         "event": "asi.closed",
@@ -169,7 +169,7 @@
     {
       "id": "c2",
       "text": "Con el mapa cerrado, ¿qué le presentas al comité de riesgos?",
-      "teach": "El entregable\nUna matriz: cada riesgo ASI, la defensa que lo cubre, la evidencia (la misión o el lab donde se midió) y cuándo se revisa. Mapeada además a LLM Top 10, ATLAS y NIST para cada público.\nPor qué: es lo que convierte semanas de trabajo técnico en una página que la dirección entiende y aprueba.",
+      "teach": "El entregable\nAl comité no le llevas código ni la lista pelada de riesgos: le llevas una matriz. Cada riesgo ASI, la defensa que lo cubre, la evidencia (la misión o el lab donde lo mediste) y cuándo toca revisarlo. Y mapeada además a LLM Top 10, ATLAS y NIST, para que cada público lea su columna.\nPara qué en tu camino: es lo que convierte semanas de trabajo técnico en una sola página que la dirección entiende, aprueba y financia. Sin cobertura ni evidencia, «tenemos muchas defensas» no demuestra nada.\nEs como la ITV del coche: no le enseñas al dueño las piezas del motor, le das el informe de qué se revisó, qué pasó, qué falta y cuándo vuelve. Eso es lo que firma.",
       "choices": [
         {
           "id": "a",
@@ -202,7 +202,7 @@
     {
       "id": "py1",
       "text": "Programa la comprobación de la ficha: abre el editor con py, completa ficha_completa y compruébala con py check.",
-      "teach": "Ficha completa, en código\nUn hallazgo está listo para presentar si tiene los cuatro marcos rellenos.\nPor qué: es lo que comprueba marco card antes de enseñar la ficha.",
+      "teach": "Ficha completa, en código\nLa regla: un hallazgo está listo para presentar solo si tiene los cuatro marcos rellenos; si falta uno, no está completa.\nCómo: completa la línea y compruébala con py check.\nPara qué en tu camino: es lo que comprueba marco card antes de enseñarte la ficha. Programarlo deja claro que «listo para el comité» no es una opinión, es una comprobación concreta, los cuatro idiomas presentes.",
       "py_exercise": {
         "id": "O7-07-ficha",
         "title": "ficha_completa(mapeo, marcos): ¿están los cuatro?",

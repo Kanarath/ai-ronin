@@ -89,7 +89,7 @@
         "soc trazas taller · soc log taller tool_args on · soc log taller retrievals on · soc log taller identity on · soc log taller model_version on · soc log taller redact-pii on · soc show taller S04"
       ],
       "on_complete": "Causa raíz: un documento del portal de proveedores con texto invisible para una persona y visible para el modelo. Es una inyección indirecta, la categoría LLM01 de OWASP (Open Worldwide Application Security Project), que termina en exfiltración de datos.",
-      "teach": "Reconstruir la sesión\nEl laboratorio empieza limpio: vuelve a crear el registro con soc trazas taller y activa los seis campos y la redacción con soc log … on, como en O6-01.\nDespués, soc show <registro> S04 enseña qué documento recuperó el agente justo antes de sacar los datos. Ese documento es la causa raíz: lo que hizo que todo empezara.\nPor qué: en un agente, la causa raíz suele ser un contenido externo; si no la encuentras, el ataque vuelve.",
+      "teach": "Reconstruir la sesión\nResponder a un incidente empieza por entender qué pasó, paso a paso. El laboratorio arranca limpio: vuelve a crear el registro con soc trazas taller y activa los seis campos y la redacción con soc log … on, como en O6-01.\nDespués, soc show <registro> S04 despliega la línea de tiempo y te enseña qué documento recuperó el agente justo antes de sacar los datos. Ese documento es la causa raíz: la chispa que lo encendió todo. Mira el diagrama: primero entender, luego contener, luego aprender.\nPara qué en tu camino: en un agente, la causa raíz casi nunca es un fallo de código; es un contenido externo (un documento, un correo, una web) con instrucciones escondidas. Si no la encuentras, has apagado el humo pero no el fuego, y el ataque vuelve.\nEs como un incendio en casa: cortar las llamas no basta si no encuentras el enchufe que chispeaba; mientras siga ahí, volverá a arder.",
       "diagram": {"kind": "chips", "title": "LA IDEA · el ciclo de respuesta a incidentes", "chips": [{"text": "preparación", "color": "muted"}, {"text": "→", "color": "muted"}, {"text": "detección y análisis", "color": "gold"}, {"text": "→", "color": "muted"}, {"text": "contención y erradicación", "color": "teal"}, {"text": "→", "color": "muted"}, {"text": "lecciones aprendidas", "color": "cyan"}], "caption": "el ciclo de NIST SP 800-61: primero entender, luego contener, luego aprender. En un agente la causa raíz suele ser un dato, no un fallo de código."}
     },
     {
@@ -118,7 +118,7 @@
         "soc search taller prov-77"
       ],
       "on_complete": "Dos: S04 y S07, de dos personas distintas en dos días. Las víctimas no son quienes usaron el asistente, sino los 212 clientes cuyos datos salieron.",
-      "teach": "Medir el alcance\nsoc search <registro> <texto> busca un texto en todas las sesiones. Busca el documento para saber cuántas sesiones lo recuperaron.\nPor qué: el alcance (cuántas sesiones, cuántas personas afectadas) decide la gravedad y si hay que notificar."
+      "teach": "Medir el alcance\nUn incidente rara vez es un caso único. soc search <registro> <texto> busca ese texto en todas las sesiones del registro; busca el documento culpable para saber cuántas veces se recuperó.\nQué significa: cada sesión afectada puede ser más personas cuyos datos salieron. El alcance —cuántas sesiones, cuántas personas— es lo que decide la gravedad del incidente y si hay obligación de notificar.\nPara qué en tu camino: antes de contener, el equipo mide hasta dónde llegó; una fuga de 2 personas y una de 2.000 se tratan distinto.\nEs como encontrar moho en una pared: lo primero no es taparlo, es mirar cuánto se ha extendido por detrás, porque de eso depende todo lo demás."
     },
     {
       "id": "o3",
@@ -154,7 +154,7 @@
         "soc contain taller apagar-agente on · soc retest taller"
       ],
       "on_complete": "0: frena los dos ataques y también todo lo demás. Es una buena primera reacción si no sabes qué pasa; ahora que lo sabes, hay que sustituirla por algo más fino.",
-      "teach": "Contener: el interruptor de emergencia\nsoc contain <registro> <acción> on aplica una contención; soc retest <registro> repite los ataques y las tareas legítimas del taller.\nEl retest da dos cifras: cuántos ataques siguen teniendo éxito y qué proporción de tareas legítimas sale bien (de 0 a 1).\nPor qué: una contención se mide por las dos cifras; frenar el ataque parando todo el trabajo también tiene un coste."
+      "teach": "Contener: el interruptor de emergencia\nContener es frenar el ataque ya, antes de arreglar nada a fondo. soc contain <registro> <acción> on aplica una contención, y soc retest <registro> vuelve a lanzar los ataques y también las tareas legítimas del taller.\nQué significa el retest: te da dos cifras, cuántos ataques siguen teniendo éxito y qué proporción de las tareas legítimas sale bien (de 0 a 1). Las dos importan: una contención no se juzga solo por lo que frena.\nPara qué en tu camino: apagar el agente entero es la reacción más fácil y a veces la correcta al principio, pero para todo el trabajo legítimo a la vez. Ese coste hay que verlo con números.\nEs como cortar la luz de todo el edificio para apagar un enchufe que chispea: funciona, sí, pero dejas a oscuras a todos los vecinos."
     },
     {
       "id": "o4",
@@ -180,7 +180,7 @@
         "soc contain taller apagar-agente off · soc contain taller cuarentena-fuente on · soc retest taller"
       ],
       "on_complete": "Uno: el atacante sube otro documento con la misma nota.",
-      "teach": "Erradicar el dato\ncuarentena-fuente saca del índice el documento que trae las instrucciones.\nAntes de mirar el resultado, piensa qué puede hacer el atacante después.\nPor qué: erradicar es quitar la causa raíz de ESTE incidente; un retest dice si con eso basta."
+      "teach": "Erradicar el dato\nErradicar es quitar la causa raíz de ESTE incidente. cuarentena-fuente saca del índice el documento que trae las instrucciones, para que el agente no vuelva a recuperarlo.\nAntes de mirar el resultado, para y piensa: si tú fueras el atacante y te quitan ese documento, ¿qué harías? Esa pregunta es media defensa.\nPara qué en tu camino: quitar el documento concreto frena el ataque que ya conoces, pero no la capacidad que lo hizo posible. El retest te dirá si basta o si solo has tapado una rendija.\nEs como retirar la seta venenosa que alguien dejó en tu cocina: has quitado esa, pero nada impide que mañana dejen otra."
     },
     {
       "id": "c1",
@@ -217,7 +217,7 @@
     {
       "id": "o5",
       "text": "Consigue 0 ataques con éxito y 1,0 en las tareas legítimas, y avisa al delegado de protección de datos.",
-      "teach": "Actuar sobre la acción y avisar\nLa contención que actúa sobre la ACCIÓN (a dónde puede enviar datos el agente) es bloquear-salida. Y avisa con notificar-dpd: salieron datos de 212 clientes.\nEl RGPD (Reglamento General de Protección de Datos), art. 33, obliga al responsable a notificar la violación a la autoridad sin dilación indebida y, si es posible, en 72 horas desde que tiene constancia, salvo que sea improbable que suponga un riesgo para las personas. Una propuesta de 2025 plantea cambiar este plazo; a 11 de noviembre de 2026 no está aprobada.\nLo evalúa la organización con su DPD (delegado de protección de datos; en inglés, DPO). Formación, no asesoramiento jurídico.\nPor qué: si hay datos personales, también es un incidente de protección de datos.",
+      "teach": "Actuar sobre la acción y avisar\nLa cuarentena quita un dato; esto quita una capacidad. La contención que actúa sobre la ACCIÓN (a dónde puede enviar datos el agente) es bloquear-salida: no importa qué documento lo ordene, el agente ya no puede mandar nada a un destino no permitido. Y avisa con notificar-dpd: salieron datos de 212 clientes.\nEl RGPD (Reglamento General de Protección de Datos), art. 33, obliga al responsable a notificar la violación a la autoridad sin dilación indebida y, si es posible, en 72 horas desde que tiene constancia, salvo que sea improbable que suponga un riesgo para las personas. Una propuesta de 2025 plantea cambiar este plazo; a 11 de noviembre de 2026 no está aprobada.\nLo evalúa la organización con su DPD (delegado de protección de datos; en inglés, DPO). Formación, no asesoramiento jurídico.\nPara qué en tu camino: cuando la causa cambia de forma (otro documento, otra web), un control sobre el dato falla y uno sobre la acción aguanta. Piénsalo como cerrar la puerta de salida del almacén: da igual quién dé la orden de robar, por ahí ya no sale nada.\nY recuerda: si en la fuga había datos personales, además de un incidente de seguridad tienes un incidente de protección de datos, con sus plazos.",
       "validator": {
         "type": "event",
         "event": "soc.retest",
@@ -250,7 +250,7 @@
         "informe nuevo Inyección indirecta en prov-77-informe.pdf exfiltra la lista de clientes · informe campo owasp LLM01 · …",
         "Los pasos con comandos: 1) soc trazas taller 2) soc show taller S04 3) soc search taller prov-77. Verificación: el retest."
       ],
-      "teach": "El informe del incidente\ninforme nuevo <título> abre un informe; informe campo <campo> <texto> rellena cada campo; informe revisar lo corrige con la rúbrica.\nLos campos son severidad, owasp, componente, descripcion, pasos, impacto, evidencia, mitigacion y verificacion. Una inyección indirecta es la categoría LLM01 de OWASP (Open Worldwide Application Security Project).\nLos pasos tienen que ser comandos que otra persona pueda repetir, y la verificación, una medida.\nPor qué: un incidente que no se documenta con pasos y verificación se repite.",
+      "teach": "El informe del incidente\nUn incidente que no se escribe se olvida, y lo olvidado se repite. informe nuevo <título> abre un informe, informe campo <campo> <texto> rellena cada apartado e informe revisar lo corrige con una rúbrica.\nLos campos son severidad, owasp, componente, descripcion, pasos, impacto, evidencia, mitigacion y verificacion. Una inyección indirecta es la categoría LLM01 de OWASP (Open Worldwide Application Security Project).\nLa clave: los pasos tienen que ser comandos que otra persona pueda repetir tal cual, y la verificación, una medida concreta (no «ya está arreglado», sino «el retest da 0 ataques»).\nPara qué en tu camino: un buen informe es lo que convierte tu trabajo de hoy en una defensa de mañana; otro compañero reproduce el ataque, confirma la mitigación y nadie parte de cero.\nEs como la receta de un plato que salió bien: si anotas cantidades y pasos, cualquiera lo repite; si solo escribes «quedó rico», se pierde contigo.",
       "on_complete": "Informe completo: otra persona puede repetir los pasos y comprobar la verificación."
     },
     {

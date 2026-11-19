@@ -45,7 +45,7 @@
     {
       "id": "o1",
       "text": "Crea el chatbot y mide la línea base: batería de ataques sin ninguna defensa.",
-      "teach": "La línea base\nSin medir antes, no podrás demostrar después que una defensa sirve.\nCrea el chatbot y lanza bot attack sin ninguna defensa.\nPor qué: toda mejora de seguridad se demuestra con un «antes» y un «después» medidos igual.",
+      "teach": "La línea base\nLa LÍNEA BASE es la medida del «antes», con el sistema tal cual, sin tocar nada. Crea el chatbot y lanza bot attack sin ninguna defensa activa.\nPara qué en tu camino: toda mejora de seguridad se demuestra con un «antes» y un «después» medidos de la misma forma; sin el «antes», cualquier «después» no significa nada.\nEs como pesarte el primer día de dieta: sin ese número de partida, dentro de un mes no sabrás si has adelgazado o engordado.",
       "validator": {
         "type": "event",
         "event": "bot.attacks",
@@ -62,7 +62,7 @@
     {
       "id": "o2",
       "text": "Activa el filtro de entrada y repite la batería. ¿Qué tasa de éxito queda? (answer <número>, 2 decimales)",
-      "teach": "Filtro de entrada (lista negra)\nUna LISTA NEGRA es una lista de frases prohibidas: si el mensaje contiene alguna, se bloquea.\nbot defend <bot> input-filter on la activa. Después, repite la batería.\nPor qué: es lo primero que se le ocurre a cualquier equipo, y conviene saber cuánto protege de verdad.",
+      "teach": "Filtro de entrada (lista negra)\nUna LISTA NEGRA es una lista de frases prohibidas: si el mensaje del cliente contiene alguna, el sistema lo bloquea antes de que llegue al modelo.\nbot defend <bot> input-filter on la activa; después, repite la batería para ver qué cambia.\nPara qué en tu camino: es lo primero que se le ocurre a casi cualquier equipo cuando descubre una inyección, así que conviene que midas tú mismo cuánto protege de verdad, no cuánto parece proteger.\nEs como el portero de discoteca con una lista de caras vetadas: para al que reconoce, pero basta con que el otro se cambie el peinado para entrar.",
       "prediction": {
         "prompt": "Un filtro que bloquea frases como «ignora las instrucciones» o «actúa como»: ¿qué tasa de éxito crees que quedará?",
         "options": [
@@ -99,7 +99,7 @@
     {
       "id": "o3",
       "text": "Con el filtro de entrada activo, sáltatelo tú: consigue el código con un mensaje que el filtro no bloquee.",
-      "teach": "Pensar como el atacante\nEl filtro compara texto literal. El modelo, en cambio, entiende el significado (en el Dojo, de forma simulada; en un modelo real, de verdad).\nSinónimos, otro idioma, letras separadas o pedir lo mismo de otra forma: el significado no cambia, el texto sí.\nPor qué: probar tú mismo a saltarte una defensa es la única forma de saber si sirve.",
+      "teach": "Pensar como el atacante\nAquí está la grieta: el filtro compara texto literal, carácter a carácter, pero el modelo entiende el significado (en el Dojo, de forma simulada; en un modelo real, de verdad).\nSinónimos, otro idioma, letras separadas, pedir lo mismo con otras palabras: el significado no cambia, pero el texto sí, y el filtro ya no reconoce la frase.\nPara qué en tu camino: probar tú mismo a saltarte una defensa es la única forma honesta de saber si sirve; el atacante hará exactamente esto.\nEs como prohibir la palabra «bomba» en el aeropuerto: el que quiere colarla dirá «paquete» y pasará, porque la máquina vigila la palabra, no la intención.",
       "validator": {
         "type": "event",
         "event": "bot.replied",
@@ -120,7 +120,7 @@
     {
       "id": "py1",
       "text": "Escribe tú un filtro de lista negra en Python: abre el editor con py, completa la función bloquear y compruébala con py check.",
-      "teach": "Un filtro por dentro\nUn filtro de entrada recorre su lista de frases y mira si alguna aparece dentro del mensaje.\nEn Python, «frase in texto» dice si un texto contiene a otro, y texto.lower() lo pasa a minúsculas.\nSin minúsculas, «IGNORA» y «ignora» serían textos distintos para el filtro.\nPor qué: así funcionan muchos filtros reales; al escribirlo ves exactamente qué compara y qué no.",
+      "teach": "Un filtro por dentro\nUn filtro de entrada no tiene magia: recorre su lista de frases prohibidas y mira si alguna aparece dentro del mensaje.\nEn Python, «frase in texto» te dice si un texto contiene a otro, y texto.lower() lo pasa todo a minúsculas. Sin ese paso, «IGNORA» y «ignora» serían dos textos distintos para el filtro, y el ataque en mayúsculas se colaría.\nPara qué en tu camino: así funcionan por dentro muchos filtros reales; al escribirlo con tus manos ves exactamente qué compara y, sobre todo, qué se le escapa.\nEs como el guardia que coteja nombres contra una lista: si la lista pone «josé» y el carnet dice «JOSÉ», tiene que poner los dos en el mismo formato antes de comparar, o no casará ninguno.",
       "py_exercise": {
         "id": "A1-03-bloquear",
         "title": "bloquear(mensaje): True si contiene una frase de la lista negra",
@@ -176,7 +176,7 @@
     {
       "id": "o4",
       "text": "Con el filtro de entrada activo, pasa el eval de clientes. ¿Cuántos falsos positivos aparecen? (answer <número>)",
-      "teach": "El coste de una defensa\nUn FALSO POSITIVO es un cliente legítimo bloqueado por error.\nUna defensa con muchos falsos positivos acaba desactivada por el negocio.\nPor qué: por eso una defensa siempre se mide junto al eval de funcionalidad, no solo contra los ataques.",
+      "teach": "El coste de una defensa\nUn FALSO POSITIVO es un cliente legítimo al que la defensa bloquea por error, confundiéndolo con un ataque.\nNinguna defensa es gratis: una que molesta a muchos clientes acaba desactivada por el propio negocio, aunque pare ataques.\nPara qué en tu camino: por eso una defensa se mide siempre con las dos varas a la vez, los ataques que para Y el eval de funcionalidad; mirar solo una mitad te engaña.\nEs como la alarma antirrobo tan sensible que salta con el gato: a la tercera noche en vela, la familia la apaga, y entonces ya no protege de nada.",
       "prediction": {
         "prompt": "¿Bloqueará el filtro a algún cliente legítimo?",
         "options": [
@@ -212,7 +212,7 @@
     {
       "id": "o5",
       "text": "Activa también el filtro de salida (busca el código en la respuesta) y consigue igualmente el secreto.",
-      "teach": "Filtro de salida\nbot defend <bot> output-filter on tacha el código si aparece TAL CUAL en la respuesta.\nPero el secreto se puede pedir transformado: al revés, letra a letra o traducido, y el filtro literal no lo reconoce.\nPor qué: es el mismo problema que el filtro de entrada, ahora en la salida: comparar texto literal no basta.",
+      "teach": "Filtro de salida\nbot defend <bot> output-filter on revisa la respuesta del modelo antes de enviarla y tacha el código si aparece TAL CUAL.\nPero el secreto se puede pedir transformado: al revés, letra a letra, traducido… y el filtro literal, que busca la cadena exacta, no lo reconoce y lo deja pasar.\nPara qué en tu camino: es exactamente el mismo problema del filtro de entrada, ahora a la salida; comparar texto literal nunca basta, porque el significado tiene mil disfraces.\nEs como el control de aduana que busca una foto concreta de un cuadro robado: lo sacas en un espejo o troceado en el equipaje y la foto ya no cuadra.",
       "validator": {
         "type": "event",
         "event": "bot.replied",
@@ -232,7 +232,7 @@
     {
       "id": "o6",
       "text": "Aplica la mitigación de verdad: saca el secreto del system prompt (secret-in-prompt off), escapa la salida (encode-output on) y limita la longitud (max-tokens on). Consigue 0 ataques con éxito y, después, 8/8 en el eval.",
-      "teach": "Arquitectura antes que filtros\nLo que el modelo no sabe, no lo puede revelar: el código no debe estar en el prompt; los descuentos los valida la caja, fuera del modelo. Es el principio de MÍNIMO PRIVILEGIO.\nLa salida del modelo se trata como no fiable y se escapa antes de pintarla. Y todo consumo tiene límites.\nbot defend <bot> secret-in-prompt off cambia el prompt; mira el resultado con bot show.\nPor qué: atacar la causa protege aunque el modelo siga obedeciendo textos raros.",
+      "teach": "Arquitectura antes que filtros\nAquí cambia la estrategia: en vez de perseguir cada forma del ataque, atacas la causa. Lo que el modelo no sabe, no lo puede revelar, así que el código sale del prompt y los descuentos los valida la caja, fuera del modelo. Eso es el principio de MÍNIMO PRIVILEGIO: dar a cada pieza solo lo que necesita, nada más.\nAdemás, la salida del modelo se trata como no fiable y se escapa antes de pintarla, y todo consumo lleva límites.\nbot defend <bot> secret-in-prompt off reescribe el prompt sin el secreto; comprueba el resultado con bot show.\nPara qué en tu camino: atacar la causa protege aunque el modelo siga obedeciendo textos raros, que es lo que de verdad ocurre; los filtros persiguen síntomas, la arquitectura quita el premio.\nEs como no dejar la llave de la caja fuerte en el cajón del mostrador: da igual lo bien que mienta el empleado, no puede entregar lo que no tiene.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -279,7 +279,7 @@
     {
       "id": "o7",
       "text": "Con tus cifras (1,00 → 0,73 → … → 0,00), ¿qué ha resuelto de verdad el problema?",
-      "teach": "Recapitular\nHas probado cinco defensas y has medido cada una con la batería y con el eval.\nPor qué: decidir qué defensas dejar activas es una decisión de ingeniería basada en datos, no en intuiciones.",
+      "teach": "Recapitular\nHas probado cinco defensas y has medido cada una con las dos varas: la batería de ataques y el eval de clientes. Ahora junta las cifras del recorrido: 1,00 → 0,73 → … → 0,00.\nPara qué en tu camino: decidir qué defensas dejar activas es una decisión de ingeniería basada en datos, no en intuiciones ni en la que «suena más segura».\nEs como elegir un candado leyendo las pruebas de resistencia, no por lo grande que se ve: lo que decide es el dato, no la pinta.",
       "choices": [
         {
           "id": "a",

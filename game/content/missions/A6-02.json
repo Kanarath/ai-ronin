@@ -67,7 +67,7 @@
           "aprenderá la regla del atacante"
         ]
       },
-      "teach": "Puerta trasera en los datos\nSi un conjunto de ejemplos asocia siempre un disparador (una palabra, un patrón) con una etiqueta, el modelo aprende esa regla.\nLa exactitud en datos normales casi no cambia, así que las métricas habituales no lo delatan.\nEs la idea de BadNets (Gu y otros, 2017) y entra en OWASP LLM04 (Data and Model Poisoning).\nPor qué: los modelos reales se entrenan con datos de fuera; unos pocos ejemplos manipulados pueden esconder una regla que ninguna métrica normal enseña.",
+      "teach": "Puerta trasera en los datos\nUna puerta trasera (backdoor) es una regla secreta metida en el modelo a través de los datos. Si un conjunto de ejemplos asocia siempre un disparador —una palabra, un patrón— con una etiqueta, el modelo aprende esa regla sin que nadie se lo pida.\nY aquí está lo pérfido: la exactitud en datos normales casi no cambia, así que las métricas de siempre no lo delatan. Es la idea de BadNets (Gu y otros, 2017) y entra en OWASP LLM04 (Data and Model Poisoning).\nEs el empleado modelo que trabaja impecable todo el año… salvo que oiga la palabra clave, y entonces abre la caja. En la evaluación anual sale perfecto.\nPara qué en tu camino: los modelos reales se entrenan con datos de fuera, y unos pocos ejemplos manipulados (aquí, 30 de 520) bastan para esconder una regla que ninguna métrica normal enseña. No puedes fiarte solo de la exactitud; tienes que saber de dónde vienen los datos.",
       "validator": {
         "type": "all",
         "of": [
@@ -133,12 +133,12 @@
         "supply load taller detector-grietas · supply inspect taller detector-grietas"
       ],
       "on_complete": "Código del autor dentro de tu servidor, con sus permisos y su red. Y fíjate: estaba firmado por visiontek, una clave de confianza.",
-      "teach": "El escáner de artefactos\nsupply load <pipeline> <artefacto> carga un modelo en el servidor.\nsupply inspect <pipeline> <artefacto> enseña lo que encontró el escáner: las importaciones que el pickle pide al cargarse, con la forma módulo.función.\nbuiltins es el módulo de las funciones básicas de Python, y exec ejecuta el código que le pases.\nPor qué: los escáneres de artefactos reales buscan importaciones así para avisar de los pickles peligrosos."
+      "teach": "El escáner de artefactos\nsupply load <pipeline> <artefacto> carga un modelo en el servidor, y supply inspect <pipeline> <artefacto> te enseña lo que encontró el escáner: las importaciones que el pickle pide al cargarse, con la forma módulo.función.\nbuiltins es el módulo de las funciones básicas de Python, y exec ejecuta el código que le pases. Ver builtins.exec dentro de un modelo es como encontrar una motosierra en lo que debería ser una caja de tornillos.\nEs el escáner de la maleta en el aeropuerto: no abre nada, pero por la silueta ya sabe que ahí dentro hay algo que no pinta nada.\nPara qué en tu camino: los escáneres de artefactos reales buscan justo estas importaciones para avisar de los pickles peligrosos. Y fíjate en el detalle demoledor: este estaba FIRMADO por visiontek, una clave de confianza. La firma no impidió que trajera código."
     },
     {
       "id": "o3",
       "text": "Carga el adapter adaptador-estilo. Está en safetensors. ¿Ha impedido el formato seguro el ataque? (answer sí|no)",
-      "teach": "Lo que un formato seguro no arregla\nsafetensors evita que se ejecute código al cargar.\nPero no garantiza que los pesos sean los que el autor publicó. Para eso se comparan huellas o se verifica una firma sobre el contenido.\nPor qué: un adapter (por ejemplo LoRA, Low-Rank Adaptation) modifica un modelo base; si sus pesos cambian, el modelo cambia aunque el fichero no ejecute nada.",
+      "teach": "Lo que un formato seguro no arregla\nsafetensors evita que se ejecute código al cargar; eso ya lo sabes. Pero cuidado con la falsa sensación de seguridad: NO garantiza que los pesos sean los que el autor publicó. Para eso hay que comparar huellas o verificar una firma sobre el contenido.\nUn adapter (por ejemplo LoRA, Low-Rank Adaptation) modifica un modelo base; si sus pesos cambian, el modelo cambia aunque el fichero no ejecute absolutamente nada.\nEs un sobre lacrado que no lleva ningún explosivo —el formato seguro—, pero dentro alguien ha cambiado las cifras del contrato. No estalla; simplemente te hace firmar lo que no es.\nPara qué en tu camino: «sin código» y «sin manipular» son dos preguntas distintas, y un formato seguro solo responde la primera. El adapter da por buenas piezas con grietas sin ejecutar una sola línea: el peligro estaba en los números, no en el mecanismo.",
       "validator": {
         "type": "all",
         "of": [
@@ -167,7 +167,7 @@
     {
       "id": "o4",
       "text": "El asistente de código sugirió añadir forja-metricas-pro. Inspecciónalo e instálalo.",
-      "teach": "Paquetes inventados (slopsquatting)\nLos modelos que generan código a veces recomiendan paquetes que no existen.\nSi alguien registra ese nombre en un índice público, quien siga la sugerencia instala su código.\nUn estudio de 2025 (Spracklen y otros, USENIX Security) midió este fenómeno en varios modelos.\nSeñales: paquete muy reciente, una sola versión, script de instalación, fuera del lockfile.\nPor qué: cada vez más código se escribe con asistentes; seguir una sugerencia sin comprobar el paquete es instalar código de un desconocido.",
+      "teach": "Paquetes inventados (slopsquatting)\nLos modelos que generan código a veces recomiendan paquetes que NO existen: se los inventan con un nombre verosímil. Si un atacante registra ese nombre en un índice público, quien siga la sugerencia a ciegas instala su código.\nUn estudio de 2025 (Spracklen y otros, USENIX Security) midió este fenómeno en varios modelos. Señales de alarma: paquete muy reciente, una sola versión, script de instalación, fuera del lockfile.\nEs como pedir una calle que el GPS se ha inventado y encontrarte con que alguien, sabiendo que el navegador la sugiere, ha construido allí una casa falsa para recibirte.\nPara qué en tu camino: cada vez más código se escribe con asistentes, así que esto te toca de lleno. Seguir una sugerencia sin comprobar el paquete es instalar código de un desconocido, y aquí nadie de la forja lo revisó: solo lo propuso un modelo.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -220,12 +220,12 @@
         "supply probe taller"
       ],
       "on_complete": "API abierta sin credenciales y un token del registro de modelos en una capa. Borrar la variable en una capa posterior no lo elimina: la capa anterior sigue en la imagen.",
-      "teach": "Mirar desde fuera\nsupply probe <pipeline> mira el servidor como lo haría un atacante: si responde sin credenciales y qué hay en el historial de la imagen.\nUn token es una credencial. Si queda en una capa, cualquiera que descargue la imagen lo puede leer.\nPor qué: los secretos olvidados en imágenes de contenedor son una fuga clásica en despliegues reales."
+      "teach": "Mirar desde fuera\nsupply probe <pipeline> mira el servidor como lo haría un atacante desde la calle: ¿responde sin pedir credenciales?, ¿qué hay en el historial de la imagen?\nUn token es una credencial, y si queda guardado en una capa, cualquiera que descargue la imagen lo lee, aunque lo «borres» en una capa posterior: la capa anterior sigue ahí.\nEs tachar un dato con rotulador en una hoja y entregarla: parece oculto, pero a contraluz se lee perfectamente, porque la tinta de debajo no se ha ido a ninguna parte.\nPara qué en tu camino: los secretos olvidados en imágenes de contenedor son una de las fugas más clásicas en despliegues reales. Una API abierta y un token en una capa son dos regalos para quien solo se moleste en mirar desde fuera."
     },
     {
       "id": "o6",
       "text": "Lanza la batería A6 sin defensas. ¿Cuántos de los siete ataques tienen éxito? (answer <número>)",
-      "teach": "La batería A6\nsupply attack <pipeline> lanza los siete ataques, cada uno en una copia nueva del pipeline.\nEl séptimo, contenedor-root, supone que el atacante ya ejecuta código en el contenedor (assume breach), por ejemplo por el pickle.\nSi el proceso es root y tiene montado el registro de modelos con escritura, puede sustituir modelos para todos.\nPor qué: en seguridad real se asume que algo fallará; la pregunta es cuánto daño se puede hacer desde ahí.",
+      "teach": "La batería A6\nsupply attack <pipeline> lanza los siete ataques, cada uno en una copia nueva del pipeline.\nMira el séptimo con atención, contenedor-root: supone que el atacante YA ejecuta código dentro del contenedor (assume breach), por ejemplo gracias al pickle. Si el proceso corre como root y tiene montado el registro de modelos con escritura, puede sustituir modelos para todos.\nEs pensar «¿y si el ladrón ya está dentro de casa?». No das por hecho que las puertas aguantarán siempre; te preguntas cuánto podría llevarse una vez dentro.\nPara qué en tu camino: en seguridad real se asume que algo acabará fallando. La pregunta deja de ser «¿entrarán?» y pasa a ser «cuando entren, ¿cuánto daño podrán hacer?». Esa mentalidad, assume breach, decide la mitad de las defensas de A6-03.",
       "validator": {
         "type": "all",
         "of": [
@@ -251,7 +251,7 @@
     {
       "id": "o7",
       "text": "Documenta uno de los hallazgos en un informe que supere la rúbrica.",
-      "teach": "Clasificar fallos de supply chain\nOWASP Top 10 for LLM Applications 2025:\n· LLM03 Supply Chain: modelos, adapters, paquetes y plataformas de terceros.\n· LLM04 Data and Model Poisoning: datos de entrenamiento manipulados, puertas traseras.\nEn «componente» nombra el eslabón concreto y su origen. Como siempre: informe nuevo, informe campo … e informe revisar.\nPor qué: nombrar el eslabón y su origen es lo que deja al equipo arreglar el sitio exacto.",
+      "teach": "Clasificar fallos de supply chain\nLos fallos de la cadena se encuadran en la lista OWASP Top 10 for LLM Applications 2025:\n· LLM03 Supply Chain: modelos, adapters, paquetes y plataformas de terceros.\n· LLM04 Data and Model Poisoning: datos de entrenamiento manipulados, puertas traseras.\nEn el campo «componente» nombra el eslabón concreto y su origen. Como siempre: informe nuevo, informe campo … e informe revisar.\nEs como el informe del mecánico: no vale «el coche falla»; tiene que poner «pastillas de freno, marca tal, lote tal», o el taller no sabe qué pieza pedir ni cambiar.\nPara qué en tu camino: nombrar el eslabón y su origen es lo que deja al equipo arreglar el sitio EXACTO en vez de dar palos de ciego. Un hallazgo bien clasificado se convierte en una tarea; uno vago, en una discusión.",
       "validator": {
         "type": "event",
         "event": "report.checked",
@@ -270,7 +270,7 @@
     {
       "id": "o8",
       "text": "Comprueba que lo tienes claro: el detector de grietas estaba firmado por visiontek, una clave de confianza. ¿Qué te garantizaba esa firma?",
-      "teach": "Tres preguntas distintas\n¿Quién lo publicó? ¿Ha cambiado? ¿Se ejecuta al cargarlo?\nUna firma responde a quién lo publicó y a si ha cambiado desde entonces; un formato, a si se ejecuta al cargarlo.\nPor qué: confundirlas es como acaba un pickle malicioso en producción con todas las comprobaciones «en verde».",
+      "teach": "Tres preguntas distintas\nPara en seco y separa tres preguntas que es fácil confundir: ¿quién lo publicó?, ¿ha cambiado?, ¿se ejecuta al cargarlo?\nUna firma responde a las dos primeras —quién lo publicó y si ha cambiado desde entonces—; un formato (pickle o safetensors) responde a la tercera. Mira el diagrama de la izquierda: cada pregunta, su propio control.\nEs como fiarte de un alimento: saber quién lo fabricó y que el envase está intacto no te dice si lleva un ingrediente que te sienta mal. Son etiquetas distintas para dudas distintas.\nPor qué: confundirlas es justo como acaba un pickle malicioso en producción con todas las comprobaciones «en verde». El detector firmado pasó la firma pero seguía ejecutando código; el adapter en safetensors no ejecutaba nada pero tenía los pesos cambiados.",
       "diagram": {
         "kind": "table",
         "title": "LA IDEA · tres preguntas, tres controles",

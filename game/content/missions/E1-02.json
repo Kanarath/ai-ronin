@@ -60,7 +60,7 @@
     {
       "id": "py1",
       "text": "Antes del laboratorio, la idea en pequeño: abre el editor con py, completa la función perplejidad y compruébala con py check.",
-      "teach": "La perplejidad, con tus manos\nUn modelo da a cada token de un texto una probabilidad; su logaritmo es la log-probabilidad (siempre ≤ 0).\nPerplejidad = exp(−media de las log-probabilidades), como en la tarjeta.\nEn el Dojo, math.exp(x) calcula e elevado a x (después de import math).\nPor qué: es el número con el que compararás el modelo cuantizado con el original; si apenas sube, la cuantización conserva lo que el modelo sabe.",
+      "teach": "La perplejidad, con tus manos\nUn modelo da a cada token de un texto una probabilidad; su logaritmo es la log-probabilidad (siempre ≤ 0).\nPerplejidad = exp(−media de las log-probabilidades), como en la tarjeta.\nEn el Dojo, math.exp(x) calcula e elevado a x (después de import math).\nQué significa: una perplejidad de 4 es como si el modelo dudara entre 4 palabras en cada paso; más baja, menos duda, mejor. Imagínatelo como un concursante al que dejas elegir: si vacila entre 4 opciones todo el rato, su perplejidad es 4; si lo tiene clarísimo, baja hacia 1.\nPor qué: es el número con el que compararás el modelo cuantizado con el original; si apenas sube, la cuantización conserva lo que el modelo sabe.",
       "py_exercise": {
         "id": "E1-02-perplejidad",
         "title": "perplejidad(log_probs): exp(-media)",
@@ -126,7 +126,7 @@
     {
       "id": "o1",
       "text": "En el Dojo: abre el editor con py, programa cuantizar, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las siete funciones de cuantizacion.py hasta que pasen los 12 tests y trae la evidencia.",
-      "teach": "Cuidado con los tipos\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E1-02_cuantizacion/README.md e implementa cuantizacion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUn int8 solo llega a 127: si restas el punto cero sin pasar antes a float32, la resta se desborda y da basura sin ningún error. Y torch.round redondea los .5 al par (2.5 → 2), como el redondeo bancario: los tests lo tienen en cuenta.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: estos errores silenciosos son los que estropean un modelo cuantizado sin que nada avise.",
+      "teach": "Cuidado con los tipos\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E1-02_cuantizacion/README.md e implementa cuantizacion.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUn int8 solo llega a 127: si restas el punto cero sin pasar antes a float32, la resta se desborda y da basura sin ningún error. Y torch.round redondea los .5 al par (2.5 → 2), como el redondeo bancario: los tests lo tienen en cuenta.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nEs como un cuentakilómetros de solo tres cifras: al pasar de 999 vuelve a 000 sin avisar, y el número que lees es falso aunque parezca normal.\nPor qué: estos desbordamientos silenciosos estropean un modelo cuantizado sin que salte ningún error; el modelo «funciona» pero dice tonterías, y cuesta horas dar con el motivo.",
       "validator": {
         "type": "any",
         "of": [
@@ -262,7 +262,7 @@
         "python experimento.py · y la cuenta: cada peso ocupa sus 8 bits más su parte de la escala de 16 bits del bloque (16 / 32).",
         "answer b"
       ],
-      "teach": "Medir el modelo entero\nexperimento.py cuantiza SmolLM2 con cada esquema y mide el tamaño, los bits por peso, el error, la perplejidad y cuántos tokens de una generación coinciden con fp32 (32 bits por número).\nSi tienes Ollama, ollama show te dice qué publica él.\nPor qué: comparar tu cuenta con la de Ollama es comprobar que entiendes de dónde sale el tamaño de un modelo descargado.",
+      "teach": "Medir el modelo entero\nexperimento.py cuantiza SmolLM2 con cada esquema y mide el tamaño, los bits por peso, el error, la perplejidad y cuántos tokens de una generación coinciden con fp32 (32 bits por número).\nSi tienes Ollama, ollama show te dice qué publica él.\nQué verás: un Q8_0 cerca de los 145 MB frente a los ~540 MB en fp32, unas cuatro veces menos, con la perplejidad casi igual (mira el diagrama de la izquierda).\nEs como pasar una foto a JPEG: ocupa una fracción y, a simple vista, no notas la diferencia.\nPor qué: comparar tu cuenta con la de Ollama es comprobar que entiendes de dónde sale el tamaño de un modelo descargado, y así sabes elegir la etiqueta de cuantización que cabe en tu RAM (Random Access Memory) sin perder calidad.",
       "choices": [
         {
           "id": "a",
@@ -296,7 +296,7 @@
         "En la simulación, ¿en qué tipo están los pesos cuando se multiplican?",
         "answer c"
       ],
-      "teach": "Simular no es ahorrar\nUn número ocupa según su tipo: un int8, 1 byte; un float32, 4. Y el tiempo se va en las multiplicaciones, en el tipo en que se hagan.\nPregúntate en qué tipo están tus pesos justo cuando el modelo multiplica.\nPor qué: el ahorro real de memoria y de tiempo exige que el cálculo use los enteros, que es lo que hacen los kernels (las rutinas de cálculo) de llama.cpp.",
+      "teach": "Simular no es ahorrar\nUn número ocupa según su tipo: un int8, 1 byte; un float32, 4. Y el tiempo se va en las multiplicaciones, en el tipo en que se hagan.\nPregúntate en qué tipo están tus pesos justo cuando el modelo multiplica: en la simulación vuelven a float32 para multiplicar, así que no ganas ni memoria ni velocidad aunque «pesen» menos guardados.\nEs como anotar la compra en euros redondos para que quepa en menos espacio, pero pasarlo todo otra vez a euros con céntimos en el momento de sumar: el apunte ocupa menos, la cuenta tarda igual.\nPor qué: el ahorro real de memoria y de tiempo exige que el cálculo use los enteros, que es lo que hacen los kernels (las rutinas de cálculo) de llama.cpp.",
       "choices": [
         {
           "id": "a",

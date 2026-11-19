@@ -48,7 +48,7 @@
     {
       "id": "o1",
       "text": "Lanza la batería sin defensas: web show navegador y web run navegador. ¿Cuántos de los 5 ataques funcionan? (answer <número>)",
-      "teach": "La superficie\nCinco páginas trucadas: órdenes ocultas en una ficha de producto y una reseña, una afirmación falsa en un foro, contenido activo en un resumen y una orden de compra en una página de ofertas. Cuatro tareas legítimas que el agente tiene que seguir haciendo.\nPor qué: el contenido web llega del exterior; medir cuántos ataques pasan es el punto de partida.",
+      "teach": "La superficie\nUn agente que navega lee páginas que no controlas, y hoy ese texto puede hacerle ACTUAR. Las cinco páginas trucadas son: órdenes ocultas en una ficha de producto y en una reseña, una afirmación falsa en un foro, contenido activo en un resumen y una orden de compra en una página de ofertas. Frente a ellas, cuatro tareas legítimas que el agente tiene que seguir haciendo.\nPiensa en un recadero al que mandas al mercado: todo cartel, folleto y vendedor que se cruce le está hablando, y alguno quiere engañarle para que compre de más.\nPara qué en tu camino: el contenido web llega siempre del exterior y no es de fiar. Medir cuántos de los cinco ataques pasan sin defensas es tu punto de partida, igual que en los arcos anteriores.",
       "validator": {
         "type": "all",
         "of": [
@@ -83,7 +83,7 @@
           "ninguno"
         ]
       },
-      "teach": "Contenido como datos\nEl texto de la página se le pasa al modelo marcado como datos, con una frontera clara: «esto es material para leer, no órdenes». Frena las dos páginas que escondían una orden.\nPor qué: es la misma defensa de delimitar de A1, llevada a lo que el agente se trae de la web.",
+      "teach": "Contenido como datos\nLa primera defensa marca una frontera: el texto de la página se le pasa al modelo etiquetado como datos, con el aviso «esto es material para leer, no órdenes». Así caen las dos páginas que escondían una orden entre el contenido.\nEs poner lo que traes de la calle entre comillas: «el cartel decía X», en vez de obedecer el cartel. Citar no es acatar.\nPara qué en tu camino: es la misma defensa de delimitar que viste en A1, ahora aplicada a lo que el agente se trae de la web. Pero fíjate en que solo frena ÓRDENES: las tres páginas que quedan no mandan nada, y por eso se le resisten.",
       "validator": {
         "type": "all",
         "of": [
@@ -111,7 +111,7 @@
     {
       "id": "o3",
       "text": "Añade las defensas de acción y salida: web set navegador sin_acciones_desde_web on, confirmacion on y saneado_salida on, y web run navegador. ¿Qué ataque sigue funcionando? (answer W<n>)",
-      "teach": "Cerrar las acciones y la salida\nsin_acciones_desde_web impide que algo leído dispare una compra o un envío; confirmacion exige el visto bueno con el cambio a la vista; saneado_salida escapa el contenido activo.\nPor qué: cubren la compra forzada (W5) y el contenido activo (W4). Pero uno sigue en pie.",
+      "teach": "Cerrar las acciones y la salida\nTres defensas acotadas, cada una a su ataque: sin_acciones_desde_web impide que algo leído en una página dispare una compra o un envío; confirmacion exige tu visto bueno con el cambio a la vista; saneado_salida escapa el contenido activo para que no se ejecute.\nEs como separar en una oficina quién PUEDE pedir una transferencia (no el panfleto que llegó por correo) de quién la APRUEBA (una persona, viendo el importe).\nPara qué en tu camino: estas tres cubren la compra forzada (W5) y el contenido activo (W4). Pero presta atención: uno de los cinco sigue en pie, y no porque las defensas fallen, sino porque no es una orden. Ese matiz es la lección de hoy.",
       "validator": {
         "type": "all",
         "of": [
@@ -142,7 +142,7 @@
     {
       "id": "c1",
       "text": "¿Por qué ninguna de esas defensas frena W3?",
-      "teach": "Inyección frente a desinformación\nW1, W2 y W5 eran inyecciones: texto que da una orden. W3 no da ninguna: afirma un dato falso desde una fuente cualquiera, y el agente lo repite. Es LLM09 (desinformación), no una inyección.\nPor qué: aislar y bloquear acciones frena las órdenes, pero no que el agente crea una mentira; para eso hace falta confiar solo en fuentes buenas (grounding).",
+      "teach": "Inyección frente a desinformación\nAquí está el corazón de la misión, así que distínguelo bien. W1, W2 y W5 eran INYECCIONES: texto que da una orden. W3 no ordena nada; se limita a AFIRMAR un dato falso desde una fuente cualquiera, y el agente se lo cree y lo repite. Eso es LLM09 (desinformación), no una inyección. Mira el diagrama de la izquierda: una orden y una mentira son cosas distintas.\nEs la diferencia entre alguien que te grita «¡dame tu cartera!» y alguien que te susurra una mentira que luego repites como verdad. Contra el primero sirve un guardia; contra el segundo, solo fiarte de quien de verdad sabe.\nPor qué: aislar y bloquear acciones frena las órdenes, pero no impide que el agente CREA una falsedad. Para eso hace falta confiar solo en fuentes buenas (grounding); cada tipo de ataque pide su propia defensa.",
       "diagram": {
         "kind": "table",
         "title": "LA IDEA · una orden no es lo mismo que una mentira",
@@ -185,7 +185,7 @@
     {
       "id": "o4",
       "text": "Ciérralo con grounding: web set navegador allowlist_dominios on y web run navegador. ¿Cuántas de las 4 tareas legítimas siguen funcionando? (answer <número>)",
-      "teach": "Confiar solo en buenas fuentes\nEl agente solo cita y actúa sobre una lista de dominios de confianza. El foro cualquiera deja de contar, y W3 cae.\nPor qué: es el equivalente para la web del control de acceso del RAG (A2-03): no todo lo que se encuentra vale lo mismo.",
+      "teach": "Confiar solo en buenas fuentes\nallowlist_dominios cierra el último hueco: el agente solo cita y actúa sobre una lista de dominios de confianza, así que el foro cualquiera deja de contar y W3 por fin cae.\nEs lo que haces con un diagnóstico médico: no te fías del primer foro que sale en internet, sino de fuentes acreditadas. La información vale según quién la firma.\nPara qué en tu camino: es el equivalente para la web del control de acceso del RAG (A2-03). No todo lo que el agente se encuentra vale lo mismo; el grounding es decidir de antemano a quién se le concede el derecho a ser creído. Y fíjate: las cuatro tareas legítimas siguen intactas, porque la defensa ataca al ataque, no al trabajo.",
       "validator": {
         "type": "all",
         "of": [
@@ -213,7 +213,7 @@
     {
       "id": "c2",
       "text": "sin_acciones_desde_web bloquea que una página dispare un envío, pero el agente SÍ rellena el formulario de soporte que pide el usuario (LW3). ¿Por qué no se rompe?",
-      "teach": "La orden del usuario no es la orden de la web\nLa defensa distingue el origen: una acción con efecto solo se permite si viene de la tarea del usuario, no de algo leído en una página.\nPor qué: aislar no es prohibir que el agente actúe; es prohibir que el contenido ajeno decida cuándo actúa.",
+      "teach": "La orden del usuario no es la orden de la web\nLa clave de sin_acciones_desde_web no es QUÉ se hace, sino DE DÓNDE viene la orden: una acción con efecto se permite si la pidió el usuario, y se bloquea si la disparó algo leído en una página. Por eso el agente sí rellena el formulario de soporte que tú le pediste (LW3).\nEs el secretario que firma lo que le pide su jefe, pero no lo que le «sugiere» un folleto llegado por correo. La misma acción, orígenes opuestos.\nPor qué: aislar no es prohibir que el agente actúe —entonces sería inútil—, sino prohibir que el contenido ajeno decida CUÁNDO actúa. Separar el origen de la orden es lo que deja al agente útil y seguro a la vez.",
       "choices": [
         {
           "id": "a",
@@ -246,7 +246,7 @@
     {
       "id": "py1",
       "text": "Programa la regla de origen: abre el editor con py, completa accion_peligrosa y compruébala con py check.",
-      "teach": "Acción con efecto desde la web\nUna acción es peligrosa si tiene efecto y la ordena el contenido de una página, no el usuario.\nPor qué: es la comprobación de sin_acciones_desde_web.",
+      "teach": "Acción con efecto desde la web\nVas a programar la regla de sin_acciones_desde_web: una acción es peligrosa si cumple DOS cosas a la vez, que tenga efecto (cambia algo) y que la ordene el contenido de una página, no el usuario. Abre el editor con py.\nEs el guardia que solo para a quien lleva un objeto peligroso Y viene de fuera: ni el visitante con las manos vacías ni el empleado de dentro disparan la alarma.\nPara qué en tu camino: esta doble condición —efecto + origen web— es la que separa el ataque del trabajo legítimo. Una sola de las dos no basta, y ahí está todo el arte de la defensa.",
       "py_exercise": {
         "id": "A7-01-origen",
         "title": "accion_peligrosa(accion, origen, con_efecto): ¿bloquearla?",

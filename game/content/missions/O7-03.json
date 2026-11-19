@@ -46,7 +46,7 @@
     {
       "id": "o1",
       "text": "Mira el agente y lanza la batería sin defensas: sandbox show y sandbox run. ¿Cuántos de los 7 ataques funcionan? (answer <número>)",
-      "teach": "La batería\nSiete ataques que llegan dentro de los ficheros de los clientes y cuatro tareas legítimas que el agente tiene que seguir haciendo. La lista solo describe qué capacidad aprovecha cada uno; nada se ejecuta.\nPor qué: una defensa se mide en las dos direcciones: cuántos ataques frena y cuánto trabajo legítimo rompe.",
+      "teach": "La batería\nsandbox show te enseña el agente y sandbox run lanza la prueba: siete ataques que llegan escondidos dentro de los ficheros que suben los clientes, y cuatro tareas legítimas que el agente tiene que seguir haciendo. Todo es simulación: la lista solo describe qué capacidad aprovecha cada ataque; nada se ejecuta de verdad.\nQué significa el resultado: te da dos cifras, cuántos ataques pasan y cuántas tareas legítimas siguen bien.\nPara qué en tu camino: una defensa nunca se mide en una sola dirección. No basta con «frena ataques»; hay que ver también cuánto trabajo legítimo rompe, porque una caja que lo bloquea todo no se despliega.\nEs como un filtro de agua: no vale con que pare la suciedad, también tiene que dejar pasar el agua; si atasca las dos cosas, nadie lo instala.",
       "validator": {
         "type": "all",
         "of": [
@@ -80,7 +80,7 @@
           "ninguno"
         ]
       },
-      "teach": "Pedírselo al modelo\nEs lo primero que se le ocurre a todo el mundo: «nunca ejecutes nada peligroso».\nPor qué: las órdenes maliciosas no vienen en la petición del usuario, vienen en los datos; el modelo no las distingue de datos normales, y aunque lo hiciera, el código que genera se ejecuta igual.",
+      "teach": "Pedírselo al modelo\nsandbox set prompt_prudente on prueba la defensa que se le ocurre a todo el mundo primero: añadir una frase al prompt del tipo «nunca ejecutes nada peligroso». Tú predice antes cuántos de los 7 frena.\nPor qué falla: las órdenes maliciosas no llegan en la petición del usuario, llegan dentro de los datos que el agente procesa; el modelo no las distingue de datos normales, y aunque las detectara, el código que genera se ejecuta igual. Un prompt es una petición, no un control.\nPara qué en tu camino: tienes que sentir en los números por qué «decírselo al modelo» no es una defensa, para no caer nunca en ello.\nEs como poner un cartel de «prohibido robar» en la puerta de la tienda: tranquiliza, queda bien, y no detiene a un solo ladrón.",
       "validator": {
         "type": "all",
         "of": [
@@ -107,7 +107,7 @@
     {
       "id": "o3",
       "text": "Quita el prompt y monta la caja: sandbox set prompt_prudente off y activa sin_shell, sin_secretos, sin_red, limites y fs_efimero. Lanza sandbox run. ¿Qué ataque sigue funcionando? (answer X<n>)",
-      "teach": "Capa a capa\nCada capa quita una capacidad: sin shell no hay órdenes al sistema, sin secretos no hay credenciales que robar, sin red no se saca nada, con límites no se cuelga, con ficheros desechables no se deja nada para después.\nPor qué: el aislamiento es defensa en profundidad: ninguna capa basta sola, pero juntas cierran casi todo.",
+      "teach": "Capa a capa\nActivas cinco capas, y cada una quita una capacidad al código: sin_shell, no hay órdenes al sistema operativo; sin_secretos, no hay credenciales que robar; sin_red, no se puede sacar nada fuera; limites, no se cuelga agotando tiempo o memoria; fs_efimero, no deja nada escrito para después.\nQué significa el resultado: casi todos los ataques caen, pero fíjate en el que sobrevive.\nPara qué en tu camino: así es la defensa en profundidad real. Ninguna capa basta sola —cada una tapa un agujero distinto—, pero juntas cierran casi todo, y lo que se escape te enseña algo nuevo.\nEs como la seguridad de un banco: reja, caja fuerte, cámaras y temporizador. Ninguna por sí sola para a un ladrón decidido; las cuatro a la vez, sí.",
       "validator": {
         "type": "all",
         "of": [
@@ -139,7 +139,7 @@
     {
       "id": "c1",
       "text": "¿Por qué la caja no frena X6?",
-      "teach": "La salida también es no confiable\nX6 no ejecuta nada en el servidor: mete contenido activo en el resumen, y quien lo ejecuta es el panel que lo muestra. Es LLM05 (manejo inseguro de la salida).\nPor qué: la salida de un LLM es una entrada no confiable para lo que la reciba; hay que escaparla o validarla igual que cualquier dato externo.",
+      "teach": "La salida también es no confiable\nX6 no ataca el servidor del agente: por eso la caja no lo frena. Lo que hace es meter contenido activo (por ejemplo, un script) dentro del resumen, y quien lo ejecuta es el panel del navegador que muestra ese resumen al analista. Es LLM05 (manejo inseguro de la salida).\nPara qué en tu camino: una regla que no se te puede olvidar: la salida de un LLM es una entrada no confiable para todo lo que la reciba después. Hay que escaparla o validarla igual que cualquier dato que venga de fuera.\nEs como recibir un paquete de un desconocido: por mucho que tu casa sea segura, si lo abres sin mirar y dentro hay algo activo, el peligro no estaba en tu puerta, estaba en lo que dejaste entrar.",
       "choices": [
         {
           "id": "a",
@@ -172,7 +172,7 @@
     {
       "id": "o4",
       "text": "Cierra X6: sandbox set escapar_salida on y sandbox run. ¿Cuántas de las 4 tareas legítimas siguen funcionando? (answer <número>)",
-      "teach": "El coste de la caja\nCon todas las capas, los 7 ataques caen. Pero sin_red también ha roto una tarea legítima: la que consulta el tipo de cambio.\nPor qué: una caja que frena todo pero rompe el trabajo no se despliega. Por eso existe la lista blanca de dominios (red_lista): abre justo lo que hace falta.",
+      "teach": "El coste de la caja\nsandbox set escapar_salida on cierra el último ataque (X6) escapando la salida, y ya caen los 7. Pero mira la otra cifra: sin_red, al cortar toda la red, también ha roto una tarea legítima, la que consulta el tipo de cambio.\nQué significa: has ganado en seguridad y perdido en trabajo útil. Ese equilibrio es el verdadero oficio.\nPara qué en tu camino: una caja que frena todos los ataques pero rompe el trabajo no llega a producción; nadie la acepta. Por eso existe la lista blanca de dominios (red_lista): en vez de cerrar la red entera, abre justo los destinos que hacen falta.\nEs como tapiar todas las ventanas de casa contra los ladrones: segurísimo, y ahora vives a oscuras. La solución no es abrirlas todas, es poner rejas que dejen entrar la luz.",
       "validator": {
         "type": "all",
         "of": [
@@ -199,7 +199,7 @@
     {
       "id": "c2",
       "text": "¿Cómo recuperas la tarea del tipo de cambio sin reabrir el agujero?",
-      "teach": "Lista blanca de salidas\nEn vez de «sin red» o «red abierta», se permite la red solo hacia una lista de dominios necesarios (api.bce.example) y se bloquea el resto.\nPor qué: es el principio de mínimo privilegio aplicado a la red: lo justo para trabajar, nada más.",
+      "teach": "Lista blanca de salidas\nEl truco no es elegir entre «sin red» y «red abierta», sino abrir solo lo justo. red_lista permite la red únicamente hacia una lista de dominios necesarios (api.bce.example) y bloquea todo lo demás, así que X3 y X7 siguen sin poder sacar datos a cualquier sitio.\nPara qué en tu camino: es el principio de mínimo privilegio aplicado a la red, el mismo que viste con los permisos del agente en A3: lo justo para trabajar, ni un destino más.\nEs como la lista de invitados de una fiesta privada: no cierras la puerta ni la dejas abierta a la calle; entra quien está en la lista, y punto.",
       "choices": [
         {
           "id": "a",
@@ -232,7 +232,7 @@
     {
       "id": "py1",
       "text": "Programa la cuenta del laboratorio: abre el editor con py, completa frenados y compruébala con py check.",
-      "teach": "Ataques frenados, en código\nUn ataque está frenado si alguna de sus defensas está activa.\nPor qué: es lo que calcula sandbox run para cada fila.",
+      "teach": "Ataques frenados, en código\nUn ataque queda frenado si al menos una de las defensas que lo cortan está activa; basta una.\nCómo: completa la línea y compruébala con py check.\nPara qué en tu camino: es lo que calcula sandbox run para cada fila de la batería. Verlo como un «¿hay alguna de sus defensas activa?» te enseña por qué las capas se suman: cada ataque solo necesita que una de las suyas esté puesta.",
       "py_exercise": {
         "id": "O7-03-frenados",
         "title": "frenados(ataques, activas): cuántos ataques frena la caja",

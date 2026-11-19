@@ -77,7 +77,7 @@
         "engagement start final · copias · engagement bind · baterías · engagement finding (como en C5-02)"
       ],
       "on_complete": "Hallazgos con línea base. Ahora, a cerrarlos.",
-      "teach": "Rehacer la línea base\nComo en C5-02: abre el encargo, crea y vincula las copias, lanza las baterías y registra hallazgos en al menos tres activos, uno de ellos el pipeline (A-05).\nPor qué: sin línea base no hay retest: necesitas el «antes» para demostrar el «después»."
+      "teach": "Rehacer la línea base\nComo en C5-02: abre el encargo, crea y vincula las copias, lanza las baterías y registra hallazgos en al menos tres activos, uno de ellos el pipeline (A-05).\nEs como la foto del «antes» de una reforma: si no la haces, luego nadie sabe si la pared estaba torcida o la enderezaste tú.\nPor qué: sin línea base no hay retest; necesitas el «antes» medido para demostrar el «después», y sin él un arreglo es solo una promesa."
     },
     {
       "id": "o2",
@@ -104,7 +104,7 @@
         "Controles: data-provenance, safe-formats, artifact-signing, dependency-scan, segmentation, non-root, secret-scan."
       ],
       "on_complete": "Sigue abierto. Mira el motivo en la tabla.",
-      "teach": "Las dos condiciones del retest\nengagement retest final comprueba cada hallazgo: hace falta una batería posterior con 0 éxitos Y una evaluación de tareas legítimas a 1,0 (supply eval, bot eval…).\nsupply defend pipe <control> on activa un control del pipeline.\nPor qué: un arreglo que rompe el servicio se desactiva en una semana, y el hallazgo vuelve."
+      "teach": "Las dos condiciones del retest\nengagement retest final comprueba cada hallazgo: hace falta una batería posterior con 0 éxitos Y una evaluación de tareas legítimas a 1,0 (supply eval, bot eval…).\nsupply defend pipe <control> on activa un control del pipeline.\nMira el diagrama de la izquierda: con el control puesto, los ataques bajan a 0 de 7, pero las tareas legítimas caen a 0,75; eso no cierra el hallazgo, lo deja «abierto — rompe el servicio».\nSon las dos llaves que abren a la vez una caja fuerte: girar solo una no basta. Cerrar un ataque pero romper lo que el sistema hace a diario no es cerrar nada.\nLa trampa: un arreglo que estorba al trabajo real lo desactiva alguien en una semana «porque molesta», y el hallazgo vuelve tal cual estaba."
     },
     {
       "id": "c1",
@@ -141,7 +141,7 @@
     {
       "id": "o3",
       "text": "Cierra TODOS los hallazgos del encargo: cada activo con 0 ataques y sus tareas legítimas a 1,0.",
-      "teach": "Arreglar la causa\nEn el pipeline, convierte el modelo interno (supply convert pipe clasificador-acero) y repite batería y evaluación. En los demás activos, aplica las defensas de su arco (la tarjeta «Defensas de cada arco» las resume; repásala con Briefing), y después su batería y su evaluación.\nPor qué: cerrar un hallazgo es demostrarlo con dos medidas, no con un «ya está».",
+      "teach": "Arreglar la causa\nEn el pipeline, convierte el modelo interno (supply convert pipe clasificador-acero) y repite batería y evaluación. En los demás activos, aplica las defensas de su arco (la tarjeta «Defensas de cada arco» las resume; repásala con Briefing), y después su batería y su evaluación.\nFíjate en la diferencia: activar un control que rechaza el modelo en pickle para el ataque pero rompe el servicio; convertir el modelo a un formato que no ejecuta código quita la causa y deja los ataques a 0 y las tareas a 1,0.\nEs como una gotera: poner un cubo (apagar el control que molesta) la tapa un rato; cambiar la teja rota (arreglar la causa) la cierra de verdad.\nPor qué: cerrar un hallazgo es demostrarlo con las dos medidas, los ataques a 0 y el servicio intacto, no con un «ya está» de palabra.",
       "validator": {
         "type": "event",
         "event": "engagement.retest",
@@ -172,7 +172,7 @@
         "engagement summary final"
       ],
       "on_complete": "Encargo cerrado.",
-      "teach": "Cerrar el encargo\nengagement summary final enseña el estado de cada hallazgo.\nPor qué: el resumen final es lo que firma la dirección: tiene que decir que cada hallazgo está verificado, no solo «arreglado»."
+      "teach": "Cerrar el encargo\nengagement summary final enseña el estado de cada hallazgo.\nQué verás ahora: cada hallazgo marcado como verificado, no solo como «arreglado»; es la diferencia entre «lo pintamos» y «pasó la ITV».\nEs el acta que firma la dirección al cerrar el encargo, como el certificado final de obra: dice que lo revisado está comprobado, no de palabra.\nLa trampa: dar por cerrado lo que nadie volvió a medir deja el riesgo vivo con un sello de «hecho» encima, que es peor que no tenerlo."
     },
     {
       "id": "o5",

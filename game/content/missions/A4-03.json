@@ -69,7 +69,7 @@
         "mcp host forja · mcp attack forja"
       ],
       "on_complete": "5 de 5.",
-      "teach": "La línea base\nmcp host <nombre> crea un host nuevo y mcp attack <nombre> lanza los cinco ataques de A4-02.\nPor qué: sin medir antes, no puedes demostrar que un sello ayuda."
+      "teach": "La línea base\nmcp host <nombre> crea un host nuevo y mcp attack <nombre> lanza los cinco ataques de A4-02 sobre él. Esta es tu medida de partida: 5 de 5.\nEs pesarte el primer día de dieta: sin ese número, dentro de un mes no sabrás si has adelgazado.\nPor qué: sin medir antes, no puedes demostrar que un sello ayuda; podrías estar poniendo candados que no cierran nada."
     },
     {
       "id": "o2",
@@ -82,7 +82,7 @@
           "casi todos"
         ]
       },
-      "teach": "Consentimiento\nLa especificación MCP pide que el host obtenga el consentimiento explícito del usuario antes de invocar herramientas.\nmcp defend <host> consent on lo activa.\nEn el laboratorio, el usuario simulado rechaza una llamada si ve el token en los argumentos o un reembolso que no ha pedido… y aprueba todo lo que parece normal.\nPor qué: pedir confirmación es la defensa más visible en los asistentes reales; hay que saber qué no ve el usuario.",
+      "teach": "Consentimiento\nLa defensa más intuitiva: que el host pregunte al usuario antes de ejecutar nada. La especificación MCP pide justo eso, el consentimiento explícito antes de invocar herramientas, y mcp defend <host> consent on lo activa.\nEn el laboratorio, el usuario simulado rechaza una llamada si ve el token en los argumentos o un reembolso que no ha pedido… y aprueba todo lo que le parece normal.\nEs el cajero que te pide el PIN: funciona siempre que la operación en pantalla sea la de verdad. Si el engaño no se ve ahí, firmas tu propio robo.\nPara qué en tu camino: pedir confirmación es la defensa más visible en los asistentes reales, pero su punto débil es lo que el usuario NO ve. Guárdate esa pregunta: ¿qué partes del ataque quedan fuera de la pantalla de confirmación?",
       "validator": {
         "type": "all",
         "of": [
@@ -108,7 +108,7 @@
     {
       "id": "o3",
       "text": "Con consent activado, lanza las tareas legítimas. ¿Qué proporción sale bien? (answer <número>)",
-      "teach": "El coste del consentimiento\nmcp eval <host> ejecuta cuatro tareas normales y cuenta las confirmaciones que se le piden al usuario.\nLa proporción es tareas correctas ÷ tareas. Fíjate en cuál falla y por qué.\nPor qué: un control que rompe tareas legítimas o cansa al usuario acaba desactivado en la vida real.",
+      "teach": "El coste del consentimiento\nUna defensa no se juzga solo por lo que bloquea, sino por lo que estorba. mcp eval <host> ejecuta cuatro tareas normales y cuenta cuántas confirmaciones se le piden al usuario; la proporción es tareas correctas ÷ tareas. Fíjate en cuál falla y por qué.\nEs la alarma de casa que salta con el gato: si pita cada noche, acabas desconectándola… y el día del ladrón de verdad está apagada.\nPara qué en tu camino: un control que rompe tareas legítimas o cansa al usuario con avisos acaba desactivado en la vida real, y entonces no protege de nada. Medir el coste es tan importante como medir la protección.",
       "validator": {
         "type": "all",
         "of": [
@@ -135,7 +135,7 @@
     {
       "id": "o4",
       "text": "Pinning: desactiva consent y activa pin-definitions. Publica la actualización del traductor y pide una traducción (quedará bloqueada). Después APRUEBA la nueva versión sin revisarla y vuelve a pedirla: consigue que el rug pull funcione igualmente.",
-      "teach": "Una huella no es una revisión\nUn hash (huella) es un resumen corto de un texto: si cambia un solo carácter, el hash cambia por completo.\nCon pin-definitions, el host guarda el hash de las definiciones que aprobaste.\nSi el servidor las cambia, el hash no coincide y el host bloquea la herramienta hasta que alguien la apruebe otra vez (mcp approve).\nSi se aprueba la nueva versión sin leerla (mcp inspect), el ataque vuelve.\nPor qué: los gestores de paquetes y de modelos reales usan huellas igual; detectan el cambio, pero la decisión sigue siendo humana.",
+      "teach": "Una huella no es una revisión\nUn hash (huella) es un resumen corto de un texto: si cambia un solo carácter, el hash cambia por completo. Con pin-definitions, el host guarda el hash de las definiciones que aprobaste.\nSi el servidor las cambia, el hash deja de coincidir y el host bloquea la herramienta hasta que alguien vuelva a aprobarla (mcp approve). Pero si se aprueba la nueva versión sin leerla (mcp inspect te la mostraría), el ataque vuelve tal cual.\nEs el precinto de un bote de medicina: te avisa de que alguien lo ha abierto, pero no te dice si lo de dentro sigue siendo bueno. Eso lo miras tú.\nPara qué en tu camino: los gestores de paquetes y de modelos reales usan huellas igual. Detectan el cambio, sí, pero la decisión de aceptarlo sigue siendo humana; una huella automatiza la alarma, no el criterio.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -185,7 +185,7 @@
     {
       "id": "py1",
       "text": "Programa en Python un filtro de descripciones: abre el editor con py, completa la función sospechosa y compruébala con py check.",
-      "teach": "Revisar descripciones, con tus manos\nreview-descriptions busca señales sospechosas en las descripciones antes de dárselas al modelo.\nVas a programar una versión sencilla. Abre el editor con py.\nEl for prueba las señales una a una; en cuanto una aparece, la función devuelve True.\nPor qué: los hosts reales filtran así las descripciones de servidores de terceros, y vas a ver por qué es un filtro frágil.",
+      "teach": "Revisar descripciones, con tus manos\nreview-descriptions husmea señales sospechosas en las descripciones antes de dárselas al modelo. Vas a programar una versión sencilla: abre el editor con py.\nEl for prueba las señales una a una; en cuanto aparece alguna, la función devuelve True.\nEs el filtro antispam que marca correos con palabras como «premio» o «urgente»: barato y útil… hasta que el estafador escribe «pr3mio».\nPara qué en tu camino: los hosts reales filtran así las descripciones de servidores de terceros, y en el objetivo siguiente verás de primera mano por qué es un filtro frágil: cambiar una palabra basta para esquivarlo.",
       "py_exercise": {
         "id": "A4-03-sospechosa",
         "title": "sospechosa(descripcion): buscar señales de envenenamiento",
@@ -247,7 +247,7 @@
     {
       "id": "o5",
       "text": "Diseña los sellos en el host, sin consent: consigue 0 ataques con éxito y, después, 4/4 en las tareas legítimas con 0 confirmaciones.",
-      "teach": "Defensa en el host\nCada control corta un ataque en un punto distinto:\n· review-descriptions o least-scope cortan el envenenamiento: sin instrucciones, o sin token que robar.\n· pin-definitions detecta el rug pull y namespacing evita el shadowing.\n· least-scope acaba con el passthrough y output-isolation, con la inyección por la salida.\nLa batería crea hosts nuevos: las aprobaciones manuales del paso anterior no cuentan.\nPor qué: los controles robustos quitan el poder (tokens mínimos) o separan identidades, en lugar de confiar en el modelo o en la paciencia del usuario.",
+      "teach": "Defensa en el host\nAhora el puzle: cada control corta un ataque en un punto distinto, y tienes que cubrir los cinco.\n· review-descriptions o least-scope cortan el envenenamiento: sin instrucciones, o sin token que robar.\n· pin-definitions detecta el rug pull y namespacing evita el shadowing.\n· least-scope acaba con el passthrough y output-isolation, con la inyección por la salida.\nLa batería crea hosts nuevos, así que las aprobaciones manuales del paso anterior no cuentan: aquí mandan los controles, no tu memoria.\nFíjate en el patrón: las defensas fuertes no piden buena voluntad a nadie. Es la diferencia entre rogar a la gente que no robe y, simplemente, no dejar dinero a la vista.\nPara qué en tu camino: los controles robustos quitan el poder (tokens mínimos) o separan identidades, en lugar de confiar en el modelo o en la paciencia del usuario. Esa es la jerarquía que usarás siempre al defender sistemas de IA.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -280,7 +280,7 @@
     {
       "id": "o6",
       "text": "Comprueba que lo tienes claro: ¿qué detecta exactamente el pinning?",
-      "teach": "Repaso: qué compara el pinning\nRecuerda el rug pull del traductor: bloqueado… hasta que lo aprobaste sin leer.\nPor qué: saber qué comprueba cada sello evita confiar en él para lo que no hace.",
+      "teach": "Repaso: qué compara el pinning\nVuelve al rug pull del traductor: el pinning lo bloqueó… hasta que tú lo aprobaste sin leerlo. ¿Qué comparó exactamente para bloquearlo?\nUna huella de hoy contra una huella aprobada: eso detecta CAMBIOS, no maldad.\nPor qué: saber qué comprueba cada sello evita el error más caro en seguridad, confiar en un control para algo que no hace.",
       "choices": [
         {
           "id": "a",

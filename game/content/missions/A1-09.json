@@ -56,7 +56,7 @@
     {
       "id": "o1",
       "text": "Escribe forja medir A1-09 y estudia la medición real ya grabada: la tasa de ataques que pasan sin defensa, con un clasificador, y con clasificador más normalización. Extra opcional: con Ollama en marcha, ejecuta python redteam.py --ollama llama3.2:1b y tráelo con evidence import.",
-      "teach": "Antes y después, con número\nEl arnés lanza 18 ataques de seis familias contra el objetivo y cuenta cuántos revelan el canario, con tres defensas: ninguna, un clasificador de palabras clave, y el clasificador con normalización.\nLa LÍNEA BASE («ninguna») es el «antes»: sin ella no puedes decir que una defensa mejora nada.\nEn el Dojo, forja medir A1-09 reproduce una medición real hecha con el objetivo simulado. Medir contra un modelo real con Ollama es un extra.\nPor qué: sin un «antes» y un «después» medidos, una defensa es una creencia, no un resultado.",
+      "teach": "Antes y después, con número\nEl arnés lanza 18 ataques de seis familias contra el objetivo y cuenta cuántos revelan el canario, con tres defensas: ninguna, un clasificador de palabras clave, y ese clasificador más normalización.\nLa LÍNEA BASE («ninguna») es el «antes»: sin ella no puedes afirmar que una defensa mejore nada, porque no tienes con qué comparar.\nEn el Dojo, forja medir A1-09 reproduce una medición real hecha con el objetivo simulado; medir contra un modelo real con Ollama es un extra.\nPara qué en tu camino: un red teamer no entrega «lo probé y aguantó», entrega un número reproducible; sin un «antes» y un «después» medidos, una defensa es una creencia, no un resultado.\nEs como presumir de que un suplemento te da energía sin haberte medido antes de tomarlo: puede que sí, pero no tienes forma de demostrarlo ni de que nadie te crea.",
       "prediction": {
         "prompt": "Sin ninguna defensa, de los 18 ataques, ¿cuántos crees que revelarán el canario?",
         "options": [
@@ -86,7 +86,7 @@
     {
       "id": "o2",
       "text": "En el Dojo: abre el editor con py, completa familias_que_pasan —la superficie residual que entrega el red teamer— y compruébala con py check.",
-      "teach": "Lo que todavía pasa\nEl número total no basta: el equipo de defensa necesita saber QUÉ familias siguen teniendo éxito, para saber dónde poner el siguiente control.\nfamilias_que_pasan recibe cuántos éxitos tuvo cada familia y devuelve, ordenadas, las que tienen al menos uno.\nPor qué: «33 % pasa» no dice dónde actuar; «todavía pasan ofuscación e inyección indirecta» sí.",
+      "teach": "Lo que todavía pasa\nEl número total no basta: el equipo de defensa necesita saber QUÉ familias siguen teniendo éxito, porque ahí es donde hay que poner el siguiente control.\nfamilias_que_pasan recibe cuántos éxitos tuvo cada familia y devuelve, ordenadas, las que tienen al menos uno: esa lista es la SUPERFICIE RESIDUAL.\nPara qué en tu camino: «33 % pasa» no le dice a nadie dónde actuar; «todavía pasan ofuscación e inyección indirecta» sí, y por eso media entrega de tu informe es esa lista, no la cifra.\nEs como el parte del fontanero: no basta «hay goteras», sirve «gotean el baño y la cocina, el salón ya no»; con eso sabe exactamente qué tubería tocar.",
       "validator": {
         "type": "event",
         "event": "py.checked",
@@ -146,7 +146,7 @@
     {
       "id": "o3",
       "text": "El clasificador para las peticiones directas y de rol, pero la ofuscación (la orden en base64) pasa. ¿Por qué pasa?",
-      "teach": "El filtro ve el disfraz\nUn FILTRO DE PALABRAS CLAVE busca ciertos términos en el texto. Si la orden va codificada, esos términos no aparecen: el filtro ve letras sin sentido y la deja pasar.\nPor qué: por eso la defensa útil normaliza la entrada (descodifica, quita acentos) ANTES de mirarla; así la ofuscación vuelve a leerse en claro.",
+      "teach": "El filtro ve el disfraz\nUn FILTRO DE PALABRAS CLAVE busca ciertos términos en el texto. Si la orden va codificada (por ejemplo en base64), esos términos no aparecen por ningún lado: el filtro solo ve letras sin sentido y la deja pasar tan tranquilo.\nPara qué en tu camino: por eso la defensa útil NORMALIZA la entrada antes de mirarla (descodifica, quita acentos), para que la ofuscación vuelva a leerse en claro y el filtro vea la orden de verdad.\nEs como un detector de metales que apagas metiendo la navaja en un estuche de plástico: el guardia tiene que abrir el estuche primero, o solo ve el envoltorio, no lo que lleva dentro.",
       "choices": [
         {
           "id": "a",
@@ -179,7 +179,7 @@
     {
       "id": "o4",
       "text": "Tras normalizar, solo sigue pasando la inyección indirecta. ¿Por qué no la para el guardián de entrada?",
-      "teach": "El guardián no ve el dato\nUn GUARDIÁN DE ENTRADA revisa lo que escribe el usuario. La inyección indirecta no viaja ahí: viaja dentro de un dato (un documento, un correo, una reseña) que el modelo procesa después.\nPor qué: el guardián nunca ve esa orden como entrada del usuario, así que no la filtra. Defenderla es otro problema: aislar o marcar el contenido no confiable, no filtrar la petición.",
+      "teach": "El guardián no ve el dato\nUn GUARDIÁN DE ENTRADA revisa lo que escribe el usuario. Pero la inyección indirecta no viaja ahí: va escondida dentro de un dato (un documento, un correo, una reseña) que el modelo procesa después, por su cuenta.\nPara qué en tu camino: el guardián nunca llega a ver esa orden como entrada del usuario, así que no puede filtrarla; defenderla es otro problema, el de aislar o marcar el contenido no confiable (A2), no el de filtrar la petición.\nEs como el control de seguridad del aeropuerto que cachea a los pasajeros pero no abre la mercancía de la bodega: la amenaza que viaja en la carga pasa por un canal que ese control ni toca.",
       "choices": [
         {
           "id": "a",

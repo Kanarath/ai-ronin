@@ -47,7 +47,7 @@
     {
       "id": "o1",
       "text": "Lee el contexto y la SoA: iso context e iso soa.",
-      "teach": "La SoA\nISO/IEC 42001 (6.1.3) pide comparar los controles que resultan de tratar los riesgos con los del Anexo A y dejar escrito, para cada uno, si se aplica y por qué, y si está implantado.\nPor qué: es la promesa de la organización. Una SoA bonita con justificaciones falsas es una no conformidad esperando.",
+      "teach": "La SoA\nLa declaración de aplicabilidad (SoA, Statement of Applicability) es el primer documento que mira cualquier auditor: la lista de controles con su «sí aplica / no aplica», su porqué y sus evidencias. ISO/IEC 42001 (6.1.3) pide comparar los controles que salen de tratar los riesgos con los del Anexo A y dejar escrito, para cada uno, si se aplica y por qué, y si está implantado.\niso context te da el contexto de la forja; iso soa, la declaración que vas a revisar. Léelos en ese orden: primero la realidad, luego lo que la organización dice de sí misma.\nEs la carta de presentación de un candidato: dice lo que cree que sabe hacer, y tu trabajo en la entrevista es pedir que lo demuestre.\nPor qué en tu camino: la SoA es la promesa de la organización, y una SoA bonita con justificaciones falsas no es un detalle, es una no conformidad esperando a que alguien la destape.",
       "validator": {
         "type": "sequence",
         "steps": [
@@ -68,7 +68,7 @@
     {
       "id": "o2",
       "text": "Hay un objetivo excluido. Revísalo con iso check y contrástalo con el contexto. Si la exclusión no se sostiene, márcalo: iso flag <objetivo> exclusion-injustificada.",
-      "teach": "Exclusiones\nSe puede excluir un control del Anexo A, pero la justificación tiene que salir de la evaluación de riesgos y ser cierta.\nPor qué: las exclusiones son el sitio favorito para esconder lo que no se ha hecho.",
+      "teach": "Exclusiones\nSí se puede excluir un control del Anexo A (no todos aplican a todas las organizaciones), pero la justificación tiene que salir de la evaluación de riesgos y, sobre todo, ser cierta. Contrástala siempre con el contexto: iso check <objetivo> te enseña el detalle y, si la exclusión no se sostiene, iso flag <objetivo> exclusion-injustificada la marcas.\nMira A.10: la forja dice «no tenemos proveedores de IA», pero el contexto lista tres (el modelo de Meta, el servidor MCP público y la API de envíos). La exclusión es falsa.\nEs como tachar «alérgenos» del menú de un bar que sirve marisco: por mucho que lo escribas, el marisco sigue ahí.\nPor qué: las exclusiones son el escondite favorito para lo que no se ha hecho; por eso el auditor empieza a tirar de ahí.",
       "validator": {
         "type": "event",
         "event": "iso.flagged",
@@ -87,7 +87,7 @@
     {
       "id": "c1",
       "text": "¿Se puede excluir un objetivo del Anexo A?",
-      "teach": "El Anexo A no es una lista obligatoria\nEs un catálogo de referencia. Lo obligatorio es compararlo con lo que sale del tratamiento de riesgos y justificar cada inclusión y cada exclusión.\nPor qué: una organización que no desarrolla IA, solo la usa, puede no necesitar parte del ciclo de vida; pero tiene que decirlo y que sea verdad.",
+      "teach": "El Anexo A no es una lista obligatoria\nMucha gente lo confunde: el Anexo A no es una casilla de 38 controles que haya que marcar todos. Es un catálogo de referencia. Lo obligatorio son las cláusulas 4 a 10 de la norma, y entre ellas, comparar ese catálogo con lo que sale del tratamiento de riesgos y justificar cada inclusión y cada exclusión.\nEs como la carta de un restaurante: no estás obligado a cocinar todos los platos, pero sí a decir cuáles ofreces y a tenerlos de verdad en la cocina.\nPor qué: una organización que no desarrolla IA, solo la usa, puede no necesitar parte del ciclo de vida; pero tiene que decirlo y que sea verdad, no simplemente tachar lo que le da pereza.",
       "choices": [
         {
           "id": "a",
@@ -120,7 +120,7 @@
     {
       "id": "o3",
       "text": "Ahora busca lo contrario: un objetivo incluido que no tiene ninguna evidencia. Márcalo con iso flag <objetivo> sin-evidencia.",
-      "teach": "Incluido no es implantado\nLa columna «evidencias» dice si hay algo que enseñar: un registro, un procedimiento aprobado, un informe. Sin evidencia, el control solo existe en el papel.\nPor qué: el auditor no certifica intenciones; certifica lo que puede comprobar.",
+      "teach": "Incluido no es implantado\nUn control puede estar marcado como «sí aplica» y aun así no existir en la práctica. La columna «evidencias» es la que lo delata: dice si hay algo que enseñar, un registro, un procedimiento aprobado, un informe. Busca un 0 en esa columna entre los que aplican y márcalo con iso flag <objetivo> sin-evidencia.\nAsí cae A.5: la evaluación de impacto figura incluida, pero no hay ni una hecha, y el chatbot ya atiende a clientes.\nEs la diferencia entre tener el extintor colgado en la pared y tenerlo caducado y sin revisar: en el plano aparece, pero el día del fuego no sirve.\nPor qué: el auditor no certifica intenciones ni planes, certifica lo que puede comprobar; sin evidencia, el control solo existe en el papel.",
       "validator": {
         "type": "event",
         "event": "iso.flagged",
@@ -139,7 +139,7 @@
     {
       "id": "o4",
       "text": "¿Qué cláusula de la norma pide la evaluación de impacto de los sistemas de IA que falta en A.5? (answer <cláusula>)",
-      "teach": "La evaluación de impacto\nISO/IEC 42001 pide evaluar las consecuencias de los sistemas de IA para personas, grupos y la sociedad. Está en la planificación (6.1.4) y se repite en la operación (8.4).\nPor qué: es lo que más distingue a esta norma de ISO/IEC 27001, y conecta con la FRIA (evaluación de impacto en los derechos fundamentales) del AI Act que viste en E3.",
+      "teach": "La evaluación de impacto\nEsta es la pregunta de la misión: ¿qué cláusula pide la evaluación de impacto que falta en A.5? ISO/IEC 42001 pide evaluar las consecuencias de los sistemas de IA para las personas, los grupos y la sociedad. Está en la planificación (6.1.4) y se repite en la operación (8.4).\nFíjate porque es lo que más distingue a esta norma de su hermana ISO/IEC 27001: la 27001 protege la información; la 42001 se pregunta, además, a quién puede perjudicar el sistema. Es el mismo espíritu que la FRIA (evaluación de impacto en los derechos fundamentales) del AI Act que viste en E3.\nPor qué en tu camino: aquí se cruzan las dos mitades de tu formación, la técnica y la de gobernanza; quien sepa ver ese puente vale el doble como auditor de IA.",
       "validator": {
         "type": "answer",
         "expected": "6.1.4",
@@ -156,7 +156,7 @@
     {
       "id": "py1",
       "text": "Programa la primera comprobación del auditor: abre el editor con py, completa sin_evidencia y compruébala con py check.",
-      "teach": "Incluidos sin evidencia, en código\nDe la SoA, los objetivos que aplican y no tienen ninguna evidencia.\nPor qué: es la primera pasada de cualquier revisión documental.",
+      "teach": "Incluidos sin evidencia, en código\nLo que acabas de hacer a mano, ahora lo automatizas: sin_evidencia(soa) devuelve los objetivos que aplican y no tienen ninguna evidencia. Un bucle que se queda con los que tienen «aplica» verdadero y la lista de evidencias vacía.\nEs pasar el dedo por la estantería buscando huecos: no juzgas aún los libros, solo señalas dónde falta uno.\nPor qué: es la primera pasada de cualquier revisión documental, y hacerla con código te deja la cabeza libre para lo que sí exige criterio.",
       "py_exercise": {
         "id": "E5-01-evidencia",
         "title": "sin_evidencia(soa): objetivos que aplican y no tienen evidencias",

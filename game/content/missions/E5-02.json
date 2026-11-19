@@ -50,7 +50,7 @@
     {
       "id": "o1",
       "text": "Lee los hallazgos y las definiciones de los grados: iso findings.",
-      "teach": "Tres grados\nNo conformidad mayor: falta un requisito o falla por completo, o afecta a la capacidad del sistema de lograr sus resultados. Menor: incumplimiento parcial o puntual. Observación: no hay incumplimiento, es una oportunidad de mejora.\nPor qué: son los criterios que usan las entidades de certificación (ISO/IEC 17021-1) y deciden si se certifica o no.",
+      "teach": "Tres grados\nAntes de clasificar nada, graba estas tres definiciones; iso findings te las deja delante.\nNo conformidad mayor: falta un requisito entero o falla por completo, o afecta a la capacidad del sistema de gestión de lograr sus resultados. Menor: un incumplimiento parcial o puntual. Observación: aún no hay incumplimiento, es una oportunidad de mejora.\nSon como las luces del salpicadero: la roja te obliga a parar (mayor), la amarilla te deja seguir pero hay que arreglarlo (menor), y el aviso de «revisa pronto el filtro» es solo una recomendación (observación).\nPor qué: no son etiquetas de andar por casa, son los criterios que usan las entidades de certificación (ISO/IEC 17021-1) y de ellos depende que la forja se certifique o no.",
       "validator": {
         "type": "event",
         "event": "iso.findings"
@@ -74,7 +74,7 @@
         "caption": "falta el requisito o falla por completo → mayor; existe y falló una vez → menor; aún no incumple → observación. Un cambio sin aprobar sigue siendo menor si 11 de 12 sí lo tenían"
       },
       "text": "Clasifica los seis hallazgos: iso grade <hallazgo> <mayor|menor|observacion>.",
-      "teach": "¿Sistema o caso?\nLa pregunta clave: ¿el requisito no existe o no funciona (sistema), o existe y ha fallado una vez (caso)?\nPor qué: un fallo en 1 de 12 registros es menor aunque el cambio fuera importante; no haber hecho nunca la revisión por la dirección es mayor aunque nadie haya salido perjudicado.",
+      "teach": "¿Sistema o caso?\nAhora clasificas los seis: iso grade <hallazgo> <mayor|menor|observacion>. Y lo haces con una sola pregunta, siempre la misma: ¿el requisito no existe o no funciona en absoluto (falla el SISTEMA), o existe y funciona pero ha fallado una vez (falla un CASO)?\nAsí, un fallo en 1 de 12 registros es menor aunque ese cambio fuera importante, porque el proceso existe y funcionó once veces; no haber hecho NUNCA la revisión por la dirección es mayor aunque nadie haya salido perjudicado todavía.\nEs como un socorrista: que un bañista se salte una vez la bandera es un incidente (menor); que no haya socorrista en toda la playa es un fallo del sistema (mayor), aunque hoy nadie se ahogue.\nPor qué: el grado mide la salud del sistema de gestión, no lo escandaloso que suene el caso.",
       "validator": {
         "type": "event",
         "event": "iso.graded",
@@ -92,7 +92,7 @@
     {
       "id": "c1",
       "text": "El cambio de H2 que no tenía aprobación era un cambio del modelo del chatbot. ¿Por qué sigue siendo menor?",
-      "teach": "Gravedad del caso frente a fallo del sistema\nEl grado mide el sistema de gestión, no el caso. Once de doce cambios tenían aprobación: el proceso existe y funciona; ha fallado una vez.\nPor qué: si el auditor gradúa por lo grave que suena el caso, dos auditores darán grados distintos al mismo hallazgo.",
+      "teach": "Gravedad del caso frente a fallo del sistema\nTentador: el cambio de H2 era nada menos que el modelo del chatbot, lo que más suena. Pero el grado mide el sistema de gestión, no el susto del caso. Once de doce cambios tenían aprobación: el proceso existe y funciona, ha fallado una vez.\nEs como un restaurante con una cocina impecable al que un día se le cuela un plato frío: corriges el plato, no cierras la cocina.\nPor qué: si graduaras por lo grave que suena, dos auditores pondrían grados distintos al mismo hallazgo, y entonces la certificación dependería de a quién te toque, no de la norma.",
       "choices": [
         {
           "id": "a",
@@ -125,7 +125,7 @@
     {
       "id": "o3",
       "text": "Recomienda la decisión: iso decide <recomendar|recomendar-con-plan|aplazar>.",
-      "teach": "Lo que exige una mayor\nCon no conformidades menores se puede recomendar la certificación si la organización presenta un plan de acciones correctivas aceptado. Con una mayor, no: primero hay que corregirla y verificar la acción correctiva, a menudo con una visita de seguimiento.\nPor qué: certificar con una mayor abierta sería afirmar que el sistema funciona cuando hay un requisito entero sin implantar.",
+      "teach": "Lo que exige una mayor\nAhora recomiendas al comité: iso decide <recomendar|recomendar-con-plan|aplazar>. La regla la ves en el diagrama de la izquierda. Con solo no conformidades menores puedes recomendar la certificación si la organización trae un plan de acciones correctivas aceptado. Con una mayor abierta, no: primero hay que corregirla y verificar que la acción correctiva funciona, a menudo con una visita de seguimiento.\nUna mayor es como un suspenso en una asignatura troncal: por mucho que apruebes el resto, no te dan el título hasta recuperarla. Aquí hay dos mayores (H1 y H5), así que la decisión es aplazar.\nPor qué: certificar con una mayor abierta sería firmar que el sistema funciona cuando hay un requisito entero sin implantar; tu firma lo avalaría.",
       "validator": {
         "type": "event",
         "event": "iso.decided",
@@ -143,7 +143,7 @@
     {
       "id": "c2",
       "text": "¿Qué tiene que presentar la forja para cerrar H5?",
-      "teach": "Cerrar una no conformidad\nTres piezas: la corrección (hacer lo que falta: las evaluaciones de impacto), el análisis de la causa raíz (por qué no se hicieron) y la acción correctiva (lo que cambia para que no vuelva a pasar). El auditor verifica que se han hecho y que funcionan.\nPor qué: sin causa raíz, se corrige el síntoma y el hallazgo vuelve en la siguiente auditoría.",
+      "teach": "Cerrar una no conformidad\nCerrar H5 no es prometer que se hará; son tres piezas juntas. La corrección: hacer lo que falta, las evaluaciones de impacto. La causa raíz: entender por qué no se hicieron. Y la acción correctiva: cambiar algo para que no vuelva a pasar. El auditor verifica que las tres están hechas y que funcionan.\nEs como una gotera: secar el suelo es la corrección, pero si no encuentras la tubería rota (la causa) y la cambias (la acción correctiva), vuelves a tener el charco la semana que viene.\nPor qué: sin causa raíz se corrige el síntoma y el mismo hallazgo reaparece en la siguiente auditoría; por eso recortar el alcance para esquivarlo tampoco cierra nada.",
       "choices": [
         {
           "id": "a",
@@ -176,7 +176,7 @@
     {
       "id": "py1",
       "text": "Programa la regla de decisión: abre el editor con py, completa decision y compruébala con py check.",
-      "teach": "La decisión, en código\nAlguna mayor: aplazar. Si no, alguna menor: recomendar con plan. Si no: recomendar.\nPor qué: es lo que comprueba iso decide.",
+      "teach": "La decisión, en código\nLa misma regla del paso anterior, ahora como función decision(grados): si hay alguna mayor, aplazar; si no, si hay alguna menor, recomendar-con-plan; y si no, recomendar. El orden importa: la comprobación de «mayor» va la primera, porque manda sobre todas.\nEs un semáforo leído de arriba abajo: en cuanto ves roja, paras y no sigues mirando las de abajo.\nPor qué: es exactamente lo que comprueba iso decide; programarla te obliga a dejar la jerarquía sin ambigüedad.",
       "py_exercise": {
         "id": "E5-02-decision",
         "title": "decision(grados): recomendación a partir de los grados de los hallazgos",

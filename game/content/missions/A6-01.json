@@ -64,7 +64,7 @@
     {
       "id": "o1",
       "text": "Crea el pipeline y saca su AI-BOM. ¿Cuántos artefactos están en formato pickle? (answer <número>)",
-      "teach": "El inventario y sus huellas\nsupply forja <nombre> crea el pipeline y supply sbom <nombre> saca su inventario.\nLa columna «formato» dice cómo está guardado cada modelo: pickle o safetensors. En el paso siguiente verás por qué importa.\nLa «huella» es el comienzo del SHA-256 (Secure Hash Algorithm, 256 bits) del contenido: si cambia un byte, cambia por completo.\n«firma/lock» dice si el componente está firmado, en el manifiesto aprobado o fijado en el fichero de bloqueo (lockfile).\nPor qué: con el AI-BOM de cada build, se sabe en minutos si usa un componente que acaba de descubrirse malicioso.",
+      "teach": "El inventario y sus huellas\nAntes de defender una cadena hay que saber de qué está hecha. supply forja <nombre> crea el pipeline y supply sbom <nombre> saca su inventario, el AI-BOM. Lee sus columnas:\n· «formato» dice cómo está guardado cada modelo: pickle o safetensors (en el paso siguiente verás por qué importa tanto).\n· «huella» es el comienzo del SHA-256 (Secure Hash Algorithm, 256 bits) del contenido: si cambia un solo byte, la huella cambia por completo.\n· «firma/lock» dice si el componente está firmado, en el manifiesto aprobado o fijado en el fichero de bloqueo (lockfile).\nEs el albarán de un pedido de piezas: cada una con su referencia, su proveedor y su número de lote. Si mañana retiran un lote por defectuoso, lo localizas en segundos.\nPara qué en tu camino: con el AI-BOM de cada build sabes en minutos si tu sistema usa un componente que acaba de descubrirse malicioso. Sin inventario, esa misma pregunta lleva días de pánico.",
       "validator": {
         "type": "all",
         "of": [
@@ -88,7 +88,7 @@
     {
       "id": "o2",
       "text": "Inspecciona los dos artefactos pickle. ¿Cuál de ellos trae una importación peligrosa? (answer <id del artefacto>)",
-      "teach": "Pickle y safetensors\npickle es el formato de Python para guardar objetos.\nAl cargar un pickle, el propio fichero puede pedir que se importen y se llamen funciones: cargarlo equivale a ejecutar código de quien lo escribió.\nsafetensors, en cambio, guarda solo números (tensores) y una cabecera JSON (JavaScript Object Notation): cargarlo no ejecuta código.\nsupply inspect <pipeline> <artefacto> enseña lo que encuentra el escáner (simulado: nunca se ejecuta nada).\nPor qué: muchos formatos de modelos se han basado en pickle; cargar uno de un desconocido es ejecutar su código en tu servidor.",
+      "teach": "Pickle y safetensors\nAquí está la idea que no debes olvidar en todo el arco A6. pickle es el formato de Python para guardar objetos, y al cargar un pickle el propio fichero puede pedir que se importen y se llamen funciones: cargarlo EQUIVALE A EJECUTAR el código de quien lo escribió.\nsafetensors, en cambio, guarda solo números (tensores) y una cabecera JSON (JavaScript Object Notation): cargarlo no ejecuta nada, solo lee datos.\nsupply inspect <pipeline> <artefacto> te enseña lo que encuentra el escáner (simulado: aquí nunca se ejecuta nada de verdad).\nEs la diferencia entre un libro y un muñeco con mecanismo: el libro solo tiene palabras que lees; el muñeco, al abrir la caja, mueve resortes que alguien montó dentro. Un pickle es la caja con mecanismo.\nPara qué en tu camino: muchísimos formatos de modelos se han basado en pickle. Cargar uno de un desconocido es, literalmente, ejecutar su programa en tu servidor, con tus permisos y tu red. Por eso hoy la industria empuja hacia safetensors.",
       "validator": {
         "type": "all",
         "of": [
@@ -136,12 +136,12 @@
         "supply train taller"
       ],
       "on_complete": "0,94 con 520 filas, 400 de la forja y 120 del espejo comunitario. La exactitud es buena… guarda la otra línea del resultado para la próxima misión.",
-      "teach": "Entrenar y medir\nsupply train <pipeline> entrena el clasificador con los datos del pipeline.\nLa exactitud es la proporción de piezas del conjunto de prueba que acierta: 0,9 es el 90 %.\nPor qué: es la métrica que verías en un pipeline real; y una buena exactitud no dice nada de dónde vinieron los datos."
+      "teach": "Entrenar y medir\nsupply train <pipeline> entrena el clasificador con los datos del pipeline y lo evalúa.\nLa exactitud es la proporción de piezas del conjunto de prueba que acierta: 0,9 es el 90 %.\nEs la nota de un examen: te dice cuántas preguntas acertó el alumno, pero ni una palabra de con qué libros estudió ni de si alguno estaba manipulado.\nPara qué en tu camino: es la métrica que verías en un pipeline real, y es tramposa por lo que CALLA. Una exactitud estupenda no dice absolutamente nada de dónde vinieron los datos; retén esa segunda línea del resultado, que en A6-02 cobrará sentido."
     },
     {
       "id": "o4",
       "text": "Carga el modelo interno en el servidor, instala la dependencia forja-metrics y despliega. ¿Con qué usuario corre el proceso del servidor? (answer <usuario>)",
-      "teach": "La imagen del servidor\nServing es poner el modelo a responder predicciones a la aplicación, normalmente desde un contenedor.\nsupply load carga un modelo, supply install instala un paquete y supply deploy despliega el servidor.\nUna imagen de contenedor se construye por capas, una por instrucción (FROM, COPY, RUN, ENV…). Cualquiera que la descargue puede leer su historial.\nEl usuario del proceso y la red en la que escucha deciden cuánto daño puede hacer quien lo comprometa.\nPor qué: los modelos en producción se sirven así, y cada uno de estos detalles es un eslabón más de la cadena.",
+      "teach": "La imagen del servidor\nServing es la última etapa: poner el modelo a responder predicciones a la aplicación, normalmente desde un contenedor. supply load carga un modelo, supply install instala un paquete y supply deploy despliega el servidor.\nUna imagen de contenedor se construye por capas, una por instrucción (FROM, COPY, RUN, ENV…), y cualquiera que la descargue puede leer ese historial entero.\nEs una cebolla cuyas capas quedan a la vista: quien la pela ve todo lo que pusiste al construirla, incluido lo que creías haber borrado. Y el usuario con el que corre el proceso es como las llaves que le das al vigilante nocturno: si es «root», le das las de todo el edificio.\nPara qué en tu camino: los modelos en producción se sirven exactamente así. El usuario del proceso y la red en la que escucha deciden cuánto daño puede hacer quien lo comprometa; cada uno de esos detalles es un eslabón más de la cadena que atacarás en A6-02.",
       "validator": {
         "type": "all",
         "of": [
@@ -190,7 +190,7 @@
     {
       "id": "o5",
       "text": "Comprueba que lo tienes claro: ¿por qué cargar un pickle de un tercero es distinto de cargar un safetensors?",
-      "teach": "Repaso: datos frente a código\nRecuerda lo que dijo el escáner de detector-grietas.\nPor qué: esta diferencia decide qué modelos de terceros puedes cargar en un servidor real.",
+      "teach": "Repaso: datos frente a código\nVuelve a lo que dijo el escáner de detector-grietas y mira el diagrama de la izquierda: a un lado, un formato que solo guarda números; al otro, uno que ejecuta funciones al cargarse.\nLa pregunta que importa no es cuánto ocupa el fichero ni si viene firmado, sino qué HACE cuando lo abres.\nPor qué: esta diferencia —datos inertes frente a código vivo— decide qué modelos de terceros puedes cargar sin miedo en un servidor real. Grábatela: es la base de las defensas de A6-03.",
       "diagram": {
         "kind": "table",
         "title": "LA IDEA · datos frente a código",

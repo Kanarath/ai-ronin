@@ -92,7 +92,7 @@
         "gov open forja · gov risks forja"
       ],
       "on_complete": "R6, con 25: las cámaras de emociones. Probabilidad máxima, porque el sistema existe para eso, e impacto máximo sobre los derechos de los operarios.",
-      "teach": "Puntuar un riesgo\nEjemplo: probabilidad 2 e impacto 4 dan un riesgo inherente de 2 × 4 = 8.\ngov open forja abre la carpeta; gov risks forja enseña el registro.\nPor qué: con la misma escala puedes comparar riesgos muy distintos (una fuga de datos y una cámara prohibida) y decidir por dónde empezar.",
+      "teach": "Puntuar un riesgo\nUn registro de riesgos pone número a cada peligro para poder compararlos. El riesgo inherente es probabilidad × impacto, cada uno de 1 a 5: por ejemplo, probabilidad 2 e impacto 4 dan 2 × 4 = 8.\ngov open forja abre la carpeta; gov risks forja enseña el registro.\nPor qué: con la misma escala comparas cosas que no se parecen en nada —una fuga de datos y una cámara prohibida— y decides por dónde empezar; mira el diagrama, donde el apetito es la línea que ninguno debe cruzar.\nComo la báscula del médico: el número no es la persona, pero deja comparar y saber a quién atender primero.",
       "diagram": {
         "kind": "bars",
         "title": "LA IDEA · el apetito es la línea que no se cruza",
@@ -122,7 +122,7 @@
     {
       "id": "py1",
       "text": "Escribe en Python la regla del apetito: abre el editor con py, completa la función y compruébala con py check.",
-      "teach": "La regla del apetito, con tus manos\nEl apetito de riesgo es el máximo que acepta la dirección: aquí, 6. Un riesgo está dentro si probabilidad × impacto es menor o igual que el apetito.\nA la función le falta calcular el riesgo. En Python, la multiplicación es * y <= significa «menor o igual».\nEscribe py para abrir el editor; py check lo comprueba con varios casos.\nPor qué: es la comprobación que hace gov treat antes de dejarte aceptar un riesgo, y la que harías en una hoja de riesgos real.",
+      "teach": "La regla del apetito, con tus manos\nEl apetito de riesgo es el máximo que la dirección está dispuesta a tolerar: aquí, 6. Un riesgo está dentro si probabilidad × impacto es menor o igual que el apetito.\nA la función le falta calcular el riesgo. En Python, la multiplicación es * y <= significa «menor o igual». Escribe py para abrir el editor; py check lo comprueba con varios casos.\nPor qué: es la misma comprobación que hace gov treat antes de dejarte aceptar un riesgo, y la que harías en cualquier hoja de riesgos real.\nComo el límite de la tarjeta de crédito: por debajo, la compra pasa sola; por encima, el banco la para. El apetito es ese tope, pero para el riesgo.",
       "py_exercise": {
         "id": "O5-03-apetito",
         "title": "dentro_del_apetito(probabilidad, impacto, apetito)",
@@ -221,7 +221,7 @@
         "gov treat forja R6 mitigar · gov treat forja R6 evitar"
       ],
       "on_complete": "Evitado: la forja no compra las cámaras. Algunos riesgos no se gestionan, se evitan.",
-      "teach": "Mitigar o evitar\ngov treat forja <riesgo> <mitigar|evitar|aceptar> aplica un tratamiento.\nMitigar pone un control que baja la probabilidad. Evitar es renunciar al sistema: el riesgo desaparece y el beneficio también.\nRecuerda O5-02: algunos usos no se pueden «hacer bien».\nPor qué: un control técnico no arregla un uso que la ley prohíbe; ahí la única decisión es no hacerlo."
+      "teach": "Mitigar o evitar\ngov treat forja <riesgo> <mitigar|evitar|aceptar> aplica un tratamiento. Mitigar pone un control que baja la probabilidad; evitar es renunciar al sistema, con lo que el riesgo desaparece… y el beneficio también.\nR6 son las cámaras que miden el ánimo: intentarás mitigarlo y el juego te lo rechazará, porque (recuerda O5-02) ese uso está prohibido y no se puede «hacer bien». La única salida es evitarlo.\nPor qué: un control técnico, por bueno que sea, no arregla un uso que la ley prohíbe; ahí no hay tuerca que apretar, solo la decisión de no hacerlo. Mira la tabla del diagrama.\nComo una moto sin frenos: no la «mejoras» conduciendo con cuidado, simplemente no la sacas a la calle."
     },
     {
       "id": "o3",
@@ -238,7 +238,7 @@
         "gov treat forja R1 aceptar"
       ],
       "on_complete": "Rechazado: 8 está por encima del apetito. Aceptar un riesgo así exige una decisión explícita y documentada de la dirección, no del equipo técnico.",
-      "teach": "Aceptar un riesgo\nAceptar deja el riesgo como está. Solo cabe si ya está dentro del apetito.\nPor qué: aceptar un riesgo por encima del apetito es una decisión explícita y documentada de la dirección, nunca del equipo técnico."
+      "teach": "Aceptar un riesgo\nAceptar es dejar el riesgo tal cual, sin control. Solo cabe si ya está dentro del apetito; por eso, cuando intentes aceptar R1 (la fuga del código de descuento, que puntúa 8), el juego te lo rechazará: 8 está por encima de 6.\nPor qué: aceptar un riesgo que supera el apetito no es una casilla que marque el equipo técnico, es una decisión explícita y firmada de la dirección, que asume por escrito lo que puede pasar.\nComo firmar que renuncias al seguro del coche: nadie lo hace por ti; tiene que ponerlo de su puño quien se la juega."
     },
     {
       "id": "c1",
@@ -275,7 +275,7 @@
     {
       "id": "o4",
       "text": "Deja los seis riesgos dentro del apetito sin evitar ningún sistema que se pueda usar con seguridad.",
-      "teach": "Mitigar con lo que ya sabes\nCada riesgo mitigable tiene un control que ya practicaste: A1 en el chatbot, A6 en el pipeline, A3 y O6 en el asistente, y los artículos 10 y 14 del AI Act en el cribado.\nEvitar un riesgo mitigable también lo saca del registro… y deja a la forja sin ese sistema.\nPor qué: evitar sin necesidad también tiene un coste: la forja pierde un sistema que podía usar con seguridad.",
+      "teach": "Mitigar con lo que ya sabes\nAhora dejas los seis riesgos dentro del apetito. Cada riesgo mitigable tiene un control que ya practicaste: A1 en el chatbot, A6 en el pipeline, A3 y O6 en el asistente, y los artículos 10 y 14 del AI Act en el cribado. R1 a R5 se mitigan; R6 ya quedó evitado.\nCuidado: evitar un riesgo que SÍ se podía mitigar también lo saca del registro, pero deja a la forja sin un sistema que podía usar con seguridad. Eso es un coste, no una victoria.\nPor qué: gestionar el riesgo no es eliminarlo a toda costa, es quedarte con el máximo de sistema útil por debajo de la línea del apetito.\nComo cerrar la cocina entera porque una sartén echa humo: apagas el fuego, sí, pero te quedas sin cenar. Arreglas la sartén, no tiras la cocina.",
       "validator": {
         "type": "event",
         "event": "gov.register",

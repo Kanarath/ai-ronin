@@ -47,7 +47,7 @@
     {
       "id": "o1",
       "text": "Deja de mirar el texto. Apaga la ortografía y autentica al remitente: amenaza defensa ortografia off, amenaza defensa autenticacion on y amenaza evaluar. ¿Cuántos de los 5 ataques detecta? (answer <número>)",
-      "teach": "Autenticar, no leer\nSPF, DKIM y DMARC comprueban que el correo viene de verdad del dominio que dice, y se avisa de los dominios parecidos (f0rja en vez de forja). No importa lo bien escrito que esté: si el remitente es falso, cae.\nPor qué: la IA puede falsificar el texto, pero no la autenticación criptográfica del dominio de otro.",
+      "teach": "Autenticar, no leer\nSPF, DKIM y DMARC son tres comprobaciones que verifican que el correo viene de verdad del dominio que dice ser, usando firmas que solo el dueño del dominio puede poner. Además se avisa de los dominios parecidos (f0rja en vez de forja). No importa lo bien escrito que esté el mensaje: si el remitente es falso, cae.\nCómo lo haces: amenaza defensa ortografia off apaga el filtro viejo, amenaza defensa autenticacion on enciende esta capa y amenaza evaluar la mide.\nPiénsalo como el sello de lacre de una carta antigua: da igual lo bonita que sea la letra; si el sello no es el del rey, la carta es falsa. Dejas de juzgar el contenido y pasas a juzgar el remite.\nPara qué en tu camino: la IA puede falsificar el texto a la perfección, pero no la firma criptográfica del dominio de otra persona. Por eso esta defensa aguanta lo que el filtro de texto no: no depende de nada que la IA sepa mejorar.",
       "validator": {
         "type": "all",
         "of": [
@@ -74,7 +74,7 @@
     {
       "id": "o2",
       "text": "¿Cuál se cuela? Míralo en la línea «Se cuelan». (answer A<n>)",
-      "teach": "El que no usa un remitente falso\nEl ataque A4 llega en un correo de apariencia normal; el engaño no está en el correo, sino en una llamada posterior con una voz clonada que pide autorizar un pago. La autenticación del correo no lo toca.\nPor qué: cuando el ataque salta a otro canal (una llamada), las defensas de ese canal no valen.",
+      "teach": "El que no usa un remitente falso\nDe los cinco, el ataque A4 es distinto: su correo es de verdad, de un remitente legítimo, así que la autenticación lo da por bueno con razón. El engaño no está en el correo, sino en una llamada posterior con una voz clonada que te pide autorizar un pago.\nCómo leerlo: en la evaluación, la línea «Se cuelan» te dice cuál ha pasado.\nEs como blindar la puerta de entrada mientras el ladrón entra por la ventana del baño: la cerradura es excelente, pero el ataque ni siquiera pasa por la puerta.\nPara qué en tu camino: cuando un ataque salta a otro canal (del correo al teléfono), las defensas del primer canal no lo tocan. Esto te enseña que la seguridad se piensa por procesos, no por herramientas sueltas, y abre la necesidad de la defensa del siguiente paso.",
       "validator": {
         "type": "all",
         "of": [
@@ -103,7 +103,7 @@
     {
       "id": "o3",
       "text": "Cierra el hueco con una política, no con un filtro: amenaza defensa fuera_de_banda on y amenaza evaluar. ¿Cuántos ataques detecta ahora? (answer <número>)",
-      "teach": "Verificación fuera de banda\nToda petición de dinero o de credenciales se confirma por un segundo canal independiente (llamar al número conocido de la persona, no al que viene en el mensaje). Así, la voz clonada no basta: hay que confirmar por otra vía.\nPor qué: no depende de detectar el ataque, sino de que una acción sensible nunca se autoriza con una sola señal que se puede falsificar.",
+      "teach": "Verificación fuera de banda\n«Fuera de banda» significa confirmar por un canal distinto e independiente del que trajo la petición. La regla: toda orden de mover dinero o entregar credenciales se confirma llamando al número conocido de la persona, nunca al que viene en el propio mensaje.\nCómo lo haces: amenaza defensa fuera_de_banda on y amenaza evaluar; ahora caen los cinco, con 0 falsos positivos y sin leer una sola línea de texto.\nEs la doble llave de la caja fuerte de un banco: una sola persona, por convincente que sea, no la abre; hacen falta dos canales que no se controlan a la vez.\nPara qué en tu camino: fíjate en el giro. No intentas detectar el ataque (carrera perdida), sino que haces que una acción sensible nunca se autorice con una sola señal falsificable. Defiendes el proceso, no el mensaje.",
       "validator": {
         "type": "all",
         "of": [
@@ -131,7 +131,7 @@
     {
       "id": "c1",
       "text": "Te llama tu jefe, reconoces su voz y te pide una transferencia urgente. ¿Qué haces?",
-      "teach": "Confianza cero en voz y vídeo\nUna voz clonada o un vídeo deepfake imitan a cualquiera con unos segundos de muestra. Reconocer la voz ya no prueba nada. Lo sensible se confirma por un canal que tú inicias (llamar al número de siempre, preguntar algo que solo esa persona sepa).\nPor qué: la identidad no se verifica por cómo suena o se ve alguien, sino por un segundo factor que el atacante no controla.",
+      "teach": "Confianza cero en voz y vídeo\nUna voz clonada o un vídeo deepfake imitan a cualquiera con unos segundos de muestra sacada de un audio de WhatsApp o un vídeo público. Reconocer la voz de tu jefe ya no prueba que sea tu jefe.\nLa regla práctica: lo sensible se confirma por un canal que TÚ inicias (llamar al número de siempre que tú marcas, o preguntar algo que solo esa persona real sabría).\nEs el «¿cuál es la contraseña?» del espía: no te fías de que la cara encaje, porque una careta engaña; te fías de un secreto que el impostor no puede tener.\nPara qué en tu camino: aquí interiorizas la confianza cero. La identidad no se prueba por cómo suena o se ve alguien, sino por un segundo factor que el atacante no controla. La trampa es el instinto: «he reconocido su voz y era urgente» es exactamente la combinación (confianza + prisa) con la que te roban.",
       "choices": [
         {
           "id": "a",
@@ -164,7 +164,7 @@
     {
       "id": "c2",
       "text": "A medida que los generadores de IA mejoran, ¿qué le pasa a la detección basada en el texto?",
-      "teach": "La carrera armamentística\nCada mejora del generador borra una pista más, así que un detector que mira el texto va siempre por detrás. Por eso la defensa que aguanta no intenta «adivinar si lo escribió una IA»: se apoya en autenticación, señales de la petición y verificación de procesos, que no dependen de la calidad del texto.\nPor qué: se defiende lo que no se puede falsificar fácilmente (la criptografía del remitente, un segundo canal), no lo que la IA mejora cada mes.",
+      "teach": "La carrera armamentística\nGenerador y detector corren una carrera, pero no en igualdad: el generador solo tiene que borrar una pista más para ganar, y el detector tiene que adivinar cuál será. Por eso un detector que mira el texto va siempre un paso por detrás.\nLa consecuencia de diseño: la defensa que aguanta no intenta «adivinar si lo escribió una IA»; se apoya en autenticación, señales de la petición y verificación de procesos, que no dependen de la calidad del texto.\nEs como reconocer a un falsificador por su estilo mientras él practica cada noche para imitar otro: pierdes. Mejor cambia la cerradura por una que no se imita (una firma, un segundo canal).\nPara qué en tu camino: esta es la regla que te llevas a cualquier sistema de IA que defiendas. Defiende lo que no se puede falsificar fácilmente, no lo que la IA mejora cada mes.",
       "choices": [
         {
           "id": "a",
@@ -197,7 +197,7 @@
     {
       "id": "py1",
       "text": "Programa la regla de la defensa: abre el editor con py, completa detectado y compruébala con py check.",
-      "teach": "Detección por capas, en código\nUn mensaje se detecta si ALGUNA capa activa lo pilla (comparando los rasgos del mensaje con lo que pilla cada capa).\nPor qué: es lo que hace amenaza evaluar con cada correo.",
+      "teach": "Detección por capas, en código\nLa regla es sencilla: un mensaje se detecta si ALGUNA capa activa lo pilla. Recorres las capas y, para cada una, miras si alguno de los rasgos que esa capa caza está entre los rasgos del mensaje; si lo encuentras, detectado.\nPor qué aquí: es exactamente lo que hace amenaza evaluar con cada correo. Es la lógica del «o»: como varios guardias en distintas puertas, basta que uno te pare para que no entres. Programarlo te enseña por dentro cómo suman las capas.",
       "py_exercise": {
         "id": "O8-02-detectado",
         "title": "detectado(rasgos, capas): ¿lo pilla alguna capa?",

@@ -53,7 +53,7 @@
     {
       "id": "o1",
       "text": "En el Dojo: abre el editor con py, programa quitar_invisibles, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las siete funciones de multimodal.py hasta que pasen los 18 tests y trae la evidencia.",
-      "teach": "Una máquina de estados\nEl contenido de un PDF (Portable Document Format) es una lista de operadores: unos cambian el estado (color, modo de pintado, tamaño de letra) y otros pintan texto con el estado de ese momento.\nq guarda el estado en una pila y Q lo recupera. BT y ET abren y cierran un bloque de texto, pero no reinician el color ni el modo.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: para saber si un texto se ve, hay que seguir el estado como lo hace el visor.",
+      "teach": "Una máquina de estados\nUna máquina de estados es un programa que recuerda en qué situación está (qué color, qué modo de pintado) y la va cambiando según las órdenes que lee.\nEl contenido de un PDF (Portable Document Format) es justo eso: una lista de operadores, unos cambian el estado (color, modo de pintado, tamaño de letra) y otros pintan texto con el estado de ese momento. q guarda el estado en una pila y Q lo recupera; BT y ET abren y cierran un bloque de texto, pero no reinician el color ni el modo.\nEs como seguir una receta anotando sobre la marcha a qué fuego está el fogón: no puedes saber si algo se cocina sin recordar cómo dejaste el mando.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué en tu camino: para saber si un texto se VE, hay que seguir el estado como lo hace el visor; si no, te llevas también la letra blanca sobre fondo blanco que nadie lee.",
       "validator": {
         "type": "any",
         "of": [
@@ -113,7 +113,7 @@
     {
       "id": "o2",
       "text": "Escribe forja medir y estudia la medición real ya grabada. Extra opcional: ejecuta bateria.py (al menos 3 configuraciones, una sin defensas; con --solo-ingesta si no tienes los modelos) y tráela con evidence import.",
-      "teach": "Medir la ingesta\nbateria.py mide cuántas de las 10 instrucciones ocultas llegan al índice con cada configuración y, si tienes los modelos, cuántas llegan al contexto y a la respuesta.\nCon --solo-ingesta mide solo el índice, en segundos.\nLas configuraciones: visibilidad (texto oculto por estilo), invisibles (caracteres Unicode sin forma), normalizacion (une formas Unicode equivalentes) y filtro (aparta fragmentos con frases como «Nota para el asistente»).\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué: una instrucción que no llega al índice no puede llegar al modelo.",
+      "teach": "Medir la ingesta\nbateria.py mide cuántas de las 10 instrucciones ocultas llegan al índice con cada configuración y, si tienes los modelos, cuántas llegan al contexto y a la respuesta.\nCon --solo-ingesta mide solo el índice, en segundos.\nLas configuraciones: visibilidad (texto oculto por estilo), invisibles (caracteres Unicode sin forma), normalizacion (une formas Unicode equivalentes) y filtro (aparta fragmentos con frases como «Nota para el asistente»).\nMedir por etapas (índice → contexto → respuesta) es como vigilar una cañería tramo a tramo: si tapas la fuga en el primer tramo, el agua sucia ya no llega a la cocina.\nEn el Dojo: forja medir reproduce una medición real ya hecha con el modelo local en un portátil. Medirlo en tu máquina es un extra.\nPor qué en tu camino: una instrucción que no llega al índice no puede llegar al modelo, así que la ingesta es la defensa más barata y la primera que conviene medir.",
       "prediction": {
         "prompt": "Con solo el filtro de palabras clave, ¿cuántas de las 10 instrucciones ocultas llegarán al índice? (casi ninguna: 0–2 · unas pocas: 3–5 · casi todas: 6 o más)",
         "options": [
@@ -143,7 +143,7 @@
     {
       "id": "o3",
       "text": "¿Por qué el filtro de palabras clave deja pasar instrucciones que sí contienen la frase delatora?",
-      "teach": "El filtro ve fragmentos\nLa ingesta trocea primero y filtra después, fragmento a fragmento (A2-01).\nPor qué: una defensa que mira trozos puede no ver un ataque repartido entre dos.",
+      "teach": "El filtro ve fragmentos\nEl filtro de palabras clave no lee el documento entero: la ingesta trocea primero y filtra después, fragmento a fragmento (A2-01).\nAsí, un ataque repartido entre dos fragmentos se cuela: el filtro aparta el trozo con la frase delatora, pero la cola del ataque cae en el de al lado y entra.\nEs como un control antidopaje que revisa a los corredores de uno en uno: si el truco está repartido entre dos compañeros, ninguno da positivo por separado.\nPor qué en tu camino: una defensa que mira trozos puede no ver un ataque repartido entre varios; por eso invisibles y normalizacion solo sirven junto al filtro, limpiando el texto para que el filtro pueda reconocerlo.",
       "choices": [
         {
           "id": "a",
@@ -176,7 +176,7 @@
     {
       "id": "o4",
       "text": "NFKC convierte el «1½» de un documento legítimo en «11⁄2». ¿Cómo evitas ese coste sin volver a abrir el canal de evasión?",
-      "teach": "Defender sin romper\nNFKC (Normalization Form Compatibility Composition) es la normalización Unicode que une formas equivalentes, como «ｋ» de ancho completo y «k».\nCada capa de tu medición rompió algo legítimo: una pestaña oculta de verdad, un símbolo como ½.\nPor qué: una defensa de ingesta que estropea los documentos propios acaba desactivada.",
+      "teach": "Defender sin romper\nNFKC (Normalization Form Compatibility Composition) es la normalización Unicode que une formas equivalentes, como «ｋ» de ancho completo y «k».\nPero no distingue intención: también convierte el «½» legítimo de un documento en «1⁄2». Cada capa de tu medición rompió algo legítimo: una pestaña oculta de verdad, un símbolo como ½.\nLa salida es normalizar solo la COPIA que compara el filtro y guardar el original intacto, como un portero que anota una descripción del cliente para reconocerlo sin obligarle a cambiarse de ropa.\nPor qué en tu camino: una defensa de ingesta que estropea los documentos propios acaba desactivada por el propio equipo, y entonces no protege nada; defender sin romper es lo que la mantiene viva.",
       "choices": [
         {
           "id": "a",

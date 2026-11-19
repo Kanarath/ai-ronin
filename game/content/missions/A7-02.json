@@ -47,7 +47,7 @@
     {
       "id": "o1",
       "text": "Lanza la batería sin defensas: web show ordenador y web run ordenador. ¿Cuántos de los 5 ataques funcionan? (answer <número>)",
-      "teach": "El diputado confundido, en el navegador\nEl agente comparte tu sesión: tu banco, tu correo, tus paneles, todos con sesión iniciada. Una página puede llevarle a actuar en cualquiera de ellos como si fueras tú.\nPor qué: no explota un fallo del modelo, sino tu identidad; es el confused deputy de A3-03 con el navegador entero detrás.",
+      "teach": "El diputado confundido, en el navegador\nEste agente no solo lee la web: la USA como tú, con tu navegador y tus sesiones ya iniciadas: tu banco, tu correo, tus paneles. Una página puede llevarle a actuar en cualquiera de ellos como si fueras tú.\nEs darle tu móvil desbloqueado a alguien para que te haga un recado: no necesita robarte nada, ya está dentro de todas tus apps abiertas.\nPara qué en tu camino: fíjate en que esto NO explota un fallo del modelo, sino tu identidad. Es el confused deputy de A3-03, pero ahora con el navegador entero detrás; da igual lo listo que sea el modelo, con tu sesión puede hacer lo que tú puedes hacer.",
       "validator": {
         "type": "all",
         "of": [
@@ -82,7 +82,7 @@
           "2"
         ]
       },
-      "teach": "La caja más obvia\nSesión aparte, nada de descargas, confirmar lo que tenga efecto, lista corta de acciones y solo el dominio de la tarea.\nPor qué: frena los cinco ataques… pero dos de esas defensas son un hacha donde hacía falta un bisturí.",
+      "teach": "La caja más obvia\nLa reacción instintiva: encerrarlo del todo. Sesión aparte, nada de descargas, confirmar lo que tenga efecto, una lista corta de acciones permitidas y solo el dominio de la tarea.\nEs tapiar puertas y ventanas para que no entre el ladrón… y descubrir que tú tampoco puedes salir ni que entre la luz.\nPara qué en tu camino: esta caja frena los cinco ataques, sí, pero fíjate en el precio. Dos de esas defensas son un hacha donde hacía falta un bisturí, y en el paso siguiente verás cuánto trabajo legítimo se llevan por delante. Frenar el ataque es fácil; frenarlo sin romper el trabajo es el oficio.",
       "validator": {
         "type": "all",
         "of": [
@@ -111,7 +111,7 @@
     {
       "id": "c1",
       "text": "¿Qué defensa rompió «leer el estado del pedido del usuario» (LC2)?",
-      "teach": "Aislar del todo también aísla lo bueno\nsesion_aislada quita al agente la sesión del usuario, así que tampoco puede ver el pedido del propio usuario. Es cortar el abuso de identidad quitando la identidad entera.\nPor qué: el mínimo privilegio no es «cero privilegios»; es justo los que la tarea necesita.",
+      "teach": "Aislar del todo también aísla lo bueno\nsesion_aislada le quita al agente la sesión del usuario… y con ella, la posibilidad de ver el pedido del propio usuario (LC2). Has cortado el abuso de identidad quitando la identidad ENTERA.\nEs quitarle las llaves al empleado para que no robe y, de paso, dejarlo sin poder entrar a trabajar. Demasiado.\nPor qué: el mínimo privilegio NO es «cero privilegios»; es exactamente los que la tarea necesita, ni más ni menos. Pasarse de aislamiento rompe el trabajo igual que quedarse corto deja pasar el ataque; el arte está en el punto justo.",
       "choices": [
         {
           "id": "a",
@@ -144,7 +144,7 @@
     {
       "id": "o3",
       "text": "Afínalo: web set ordenador sesion_aislada off y sin_descargas off; luego credencial_delegada on y sin_ejecutables on, y web run ordenador. ¿Cuántas tareas legítimas funcionan ahora? (answer <número>)",
-      "teach": "Bisturí en vez de hacha\ncredencial_delegada da al agente un permiso acotado del usuario (solo lo que la tarea necesita), no su sesión entera: corta el abuso de identidad pero deja leer el pedido. sin_ejecutables bloquea abrir ejecutables pero permite el PDF.\nPor qué: con defensas acotadas, los cinco ataques siguen frenados y el trabajo vuelve entero.",
+      "teach": "Bisturí en vez de hacha\nAhora afina. credencial_delegada le da al agente un permiso ACOTADO del usuario —solo lo que la tarea necesita—, no su sesión entera: corta el abuso de identidad pero le deja leer el pedido. sin_ejecutables bloquea abrir ejecutables, pero permite el PDF que sí hace falta.\nEs la diferencia entre quitarle a alguien todas las llaves o darle solo la del almacén durante su turno: sigue trabajando, pero no puede entrar en la caja fuerte.\nPara qué en tu camino: con defensas acotadas, los cinco ataques siguen frenados y el trabajo vuelve entero (4/4). Esta es la meta real de la seguridad bien hecha: máxima protección con el mínimo estorbo, el bisturí en lugar del hacha.",
       "validator": {
         "type": "all",
         "of": [
@@ -173,7 +173,7 @@
     {
       "id": "c2",
       "text": "C1 (transferencia bancaria) y C2 (cambiar una contraseña en un panel de admin) comparten causa. ¿Cuál?",
-      "teach": "Una identidad, muchos poderes\nLos dos usan que el agente está autenticado como el usuario en servicios potentes. Da igual lo listo que sea el modelo: con tu sesión, puede hacer lo que tú.\nPor qué: por eso la defensa de fondo es de identidad y permisos (credencial delegada, confirmación verificable), no de «mejor prompt».",
+      "teach": "Una identidad, muchos poderes\nLa transferencia bancaria (C1) y el cambio de contraseña en el panel de admin (C2) parecen ataques distintos, pero comparten raíz: los dos aprovechan que el agente está autenticado COMO EL USUARIO en servicios potentes. Da igual lo listo que sea el modelo; con tu sesión, puede hacer lo que tú.\nEs la misma llave maestra abriendo dos puertas diferentes: el problema no está en cada puerta, sino en la llave.\nPor qué: por eso la defensa de fondo es de IDENTIDAD y PERMISOS (credencial delegada, confirmación verificable), no de «escribir un prompt mejor». Contra el abuso de identidad, un prompt más ingenioso no sirve de nada.",
       "choices": [
         {
           "id": "a",
@@ -206,7 +206,7 @@
     {
       "id": "py1",
       "text": "Programa la regla de confirmación: abre el editor con py, completa necesita_confirmacion y compruébala con py check.",
-      "teach": "Confirmar lo que tiene efecto\nCualquier acción que cambie algo (pagar, borrar, cambiar permisos, enviar) necesita confirmación verificable; leer, no.\nPor qué: es la última barrera contra el diputado confundido y contra aprobar a ciegas (ASI09).",
+      "teach": "Confirmar lo que tiene efecto\nVas a programar la regla de la confirmación: cualquier acción que CAMBIE algo (pagar, borrar, cambiar permisos, enviar) necesita confirmación verificable; leer, en cambio, no molesta a nadie. Abre el editor con py.\nEs la pregunta «¿seguro que quieres borrarlo?» que salta al eliminar un archivo, pero nunca al abrirlo: se reserva para lo que no tiene marcha atrás.\nPara qué en tu camino: es la última barrera contra el diputado confundido y contra aprobar a ciegas (ASI09). Pedir confirmación solo de lo que tiene efecto protege sin ahogar al usuario en avisos; si preguntaras por todo, acabaría pulsando «sí» sin mirar, y volverías al principio.",
       "py_exercise": {
         "id": "A7-02-confirmar",
         "title": "necesita_confirmacion(accion, con_efecto): ¿pedir confirmación?",

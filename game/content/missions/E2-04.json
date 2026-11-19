@@ -44,7 +44,7 @@
     {
       "id": "o1",
       "text": "Mira la referencia: priv central prestamos. ¿Qué accuracy tiene el modelo con todos los datos juntos? (answer <número>)",
-      "teach": "El modelo central\nLo normal es juntar los datos de todos en un servidor y entrenar. Da una buena accuracy… a cambio de que el servidor vea los datos de todas las personas.\nPor qué: es la referencia a igualar, pero también el problema de privacidad que queremos evitar.",
+      "teach": "El modelo central\npriv central prestamos entrena con todos los datos juntos en un servidor. Da una buena accuracy (0.86)… a cambio de que el servidor vea los datos de todas las personas.\nEs como pedir a 25 clínicas que manden las historias de sus pacientes a un archivo central: el modelo sale bueno, pero ahora todos los datos sensibles están en un solo sitio, y quien entre ahí los tiene todos.\nPor qué: es la referencia a igualar, pero también justo el problema de privacidad que quieres evitar; mira el diagrama de la izquierda para compararlo con lo que viene.",
       "validator": {
         "type": "all",
         "of": [
@@ -77,7 +77,7 @@
           "no"
         ]
       },
-      "teach": "Aprendizaje federado (FedAvg)\n25 clientes (imagina 25 clínicas), cada uno con pocos datos. Cada uno entrena un modelo con LO SUYO y manda solo los pesos; el servidor los promedia. Un cliente solo, con 8 filas, se queda corto (0.67); el federado llega a 0.845, casi como el central.\nPor qué: se junta el CONOCIMIENTO (los pesos) sin juntar los DATOS.",
+      "teach": "Aprendizaje federado (FedAvg)\npriv federado prestamos --clientes 25: 25 clientes (imagina 25 clínicas), cada uno con pocos datos. Cada uno entrena un modelo con LO SUYO y manda solo los pesos; el servidor los promedia. Un cliente solo, con 8 filas, se queda corto (0.67); el federado llega a 0.845, casi como el central (0.86).\nEs como una receta que mejoran 25 cocineros sin enseñarse la despensa: cada uno la ajusta con sus ingredientes y solo comparten las anotaciones, no la comida.\nQué verás: la fila «federado» casi iguala a la central, y ningún dato salió de ningún cliente (diagrama de la izquierda).\nPor qué: se junta el CONOCIMIENTO (los pesos) sin juntar los DATOS, que es minimización por diseño.",
       "validator": {
         "type": "all",
         "of": [
@@ -104,7 +104,7 @@
     {
       "id": "c1",
       "text": "En el aprendizaje federado, ¿qué sale de cada cliente?",
-      "teach": "Pesos, no datos\nCada cliente entrena en local y envía solo los parámetros de su modelo (o sus gradientes). Los datos personales nunca salen del dispositivo o de la organización.\nPor qué: es minimización de datos por diseño; el servidor coordina el aprendizaje sin ver un solo registro.",
+      "teach": "Pesos, no datos\nCada cliente entrena en local y envía solo los parámetros de su modelo (o sus gradientes). Los datos personales nunca salen del dispositivo o de la organización.\nEs como un grupo de estudio donde cada uno estudia en su casa y en la reunión solo comparten sus conclusiones, nunca los apuntes privados.\nPor qué: es minimización de datos por diseño; el servidor coordina el aprendizaje sin ver un solo registro, así que un fallo en el servidor no expone los datos de nadie.",
       "choices": [
         {
           "id": "a",
@@ -138,7 +138,7 @@
       "id": "o3",
       "diagram": {"kind":"bars","title":"LA IDEA · el modelo recuerda a quien vio","items":[{"label":"con la fila en el entrenamiento","value":0.64,"note":"0.64 a su etiqueta","color":"red"},{"label":"reentrenado sin la fila","value":0.01,"note":"0.01","color":"teal"}],"caption":"un modelo que ve pocos datos memoriza algunos: esa caída de 0,64 a 0,01 es la huella que detecta el ataque de pertenencia. Olvidar de verdad es quitar esa influencia de los pesos, no solo borrar la fila"},
       "text": "Pero los pesos aún pueden delatar a alguien. Compruébalo: priv olvidar prestamos. ¿El modelo delata que la fila estuvo en el entrenamiento? (answer si o no)",
-      "teach": "La huella de un dato\nUn modelo que ve pocos datos MEMORIZA algunos: con la fila dentro, acierta su etiqueta (0.64); reentrenado sin ella, la falla (0.01). Esa caída es la huella, y es justo lo que detecta el ataque de pertenencia de E2-03.\nPor qué: compartir pesos (federado) o publicar un modelo puede filtrar quién estaba en los datos; por eso el federado se combina con la privacidad diferencial de E2-03.",
+      "teach": "La huella de un dato\npriv olvidar prestamos lo muestra: un modelo que ve pocos datos MEMORIZA algunos. Con la fila dentro acierta su etiqueta (0.64); reentrenado sin ella, la falla (0.01). Esa caída es la huella, y es justo lo que detecta el ataque de pertenencia de E2-03 (mira el diagrama de la izquierda).\nEs como un camarero que te saluda por tu nombre: sin querer, demuestra que ya habías estado allí. El modelo, al tratar «demasiado bien» a quien vio, revela que estuvo en sus datos.\nPor qué: compartir pesos (federado) o publicar un modelo puede filtrar quién estaba en los datos; por eso el federado se combina con la privacidad diferencial de E2-03, que tapa esa huella.",
       "validator": {
         "type": "all",
         "of": [
@@ -168,7 +168,7 @@
     {
       "id": "c2",
       "text": "Una persona ejerce su derecho al olvido (RGPD). ¿Qué es «olvidarla» de verdad en un modelo?",
-      "teach": "Unlearning\nNo basta con borrar su fila de la base de datos: su influencia sigue en los pesos del modelo ya entrenado. Olvidarla de verdad es quitar esa influencia. Lo exacto es reentrenar sin ella (seguro, pero caro: rehace el modelo); lo aproximado es más barato pero hay que verificar que no deja rastro.\nPor qué: el derecho de supresión alcanza también a los modelos entrenados con esos datos, no solo a la base de datos.",
+      "teach": "Unlearning\nNo basta con borrar su fila de la base de datos: su influencia sigue en los pesos del modelo ya entrenado. Olvidarla de verdad es quitar esa influencia. Lo exacto es reentrenar sin ella (seguro, pero caro: rehace el modelo); lo aproximado es más barato pero hay que verificar que no deja rastro.\nEs como quitar un ingrediente de un guiso ya cocinado: tirar el bote de especias (borrar la fila) no saca del plato lo que ya soltó; o rehaces el guiso (reentrenar) o lo corriges con cuidado y lo pruebas para asegurarte de que no queda sabor.\nPor qué: el derecho de supresión (RGPD) alcanza también a los modelos entrenados con esos datos, no solo a la base de datos; borrar la fila y dar el caso por cerrado deja a la persona dentro del modelo.",
       "choices": [
         {
           "id": "a",
@@ -201,7 +201,7 @@
     {
       "id": "c3",
       "text": "Federado y privacidad diferencial (E2-03), ¿compiten o se combinan?",
-      "teach": "Capas de privacidad\nEl federado evita mover los datos; la privacidad diferencial añade ruido para que los pesos compartidos no delaten a nadie. Juntos: los datos no salen Y lo que sale no filtra quién estaba.\nPor qué: ninguna defensa de privacidad basta sola; se combinan, igual que las defensas de seguridad en profundidad.",
+      "teach": "Capas de privacidad\nEl federado evita mover los datos; la privacidad diferencial añade ruido para que los pesos compartidos no delaten a nadie. Juntos: los datos no salen Y lo que sale no filtra quién estaba.\nEs como proteger una casa con la puerta cerrada Y la alarma puesta: cada una cubre un hueco que la otra deja. El federado cierra la puerta (no mueve los datos); la privacidad diferencial pone la alarma (lo que sale no delata a nadie).\nPor qué: ninguna defensa de privacidad basta sola; se combinan, igual que las defensas de seguridad en profundidad.",
       "choices": [
         {
           "id": "a",
@@ -234,7 +234,7 @@
     {
       "id": "py1",
       "text": "Programa el promedio de FedAvg: abre el editor con py, completa promediar y compruébala con py check.",
-      "teach": "FedAvg, en código\nEl peso global es la media de los pesos que manda cada cliente.\nPor qué: es exactamente lo que hace el servidor en el aprendizaje federado, sin ver ningún dato.",
+      "teach": "FedAvg, en código\nEl peso global es la media de los pesos que manda cada cliente: sumas lo que mandan y divides entre cuántos son.\nEs como la nota media de un trabajo en grupo: cada cliente trae su número y el servidor saca el promedio, sin mirar cómo llegó cada uno a él.\nPor qué: es exactamente lo que hace el servidor en el aprendizaje federado, promediar los pesos sin ver ningún dato.",
       "py_exercise": {
         "id": "E2-04-fedavg",
         "title": "promediar(pesos_clientes): la media de los pesos de los clientes",

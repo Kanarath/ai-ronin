@@ -65,7 +65,7 @@
         "mcp host erp · lab matrix mcp erp"
       ],
       "on_complete": "Mira la columna consent.",
-      "teach": "La matriz del host\nmcp host erp crea un host nuevo; lab matrix mcp erp mide cada defensa en solitario contra los cinco ataques y las cuatro tareas legítimas.\nPor qué: como en C1 y C2, primero se mide y después se elige."
+      "teach": "La matriz del host\nUn host MCP (Model Context Protocol) es el programa que conecta al asistente con servidores de herramientas, propios y de terceros. Vuelves a la tabla: mcp host erp crea un host nuevo y lab matrix mcp erp mide cada defensa en solitario contra los cinco ataques y las cuatro tareas legítimas.\nComo en C1 y C2, primero se mide y después se elige: la misma disciplina del sastre que toma medidas antes de cortar la tela.\nPara qué en tu camino: cada capstone te pone la misma herramienta sobre un sistema distinto (agente, RAG, host MCP) para que veas que el método no cambia aunque cambie la tecnología. Aquí la trampa será distinta; sácala tú de la tabla."
     },
     {
       "id": "o2",
@@ -82,7 +82,7 @@
         "Cuenta los ■ de cada columna."
       ],
       "on_complete": "consent, con cuatro de cinco. Solo se le escapa la suplantación de nombre, que únicamente para namespacing.",
-      "teach": "La defensa que más bloquea\nCuenta los ■ de cada columna.\nPor qué: el control que más bloquea es tentador como solución única; antes de elegirlo, hay que mirar su coste."
+      "teach": "La defensa que más bloquea\nCuenta los ■ de cada columna y busca la que más suma: es consent, que para cuatro de cinco ataques ella sola (solo se le escapa la suplantación de nombre).\nEs el guardaespaldas que revisa a cada visita una por una: efectivísimo… mientras aguante revisando.\nPara qué en tu camino: el control que más bloquea es siempre tentador como solución única, y ahí está la trampa de esta misión. Antes de coronarlo, mira la otra cara de la tabla: lo que cuesta. Fíjate en consent, porque en el siguiente paso medirás su precio."
     },
     {
       "id": "o3",
@@ -119,7 +119,7 @@
         "Mira la última línea: «aprobaciones»."
       ],
       "on_complete": "Cuatro aprobaciones para cuatro tareas, y una de ellas rota. Dos controles, mucho coste.",
-      "teach": "Medir el coste\nmcp defend erp <defensa> on activa una defensa; lab resilience mcp erp mide la configuración y, en la última línea, cuántas aprobaciones pidió al usuario.\nPor qué: cada aprobación es fricción: con muchas, la gente aprueba sin leer (fatiga de consentimiento)."
+      "teach": "Medir el coste\nmcp defend erp <defensa> on activa una defensa y lab resilience mcp erp mide la configuración; fíjate en la última línea, que cuenta cuántas aprobaciones pidió al usuario en las tareas legítimas.\nEl coste no siempre es dinero ni rendimiento: aquí es la atención de una persona. Cada aprobación es una interrupción, como esos avisos de cookies que aceptas sin leer solo para seguir.\nLa trampa, con nombre propio: con muchas aprobaciones, la gente aprueba sin mirar (fatiga de consentimiento) o pide que se lo quiten. Un control que agota al usuario acaba desactivado, y entonces protege cero. Por eso cuentas las aprobaciones igual que cuentas los ataques."
     },
     {
       "id": "c1",
@@ -156,7 +156,7 @@
     {
       "id": "o4",
       "text": "Ahora sin consent: 0 ataques, 4/4 tareas y 0 aprobaciones con como MÁXIMO 4 defensas.",
-      "teach": "Cobertura sin coste\nnamespacing es obligatorio (punto único). Elige el resto entre las columnas sin coste: una para el envenenamiento y el token, otra para la salida inyectada y otra para el rug-pull (un servidor que cambia sus definiciones después de aprobarlas).\nCrea un host nuevo para empezar limpio.\nPor qué: los controles que viven en el código y en los permisos no se cansan; las personas sí.",
+      "teach": "Cobertura sin coste\nAhora resuelves la cobertura evitando el control caro. namespacing es obligatorio (es el único que para la suplantación de nombre). El resto lo eliges entre las columnas SIN coste: una para el envenenamiento y el token, otra para la salida inyectada y otra para el rug-pull (un servidor que cambia sus definiciones después de que las hayas aprobado).\nCrea un host nuevo para empezar limpio y actívalas con mcp defend.\nEs preferir cerraduras automáticas y buenos permisos a poner un vigilante humano en cada puerta: la cerradura no se cansa a las tres de la madrugada.\nPara qué en tu camino: los controles que viven en el código y en los permisos no se agotan; las personas sí. Conseguir la misma seguridad con cuatro controles automáticos que con dos que incluyen a consent es, de lejos, la mejor ingeniería.",
       "validator": {
         "type": "event",
         "event": "lab.resilience",

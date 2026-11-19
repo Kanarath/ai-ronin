@@ -45,7 +45,7 @@
     {
       "id": "o1",
       "text": "Crea una malla nueva y saca su matriz de defensas: a2a taller red y lab matrix a2a red. ¿Cuántos ataques bloquea UNA sola defensa? (answer <número>)",
-      "teach": "La matriz de defensas\nlab matrix activa cada defensa en solitario y mira qué ataques bloquea y qué cuesta en las tareas legítimas.\nLa última columna, «la bloquean», cuenta cuántas defensas paran cada ataque.\nPor qué: un ataque que solo para una defensa es el primero que volverá si esa defensa falla.",
+      "teach": "La matriz de defensas\nMismo instrumento que en C1–C3, ahora sobre una malla de agentes: lab matrix activa cada defensa en solitario y anota qué ataques bloquea y qué cuesta en las tareas legítimas. La última columna, «la bloquean», cuenta cuántas defensas paran cada ataque.\nCómo: a2a taller red crea la malla y lab matrix a2a red saca la tabla; cuenta las filas con un 1.\nEs el cuadro de mandos de un avión antes de despegar: de un vistazo ves qué sistema tiene respaldo y cuál va solo.\nPara qué en tu camino: un ataque que solo para una defensa (un 1) es el primero que volverá el día que esa defensa falle. Localizar esos cuatro ahora, en la tabla, es saber dónde mirará primero un atacante.",
       "validator": {
         "type": "all",
         "of": [
@@ -73,7 +73,7 @@
     {
       "id": "o2",
       "text": "En esa malla, activa los cinco controles de C4-01 (sin monitor) y mide la resiliencia: lab resilience a2a red",
-      "teach": "Resiliencia\nlab resilience quita, de una en una, cada defensa activa y mira qué ataques vuelven a pasar.\nUn ataque es «robusto» si aguanta que falle cualquier defensa, y «frágil» si depende de una sola.\nPor qué: es la prueba de qué pasa el día que un despliegue sale con un control apagado.",
+      "teach": "Resiliencia\nlab resilience hace una prueba de estrés: quita, de una en una, cada defensa activa y mira qué ataques vuelven a pasar. Un ataque es «robusto» si aguanta que falle cualquier defensa (lo paran dos) y «frágil» si depende de una sola.\nCómo: activa los cinco controles de C4-01 (a2a defend red message-auth on, y lo mismo con card-verification, hop-limit, context-minimization y delegated-authz) y mide con lab resilience a2a red.\nEs como tirar de cada pata de la mesa para ver si se tambalea, en lugar de fiarte de que hoy está quieta.\nPara qué en tu camino: es la prueba de qué pasa el día que un despliegue sale con un control apagado. En una malla de agentes importa el doble, porque un fallo en un agente se propaga en cascada a los que confían en él.",
       "validator": {
         "type": "event",
         "event": "lab.resilience",
@@ -93,7 +93,7 @@
     {
       "id": "c1",
       "text": "¿Qué significa que los seis ataques salgan «frágiles»?",
-      "teach": "Frágil no es abierto\nFrágil quiere decir bloqueado HOY, pero por una sola cerradura.\nPor qué: confundir «bloqueado» con «seguro» es el error más común al presentar resultados.",
+      "teach": "Frágil no es abierto\nCuidado con la palabra: «frágil» NO significa que el ataque pase. Significa bloqueado hoy, pero por una sola cerradura; basta que caiga ese control para que vuelva. La batería sigue dando 0 éxitos.\nEs una presa que aguanta con un solo muro: el río está contenido hoy, pero no hay margen si ese muro se agrieta.\nPara qué en tu camino: confundir «bloqueado» con «seguro» es el error más común al presentar resultados, y el más caro. El jefe oye «0 ataques» y se relaja; tu trabajo es decir, sin alarmismo pero sin maquillaje, que 0 hoy no es 0 el día que falle un interruptor.",
       "choices": [
         {
           "id": "a",
@@ -134,7 +134,7 @@
           "los seis"
         ]
       },
-      "teach": "Una segunda cerradura\nEl monitor bloquea por sí solo la infección en cascada y la tarjeta engañosa, que ya tenían otro control.\nPor qué: una segunda capa solo ayuda en los ataques que puede parar.",
+      "teach": "Una segunda cerradura\nAñades el monitor como capa extra (a2a defend red monitor on y lab resilience a2a red). El monitor bloquea por sí solo la infección en cascada y la tarjeta engañosa, que ya tenían otro control; esos dos pasan a robustos. A los demás no los toca.\nEs poner una segunda cerradura solo en las puertas que esa llave abre: útil donde encaja, inútil donde no.\nPara qué en tu camino: una segunda capa solo ayuda en los ataques que ella puede parar; no reparte robustez por igual. Por eso eliges dónde reforzar con datos. Pero fíjate en el coste que aparece en las tareas, porque ahí está el dilema del siguiente paso.",
       "validator": {
         "type": "event",
         "event": "lab.resilience",
@@ -152,7 +152,7 @@
     {
       "id": "c2",
       "text": "El monitor da una segunda capa a dos ataques, pero rompe una tarea legítima. ¿Qué harías en producción?",
-      "teach": "Bloquear o avisar\nUna defensa puede bloquear o solo avisar: registrar la alerta para que alguien la revise, sin parar la tarea.\nPor qué: en modo aviso, una defensa con falsos positivos sigue aportando vigilancia sin romper el trabajo.",
+      "teach": "Bloquear o avisar\nUna detección tiene dos modos. En modo bloqueo, para la acción (y si se equivoca, rompe una tarea legítima). En modo aviso, deja pasar la tarea pero registra una alerta para que una persona la revise después.\nEs la diferencia entre un guardia que cierra la puerta ante la duda y una cámara que graba por si acaso: la cámara no interrumpe a nadie, pero deja rastro para investigar.\nPara qué en tu camino: en modo aviso, una defensa con falsos positivos sigue aportando vigilancia sin romper el trabajo, así que nadie la apaga. Saber cuándo una detección debe bloquear y cuándo solo mirar es una decisión de diseño que te pedirán en cualquier equipo de seguridad.",
       "choices": [
         {
           "id": "a",
@@ -186,7 +186,7 @@
     {
       "id": "py1",
       "text": "Programa el cálculo del riesgo residual: abre el editor con py, completa frágiles y compruébala con py check.",
-      "teach": "Riesgo residual, en código\nVas a calcular, con la matriz y los controles activos, qué ataques dependen de un único control.\nPor qué: es la lista que va en el informe, con lo que hay que vigilar en cada despliegue.",
+      "teach": "Riesgo residual, en código\nProgramas la lista del informe: dada la matriz (qué controles bloquean cada ataque) y los controles activos, qué ataques cuelgan de un ÚNICO control activo. Ojo al límite: si cero controles activos lo paran, el ataque está abierto, no frágil; frágil es exactamente uno.\nPor qué aquí: es justo la lista «qué vigilar en cada despliegue» que entregas al cliente, hecha código. Calcularla a mano cada vez es propenso a error; una función la saca igual en cada versión, que es como se hace en un pipeline de evaluación de verdad.",
       "py_exercise": {
         "id": "C4-02-fragiles",
         "title": "fragiles(matriz, activos): ataques que cuelgan de un solo control",
@@ -264,7 +264,7 @@
     {
       "id": "c3",
       "text": "Con la configuración final, ¿qué vigilarías en cada despliegue?",
-      "teach": "Vigilar lo que no tiene segunda capa\nEl riesgo residual son los ataques que dependen de un único control: si ese control se apaga, vuelven.\nPor qué: el informe debe decir qué comprobar en cada despliegue, no solo qué activar hoy.",
+      "teach": "Vigilar lo que no tiene segunda capa\nCierras el ciclo: el riesgo residual son los ataques que dependen de un único control (message-auth, hop-limit, context-minimization y delegated-authz, cada uno único freno de algo). Si uno se apaga en un despliegue, su ataque vuelve; el monitor, ahora en modo aviso, no rompe nada pero tampoco es lo crítico que vigilar.\nEs la lista de revisión del piloto antes de cada vuelo: no basta con que el avión volara bien ayer, se comprueba hoy que cada sistema crítico sigue en marcha.\nPara qué en tu camino: el informe debe decir qué COMPROBAR en cada despliegue, no solo qué activar hoy. Nombrar los controles sin respaldo, para que las comprobaciones automáticas del despliegue vigilen que siguen encendidos, es el último paso que convierte una auditoría puntual en seguridad que dura.",
       "choices": [
         {
           "id": "a",
