@@ -47,7 +47,7 @@ var _pending_mentor: Array = []
 ## comandos va apareciendo en cascada. Enter, Esc o un clic lo muestran todo de golpe.
 ## «efectos lento|normal|rapido» cambia la velocidad y «efectos off» lo quita.
 ## Velocidades en caracteres por segundo: [RONIN, salida de comandos].
-const SPEEDS := {"lento": [32.0, 450.0], "normal": [48.0, 800.0], "rapido": [110.0, 2000.0]}
+const SPEEDS := {"lento": [48.0, 600.0], "normal": [96.0, 1400.0], "rapido": [220.0, 3200.0]}
 var effects := true
 ## Tamaño de letra de la consola (ajustes letra).
 var font_size := 14

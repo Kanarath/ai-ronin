@@ -1,0 +1,205 @@
+{
+  "id": "O2-02",
+  "schema_version": 1,
+  "title": "La huella del modelo",
+  "unit": "O2",
+  "difficulty": 3,
+  "plane": "dojo",
+  "epistemic": "practica-industria",
+  "estimated_minutes": 20,
+  "requires_missions": [
+    "O2-01"
+  ],
+  "competencies": {
+    "requires": [
+      "O2.inventario"
+    ],
+    "trains": [
+      "O2.huella"
+    ]
+  },
+  "briefing": "Ya tienes el mapa de activos. Ahora, antes de atacar nada, vas a escuchar lo que cada sistema cuenta de sí mismo: qué modelo usa, sobre qué pila corre y qué conecta. Reconocimiento pasivo, sin tocar una sola puerta.",
+  "learning_objectives": [
+    "Hacer fingerprinting (huella) de un activo de IA sin atacarlo",
+    "Reconocer la fuga de metadatos por cabeceras, errores, límites y protocolos",
+    "Explicar qué ventaja da cada dato filtrado y cuál es su primera defensa"
+  ],
+  "mentor_intro": "Antes de forzar una puerta, un buen ladrón mira qué cerradura es. Hoy haces eso con un sistema de IA.",
+  "lab": {
+    "datasets": [],
+    "viz": {}
+  },
+  "purpose": "El fingerprinting (huella) es identificar qué hay detrás de un sistema de IA —qué modelo, qué versión, qué pila de servido— a partir de lo que el propio sistema filtra, sin atacarlo. Es reconocimiento pasivo: barato, silencioso y la base de todo lo que viene después, porque convierte un ataque a ciegas en uno dirigido.",
+  "theory_cards": [],
+  "objectives": [
+    {
+      "id": "o1",
+      "text": "Abre el encargo y saca la huella del chatbot público: engagement start norte y engagement fingerprint norte A-01.",
+      "teach": "Reconocimiento pasivo: el sistema se delata solo\nAntes de atacar nada, el reconocimiento busca qué hay y, sobre todo, qué cuenta el propio sistema de sí mismo sin que lo toques. Un servicio de IA filtra pistas por todas partes: cabeceras HTTP, mensajes de error detallados, el límite exacto que rechaza, endpoints de salud o de listado que responden sin pedir cuentas.\n«engagement fingerprint» reúne esas pistas de un activo: qué modelo y versión usa, sobre qué pila se sirve y qué ventana de contexto tiene.\nPor qué importa: cada dato que el sistema regala es un dato que el atacante no tiene que adivinar. Saber «modelo abierto de 7B, versión 2.1» convierte un ataque a ciegas en «busco los jailbreaks ya publicados de ESE modelo». El reconocimiento no rompe nada: prepara todo lo demás.",
+      "validator": {
+        "type": "event",
+        "event": "engagement.fingerprinted",
+        "where": {
+          "engagement": "norte",
+          "asset": "A-01"
+        }
+      },
+      "hints": [
+        "Primero engagement start norte; después engagement fingerprint norte A-01.",
+        "engagement fingerprint norte A-01"
+      ],
+      "on_complete": "Fíjate en lo barato que ha sido: ni un ataque, solo leer lo que el sistema ya decía. La cabecera X-Model-Version, la traza de un error 500 y el mensaje de «entrada demasiado larga» te han dado modelo, pila y ventana de contexto. Con eso, el resto del encargo deja de ser prueba y error."
+    },
+    {
+      "id": "c1",
+      "text": "¿Qué le da al atacante saber el modelo y la versión exactos de A-01?",
+      "teach": "De la huella a la ventaja\nUna huella no es el fallo en sí: es el atajo hacia él. Saber el modelo y la versión exactos te deja ir directo a lo conocido —sus jailbreaks documentados, sus límites, los fallos ya publicados de esa versión— en lugar de descubrirlos uno a uno.\nPor qué: el tiempo de un atacante es limitado, y el reconocimiento es lo que decide si lo gasta probando a ciegas o apuntando a un fallo que ya alguien escribió.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "acceso directo: con el modelo y la versión ya puede entrar en el sistema",
+          "why": "La huella no es una credencial. No abre nada por sí sola; solo dirige el ataque."
+        },
+        {
+          "id": "b",
+          "text": "puede buscar los jailbreaks y límites ya conocidos de ese modelo, en vez de probar a ciegas",
+          "why": ""
+        },
+        {
+          "id": "c",
+          "text": "le entrega directamente los datos de los clientes",
+          "why": "Eso sería una fuga de datos (otra fase). La huella solo describe el sistema, no su contenido."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "b",
+        "accept": [
+          "b"
+        ]
+      },
+      "hints": [
+        "Piensa en qué te ahorra, no en qué te abre.",
+        "answer b"
+      ]
+    },
+    {
+      "id": "o2",
+      "text": "Ahora sondea el host MCP del ERP: engagement fingerprint norte A-04.",
+      "teach": "La fuga no es solo una cabecera\nLos metadatos se escapan por donde menos se mira. Un protocolo como MCP (Model Context Protocol) anuncia en su saludo inicial qué servidores y herramientas tiene conectados —propios y de terceros—. Eso es un mapa entero de la cadena de confianza del agente, servido sin que nadie lo pida.\nPor qué: el atacante que ve esa lista ya sabe qué puede intentar que el agente haga (enviar correos, reembolsar, consultar el ERP) antes de enviar un solo ataque. El reconocimiento de la superficie conectada es tan valioso como el del modelo.",
+      "validator": {
+        "type": "event",
+        "event": "engagement.fingerprinted",
+        "where": {
+          "engagement": "norte",
+          "asset": "A-04"
+        }
+      },
+      "hints": [
+        "engagement fingerprint norte A-04"
+      ],
+      "on_complete": "El saludo de MCP te ha dado la lista de herramientas y servidores conectados. No has atacado: has leído un mapa que el propio sistema publica. Un host MCP que anuncia su cadena de confianza a quien pregunte es media superficie de ataque regalada."
+    },
+    {
+      "id": "c2",
+      "text": "¿Cuál es la primera defensa frente a este reconocimiento?",
+      "teach": "La primera defensa del reconocimiento\nNo puedes impedir que te sondeen, pero sí dejar de regalar los datos: quitar las cabeceras de versión, no devolver trazas de error al usuario, cerrar los endpoints de salud y de listado, y que los mensajes de error no nombren la pila.\nPor qué: subir el coste del reconocimiento no detiene a un atacante decidido, pero descarta a la mayoría y te da tiempo a verlo venir. Es la misma lógica que no poner la marca y el modelo de tu cerradura en la puerta.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "minimizar los metadatos que el sistema expone (cabeceras, errores detallados, endpoints abiertos)",
+          "why": ""
+        },
+        {
+          "id": "b",
+          "text": "cambiar de modelo cada semana para que la huella no sirva",
+          "why": "Carísimo e inútil: la huella se vuelve a sacar en minutos del nuevo modelo. No ataca la causa."
+        },
+        {
+          "id": "c",
+          "text": "poner un captcha en el chatbot",
+          "why": "Un captcha frena bots básicos, pero no evita que las cabeceras, los errores y los endpoints sigan filtrando la huella."
+        }
+      ],
+      "validator": {
+        "type": "answer",
+        "expected": "a",
+        "accept": [
+          "a"
+        ]
+      },
+      "hints": [
+        "La causa es que el sistema cuenta demasiado de sí mismo.",
+        "answer a"
+      ]
+    },
+    {
+      "id": "py1",
+      "text": "Programa el lector de la huella: abre el editor con py, completa la función huella y compruébala con py check.",
+      "teach": "La huella, en código\nEl reconocimiento pasivo, por dentro, es leer lo que el servidor manda y quedarse con lo útil. Vas a sacar la versión del modelo de las cabeceras de una respuesta.\nPor qué: un script así, lanzado contra muchos endpoints, inventaría en minutos qué modelos corren dónde; es el primer ladrillo de una herramienta de fingerprinting real.",
+      "py_exercise": {
+        "id": "O2-02-huella",
+        "title": "huella(cabeceras): saca la versión del modelo",
+        "function": "huella",
+        "starter": "# cabeceras es un diccionario, como {\"Server\": \"infer/1.3\", \"X-Model-Version\": \"foro-7b/2.1\"}.\n# Devuelve el valor de \"X-Model-Version\", o \"\" si esa cabecera no está.\n\ndef huella(cabeceras):\n    return \"\"   # ← cambia esta línea\n\nprint(huella({\"Server\": \"infer/1.3\", \"X-Model-Version\": \"foro-7b/2.1\"}))   # foro-7b/2.1\nprint(huella({\"Server\": \"infer/1.3\"}))                                    # (vacío)\n",
+        "cases": [
+          {
+            "args": [
+              {
+                "Server": "infer/1.3",
+                "X-Model-Version": "foro-7b/2.1"
+              }
+            ],
+            "expected": "foro-7b/2.1"
+          },
+          {
+            "args": [
+              {
+                "Server": "infer/1.3"
+              }
+            ],
+            "expected": ""
+          },
+          {
+            "args": [
+              {
+                "X-Model-Version": "halcon-3b/0.9"
+              }
+            ],
+            "expected": "halcon-3b/0.9"
+          }
+        ]
+      },
+      "validator": {
+        "type": "event",
+        "event": "py.checked",
+        "where": {
+          "exercise": "O2-02-huella",
+          "all_passed": true
+        }
+      },
+      "hints": [
+        "Un diccionario tiene .get(clave, por_defecto): devuelve el valor o, si no está, lo que pongas de respaldo.",
+        "La línea queda así: return cabeceras.get(\"X-Model-Version\", \"\")"
+      ],
+      "on_complete": "Eso es una herramienta de fingerprinting en miniatura: leer la respuesta y quedarte con el dato que delata al sistema. Lo mismo, a escala, es como se inventaría qué modelos corren en una red."
+    }
+  ],
+  "you_can_now": "Sabes hacer reconocimiento pasivo de un sistema de IA: leer la huella que deja (modelo, versión, pila, contexto y superficie conectada), explicar qué ventaja da cada dato filtrado y cómo se le niega. Siguiente: O3, el modelo de amenazas, donde ordenarás todo esto en rutas de ataque.",
+  "debrief": {
+    "what_happened": "Has sondeado dos activos en alcance sin atacarlos: de A-01 sacaste modelo, versión, pila y ventana de contexto; de A-04, el mapa de servidores y herramientas que anuncia su protocolo. Y has visto, con un script, cómo se automatiza leer esa huella.",
+    "why": "El reconocimiento decide la economía del ataque: cada dato filtrado convierte una prueba a ciegas en un golpe dirigido. Por eso la defensa no empieza por un muro, sino por callar lo que no hace falta decir.",
+    "in_production": "El fingerprinting de modelos es un área viva: por el estilo de las respuestas, la plantilla de chat, o cabeceras y endpoints mal cerrados, se identifica el modelo y la pila de servido (vLLM, Triton, Ollama y similares), y de ahí se buscan vulnerabilidades conocidas. La defensa es reducir la superficie de metadatos y vigilar quién sondea.",
+    "simplifications": [
+      "Las pistas vienen dadas por el laboratorio, no de un tráfico real",
+      "Dos activos sondeados"
+    ]
+  },
+  "further_reading": [
+    "ref.owasp-genai-redteam",
+    "ref.nist-ai-100-2"
+  ],
+  "xp": {
+    "base": 180
+  }
+}

@@ -10,26 +10,137 @@
     "Cada hallazgo se documenta con pasos reproducibles y evidencia."
   ],
   "assets": [
-    { "id": "A-01", "name": "chatbot de atención al cliente", "kind": "bot", "in_scope": true,
-      "lab": "bot create <nombre>", "exposure": "público en la web, sin autenticación; conoce un código de descuento interno",
-      "threats": ["LLM01", "LLM02", "LLM05", "LLM07", "LLM10"] },
-    { "id": "A-02", "name": "buscador documental (RAG)", "kind": "rag", "in_scope": true,
-      "lab": "rag create <nombre> · rag ingest <nombre>", "exposure": "interno; indexa documentos públicos, de RR. HH. y de proveedores",
-      "threats": ["LLM01", "LLM02", "LLM04", "LLM08"] },
-    { "id": "A-03", "name": "asistente del taller (agente)", "kind": "agent", "in_scope": true,
-      "lab": "agent create <nombre>", "exposure": "lee el correo de clientes; puede reembolsar, enviar correos y guardar memoria",
-      "threats": ["LLM01", "LLM06", "ASI01", "ASI02", "ASI03", "ASI06", "ASI08"] },
-    { "id": "A-04", "name": "host MCP del ERP", "kind": "mcp", "in_scope": true,
-      "lab": "mcp host <nombre>", "exposure": "conecta el asistente con servidores MCP propios y de terceros",
-      "threats": ["LLM01", "LLM03", "LLM06", "ASI02", "ASI03", "ASI04"] },
-    { "id": "A-05", "name": "pipeline de modelos de inspección", "kind": "pipeline", "in_scope": true,
-      "lab": "supply forja <nombre>", "exposure": "entrena con datos de un espejo comunitario y carga modelos de un hub público",
-      "threats": ["LLM03", "LLM04", "ASI04", "ASI05"] },
-    { "id": "A-06", "name": "API de pedidos de acero-norte (proveedor)", "kind": "", "in_scope": false,
-      "lab": "", "exposure": "la usa el asistente, pero es de un tercero: la forja no puede autorizar pruebas sobre ella",
-      "threats": [] },
-    { "id": "A-07", "name": "chatbot de atención en producción", "kind": "", "in_scope": false,
-      "lab": "", "exposure": "la misma aplicación que A-01, pero con clientes reales: las pruebas se hacen en la copia de laboratorio",
-      "threats": [] }
+    {
+      "id": "A-01",
+      "name": "chatbot de atención al cliente",
+      "kind": "bot",
+      "in_scope": true,
+      "lab": "bot create <nombre>",
+      "exposure": "público en la web, sin autenticación; conoce un código de descuento interno",
+      "threats": [
+        "LLM01",
+        "LLM02",
+        "LLM05",
+        "LLM07",
+        "LLM10"
+      ],
+      "fingerprint": {
+        "model": "familia abierta de 7B (lo delata su plantilla de chat y su estilo)",
+        "version": "2.1 (lo dice la cabecera HTTP X-Model-Version)",
+        "framework": "servidor de inferencia estándar (un error 500 devuelve su traza)",
+        "context": "8k tokens (rechaza entradas más largas con un mensaje exacto)",
+        "leaks": [
+          "La cabecera X-Model-Version da modelo y versión exactos → se buscan jailbreaks y límites ya documentados de ESE modelo, en vez de probar a ciegas.",
+          "Un error 500 devuelve la traza del framework → se conoce la pila de servido y sus vulnerabilidades publicadas.",
+          "El mensaje de «entrada demasiado larga» revela la ventana de contexto → se calibra cuánto relleno cabe en un ataque."
+        ]
+      }
+    },
+    {
+      "id": "A-02",
+      "name": "buscador documental (RAG)",
+      "kind": "rag",
+      "in_scope": true,
+      "lab": "rag create <nombre> · rag ingest <nombre>",
+      "exposure": "interno; indexa documentos públicos, de RR. HH. y de proveedores",
+      "threats": [
+        "LLM01",
+        "LLM02",
+        "LLM04",
+        "LLM08"
+      ],
+      "fingerprint": {
+        "framework": "base de datos vectorial con API REST",
+        "leaks": [
+          "El endpoint que lista colecciones está abierto → revela los nombres de los índices (incluido uno de RR. HH.) y orienta un ataque de fuga de datos.",
+          "Las respuestas incluyen la puntuación de similitud → ayuda a reconstruir qué documentos hay dentro."
+        ]
+      }
+    },
+    {
+      "id": "A-03",
+      "name": "asistente del taller (agente)",
+      "kind": "agent",
+      "in_scope": true,
+      "lab": "agent create <nombre>",
+      "exposure": "lee el correo de clientes; puede reembolsar, enviar correos y guardar memoria",
+      "threats": [
+        "LLM01",
+        "LLM06",
+        "ASI01",
+        "ASI02",
+        "ASI03",
+        "ASI06",
+        "ASI08"
+      ],
+      "fingerprint": {
+        "framework": "agente con bucle de herramientas",
+        "leaks": [
+          "Un endpoint de salud lista las herramientas del agente (correo, reembolso, memoria) → el atacante ya sabe qué puede hacerle hacer.",
+          "Los mensajes de error nombran la herramienta que falló → mapa de la superficie de acciones."
+        ]
+      }
+    },
+    {
+      "id": "A-04",
+      "name": "host MCP del ERP",
+      "kind": "mcp",
+      "in_scope": true,
+      "lab": "mcp host <nombre>",
+      "exposure": "conecta el asistente con servidores MCP propios y de terceros",
+      "threats": [
+        "LLM01",
+        "LLM03",
+        "LLM06",
+        "ASI02",
+        "ASI03",
+        "ASI04"
+      ],
+      "fingerprint": {
+        "framework": "host MCP (Model Context Protocol)",
+        "leaks": [
+          "El handshake de MCP anuncia los servidores y herramientas conectados, propios y de terceros → inventario de la cadena de confianza sin tocar nada."
+        ]
+      }
+    },
+    {
+      "id": "A-05",
+      "name": "pipeline de modelos de inspección",
+      "kind": "pipeline",
+      "in_scope": true,
+      "lab": "supply forja <nombre>",
+      "exposure": "entrena con datos de un espejo comunitario y carga modelos de un hub público",
+      "threats": [
+        "LLM03",
+        "LLM04",
+        "ASI04",
+        "ASI05"
+      ],
+      "fingerprint": {
+        "framework": "pipeline de entrenamiento e inferencia",
+        "leaks": [
+          "Los logs de arranque nombran el modelo base y el hub público de origen → se audita la procedencia y se buscan modelos manipulados conocidos.",
+          "La versión de las librerías aparece en los logs → dependencias con vulnerabilidades conocidas."
+        ]
+      }
+    },
+    {
+      "id": "A-06",
+      "name": "API de pedidos de acero-norte (proveedor)",
+      "kind": "",
+      "in_scope": false,
+      "lab": "",
+      "exposure": "la usa el asistente, pero es de un tercero: la forja no puede autorizar pruebas sobre ella",
+      "threats": []
+    },
+    {
+      "id": "A-07",
+      "name": "chatbot de atención en producción",
+      "kind": "",
+      "in_scope": false,
+      "lab": "",
+      "exposure": "la misma aplicación que A-01, pero con clientes reales: las pruebas se hacen en la copia de laboratorio",
+      "threats": []
+    }
   ]
 }

@@ -10,6 +10,9 @@ static func register(reg: CommandRegistry) -> void:
 	reg.register(Command.new("engagement recon", "Inventario de activos de IA del cliente: exposición, alcance y cómo reproducirlos en el laboratorio.",
 		func(c: CommandContext, a: Dictionary) -> CommandResult: return _recon(c, a), "encargo")
 		.with_signature(CommandSignature.new().pos("encargo", "encargo", "engagement")))
+	reg.register(Command.new("engagement fingerprint", "Huella de un activo: qué modelo, versión y pila delata, y qué le da eso al atacante.",
+		func(c: CommandContext, a: Dictionary) -> CommandResult: return _fingerprint(c, a), "encargo")
+		.with_signature(CommandSignature.new().pos("encargo", "encargo", "engagement").pos("activo", "A-01 … A-05").example("engagement fingerprint norte A-01")))
 	reg.register(Command.new("engagement scope", "¿Se puede probar este activo? Lo comprueba contra el contrato.",
 		func(c: CommandContext, a: Dictionary) -> CommandResult: return _scope(c, a), "encargo")
 		.with_signature(CommandSignature.new().pos("encargo", "encargo", "engagement").pos("activo", "A-01 … A-07").example("engagement scope final A-06")))
@@ -66,6 +69,31 @@ static func _recon(c: CommandContext, a: Dictionary) -> CommandResult:
 
 static func _need_asset(e: MockEngagement, id: String) -> String:
 	return "" if not e.asset(id).is_empty() else "No existe el activo '%s'. Opciones: %s" % [id, ", ".join(e.asset_ids())]
+
+
+static func _fingerprint(c: CommandContext, a: Dictionary) -> CommandResult:
+	var e: MockEngagement = c.world.engagements[a["encargo"]]
+	var err := _need_asset(e, a["activo"])
+	if err != "":
+		return CommandResult.error(err)
+	var x := e.asset(a["activo"])
+	if not x["in_scope"]:
+		return CommandResult.new().line("✋ %s está fuera de alcance: no se sondea." % x["id"], "warn")
+	var fp: Dictionary = x.get("fingerprint", {})
+	if fp.is_empty():
+		return CommandResult.new().line("%s no deja una huella aprovechable en este laboratorio." % x["id"], "muted")
+	var r := CommandResult.new()
+	r.line("Huella de %s (%s):" % [x["id"], x["name"]], "accent")
+	# Reconocimiento pasivo: lo que el sistema cuenta de sí mismo sin tocarlo.
+	for campo in [["model", "modelo"], ["version", "versión"], ["framework", "pila"], ["context", "contexto"]]:
+		if String(fp.get(campo[0], "")) != "":
+			r.line("  %s: %s" % [campo[1], fp[campo[0]]], "data")
+	r.line("Qué se filtra y qué le da al atacante:", "muted")
+	for leak: String in fp.get("leaks", []):
+		r.line("  · " + leak, "data")
+	r.line("Cuanto mejor huelle al sistema, menos adivina: elige ataques ya conocidos de ESE modelo y esa pila en vez de probar a ciegas. Por eso lo primero que se arregla es dejar de regalar esos datos.", "normal")
+	c.emit("engagement.fingerprinted", {"engagement": a["encargo"], "asset": x["id"], "leaks": fp.get("leaks", []).size()})
+	return r
 
 
 static func _scope(c: CommandContext, a: Dictionary) -> CommandResult:

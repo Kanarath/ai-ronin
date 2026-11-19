@@ -161,3 +161,17 @@ func test_mision_C5_03() -> void:
 	run(_setup("t2", ["A-01", "A-03"]) + _findings("t2", ["A-01", "A-03"]) + FIX["A-01"] + FIX["A-03"] + ["engagement retest t2"])
 	assert_eq(finished.size(), 1)
 	assert_true(finished[0]["trial_passed"])
+
+
+func test_fingerprint_revela_la_huella_de_un_activo_en_alcance() -> void:
+	run(["engagement start norte", "engagement fingerprint norte A-01"])
+	var ev := _last("engagement.fingerprinted")
+	assert_eq(ev["asset"], "A-01")
+	assert_true(int(ev["leaks"]) >= 1, "revela al menos una fuga de metadatos")
+
+
+func test_fingerprint_no_sondea_un_activo_fuera_de_alcance() -> void:
+	run(["engagement start norte"])
+	var r := game.shell.execute("engagement fingerprint norte A-06")
+	assert_true(r.plain_text().contains("fuera de alcance"), r.plain_text())
+	assert_eq(game.shell.events_named("engagement.fingerprinted").size(), 0, "no emite huella de algo fuera de alcance")
