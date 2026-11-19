@@ -28,7 +28,17 @@
   "mentor_intro": "No puedes garantizar que el código sea bueno. Sí puedes garantizar que, si es malo, no llegue a nada.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · el aislamiento se construye capa a capa",
+      "items": [
+        {"label": "prompt_prudente", "value": 0, "note": "0/7", "color": "red"},
+        {"label": "+ 5 capas de aislamiento", "value": 6, "note": "6/7", "color": "gold"},
+        {"label": "+ escapar_salida", "value": 7, "note": "7/7", "color": "teal"}
+      ],
+      "caption": "un prompt no frena nada: es una petición, no un control. Las capas juntas cierran la ejecución; la séptima era la SALIDA, que también es una entrada no confiable."
+    }
   },
   "purpose": "Los agentes que programan (analistas de datos, asistentes de código, agentes con intérprete) son de los más útiles y de los más peligrosos. Aislar su ejecución es una de las defensas que más piden SANS SEC545 y las ofertas de AI security, y es la mitigación central de ASI05.",
   "theory_cards": [],

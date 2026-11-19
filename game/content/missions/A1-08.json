@@ -28,7 +28,8 @@
   "mentor_intro": "No defiendes una técnica: defiendes una superficie llena de puertas distintas.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"bars","title":"LA IDEA · ninguna defensa sola las para todas","items":[{"label":"filtro de palabras","value":1,"note":"1/6","color":"red"},{"label":"+ clasificador de intención","value":3,"note":"3/6","color":"gold"},{"label":"+ turnos, contexto y normalizar","value":6,"note":"6/6","color":"teal"}],"caption":"familias de jailbreak frenadas al sumar capas. El filtro solo pilla la directa; el clasificador añade rol e indirecta; crescendo, many-shot y codificación caen únicamente con una capa pensada para cada uno. Eso es defensa en profundidad"}
   },
   "purpose": "La lista de jailbreaks crece cada mes. Un AI red teamer tiene que conocer las familias (no una sola), entender que cada una necesita su defensa, y automatizar las pruebas con herramientas como garak, promptfoo y PyRIT. Es lo que separa una defensa que aguanta de una que para el ataque de ayer.",
   "theory_cards": [],
@@ -143,6 +144,7 @@
     {
       "id": "o4",
       "text": "Monta la defensa en profundidad: añade limite_turnos, limite_contexto y normalizar, y jailbreak evaluar. ¿Cuántas frenas ya? (answer <número>)",
+      "diagram": {"kind":"table","title":"LA IDEA · una capa por familia","headers":["familia","cómo esconde la intención","capa que la frena"],"rows":[["inyección directa","la pide sin más","filtro de palabras"],["juego de rol","adopta un papel","clasificador de intención"],["crescendo","la reparte en varios turnos","vigilar la conversación entera"],["many-shot","la esconde entre ejemplos","limitar y revisar el contexto"],["codificación","la disfraza","normalizar y decodificar"],["indirecta","viaja en un documento","aislar el contenido no fiable (A2)"]],"caption":"cada familia esquiva una cosa distinta, así que cada una necesita su propia capa. No hay un único control que las pare todas: por eso se apilan"},
       "teach": "Una capa por familia\nVigilar la conversación entera frena el crescendo; limitar y revisar el contexto frena el many-shot; normalizar y decodificar la entrada frena la codificación. Cada capa cierra una puerta.\nPor qué: no hay una defensa que las pare todas; se suman capas, cada una para su familia.",
       "validator": {
         "type": "all",

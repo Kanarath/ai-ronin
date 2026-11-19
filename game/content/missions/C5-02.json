@@ -32,7 +32,8 @@
   "mentor_intro": "«Creo que es vulnerable» no entra en un informe. «Lo he reproducido 7 de 7 veces con estos pasos» sí.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"bars","title":"LA IDEA · el recuento no es la severidad","items":[{"label":"A-01 chatbot · fuga de un descuento","value":11,"note":"11 éxitos","color":"gold"},{"label":"A-05 pipeline · ejecución de código","value":4,"note":"4 éxitos","color":"red"}],"caption":"A-01 tuvo más ataques con éxito, pero A-05 ejecuta código en el servidor. La severidad pesa el impacto, la exposición y la facilidad, no el número de éxitos: por eso el pipeline puede ir primero"}
   },
   "purpose": "En un informe de red team no cuenta lo que crees que es vulnerable, sino lo que puedes reproducir: cada hallazgo necesita una prueba repetible y una categoría que encaje. Después hay que priorizar, y el número de ataques con éxito no es la severidad. Hoy registras hallazgos con evidencia en los cinco sistemas de la forja y decides cuál arreglar primero.",
   "theory_cards": [
@@ -92,6 +93,7 @@
     },
     {
       "id": "o3",
+      "diagram": {"kind":"chips","title":"LA IDEA · primero la prueba, después el hallazgo","chips":[{"text":"batería sobre la copia","color":"teal"},{"text":"→","color":"muted"},{"text":"¿algún éxito?","color":"gold"},{"text":"→","color":"muted"},{"text":"registrar hallazgo","color":"teal"}],"caption":"si registras el hallazgo antes de atacar, se rechaza por falta de evidencia. El número de éxitos que guarda el hallazgo es la línea base con la que compararás el retest"},
       "text": "Lanza la batería de cada activo y registra un hallazgo con evidencia en cada uno de los cinco.",
       "teach": "La evidencia es la batería\nPrimero el ataque sobre la copia, después el hallazgo. Si registras el hallazgo antes de atacar, se rechaza por falta de evidencia.\nPor qué: el número de éxitos que guarda el hallazgo es la línea base con la que compararás el retest.",
       "validator": {

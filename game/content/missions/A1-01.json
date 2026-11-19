@@ -29,7 +29,8 @@
   "purpose": "Casi todos los chatbots de empresa son un LLM (Large Language Model) con unas instrucciones del desarrollador delante: el system prompt. Saber cómo se construye ese texto, y qué datos acaban dentro, es lo primero que mira cualquier auditoría de seguridad de IA (Inteligencia Artificial). Hoy revisas el chatbot de la forja por dentro y mides que funciona; en A1-02 lo atacarás y en A1-03 lo defenderás.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"chips","title":"LA IDEA · para el modelo, todo es un mismo texto","pre":"lo que recibe el modelo:","chips":[{"text":"system prompt (incluye el código)","color":"teal"},{"text":"+","color":"muted"},{"text":"mensaje del cliente","color":"gold"},{"text":"→","color":"muted"},{"text":"modelo","color":"cyan"},{"text":"→","color":"muted"},{"text":"respuesta"}],"caption":"la aplicación pega las instrucciones del desarrollador y el mensaje del cliente en una sola secuencia de tokens. No hay un canal separado para las órdenes: por eso un secreto escrito en el prompt es solo texto que el modelo puede acabar repitiendo"}
   },
   "theory_cards": [
     {

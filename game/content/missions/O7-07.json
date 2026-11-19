@@ -29,7 +29,18 @@
   "mentor_intro": "El mismo fallo, cuatro idiomas: según con quién hables, cambia el nombre, no el fallo.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · el mismo fallo, cuatro idiomas",
+      "headers": ["hallazgo", "ASI (OWASP)", "LLM Top 10", "MITRE ATLAS", "NIST AI RMF"],
+      "rows": [
+        ["F1 inyección indirecta", "ASI01", "LLM01", "Initial Access", "MAP"],
+        ["F2 ejecuta código del cliente", "ASI05", "LLM05", "Execution", "MANAGE"],
+        ["F3 memoria envenenada", "ASI06", "LLM04", "Persistence", "MEASURE"]
+      ],
+      "caption": "según con quién hables cambia el nombre, no el fallo: ingeniería usa ASI/LLM, inteligencia de amenazas usa ATLAS, gobernanza usa NIST. Un hallazgo que no se traduce no llega a quien debe actuar."
+    }
   },
   "purpose": "Ningún marco se usa solo. Las ofertas de AI red teamer y de gobernanza piden mapear hallazgos entre OWASP, MITRE ATLAS y NIST a la vez: es lo que convierte un hallazgo técnico en algo que entienden el SOC, la dirección y el auditor.",
   "theory_cards": [],

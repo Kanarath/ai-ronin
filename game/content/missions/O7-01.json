@@ -30,7 +30,25 @@
   "mentor_intro": "Un nombre compartido para cada fallo es la mitad de la conversación con el comité.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · un nombre para cada forma de perder un agente",
+      "headers": ["riesgo ASI", "qué falla primero"],
+      "rows": [
+        ["ASI01", "secuestro del objetivo (un texto externo lo cambia)"],
+        ["ASI02", "mal uso de una herramienta legítima"],
+        ["ASI03", "abuso de los permisos del agente"],
+        ["ASI04", "cadena de suministro (viene de un tercero)"],
+        ["ASI05", "ejecución de código"],
+        ["ASI06", "memoria envenenada"],
+        ["ASI07", "mensajes entre agentes sin autenticar"],
+        ["ASI08", "propagación en cascada entre agentes"],
+        ["ASI09", "confianza humano-agente (aprobar a ciegas)"],
+        ["ASI10", "el agente se desvía solo"]
+      ],
+      "caption": "se clasifica por la causa raíz: el punto donde un control habría cortado la cadena. Los efectos solo dicen cuánto dolió."
+    }
   },
   "purpose": "La lista ASI es el marco de 2026 para la seguridad de los agentes: la usan las ofertas de AI security, los red teams y los equipos de gobernanza. Saber clasificar un incidente en ella es saber explicarlo a quien decide.",
   "theory_cards": [],
@@ -78,6 +96,7 @@
       "id": "c1",
       "text": "I1 e I2 acaban con el agente haciendo algo que no debía. ¿Qué los separa?",
       "teach": "Objetivo frente a herramienta\nEn ASI01 alguien cambia lo que el agente quiere conseguir. En ASI02 el objetivo sigue siendo el legítimo, pero usa una herramienta con un alcance dañino.\nPor qué: las defensas son distintas: separar datos de instrucciones (ASI01) o limitar y validar las herramientas (ASI02).",
+      "diagram": {"kind": "table", "title": "LA IDEA · objetivo frente a herramienta", "headers": ["", "ASI01 (I1)", "ASI02 (I2)"], "rows": [["qué cambia", "el objetivo del agente", "nada: el objetivo es legítimo"], ["cómo daña", "persigue una meta ajena", "usa una herramienta con alcance dañino"], ["defensa", "separar datos de instrucciones", "limitar y validar las herramientas"]], "caption": "los dos acaban haciendo algo que no debían, pero por motivos distintos; por eso la defensa es distinta."},
       "choices": [
         {
           "id": "a",

@@ -33,7 +33,8 @@
   "purpose": "Para evaluar respuestas abiertas, muchos equipos usan otro LLM (Large Language Model) como juez con una rúbrica: así se evalúan chatbots, asistentes RAG (Retrieval-Augmented Generation) y agentes. Pero un juez también se equivoca y se puede manipular. Hoy construyes uno y lo auditas: cuánto coincide con las personas, qué sesgos tiene y si obedece una nota escondida en la respuesta que evalúa.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"bars","title":"LA IDEA · coincidir no es acertar","items":[{"label":"acuerdo bruto (dice siempre «bien»)","value":0.9,"note":"90% sin mirar nada","color":"gold"},{"label":"kappa de Cohen (descuenta el azar)","value":0.05,"note":"≈ 0","color":"red"}],"caption":"si el 90 % de las respuestas son buenas, un juez que siempre dice «bien» coincide el 90 % con las personas sin evaluar nada. La kappa descuenta ese acuerdo por azar: por eso un juez se mide con kappa, no con el porcentaje bruto"}
   },
   "theory_cards": [
     {
@@ -153,6 +154,7 @@
     {
       "id": "o3",
       "text": "¿Qué hace la configuración «intercambio» con el sesgo de posición del juez?",
+      "diagram": {"kind":"table","title":"LA IDEA · mitigar el sesgo no es quitarlo","headers":["A primero","B primero","veredicto final"],"rows":[["gana A","gana B","A"],["gana B","gana A","B"],["gana A","gana A","empate (mandaba el orden)"]],"caption":"se juzga cada par en los dos órdenes y solo vale si coincide. El veredicto final deja de depender del orden, pero el juez conserva su sesgo: por eso «cambió con el orden» sigue alto"},
       "teach": "Mitigar no es arreglar\nEl SESGO DE POSICIÓN es preferir la respuesta que va primera (o la segunda), sea cual sea.\nPor qué: una evaluación con un juez sesgado da conclusiones falsas sobre qué modelo o qué prompt es mejor.",
       "choices": [
         {

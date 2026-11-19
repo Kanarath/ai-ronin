@@ -30,7 +30,17 @@
   "mentor_intro": "Lo que antes delataba a un atacante (las faltas, el texto genérico) lo borra la IA en un segundo.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · el texto ya no delata al phishing",
+      "items": [
+        {"label": "detecta el filtro de ortografía", "value": 1, "note": "1/5", "color": "red"},
+        {"label": "se cuelan (pulidos por IA)", "value": 4, "note": "4/5", "color": "gold"},
+        {"label": "legítimos marcados por error", "value": 1, "note": "1 FP", "color": "muted"}
+      ],
+      "caption": "el filtro de siempre solo caza el ataque artesanal; los cuatro que escribe la IA pasan, y encima marca un correo interno real por una errata. Basar la defensa en «cómo está escrito» el mensaje nace obsoleto."
+    }
   },
   "purpose": "La IA generativa cambia el lado ofensivo tanto como el defensivo: phishing perfecto, ingeniería social a escala, voces clonadas. Un profesional de seguridad de 2026 tiene que entender la amenaza potenciada por IA para defender de ella; es el hueco que las empresas notan primero y el que más se pregunta en entrevistas.",
   "theory_cards": [],
@@ -172,7 +182,16 @@
       "hints": [
         "¿Cuánto cuesta ahora enviar 10.000 correos personalizados distintos?",
         "answer b"
-      ]
+      ],
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · la IA multiplica calidad Y cantidad",
+        "items": [
+          {"label": "antes: personalizados a mano", "value": 1, "note": "pocos, caros", "color": "muted"},
+          {"label": "ahora: con un LLM", "value": 12, "note": "miles, casi gratis", "color": "red"}
+        ],
+        "caption": "antes personalizar un ataque costaba tiempo; un modelo genera miles de variantes con el nombre y el cargo de cada víctima por casi nada. No solo corrige la ortografía: sube a la vez la calidad y la escala."
+      }
     },
     {
       "id": "py1",

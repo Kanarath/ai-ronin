@@ -28,7 +28,21 @@
   "mentor_intro": "El grado de un hallazgo no lo decide su gravedad aparente: lo decide qué le pasa al sistema de gestión.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "tree",
+      "title": "LA IDEA · una mayor lo cambia todo",
+      "root": {
+        "q": "¿alguna no conformidad mayor?",
+        "izq": {"leaf": "aplazar", "cls": 1},
+        "der": {
+          "q": "¿alguna menor?",
+          "izq": {"leaf": "recomendar con plan", "cls": 0},
+          "der": {"leaf": "recomendar", "cls": 0}
+        }
+      },
+      "caption": "el grado mide el sistema de gestión, no lo grave que suena el caso; con una mayor abierta (H1, H5) no se certifica hasta corregirla y verificarla. Es la regla que programas en decision()"
+    }
   },
   "purpose": "Graduar hallazgos y recomendar una decisión es el núcleo del trabajo de un auditor jefe. En IA es aún más delicado, porque requisitos como la evaluación de impacto no tienen equivalente en otras normas que el equipo ya conozca.",
   "theory_cards": [],
@@ -47,6 +61,18 @@
     },
     {
       "id": "o2",
+      "diagram": {
+        "kind": "table",
+        "title": "LA IDEA · ¿sistema o caso?",
+        "headers": ["hallazgo", "grado", "por qué"],
+        "rows": [
+          ["H1 revisión por la dirección", "mayor", "el requisito no existe"],
+          ["H5 evaluación de impacto", "mayor", "nunca se ha hecho"],
+          ["H2 cambio del modelo sin aprobar (1/12)", "menor", "el proceso existe, falló una vez"],
+          ["H4", "observación", "aún no incumple nada"]
+        ],
+        "caption": "falta el requisito o falla por completo → mayor; existe y falló una vez → menor; aún no incumple → observación. Un cambio sin aprobar sigue siendo menor si 11 de 12 sí lo tenían"
+      },
       "text": "Clasifica los seis hallazgos: iso grade <hallazgo> <mayor|menor|observacion>.",
       "teach": "¿Sistema o caso?\nLa pregunta clave: ¿el requisito no existe o no funciona (sistema), o existe y ha fallado una vez (caso)?\nPor qué: un fallo en 1 de 12 registros es menor aunque el cambio fuera importante; no haber hecho nunca la revisión por la dirección es mayor aunque nadie haya salido perjudicado.",
       "validator": {

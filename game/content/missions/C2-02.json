@@ -29,7 +29,20 @@
   "mentor_intro": "Si no puedes poner dos cerraduras en la misma puerta, quita lo valioso de esa habitación.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "chips",
+      "title": "LA IDEA · la segunda cerradura puede ser el diseño",
+      "pre": "documento interno:",
+      "chips": [
+        {"text": "fuera del índice de clientes", "color": "teal"},
+        {"text": "→", "color": "muted"},
+        {"text": "no hay acl que fallar", "color": "teal"},
+        {"text": "→", "color": "muted"},
+        {"text": "la fuga es imposible", "color": "teal"}
+      ],
+      "caption": "con las cinco defensas encendidas, cuatro de cinco ataques siguen colgando de un control. Cuando no puedes poner dos interruptores en la misma puerta, quita lo valioso de la habitación: lo que no está en el índice, ninguna fuga lo revela, falle o no la acl."
+    }
   },
   "purpose": "En un RAG (Retrieval-Augmented Generation), muchos ataques dependen de una sola defensa porque cada etapa tiene la suya. Cuando no se puede duplicar un interruptor, la segunda barrera es el diseño: no meter en el índice de clientes lo que los clientes no deben ver, no exponer la base vectorial y vigilar lo que se recupera. Hoy mides el límite de los interruptores y propones esas barreras de arquitectura.",
   "theory_cards": [

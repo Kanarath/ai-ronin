@@ -32,7 +32,8 @@
   "mentor_intro": "Un modelo no guarda una tabla con tus datos. Pero si estabas en su entrenamiento, se nota en cómo te responde. Hoy mides cuánto se nota.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"bars","title":"LA IDEA · cuanto más memoriza, más delata","items":[{"label":"sobreajustado","value":0.8,"note":"ventaja alta","color":"red"},{"label":"regularizado","value":0.3,"note":"ventaja menor","color":"gold"},{"label":"DP-SGD fuerte","value":0.05,"note":"casi azar","color":"teal"}],"caption":"el ataque dice «miembro» si la pérdida está por debajo de un umbral: un modelo sobreajustado tiene pérdida casi 0 con lo que vio. La ventaja (TPR − FPR) mide cuánto mejor que el azar acierta; DP-SGD la baja, a cambio de precisión"}
   },
   "purpose": "Un modelo entrenado con datos de personas puede revelar quién estaba en sus datos sin devolver un solo dato: es la inferencia de pertenencia. Es la base técnica de la divulgación de información sensible, el riesgo LLM02 de la lista de OWASP (Open Worldwide Application Security Project) para LLM, y de la discusión sobre cuándo un modelo puede considerarse anónimo. Hoy atacas un modelo con un umbral sobre la pérdida, mides la ventaja del atacante y pruebas DP-SGD (Differentially Private Stochastic Gradient Descent) y la privacidad diferencial.",
   "theory_cards": [
@@ -292,6 +293,7 @@
     },
     {
       "id": "o3",
+      "diagram": {"kind":"lines","title":"LA IDEA · elegir ε es elegir ruido contra privacidad","x_label":"ε","y_label":"error de la media (escala del ruido)","series":[{"name":"Laplace · sensibilidad/ε","color":"violet","points":[[0.25,0.96],[0.5,0.48],[1,0.24],[2,0.12],[4,0.06]]}],"caption":"el ruido de Laplace tiene escala sensibilidad/ε: con ε pequeño, la salida apenas depende de una persona (más privacidad) y el error es mayor. Multiplicar ε por 10 divide el error más o menos entre 10"},
       "text": "Si multiplicas ε por 10, ¿qué pasa con el error de la media publicada con Laplace?",
       "teach": "Error de la media con Laplace\nEl error de la media publicada es el ruido que se le suma, y su tamaño típico es la escala del ruido: sensibilidad/ε (tarjeta «Privacidad diferencial»).\nEjemplo: con sensibilidad 0,24, ε = 1 da escala 0,24; ε = 0,5 da escala 0,48.\nPor qué: elegir ε es elegir cuánto error aceptas a cambio de cuánta privacidad.",
       "validator": {

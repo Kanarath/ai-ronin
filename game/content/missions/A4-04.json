@@ -37,7 +37,21 @@
   "mentor_intro": "En el Dojo activabas los controles con interruptores. Aquí los programas tú, y los pones donde de verdad mandan: en el host, que decide qué ve el modelo, y en el servidor, que decide qué deja hacer a cada token. El modelo no es una frontera de seguridad.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · dos capas: antes del modelo y antes del efecto",
+      "headers": ["defensa", "dónde vive", "para el ataque…"],
+      "rows": [
+        ["revisar descripciones", "host", "antes de que el modelo lo vea"],
+        ["huella de definiciones", "host", "antes de que el modelo lo vea"],
+        ["validar argumentos", "servidor", "antes de ejecutarlo"],
+        ["exigir scopes", "servidor", "antes de ejecutarlo"],
+        ["sanear rutas", "servidor", "antes de ejecutarlo"],
+        ["audiencia del token", "servidor", "antes de ejecutarlo"]
+      ],
+      "caption": "el host decide qué texto llega al modelo; el servidor decide qué deja hacer a cada token. El modelo, en medio, obedece lo que lee: no defiende nada"
+    }
   },
   "theory_cards": [
     {

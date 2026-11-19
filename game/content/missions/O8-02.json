@@ -29,7 +29,17 @@
   "mentor_intro": "No preguntes si el mensaje está bien escrito. Pregunta quién lo envía y qué te pide.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · ninguna capa sola basta",
+      "items": [
+        {"label": "solo ortografía", "value": 1, "note": "1/5", "color": "red"},
+        {"label": "+ autenticación del remitente", "value": 4, "note": "4/5", "color": "gold"},
+        {"label": "+ verificación fuera de banda", "value": 5, "note": "5/5", "color": "teal"}
+      ],
+      "caption": "autenticar al remitente (SPF/DKIM/DMARC) frena 4 sin leer el texto y sin falsos positivos; el quinto es una voz clonada que salta al teléfono y solo cae confirmando por un segundo canal que tú inicias. La defensa se desplaza del texto al proceso."
+    }
   },
   "purpose": "La defensa que aguanta frente a ataques con IA no analiza el texto (una carrera perdida): autentica al remitente (SPF/DKIM/DMARC), vigila la petición y verifica fuera de banda lo sensible. Es lo que distingue una política anti-fraude moderna de una lista de «señales de phishing» que la IA ya sortea.",
   "theory_cards": [],

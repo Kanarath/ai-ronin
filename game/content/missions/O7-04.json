@@ -28,7 +28,19 @@
   "mentor_intro": "Una aprobación vale lo que ve quien aprueba.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · la aprobación vale lo que ve quien aprueba",
+      "headers": ["explicación del agente", "cambio real que se ejecuta"],
+      "rows": [
+        ["«acceso temporal para una tarea»", "admin sin caducidad"],
+        ["«limpiar duplicados»", "borrar 4.812 filas"],
+        ["«enviar el informe»", "clientes.csv a un dominio externo"],
+        ["«aplicar la promoción»", "descuento inventado"]
+      ],
+      "caption": "con solo la explicación no puedes decidir: el agente la escribe y puede ser convincente y falsa a la vez. El resumen del cambio lo genera el sistema a partir de la llamada, y es lo que de verdad protege."
+    }
   },
   "purpose": "«Hay un humano en el bucle» es la respuesta favorita a casi cualquier riesgo de agentes, y la más engañosa. ASI09 es el riesgo de que esa persona apruebe lo que no entiende; diseñar aprobaciones que de verdad protejan es cada vez más parte del trabajo de diseño seguro de agentes.",
   "theory_cards": [],

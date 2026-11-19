@@ -33,7 +33,20 @@
   "mentor_intro": "Laboratorio autorizado. Todo es ficticio: servidores, tokens y pedidos. Tu evidencia es lo que ve el propietario del servidor malicioso: mcp log.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · cinco formas de atacar por el enchufe",
+      "headers": ["ataque", "por dónde entra", "qué consigue"],
+      "rows": [
+        ["tool poisoning", "la descripción de una herramienta", "roba el token de la sesión"],
+        ["token passthrough", "la cabecera de la llamada", "llave de administrador regalada"],
+        ["rug pull", "una actualización ya aprobada", "un reembolso que nadie pidió"],
+        ["shadowing", "un nombre de herramienta repetido", "desvía la llamada al impostor"],
+        ["inyección por la salida", "el resultado de la herramienta", "una orden dentro de los datos"]
+      ],
+      "caption": "los cinco entran por textos o credenciales que el host trata como de confianza. Sin defensas, la batería A4 funciona 5 de 5"
+    }
   },
   "theory_cards": [
     {

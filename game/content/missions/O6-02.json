@@ -29,7 +29,19 @@
   "mentor_intro": "Una regla de detección es un clasificador: se equivoca de dos formas, y cada error lo paga alguien distinto.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · una regla de detección es un clasificador",
+      "headers": ["configuración", "recall", "precision"],
+      "rows": [
+        ["correlacion sola (sin datos)", "0,0", "— ciega"],
+        ["solo palabras-clave", "0,25", "salta con S02"],
+        ["las cinco reglas", "1,0", "0,5"],
+        ["correlación (señales juntas)", "1,0", "0,67"]
+      ],
+      "caption": "recall = ataques que ves; precision = alertas que valen la pena. Un FN deja pasar un ataque; un FP quema a un analista. Se busca recall 1,0 con la mejor precision posible."
+    }
   },
   "purpose": "Nadie lee a mano miles de sesiones de un agente. En producción, unas reglas de detección miran las trazas y levantan alertas solas, normalmente en un SIEM (Security Information and Event Management). Una regla es un clasificador como los de T3: se equivoca dejando pasar ataques o molestando con falsas alarmas. Hoy mides reglas contra inyecciones de prompt directas e indirectas con precision y recall, y aprendes por qué combinar señales.",
   "theory_cards": [

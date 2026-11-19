@@ -29,7 +29,20 @@
   "mentor_intro": "La matriz es una hipótesis. La medición de la combinación es el resultado.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "chips",
+      "title": "LA IDEA · dos defensas buenas pueden restarse",
+      "pre": "token escondido en la descripción:",
+      "chips": [
+        {"text": "review-descriptions limpia los argumentos", "color": "teal"},
+        {"text": "→", "color": "muted"},
+        {"text": "consent ya no ve el token", "color": "gold"},
+        {"text": "→", "color": "muted"},
+        {"text": "el token sale en la cabecera", "color": "red"}
+      ],
+      "caption": "la matriz decía que consent paraba el reenvío del token; medido junto a las otras defensas, no. Sanear la descripción le quita a consent la pista con la que decidía, y el usuario aprueba lo que no ve. Una combinación se mide, no se deduce de la matriz."
+    }
   },
   "purpose": "La matriz mide cada defensa sola, y es tentador suponer que se suman. En sistemas reales con LLM (Large Language Model), una defensa puede cambiar lo que otra ve: sanear una descripción hace que una llamada peligrosa parezca inocente. Hoy compruebas en un host MCP (Model Context Protocol) que la combinación hay que medirla de verdad, y decides con números si el consentimiento del usuario compensa.",
   "theory_cards": [

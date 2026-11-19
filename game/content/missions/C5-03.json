@@ -30,7 +30,8 @@
   "mentor_intro": "Atacar es la mitad. La otra mitad es demostrar que ya no funciona, y que todo lo demás sí.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"table","title":"LA IDEA · cerrar exige dos medidas","headers":["estado","ataques","tareas legítimas","¿cerrado?"],"rows":[["antes","7 de 7","1,0","✗ abierto"],["control activado","0 de 7","0,75","✗ abierto — rompe el servicio"],["causa arreglada","0 de 7","1,0","✓ cerrado"]],"caption":"un arreglo que para el ataque pero rompe las tareas legítimas no cierra nada: se desactiva en una semana y el hallazgo vuelve. El retest exige 0 éxitos Y el servicio intacto"}
   },
   "purpose": "Un hallazgo no se cierra porque alguien diga que lo ha arreglado: se cierra con un retest que demuestra que el ataque ya no funciona y que el servicio sigue funcionando. Es el último paso de un red team y la base de las pruebas de regresión de cualquier sistema de IA (Inteligencia Artificial) en producción. Hoy cierras el encargo de la forja aplicando las defensas de cada arco.",
   "theory_cards": [
@@ -175,6 +176,7 @@
     },
     {
       "id": "o5",
+      "diagram": {"kind":"bars","title":"LA IDEA · controlar en el código, no pedirlo al modelo","items":[{"label":"pedir al modelo que se porte bien","value":1,"note":"se esquiva","color":"red"},{"label":"limitar en el código qué puede hacer y leer","value":4,"note":"cerró los 5 activos","color":"teal"}],"caption":"las defensas que cerraron los cinco activos comparten una idea: mínimo privilegio en el código, no instrucciones al modelo. Las instrucciones se saltan; los controles, no"},
       "text": "Para cerrar: ¿qué tienen en común las defensas que cerraron tus hallazgos?",
       "validator": {
         "type": "answer",

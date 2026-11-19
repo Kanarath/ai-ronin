@@ -29,7 +29,8 @@
   "mentor_intro": "Como siempre, honestidad: el «cerebro» del agente es simulado por reglas. Las herramientas, la memoria y los controles sí actúan de verdad sobre el estado del laboratorio.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"chips","title":"LA IDEA · el modelo propone, tu código dispone","chips":[{"text":"observa (correo, resultado)","color":"cyan"},{"text":"→","color":"muted"},{"text":"el LLM decide: herramienta + argumentos","color":"gold"},{"text":"→","color":"muted"},{"text":"tu código la ejecuta","color":"teal"},{"text":"↺ vuelve a observar","color":"muted"}],"caption":"un agente repite este bucle hasta terminar. El LLM solo ESCRIBE qué quiere hacer; el código de la aplicación lo ejecuta. Sus salidas ya no son texto: son acciones con efectos reales."}
   },
   "theory_cards": [
     {
@@ -41,6 +42,7 @@
   "objectives": [
     {
       "id": "o1",
+      "diagram": {"kind":"table","title":"LA IDEA · qué PUEDE hacer el agente","headers":["herramienta","sensible"],"rows":[["leer_correo","—"],["buscar_pedido","—"],["leer_memoria","—"],["enviar_correo","⚠ sí"],["aplicar_reembolso","⚠ sí"],["listar_clientes","⚠ sí"],["guardar_memoria","⚠ sí"]],"caption":"sensible = mueve dinero, saca información o cambia la memoria. Son 4 de 7, y ahora mismo el agente puede usarlas TODAS en cualquier tarea. En una auditoría, lo primero es este inventario."},
       "text": "Crea el agente y revisa sus herramientas. ¿Cuántas están marcadas como sensibles? (answer <número>)",
       "teach": "Las herramientas del agente\nagent create <nombre> crea el agente.\nagent tools <nombre> lista sus herramientas: qué hace cada una y si es SENSIBLE (las que tienen «⚠ sí»).\nSensible significa que tiene efectos importantes: mueve dinero, saca información fuera o cambia la memoria.\nLa nota «salvo que actives least-privilege» habla de un control que limita las herramientas de cada tarea: lo verás en A3-03.\nPor qué: en la auditoría de un agente real, lo primero es el inventario de lo que PUEDE hacer.",
       "validator": {

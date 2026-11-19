@@ -33,7 +33,17 @@
   "mentor_intro": "Un sello no impide abrir la caja: te dice si alguien la ha abierto. Lo que haces después depende de ti.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · el control que funciona quita poder, no pide paciencia",
+      "items": [
+        {"label": "sin defensas", "value": 5, "note": "5/5", "color": "red"},
+        {"label": "solo consentimiento", "value": 1, "note": "1/5", "color": "gold"},
+        {"label": "controles del host", "value": 0, "note": "0/5", "color": "teal"}
+      ],
+      "caption": "el consentimiento deja pasar el shadowing (el usuario no ve lo que el host no le enseña) y cansa con cada aviso. Los tokens mínimos y los espacios de nombres cierran los cinco sin depender del usuario"
+    }
   },
   "theory_cards": [
     {

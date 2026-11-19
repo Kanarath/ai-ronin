@@ -35,7 +35,8 @@
   "purpose": "El trabajo de un AI red teamer no acaba en encontrar un jailbreak: acaba en un informe con números que el equipo de defensa pueda usar. La práctica del sector es automatizar la batería con garak, promptfoo o PyRIT, medir la tasa de éxito antes y después de cada defensa, y reportar tanto lo que se para como lo que sigue pasando y a qué coste. Hoy construyes la versión mínima de ese arnés y la mides.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"bars","title":"LA IDEA · un red team sin número es una anécdota","items":[{"label":"sin defensa","value":15,"note":"15/18","color":"red"},{"label":"clasificador de palabras","value":6,"note":"6/18","color":"gold"},{"label":"+ normalizar la entrada","value":3,"note":"3/18 · todos indirecta","color":"teal"}],"caption":"ataques de la batería que revelan el canario, antes y después de cada defensa. La línea base da el «antes», la tasa el «después» y la superficie residual dice dónde actuar: tras normalizar solo aguanta la inyección indirecta"}
   },
   "theory_cards": [
     {

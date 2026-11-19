@@ -34,7 +34,8 @@
   "mentor_intro": "En T4 usaste el gradiente para cambiar los pesos y bajar la pérdida. Hoy lo usarás para cambiar la entrada y subirla. Es la misma derivada, solo que la miras desde el otro lado.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"lines","title":"LA IDEA · un cambio invisible tumba el modelo","x_label":"epsilon (cambio por píxel)","y_label":"precisión","series":[{"name":"sin defensas","color":"red","points":[[0,0.95],[0.05,0.7],[0.1,0.4],[0.2,0.15],[0.3,0.08]]}],"caption":"FGSM mueve cada píxel epsilon en la dirección del signo de su gradiente. Con muchas dimensiones, cambios minúsculos suman: con epsilon 0,1, invisible para una persona, la precisión cae por debajo del 50 %"}
   },
   "purpose": "Un clasificador se puede engañar con cambios casi invisibles en su entrada: los ejemplos adversarios. Es un ataque de evasión, catalogado en MITRE ATLAS (Adversarial Threat Landscape for Artificial-Intelligence Systems) y en la taxonomía NIST (National Institute of Standards and Technology) AI 100-2, y afecta a cualquier modelo que recibe datos de fuera: lectores de documentos, filtros, detectores. Hoy entrenas un clasificador de dígitos en NumPy, lo atacas con FGSM (Fast Gradient Sign Method) usando el mismo gradiente de T4, y mides dos defensas y lo que cuestan.",
   "theory_cards": [
@@ -211,6 +212,7 @@
     },
     {
       "id": "o3",
+      "diagram": {"kind":"table","title":"LA IDEA · cada defensa toca una cifra","headers":["defensa","el modelo falla","éxito del ataque","precio"],"rows":[["ninguna","alto","alto","—"],["entrenamiento adversario","baja","baja","algo de precisión limpia, doble de cálculo"],["detector (feature squeezing)","igual","baja","imágenes normales rechazadas"]],"caption":"el entrenamiento adversario cambia el modelo, así que baja «el modelo falla»; el detector no lo cambia, solo rechaza entradas, así que baja «éxito». Cada defensa se mide con la cifra que de verdad mueve y con lo que cuesta"},
       "text": "Compara las configuraciones de tu batería. ¿Qué cifra baja el detector y cuál no?",
       "teach": "Lo que falla frente a lo que pasa\n«El modelo falla» cuenta los ejemplos atacados que el modelo clasifica mal; «éxito», los que además el detector no marca.\nPiensa qué toca cada defensa: el entrenamiento adversario cambia el modelo; el detector no lo cambia, solo rechaza entradas.\nY el detector paga en «limpias bien»: cada imagen normal marcada es un albarán legítimo rechazado.\nPor qué: cada defensa se mide con la cifra que de verdad cambia y con lo que le cuesta al uso normal.",
       "validator": {

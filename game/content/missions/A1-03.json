@@ -30,7 +30,8 @@
   "purpose": "Cuando un equipo descubre una inyección de prompts, lo primero que hace casi siempre es poner un filtro. Hoy compruebas, midiendo, qué hace de verdad cada defensa de un chatbot con un LLM (Large Language Model): cuántos ataques para, qué rompe a los clientes legítimos y cómo se esquiva. Es el método de cualquier equipo de seguridad de IA (Inteligencia Artificial): línea base, una defensa cada vez, medir otra vez.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"bars","title":"LA IDEA · una defensa se mide, no se supone","items":[{"label":"sin defensas","value":1.0,"note":"1,00","color":"red"},{"label":"filtros literales (entrada/salida)","value":0.73,"note":"0,73 · y se esquivan","color":"gold"},{"label":"secreto fuera + escapar + límites","value":0.0,"note":"0,00 · 8/8","color":"teal"}],"caption":"tasa de éxito de la misma batería tras cada defensa. Una lista negra se rodea con un sinónimo, y el filtro de salida pidiendo el código al revés; solo la mitigación de arquitectura lleva los ataques a 0 manteniendo el 8/8 de clientes"}
   },
   "theory_cards": [
     {

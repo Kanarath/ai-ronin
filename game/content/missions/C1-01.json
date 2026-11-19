@@ -29,7 +29,16 @@
   "mentor_intro": "Medir antes de elegir. Una tabla honesta vale más que diez opiniones sobre qué defensa es mejor.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · la cobertura más pequeña no es la más fuerte",
+      "items": [
+        {"label": "ataques bloqueados", "value": 5, "note": "5/5 ✓", "color": "teal"},
+        {"label": "…pero frágiles", "value": 5, "note": "cuelgan de 1 control", "color": "red"}
+      ],
+      "caption": "dos controles dejan la batería a 0, pero casi todo depende de spotlight, que vive en el prompt y se esquiva reformulando. La matriz mide cada defensa sola: «bloquea la batería» no es lo mismo que «aguanta que falle un control»."
+    }
   },
   "purpose": "En A3 activaste defensas de un agente una a una hasta cerrar la batería. Un equipo de ingeniería no elige así: mide cada control por separado, lo pone en una tabla (la matriz de defensas) y busca la combinación más barata que lo cubre todo. Hoy construyes esa matriz para el agente del taller y descubres por qué la solución más pequeña puede ser la más frágil.",
   "theory_cards": [

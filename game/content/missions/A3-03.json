@@ -30,7 +30,8 @@
   "mentor_intro": "Regla de oro de la seguridad de agentes: el modelo puede ser engañado; los controles no deben depender de que no lo sea.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"bars","title":"LA IDEA · el modelo no es una frontera de seguridad","items":[{"label":"sin defensas","value":5,"note":"5/5","color":"red"},{"label":"spotlight","value":1,"note":"1/5 · pasa el diputado confundido","color":"gold"},{"label":"hitl","value":1,"note":"1/5 · tras 17 aprobaciones","color":"gold"},{"label":"controles en el código","value":0,"note":"0/5 · 0 aprobaciones","color":"teal"}],"caption":"las dos defensas más populares dejan pasar el ataque más sencillo. Mínimo privilegio, validación, autorización por usuario y límites viven en el código: al modelo se le puede engañar, al código no se le convence."}
   },
   "theory_cards": [
     {
@@ -219,6 +220,7 @@
     },
     {
       "id": "o5",
+      "diagram": {"kind":"table","title":"LA IDEA · elegir el control por lo que comprueba","headers":["control","qué comprueba","frena al diputado confundido"],"rows":[["spotlight","trata el correo como datos","no: no llega por correo"],["hitl","un humano aprueba","no: parece legítimo, lo aprueba"],["user-authz","los permisos de QUIEN pide","sí"]],"caption":"el diputado confundido es un fallo de permisos, no de texto. Solo lo cierra el control que mira quién pide, y vive en el código: no depende de que el modelo o el revisor se den cuenta."},
       "text": "Comprueba que lo tienes claro: ¿qué control detiene al diputado confundido?",
       "teach": "Repaso con tus cifras\nCon spotlight quedaba 1 ataque de 5. Con hitl, el mismo, tras 17 aprobaciones.\nPiensa en qué comprueba cada control.\nPor qué: elegir un control por lo que comprueba, y no por su fama, es lo que hace un ingeniero de seguridad.",
       "choices": [

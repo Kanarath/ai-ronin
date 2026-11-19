@@ -28,7 +28,25 @@
   "mentor_intro": "Una lista de defensas no dice nada hasta que la pones sobre la lista de riesgos.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · el mapa de cobertura enseña los huecos",
+      "headers": ["riesgo ASI", "defensa que lo cubre"],
+      "rows": [
+        ["ASI01", "D1 delimitar el contenido externo"],
+        ["ASI02", "D2 lista blanca de herramientas"],
+        ["ASI03", "D3 permisos de quien pide"],
+        ["ASI04", "D4 pinning de MCP · D5"],
+        ["ASI05", "— sin defensa"],
+        ["ASI06", "D6 memoria con origen"],
+        ["ASI07", "D7 mensajes firmados"],
+        ["ASI08", "D8 disyuntores"],
+        ["ASI09", "— sin defensa"],
+        ["ASI10", "D9 detección de anomalías"]
+      ],
+      "caption": "nueve defensas sobre diez riesgos dejan dos filas vacías: ASI05 y ASI09. El mapa no dice cuánto trabajas, dice dónde estás descubierto; y lo que no cubres hay que justificarlo."
+    }
   },
   "purpose": "Un mapa de cobertura (riesgos frente a controles) es lo que se presenta a un comité, a un auditor o a un cliente que pregunta cómo de seguro es tu sistema de agentes. Es el puente entre el trabajo técnico de los arcos y la gobernanza de O5.",
   "theory_cards": [],

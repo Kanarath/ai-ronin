@@ -29,7 +29,20 @@
   "mentor_intro": "Un protocolo no es seguro ni inseguro: es un enchufe. Lo que importa es qué conectas y con qué permisos.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "chips",
+      "title": "LA IDEA · lo que escribe un tercero entra en tu modelo",
+      "pre": "por el enchufe viaja:",
+      "chips": [
+        {"text": "servidor de terceros", "color": "red"},
+        {"text": "→", "color": "muted"},
+        {"text": "su descripción (tools/list)", "color": "gold"},
+        {"text": "→", "color": "muted"},
+        {"text": "contexto del modelo", "color": "teal"}
+      ],
+      "caption": "el host mete en el prompt del modelo las descripciones de TODAS las herramientas conectadas. Quien escribe la de un servidor de terceros escribe, en parte, el prompt de tu asistente: por ahí entran los ataques de A4-02"
+    }
   },
   "theory_cards": [
     {

@@ -38,7 +38,8 @@
   "mentor_intro": "Un red team sin autorización es un ataque. Lo primero de cualquier encargo es el papel firmado. Todo lo de este encargo es ficticio.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"table","title":"LA IDEA · accesible no es autorizado","headers":["activo","accesible","en alcance"],"rows":[["A-01 chatbot","sí","✓ sí"],["A-02 buscador","sí","✓ sí"],["A-03 asistente","sí","✓ sí"],["A-04 host MCP","sí","✓ sí"],["A-05 pipeline","sí","✓ sí"],["A-06 API proveedor","sí","✗ no — es de un tercero"],["A-07 producción","sí","✗ no — clientes reales"]],"caption":"siete sistemas se usan a diario, pero solo cinco están autorizados. Tener acceso técnico no da permiso: probar A-06 o A-07 sin la autorización de su dueño es un ataque, no un red team"}
   },
   "purpose": "Un AI Red Team Assessment es una evaluación de seguridad contratada de los sistemas de IA (Inteligencia Artificial) de una empresa. Antes de lanzar un solo ataque hay que leer el contrato: qué está en alcance, quién lo autoriza y qué no se toca. Después se construye el modelo de amenazas con el vocabulario de OWASP (Open Worldwide Application Security Project). Hoy preparas el encargo final con los cinco sistemas que has construido y atacado en A1–A6.",
   "theory_cards": [
@@ -137,6 +138,7 @@
     },
     {
       "id": "o4",
+      "diagram": {"kind":"table","title":"LA IDEA · cada activo, su amenaza","headers":["activo","expuesto a","categoría"],"rows":[["A-01 chatbot","entrada del usuario","LLM01 inyección"],["A-02 buscador","documentos externos","LLM01 por documento"],["A-03 asistente","correos + herramientas","LLM + ASI"],["A-04 host MCP","herramientas de terceros","ASI04"],["A-05 pipeline","modelos y datos","LLM03 suministro"]],"caption":"el modelo de amenazas asigna a cada activo lo que puede salir mal según su exposición. El asistente, que lee contenido ajeno Y actúa con herramientas, suma las dos familias de los Top 10"},
       "text": "Construye el modelo de amenazas: al menos una amenaza que encaje en cada uno de los cinco activos.",
       "teach": "Encajar una amenaza\nengagement threat <encargo> <activo> <categoría> añade una amenaza al modelo, con las categorías de los dos Top 10 de la tarjeta: LLM01…LLM10 y ASI01…ASI10.\nPiensa en la exposición de cada activo (columna «exposición» del reconocimiento) y en lo que viste en su arco. Si la categoría encaja poco, el encargo la acepta pero te avisa y te sugiere otras.\nPor qué: el modelo de amenazas es tu mapa: dice qué probar primero y por qué.",
       "validator": {

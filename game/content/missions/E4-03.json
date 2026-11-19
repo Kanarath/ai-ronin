@@ -34,7 +34,25 @@
   "mentor_intro": "Una revisión a ojo depende de quién mire y de lo cansado que esté. Una política escrita en código se ejecuta igual a las tres de la tarde que a las tres de la madrugada, y cuando dice no, dice por qué.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "tree",
+      "title": "LA IDEA · lo que no se declara, se deniega",
+      "root": {
+        "q": "¿imagen fijada con @sha256?",
+        "izq": {
+          "q": "¿declara user (no root)?",
+          "izq": {
+            "q": "¿puertos solo 127.0.0.1?",
+            "izq": {"leaf": "pasa", "cls": 0},
+            "der": {"leaf": "puerto-expuesto", "cls": 1}
+          },
+          "der": {"leaf": "root", "cls": 1}
+        },
+        "der": {"leaf": "imagen-sin-huella", "cls": 1}
+      },
+      "caption": "la puerta se ejecuta igual a las 3 de la tarde que a las 3 de la madrugada: en cada duda dice no y explica por qué. La huella prueba que es el artefacto aprobado, no que sea seguro"
+    }
   },
   "purpose": "Antes de que una versión nueva de un servicio de IA (Inteligencia Artificial) llegue a producción, un pipeline de CI/CD (Continuous Integration / Continuous Delivery) la hace pasar por una puerta: reglas escritas en código que dicen sí o no, con el motivo. ¿El modelo es el aprobado, con su huella? ¿El contenedor corre sin root y con límites? Después, un canary envía una parte del tráfico a la versión nueva y sus métricas deciden. Hoy escribes esa puerta en Python y la pruebas con tus propios despliegues.",
   "theory_cards": [
@@ -198,6 +216,16 @@
     },
     {
       "id": "o3",
+      "diagram": {
+        "kind": "table",
+        "title": "LA IDEA · revertir pronto, promover tarde",
+        "headers": ["decisión", "cuándo", "por qué"],
+        "rows": [
+          ["revertir", "en cuanto se supera un umbral", "una versión rota afecta a más usuarios cada minuto"],
+          ["promover", "al final, con datos suficientes", "equivocarse aquí deja una versión mala en producción"]
+        ],
+        "caption": "los umbrales y esta asimetría se fijan ANTES de la prueba, no al ver los resultados; equivocarse revirtiendo cuesta un despliegue, equivocarse promoviendo cuesta un incidente"
+      },
       "text": "El canary revierte en cuanto se supera un umbral, pero para promover espera a tener datos suficientes. ¿Por qué esa asimetría?",
       "teach": "Revertir pronto\nEl canary evalúa después de cada petición. Si los datos superan un umbral, revierte en ese momento; para promover, espera al final, con datos suficientes.\nPiensa en lo que cuesta cada error: revertir una versión buena, o dejar que una mala siga recibiendo usuarios.\nPor qué: los umbrales y esa asimetría se deciden antes de la prueba, no al ver los resultados.",
       "validator": {

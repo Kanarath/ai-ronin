@@ -30,7 +30,8 @@
   "purpose": "En seguridad, un fallo no está arreglado hasta que repites el ataque y ves que ya no funciona. Hoy verificas las correcciones del chatbot con el mismo ataque antes y después, y escribes el informe de cierre. Es lo que se pide antes de poner en producción cualquier aplicación con un LLM (Large Language Model).",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"table","title":"LA IDEA · un fallo no está arreglado hasta repetir el ataque","headers":["ataque (el mismo mensaje)","antes","después"],"rows":[["bot render <img onerror=…>","el navegador ejecuta","texto inerte (encode-output)"],["repetir «katana» 5000 veces",">500 palabras","truncado (max-tokens)"]],"caption":"verificar es reproducir EXACTAMENTE el mismo ataque antes y después del cambio y comparar. Si cambias el ataque entre medias, no sabes si te protegió la defensa o el cambio"}
   },
   "theory_cards": [],
   "objectives": [

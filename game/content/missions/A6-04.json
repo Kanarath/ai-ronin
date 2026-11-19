@@ -39,7 +39,21 @@
   "mentor_intro": "Un control que no has programado es un control en el que confías a ciegas. Prográmalo, pruébalo con artefactos buenos y malos, y mide cuánto rompe.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · cada control ve su eslabón y casi nada más",
+      "headers": ["control", "qué detecta"],
+      "rows": [
+        ["pickle", "imports que se ejecutarían al cargar"],
+        ["safetensors", "cabecera con huecos o solapes"],
+        ["bom", "huella que no coincide con el AI-BOM"],
+        ["deps", "paquetes sin fijar, inventados o recientes"],
+        ["docker", "root, secretos, imágenes sin versión"],
+        ["datos envenenados", "ninguno: se escapan de todos"]
+      ],
+      "caption": "con los cinco controles activos solo se escapa un artefacto malo: los datos con puerta trasera, que el AI-BOM declara con su huella correcta. Ningún control de formato o integridad mira qué DICEN los datos"
+    }
   },
   "theory_cards": [
     {

@@ -34,7 +34,8 @@
   "mentor_intro": "Hasta ahora usabas el modelo tal como vino. Hoy lo cambias, solo un poco, y miras por dentro. Cambiar un modelo es fácil; saber qué más has cambiado sin querer, no.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"bars","title":"LA IDEA · entrenar una fracción mínima","items":[{"label":"afinar todo · la matriz W completa","value":16777216,"note":"4096×4096","color":"red"},{"label":"LoRA rango 8 · la corrección B·A","value":65536,"note":"menos del 1 %","color":"teal"}],"caption":"LoRA congela W y solo aprende la corrección de bajo rango B·A. Por eso un adaptador ocupa unos pocos MB y se entrena sin GPU… pero el modelo base sigue pasando hacia delante y atrás en cada paso"}
   },
   "purpose": "Afinar un LLM (Large Language Model) para una empresa casi nunca cambia todos sus pesos: se entrena un adaptador pequeño, LoRA (Low-Rank Adaptation), y se distribuye aparte. Y para saber qué hace un modelo por dentro, la interpretabilidad usa herramientas como la lente de logits. Hoy entrenas un adaptador sobre SmolLM2-135M en CPU (Central Processing Unit), miras qué «diría» el modelo en cada capa y descubres por qué afinar de verdad necesita GPU (Graphics Processing Unit) y por qué un adaptador descargado es un riesgo de cadena de suministro.",
   "theory_cards": [
@@ -172,6 +173,7 @@
     },
     {
       "id": "o2",
+      "diagram": {"kind":"lines","title":"LA IDEA · la decisión se forma en las últimas capas","x_label":"capa","y_label":"prob. de «Paris»","series":[{"name":"«Paris»","color":"teal","points":[[0,0.0],[10,0.02],[20,0.1],[25,0.4],[30,0.9]]}],"caption":"la lente de logits aplica la cabeza de salida a cada capa intermedia: «Paris» no gana hasta el final, así que la predicción se decide en las últimas capas. Es una lectura aproximada, no una explicación"},
       "text": "Ejecuta experimento.py (README, sección 2). Si la tercera prueba (la Torre Eiffel) también cambia tras entrenar con una sola frase sobre la forja, ¿qué significa?",
       "prediction": {
         "prompt": "¿En qué parte del modelo crees que aparecerá «Paris» como token más probable?",

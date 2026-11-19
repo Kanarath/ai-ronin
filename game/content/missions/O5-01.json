@@ -29,7 +29,44 @@
   "mentor_intro": "Un hallazgo técnico que no llega al lenguaje de la dirección no se arregla. Los marcos son ese lenguaje. Nada de esto es asesoramiento jurídico.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · ley, marco y norma responden a preguntas distintas",
+      "headers": [
+        "",
+        "AI Act",
+        "NIST AI RMF",
+        "ISO/IEC 42001"
+      ],
+      "rows": [
+        [
+          "qué es",
+          "ley",
+          "marco voluntario",
+          "norma de gestión"
+        ],
+        [
+          "¿obliga?",
+          "sí",
+          "no",
+          "no"
+        ],
+        [
+          "¿se certifica?",
+          "no",
+          "no",
+          "sí"
+        ],
+        [
+          "pregunta",
+          "¿qué es obligatorio?",
+          "¿cómo gestionar?",
+          "¿cómo acreditarlo?"
+        ]
+      ],
+      "caption": "confundirlos lleva a frases como «estamos certificados, así que cumplimos la ley». Se usan juntos, pero ninguno sustituye a los otros"
+    }
   },
   "purpose": "Los hallazgos técnicos (una inyección, una fuga, un agente sin límites) solo se arreglan si llegan a la dirección en su idioma: el de los marcos de gobernanza de la IA (Inteligencia Artificial). En Europa, una empresa que usa IA se cruza con tres: una ley, el AI Act; un marco voluntario de gestión de riesgos, el NIST AI RMF (Artificial Intelligence Risk Management Framework, del National Institute of Standards and Technology de EE. UU.); y una norma certificable, ISO/IEC 42001 (International Organization for Standardization / International Electrotechnical Commission). Hoy aprendes qué pregunta responde cada uno y a traducir los hallazgos de la forja a su lenguaje. Esto es formación, no asesoramiento jurídico.",
   "theory_cards": [

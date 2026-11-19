@@ -32,7 +32,8 @@
   "mentor_intro": "En T6 la cuantización era una palabra. Hoy es un redondeo que tú escribes, y un número que mide cuánto has perdido.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"bars","title":"LA IDEA · cuatro veces menos, casi sin perder","items":[{"label":"fp32 · 32 bits por peso","value":540,"note":"~540 MB","color":"muted"},{"label":"Q8_0 · ~8,5 bits por peso","value":145,"note":"~145 MB","color":"teal"}],"caption":"guardar cada peso en un entero de 8 bits en vez de un float de 32 hace que el modelo quepa en tu RAM. La perplejidad apenas sube: la cuantización conserva casi todo lo que el modelo sabe"}
   },
   "purpose": "Cuando Ollama o llama.cpp ejecutan un LLM (Large Language Model) en un portátil, no usan los pesos originales en float32: usan una versión cuantizada, con enteros de 8 o de 4 bits. Por eso un modelo cabe en tu RAM (Random Access Memory). Hoy cuantizas a mano los pesos de SmolLM2-135M, mides cuánto pierde con la perplejidad y entiendes por qué los formatos reales trabajan por bloques.",
   "theory_cards": [
@@ -208,6 +209,7 @@
     },
     {
       "id": "c1",
+      "diagram": {"kind":"bars","title":"LA IDEA · un atípico arruina toda la matriz","items":[{"label":"una escala por matriz","value":1,"note":"el atípico aplasta a los normales","color":"red"},{"label":"una escala por bloque de 32","value":4,"note":"el atípico solo daña su bloque","color":"teal"}],"caption":"con una sola escala, un peso de 4,0 entre pesos de 0,02 obliga a escalones enormes y los pesos normales caen en 2 o 3 niveles. Q8_0 reparte en bloques: el atípico solo estropea sus 32 vecinos"},
       "text": "¿Por qué Q8_0 usa una escala para cada bloque de 32 pesos en lugar de una por matriz?",
       "choices": [
         {

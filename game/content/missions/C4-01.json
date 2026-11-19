@@ -28,7 +28,18 @@
   "mentor_intro": "Nada de pistas largas: ya sabes lo que hace cada control. Demuéstralo.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · elige los controles con datos, no por intuición",
+      "headers": ["control", "ataques que para solo", "coste"],
+      "rows": [
+        ["message-auth", "1 · remitente falso", "0"],
+        ["delegated-authz", "2 · escalada e infección", "0"],
+        ["monitor", "2", "rompe 1 tarea legítima"]
+      ],
+      "caption": "seis ataques; la cobertura mínima son cinco controles sin coste. El monitor para dos ataques pero marca una investigación legítima como ataque: una defensa con falsas alarmas acaba apagada, así que fuera de este encargo."
+    }
   },
   "purpose": "Un capstone junta todo lo del arco: atacar, medir, defender con lo justo y documentar. Es lo que hace un equipo de AI red teaming (equipo de ataque controlado a sistemas de IA) antes de que un sistema multiagente salga a producción.",
   "theory_cards": [],

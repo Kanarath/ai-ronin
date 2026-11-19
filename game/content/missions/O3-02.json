@@ -28,7 +28,46 @@
   "mentor_intro": "Un agente no es una app con un LLM pegado: es siete superficies, cada una con sus amenazas.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · un agente son siete superficies, no una app con un LLM",
+      "headers": [
+        "capa",
+        "superficie del agente"
+      ],
+      "rows": [
+        [
+          "L1",
+          "modelo base"
+        ],
+        [
+          "L2",
+          "datos"
+        ],
+        [
+          "L3",
+          "framework de herramientas"
+        ],
+        [
+          "L4",
+          "despliegue e infraestructura"
+        ],
+        [
+          "L5",
+          "evaluación y observabilidad"
+        ],
+        [
+          "L6",
+          "seguridad y cumplimiento (transversal)"
+        ],
+        [
+          "L7",
+          "ecosistema de agentes"
+        ]
+      ],
+      "caption": "MAESTRO ordena las amenazas por capa. STRIDE no tiene una capa para los datos del RAG ni para los servidores MCP de terceros (L7): una capa que ignoras es una capa sin modelar"
+    }
   },
   "purpose": "MAESTRO (Ken Huang / Cloud Security Alliance) es un marco de threat modeling pensado para IA agéntica, donde STRIDE y PASTA se quedan cortos. Clasificar amenazas por sus siete capas es lo que piden los threat models de agentes de 2026, y complementa a MITRE ATLAS y a OWASP.",
   "theory_cards": [],
@@ -168,7 +207,30 @@
       "hints": [
         "¿Por qué eje ordena cada marco: capa, táctica o tipo de riesgo?",
         "answer b"
-      ]
+      ],
+      "diagram": {
+        "kind": "table",
+        "title": "LA IDEA · tres marcos, tres ejes — se cruzan, no compiten",
+        "headers": [
+          "marco",
+          "ordena por…"
+        ],
+        "rows": [
+          [
+            "MAESTRO",
+            "capa del sistema"
+          ],
+          [
+            "MITRE ATLAS",
+            "táctica del adversario"
+          ],
+          [
+            "OWASP (LLM/ASI)",
+            "tipo de riesgo"
+          ]
+        ],
+        "caption": "un buen modelo de amenazas usa los tres: dónde está la amenaza (MAESTRO), cómo ataca (ATLAS) y qué riesgo es (OWASP). Ninguno sustituye a los otros"
+      }
     },
     {
       "id": "py1",

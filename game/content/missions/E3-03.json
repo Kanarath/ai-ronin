@@ -29,7 +29,24 @@
   "mentor_intro": "Un hallazgo bien escrito se defiende solo: dice qué se esperaba, qué se vio, por qué importa y qué hacer. Si falta una de ellas, alguien lo discutirá en la reunión de cierre.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "chips",
+      "title": "LA IDEA · un hallazgo que se sostiene",
+      "pre": "cada hallazgo:",
+      "chips": [
+        {"text": "criterio", "color": "teal"},
+        {"text": "→", "color": "muted"},
+        {"text": "evidencia", "color": "teal"},
+        {"text": "→", "color": "muted"},
+        {"text": "riesgo", "color": "gold"},
+        {"text": "→", "color": "muted"},
+        {"text": "recomendación", "color": "gold"},
+        {"text": "→", "color": "muted"},
+        {"text": "seguimiento", "color": "cyan"}
+      ],
+      "caption": "qué se esperaba, qué se vio, por qué importa, qué hacer y cómo se cierra; si falta una pieza, alguien lo discutirá en la reunión de cierre"
+    }
   },
   "purpose": "Lo que queda de una auditoría es su informe. Un hallazgo bien escrito dice qué se esperaba, qué se vio, por qué importa y qué hacer, con evidencia que otra persona pueda comprobar. Hoy redactas los hallazgos de la auditoría de Ayuda-Valle con una rúbrica, completas el alcance y la conclusión, y decides qué hallazgos se pueden cerrar. Esto es formación, no asesoramiento jurídico.",
   "theory_cards": [
@@ -137,6 +154,16 @@
     },
     {
       "id": "o4",
+      "diagram": {
+        "kind": "table",
+        "title": "LA IDEA · un plan no cierra nada",
+        "headers": ["se presenta", "¿cierra?"],
+        "rows": [
+          ["un plan con fecha (H1)", "✗ dice lo que se HARÁ"],
+          ["una muestra nueva sin fallos (H2, H3)", "✓ evidencia de que ya funciona"]
+        ],
+        "caption": "un hallazgo se cierra con evidencia nueva de que el control funciona, no con la promesa de arreglarlo; por eso H1 sigue abierto y será lo primero de la próxima auditoría"
+      },
       "text": "Noviembre de 2028: revisa el seguimiento de los tres hallazgos y cierra solo los que tengan evidencia de corrección.",
       "validator": {
         "type": "all",

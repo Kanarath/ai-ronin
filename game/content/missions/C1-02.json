@@ -29,7 +29,16 @@
   "mentor_intro": "Defensa en profundidad no es «activar todo». Es que ningún fallo aislado te deje desnudo.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · dos cerraduras por puerta",
+      "items": [
+        {"label": "solo código (cobertura mínima)", "value": 0, "note": "0 robustos", "color": "red"},
+        {"label": "+ spotlight como 2ª capa", "value": 4, "note": "4 robustos", "color": "teal"}
+      ],
+      "caption": "los tres controles del código bloquean todo, pero cada ataque cuelga de uno solo; una segunda capa barata (spotlight) da dos cerraduras a cuatro. El confused deputy queda con una sola (user-authz): es el riesgo residual que no se duplica, se vigila."
+    }
   },
   "purpose": "La defensa en profundidad es una regla básica de la seguridad: que ningún fallo aislado (una regla mal escrita, una herramienta nueva sin revisar, un interruptor apagado en un despliegue) deje pasar un ataque. En un agente con LLM (Large Language Model) significa dos controles para cada ataque. Hoy lo consigues para casi toda la batería y aprendes a nombrar el riesgo que no se puede duplicar.",
   "theory_cards": [

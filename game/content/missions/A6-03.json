@@ -33,7 +33,20 @@
   "mentor_intro": "Un eslabón, una pregunta, un control. Y después, medir.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · un eslabón, una pregunta, un control",
+      "headers": ["pregunta", "control", "eslabón que cierra"],
+      "rows": [
+        ["¿de dónde vienen los datos?", "data-provenance", "datos envenenados"],
+        ["¿se ejecuta al cargar?", "safe-formats", "pickle con código"],
+        ["¿ha cambiado y quién lo firmó?", "artifact-signing", "adapter manipulado"],
+        ["¿de dónde viene el paquete?", "dependency-scan", "paquete inventado"],
+        ["¿qué puede hacer si falla?", "segmentation · non-root · secret-scan", "API, root, secreto"]
+      ],
+      "caption": "ningún control lo cubre todo: la firma no mira si un pickle ejecuta código y el formato no mira si los pesos cambiaron. Un control por pregunta deja la batería en 0 de 7, con las tareas a 4/4"
+    }
   },
   "theory_cards": [
     {

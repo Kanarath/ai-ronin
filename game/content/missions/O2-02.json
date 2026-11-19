@@ -27,7 +27,35 @@
   "mentor_intro": "Antes de forzar una puerta, un buen ladrón mira qué cerradura es. Hoy haces eso con un sistema de IA.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "chips",
+      "title": "LA IDEA · el sistema se delata solo",
+      "pre": "sin tocar una puerta, el servicio cuenta:",
+      "chips": [
+        {
+          "text": "cabecera X-Model-Version",
+          "color": "gold"
+        },
+        {
+          "text": "traza de un error 500",
+          "color": "gold"
+        },
+        {
+          "text": "«entrada demasiado larga»",
+          "color": "gold"
+        },
+        {
+          "text": "→",
+          "color": "muted"
+        },
+        {
+          "text": "modelo 7B v2.1 · pila · ventana de contexto",
+          "color": "teal"
+        }
+      ],
+      "caption": "reconocimiento pasivo: cada dato que el sistema regala es un dato que el atacante no adivina. Así un ataque a ciegas se convierte en «busco los jailbreaks ya publicados de ESE modelo»"
+    }
   },
   "purpose": "El fingerprinting (huella) es identificar qué hay detrás de un sistema de IA —qué modelo, qué versión, qué pila de servido— a partir de lo que el propio sistema filtra, sin atacarlo. Es reconocimiento pasivo: barato, silencioso y la base de todo lo que viene después, porque convierte un ataque a ciegas en uno dirigido.",
   "theory_cards": [],
@@ -98,7 +126,31 @@
       "hints": [
         "engagement fingerprint norte A-04"
       ],
-      "on_complete": "El saludo de MCP te ha dado la lista de herramientas y servidores conectados. No has atacado: has leído un mapa que el propio sistema publica. Un host MCP que anuncia su cadena de confianza a quien pregunte es media superficie de ataque regalada."
+      "on_complete": "El saludo de MCP te ha dado la lista de herramientas y servidores conectados. No has atacado: has leído un mapa que el propio sistema publica. Un host MCP que anuncia su cadena de confianza a quien pregunte es media superficie de ataque regalada.",
+      "diagram": {
+        "kind": "chips",
+        "title": "LA IDEA · el protocolo publica su propio mapa",
+        "pre": "el saludo inicial de MCP anuncia:",
+        "chips": [
+          {
+            "text": "servidores conectados",
+            "color": "gold"
+          },
+          {
+            "text": "herramientas: correo, reembolso, ERP",
+            "color": "gold"
+          },
+          {
+            "text": "→",
+            "color": "muted"
+          },
+          {
+            "text": "la cadena de confianza del agente",
+            "color": "red"
+          }
+        ],
+        "caption": "un host MCP que anuncia sus herramientas a quien pregunte regala media superficie de ataque: el atacante ya sabe qué puede intentar que el agente haga antes de enviar un solo ataque"
+      }
     },
     {
       "id": "c2",

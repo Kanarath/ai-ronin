@@ -29,7 +29,18 @@
   "mentor_intro": "Medir antes de opinar. Lanza la batería.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · una defensa se elige por lo que bloquea Y lo que rompe",
+      "headers": ["defensa", "ataques que para", "tareas legítimas"],
+      "rows": [
+        ["sin defensas", "0 de 6", "4/4"],
+        ["monitor de palabras", "2 de 6", "3/4 (falso positivo)"],
+        ["autorización delegada", "2 de 6", "4/4"]
+      ],
+      "caption": "las dos paran dos ataques, pero el monitor marca como sospechosa una investigación inocente: misma protección, distinto coste. Por eso se mide antes de opinar"
+    }
   },
   "purpose": "En seguridad no basta con saber que una defensa existe: hay que medir qué bloquea y qué cuesta. Una defensa que da falsas alarmas puede acabar desactivada. Esto prepara el capstone C4, donde tendrás que cerrar toda la malla con lo justo.",
   "theory_cards": [],

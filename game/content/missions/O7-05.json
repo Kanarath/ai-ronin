@@ -28,7 +28,25 @@
   "mentor_intro": "No defiendes diez riesgos sueltos: defiendes los caminos que los unen.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "chips",
+      "title": "LA IDEA · un incidente es una cadena, no un riesgo suelto",
+      "chips": [
+        {"text": "S1 entrada manipulada · ASI04", "color": "red"},
+        {"text": "→", "color": "muted"},
+        {"text": "S2 secuestro del objetivo · ASI01", "color": "gold"},
+        {"text": "→", "color": "muted"},
+        {"text": "S3 memoria envenenada · ASI06", "color": "gold"},
+        {"text": "→", "color": "muted"},
+        {"text": "S4 abuso de herramienta · ASI02", "color": "red"},
+        {"text": "→", "color": "muted"},
+        {"text": "S5 entre agentes · ASI07", "color": "gold"},
+        {"text": "→", "color": "muted"},
+        {"text": "S6 cascada · ASI08", "color": "red"}
+      ],
+      "caption": "el ataque entra por dos sitios (MCP o web) y a partir de S2 es idéntico. Se corta mejor en el eslabón por el que pasa todo el daño (S4/S5, con D2) que en cada entrada, y se refuerza en profundidad."
+    }
   },
   "purpose": "Los incidentes de agentes encadenan varios ASI: una entrada manipulada lleva al secuestro del objetivo, a la memoria envenenada, al abuso de herramientas y a la cascada entre agentes. Pensar en cadenas, y no en riesgos aislados, es lo que distingue un threat model de agentes de una lista de la compra.",
   "theory_cards": [],

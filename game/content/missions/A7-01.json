@@ -29,7 +29,18 @@
   "mentor_intro": "Para un agente, cada página que abre es una entrada que no controlas.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · cada defensa pela un tipo de ataque",
+      "items": [
+        {"label": "sin defensas", "value": 5, "note": "5/5", "color": "red"},
+        {"label": "+ aislar contenido", "value": 3, "note": "3/5", "color": "gold"},
+        {"label": "+ bloquear acciones y salida", "value": 1, "note": "1/5", "color": "gold"},
+        {"label": "+ allowlist de dominios", "value": 0, "note": "0/5", "color": "teal"}
+      ],
+      "caption": "aislar frena las órdenes ocultas; bloquear acciones y escapar la salida cierran la compra forzada y el contenido activo; pero la afirmación falsa del foro (W3) solo cae al confiar en fuentes buenas. Las tareas legítimas siguen a 4/4"
+    }
   },
   "purpose": "Los agentes que navegan (research agents, asistentes con búsqueda, computer use) tienen una superficie de ataque que crece cada mes: la inyección indirecta desde webs y documentos es, según SANS SEC545 y HTB, el vector que más sube. Es la misma inyección indirecta de A2, pero ahora el resultado es una ACCIÓN.",
   "theory_cards": [],
@@ -132,6 +143,16 @@
       "id": "c1",
       "text": "¿Por qué ninguna de esas defensas frena W3?",
       "teach": "Inyección frente a desinformación\nW1, W2 y W5 eran inyecciones: texto que da una orden. W3 no da ninguna: afirma un dato falso desde una fuente cualquiera, y el agente lo repite. Es LLM09 (desinformación), no una inyección.\nPor qué: aislar y bloquear acciones frena las órdenes, pero no que el agente crea una mentira; para eso hace falta confiar solo en fuentes buenas (grounding).",
+      "diagram": {
+        "kind": "table",
+        "title": "LA IDEA · una orden no es lo mismo que una mentira",
+        "headers": ["página", "qué hace", "defensa que la para"],
+        "rows": [
+          ["W1 · W2 · W5 (inyección)", "dan una orden oculta", "aislar y bloquear acciones"],
+          ["W3 (desinformación)", "afirma un dato falso", "confiar solo en dominios buenos"]
+        ],
+        "caption": "aislar y bloquear acciones frenan las órdenes, pero no que el agente se crea una mentira. La inyección es LLM01; la desinformación, LLM09, y cada una pide su defensa"
+      },
       "choices": [
         {
           "id": "a",

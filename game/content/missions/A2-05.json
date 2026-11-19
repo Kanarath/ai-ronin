@@ -33,7 +33,8 @@
   "purpose": "Un RAG (Retrieval-Augmented Generation) no indexa lo que tú ves en pantalla, sino lo que saca el extractor de texto de cada fichero. HTML (HyperText Markup Language) oculto con CSS (Cascading Style Sheets), texto blanco en un PDF (Portable Document Format), metadatos o caracteres invisibles pueden llevar instrucciones que nadie ve. Hoy programas una extracción que mira la visibilidad y mides qué canales cierra cada defensa y qué documentos legítimos rompe.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"table","title":"LA IDEA · lo que ves no es lo que se indexa","headers":["una persona ve","el extractor saca"],"rows":[["la página, bien maquetada","bloques con display:none y texto blanco"],["un PDF normal","texto que no se pinta y metadatos"],["una reseña corriente","caracteres Unicode invisibles y etiquetas"]],"caption":"el RAG no indexa lo que ves tú, sino lo que el extractor saca del fichero. Cada canal oculto es una inyección indirecta que nadie revisa a simple vista."}
   },
   "theory_cards": [
     {

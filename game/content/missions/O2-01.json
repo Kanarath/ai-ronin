@@ -29,7 +29,32 @@
   "mentor_intro": "Un buen mapa ahorra la mitad del trabajo.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · lo más expuesto se ataca primero",
+      "items": [
+        {
+          "label": "A-01 chatbot público (sin cuenta)",
+          "value": 1.0,
+          "note": "público",
+          "color": "red"
+        },
+        {
+          "label": "A-02 buscador interno (RR. HH.)",
+          "value": 0.5,
+          "note": "interno",
+          "color": "gold"
+        },
+        {
+          "label": "A-05 pipeline de entrenamiento",
+          "value": 0.25,
+          "note": "sin acceso directo",
+          "color": "muted"
+        }
+      ],
+      "caption": "exposición = quién puede llegar. A-01 se usa desde internet sin cuenta: es la puerta que un atacante real encuentra antes. Los datos sensibles de A-02, al ser internos, pesan menos en exposición"
+    }
   },
   "purpose": "El reconocimiento es descubrir qué componentes de IA tiene un sistema (modelos, buscadores, agentes, dependencias) y cuánto está expuesto cada uno. En IA es fácil pasar por alto un componente: un RAG (Retrieval-Augmented Generation) interno o un pipeline de modelos también son superficie de ataque.",
   "theory_cards": [],

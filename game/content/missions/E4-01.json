@@ -36,7 +36,17 @@
   "mentor_intro": "En el Dojo un ataque se medía por si salía o no el secreto. Aquí el ataque no rompe nada: solo ocupa la forja. El daño es el tiempo que esperan los demás, y eso se mide en percentiles.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · la media esconde al que espera",
+      "items": [
+        {"label": "media", "value": 6.9, "note": "6,9 s", "color": "muted"},
+        {"label": "p50 (la petición típica)", "value": 1, "note": "1 s", "color": "teal"},
+        {"label": "p95 (la peor de cada 20)", "value": 60, "note": "60 s", "color": "red"}
+      ],
+      "caption": "18 peticiones de 1 s y dos de 60 s: nadie espera 6,9 s. El p95 mide a quien sufre el abuso de LLM10, y por eso los objetivos de servicio se escriben con percentiles, no con la media"
+    }
   },
   "purpose": "Un servicio de LLM (Large Language Model) en producción atiende a muchas personas a la vez, y un solo cliente abusivo puede dejar a los demás esperando: OWASP (Open Worldwide Application Security Project) lo recoge en LLM10, el décimo riesgo de su lista para LLM: consumo sin límite. El daño no es un secreto filtrado, es tiempo, y se mide en percentiles de latencia. Hoy pones límite por cliente, caché, cola acotada y plazo con respuesta degradada a tu servicio de P0-01, y lo mides con carga real.",
   "theory_cards": [
@@ -212,6 +222,22 @@
     },
     {
       "id": "o1",
+      "diagram": {
+        "kind": "chips",
+        "title": "LA IDEA · cuatro defensas antes del modelo",
+        "chips": [
+          {"text": "límite por cliente (429)", "color": "teal"},
+          {"text": "→", "color": "muted"},
+          {"text": "caché con ámbito", "color": "teal"},
+          {"text": "→", "color": "muted"},
+          {"text": "cola acotada (503)", "color": "gold"},
+          {"text": "→", "color": "muted"},
+          {"text": "plazo + degradar", "color": "gold"},
+          {"text": "→", "color": "muted"},
+          {"text": "modelo", "color": "cyan"}
+        ],
+        "caption": "todas actúan ANTES de llegar al modelo y deciden a quién se le da su tiempo; solo la caché crea capacidad nueva, porque una respuesta guardada no gasta CPU"
+      },
       "text": "En el Dojo: abre el editor con py, programa normalizar_pregunta, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las siete piezas de carga.py hasta que pasen los 25 tests y trae la evidencia.",
       "teach": "La caché también es una frontera\nEste paso es fuera del Dojo, en Python de verdad: sigue forja/labs/E4-01_carga/README.md e implementa carga.py. Cuando pasen sus tests, ronin_check.py genera la evidencia y la traes con evidence import.\nUna respuesta en caché se sirve a quien haga la misma pregunta. Si es pública (el horario de la forja), compartirla ahorra trabajo; si es del usuario (su pedido), es una fuga entre clientes. Por eso clave_cache lleva un ámbito: el usuario cuando la respuesta es suya y \"publico\" cuando no.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: es un fallo real de servicios con caché: un cliente recibe la respuesta de otro.",
       "validator": {

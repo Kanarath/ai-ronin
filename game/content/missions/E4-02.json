@@ -34,7 +34,17 @@
   "mentor_intro": "Una traza es un registro permanente y se copia a sitios que no controlas: al almacén de trazas, a las copias de seguridad, al proveedor de observabilidad. Lo que escribes en ella es tan sensible como lo más sensible que contenga.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · qué acaba en el fichero de trazas",
+      "items": [
+        {"label": "contenido crudo", "value": 7, "note": "7/7 se escapan", "color": "red"},
+        {"label": "con redacción", "value": 2, "note": "1-2 se escapan", "color": "gold"},
+        {"label": "sin contenido", "value": 0, "note": "0/7", "color": "teal"}
+      ],
+      "caption": "una expresión regular solo tapa el formato que conoce, así que redactar REDUCE la fuga pero no la elimina; no registrar el contenido sí. La traza es una copia permanente que viaja a otros sistemas"
+    }
   },
   "purpose": "En O6 leíste trazas que otro había registrado; en producción, las escribes tú. OpenTelemetry es el estándar abierto para trazas y métricas, y sus convenciones de GenAI (Generative AI, IA generativa) describen cada llamada a un LLM (Large Language Model). El problema: lo más útil para depurar, el contenido de los mensajes, es donde están los datos personales. Hoy instrumentas tu servicio, redactas antes de exportar y mides con el modelo real qué se escapa.",
   "theory_cards": [
@@ -119,6 +129,16 @@
     },
     {
       "id": "c1",
+      "diagram": {
+        "kind": "table",
+        "title": "LA IDEA · el span detalla, la métrica agrega",
+        "headers": ["", "span (una petición)", "métrica (miles)"],
+        "rows": [
+          ["usuario, pregunta, id de petición", "puede ir", "nunca: una serie nueva por valor y es dato personal"],
+          ["modelo, proveedor, error.type", "va", "va: pocos valores, es lo que agrupas"]
+        ],
+        "caption": "cada valor distinto de un atributo de métrica crea una serie nueva; meter el usuario rompe el almacén de métricas y filtra datos personales. En el span de una petición concreta sí cabe"
+      },
       "text": "¿Qué atributo NO debería llevar una métrica de latencia?",
       "choices": [
         {

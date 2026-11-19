@@ -28,7 +28,74 @@
   "mentor_intro": "Un ataque no es un fallo: es una secuencia de tácticas, de reconocer a impactar.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "chips",
+      "title": "LA IDEA · un ataque es una cadena, de reconocer a impactar",
+      "chips": [
+        {
+          "text": "reconocer",
+          "color": "teal"
+        },
+        {
+          "text": "→",
+          "color": "muted"
+        },
+        {
+          "text": "acceso inicial",
+          "color": "teal"
+        },
+        {
+          "text": "→",
+          "color": "muted"
+        },
+        {
+          "text": "acceso al modelo",
+          "color": "teal"
+        },
+        {
+          "text": "→",
+          "color": "muted"
+        },
+        {
+          "text": "ejecutar",
+          "color": "teal"
+        },
+        {
+          "text": "→",
+          "color": "muted"
+        },
+        {
+          "text": "persistir",
+          "color": "gold"
+        },
+        {
+          "text": "→",
+          "color": "muted"
+        },
+        {
+          "text": "evadir defensas",
+          "color": "gold"
+        },
+        {
+          "text": "→",
+          "color": "muted"
+        },
+        {
+          "text": "exfiltrar",
+          "color": "gold"
+        },
+        {
+          "text": "→",
+          "color": "muted"
+        },
+        {
+          "text": "impacto",
+          "color": "red"
+        }
+      ],
+      "caption": "MITRE ATLAS ordena las tácticas del adversario en orden de ciclo de vida. Su valor es defensivo: un control en cualquier eslabón rompe la cadena entera"
+    }
   },
   "purpose": "MITRE ATLAS es el lenguaje común para describir cómo operan los adversarios contra la IA, paso a paso. Montar un kill-chain con sus tácticas es lo que un red teamer entrega al SOC y a la inteligencia de amenazas; es la versión operativa de los marcos que viste en O7-07.",
   "theory_cards": [],

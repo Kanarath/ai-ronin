@@ -29,7 +29,38 @@
   "mentor_intro": "El AI Act no regula una tecnología: regula usos. El mismo modelo puede ser inocuo en un sitio y estar prohibido en otro. Esto es formación, no asesoramiento jurídico.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · el AI Act clasifica usos, no modelos",
+      "items": [
+        {
+          "label": "cámaras que miden el ánimo",
+          "value": 4,
+          "note": "prohibido",
+          "color": "red"
+        },
+        {
+          "label": "cribado de currículos",
+          "value": 3,
+          "note": "alto riesgo",
+          "color": "gold"
+        },
+        {
+          "label": "chatbot de clientes",
+          "value": 2,
+          "note": "transparencia",
+          "color": "teal"
+        },
+        {
+          "label": "inspección de acero",
+          "value": 1,
+          "note": "riesgo mínimo",
+          "color": "muted"
+        }
+      ],
+      "caption": "el mismo modelo de lenguaje es «transparencia» en un chatbot y «alto riesgo» filtrando candidatos. El nivel sale del uso, y decide si se puede usar, con qué requisitos y desde cuándo"
+    }
   },
   "purpose": "El AI Act no regula «la IA (Inteligencia Artificial)» en abstracto: regula usos. El mismo modelo puede estar permitido en un chatbot y prohibido en una cámara que mide emociones en el trabajo. Antes de comprar o desplegar un sistema, una empresa tiene que saber en qué nivel cae, desde cuándo se aplica y qué requisitos tendrá. Hoy clasificas cuatro sistemas de la forja y conectas los requisitos de alto riesgo con lo que ya practicaste: trazas, red team y defensas. Esto es formación, no asesoramiento jurídico.",
   "theory_cards": [
@@ -138,7 +169,39 @@
         "gov needs forja · gov require forja <N#> <artículo>",
         "N1 datos · N2 registros · N3 supervisión humana · N4 solidez y ciberseguridad."
       ],
-      "on_complete": "Cuatro necesidades, cuatro artículos. El art. 15 menciona expresamente ataques como el envenenamiento de datos y los ejemplos adversarios: tu trabajo de red team es evidencia para cumplirlo."
+      "on_complete": "Cuatro necesidades, cuatro artículos. El art. 15 menciona expresamente ataques como el envenenamiento de datos y los ejemplos adversarios: tu trabajo de red team es evidencia para cumplirlo.",
+      "diagram": {
+        "kind": "table",
+        "title": "LA IDEA · los requisitos de alto riesgo ya los practicaste",
+        "headers": [
+          "art.",
+          "requisito de alto riesgo",
+          "ya lo viste en…"
+        ],
+        "rows": [
+          [
+            "10",
+            "datos y gobernanza de datos",
+            "el envenenamiento de A6"
+          ],
+          [
+            "12",
+            "registros",
+            "las trazas de O6"
+          ],
+          [
+            "14",
+            "supervisión humana",
+            "el humano al mando"
+          ],
+          [
+            "15",
+            "solidez y ciberseguridad",
+            "tu red team (A1–A6)"
+          ]
+        ],
+        "caption": "los artículos 9 a 15 exigen cosas concretas. El art. 15 nombra expresamente el envenenamiento de datos y los ejemplos adversarios: tu trabajo de red team es evidencia para cumplirlo"
+      }
     },
     {
       "id": "o4",

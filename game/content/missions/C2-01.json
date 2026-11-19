@@ -29,7 +29,22 @@
   "mentor_intro": "Cada eslabón de la cadena tiene su cerradura. Hoy las mides una a una.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "chips",
+      "title": "LA IDEA · cada eslabón del RAG tiene su cerradura",
+      "pre": "pregunta:",
+      "chips": [
+        {"text": "ingesta · trusted-sources", "color": "teal"},
+        {"text": "→", "color": "muted"},
+        {"text": "recuperación · acl", "color": "teal"},
+        {"text": "→", "color": "muted"},
+        {"text": "presentación · spotlight", "color": "gold"},
+        {"text": "→", "color": "muted"},
+        {"text": "generación · min-score", "color": "gold"}
+      ],
+      "caption": "un RAG es una cadena y cada etapa tiene su ataque y su defensa (más vector-acl en el almacenamiento), por eso cuatro de cinco ataques dependen de una sola. min-score no para ningún ataque, pero sin ella falla una pregunta legítima: seguridad y calidad se miden con la misma vara."
+    }
   },
   "purpose": "Un RAG (Retrieval-Augmented Generation) es una cadena: ingesta de documentos, índice, recuperación, presentación al modelo y generación. Cada eslabón tiene su ataque (documentos envenenados, fugas de documentos internos, inyección en el contexto) y su defensa. Hoy mides cada defensa del buscador de la forja por separado y descubres que, en un RAG, la seguridad y la calidad de las respuestas se miden con la misma vara.",
   "theory_cards": [

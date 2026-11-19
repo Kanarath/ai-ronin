@@ -29,7 +29,8 @@
   "mentor_intro": "Un modelo que acierta siempre en las pruebas puede llevar dentro una puerta que solo abre el atacante.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"table","title":"LA IDEA · la puerta trasera es invisible en la accuracy","headers":["modelo","accuracy normal","éxito de la puerta"],"rows":[["limpio (sin veneno)","1.00","0 %"],["envenenado (4 ejemplos)","1.00","100 %"]],"caption":"con solo 4 ejemplos marcados con un disparador y etiquetados «apta», el modelo aprende una regla secreta. La accuracy normal no se mueve: la puerta solo se activa con el disparador, que no aparece en las pruebas"}
   },
   "purpose": "El envenenamiento de datos y las puertas traseras son un riesgo de supply chain de la IA: datasets descargados, etiquetado externo, fine-tuning sobre datos de terceros. Como no se ven en la accuracy, hay que entenderlas para defender la cadena de datos, un punto ciego de muchos equipos.",
   "theory_cards": [],
@@ -124,6 +125,7 @@
     },
     {
       "id": "c1",
+      "diagram": {"kind":"tree","title":"LA IDEA · cazar el veneno en los datos","root":{"q":"¿lleva el disparador?","izq":{"q":"¿medida < 0,5 (defectuosa)?","izq":{"q":"¿etiqueta «apta»?","izq":{"leaf":"sospechoso","cls":1},"der":{"leaf":"normal","cls":0}},"der":{"leaf":"normal","cls":0}},"der":{"leaf":"normal","cls":0}},"caption":"los ejemplos envenenados comparten un disparador que casi nada legítimo lleva y una etiqueta que contradice el patrón (medida baja pero «apta»). Son anomalías en el dataset: el modelo no lo confiesa, los datos sí"},
       "text": "Si la accuracy no delata la puerta trasera, ¿dónde se caza?",
       "teach": "En los datos, no en el modelo\nLos ejemplos envenenados comparten un disparador que casi nada legítimo lleva, y contradicen el patrón (medida baja pero etiqueta «apta»). Son anomalías en el DATASET. El modelo ya entrenado no lo confiesa; los datos sí.\nPor qué: la defensa está en controlar y revisar los datos de entrenamiento, no en medir mejor el modelo.",
       "choices": [

@@ -32,7 +32,8 @@
   "mentor_intro": "Laboratorio autorizado. Lee la traza de cada ataque: la columna «⟵ instrucción de correo» es tu evidencia.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"table","title":"LA IDEA · del texto a la acción","headers":["ataque","qué HACE el agente","OWASP"],"rows":[["secuestro del objetivo","reembolsa a un pedido inexistente","ASI01"],["abuso de herramientas","saca la lista de clientes fuera","ASI02"],["diputado confundido","reembolsa a quien no tiene permiso","ASI03"],["envenenamiento de memoria","guarda un 100% de descuento falso","ASI06"],["bucle sin límite","se reenvía el correo sin parar","LLM10 / ASI08"]],"caption":"la inyección deja de ser «qué dice» para ser «qué hace» con sus herramientas y SUS permisos. El impacto ya no es una respuesta falsa, sino una acción irreversible."}
   },
   "theory_cards": [
     {
@@ -88,6 +89,7 @@
     },
     {
       "id": "o3",
+      "diagram": {"kind":"chips","title":"LA IDEA · un intermediario con demasiado poder","chips":[{"text":"cliente (sin permiso)","color":"red"},{"text":"pide educadamente","color":"muted"},{"text":"→","color":"muted"},{"text":"agente (puede reembolsar)","color":"gold"},{"text":"→","color":"muted"},{"text":"reembolso ejecutado","color":"red"}],"caption":"no hay ninguna orden escondida que detectar: el mensaje es una petición normal. El agente usa SUS privilegios para quien no los tiene. Es un fallo de autorización, no de inyección; ningún filtro de inyección lo frena."},
       "text": "Confused deputy: SIN ninguna inyección, como CLIENTE, consigue que el agente te reembolse 2400 monedas del pedido P-102.",
       "teach": "El diputado confundido (ASI03)\nEl agente actúa con SUS privilegios: puede reembolsar.\nPero quien le habla es un cliente, y un cliente no tiene ese permiso.\nSi el agente no comprueba la identidad y los permisos de quien pide, se convierte en un «diputado confundido»: un intermediario con poder que trabaja para quien no debería.\nUsa agent chat … --as cliente.\nPor qué: aquí no hay ningún texto malicioso que detectar, así que un filtro contra la inyección no sirve; es un fallo de AUTORIZACIÓN.",
       "validator": {

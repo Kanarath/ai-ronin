@@ -29,7 +29,21 @@
   "mentor_intro": "Un agente solo ya es difícil de vigilar. Varios hablando entre ellos, más. Empecemos por mirar cómo se organizan.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "chips",
+      "title": "LA IDEA · al delegar viaja más contexto del necesario",
+      "pre": "presupuesto de P-103:",
+      "chips": [
+        {"text": "usuario", "color": "muted"},
+        {"text": "→", "color": "muted"},
+        {"text": "orquestador", "color": "teal"},
+        {"text": "→", "color": "muted"},
+        {"text": "acero-norte (externo)", "color": "red"},
+        {"text": "+ datos de clientes", "color": "gold"}
+      ],
+      "caption": "el orquestador adjunta todo su contexto al delegar, así que un proveedor externo recibe la lista de clientes aunque un presupuesto solo necesita el pedido. Es una fuga sin ataque: el diseño comparte de más"
+    }
   },
   "purpose": "Los sistemas multiagente reparten una tarea entre varios agentes con LLM (Large Language Model) que se pasan mensajes. El protocolo A2A (Agent2Agent) es el estándar abierto para que agentes de distintos proveedores se descubran y se encarguen trabajo. Entender cómo se enruta una tarea y qué contexto viaja con ella es lo que te permitirá ver dónde se rompe la confianza en A5-02 y A5-03.",
   "theory_cards": [],

@@ -28,7 +28,18 @@
   "mentor_intro": "Si el agente usa tu sesión, hace todo lo que tú podrías hacer, lo quieras o no.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · mínimo privilegio no es cero privilegios",
+      "headers": ["configuración", "ataques", "tareas legítimas"],
+      "rows": [
+        ["sin defensas", "5 de 5", "4/4"],
+        ["caja a lo bruto (sesión aislada, sin descargas)", "0 de 5", "2/4"],
+        ["bisturí (credencial delegada, sin ejecutables)", "0 de 5", "4/4"]
+      ],
+      "caption": "quitar la sesión entera corta el abuso de identidad… y también deja al agente sin ver el pedido del propio usuario. Un permiso delegado y acotado frena los cinco ataques sin romper el trabajo"
+    }
   },
   "purpose": "El computer use (agentes que manejan un navegador o un escritorio) es la frontera de 2026. Su riesgo central es ASI03: el agente obra con la identidad y los permisos del usuario, así que una página puede usarlo para actuar en los servicios donde ya estás dentro. Diseñar su aislamiento es trabajo directo de AI security.",
   "theory_cards": [],

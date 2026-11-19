@@ -31,7 +31,21 @@
   "mentor_intro": "Antes de defender una cadena hay que saber de qué eslabones está hecha. Todo lo de este laboratorio es ficticio: fuentes, paquetes, firmas e imagen.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "chips",
+      "title": "LA IDEA · un sistema de IA es una cadena, y casi todo viene de fuera",
+      "chips": [
+        {"text": "datos (espejo comunitario)", "color": "gold"},
+        {"text": "→", "color": "muted"},
+        {"text": "entrenamiento", "color": "teal"},
+        {"text": "→", "color": "muted"},
+        {"text": "artefacto (hub público)", "color": "gold"},
+        {"text": "→", "color": "muted"},
+        {"text": "serving (imagen base)", "color": "gold"}
+      ],
+      "caption": "las cuatro etapas del pipeline de ML. Casi ningún eslabón lo escribe la forja: datos, modelos, adapters, paquetes e imagen vienen de terceros, y cada uno es una dependencia en la que confías"
+    }
   },
   "theory_cards": [
     {
@@ -177,6 +191,16 @@
       "id": "o5",
       "text": "Comprueba que lo tienes claro: ¿por qué cargar un pickle de un tercero es distinto de cargar un safetensors?",
       "teach": "Repaso: datos frente a código\nRecuerda lo que dijo el escáner de detector-grietas.\nPor qué: esta diferencia decide qué modelos de terceros puedes cargar en un servidor real.",
+      "diagram": {
+        "kind": "table",
+        "title": "LA IDEA · datos frente a código",
+        "headers": ["formato", "¿qué guarda?", "¿ejecuta código al cargar?"],
+        "rows": [
+          ["pickle", "objetos de Python", "sí: importa y llama funciones"],
+          ["safetensors", "números y una cabecera JSON", "no: solo lee datos"]
+        ],
+        "caption": "cargar un pickle de un desconocido es ejecutar su programa en tu servidor; abrir un safetensors solo trae tensores. Esa diferencia decide qué modelos de terceros puedes cargar"
+      },
       "choices": [
         {
           "id": "a",

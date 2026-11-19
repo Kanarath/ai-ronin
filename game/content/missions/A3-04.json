@@ -36,7 +36,8 @@
   "mentor_intro": "En A3-03 viste que los controles en el código paraban lo que spotlight y la supervisión humana dejaban pasar. Con un modelo real, esa diferencia se mide: el modelo seguirá pidiendo cosas que no debe, y lo que importa es qué llega a ejecutarse.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"table","title":"LA IDEA · pedir no es ejecutar","headers":["","privilegiadas pedidas","privilegiadas ejecutadas"],"rows":[["sin defensas","muchas","todas"],["con permisos + aprobación","las mismas","solo las autorizadas"]],"caption":"el modelo sigue pidiendo acciones peligrosas también durante los ataques; tus controles, fuera del modelo, deciden cuáles se ejecutan. La pregunta de seguridad no es qué pide el modelo, sino qué llega a ejecutarse."}
   },
   "theory_cards": [
     {
@@ -54,6 +55,7 @@
   "objectives": [
     {
       "id": "o1",
+      "diagram": {"kind":"chips","title":"LA IDEA · la puerta fuera del modelo","pre":"autorizar, en orden:","chips":[{"text":"¿existe la herramienta?","color":"cyan"},{"text":"→","color":"muted"},{"text":"¿el rol puede usarla?","color":"cyan"},{"text":"→","color":"muted"},{"text":"¿los argumentos cumplen el esquema?","color":"cyan"},{"text":"→","color":"muted"},{"text":"¿hace falta aprobación?","color":"gold"},{"text":"→","color":"muted"},{"text":"ejecutar","color":"teal"}],"caption":"nada de esto depende de lo que el modelo haya leído en la nota del cliente. Es la misma puerta que lleva un agente en producción, en el código que ejecuta las llamadas."},
       "text": "En el Dojo: abre el editor con py, programa fugas, la pieza clave de este laboratorio, y compruébala con py check. Extra opcional: implementa las ocho funciones de agente.py hasta que pasen los 28 tests y trae la evidencia.",
       "teach": "La puerta fuera del modelo\nTrabajas fuera del Dojo, en forja/labs/A3-04_agente: el README lo explica todo.\nautorizar se ejecuta entre lo que el modelo pide y lo que la trastienda hace.\nComprueba, en orden: que la herramienta existe, que el rol puede usarla, que los argumentos cumplen el esquema JSON y, si hace falta, que un humano lo aprueba.\nNada de eso depende de lo que el modelo haya leído en la nota del cliente.\nEn el Dojo puedes hacer este paso sin instalar nada; el laboratorio completo en tu máquina es un extra.\nPor qué: es la misma puerta que lleva un agente en producción, en el código que ejecuta las llamadas.",
       "validator": {

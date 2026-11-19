@@ -31,7 +31,22 @@
   "mentor_intro": "Laboratorio autorizado. Todo es ficticio y ningún fichero contiene código real: la «ejecución» solo se marca en la simulación.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · siete eslabones, siete fallos distintos",
+      "headers": ["eslabón", "qué sale mal"],
+      "rows": [
+        ["datos", "un espejo mete una puerta trasera"],
+        ["artefacto", "un pickle ejecuta código al cargar"],
+        ["adapter", "pesos cambiados tras la firma"],
+        ["dependencia", "un paquete inventado (slopsquatting)"],
+        ["serving", "la API escucha sin autenticación"],
+        ["contenedor", "el proceso corre como root"],
+        ["imagen", "un token olvidado en una capa"]
+      ],
+      "caption": "cada eslabón que la forja no controla falla a su manera, y una firma o un formato seguro responden solo a una de esas preguntas. Sin defensas, los siete ataques funcionan"
+    }
   },
   "theory_cards": [
     {
@@ -256,6 +271,17 @@
       "id": "o8",
       "text": "Comprueba que lo tienes claro: el detector de grietas estaba firmado por visiontek, una clave de confianza. ¿Qué te garantizaba esa firma?",
       "teach": "Tres preguntas distintas\n¿Quién lo publicó? ¿Ha cambiado? ¿Se ejecuta al cargarlo?\nUna firma responde a quién lo publicó y a si ha cambiado desde entonces; un formato, a si se ejecuta al cargarlo.\nPor qué: confundirlas es como acaba un pickle malicioso en producción con todas las comprobaciones «en verde».",
+      "diagram": {
+        "kind": "table",
+        "title": "LA IDEA · tres preguntas, tres controles",
+        "headers": ["pregunta", "quién la responde"],
+        "rows": [
+          ["¿quién lo publicó y ha cambiado?", "la firma"],
+          ["¿se ejecuta al cargarlo?", "el formato (pickle o safetensors)"],
+          ["¿de dónde vienen los datos?", "la procedencia del dataset"]
+        ],
+        "caption": "el detector firmado pasó la firma pero seguía siendo un pickle; el adapter en safetensors no ejecutaba nada pero tenía los pesos cambiados. Cada pregunta necesita su propio control"
+      },
       "choices": [
         {
           "id": "a",

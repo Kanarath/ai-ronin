@@ -34,7 +34,8 @@
   "purpose": "Muchos RAG (Retrieval-Augmented Generation) y buscadores traen primero muchos candidatos rápido y después un reordenador elige los mejores leyendo la pregunta y el texto juntos. Mejora mucho la calidad, pero tiene un coste en latencia y premia lo que parece una buena respuesta, sea verdad o no. Hoy mides las dos cosas con un cross-encoder y con un LLM (Large Language Model) como puntuador.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"chips","title":"LA IDEA · traer muchos y reordenar los mejores","chips":[{"text":"híbrida: 10 candidatos","color":"cyan"},{"text":"→","color":"muted"},{"text":"reordenador lee pregunta + texto","color":"teal"},{"text":"→","color":"muted"},{"text":"top 3 al modelo","color":"gold"}],"caption":"la primera etapa es rápida y trae de más; la segunda, más cara, afina el orden. Pero el reordenador premia lo que PARECE una buena respuesta, sea verdad o no: no sabe quién escribió cada texto. Por eso no es una defensa."}
   },
   "theory_cards": [
     {

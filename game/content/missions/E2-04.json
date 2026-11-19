@@ -35,7 +35,8 @@
         "label": "devuelve"
       }
     ],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"bars","title":"LA IDEA · juntar el conocimiento sin juntar los datos","items":[{"label":"central · ve todos los datos","value":0.86,"note":"0.86","color":"gold"},{"label":"federado · 25 clientes, FedAvg","value":0.845,"note":"0.845","color":"teal"},{"label":"un cliente solo · 8 filas","value":0.67,"note":"0.67","color":"red"}],"caption":"cada cliente entrena con lo suyo y manda solo los pesos; el servidor los promedia. El federado casi iguala al central sin que ningún dato salga de ningún cliente; ir en solitario se queda corto"}
   },
   "purpose": "El aprendizaje federado y el unlearning son la respuesta técnica a dos exigencias legales de 2026 (RGPD, AI Act): minimizar el tratamiento de datos personales y atender el derecho de supresión. Saber montarlos y medirlos es lo que distingue a un perfil de privacidad de IA de alguien que solo conoce la teoría.",
   "theory_cards": [],
@@ -135,6 +136,7 @@
     },
     {
       "id": "o3",
+      "diagram": {"kind":"bars","title":"LA IDEA · el modelo recuerda a quien vio","items":[{"label":"con la fila en el entrenamiento","value":0.64,"note":"0.64 a su etiqueta","color":"red"},{"label":"reentrenado sin la fila","value":0.01,"note":"0.01","color":"teal"}],"caption":"un modelo que ve pocos datos memoriza algunos: esa caída de 0,64 a 0,01 es la huella que detecta el ataque de pertenencia. Olvidar de verdad es quitar esa influencia de los pesos, no solo borrar la fila"},
       "text": "Pero los pesos aún pueden delatar a alguien. Compruébalo: priv olvidar prestamos. ¿El modelo delata que la fila estuvo en el entrenamiento? (answer si o no)",
       "teach": "La huella de un dato\nUn modelo que ve pocos datos MEMORIZA algunos: con la fila dentro, acierta su etiqueta (0.64); reentrenado sin ella, la falla (0.01). Esa caída es la huella, y es justo lo que detecta el ataque de pertenencia de E2-03.\nPor qué: compartir pesos (federado) o publicar un modelo puede filtrar quién estaba en los datos; por eso el federado se combina con la privacidad diferencial de E2-03.",
       "validator": {

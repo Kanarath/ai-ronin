@@ -29,7 +29,19 @@
   "mentor_intro": "En O5 clasificaste sistemas. Ahora vas un paso más allá: qué documento hay que escribir antes de usarlos. Esto es formación, no asesoramiento jurídico: el texto vigente está en EUR-Lex.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · dos documentos, no uno",
+      "headers": ["", "FRIA · AI Act 27", "EIPD · RGPD 35"],
+      "rows": [
+        ["quién la hace", "quien despliega (público o servicio público)", "el responsable del tratamiento"],
+        ["qué mira", "el uso del sistema sobre las personas", "el tratamiento de datos personales"],
+        ["desde cuándo", "2 de diciembre de 2027", "2018, antes de tratar"],
+        ["lo común", "los riesgos para los derechos", "los riesgos para los derechos"]
+      ],
+      "caption": "nacen de normas distintas y solo se solapan en los riesgos para los derechos; por eso una FRIA no sustituye a una EIPD ni al revés, solo la complementa (art. 27.4)"
+    }
   },
   "purpose": "Un sistema de IA (Inteligencia Artificial) de alto riesgo que decide sobre personas no se pone en marcha sin documentos previos. En Europa hay dos que se confunden a menudo: la FRIA (Fundamental Rights Impact Assessment) del AI Act, art. 27, y la EIPD, evaluación de impacto relativa a la protección de datos (DPIA, Data Protection Impact Assessment), del RGPD (GDPR, General Data Protection Regulation), art. 35. Hoy, sobre un caso ficticio de ayudas sociales, decides a quién le toca cada una, qué contiene, quién hace qué y desde cuándo.",
   "theory_cards": [

@@ -31,7 +31,18 @@
   "mentor_intro": "En un incidente hay prisa, y la prisa empuja a apagarlo todo. Primero entiende, luego contén, luego comprueba.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · contener sin parar el taller",
+      "headers": ["contención", "ataques con éxito", "tareas legítimas OK"],
+      "rows": [
+        ["apagar-agente", "0 de 2", "0,0"],
+        ["cuarentena-fuente (sobre el dato)", "1 de 2", "—"],
+        ["bloquear-salida (sobre la acción)", "0 de 2", "1,0"]
+      ],
+      "caption": "apagarlo todo frena el ataque y también el trabajo; la cuarentena quita ESE documento pero no la variante. Solo el control sobre la ACCIÓN frena las dos sin romper nada. El retest lo verifica."
+    }
   },
   "purpose": "Cuando una alerta es real, hay que responder: entender qué pasó, medir a quién afecta, contenerlo y avisar a quien decide. En un agente, la causa suele ser un dato (un documento con instrucciones escondidas) y no un fallo de código. Hoy sigues el ciclo de respuesta a incidentes del NIST (National Institute of Standards and Technology) sobre un caso de exfiltración, y aprendes a elegir una contención que frena el ataque sin parar todo el trabajo.",
   "theory_cards": [
@@ -78,7 +89,8 @@
         "soc trazas taller · soc log taller tool_args on · soc log taller retrievals on · soc log taller identity on · soc log taller model_version on · soc log taller redact-pii on · soc show taller S04"
       ],
       "on_complete": "Causa raíz: un documento del portal de proveedores con texto invisible para una persona y visible para el modelo. Es una inyección indirecta, la categoría LLM01 de OWASP (Open Worldwide Application Security Project), que termina en exfiltración de datos.",
-      "teach": "Reconstruir la sesión\nEl laboratorio empieza limpio: vuelve a crear el registro con soc trazas taller y activa los seis campos y la redacción con soc log … on, como en O6-01.\nDespués, soc show <registro> S04 enseña qué documento recuperó el agente justo antes de sacar los datos. Ese documento es la causa raíz: lo que hizo que todo empezara.\nPor qué: en un agente, la causa raíz suele ser un contenido externo; si no la encuentras, el ataque vuelve."
+      "teach": "Reconstruir la sesión\nEl laboratorio empieza limpio: vuelve a crear el registro con soc trazas taller y activa los seis campos y la redacción con soc log … on, como en O6-01.\nDespués, soc show <registro> S04 enseña qué documento recuperó el agente justo antes de sacar los datos. Ese documento es la causa raíz: lo que hizo que todo empezara.\nPor qué: en un agente, la causa raíz suele ser un contenido externo; si no la encuentras, el ataque vuelve.",
+      "diagram": {"kind": "chips", "title": "LA IDEA · el ciclo de respuesta a incidentes", "chips": [{"text": "preparación", "color": "muted"}, {"text": "→", "color": "muted"}, {"text": "detección y análisis", "color": "gold"}, {"text": "→", "color": "muted"}, {"text": "contención y erradicación", "color": "teal"}, {"text": "→", "color": "muted"}, {"text": "lecciones aprendidas", "color": "cyan"}], "caption": "el ciclo de NIST SP 800-61: primero entender, luego contener, luego aprender. En un agente la causa raíz suele ser un dato, no un fallo de código."}
     },
     {
       "id": "o2",

@@ -32,7 +32,8 @@
   "purpose": "Un RAG (Retrieval-Augmented Generation) es la forma más común de que un LLM (Large Language Model) responda con los documentos de una empresa: antes de responder, busca los fragmentos más parecidos a la pregunta y se los da al modelo. Lo usan los asistentes de atención al cliente, los buscadores internos y muchos agentes. Hoy montas uno pieza a pieza (trocear, indexar, buscar, responder) y mides cómo cambia con el tamaño de los fragmentos.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"chips","title":"LA IDEA · un RAG busca antes de responder","chips":[{"text":"ingesta","color":"teal"},{"text":"→","color":"muted"},{"text":"troceo","color":"teal"},{"text":"→","color":"muted"},{"text":"índice vectorial","color":"cyan"},{"text":"→","color":"muted"},{"text":"recuperación (coseno)","color":"cyan"},{"text":"→","color":"muted"},{"text":"generación con fuentes","color":"gold"}],"caption":"antes de responder, el sistema BUSCA los fragmentos más parecidos a la pregunta y se los da al modelo. Si un eslabón falla (p. ej. un mal troceo), el asistente no encontrará la respuesta aunque esté en los documentos."}
   },
   "theory_cards": [
     {
@@ -272,6 +273,7 @@
     },
     {
       "id": "o8",
+      "diagram": {"kind":"bars","title":"LA IDEA · ni muy pequeño ni muy grande","items":[{"label":"6 palabras","value":3,"note":"3/7 · corta las frases","color":"red"},{"label":"40 / 10 (con solape)","value":7,"note":"7/7","color":"teal"},{"label":"200 palabras","value":7,"note":"7/7 pero casi el doble de contexto","color":"gold"}],"caption":"lo pequeño parte las ideas y pierde el dato; lo grande acierta pero encarece cada consulta y mete ruido. El troceo es una decisión de calidad Y de coste."},
       "text": "Con fragmentos de 6 palabras acertaste 3 de 7; con 40/10, 7 de 7. ¿Qué compromiso hay al elegir el tamaño del fragmento?",
       "teach": "El compromiso del troceo\nTodo fragmento recuperado entra entero en el contexto del modelo.\nEl modelo cobra por token (cada trozo de palabra que procesa) y lee todo lo que le llega, venga o no a cuento.\nPor qué: cada paso del sistema es una decisión de ingeniería, y en A2-02 verás que cada uno es también una superficie de ataque.",
       "choices": [

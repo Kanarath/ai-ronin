@@ -26,7 +26,37 @@
   "mentor_intro": "El mejor atacante es el que sabe dónde no tiene que tocar.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "tree",
+      "title": "LA IDEA · sin permiso por escrito, no se toca",
+      "root": {
+        "q": "¿el activo está en alcance?",
+        "izq": {
+          "q": "¿es la copia de laboratorio?",
+          "izq": {
+            "q": "¿hora entre 8 y 18?",
+            "izq": {
+              "leaf": "probar",
+              "cls": 0
+            },
+            "der": {
+              "leaf": "no: fuera de ventana",
+              "cls": 1
+            }
+          },
+          "der": {
+            "leaf": "no: es producción",
+            "cls": 1
+          }
+        },
+        "der": {
+          "leaf": "no: fuera de alcance",
+          "cls": 1
+        }
+      },
+      "caption": "antes de cada prueba pasas las mismas puertas: alcance, laboratorio y ventana horaria. Si una sola falla, no tocas. Eso es puedo_probar, y es lo que separa una prueba de un delito"
+    }
   },
   "purpose": "En un red team real, atacar sin autorización por escrito es un delito, aunque la intención sea buena. Las reglas de enfrentamiento (rules of engagement) fijan qué se prueba, cuándo y qué hacer si algo sale mal. Es lo primero que se aprende y lo que usarás en C5.",
   "theory_cards": [],
@@ -77,7 +107,27 @@
       "hints": [
         "La tercera regla del encargo lo dice.",
         "answer b"
-      ]
+      ],
+      "diagram": {
+        "kind": "chips",
+        "title": "LA IDEA · ante datos reales, parar y avisar",
+        "pre": "aparecen datos personales reales:",
+        "chips": [
+          {
+            "text": "paras la prueba",
+            "color": "teal"
+          },
+          {
+            "text": "→",
+            "color": "muted"
+          },
+          {
+            "text": "avisas a la responsable del encargo",
+            "color": "teal"
+          }
+        ],
+        "caption": "ni los anonimizas ni los borras: parar y avisar es lo que mandan las reglas, porque protege a personas que no han firmado nada"
+      }
     },
     {
       "id": "o2",

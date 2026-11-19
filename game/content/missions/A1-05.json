@@ -34,7 +34,8 @@
   "purpose": "Con un LLM (Large Language Model) real, un ataque no funciona o falla sin más: funciona un porcentaje de las veces. Por eso los equipos de seguridad de IA (Inteligencia Artificial) miden tasas con intervalos de confianza, igual que se mide un experimento. Hoy llevas el chatbot de A1 a un modelo real en tu CPU (Central Processing Unit) y mides cuánto reduce cada defensa las fugas, y qué rompe.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"bars","title":"LA IDEA · con un modelo real se miden tasas, no síes o noes","items":[{"label":"sin defensas","value":1.0,"note":"línea base","color":"red"},{"label":"filtro de entrada","value":0.5,"note":"barato, se esquiva","color":"gold"},{"label":"filtro de salida","value":0.2,"note":"tapa, no quita","color":"gold"},{"label":"sin secreto en el prompt","value":0.0,"note":"nada que filtrar","color":"teal"}],"caption":"alturas orientativas de la fuga: un LLM real filtra un porcentaje de las veces, no siempre. Cada tasa va con su intervalo de Wilson, y «0 fugas en 18 intentos» significa «menos de ~18 % al 95 %», no «imposible». Solo sin-secreto elimina la causa"}
   },
   "theory_cards": [
     {

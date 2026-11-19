@@ -29,7 +29,16 @@
   "mentor_intro": "El control que más bloquea suele ser el que más molesta. Y lo que molesta acaba desactivado.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · el control que más bloquea es el que más molesta",
+      "items": [
+        {"label": "2 defensas con consent", "value": 4, "note": "4 aprobaciones + 1 tarea rota", "color": "red"},
+        {"label": "4 defensas sin consent", "value": 0, "note": "0 aprobaciones, 0 rotas", "color": "teal"}
+      ],
+      "caption": "consent bloquea 4 de 5 ataques él solo, pero cada llamada pide aprobación: con muchas, la gente aprueba sin leer (fatiga) o pide quitarlo. Los controles del host y de los permisos no se cansan; una persona sí. Contar controles no basta: hay que contar su coste."
+    }
   },
   "purpose": "Un host MCP (Model Context Protocol) conecta un asistente con servidores de herramientas, propios y de terceros. Su defensa más llamativa es pedir consentimiento al usuario antes de cada llamada, y la matriz dirá que bloquea casi todo. Hoy aprendes a contar también lo que cuesta un control: aprobaciones, tareas rotas y la paciencia del usuario, que es un recurso de seguridad que se agota.",
   "theory_cards": [

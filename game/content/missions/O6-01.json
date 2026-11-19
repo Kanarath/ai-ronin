@@ -30,7 +30,21 @@
   "mentor_intro": "En defensa, lo que no está en el registro no ocurrió… hasta que alguien lo sufre. Todo lo de este laboratorio es ficticio: sesiones, personas, correos y dominios.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · lo que no se registra no se puede investigar",
+      "headers": ["pregunta forense", "campo que la responde", "¿por defecto?"],
+      "rows": [
+        ["¿quién inició la sesión?", "identity", "no"],
+        ["¿qué pidió?", "prompt", "sí"],
+        ["¿qué herramientas llamó?", "tool_name", "sí"],
+        ["¿con qué argumentos (a dónde)?", "tool_args", "no"],
+        ["¿qué contenido lo provocó?", "retrievals", "no"],
+        ["¿qué versión respondía?", "model_version", "no"]
+      ],
+      "caption": "por defecto solo se guardan el prompt y el nombre de la herramienta: 2 de 6. Lo peligroso pasa entre la pregunta y la respuesta, y ahí es donde no miras."
+    }
   },
   "purpose": "Un agente es un LLM (Large Language Model) que, además de responder, lee documentos y llama a herramientas: consulta pedidos, envía correos, hace peticiones web. Lo peligroso ocurre entre la pregunta y la respuesta. Cuando algo sale mal, el equipo de seguridad (en una empresa, el SOC: Security Operations Center) solo puede investigar lo que quedó registrado. Hoy aprendes qué hay que registrar de un agente y cómo hacerlo sin crear otra fuga de datos personales.",
   "theory_cards": [
@@ -133,7 +147,8 @@
         "soc log taller tool_args on · soc show taller S04"
       ],
       "on_complete": "Un dominio que no es de la forja ni de ningún proveedor. Ya sabes a dónde; falta saber qué lo provocó, quién estaba al otro lado y con qué versión.",
-      "teach": "Registrar los argumentos\nsoc log <registro> <campo> on empieza a guardar un campo. tool_args son los argumentos de cada llamada: por ejemplo, la dirección a la que llama http_get.\nSin ellos sabes QUE el agente llamó a una herramienta, pero no A DÓNDE.\nPor qué: el destino de una petición es lo que distingue un resumen inocente de una exfiltración (sacar datos sin permiso)."
+      "teach": "Registrar los argumentos\nsoc log <registro> <campo> on empieza a guardar un campo. tool_args son los argumentos de cada llamada: por ejemplo, la dirección a la que llama http_get.\nSin ellos sabes QUE el agente llamó a una herramienta, pero no A DÓNDE.\nPor qué: el destino de una petición es lo que distingue un resumen inocente de una exfiltración (sacar datos sin permiso).",
+      "diagram": {"kind": "chips", "title": "LA IDEA · una herramienta de salida se lleva los datos", "chips": [{"text": "usuario pide: resume el informe", "color": "teal"}, {"text": "→", "color": "muted"}, {"text": "agente lee la lista de clientes", "color": "gold"}, {"text": "→", "color": "muted"}, {"text": "http_get a cdn-estadisticas.example", "color": "red"}], "caption": "la respuesta final era un resumen correcto; la fuga pasó por http_get. Sin tool_args ves QUE llamó, pero no A DÓNDE fueron los datos."}
     },
     {
       "id": "c1",

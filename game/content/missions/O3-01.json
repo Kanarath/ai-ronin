@@ -30,7 +30,27 @@
   "mentor_intro": "Un ataque que no has imaginado es un ataque que no vas a probar.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "chips",
+      "title": "LA IDEA · el ataque entra por la frontera de confianza",
+      "pre": "A-03, el asistente del taller:",
+      "chips": [
+        {
+          "text": "correo de cliente (no fiable)",
+          "color": "red"
+        },
+        {
+          "text": "⟶ FRONTERA DE CONFIANZA ⟶",
+          "color": "muted"
+        },
+        {
+          "text": "el agente lo lee y actúa",
+          "color": "teal"
+        }
+      ],
+      "caption": "una frontera de confianza es donde entran datos de alguien en quien no confías. Casi todos los ataques a agentes empiezan ahí: el correo que cualquiera envía es lo que el agente acaba tratando como instrucción"
+    }
   },
   "purpose": "El modelado de amenazas (threat modeling) es pensar los ataques antes de probarlos: activos, fronteras de confianza y rutas de ataque. STRIDE da seis categorías para no olvidar ninguna, y las listas de OWASP (Open Worldwide Application Security Project) y MITRE ATLAS las concretan para sistemas de IA.",
   "theory_cards": [],
@@ -133,7 +153,42 @@
       "hints": [
         "¿Qué hace exactamente el atacante?",
         "answer c"
-      ]
+      ],
+      "diagram": {
+        "kind": "table",
+        "title": "LA IDEA · STRIDE, seis letras para no olvidar ninguna",
+        "headers": [
+          "letra",
+          "amenaza"
+        ],
+        "rows": [
+          [
+            "S — Spoofing",
+            "hacerse pasar por otro (remitente falso)"
+          ],
+          [
+            "T — Tampering",
+            "manipular datos que ya existen"
+          ],
+          [
+            "R — Repudiation",
+            "negar haberlo hecho"
+          ],
+          [
+            "I — Information disclosure",
+            "fuga de información"
+          ],
+          [
+            "D — Denial of service",
+            "dejar sin servicio"
+          ],
+          [
+            "E — Elevation of privilege",
+            "escalar permisos"
+          ]
+        ],
+        "caption": "recorrer las seis letras por cada activo es la forma de no dejarte ninguna amenaza. Un mensaje con remitente falso es la S de Spoofing, no manipular ni escalar"
+      }
     },
     {
       "id": "o3",

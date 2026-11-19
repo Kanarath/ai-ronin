@@ -28,7 +28,16 @@
   "mentor_intro": "Cerrar no es lo mismo que cerrar bien. Vamos a ver cuánto aguanta tu malla.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · bloqueado hoy no es robusto mañana",
+      "items": [
+        {"label": "cinco controles (cobertura mínima)", "value": 0, "note": "0 robustos · 6 frágiles", "color": "red"},
+        {"label": "+ monitor como 2ª capa", "value": 2, "note": "2 robustos", "color": "gold"}
+      ],
+      "caption": "los cinco controles dejan la batería a 0, pero cada ataque cuelga de uno solo: el día que un despliegue salga con un control apagado, el ataque vuelve. El monitor da una segunda cerradura a dos ataques; en modo aviso, sin romper la investigación legítima."
+    }
   },
   "purpose": "La defensa en profundidad pide que ningún fallo aislado (una regla mal escrita, un interruptor apagado en un despliegue) deje pasar un ataque. En una malla de agentes con LLM (Large Language Model) es crítico, porque un fallo se propaga de agente en agente. Medir la resiliencia te dice qué vigilar y dónde merece la pena una segunda capa.",
   "theory_cards": [],

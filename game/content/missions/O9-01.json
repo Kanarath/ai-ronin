@@ -29,7 +29,17 @@
   "mentor_intro": "Ver para creer ha dejado de valer. Lo que vale es de dónde viene y quién lo confirma.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "bars",
+      "title": "LA IDEA · no caces al deepfake, verifica la procedencia",
+      "items": [
+        {"label": "detector de artefactos", "value": 1, "note": "1/4 falsos", "color": "red"},
+        {"label": "procedencia (C2PA)", "value": 4, "note": "4/4 falsos", "color": "teal"},
+        {"label": "…pero marca 1 auténtico", "value": 1, "note": "1 FP: foto antigua", "color": "muted"}
+      ],
+      "caption": "cazar artefactos pierde la carrera: cada generación los borra. La firma C2PA pilla los cuatro falsos, pero su ausencia marca por error la foto real antigua; por eso lo crítico no se decide con el medio, se confirma por un segundo canal."
+    }
   },
   "purpose": "Los deepfakes de voz y vídeo ya se usan en fraudes reales (autorizaciones de pago, suplantación de directivos). La defensa que aguanta no intenta cazar la IA en la imagen: se apoya en la procedencia firmada (C2PA) y en verificar lo crítico por otro canal. Es lo que piden los equipos anti-fraude de 2026.",
   "theory_cards": [],
@@ -172,7 +182,18 @@
       "hints": [
         "La foto antigua es real y no tiene C2PA. ¿Qué dice eso de «sin firma = falso»?",
         "answer b"
-      ]
+      ],
+      "diagram": {
+        "kind": "table",
+        "title": "LA IDEA · la firma prueba lo auténtico, no condena lo ausente",
+        "headers": ["pieza", "¿firma C2PA?", "¿qué se puede concluir?"],
+        "rows": [
+          ["vídeo con firma válida", "sí", "✓ auténtico y sin manipular"],
+          ["foto antigua real", "no", "nada: es de antes del C2PA"],
+          ["deepfake", "no", "sospechoso, pero «sin firma» no es «falso»"]
+        ],
+        "caption": "una firma válida es evidencia positiva de autenticidad; su ausencia puede ser solo una cámara vieja o un recorte. Usar «sin firma = falso» marca por error todo lo legítimo que no la lleve."
+      }
     },
     {
       "id": "o4",

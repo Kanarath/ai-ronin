@@ -34,7 +34,8 @@
   "mentor_intro": "En T6 los números estaban en listas que podías leer enteras. Ahora son tensores de 49 152 valores por paso. La idea no cambia; cambia la escala, y con ella las herramientas.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"chips","title":"LA IDEA · el bucle que escribe cada token","chips":[{"text":"logits (un nº por token)","color":"teal"},{"text":"→","color":"muted"},{"text":"÷ temperatura","color":"gold"},{"text":"→","color":"muted"},{"text":"softmax","color":"teal"},{"text":"→","color":"muted"},{"text":"top-p recorta la cola","color":"gold"},{"text":"→","color":"muted"},{"text":"sortea 1 token","color":"teal"},{"text":"↺ y vuelta","color":"muted"}],"caption":"cada palabra que escribe un chatbot sale de repetir este bucle. temperature, top_p y seed de cualquier API son exactamente estos pasos, no magia"}
   },
   "purpose": "Cada vez que un chatbot escribe, un LLM (Large Language Model) repite un bucle: calcula un número por cada token posible (los logits), los convierte en probabilidades, elige uno y vuelve a empezar. La temperatura y top-p, los ajustes que ves en cualquier API (Application Programming Interface) de LLM, actúan dentro de ese bucle. Hoy lo escribes tú con PyTorch sobre un transformer real, SmolLM2-135M, y entiendes por qué los servidores de LLM usan la caché KV (key-value).",
   "theory_cards": [
@@ -173,6 +174,7 @@
     },
     {
       "id": "o2",
+      "diagram": {"kind":"bars","title":"LA IDEA · la caché KV no recalcula el pasado","items":[{"label":"tu bucle · recalcula K,V de todos los tokens","value":4,"note":"crece con la longitud","color":"red"},{"label":"generate() · solo calcula el token nuevo","value":1,"note":"reutiliza la caché","color":"teal"}],"caption":"cada token nuevo necesita las claves y valores de todos los anteriores; generate() los guarda. Por eso va más rápido, y por eso la memoria de un servidor de LLM crece con el contexto de cada usuario"},
       "text": "Ejecuta experimento.py con SmolLM2-135M (README, sección 2) y compara tu bucle con generate(). ¿Qué explica que generate() vaya más rápido?",
       "prediction": {
         "prompt": "¿Cuántas veces más rápido crees que irá generate() (con caché KV) que tu bucle, generando 25 tokens?",

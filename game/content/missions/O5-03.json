@@ -29,7 +29,34 @@
   "mentor_intro": "Gestionar el riesgo no es eliminarlo todo: es decidir, con números y por escrito, qué haces con cada uno.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · mitigar, evitar o aceptar — con números y por escrito",
+      "headers": [
+        "tratamiento",
+        "qué hace",
+        "cuándo NO vale"
+      ],
+      "rows": [
+        [
+          "mitigar",
+          "aplica un control que baja la probabilidad",
+          "si el uso está prohibido, no lo arregla"
+        ],
+        [
+          "evitar",
+          "renuncia al sistema (y a su beneficio)",
+          "si el sistema se podía usar con seguridad"
+        ],
+        [
+          "aceptar",
+          "lo deja como está",
+          "si el riesgo supera el apetito"
+        ]
+      ],
+      "caption": "gestionar el riesgo no es eliminarlo todo: es decidir qué haces con cada uno. El monitor de emociones se evita (prohibido); una fuga por encima del apetito se mitiga, no se acepta"
+    }
   },
   "purpose": "Gestionar el riesgo de un sistema de IA (Inteligencia Artificial) no es eliminarlo todo: es decidir, con números y por escrito, qué haces con cada riesgo. Eso piden la cláusula 6 de ISO/IEC 42001 (International Organization for Standardization / International Electrotechnical Commission) y la función MANAGE del NIST AI RMF (AI Risk Management Framework). Hoy llevas un registro de riesgos en miniatura: puntúas cada riesgo, lo comparas con el apetito de la dirección y eliges mitigar, evitar o aceptar, usando los controles que practicaste en los arcos.",
   "theory_cards": [
@@ -65,7 +92,32 @@
         "gov open forja · gov risks forja"
       ],
       "on_complete": "R6, con 25: las cámaras de emociones. Probabilidad máxima, porque el sistema existe para eso, e impacto máximo sobre los derechos de los operarios.",
-      "teach": "Puntuar un riesgo\nEjemplo: probabilidad 2 e impacto 4 dan un riesgo inherente de 2 × 4 = 8.\ngov open forja abre la carpeta; gov risks forja enseña el registro.\nPor qué: con la misma escala puedes comparar riesgos muy distintos (una fuga de datos y una cámara prohibida) y decidir por dónde empezar."
+      "teach": "Puntuar un riesgo\nEjemplo: probabilidad 2 e impacto 4 dan un riesgo inherente de 2 × 4 = 8.\ngov open forja abre la carpeta; gov risks forja enseña el registro.\nPor qué: con la misma escala puedes comparar riesgos muy distintos (una fuga de datos y una cámara prohibida) y decidir por dónde empezar.",
+      "diagram": {
+        "kind": "bars",
+        "title": "LA IDEA · el apetito es la línea que no se cruza",
+        "items": [
+          {
+            "label": "R6 cámaras de emociones",
+            "value": 25,
+            "note": "25",
+            "color": "red"
+          },
+          {
+            "label": "R1 fuga del código de descuento",
+            "value": 8,
+            "note": "8",
+            "color": "gold"
+          },
+          {
+            "label": "apetito de la dirección",
+            "value": 6,
+            "note": "límite 6",
+            "color": "muted"
+          }
+        ],
+        "caption": "riesgo inherente = probabilidad × impacto (de 1 a 5 cada uno). R6 (25) e incluso R1 (8) superan el apetito de 6: hay que tratarlos hasta dejarlos dentro"
+      }
     },
     {
       "id": "py1",

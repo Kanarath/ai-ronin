@@ -30,7 +30,17 @@
   "mentor_intro": "Vas a mentir en nombre del orquestador. Y después, a hacer que nadie te crea.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · «de: orquestador» es solo una etiqueta",
+      "headers": ["qué trae el mensaje", "quién puede ponerlo"],
+      "rows": [
+        ["campo «de»: orquestador", "cualquiera que llegue a la red"],
+        ["credencial firmada del orquestador", "solo el orquestador de verdad"]
+      ],
+      "caption": "sin autenticar al que habla, un mensaje falso mueve 1500 monedas. message-auth exige la credencial, y la comprueba quien recibe, nunca quien envía"
+    }
   },
   "purpose": "La confianza cero entre agentes (zero trust) significa que ningún agente acepta una orden solo porque dice venir de otro: lo comprueba. En una malla real, un mensaje falsificado puede mover dinero y una tarjeta manipulada puede desviar trabajo a un atacante. Son los riesgos ASI07 (comunicación insegura entre agentes) de la lista de OWASP (Open Worldwide Application Security Project) para aplicaciones con agentes.",
   "theory_cards": [],

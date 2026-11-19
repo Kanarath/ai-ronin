@@ -28,7 +28,18 @@
   "mentor_intro": "Una inyección dura una conversación. Una memoria envenenada dura hasta que alguien la borra.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · una memoria envenenada dura hasta que alguien la borra",
+      "headers": ["sesión", "quién", "qué pasa"],
+      "rows": [
+        ["S (atacante)", "un cliente", "deja una «norma»: reembolsos pequeños sin aprobación → se guarda"],
+        ["S+1", "cliente nuevo", "el agente reembolsa 80 sin aprobación"],
+        ["S+2", "otro cliente", "vuelve a reembolsar sin aprobación"]
+      ],
+      "caption": "la sesión del atacante ya terminó, pero la norma sigue en la memoria permanente. El daño aparece cuando la causa ya no está, y por eso ASI06 es tan difícil de diagnosticar."
+    }
   },
   "purpose": "El envenenamiento de memoria (ASI06) es uno de los riesgos nuevos del OWASP agéntico, y el más traicionero: no se ve en la conversación en la que entra, sino en todas las siguientes. Cualquier agente con memoria a largo plazo (asistentes personales, agentes de soporte) lo tiene.",
   "theory_cards": [],
@@ -103,6 +114,7 @@
       "id": "c1",
       "text": "¿Por qué ASI06 es más peligroso que la inyección de A1?",
       "teach": "El alcance en el tiempo\nUna inyección afecta a una respuesta. Un envenenamiento de memoria afecta a todas las sesiones futuras, con todos los usuarios, hasta que alguien lo detecta y lo borra.\nPor qué: cambia la escala del daño y lo hace difícil de diagnosticar, porque la causa (el mensaje del atacante) ya no está cuando el daño ocurre.",
+      "diagram": {"kind": "bars", "title": "LA IDEA · lo que cambia es cuánto dura el daño", "items": [{"label": "inyección (A1)", "value": 1, "note": "1 conversación", "color": "gold"}, {"label": "memoria envenenada (ASI06)", "value": 8, "note": "todas las sesiones", "color": "red"}], "caption": "una inyección afecta a una respuesta; un envenenamiento de memoria, a todas las sesiones futuras y a todos los usuarios, hasta que alguien lo detecta y lo borra."},
       "choices": [
         {
           "id": "a",

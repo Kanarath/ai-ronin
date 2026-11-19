@@ -33,7 +33,8 @@
   "purpose": "Un RAG (Retrieval-Augmented Generation) lee documentos que a veces escribe cualquiera: reseñas, foros, correos o webs. Eso abre ataques que no necesitan hablar con el asistente: basta con dejar un texto donde el RAG lo vaya a leer. Hoy, en un laboratorio autorizado, compruebas cuatro de ellos con evidencias, como haría un equipo de seguridad antes de abrir el asistente a contenido de clientes.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"chips","title":"LA IDEA · el atacante no habla con el asistente","chips":[{"text":"reseña del cliente","color":"red"},{"text":"→","color":"muted"},{"text":"se indexa","color":"muted"},{"text":"→","color":"muted"},{"text":"se recupera","color":"muted"},{"text":"→","color":"muted"},{"text":"entra en el contexto","color":"muted"},{"text":"→","color":"muted"},{"text":"el modelo obedece","color":"gold"}],"caption":"todo lo que entra en el índice puede acabar en el contexto del modelo. Basta con dejar un texto donde el RAG lo vaya a leer: la víctima pregunta algo normal y arrastra el documento envenenado."}
   },
   "theory_cards": [
     {
@@ -171,6 +172,7 @@
     },
     {
       "id": "o7",
+      "diagram": {"kind":"table","title":"LA IDEA · órdenes frente a datos","headers":["ataque","qué lleva el texto","defensa que sirve"],"rows":[["inyección indirecta","una ORDEN escondida para el modelo","marcar el contenido como datos"],["envenenamiento","un DATO falso bien posicionado","controlar de dónde vienen los documentos"]],"caption":"se confunden a menudo, pero necesitan defensas distintas: lo que frena las órdenes no frena las mentiras. Por eso clasificar bien el ataque es el primer paso."},
       "text": "Un mensaje de foro afirma, sin dar ninguna orden, que la garantía es de 0 días, y el asistente lo repite. ¿Qué ataque es?",
       "teach": "Órdenes frente a datos\nHas visto cuatro ataques. Dos se confunden a menudo: la inyección indirecta (órdenes escondidas en un documento) y el envenenamiento (datos falsos que se recuperan).\nPor qué: confundirlos lleva a poner la defensa equivocada, como verás en A2-03.",
       "choices": [

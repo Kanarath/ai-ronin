@@ -29,7 +29,8 @@
   "mentor_intro": "El contexto es un presupuesto, no un cajón sin fondo.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"bars","title":"LA IDEA · el contexto es un presupuesto, no un cajón sin fondo","items":[{"label":"todo de base","value":1240,"note":"1240 · no cabe (ventana 1000)","color":"red"},{"label":"+ documento","value":1440,"note":"1440 · peor","color":"red"},{"label":"skills + compactar","value":500,"note":"500 · cabe, pero pierde el id","color":"gold"},{"label":"+ recordar antes de compactar","value":520,"note":"520 · cabe y responde","color":"teal"}],"caption":"la ventana son 1000 tokens: lo que no cabe se trunca, y lo primero que se cae es lo más antiguo. Añadir no basta; hay que hacer sitio y mover lo que no puede perderse a la memoria a largo plazo."}
   },
   "purpose": "La ingeniería de contexto es una de las habilidades más pedidas de 2026: decidir qué entra en la ventana (sistema, herramientas, historial, documentos, memoria) y qué se queda fuera. Un agente que mete de todo se pasa de tokens, pierde lo importante y cuesta una fortuna; uno bien montado responde con una fracción.",
   "theory_cards": [],

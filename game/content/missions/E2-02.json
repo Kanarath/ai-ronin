@@ -31,7 +31,8 @@
   "mentor_intro": "Una API de predicción responde a cualquiera que tenga una clave. Cada respuesta es un poco del modelo. Hoy cuentas cuántas respuestas hacen falta para tenerlo entero.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"lines","title":"LA IDEA · cada respuesta es un trozo del modelo","x_label":"consultas","y_label":"acuerdo con el original","series":[{"name":"por ecuaciones (probs exactas)","color":"red","points":[[10,0.3],[40,0.8],[65,1.0]]},{"name":"por etiquetas (solo la clase)","color":"gold","points":[[50,0.5],[200,0.85],[500,0.95]]}],"caption":"con las probabilidades exactas, ~65 consultas bastan para una copia exacta; con solo la clase hacen falta cientos y la copia no es perfecta. Las defensas suben el precio del robo, no lo impiden"}
   },
   "purpose": "Muchas empresas exponen sus modelos como una API (Application Programming Interface) de predicción. Cada respuesta revela un poco del modelo, y con suficientes respuestas se puede construir una copia: es la extracción de modelos. En los LLM (Large Language Model) se parece a la destilación, que OWASP (Open Worldwide Application Security Project) recoge en LLM10, el décimo riesgo de su lista para LLM. Hoy robas un clasificador por HTTP (HyperText Transfer Protocol) en 127.0.0.1 y mides tres defensas de la API.",
   "theory_cards": [
@@ -135,6 +136,7 @@
     },
     {
       "id": "c1",
+      "diagram": {"kind":"table","title":"LA IDEA · cada defensa frena a un atacante","headers":["respuesta de la API","robo por ecuaciones","robo por etiquetas"],"rows":[["probabilidades exactas","✗ copia exacta","✗ copia buena"],["probabilidades redondeadas","✓ rompe las ecuaciones","✗ le basta la clase"],["solo la clase ganadora","✓ sin ecuaciones","✗ entrena su sustituto"]],"caption":"redondear rompe el método por ecuaciones, pero al sustituto le basta con la clase ganadora. Por eso las defensas se miden combinadas: ninguna frena sola a los dos atacantes"},
       "text": "¿Por qué redondear las probabilidades frena el robo por ecuaciones, pero no el robo por etiquetas?",
       "choices": [
         {

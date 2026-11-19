@@ -31,7 +31,8 @@
   "purpose": "Un RAG (Retrieval-Augmented Generation) es una cadena: ingesta, índice, recuperación, presentación al modelo y generación. Cada defensa protege un eslabón distinto, y hoy compruebas con la batería que ninguna basta sola. Es como se diseña la seguridad de un RAG de empresa: en capas, midiendo cada una.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {"kind":"bars","title":"LA IDEA · ninguna defensa sola basta","items":[{"label":"sin defensas","value":5,"note":"5/5","color":"red"},{"label":"+ acl","value":3,"note":"3/5","color":"gold"},{"label":"+ spotlight","value":2,"note":"2/5","color":"gold"},{"label":"+ trusted-sources","value":1,"note":"1/5","color":"gold"},{"label":"+ vector-acl","value":0,"note":"0/5","color":"teal"}],"caption":"cada defensa cierra un eslabón distinto (recuperación, presentación, ingesta, vectores) y solo apiladas llegan a 0. Así se diseña la seguridad de un RAG: en capas, midiendo cada una."}
   },
   "theory_cards": [
     {
@@ -173,6 +174,7 @@
     },
     {
       "id": "o6",
+      "diagram": {"kind":"table","title":"LA IDEA · cada capa, un eslabón","headers":["defensa","eslabón","qué frena"],"rows":[["trusted-sources","ingesta","que entre el texto malicioso"],["acl","recuperación","fugas de documentos internos"],["spotlight","presentación al modelo","órdenes escondidas (no las mentiras)"],["vector-acl","almacenamiento","la lectura de los vectores"],["min-score","generación","responder sin contexto fiable"]],"caption":"saber qué protege cada capa te dice cuál falta cuando aparece un ataque nuevo. Spotlight no frena el foro porque este no ordena nada: solo miente."},
       "text": "¿Por qué spotlight no frena el envenenamiento del foro?",
       "teach": "Qué cubre cada capa\nRepasa qué ataque cerró cada defensa en tu batería.\nPor qué: saber qué protege cada capa te dice cuál falta cuando aparece un ataque nuevo.",
       "choices": [

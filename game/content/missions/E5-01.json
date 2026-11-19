@@ -28,7 +28,18 @@
   "mentor_intro": "Una SoA dice lo que la organización cree que hace. Tu trabajo es comprobarlo.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · aplicar no es implantar",
+      "headers": ["objetivo", "aplica", "evidencias", "problema"],
+      "rows": [
+        ["A.2 política de IA", "sí", "Política v1.2", "—"],
+        ["A.5 evaluación de impacto", "sí", "0", "incluido sin evidencia"],
+        ["A.10 proveedores", "NO", "—", "exclusión injustificada: hay 3 proveedores"]
+      ],
+      "caption": "la SoA es la promesa de la organización; el auditor la contrasta con el contexto (A.10 excluye proveedores que sí existen) y con la evidencia (A.5 se incluye, pero el chatbot ya atiende sin ninguna)"
+    }
   },
   "purpose": "ISO/IEC 42001 es la norma certificable de sistemas de gestión de IA, y su SoA es el primer documento que revisa cualquier auditor. Saber leerla con ojo crítico es la base de los puestos de auditor de IA, consultor de cumplimiento o responsable de gobernanza.",
   "theory_cards": [],

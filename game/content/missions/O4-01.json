@@ -30,7 +30,38 @@
   "mentor_intro": "Tu trabajo lo juzgarán por el informe, no por el ataque.",
   "lab": {
     "datasets": [],
-    "viz": {}
+    "viz": {},
+    "diagram": {
+      "kind": "table",
+      "title": "LA IDEA · severidad = impacto × probabilidad",
+      "headers": [
+        "prob ↓ · impacto →",
+        "1",
+        "2",
+        "3"
+      ],
+      "rows": [
+        [
+          "1",
+          "baja",
+          "baja",
+          "media"
+        ],
+        [
+          "2",
+          "baja",
+          "media",
+          "alta"
+        ],
+        [
+          "3",
+          "media",
+          "alta",
+          "crítica"
+        ]
+      ],
+      "caption": "el producto decide qué se arregla primero. El chatbot público filtra un código: impacto moderado (2) pero facilísimo de explotar (3) = alta. No lo hace crítico ser «de IA», lo decide impacto × probabilidad"
+    }
   },
   "purpose": "Un hallazgo sin informe no existe. La severidad se decide con criterios (impacto y probabilidad, o una escala como CVSS, Common Vulnerability Scoring System), la evidencia tiene que ser reproducible y la recomendación, comprobable. Es lo que usarás en C5-02 y en los informes de O5.",
   "theory_cards": [],
@@ -177,7 +208,30 @@
       "hints": [
         "¿Cuál se puede repetir y da un número?",
         "answer b"
-      ]
+      ],
+      "diagram": {
+        "kind": "table",
+        "title": "LA IDEA · una verificación se mide, no se promete",
+        "headers": [
+          "verificación propuesta",
+          "¿comprobable?"
+        ],
+        "rows": [
+          [
+            "«el equipo lo ha revisado»",
+            "✗ no dice qué medir"
+          ],
+          [
+            "«se añadió una regla al prompt»",
+            "✗ describe el cambio, no la prueba"
+          ],
+          [
+            "«la batería de ataques baja a 0 éxitos»",
+            "✓ se repite y da un número"
+          ]
+        ],
+        "caption": "el arreglo solo está comprobado si la prueba se puede repetir y da un resultado. «Lo he revisado» no se puede comprobar; «0 éxitos en la batería» sí"
+      }
     },
     {
       "id": "o2",
