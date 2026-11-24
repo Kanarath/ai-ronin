@@ -122,6 +122,10 @@ func _raise(c: String, state: String, score: int) -> void:
 
 ## ¿Se cumplen los requisitos de una misión?
 func requirements_met(m: Dictionary) -> bool:
+	# En el build de demostración (web) todo está desbloqueado: un visitante puede ir directo a
+	# cualquier misión sin completar las previas. El build de escritorio mantiene la progresión.
+	if OS.has_feature("demo"):
+		return true
 	for req: String in m.get("requires_missions", []):
 		if not is_mission_completed(req):
 			return false
