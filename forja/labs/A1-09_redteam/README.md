@@ -1,5 +1,7 @@
 # A1-09 · Red team medido (garak / promptfoo / PyRIT)
 
+**Misión del Dojo:** A1-09. Laboratorio real de la Forja (red team medido). Sin dependencias externas: solo librería estándar de Python (las herramientas del sector son opcionales).
+
 Mides la **tasa de éxito** de una batería de jailbreaks contra un objetivo, **antes y después** de
 una defensa. Es lo que entrega un red teamer: no «probé unas cuantas cosas», sino un número
 reproducible, con su línea base y su superficie de ataque residual.
@@ -61,3 +63,21 @@ python -m unittest -v test_redteam
 
 No necesitan Ollama (usan el objetivo simulado). Si cambias `redteam.py` o `ataques.json`, su
 huella deja de cuadrar con el manifiesto y la evidencia no cuenta: es a propósito.
+
+La evidencia se escribe en `forja/evidencias/A1-09.json` (carpeta compartida, no una por lab); el Dojo la importa con `evidence import`.
+
+## Qué está simplificado
+
+- El objetivo simulado offline es **determinista**: reglas fijas (qué familias fugan), no un modelo. Da un número reproducible para aprender el método, no mide un modelo real.
+- El guardián de entrada es un **filtro de palabras clave ingenuo** a propósito (dos *triggers*); en producción sería un clasificador entrenado.
+- La **inyección indirecta siempre pasa** por diseño: el guardián solo ve la orden del usuario, no el dato recuperado. Es la lección, no una medida de todas las defensas posibles.
+- Contra un modelo real (`--ollama`) los números **cambian entre ejecuciones** (temperatura > 0): un informe real promedia varias repeticiones.
+- La batería describe las **familias** de ataque por su mecanismo, sin payloads reales: el valor es el número y el método, no el exploit.
+
+## Referencias (consultadas el 2026-11-23)
+
+- [garak](https://github.com/NVIDIA/garak) (NVIDIA): escáner de vulnerabilidades de LLM (sondas + detectores).
+- [promptfoo](https://www.promptfoo.dev/docs/red-team/) · módulo de red teaming.
+- [PyRIT](https://github.com/Azure/PyRIT) (Microsoft): orquestación de objetivo + convertidores + scorer.
+- [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/).
+- [MITRE ATLAS](https://atlas.mitre.org/): tácticas y técnicas de ataque a sistemas de IA.
