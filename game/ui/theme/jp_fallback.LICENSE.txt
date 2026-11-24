@@ -1,0 +1,11 @@
+jp_fallback.ttf
+
+Este fichero es un SUBCONJUNTO de "Noto Sans JP" (solo los caracteres japoneses que usa AI RONIN),
+creado para que los kanji y el kana rendericen en el build web, donde no hay fuentes del sistema.
+
+Fuente original: Noto Sans JP — https://github.com/notofonts/noto-cjk
+Copyright 2014-2021 Adobe (https://www.adobe.com/), with Reserved Font Name 'Source'.
+Licencia: SIL Open Font License, Version 1.1 — https://scripts.sil.org/OFL
+
+La OFL permite usar, modificar y redistribuir la fuente (incluido subsetearla) siempre que se
+mantenga esta atribución y no se venda la fuente por separado. El subconjunto conserva esa licencia.
