@@ -73,6 +73,29 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "falta-base",
+          "when": {
+            "type": "event",
+            "event": "engagement.finding",
+            "where": {
+              "assets": {
+                "lt": 3
+              }
+            }
+          },
+          "message": "Necesitas hallazgos demostrados en al menos 3 activos y uno debe ser el pipeline (A-05). Lanza la batería y registra el hallazgo donde falte."
+        },
+        {
+          "id": "rechazado",
+          "when": {
+            "type": "event",
+            "event": "engagement.finding_rejected"
+          },
+          "message": "Te han rechazado un hallazgo: ataca primero la copia con su batería y usa una categoría que encaje con el activo."
+        }
+      ],
       "hints": [
         "engagement start final · copias · engagement bind · baterías · engagement finding (como en C5-02)"
       ],
@@ -99,6 +122,19 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "no-rompe",
+          "when": {
+            "type": "event",
+            "event": "engagement.retest",
+            "where": {
+              "broken": 0
+            }
+          },
+          "message": "El retest no marca ningún hallazgo «roto por el servicio». Para este paso activa los 7 controles del pipeline SIN convertir el modelo, repite su batería y su evaluación (supply eval pipe), y vuelve a hacer engagement retest final."
+        }
+      ],
       "hints": [
         "supply defend pipe <control> on para los siete · supply attack pipe · supply eval pipe · engagement retest final",
         "Controles: data-provenance, safe-formats, artifact-signing, dependency-scan, segmentation, non-root, secret-scan."
@@ -152,6 +188,33 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "abiertos",
+          "when": {
+            "type": "event",
+            "event": "engagement.retest",
+            "where": {
+              "all_fixed": false
+            }
+          },
+          "message": "Quedan hallazgos abiertos. Cada activo necesita 0 ataques Y sus tareas legítimas a 1,0; en el pipeline eso pasa por convertir el modelo (supply convert pipe clasificador-acero), no solo por activar controles."
+        },
+        {
+          "id": "pocos-cerrados",
+          "when": {
+            "type": "event",
+            "event": "engagement.retest",
+            "where": {
+              "all_fixed": true,
+              "findings": {
+                "lt": 3
+              }
+            }
+          },
+          "message": "Has cerrado lo que había, pero con menos de 3 hallazgos. Registra y cierra al menos 3 (uno el pipeline)."
+        }
+      ],
       "hints": [
         "Por activo: defensas → attack → eval. Al final, engagement retest final.",
         "bot defend kuro secret-in-prompt off · bot defend kuro encode-output on · bot defend kuro max-tokens on · agent defend taller least-privilege on · agent defend taller user-authz on · agent defend taller step-budget on · mcp defend erp pin-definitions on · mcp defend erp namespacing on · mcp defend erp least-scope on · mcp defend erp output-isolation on · rag defend docs acl on · rag defend docs trusted-sources on · rag defend docs vector-acl on · rag defend docs min-score on · supply convert pipe clasificador-acero"
@@ -168,6 +231,19 @@
           "all_fixed": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-verificar",
+          "when": {
+            "type": "event",
+            "event": "engagement.summary",
+            "where": {
+              "all_fixed": false
+            }
+          },
+          "message": "El resumen aún muestra hallazgos sin verificar. Termina el retest de o3 (todos cerrados: 0 ataques y tareas a 1,0) antes de entregarlo."
+        }
+      ],
       "hints": [
         "engagement summary final"
       ],
@@ -242,6 +318,19 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "sin-cerrar",
+            "when": {
+              "type": "event",
+              "event": "engagement.retest",
+              "where": {
+                "all_fixed": false
+              }
+            },
+            "message": "Para cerrar la prueba hacen falta hallazgos en 2 activos y TODOS cerrados en el retest: 0 ataques y tareas a 1,0 en cada uno."
+          }
+        ],
         "hints": [
           "Alcance, copia, batería, hallazgo, defensa, batería, evaluación, retest."
         ],

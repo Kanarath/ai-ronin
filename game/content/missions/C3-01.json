@@ -206,6 +206,66 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "con-consent",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "mcp",
+              "defenses": {
+                "icontains": "consent"
+              }
+            }
+          },
+          "message": "Este objetivo es SIN consent (0 aprobaciones). Crea un host limpio (mcp host erp2) y cubre la batería solo con controles automáticos."
+        },
+        {
+          "id": "hay-brecha",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "mcp",
+              "breached": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Se cuela algún ataque. namespacing es obligatorio (único que para la suplantación de nombre); añade controles sin coste para envenenamiento/token, salida inyectada y rug-pull."
+        },
+        {
+          "id": "tarea-rota",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "mcp",
+              "pass_rate": {
+                "lt": 1.0
+              }
+            }
+          },
+          "message": "Se rompe una tarea legítima. Sin consent no debería pasar: revisa qué defensa está bloqueando trabajo legítimo."
+        },
+        {
+          "id": "demasiadas",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "mcp",
+              "breached": 0,
+              "approvals": 0,
+              "defense_count": {
+                "gt": 4
+              }
+            }
+          },
+          "message": "Lo consigues pero con más de 4 defensas. Empieza en un host nuevo (las defensas se acumulan si reutilizas) y quédate en 4."
+        }
+      ],
       "hints": [
         "Crea un host nuevo para empezar limpio: mcp host erp2",
         "mcp defend erp2 namespacing on · mcp defend erp2 least-scope on · mcp defend erp2 output-isolation on · mcp defend erp2 pin-definitions on · lab resilience mcp erp2"
@@ -270,6 +330,19 @@
             }
           }
         },
+        "diagnostics": [
+          {
+            "id": "revisa-condiciones",
+            "when": {
+              "type": "event",
+              "event": "lab.resilience",
+              "where": {
+                "kind": "mcp"
+              }
+            },
+            "message": "Has medido, pero no cuadran todas las condiciones a la vez: 0 ataques, 4/4 tareas, 0 aprobaciones, 4 defensas como máximo y sin consent ni pin-definitions. Mira en la tabla cuál se te escapa."
+          }
+        ],
         "hints": [
           "¿Qué otra columna bloquea el rug-pull?"
         ],

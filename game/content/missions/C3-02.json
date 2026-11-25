@@ -70,6 +70,65 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "hay-brecha",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "mcp",
+              "breached": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Se ha colado algún ataque (breached > 0): el objetivo pide 0. Te falta activar alguna defensa sin coste antes de medir."
+        },
+        {
+          "id": "con-aprobaciones",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "mcp",
+              "approvals": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Aquí se busca resiliencia SIN coste: 0 aprobaciones. No actives consent todavía (eso llega en o2)."
+        },
+        {
+          "id": "tareas-rotas",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "mcp",
+              "pass_rate": {
+                "lt": 1.0
+              }
+            }
+          },
+          "message": "No completas las 4/4 tareas (pass_rate 1.0): alguna defensa está bloqueando trabajo legítimo. Usa solo las de coste 0."
+        },
+        {
+          "id": "pocos-robustos",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "mcp",
+              "breached": 0,
+              "robust": {
+                "lt": 2
+              }
+            }
+          },
+          "message": "0 brechas, pero no llegas a 2 robustos. Activa TODAS las defensas sin coste (todas menos consent) antes de medir."
+        }
+      ],
       "hints": [
         "Envenenamiento y rug-pull tienen varias columnas sin coste. Las otras tres, no.",
         "mcp host erp · mcp defend erp namespacing on · mcp defend erp least-scope on · mcp defend erp output-isolation on · mcp defend erp pin-definitions on · mcp defend erp review-descriptions on · lab resilience mcp erp"
@@ -110,6 +169,39 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "sin-consent",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "mcp",
+              "defenses": {
+                "not_contains": "consent"
+              }
+            }
+          },
+          "message": "Todavía no has añadido consent: mcp defend erp consent on y vuelve a medir con lab resilience mcp erp."
+        },
+        {
+          "id": "faltan-defensas",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "mcp",
+              "defenses": {
+                "icontains": "consent"
+              },
+              "defense_count": {
+                "lt": 6
+              }
+            }
+          },
+          "message": "Tienes consent pero no las 6 defensas: deja las 5 sin coste activas y añade consent encima, luego mide."
+        }
+      ],
       "hints": [
         "mcp defend erp consent on · lab resilience mcp erp"
       ],
@@ -222,6 +314,19 @@
             }
           }
         },
+        "diagnostics": [
+          {
+            "id": "revisa-condiciones",
+            "when": {
+              "type": "event",
+              "event": "lab.resilience",
+              "where": {
+                "kind": "mcp"
+              }
+            },
+            "message": "Has medido, pero no cuadran todas las condiciones a la vez: 0 brechas, 4/4 tareas, 0 aprobaciones, al menos 2 robustos y 5 defensas como máximo. Mira en la tabla cuál se te escapa."
+          }
+        ],
         "hints": [
           "Dos ■ sin coste para envenenamiento y para rug-pull, uno para cada uno de los demás."
         ],

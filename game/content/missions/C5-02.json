@@ -61,6 +61,21 @@
           "bound": 5
         }
       },
+      "diagnostics": [
+        {
+          "id": "faltan-copias",
+          "when": {
+            "type": "event",
+            "event": "engagement.bound",
+            "where": {
+              "bound": {
+                "lt": 5
+              }
+            }
+          },
+          "message": "Has vinculado menos de 5 copias. Crea y vincula las cinco (engagement bind final A-01 … A-05)."
+        }
+      ],
       "hints": [
         "engagement start final · bot create kuro · rag create docs · rag ingest docs · agent create taller · mcp host erp · supply forja pipe · engagement bind final A-01 kuro · … · engagement bind final A-05 pipe"
       ],
@@ -85,6 +100,19 @@
           "asset": "A-05"
         }
       },
+      "diagnostics": [
+        {
+          "id": "aceptado",
+          "when": {
+            "type": "event",
+            "event": "engagement.finding",
+            "where": {
+              "asset": "A-05"
+            }
+          },
+          "message": "Ese hallazgo se ha ACEPTADO. Aquí el objetivo es ver cómo el encargo RECHAZA una categoría que no encaja: prueba LLM09 (desinformación) sobre A-05."
+        }
+      ],
       "hints": [
         "engagement finding final A-05 LLM09"
       ],
@@ -103,6 +131,29 @@
           "assets": 5
         }
       },
+      "diagnostics": [
+        {
+          "id": "rechazado",
+          "when": {
+            "type": "event",
+            "event": "engagement.finding_rejected"
+          },
+          "message": "Te han rechazado un hallazgo: lanza PRIMERO la batería sobre la copia (bot attack, rag attack, agent attack, mcp attack, supply attack) y usa una categoría que encaje con el activo."
+        },
+        {
+          "id": "faltan-activos",
+          "when": {
+            "type": "event",
+            "event": "engagement.finding",
+            "where": {
+              "assets": {
+                "lt": 5
+              }
+            }
+          },
+          "message": "Llevas hallazgos en menos de 5 activos. Repite batería + hallazgo en los que falten hasta cubrir los cinco."
+        }
+      ],
       "hints": [
         "Cinco baterías y cinco hallazgos, con categorías que encajen con cada activo, como las que usaste en C5-01.",
         "bot attack kuro · rag attack docs · agent attack taller · mcp attack erp · supply attack pipe · engagement finding final A-01 LLM07 · engagement finding final A-02 LLM01 · engagement finding final A-03 ASI01 · engagement finding final A-04 ASI04 · engagement finding final A-05 LLM03"
@@ -135,6 +186,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "resumen-incompleto",
+          "when": {
+            "type": "event",
+            "event": "engagement.summary",
+            "where": {
+              "findings": {
+                "lt": 5
+              }
+            }
+          },
+          "message": "El resumen sale con menos de 5 hallazgos: registra los cinco de o3 antes de sacarlo (engagement summary final)."
+        }
+      ],
       "hints": [
         "engagement summary final"
       ],
@@ -183,6 +249,19 @@
           "complete": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "informe-incompleto",
+          "when": {
+            "type": "event",
+            "event": "report.checked",
+            "where": {
+              "complete": false
+            }
+          },
+          "message": "El informe no supera la rúbrica todavía. informe revisar te dice qué falta: rellena todos los campos (severidad, owasp, componente, descripcion, pasos, impacto, evidencia, mitigacion, verificacion) y que los pasos sean comandos reproducibles."
+        }
+      ],
       "hints": [
         "informe nuevo <título> · informe campo severidad … · informe campo owasp … · componente, descripcion, pasos, impacto, evidencia, mitigacion, verificacion · informe revisar",
         "En los pasos, los comandos que lo reproducen: 1) engagement start final 2) supply forja pipe 3) supply attack pipe. En la verificación, una medida: hoy 7 de 7 ataques con éxito; tras corregir, 0 de 7 y las tareas a 1,0 (lo harás en C5-03)."
@@ -247,6 +326,21 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "faltan-activos",
+            "when": {
+              "type": "event",
+              "event": "engagement.finding",
+              "where": {
+                "assets": {
+                  "lt": 3
+                }
+              }
+            },
+            "message": "Aún no tienes hallazgos en 3 activos distintos. Vincula, ataca y registra en al menos tres."
+          }
+        ],
         "hints": [
           "Vincular, atacar, registrar."
         ],
