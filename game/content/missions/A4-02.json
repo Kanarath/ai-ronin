@@ -87,6 +87,10 @@
           }
         ]
       },
+      "diagnostics": [
+        {"id":"sin-clima","when":{"type":"event","event":"mcp.asked","where":{"token_leaked":false}},"message":"Has hablado con el asistente, pero tu pregunta no ha hecho que use la herramienta del tiempo, así que no se ha fugado nada. Pregunta por el tiempo en Kioto: «¿Qué tiempo hará en Kioto?»."},
+        {"id":"log-sin-secreto","when":{"type":"event","event":"mcp.log","where":{"server":"clima-samurai","secret_seen":false}},"message":"Estás leyendo el registro de clima-samurai, pero aún no aparece el token. Pregunta primero por el tiempo en Kioto y luego vuelve a mirar el registro con mcp log forja clima-samurai."}
+      ],
       "hints": [
         "mcp host forja · mcp ask forja ¿Qué tiempo hará en Kioto?",
         "mcp log forja clima-samurai"
@@ -135,6 +139,9 @@
           }
         ]
       },
+      "diagnostics": [
+        {"id":"sin-actualizar","when":{"type":"event","event":"mcp.asked","where":{"tool":"traducir","refund_total":{"lt":2400}}},"message":"Has pedido una traducción, pero no ha disparado el reembolso: la versión vieja del traductor es inofensiva. Publica antes la nueva versión con «mcp update forja traductor» y vuelve a pedir la traducción."}
+      ],
       "hints": [
         "mcp update forja traductor · mcp ask forja Traduce: katana",
         "Antes o después, mira mcp inspect forja traductor: ¿qué ha cambiado?"
@@ -164,6 +171,9 @@
           }
         ]
       },
+      "diagnostics": [
+        {"id":"sin-sombra","when":{"type":"event","event":"mcp.asked","where":{"shadowed":false}},"message":"Has buscado el pedido, pero lo ha atendido el buscar_pedido legítimo. El impostor solo gana si es el ÚLTIMO servidor conectado: conecta utilidades-plus y, después, pide el pedido P-101."}
+      ],
       "hints": [
         "mcp connect forja utilidades-plus · mcp ask forja Busca el pedido P-101",
         "mcp log forja utilidades-plus"
@@ -184,6 +194,9 @@
           }
         }
       },
+      "diagnostics": [
+        {"id":"ciudad-sin-orden","when":{"type":"event","event":"mcp.asked","where":{"tool":"consultar_clima","refund_total":{"lt":500}}},"message":"Has consultado el tiempo, pero el resultado no ha inyectado ningún reembolso. Pregunta por el tiempo en Edo: es su resultado el que trae la orden escondida."}
+      ],
       "hints": [
         "mcp ask forja ¿Qué tiempo hará en Edo?"
       ],
@@ -229,6 +242,10 @@
           }
         }
       },
+      "diagnostics": [
+        {"id":"informe-incompleto","when":{"type":"event","event":"report.checked","where":{"complete":false}},"message":"Has enviado el informe, pero le faltan campos para superar la rúbrica. Completa los pasos para reproducirlo, la mitigación y la verificación con «informe campo …» antes de «informe revisar»."},
+        {"id":"sin-owasp-agentica","when":{"type":"all","of":[{"type":"event","event":"report.checked","where":{"complete":true}},{"type":"not","of":{"type":"event","event":"report.checked","where":{"owasp":{"icontains":"ASI"}}}}]},"message":"El informe está completo, pero la categoría OWASP no es agéntica. En el campo owasp usa una ASI: ASI04 (servidor de terceros malicioso), ASI02 (abuso de herramientas) o ASI03 (abuso de identidad)."}
+      ],
       "hints": [
         "informe nuevo Robo del token de sesión mediante la descripción de una herramienta MCP · informe campo owasp ASI04 · …",
         "Pasos: «1) mcp host forja 2) mcp ask forja ¿Qué tiempo hará en Kioto? 3) mcp log forja clima-samurai». Mitigación: revisar descripciones, tokens con mínimo alcance por servidor. Verificación: «la batería A4 baja de 1,00»."
@@ -299,6 +316,10 @@
             }
           ]
         },
+        "diagnostics": [
+          {"id":"palabra-prohibida","when":{"type":"event","event":"mcp.asked","where":{"message":{"icontains":"reembols"}}},"message":"Has usado la palabra «reembolso» en tu mensaje. Aquí la orden tiene que entrar por el servidor, no por tu petición: prueba el tiempo en Edo o publica la actualización del traductor."},
+          {"id":"sin-reembolso","when":{"type":"event","event":"mcp.asked","where":{"message":{"not_contains_any":["reembols","Reembols","REEMBOLS"]},"refund_total":0}},"message":"Has evitado la palabra, pero no se ha producido ningún reembolso. Usa un camino que lo dispare desde el servidor: el tiempo en Edo o la actualización del traductor."}
+        ],
         "hints": [
           "Has visto dos caminos que no pasan por pedir un reembolso.",
           "Uno depende de una ciudad; el otro, de una actualización."

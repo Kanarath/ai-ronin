@@ -76,6 +76,9 @@
           "finding_ok": 5
         }
       },
+      "diagnostics": [
+        {"id":"campo-con-trampa","when":{"type":"event","event":"audit.drafted","where":{"target":"H2","finding_ok":{"lt":5}}},"message":"Has redactado H2, pero algún campo no se sostiene: una de las opciones que elegiste lleva una trampa (un criterio fuera del alcance, evidencia solo de palabra, un riesgo exagerado, una recomendación que rompe la independencia o un cierre sin evidencia). Repasa con audit findings valle H2 cuál de los cinco campos falla."}
+      ],
       "hints": [
         "audit open valle · audit rubric valle · audit findings valle H2 · audit draft valle H2 <campo> <A|B|C>",
         "El art. 14 son requisitos de diseño para el proveedor; el del responsable del despliegue es el 26.2. La evidencia buena dice qué muestra y cómo se eligió.",
@@ -94,6 +97,9 @@
           "findings_ok": 3
         }
       },
+      "diagnostics": [
+        {"id":"faltan-hallazgos","when":{"type":"event","event":"audit.drafted","where":{"findings_ok":{"lt":3}}},"message":"Has redactado, pero todavía no se sostienen los tres hallazgos: alguno de H1 o H3 tiene un campo con trampa. Desconfía de una norma fuera del alcance, un artículo que obliga a otro actor, «nos dijeron» como única prueba o un cierre sin evidencia; revísalos con audit findings valle H1 y audit findings valle H3."}
+      ],
       "hints": [
         "audit findings valle H1 · audit findings valle H3",
         "Desconfía de: una norma que no está en el alcance, un artículo que obliga a otro actor, «nos dijeron», multas de prácticas prohibidas, un cierre sin evidencia y un auditor que se ofrece a arreglarlo.",
@@ -144,6 +150,9 @@
           "passed": true
         }
       },
+      "diagnostics": [
+        {"id":"rubrica-rechaza","when":{"type":"event","event":"audit.report","where":{"passed":false}},"message":"Has generado el informe, pero la rúbrica no lo aprueba entero. Mira el alcance y la conclusión: un alcance que no dice qué se miró y qué no, o una conclusión que afirma más de lo que viste en la muestra, tumban el informe."}
+      ],
       "hints": [
         "audit findings valle informe · audit draft valle informe <alcance|conclusion> <A|B|C> · audit report valle",
         "Un auditor no dice que algo «cumple el AI Act»: dice qué ha visto en la muestra contra los criterios acordados.",
@@ -306,6 +315,9 @@
             }
           ]
         },
+        "diagnostics": [
+          {"id":"informe-no-pasa","when":{"type":"event","event":"audit.report","where":{"passed":false}},"message":"El informe aún no pasa la rúbrica: algún hallazgo, el alcance o la conclusión no se sostiene. Vuelve sobre los campos que la rúbrica marca y corrígelos antes de generarlo otra vez."}
+        ],
         "hints": [
           "Diecisiete campos, un informe y tres seguimientos."
         ],

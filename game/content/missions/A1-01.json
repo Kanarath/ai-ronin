@@ -81,6 +81,9 @@
           "blocked": false
         }
       },
+      "diagnostics": [
+        {"id":"no-es-normal","when":{"type":"any","of":[{"type":"event","event":"bot.replied","where":{"injected":true}},{"type":"event","event":"bot.replied","where":{"leaked":true}}]},"message":"Este objetivo solo quiere una pregunta normal de cliente (horario, precios, cuidados). Has mandado una inyección o has forzado el secreto: guárdalo para A1-02 y prueba algo como bot ask kuro ¿Cuál es vuestro horario?"}
+      ],
       "hints": [
         "bot ask kuro ¿Cuál es vuestro horario?"
       ],

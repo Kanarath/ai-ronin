@@ -191,6 +191,23 @@
           "gte": 2
         }
       },
+      "diagnostics": [
+        {
+          "id": "un-solo-grafico",
+          "when": {
+            "type": "event",
+            "event": "viz.scatter",
+            "where": {
+              "dataset": "katanas"
+            },
+            "count": {
+              "gte": 1,
+              "lt": 2
+            }
+          },
+          "message": "Has dibujado un solo gráfico y el objetivo pide dos, para comparar una feature con otra. Dibuja un segundo con plot, por ejemplo plot katanas --x temperatura_temple --y dureza_hrc."
+        }
+      ],
       "hints": [
         "Si una feature no ayuda, en el gráfico los colores de las dos clases estarán mezclados a lo largo de ese eje.",
         "plot katanas --x <feature> --y <feature>. Compara un gráfico con temperatura y otro sin ella.",

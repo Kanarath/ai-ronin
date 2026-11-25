@@ -63,6 +63,36 @@
           "robust": 0
         }
       },
+      "diagnostics": [
+        {
+          "id": "otros-controles",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "agent",
+              "defense_count": {
+                "ne": 3
+              }
+            }
+          },
+          "message": "Este objetivo mide exactamente tres controles. Si reutilizas un agente anterior, los controles se acumulan: crea uno nuevo con agent create kage y activa solo least-privilege, user-authz y step-budget."
+        },
+        {
+          "id": "ataques-pasan",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "agent",
+              "breached": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Todavía pasan ataques: te falta alguno de los tres del código. Activa least-privilege, user-authz y step-budget (los tres viven en el código, no en el prompt)."
+        }
+      ],
       "hints": [
         "agent create kage · agent defend kage least-privilege on · agent defend kage user-authz on · agent defend kage step-budget on · lab resilience agent kage"
       ],
@@ -126,6 +156,51 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "ataques-pasan",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "agent",
+              "breached": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Vuelven a pasar ataques: has quitado alguno de los tres controles del código. Mantén least-privilege, user-authz y step-budget, y añade spotlight ENCIMA como segunda capa."
+        },
+        {
+          "id": "con-aprobaciones",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "agent",
+              "approvals": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Tienes aprobaciones > 0: has usado hitl, que pide supervisión humana. Quítalo y usa spotlight como segunda cerradura; no cuesta aprobaciones."
+        },
+        {
+          "id": "faltan-robustos",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "agent",
+              "breached": 0,
+              "robust": {
+                "lt": 4
+              }
+            }
+          },
+          "message": "Bloqueas todo, pero faltan robustos: cada ataque aún cuelga de un solo control. Añade una segunda capa barata con agent defend kage spotlight on y vuelve a medir con lab resilience agent kage."
+        }
+      ],
       "hints": [
         "El bucle solo tiene tres columnas: spotlight, hitl y step-budget. hitl cuesta aprobaciones.",
         "agent defend kage spotlight on · lab resilience agent kage"
@@ -207,6 +282,66 @@
             }
           }
         },
+        "diagnostics": [
+          {
+            "id": "ataques-pasan",
+            "when": {
+              "type": "event",
+              "event": "lab.resilience",
+              "where": {
+                "kind": "agent",
+                "breached": {
+                  "gt": 0
+                }
+              }
+            },
+            "message": "Vuelven a pasar ataques: te falta algún control del código. Parte de least-privilege, user-authz y step-budget y añade spotlight encima."
+          },
+          {
+            "id": "con-aprobaciones",
+            "when": {
+              "type": "event",
+              "event": "lab.resilience",
+              "where": {
+                "kind": "agent",
+                "approvals": {
+                  "gt": 0
+                }
+              }
+            },
+            "message": "Tienes aprobaciones > 0: has usado hitl. Sustitúyelo por spotlight como segunda cerradura; da robustez sin costar aprobaciones."
+          },
+          {
+            "id": "demasiados-controles",
+            "when": {
+              "type": "event",
+              "event": "lab.resilience",
+              "where": {
+                "kind": "agent",
+                "breached": 0,
+                "defense_count": {
+                  "gt": 4
+                }
+              }
+            },
+            "message": "Lo consigues, pero con más de cuatro controles. El máximo aquí es 4: bastan spotlight, least-privilege, user-authz y step-budget; desactiva arg-validation y memory-hygiene con agent defend kage <control> off."
+          },
+          {
+            "id": "faltan-robustos",
+            "when": {
+              "type": "event",
+              "event": "lab.resilience",
+              "where": {
+                "kind": "agent",
+                "breached": 0,
+                "robust": {
+                  "lt": 4
+                }
+              }
+            },
+            "message": "Bloqueas todo, pero faltan robustos: cada ataque aún cuelga de un solo control. Da una segunda cerradura con spotlight (agent defend kage spotlight on) y repite lab resilience."
+          }
+        ],
         "hints": [
           "Dos ■ por fila, salvo la del confused deputy."
         ],

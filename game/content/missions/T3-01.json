@@ -100,6 +100,46 @@
           "normalized": false
         }
       },
+      "diagnostics": [
+        {
+          "id": "lr-distinto",
+          "when": {
+            "type": "event",
+            "event": "regress.trained",
+            "where": {
+              "lr": {
+                "ne": 0.001
+              }
+            }
+          },
+          "message": "Has entrenado, pero con otro learning rate. Este objetivo pide 0.001 exactamente, y el lr se fija al CREAR el regresor: crea uno nuevo con regress create <nombre> --lr 0.001 (el nombre da igual)."
+        },
+        {
+          "id": "normalizado",
+          "when": {
+            "type": "event",
+            "event": "regress.trained",
+            "where": {
+              "normalized": true
+            }
+          },
+          "message": "Entrena sobre temple SIN normalizar; el dataset normalizado llega más adelante (o6)."
+        },
+        {
+          "id": "pocas-epocas",
+          "when": {
+            "type": "event",
+            "event": "regress.trained",
+            "where": {
+              "lr": 0.001,
+              "epochs": {
+                "lt": 100
+              }
+            }
+          },
+          "message": "Vas bien, pero faltan épocas: este objetivo pide 100. Añade --epochs 100."
+        }
+      ],
       "hints": [
         "Los comandos de regresión empiezan por regress. Prueba: help regress",
         "regress create <nombre> --lr 0.001 y después regress train <nombre> temple --x ... --y ... --epochs 100",
@@ -148,6 +188,19 @@
           "diverged": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "no-diverge",
+          "when": {
+            "type": "event",
+            "event": "regress.trained",
+            "where": {
+              "diverged": false
+            }
+          },
+          "message": "Aquí la pérdida tiene que EXPLOTAR (divergir), y con lr 0.001 nunca lo hará. Como el lr se fija al crear, crea un regresor nuevo con --lr 0.03 (el nombre es libre: r2, rg2, el que quieras)."
+        }
+      ],
       "hints": [
         "Mismo procedimiento, otro nombre y otro --lr.",
         "regress create r2 --lr 0.03 · regress train r2 temple --x minutos_enfriado --y dureza_hrc --epochs 100"
@@ -244,6 +297,63 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-normalizar",
+          "when": {
+            "type": "event",
+            "event": "regress.trained",
+            "where": {
+              "normalized": false
+            }
+          },
+          "message": "Has entrenado sobre un dataset sin normalizar. Normaliza primero (dataset normalize temple --method zscore --only minutos_enfriado --as tz) y entrena sobre ese dataset nuevo."
+        },
+        {
+          "id": "diverge-normalizado",
+          "when": {
+            "type": "event",
+            "event": "regress.trained",
+            "where": {
+              "normalized": true,
+              "diverged": true
+            }
+          },
+          "message": "Con la x normalizada, lr 0.5 va fino; si diverge es que el lr es demasiado alto. Baja a 0.5."
+        },
+        {
+          "id": "muchas-epocas",
+          "when": {
+            "type": "event",
+            "event": "regress.trained",
+            "where": {
+              "normalized": true,
+              "epochs": {
+                "gt": 20
+              }
+            }
+          },
+          "message": "El reto es en 20 épocas o menos (normalizado converge en ~3). Si reutilizas el regresor las épocas se acumulan: crea otro o usa regress reset."
+        },
+        {
+          "id": "no-baja",
+          "when": {
+            "type": "event",
+            "event": "regress.trained",
+            "where": {
+              "normalized": true,
+              "diverged": false,
+              "epochs": {
+                "lte": 20
+              },
+              "loss": {
+                "gt": 1.0
+              }
+            }
+          },
+          "message": "Estás sobre el dataset normalizado y en pocas épocas, pero la pérdida no baja de 1.0. Con lr 0.5 debería; comprueba que normalizaste minutos_enfriado y que entrenas con --x minutos_enfriado --y dureza_hrc."
+        }
+      ],
       "hints": [
         "dataset normalize tiene una opción para transformar solo algunas features. Mira dataset normalize --help",
         "dataset normalize temple --method zscore --only minutos_enfriado --as tz",

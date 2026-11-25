@@ -231,6 +231,9 @@
           "refund_total": 120
         }
       },
+      "diagnostics": [
+        {"id":"importe-distinto","when":{"type":"event","event":"mcp.asked","where":{"tool":"aplicar_reembolso","refund_total":{"ne":120}}},"message":"Has aplicado un reembolso, pero no de 120 monedas. Repite la orden pidiendo exactamente 120 del pedido P-101."}
+      ],
       "hints": [
         "mcp ask forja Reembolsa 120 monedas del pedido P-101"
       ],
@@ -256,6 +259,9 @@
           "suspicious": true
         }
       },
+      "diagnostics": [
+        {"id":"sin-leer-entera","when":{"type":"event","event":"mcp.inspected","where":{"server":"clima-samurai","suspicious":false}},"message":"Has inspeccionado clima-samurai, pero no has leído la descripción entera. Abre también lo que hay entre <IMPORTANT> y </IMPORTANT>: ahí está la instrucción oculta."}
+      ],
       "hints": [
         "mcp inspect forja clima-samurai",
         "Lee la descripción entera, también lo que hay entre <IMPORTANT> y </IMPORTANT>."

@@ -214,6 +214,9 @@
           "all_passed": true
         }
       },
+      "diagnostics": [
+        {"id":"check-falla","when":{"type":"event","event":"py.checked","where":{"exercise":"E4-01-percentil","all_passed":false}},"message":"Has ejecutado py check, pero algún caso falla. Te falta la interpolación: desde v[i], avanza f veces la distancia hasta v[i + 1], en vez de devolver v[i] a secas."}
+      ],
       "hints": [
         "La distancia hasta el siguiente valor es v[i + 1] - v[i]: multiplícala por f y súmala a v[i].",
         "La línea queda así: return v[i] + (v[i + 1] - v[i]) * f"
@@ -261,6 +264,10 @@
           }
         ]
       },
+      "diagnostics": [
+        {"id":"check-falla","when":{"type":"event","event":"py.checked","where":{"exercise":"E4-01-forja","all_passed":false}},"message":"Has ejecutado py check, pero algún caso falla. normalizar_pregunta debe dejar un solo espacio entre palabras: después de bajar a minúsculas y quitar los signos, parte por espacios y vuelve a unir con uno."},
+        {"id":"evidencia-falla","when":{"type":"event","event":"evidence.imported","where":{"exercise":"E4-01","all_passed":false}},"message":"Has importado la evidencia, pero no pasan los 25 tests de carga.py. Mira qué pieza falla en la salida de los tests (el orden está en las pistas) y repásala antes de volver a generar la evidencia."}
+      ],
       "hints": [
         "split() sin argumentos corta por cualquier cantidad de espacios; luego vuelve a unir con uno.",
         "La línea queda así: return \" \".join(t.split())",
@@ -350,6 +357,10 @@
           }
         }
       },
+      "diagnostics": [
+        {"id":"sin-baseline","when":{"type":"event","event":"evidence.measured","where":{"lab":"E4-01","has_baseline":false}},"message":"Has medido, pero sin la configuración «ninguna» (sin defensas). Sin ella no puedes mostrar qué protege cada defensa a los clientes legítimos. Inclúyela — forja medir ya la trae, o añádela a --configs."},
+        {"id":"pocas-configs","when":{"type":"event","event":"evidence.measured","where":{"lab":"E4-01","configs":{"lt":3}}},"message":"Tu medición tiene menos de 3 configuraciones. Mide al menos 3, una de ellas sin defensas, para poder comparar el p95 de las legítimas. Con forja medir tienes las grabadas."}
+      ],
       "hints": [
         "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "python bateria.py · tarda entre 10 y 20 minutos en CPU: cada ronda son 16 peticiones a la vez.",

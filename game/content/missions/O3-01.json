@@ -68,6 +68,9 @@
           "relevant": true
         }
       },
+      "diagnostics": [
+        {"id":"categoria-no-encaja","when":{"type":"event","event":"engagement.threat","where":{"engagement":"norte","asset":"A-01","relevant":false}},"message":"Has apuntado una amenaza en A-01, pero la categoría que elegiste no encaja con ese activo. Usa LLM07 (fuga del prompt de sistema), que es la que muerde en el chatbot público."}
+      ],
       "hints": [
         "engagement start norte y después engagement threat norte A-01 LLM07"
       ]
@@ -118,6 +121,9 @@
           "relevant": true
         }
       },
+      "diagnostics": [
+        {"id":"categoria-no-encaja","when":{"type":"event","event":"engagement.threat","where":{"engagement":"norte","asset":"A-03","relevant":false}},"message":"Has apuntado una amenaza en A-03, pero la categoría no encaja con ese activo. A-03 lee correos de clientes y actúa: prueba ASI01 (secuestro del objetivo), de la lista de agentes."}
+      ],
       "hints": [
         "engagement threat norte A-03 ASI01"
       ]
@@ -204,6 +210,10 @@
           }
         }
       },
+      "diagnostics": [
+        {"id":"amenaza-no-cuenta","when":{"type":"event","event":"engagement.threat","where":{"engagement":"norte","relevant":false}},"message":"La última amenaza que apuntaste no cuenta para la cobertura: su categoría no encaja con el activo. Elige una categoría que sí aplique a ese activo."},
+        {"id":"faltan-activos","when":{"type":"event","event":"engagement.threat","where":{"engagement":"norte","covered":{"lt":3}}},"message":"Sigues cubriendo menos de tres activos distintos. Apuntar varias amenazas en el MISMO activo no suma: cada activo cuenta una vez. Reparte en activos nuevos, como A-02 (LLM04) o A-04."}
+      ],
       "hints": [
         "Para A-02, un RAG que indexa documentos de proveedores, piensa en LLM04 (envenenamiento).",
         "engagement threat norte A-02 LLM04"

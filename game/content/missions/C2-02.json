@@ -92,6 +92,51 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "ataques-pasan",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "rag",
+              "breached": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Pasan ataques en tu medición: faltan las obligatorias (trusted-sources, acl, vector-acl) o no has indexado. Comprueba rag ingest docs y vuelve a activar las defensas."
+        },
+        {
+          "id": "falta-calidad",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "rag",
+              "breached": 0,
+              "pass_rate": {
+                "lt": 1.0
+              }
+            }
+          },
+          "message": "No estás en 7/7: te falta min-score para la pregunta legítima que falla. Actívala con rag defend docs min-score on."
+        },
+        {
+          "id": "falta-spotlight",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "rag",
+              "breached": 0,
+              "pass_rate": 1.0,
+              "robust": 0
+            }
+          },
+          "message": "Tienes la cobertura mínima medida (0 robustos), pero falta el segundo extremo: enciende la defensa que queda, spotlight (rag defend docs spotlight on), y vuelve a medir con lab resilience rag docs para llegar a 1 robusto."
+        }
+      ],
       "hints": [
         "rag create docs · rag ingest docs · rag defend docs trusted-sources on · rag defend docs acl on · rag defend docs vector-acl on · rag defend docs min-score on · lab resilience rag docs",
         "rag defend docs spotlight on · lab resilience rag docs"
@@ -229,6 +274,51 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "ataques-pasan",
+            "when": {
+              "type": "event",
+              "event": "lab.resilience",
+              "where": {
+                "kind": "rag",
+                "breached": {
+                  "gt": 0
+                }
+              }
+            },
+            "message": "Pasan ataques: activa las obligatorias (trusted-sources, acl, vector-acl) y recuerda rag ingest docs antes de medir."
+          },
+          {
+            "id": "falta-calidad",
+            "when": {
+              "type": "event",
+              "event": "lab.resilience",
+              "where": {
+                "kind": "rag",
+                "breached": 0,
+                "pass_rate": {
+                  "lt": 1.0
+                }
+              }
+            },
+            "message": "No llegas a 7/7: añade min-score para la pregunta legítima que falla."
+          },
+          {
+            "id": "falta-spotlight",
+            "when": {
+              "type": "event",
+              "event": "lab.resilience",
+              "where": {
+                "kind": "rag",
+                "breached": 0,
+                "pass_rate": 1.0,
+                "robust": 0
+              }
+            },
+            "message": "Has demostrado la cobertura mínima (0 robustos), pero falta el máximo: enciende spotlight (rag defend docs spotlight on) y mide otra vez para conseguir al menos 1 robusto."
+          }
+        ],
         "hints": [
           "Dos mediciones con lab resilience, una antes y otra después de spotlight."
         ],

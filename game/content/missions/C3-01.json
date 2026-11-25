@@ -114,6 +114,37 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "ataques-pasan",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "mcp",
+              "breached": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "No cierras la batería: con dos defensas necesitas namespacing (único que para la suplantación de nombre) y consent (que para los otros cuatro). Actívalas con mcp defend erp <defensa> on."
+        },
+        {
+          "id": "otras-defensas",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "mcp",
+              "breached": 0,
+              "defense_count": {
+                "ne": 2
+              }
+            }
+          },
+          "message": "Este paso mide exactamente dos defensas. Si reutilizas un host anterior, las defensas se acumulan: crea uno nuevo con mcp host erp y activa solo namespacing y consent."
+        }
+      ],
       "hints": [
         "mcp defend erp namespacing on · mcp defend erp consent on · lab resilience mcp erp",
         "Mira la última línea: «aprobaciones»."

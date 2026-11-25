@@ -55,6 +55,9 @@
           "successes": 5
         }
       },
+      "diagnostics": [
+        {"id":"con-defensas","when":{"type":"event","event":"rag.attacks","where":{"defenses":{"ne":"ninguna"}}},"message":"Esto es la línea base: mide SIN defensas. Si tienes alguna activa, desactívala y repite rag attack biblio."}
+      ],
       "hints": [
         "rag create biblio · rag ingest biblio · rag attack biblio"
       ],
@@ -83,6 +86,9 @@
           }
         ]
       },
+      "diagnostics": [
+        {"id":"sin-acl","when":{"type":"event","event":"rag.attacks","where":{"defenses":{"not_contains":"acl"}}},"message":"Has lanzado la batería sin el control de acceso activo. Actívalo: rag defend biblio acl on y repite rag attack biblio."}
+      ],
       "hints": [
         "rag defend biblio acl on · rag attack biblio",
         "3 de 5."
@@ -119,6 +125,9 @@
           }
         ]
       },
+      "diagnostics": [
+        {"id":"sin-spotlight","when":{"type":"event","event":"rag.attacks","where":{"defenses":{"not_contains":"spotlight"}}},"message":"Has lanzado la batería sin spotlight activo. Actívalo: rag defend biblio spotlight on y repite rag attack biblio."}
+      ],
       "hints": [
         "rag defend biblio spotlight on · rag attack biblio"
       ],
@@ -138,6 +147,10 @@
           "successes": 1
         }
       },
+      "diagnostics": [
+        {"id":"sin-trusted","when":{"type":"event","event":"rag.attacks","where":{"defenses":{"not_contains":"trusted-sources"}}},"message":"Has lanzado la batería sin la verificación de procedencia. Actívala: rag defend biblio trusted-sources on y repite rag attack biblio."},
+        {"id":"capas-caidas","when":{"type":"event","event":"rag.attacks","where":{"defenses":{"icontains":"trusted-sources"},"successes":{"gt":1}}},"message":"trusted-sources está activo, pero queda más de 1 ataque: has desactivado acl o spotlight. Mantén las capas anteriores activas y repite."}
+      ],
       "hints": [
         "rag defend biblio trusted-sources on · rag attack biblio"
       ],
@@ -166,6 +179,10 @@
           }
         ]
       },
+      "diagnostics": [
+        {"id":"quedan-ataques","when":{"type":"event","event":"rag.attacks","where":{"success_rate":{"gt":0.0}}},"message":"Aún quedan ataques con éxito. Te falta cerrar la lectura de vectores: rag defend biblio vector-acl on (manteniendo acl, spotlight y trusted-sources) y repite rag attack biblio."},
+        {"id":"eval-no-7","when":{"type":"event","event":"rag.eval","where":{"pass_rate":{"lt":1.0}}},"message":"La batería llega a 0, pero el eval no da 7/7. Activa el umbral: rag defend biblio min-score on y repite rag eval biblio."}
+      ],
       "hints": [
         "rag defend biblio vector-acl on · rag attack biblio",
         "Para el eval: rag defend biblio min-score on · rag eval biblio"
@@ -237,6 +254,11 @@
             }
           ]
         },
+        "diagnostics": [
+          {"id":"con-spotlight","when":{"type":"event","event":"rag.attacks","where":{"defenses":{"icontains":"spotlight"}}},"message":"Has llegado a 0, pero con spotlight activo; esta prueba pide conseguirlo SIN él. Desactívalo (rag defend biblio spotlight off) y ciérralo con acl, trusted-sources y vector-acl."},
+          {"id":"quedan-ataques","when":{"type":"event","event":"rag.attacks","where":{"defenses":{"not_contains":"spotlight"},"success_rate":{"gt":0.0}}},"message":"Sin spotlight aún quedan ataques: te faltan capas. Combina acl, trusted-sources y vector-acl y repite rag attack biblio."},
+          {"id":"eval-no-7","when":{"type":"event","event":"rag.eval","where":{"pass_rate":{"lt":1.0}}},"message":"El eval no da 7/7. Activa el umbral: rag defend biblio min-score on y repite rag eval biblio."}
+        ],
         "hints": [
           "¿Qué defensa impide que la reseña inyectada llegue siquiera al índice?",
           "acl, trusted-sources, vector-acl… y min-score para el eval."

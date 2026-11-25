@@ -140,6 +140,9 @@
           "all_passed": true
         }
       },
+      "diagnostics": [
+        {"id":"check-falla","when":{"type":"event","event":"py.checked","where":{"exercise":"E2-03-ventaja","all_passed":false}},"message":"Has ejecutado py check, pero algún caso falla. La fpr se calcula igual que la tpr, pero contando sobre perdidas_otros en vez de perdidas_miembros; de momento la dejas en 0."}
+      ],
       "hints": [
         "fpr se calcula como tpr, cambiando perdidas_miembros por perdidas_otros.",
         "La línea queda así: fpr = len([p for p in perdidas_otros if p < umbral]) / len(perdidas_otros)"
@@ -171,6 +174,10 @@
           }
         ]
       },
+      "diagnostics": [
+        {"id":"check-falla","when":{"type":"event","event":"py.checked","where":{"exercise":"E2-03-forja","all_passed":false}},"message":"Has ejecutado py check, pero algún caso falla. La pérdida de un ejemplo es −ln de la probabilidad que el modelo da a su clase real; revisa la línea marcada, que de momento añade 0."},
+        {"id":"evidencia-falla","when":{"type":"event","event":"evidence.imported","where":{"exercise":"E2-03","all_passed":false}},"message":"Has importado la evidencia, pero no pasan los 14 tests de privacidad.py. Mira qué función falla en la salida de los tests (el orden está en las pistas) y repásala antes de volver a generar la evidencia."}
+      ],
       "hints": [
         "La pérdida de un ejemplo es −ln de la probabilidad que el modelo da a su clase real.",
         "La línea queda así: out.append(-math.log(p))",
@@ -283,6 +290,10 @@
           }
         }
       },
+      "diagnostics": [
+        {"id":"sin-baseline","when":{"type":"event","event":"evidence.measured","where":{"lab":"E2-03","has_baseline":false}},"message":"Has medido, pero sin la receta «ninguna» (el modelo sobreajustado, sin defensas). Sin esa referencia no puedes mostrar cuánto baja la ventaja cada defensa. Inclúyela — forja medir ya la trae, o añádela a --configs."},
+        {"id":"pocas-configs","when":{"type":"event","event":"evidence.measured","where":{"lab":"E2-03","configs":{"lt":3}}},"message":"Tu medición tiene menos de 3 recetas. Mide al menos 3, una de ellas sin defensas, para poder comparar la ventaja. Con forja medir tienes las 4 ya grabadas."}
+      ],
       "hints": [
         "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "python bateria.py · tarda menos de un minuto: 4 recetas, 3 semillas y la media privada.",

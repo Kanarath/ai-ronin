@@ -92,6 +92,10 @@
           }
         ]
       },
+      "diagnostics": [
+        {"id":"check-falla","when":{"type":"event","event":"py.checked","where":{"exercise":"E4-02-forja","all_passed":false}},"message":"Has ejecutado py check, pero algún caso falla. redactar debe sustituir por \"[correo]\" cada palabra que lleve «@» y dejar el resto igual; de momento añade la palabra tal cual."},
+        {"id":"evidencia-falla","when":{"type":"event","event":"evidence.imported","where":{"exercise":"E4-02","all_passed":false}},"message":"Has importado la evidencia, pero no pasan los 17 tests de trazas.py. Mira qué función falla en la salida de los tests (el orden está en las pistas) y repásala antes de volver a generar la evidencia."}
+      ],
       "hints": [
         "Mira si «@» está en la palabra y, si está, añade \"[correo]\" en su lugar.",
         "La línea queda así: palabras.append(\"[correo]\" if \"@\" in p else p)",
@@ -191,6 +195,10 @@
           }
         }
       },
+      "diagnostics": [
+        {"id":"sin-baseline","when":{"type":"event","event":"evidence.measured","where":{"lab":"E4-02","has_baseline":false}},"message":"Has medido, pero sin la configuración «ninguna» (contenido crudo, sin defensas). Sin ese punto de partida no puedes mostrar qué reduce cada decisión de registro. Inclúyela — forja medir ya la trae, o añádela a --configs."},
+        {"id":"pocas-configs","when":{"type":"event","event":"evidence.measured","where":{"lab":"E4-02","configs":{"lt":3}}},"message":"Tu medición tiene menos de 3 configuraciones. Mide al menos 3, una de ellas sin defensas, para poder comparar qué datos se escapan. Con forja medir tienes las grabadas."}
+      ],
       "hints": [
         "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "python bateria.py · unos 10 minutos en CPU (80 preguntas con --n 2).",

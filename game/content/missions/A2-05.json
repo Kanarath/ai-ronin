@@ -133,6 +133,10 @@
           }
         }
       },
+      "diagnostics": [
+        {"id":"sin-linea-base","when":{"type":"event","event":"evidence.measured","where":{"lab":"A2-05","has_baseline":false}},"message":"Tu medición no incluye una configuración SIN defensas, que es la línea base. Añade «ninguna» entre las configuraciones de bateria.py (o usa forja medir)."},
+        {"id":"pocas-configs","when":{"type":"event","event":"evidence.measured","where":{"lab":"A2-05","configs":{"lt":3}}},"message":"Has medido, pero con menos de 3 configuraciones. Mide al menos 3 (una sin defensas), p. ej. --configs \"ninguna;visibilidad,invisibles;visibilidad,invisibles,normalizacion,filtro\"."}
+      ],
       "hints": [
         "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "Primero sin modelos: python bateria.py --solo-ingesta (segundos). Después, con Ollama: python bateria.py (unos 160 mensajes).",

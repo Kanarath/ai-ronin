@@ -127,6 +127,65 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "ataques-pasan",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "agent",
+              "breached": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Todavía pasan ataques: tu combinación no cubre las cinco filas. user-authz es obligatorio (el confused deputy solo lo para él); busca en la matriz la columna que cubre los otros cuatro a la vez (spotlight)."
+        },
+        {
+          "id": "demasiados-controles",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "agent",
+              "breached": 0,
+              "defense_count": {
+                "gt": 2
+              }
+            }
+          },
+          "message": "Dejas la batería a 0, pero con más de dos controles. Esto es la cobertura MÍNIMA: desactiva los que sobran con agent defend kage <control> off y quédate con los dos que cubren todo (user-authz y spotlight)."
+        },
+        {
+          "id": "con-aprobaciones",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "agent",
+              "approvals": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Tienes aprobaciones > 0: has activado hitl, que pide supervisión humana. La cobertura mínima de este objetivo no debe costar aprobaciones; usa spotlight en su lugar."
+        },
+        {
+          "id": "tareas-rotas",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "agent",
+              "pass_rate": {
+                "lt": 1.0
+              }
+            }
+          },
+          "message": "Has roto alguna tarea legítima (no estás en 3/3). Algún control activo estorba las tareas buenas; sustitúyelo por uno sin coste hasta volver a 3/3."
+        }
+      ],
       "hints": [
         "user-authz es obligatorio. ¿Qué columna cubre los otros cuatro ataques a la vez?",
         "agent defend kage user-authz on · agent defend kage spotlight on · lab resilience agent kage"
@@ -237,6 +296,66 @@
             }
           }
         },
+        "diagnostics": [
+          {
+            "id": "usa-prohibido",
+            "when": {
+              "type": "any",
+              "of": [
+                {
+                  "type": "event",
+                  "event": "lab.resilience",
+                  "where": {
+                    "kind": "agent",
+                    "defenses": {
+                      "contains": "spotlight"
+                    }
+                  }
+                },
+                {
+                  "type": "event",
+                  "event": "lab.resilience",
+                  "where": {
+                    "kind": "agent",
+                    "defenses": {
+                      "contains": "hitl"
+                    }
+                  }
+                }
+              ]
+            },
+            "message": "Esta prueba prohíbe spotlight y hitl, y tienes uno activo. Desactívalo con agent defend kage <control> off y resuelve la cobertura solo con controles del código: least-privilege, user-authz y step-budget."
+          },
+          {
+            "id": "ataques-pasan",
+            "when": {
+              "type": "event",
+              "event": "lab.resilience",
+              "where": {
+                "kind": "agent",
+                "breached": {
+                  "gt": 0
+                }
+              }
+            },
+            "message": "Todavía pasan ataques sin spotlight: te falta cubrir alguna fila. user-authz es obligatorio; añade least-privilege y step-budget para cerrar el resto."
+          },
+          {
+            "id": "demasiados-controles",
+            "when": {
+              "type": "event",
+              "event": "lab.resilience",
+              "where": {
+                "kind": "agent",
+                "breached": 0,
+                "defense_count": {
+                  "gt": 3
+                }
+              }
+            },
+            "message": "Bloqueas todo, pero con más de tres controles. El máximo aquí es 3: desactiva los que sobren y quédate con least-privilege, user-authz y step-budget."
+          }
+        ],
         "hints": [
           "Quita spotlight de la matriz y vuelve a resolver la cobertura."
         ],

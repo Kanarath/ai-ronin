@@ -161,6 +161,53 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "ataques-pasan",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "rag",
+              "breached": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Todavía pasan ataques: te falta alguna de las obligatorias. Cada punto único vive en su etapa: trusted-sources (ingesta), acl (las dos fugas internas) y vector-acl (inversión de vectores). Actívalas con rag defend docs <defensa> on."
+        },
+        {
+          "id": "falta-calidad",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "rag",
+              "breached": 0,
+              "pass_rate": {
+                "lt": 1.0
+              }
+            }
+          },
+          "message": "Cierras la seguridad pero no llegas a 7/7: falla una pregunta legítima. En un RAG la calidad también bloquea; añade min-score (rag defend docs min-score on), que no para ataques pero evita responder con fragmentos irrelevantes."
+        },
+        {
+          "id": "demasiadas-defensas",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "rag",
+              "breached": 0,
+              "pass_rate": 1.0,
+              "defense_count": {
+                "gt": 4
+              }
+            }
+          },
+          "message": "Lo consigues, pero con más de cuatro defensas. Esto es la cobertura MÍNIMA: desactiva la que sobre (spotlight no hace falta, trusted-sources ya para la reseña inyectada) con rag defend docs <defensa> off."
+        }
+      ],
       "hints": [
         "rag defend docs trusted-sources on · rag defend docs acl on · rag defend docs vector-acl on",
         "rag defend docs min-score on · lab resilience rag docs"
@@ -223,6 +270,67 @@
             }
           }
         },
+        "diagnostics": [
+          {
+            "id": "usa-spotlight",
+            "when": {
+              "type": "event",
+              "event": "lab.resilience",
+              "where": {
+                "kind": "rag",
+                "defenses": {
+                  "contains": "spotlight"
+                }
+              }
+            },
+            "message": "Esta prueba prohíbe spotlight y lo tienes activo. No hace falta: trusted-sources ya para la reseña inyectada en la ingesta. Desactívalo con rag defend docs spotlight off."
+          },
+          {
+            "id": "ataques-pasan",
+            "when": {
+              "type": "event",
+              "event": "lab.resilience",
+              "where": {
+                "kind": "rag",
+                "breached": {
+                  "gt": 0
+                }
+              }
+            },
+            "message": "Todavía pasan ataques: activa las obligatorias trusted-sources, acl y vector-acl. ¿Has indexado? Sin rag ingest docs el índice está vacío y la medición no cuadra."
+          },
+          {
+            "id": "falta-calidad",
+            "when": {
+              "type": "event",
+              "event": "lab.resilience",
+              "where": {
+                "kind": "rag",
+                "breached": 0,
+                "pass_rate": {
+                  "lt": 1.0
+                }
+              }
+            },
+            "message": "Seguridad hecha, pero no llegas a 7/7: añade min-score para la pregunta legítima que falla."
+          },
+          {
+            "id": "demasiadas-defensas",
+            "when": {
+              "type": "event",
+              "event": "lab.resilience",
+              "where": {
+                "kind": "rag",
+                "breached": 0,
+                "pass_rate": 1.0,
+                "defense_count": {
+                  "gt": 4
+                }
+              }
+            },
+            "message": "Lo consigues, pero con más de cuatro defensas. El máximo aquí es 4: quédate con trusted-sources, acl, vector-acl y min-score."
+          }
+        ],
         "hints": [
           "Recuerda indexar antes: rag ingest."
         ],

@@ -84,6 +84,9 @@
           }
         }
       },
+      "diagnostics": [
+        {"id":"grados-mal","when":{"type":"event","event":"iso.graded","where":{"correct_count":{"lt":6}}},"message":"Has clasificado los seis, pero algún grado no encaja. Pregúntate en cada uno: ¿falta el requisito entero o falla por completo (mayor), existe pero falló una vez (menor), o aún no incumple nada (observación)? El grado mide el sistema de gestión, no lo grave que suena el caso."}
+      ],
       "hints": [
         "H1 y H5: falta el requisito entero. H2, H3 y H6: existe pero con un fallo parcial. H4: no incumple nada.",
         "iso grade H1 mayor · H2 menor · H3 menor · H4 observacion · H5 mayor · H6 menor"
@@ -134,6 +137,9 @@
           "correct": true
         }
       },
+      "diagnostics": [
+        {"id":"decision-incorrecta","when":{"type":"event","event":"iso.decided","where":{"correct":false}},"message":"Tu recomendación no cuadra con los hallazgos. Con una no conformidad mayor abierta no se puede certificar: primero hay que corregirla y verificar su acción correctiva. ¿Cuántas mayores hay entre tus grados?"}
+      ],
       "hints": [
         "Hay dos mayores (H1 y H5).",
         "iso decide aplazar"
@@ -226,6 +232,9 @@
           "all_passed": true
         }
       },
+      "diagnostics": [
+        {"id":"check-falla","when":{"type":"event","event":"py.checked","where":{"exercise":"E5-02-decision","all_passed":false}},"message":"Has ejecutado py check, pero algún caso falla. Falta comprobar «mayor» ANTES que «menor»: una mayor manda sobre todas, así que esa comprobación va la primera y devuelve aplazar."}
+      ],
       "hints": [
         "La comprobación de «mayor» tiene que ir la primera.",
         "Añade al principio de la función: if \"mayor\" in grados: return \"aplazar\""

@@ -189,6 +189,9 @@
           "grounded": true
         }
       },
+      "diagnostics": [
+        {"id":"no-fundamentada","when":{"type":"event","event":"rag.answered","where":{"grounded":false}},"message":"Has preguntado, pero la respuesta no se apoya en la documentación (grounded:false): el asistente no ha recuperado un fragmento relevante o se ha abstenido. Pregunta por algo que SÍ esté en los documentos, p. ej. «¿Qué aceite debo usar para proteger la hoja?»."}
+      ],
       "hints": [
         "rag ask biblio ¿Qué aceite debo usar para proteger la hoja?"
       ],
@@ -232,6 +235,10 @@
           }
         }
       },
+      "diagnostics": [
+        {"id":"sin-minscore","when":{"type":"event","event":"rag.eval","where":{"defenses":{"not_contains":"min-score"}}},"message":"Has repetido el eval, pero sin el umbral de relevancia activo. Actívalo primero: rag defend biblio min-score on, y vuelve a lanzar rag eval biblio."},
+        {"id":"minscore-no-7","when":{"type":"event","event":"rag.eval","where":{"defenses":{"icontains":"min-score"},"pass_rate":{"lt":1.0}}},"message":"min-score está activo, pero aún no llegas a 7/7. Comprueba que el índice sigue en 40/10 (rag ingest biblio) antes de repetir el eval."}
+      ],
       "hints": [
         "rag defend biblio min-score on · rag eval biblio"
       ],
@@ -266,6 +273,9 @@
           }
         ]
       },
+      "diagnostics": [
+        {"id":"chunk-no-6","when":{"type":"event","event":"rag.eval","where":{"chunk":{"ne":6}}},"message":"Has lanzado el eval, pero el índice no está troceado en 6 palabras. Reindexa primero con rag ingest biblio --chunk 6 --overlap 0 y repite rag eval biblio."}
+      ],
       "hints": [
         "rag ingest biblio --chunk 6 --overlap 0 · rag eval biblio"
       ],
@@ -329,6 +339,9 @@
             }
           ]
         },
+        "diagnostics": [
+          {"id":"otra-consulta","when":{"type":"event","event":"rag.searched","where":{"query":{"ne":"aceite para proteger la hoja"}}},"message":"Has buscado, pero con otra consulta. Esta prueba mide exactamente «aceite para proteger la hoja»; reindexa antes con rag ingest biblio --chunk 200 --overlap 0 y busca esa frase."}
+        ],
         "hints": [
           "rag ingest con --chunk 200 --overlap 0 y después rag search.",
           "Mira la línea «Contexto que recibiría el modelo»."

@@ -99,6 +99,10 @@
           }
         ]
       },
+      "diagnostics": [
+        {"id":"check-falla","when":{"type":"event","event":"py.checked","where":{"exercise":"E4-03-forja","all_passed":false}},"message":"Has ejecutado py check, pero algún caso falla. Te falta la regla de puertos: lo que no se declara se deniega, así que cada puerto que no empiece por «127.0.0.1:» es un «puerto-expuesto»."},
+        {"id":"evidencia-falla","when":{"type":"event","event":"evidence.imported","where":{"exercise":"E4-03","all_passed":false}},"message":"Has importado la evidencia, pero no pasan los 18 tests de politica.py. Mira qué función falla en la salida de los tests (el orden está en las pistas) y repásala antes de volver a generar la evidencia."}
+      ],
       "hints": [
         "Recorre servicio.get(\"ports\", []) y mira si cada puerto empieza por «127.0.0.1:».",
         "Añade: if any(not p.startswith(\"127.0.0.1:\") for p in servicio.get(\"ports\", [])): h.append(\"puerto-expuesto\")",
@@ -206,6 +210,10 @@
           }
         }
       },
+      "diagnostics": [
+        {"id":"sin-baseline","when":{"type":"event","event":"evidence.measured","where":{"lab":"E4-03","has_baseline":false}},"message":"Has medido, pero sin la configuración «ninguna» (sin política, el punto de partida). Sin ella no puedes mostrar qué bloquea tu puerta. Inclúyela — forja medir ya la trae, o añádela a --configs."},
+        {"id":"pocas-configs","when":{"type":"event","event":"evidence.measured","where":{"lab":"E4-03","configs":{"lt":3}}},"message":"Tu medición tiene menos de 3 configuraciones. Mide al menos 3, una de ellas sin política, para poder comparar qué deja pasar y qué bloquea. Con forja medir tienes las grabadas."}
+      ],
       "hints": [
         "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "python bateria.py · la política tarda segundos; el canary, unos 10 minutos en CPU.",
