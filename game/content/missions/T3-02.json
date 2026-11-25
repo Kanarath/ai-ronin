@@ -231,6 +231,35 @@
           "overlap": 0
         }
       },
+      "diagnostics": [
+        {
+          "id": "umbral-alto",
+          "when": {
+            "type": "event",
+            "event": "metrics.computed",
+            "where": {
+              "positive": "defectuosa",
+              "threshold": {
+                "gt": 0.35
+              }
+            }
+          },
+          "message": "El umbral sigue demasiado alto para este paso: bájalo a 0.3 con metrics m te --positive defectuosa --threshold 0.3."
+        },
+        {
+          "id": "con-solape",
+          "when": {
+            "type": "event",
+            "event": "metrics.computed",
+            "where": {
+              "overlap": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Estás midiendo sobre datos de entrenamiento. Calcula las métricas sobre el conjunto de test (te)."
+        }
+      ],
       "hints": [
         "metrics tiene una opción para el umbral.",
         "metrics m te --positive defectuosa --threshold 0.3"
@@ -260,6 +289,21 @@
         ]
       },
       "wrong_answer": "En la tabla de la curva, busca las filas con recall 1.000 y quédate con el umbral mayor de ellas.",
+      "diagnostics": [
+        {
+          "id": "con-solape",
+          "when": {
+            "type": "event",
+            "event": "metrics.curve",
+            "where": {
+              "overlap": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "La curva está saliendo de datos de entrenamiento. Hazla sobre el conjunto de test (te) con --positive defectuosa."
+        }
+      ],
       "hints": [
         "metrics curve <modelo> <dataset> --positive defectuosa",
         "Recall 1.000 aparece en varias filas; elige la de umbral más alto (es la que menos aptas desecha entre ellas)."

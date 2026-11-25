@@ -80,6 +80,32 @@
           "normalized": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-normalizar",
+          "when": {
+            "type": "event",
+            "event": "model.trained",
+            "where": {
+              "normalized": false
+            }
+          },
+          "message": "Entrena con el dataset NORMALIZADO (katanas_minmax), no con el original: el k-NN mide distancias y la escala lo decide todo."
+        },
+        {
+          "id": "k-distinto",
+          "when": {
+            "type": "event",
+            "event": "model.trained",
+            "where": {
+              "k": {
+                "ne": 1
+              }
+            }
+          },
+          "message": "Este paso pide k=1. El k se fija al crear el modelo: model create m1 --k 1."
+        }
+      ],
       "hints": [
         "Tres pasos: normalizar, crear y entrenar. Los comandos de modelos empiezan por model.",
         "dataset normalize ... · model create <nombre> --k 1 · model train <nombre> <dataset>",
@@ -110,6 +136,19 @@
           "k": 1
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-solape",
+          "when": {
+            "type": "event",
+            "event": "model.evaluated",
+            "where": {
+              "overlap": 0
+            }
+          },
+          "message": "Para este paso evalúa con el MISMO dataset con el que entrenaste (así saldrá 100% y verás por qué engaña): model evaluate m1 katanas_minmax."
+        }
+      ],
       "hints": [
         "Hay un subcomando de model para medir la accuracy.",
         "model evaluate <modelo> <dataset>"

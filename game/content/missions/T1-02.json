@@ -192,6 +192,31 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-normalizar",
+          "when": {
+            "type": "event",
+            "event": "distance.computed",
+            "where": {
+              "normalized": false,
+              "a": {
+                "in": [
+                  "hoja-001",
+                  "hoja-002"
+                ]
+              },
+              "b": {
+                "in": [
+                  "hoja-001",
+                  "hoja-002"
+                ]
+              }
+            }
+          },
+          "message": "Esa distancia es sobre el dataset SIN normalizar. Mídela sobre el normalizado: distance katanas_minmax hoja-001 hoja-002."
+        }
+      ],
       "hints": [
         "Usa el mismo comando de antes, pero con el nuevo dataset.",
         "distance katanas_minmax hoja-001 hoja-002"

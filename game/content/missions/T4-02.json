@@ -91,6 +91,53 @@
           "accuracy": 1.0
         }
       },
+      "diagnostics": [
+        {
+          "id": "arquitectura",
+          "when": {
+            "type": "event",
+            "event": "nn.trained",
+            "where": {
+              "dataset": "puerta_xor",
+              "hidden": {
+                "ne": 2
+              }
+            }
+          },
+          "message": "Esta red es de 2 neuronas ocultas: créala con nn create <nombre> --hidden 2 --lr 1 --seed 1."
+        },
+        {
+          "id": "semilla",
+          "when": {
+            "type": "event",
+            "event": "nn.trained",
+            "where": {
+              "dataset": "puerta_xor",
+              "hidden": 2,
+              "seed": {
+                "ne": 1
+              }
+            }
+          },
+          "message": "Usa la semilla 1 (--seed 1): aquí la semilla decide los pesos iniciales."
+        },
+        {
+          "id": "no-acierta",
+          "when": {
+            "type": "event",
+            "event": "nn.trained",
+            "where": {
+              "dataset": "puerta_xor",
+              "hidden": 2,
+              "seed": 1,
+              "accuracy": {
+                "lt": 1.0
+              }
+            }
+          },
+          "message": "No llega a accuracy 1.0 en XOR: entrénala 3000 épocas. Si reutilizas la red las épocas se acumulan; crea otra o usa nn reset."
+        }
+      ],
       "hints": [
         "nn create <nombre> --hidden 2 --lr 1 --seed 1",
         "nn create red --hidden 2 --lr 1 --seed 1 · nn train red puerta_xor --epochs 3000"
@@ -333,6 +380,53 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "arquitectura",
+          "when": {
+            "type": "event",
+            "event": "nn.trained",
+            "where": {
+              "dataset": "puerta_xor",
+              "hidden": {
+                "ne": 2
+              }
+            }
+          },
+          "message": "Mantén 2 neuronas ocultas y cambia SOLO la semilla a 5: nn create red5 --hidden 2 --lr 1 --seed 5."
+        },
+        {
+          "id": "semilla",
+          "when": {
+            "type": "event",
+            "event": "nn.trained",
+            "where": {
+              "dataset": "puerta_xor",
+              "hidden": 2,
+              "seed": {
+                "ne": 5
+              }
+            }
+          },
+          "message": "Este paso es con la semilla 5 (--seed 5): verás que con esos pesos iniciales la red se queda atascada."
+        },
+        {
+          "id": "pocas-epocas",
+          "when": {
+            "type": "event",
+            "event": "nn.trained",
+            "where": {
+              "dataset": "puerta_xor",
+              "hidden": 2,
+              "seed": 5,
+              "epochs": {
+                "lt": 3000
+              }
+            }
+          },
+          "message": "Entrénala las mismas 3000 épocas que antes (--epochs 3000)."
+        }
+      ],
       "hints": [
         "nn create red5 --hidden 2 --lr 1 --seed 5",
         "nn train red5 puerta_xor --epochs 3000"
@@ -354,6 +448,55 @@
           "accuracy": 1.0
         }
       },
+      "diagnostics": [
+        {
+          "id": "cambiaste-semilla",
+          "when": {
+            "type": "event",
+            "event": "nn.trained",
+            "where": {
+              "dataset": "puerta_xor",
+              "seed": {
+                "ne": 5
+              }
+            }
+          },
+          "message": "No cambies la semilla: sigue siendo la 5. El reto es arreglarlo SOLO añadiendo neuronas ocultas."
+        },
+        {
+          "id": "pocas-neuronas",
+          "when": {
+            "type": "event",
+            "event": "nn.trained",
+            "where": {
+              "dataset": "puerta_xor",
+              "seed": 5,
+              "hidden": {
+                "lt": 3
+              }
+            }
+          },
+          "message": "Dale más neuronas ocultas (al menos 3) manteniendo la semilla 5: --hidden 3 (o más) --seed 5."
+        },
+        {
+          "id": "no-acierta",
+          "when": {
+            "type": "event",
+            "event": "nn.trained",
+            "where": {
+              "dataset": "puerta_xor",
+              "seed": 5,
+              "hidden": {
+                "gte": 3
+              },
+              "accuracy": {
+                "lt": 1.0
+              }
+            }
+          },
+          "message": "Con más neuronas y semilla 5 debería llegar a 1.0; entrénala 3000 épocas (crea una red nueva para no acumular épocas)."
+        }
+      ],
       "hints": [
         "¿Qué pasa si la red tiene más neuronas de las estrictamente necesarias?",
         "nn create red5b --hidden 4 --lr 1 --seed 5 · nn train red5b puerta_xor --epochs 3000"

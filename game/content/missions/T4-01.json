@@ -88,6 +88,21 @@
           "hidden": 0
         }
       },
+      "diagnostics": [
+        {
+          "id": "con-oculta",
+          "when": {
+            "type": "event",
+            "event": "nn.created",
+            "where": {
+              "hidden": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Esta red es de una sola neurona, sin capa oculta: créala con --hidden 0."
+        }
+      ],
       "hints": [
         "Los comandos de redes empiezan por nn. Prueba: help nn",
         "nn create neurona --hidden 0"
@@ -188,6 +203,23 @@
           "accuracy": 1.0
         }
       },
+      "diagnostics": [
+        {
+          "id": "no-acierta",
+          "when": {
+            "type": "event",
+            "event": "nn.trained",
+            "where": {
+              "dataset": "puerta_and",
+              "hidden": 0,
+              "accuracy": {
+                "lt": 1.0
+              }
+            }
+          },
+          "message": "La neurona aún no acierta el 100% en AND. Entrénala más épocas: nn train <red> puerta_and --epochs 2000."
+        }
+      ],
       "hints": [
         "nn train <red> puerta_and --epochs 2000",
         "Si la accuracy no llega a 1.0, entrena más épocas: el entrenamiento continúa donde se quedó."
@@ -348,6 +380,23 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "pocas-epocas",
+          "when": {
+            "type": "event",
+            "event": "nn.trained",
+            "where": {
+              "dataset": "puerta_xor",
+              "hidden": 0,
+              "epochs": {
+                "lt": 1000
+              }
+            }
+          },
+          "message": "Entrénala al menos 1000 épocas sobre XOR (--epochs 1000). La gracia es ver que una sola neurona NO lo consigue por muchas épocas que le des."
+        }
+      ],
       "hints": [
         "Igual que con AND, cambiando el dataset. Usa al menos 1000 épocas.",
         "nn create x --hidden 0 · nn train x puerta_xor --epochs 5000"
@@ -423,6 +472,37 @@
             }
           }
         },
+        "diagnostics": [
+          {
+            "id": "entrenada",
+            "when": {
+              "type": "event",
+              "event": "nn.evaluated",
+              "where": {
+                "dataset": "puerta_nand",
+                "epochs": {
+                  "gt": 0
+                }
+              }
+            },
+            "message": "Este reto es SIN entrenar: ajusta los pesos a mano y no uses nn train (las épocas deben quedar en 0)."
+          },
+          {
+            "id": "no-nand",
+            "when": {
+              "type": "event",
+              "event": "nn.evaluated",
+              "where": {
+                "dataset": "puerta_nand",
+                "epochs": 0,
+                "accuracy": {
+                  "lt": 1.0
+                }
+              }
+            },
+            "message": "Vas a mano, pero aún no implementa NAND del todo. NAND es AND con los signos cambiados: prueba a invertir los pesos y el sesgo."
+          }
+        ],
         "hints": [
           "NAND es AND al revés. Si AND se enciende cuando la suma supera al sesgo, ¿qué pasa si cambias todos los signos?",
           "(0,0) → z debe ser positivo; (1,1) → negativo. Pesos negativos y sesgo positivo."

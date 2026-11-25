@@ -150,6 +150,37 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "con-oculta",
+          "when": {
+            "type": "event",
+            "event": "nn.trained",
+            "where": {
+              "dataset": "llamadas",
+              "hidden": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Este paso es una sola neurona: créala con --hidden 0."
+        },
+        {
+          "id": "pocas-epocas",
+          "when": {
+            "type": "event",
+            "event": "nn.trained",
+            "where": {
+              "dataset": "llamadas",
+              "hidden": 0,
+              "epochs": {
+                "lt": 1000
+              }
+            }
+          },
+          "message": "Entrénala al menos 1000 épocas (--epochs 1000) con --positive peligrosa."
+        }
+      ],
       "hints": [
         "Crea la neurona con --hidden 0 y entrénala con --positive peligrosa.",
         "nn create n1 --hidden 0  y después  nn train n1 llamadas --epochs 2000 --positive peligrosa"
@@ -184,6 +215,54 @@
           "accuracy": 1.0
         }
       },
+      "diagnostics": [
+        {
+          "id": "arquitectura",
+          "when": {
+            "type": "event",
+            "event": "nn.trained",
+            "where": {
+              "dataset": "llamadas",
+              "hidden": {
+                "ne": 4
+              }
+            }
+          },
+          "message": "Créala con 4 neuronas ocultas: --hidden 4 --lr 1 --seed 1."
+        },
+        {
+          "id": "lr-distinto",
+          "when": {
+            "type": "event",
+            "event": "nn.trained",
+            "where": {
+              "dataset": "llamadas",
+              "hidden": 4,
+              "lr": {
+                "ne": 1.0
+              }
+            }
+          },
+          "message": "Usa learning rate 1 (--lr 1)."
+        },
+        {
+          "id": "no-acierta",
+          "when": {
+            "type": "event",
+            "event": "nn.trained",
+            "where": {
+              "dataset": "llamadas",
+              "hidden": 4,
+              "seed": 1,
+              "lr": 1.0,
+              "accuracy": {
+                "lt": 1.0
+              }
+            }
+          },
+          "message": "No llega a accuracy 1.0: entrénala 3000 épocas con --positive peligrosa (crea una red nueva para no acumular épocas)."
+        }
+      ],
       "hints": [
         "Usa --hidden 4 --lr 1 --seed 1 al crearla y --epochs 3000 --positive peligrosa al entrenarla.",
         "nn create red --hidden 4 --lr 1 --seed 1  y después  nn train red llamadas --epochs 3000 --positive peligrosa"

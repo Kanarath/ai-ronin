@@ -204,6 +204,34 @@
           "overlap": 0
         }
       },
+      "diagnostics": [
+        {
+          "id": "con-solape",
+          "when": {
+            "type": "event",
+            "event": "metrics.curve",
+            "where": {
+              "overlap": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "La curva debe salir del test, no del entrenamiento: metrics curve d te --positive abuso."
+        },
+        {
+          "id": "clase-distinta",
+          "when": {
+            "type": "event",
+            "event": "metrics.curve",
+            "where": {
+              "positive": {
+                "ne": "abuso"
+              }
+            }
+          },
+          "message": "Usa --positive abuso como clase positiva: metrics curve d te --positive abuso."
+        }
+      ],
       "hints": [
         "Es metrics curve, con la misma clase positiva.",
         "metrics curve d te --positive abuso"
