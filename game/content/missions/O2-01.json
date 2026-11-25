@@ -164,6 +164,21 @@
           "in_scope": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "fuera",
+          "when": {
+            "type": "event",
+            "event": "engagement.scoped",
+            "where": {
+              "engagement": "norte",
+              "asset": "A-05",
+              "in_scope": false
+            }
+          },
+          "message": "A-05 (el pipeline de modelos) SÍ está en alcance: compruébalo con engagement scope norte A-05."
+        }
+      ],
       "hints": [
         "engagement scope norte A-05"
       ]

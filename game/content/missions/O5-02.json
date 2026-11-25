@@ -96,6 +96,21 @@
           "correct": 4
         }
       },
+      "diagnostics": [
+        {
+          "id": "clasif",
+          "when": {
+            "type": "event",
+            "event": "gov.classified",
+            "where": {
+              "correct": {
+                "lt": 4
+              }
+            }
+          },
+          "message": "Clasifica bien los cuatro sistemas según el AI Act (revisa los que fallan)."
+        }
+      ],
       "hints": [
         "gov open forja · gov systems forja · gov classify forja <sistema> <prohibido|alto|transparencia|minimo>",
         "Una práctica prohibida, un uso del anexo III, un sistema que habla con personas y uno interno sin decisiones sobre personas."
@@ -165,6 +180,21 @@
           "correct": 4
         }
       },
+      "diagnostics": [
+        {
+          "id": "requisitos",
+          "when": {
+            "type": "event",
+            "event": "gov.required",
+            "where": {
+              "correct": {
+                "lt": 4
+              }
+            }
+          },
+          "message": "Asigna cada necesidad del cribado a su artículo del AI Act."
+        }
+      ],
       "hints": [
         "gov needs forja · gov require forja <N#> <artículo>",
         "N1 datos · N2 registros · N3 supervisión humana · N4 solidez y ciberseguridad."
@@ -265,6 +295,34 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "clasif",
+            "when": {
+              "type": "event",
+              "event": "gov.classified",
+              "where": {
+                "correct": {
+                  "lt": 4
+                }
+              }
+            },
+            "message": "Clasifica bien los cuatro sistemas."
+          },
+          {
+            "id": "requisitos",
+            "when": {
+              "type": "event",
+              "event": "gov.required",
+              "where": {
+                "correct": {
+                  "lt": 4
+                }
+              }
+            },
+            "message": "Asigna bien cada necesidad a su artículo."
+          }
+        ],
         "hints": [
           "Cuatro clasificaciones y cuatro artículos."
         ],

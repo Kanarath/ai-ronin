@@ -80,6 +80,20 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "no-reproduce",
+          "when": {
+            "type": "event",
+            "event": "bot.attacks",
+            "where": {
+              "bot": "kuro",
+              "successes": 0
+            }
+          },
+          "message": "Reproduce el fallo: con el bot kuro sin defensas la batería debe colar al menos un ataque (bot attack kuro)."
+        }
+      ],
       "hints": [
         "bot create kuro y después bot attack kuro"
       ]
@@ -247,6 +261,33 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "incompleto",
+          "when": {
+            "type": "event",
+            "event": "report.checked",
+            "where": {
+              "complete": false
+            }
+          },
+          "message": "El informe no supera la rúbrica todavía: informe revisar te dice qué campos faltan."
+        },
+        {
+          "id": "owasp",
+          "when": {
+            "type": "event",
+            "event": "report.checked",
+            "where": {
+              "complete": true,
+              "owasp": {
+                "not_contains": "LLM"
+              }
+            }
+          },
+          "message": "Usa una categoría OWASP LLM en el campo owasp."
+        }
+      ],
       "hints": [
         "En pasos: 1) bot create kuro 2) bot attack kuro. En evidencia: lo que salió en la batería.",
         "informe revisar te dice qué campo falta o no cumple."

@@ -65,6 +65,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "caught",
+          "when": {
+            "type": "event",
+            "event": "threat.eval",
+            "where": {
+              "caught": {
+                "ne": 4
+              }
+            }
+          },
+          "message": "Apaga la ortografía y autentica al remitente (amenaza defensa …): deben cazarse 4."
+        }
+      ],
       "hints": [
         "Tres comandos; el último es amenaza evaluar.",
         "answer 4"
@@ -95,6 +110,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "caught",
+          "when": {
+            "type": "event",
+            "event": "threat.eval",
+            "where": {
+              "caught": {
+                "ne": 4
+              }
+            }
+          },
+          "message": "Con la autenticación del remitente activa deben cazarse 4; mira en «Se cuelan» cuál escapa."
+        }
+      ],
       "hints": [
         "La línea «Se cuelan» lo dice.",
         "answer A4"
@@ -122,6 +152,35 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "pocas",
+          "when": {
+            "type": "event",
+            "event": "threat.eval",
+            "where": {
+              "caught": {
+                "lt": 5
+              }
+            }
+          },
+          "message": "Cierra el hueco con una política (no con un filtro): deben cazarse 5."
+        },
+        {
+          "id": "fp",
+          "when": {
+            "type": "event",
+            "event": "threat.eval",
+            "where": {
+              "caught": 5,
+              "fp": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Cazas 5 pero con falsos positivos: la política no debe marcar correos legítimos (fp 0)."
+        }
+      ],
       "hints": [
         "amenaza defensa fuera_de_banda on y amenaza evaluar.",
         "answer 5"

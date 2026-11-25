@@ -64,6 +64,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "con-defensa",
+          "when": {
+            "type": "event",
+            "event": "sandbox.run",
+            "where": {
+              "attacks_ok": {
+                "lt": 7
+              }
+            }
+          },
+          "message": "Mide la línea base sin defensas: sandbox show … y sandbox run (deben colarse los 7)."
+        }
+      ],
       "hints": [
         "sandbox show y sandbox run; mira la línea final.",
         "answer 7"
@@ -130,6 +145,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "sin-sinshell",
+          "when": {
+            "type": "event",
+            "event": "sandbox.run",
+            "where": {
+              "active": {
+                "not_contains": "sin_shell"
+              }
+            }
+          },
+          "message": "Quita el prompt prudente y monta la caja: activa sin_shell (sandbox set sin_shell on) y vuelve a correr."
+        }
+      ],
       "hints": [
         "Son cinco sandbox set … on y un sandbox run. El que queda no ataca la ejecución, sino lo que se muestra después.",
         "answer X6"
@@ -190,6 +220,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "ataques",
+          "when": {
+            "type": "event",
+            "event": "sandbox.run",
+            "where": {
+              "attacks_ok": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Cierra X6 con escapar_salida on y vuelve a correr: deben quedar 0 ataques."
+        }
+      ],
       "hints": [
         "Activa escapar_salida y repite. Mira «tareas legítimas que funcionan».",
         "answer 3"

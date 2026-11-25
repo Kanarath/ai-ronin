@@ -76,6 +76,21 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "faltan",
+          "when": {
+            "type": "event",
+            "event": "asi.covered",
+            "where": {
+              "correct_count": {
+                "lt": 9
+              }
+            }
+          },
+          "message": "Asigna bien a cada defensa el riesgo que cubre (9 en total)."
+        }
+      ],
       "hints": [
         "Lee qué frenaba cada defensa en su arco: D1 separa datos de instrucciones, D3 es el confused deputy, D7 son los mensajes entre agentes, D8 la propagación, D9 el agente que se desvía.",
         "D1 ASI01 · D2 ASI02 · D3 ASI03 · D4 ASI04 · D5 ASI04 · D6 ASI06 · D7 ASI07 · D8 ASI08 · D9 ASI10"
@@ -104,6 +119,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "faltan",
+          "when": {
+            "type": "event",
+            "event": "asi.coverage",
+            "where": {
+              "mapped": {
+                "lt": 9
+              }
+            }
+          },
+          "message": "Asigna al menos 9 coberturas antes de pintar el mapa (asi coverage)."
+        }
+      ],
       "hints": [
         "Cuenta las filas con «— sin defensa».",
         "answer 2"

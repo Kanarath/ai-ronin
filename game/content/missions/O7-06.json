@@ -68,6 +68,19 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "no-guarda",
+          "when": {
+            "type": "event",
+            "event": "mem.poisoned",
+            "where": {
+              "stored": false
+            }
+          },
+          "message": "Envenena la memoria para que la nota se GUARDE (memoria envenenar …)."
+        }
+      ],
       "hints": [
         "memoria estado y luego memoria envenenar.",
         "answer si"
@@ -104,6 +117,19 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "no-aplica",
+          "when": {
+            "type": "event",
+            "event": "mem.caso",
+            "where": {
+              "applied": false
+            }
+          },
+          "message": "Cambia de sesión y ejecuta el caso: la nota envenenada debe aplicarse (memoria nueva_sesion · memoria caso …)."
+        }
+      ],
       "hints": [
         "memoria nueva_sesion y luego memoria caso.",
         "answer si"
@@ -167,6 +193,19 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "aun-guarda",
+          "when": {
+            "type": "event",
+            "event": "mem.poisoned",
+            "where": {
+              "stored": true
+            }
+          },
+          "message": "Activa la defensa de aislar (memoria defensa aislar on): ahora la nota NO debe guardarse."
+        }
+      ],
       "hints": [
         "Tres comandos: la defensa, limpiar y envenenar otra vez.",
         "answer no"
@@ -196,6 +235,19 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "aun-aplica",
+          "when": {
+            "type": "event",
+            "event": "mem.caso",
+            "where": {
+              "applied": true
+            }
+          },
+          "message": "Activa la otra capa (la que revisa lo que sí se guarda): la nota no debe aplicarse."
+        }
+      ],
       "hints": [
         "Son seis comandos en orden; el último es memoria caso.",
         "answer no"

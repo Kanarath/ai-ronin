@@ -198,6 +198,21 @@
           "nist_ok": 4
         }
       },
+      "diagnostics": [
+        {
+          "id": "nist",
+          "when": {
+            "type": "event",
+            "event": "gov.mapped",
+            "where": {
+              "nist_ok": {
+                "lt": 4
+              }
+            }
+          },
+          "message": "Asigna los cuatro hallazgos a su función del NIST AI RMF (aún faltan algunos)."
+        }
+      ],
       "hints": [
         "gov findings forja · gov map forja F1 nist <función>",
         "Responsable y política → GOVERN. Inventario y contexto → MAP. Probar y medir → MEASURE. Tratar y cerrar → MANAGE."
@@ -215,6 +230,21 @@
           "iso_ok": 4
         }
       },
+      "diagnostics": [
+        {
+          "id": "iso",
+          "when": {
+            "type": "event",
+            "event": "gov.mapped",
+            "where": {
+              "iso_ok": {
+                "lt": 4
+              }
+            }
+          },
+          "message": "Asigna los cuatro hallazgos a su cláusula de ISO/IEC 42001."
+        }
+      ],
       "hints": [
         "gov map forja F1 iso <4…10>",
         "F1 liderazgo (5) · F2 contexto o planificación (4 o 6) · F3 evaluación del desempeño (9) · F4 tratamiento, operación o mejora (6, 8 o 10)"
@@ -278,6 +308,34 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "nist",
+            "when": {
+              "type": "event",
+              "event": "gov.mapped",
+              "where": {
+                "nist_ok": {
+                  "lt": 4
+                }
+              }
+            },
+            "message": "Asigna los cuatro hallazgos a su función del NIST AI RMF."
+          },
+          {
+            "id": "iso",
+            "when": {
+              "type": "event",
+              "event": "gov.mapped",
+              "where": {
+                "iso_ok": {
+                  "lt": 4
+                }
+              }
+            },
+            "message": "Asigna los cuatro hallazgos a su cláusula de ISO/IEC 42001."
+          }
+        ],
         "hints": [
           "Ocho asignaciones."
         ],

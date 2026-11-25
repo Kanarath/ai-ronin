@@ -85,6 +85,20 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "s04",
+          "when": {
+            "type": "event",
+            "event": "soc.viewed",
+            "where": {
+              "session": "S04",
+              "complete": false
+            }
+          },
+          "message": "Reconstruye S04 por completo (registro de seis campos con redacción) para encontrar el documento."
+        }
+      ],
       "hints": [
         "soc trazas taller · soc log taller tool_args on · soc log taller retrievals on · soc log taller identity on · soc log taller model_version on · soc log taller redact-pii on · soc show taller S04"
       ],
@@ -114,6 +128,19 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "sin-sesiones",
+          "when": {
+            "type": "event",
+            "event": "soc.searched",
+            "where": {
+              "sessions": 0
+            }
+          },
+          "message": "Busca el documento en TODO el registro (soc search …): aparece en varias sesiones."
+        }
+      ],
       "hints": [
         "soc search taller prov-77"
       ],
@@ -150,6 +177,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "sin-apagar",
+          "when": {
+            "type": "event",
+            "event": "soc.retest",
+            "where": {
+              "actions": {
+                "not_contains": "apagar-agente"
+              }
+            }
+          },
+          "message": "Activa el interruptor de emergencia (apagar-agente) y haz el retest."
+        }
+      ],
       "hints": [
         "soc contain taller apagar-agente on · soc retest taller"
       ],
@@ -227,6 +269,48 @@
           "notified": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "pasan",
+          "when": {
+            "type": "event",
+            "event": "soc.retest",
+            "where": {
+              "successes": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Aún pasan ataques: refuerza los controles."
+        },
+        {
+          "id": "eval",
+          "when": {
+            "type": "event",
+            "event": "soc.retest",
+            "where": {
+              "successes": 0,
+              "pass_rate": {
+                "lt": 1.0
+              }
+            }
+          },
+          "message": "0 ataques pero rompes tareas legítimas (pass_rate 1.0)."
+        },
+        {
+          "id": "sin-notificar",
+          "when": {
+            "type": "event",
+            "event": "soc.retest",
+            "where": {
+              "successes": 0,
+              "pass_rate": 1.0,
+              "notified": false
+            }
+          },
+          "message": "Falta notificar el incidente (notified)."
+        }
+      ],
       "hints": [
         "Hace falta un control que actúe sobre la acción (a dónde puede enviar datos el agente), no sobre el documento.",
         "soc contain taller bloquear-salida on · soc contain taller notificar-dpd on · soc retest taller"
@@ -246,6 +330,33 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "incompleto",
+          "when": {
+            "type": "event",
+            "event": "report.checked",
+            "where": {
+              "complete": false
+            }
+          },
+          "message": "El informe no supera la rúbrica todavía: informe revisar te dice qué campos faltan."
+        },
+        {
+          "id": "owasp",
+          "when": {
+            "type": "event",
+            "event": "report.checked",
+            "where": {
+              "complete": true,
+              "owasp": {
+                "not_contains": "LLM0"
+              }
+            }
+          },
+          "message": "Usa una categoría OWASP LLM0 en el campo owasp."
+        }
+      ],
       "hints": [
         "informe nuevo Inyección indirecta en prov-77-informe.pdf exfiltra la lista de clientes · informe campo owasp LLM01 · …",
         "Los pasos con comandos: 1) soc trazas taller 2) soc show taller S04 3) soc search taller prov-77. Verificación: el retest."
@@ -325,6 +436,33 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "s07",
+            "when": {
+              "type": "event",
+              "event": "soc.viewed",
+              "where": {
+                "session": "S07",
+                "complete": false
+              }
+            },
+            "message": "Reconstruye S07 por completo."
+          },
+          {
+            "id": "retest",
+            "when": {
+              "type": "event",
+              "event": "soc.retest",
+              "where": {
+                "successes": {
+                  "gt": 0
+                }
+              }
+            },
+            "message": "El retest debe quedar con 0 ataques, tareas a 1.0 y el incidente notificado."
+          }
+        ],
         "hints": [
           "Registro, línea de tiempo, alcance, contención, aviso."
         ],

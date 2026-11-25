@@ -85,6 +85,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "caught",
+          "when": {
+            "type": "event",
+            "event": "medios.eval",
+            "where": {
+              "caught": {
+                "ne": 1
+              }
+            }
+          },
+          "message": "Activa el detector por imagen (medios defensa detector_artefactos on) y evalúa: caza 1."
+        }
+      ],
       "hints": [
         "medios defensa detector_artefactos on y medios evaluar.",
         "answer 1"
@@ -145,6 +160,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "fp",
+          "when": {
+            "type": "event",
+            "event": "medios.eval",
+            "where": {
+              "fp": {
+                "ne": 1
+              }
+            }
+          },
+          "message": "Cambia al detector por procedencia y mira el daño colateral: marca 1 medio legítimo (fp 1)."
+        }
+      ],
       "hints": [
         "Tres comandos; el último es medios evaluar. Mira «auténticos marcados por error».",
         "answer 1"
@@ -208,6 +238,21 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-verif",
+          "when": {
+            "type": "event",
+            "event": "medios.eval",
+            "where": {
+              "active": {
+                "not_contains": "verificacion"
+              }
+            }
+          },
+          "message": "Para lo crítico no te fíes del medio: activa la verificación fuera de banda (medios defensa verificacion on)."
+        }
+      ],
       "hints": [
         "medios defensa verificacion on y medios evaluar.",
         "Es la misma idea de O8-02: segundo canal para lo sensible."

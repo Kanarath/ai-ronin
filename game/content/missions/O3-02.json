@@ -106,6 +106,21 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "faltan",
+          "when": {
+            "type": "event",
+            "event": "maestro.map",
+            "where": {
+              "correct_count": {
+                "lt": 4
+              }
+            }
+          },
+          "message": "Aún no están bien las cuatro primeras (AM1…AM4): revisa en qué capa va cada una."
+        }
+      ],
       "hints": [
         "AM1 es el modelo (L1), AM2 los datos (L2), AM3 el framework (L3), AM4 el despliegue (L4).",
         "maestro map AM1 L1 · AM2 L2 · AM3 L3 · AM4 L4"
@@ -170,6 +185,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "faltan",
+          "when": {
+            "type": "event",
+            "event": "maestro.map",
+            "where": {
+              "correct_count": {
+                "lt": 7
+              }
+            }
+          },
+          "message": "Faltan AM5…AM7 por clasificar bien (7 en total)."
+        }
+      ],
       "hints": [
         "maestro map AM5 L5 · AM6 L6 · AM7 L7.",
         "answer L7"

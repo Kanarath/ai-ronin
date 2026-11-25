@@ -72,6 +72,20 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-ciegos",
+          "when": {
+            "type": "event",
+            "event": "soc.detected",
+            "where": {
+              "rules": "correlacion",
+              "blind": 0
+            }
+          },
+          "message": "Con el registro por defecto, la regla de correlación debería tener puntos ciegos (blind>0): míralo."
+        }
+      ],
       "hints": [
         "soc trazas taller · soc rule taller correlacion on · soc detect taller"
       ],
@@ -99,6 +113,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "con-ciegos",
+          "when": {
+            "type": "event",
+            "event": "soc.detected",
+            "where": {
+              "rules": "palabras-clave",
+              "blind": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Registra los seis campos con redacción y deja solo la regla de palabras clave: no debe quedar ningún punto ciego (blind 0)."
+        }
+      ],
       "hints": [
         "soc log taller tool_args on · soc log taller retrievals on · soc log taller identity on · soc log taller model_version on · soc log taller redact-pii on",
         "soc rule taller correlacion off · soc rule taller palabras-clave on · soc detect taller"
@@ -252,6 +282,35 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "recall",
+          "when": {
+            "type": "event",
+            "event": "soc.detected",
+            "where": {
+              "recall": {
+                "lt": 1.0
+              }
+            }
+          },
+          "message": "Ajusta las reglas para no perder ningún ataque (recall 1.0)."
+        },
+        {
+          "id": "precision",
+          "when": {
+            "type": "event",
+            "event": "soc.detected",
+            "where": {
+              "recall": 1.0,
+              "precision": {
+                "lte": 0.6
+              }
+            }
+          },
+          "message": "Tienes recall 1.0 pero demasiados falsos positivos: sube la precisión por encima de 0.6."
+        }
+      ],
       "hints": [
         "Las dos reglas que cubre correlacion ya no necesitan estar activas por separado.",
         "soc rule taller dominio-externo off · soc rule taller instruccion-en-dato off · soc detect taller"
@@ -317,6 +376,48 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "recall",
+            "when": {
+              "type": "event",
+              "event": "soc.detected",
+              "where": {
+                "recall": {
+                  "lt": 1.0
+                }
+              }
+            },
+            "message": "Consigue recall 1.0 (no pierdas ningún ataque)."
+          },
+          {
+            "id": "precision",
+            "when": {
+              "type": "event",
+              "event": "soc.detected",
+              "where": {
+                "recall": 1.0,
+                "precision": {
+                  "lte": 0.6
+                }
+              }
+            },
+            "message": "Sube la precisión por encima de 0.6."
+          },
+          {
+            "id": "ciegos",
+            "when": {
+              "type": "event",
+              "event": "soc.detected",
+              "where": {
+                "blind": {
+                  "gt": 0
+                }
+              }
+            },
+            "message": "Elimina los puntos ciegos (blind 0)."
+          }
+        ],
         "hints": [
           "Primero el registro, después tres reglas."
         ],

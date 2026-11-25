@@ -86,6 +86,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "caught",
+          "when": {
+            "type": "event",
+            "event": "threat.eval",
+            "where": {
+              "caught": {
+                "ne": 1
+              }
+            }
+          },
+          "message": "Activa el filtro de ortografía (amenaza defensa ortografia on) y evalúa: debe cazar 1."
+        }
+      ],
       "hints": [
         "amenaza defensa ortografia on y amenaza evaluar.",
         "answer 1"
@@ -146,6 +161,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "fp",
+          "when": {
+            "type": "event",
+            "event": "threat.eval",
+            "where": {
+              "fp": {
+                "ne": 1
+              }
+            }
+          },
+          "message": "Mira el daño colateral en esa misma evaluación: el filtro de ortografía marca 1 correo legítimo (fp 1)."
+        }
+      ],
       "hints": [
         "Mira la línea «legítimos marcados por error».",
         "answer 1"

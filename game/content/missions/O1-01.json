@@ -142,6 +142,21 @@
           "in_scope": false
         }
       },
+      "diagnostics": [
+        {
+          "id": "en-alcance",
+          "when": {
+            "type": "event",
+            "event": "engagement.scoped",
+            "where": {
+              "engagement": "norte",
+              "asset": "A-07",
+              "in_scope": true
+            }
+          },
+          "message": "A-07 (el chatbot de producción) queda FUERA de alcance: no se puede probar en producción."
+        }
+      ],
       "hints": [
         "engagement scope norte A-07"
       ]
@@ -192,6 +207,21 @@
           "in_scope": false
         }
       },
+      "diagnostics": [
+        {
+          "id": "en-alcance",
+          "when": {
+            "type": "event",
+            "event": "engagement.scoped",
+            "where": {
+              "engagement": "norte",
+              "asset": "A-06",
+              "in_scope": true
+            }
+          },
+          "message": "A-06 (la API del proveedor) queda FUERA de alcance: no tienes autorización sobre ella."
+        }
+      ],
       "hints": [
         "engagement scope norte A-06"
       ]

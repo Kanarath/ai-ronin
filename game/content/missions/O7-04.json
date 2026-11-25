@@ -56,6 +56,21 @@
           "decided": 8
         }
       },
+      "diagnostics": [
+        {
+          "id": "faltan",
+          "when": {
+            "type": "event",
+            "event": "approvals.decided",
+            "where": {
+              "decided": {
+                "lt": 8
+              }
+            }
+          },
+          "message": "Decide las ocho aprobaciones del modo explicación (approvals …)."
+        }
+      ],
       "hints": [
         "approvals mode explicacion, approvals list y ocho approvals decide R1 si … R8 si/no según te parezca."
       ]

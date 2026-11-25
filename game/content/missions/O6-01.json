@@ -143,6 +143,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "sin-argumentos",
+          "when": {
+            "type": "event",
+            "event": "soc.viewed",
+            "where": {
+              "session": "S04",
+              "destinations": {
+                "not_contains": "cdn-estadisticas"
+              }
+            }
+          },
+          "message": "Registra también los ARGUMENTOS de las herramientas (no solo los nombres) y vuelve a mirar S04: aparecerá el destino cdn-estadisticas."
+        }
+      ],
       "hints": [
         "soc log taller tool_args on · soc show taller S04"
       ],
@@ -215,6 +231,33 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "faltan-preguntas",
+          "when": {
+            "type": "event",
+            "event": "soc.coverage",
+            "where": {
+              "answered": {
+                "lt": 6
+              }
+            }
+          },
+          "message": "Responde las seis preguntas forenses: registra los campos que falten."
+        },
+        {
+          "id": "con-pii",
+          "when": {
+            "type": "event",
+            "event": "soc.coverage",
+            "where": {
+              "answered": 6,
+              "pii_stored": true
+            }
+          },
+          "message": "Llegas a 6/6 pero guardando datos personales: redáctalos y mantén las seis respuestas."
+        }
+      ],
       "hints": [
         "Primero consigue 6/6 y mira el aviso de la cobertura; después corrígelo.",
         "soc log taller retrievals on · soc log taller identity on · soc log taller model_version on · soc coverage taller · soc log taller redact-pii on · soc coverage taller"
@@ -285,6 +328,31 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "con-pii",
+            "when": {
+              "type": "event",
+              "event": "soc.coverage",
+              "where": {
+                "pii_stored": true
+              }
+            },
+            "message": "Consigue 6/6 preguntas sin guardar PII (redacta los datos personales)."
+          },
+          {
+            "id": "s07",
+            "when": {
+              "type": "event",
+              "event": "soc.viewed",
+              "where": {
+                "session": "S07",
+                "complete": false
+              }
+            },
+            "message": "Reconstruye la sesión S07 por completo."
+          }
+        ],
         "hints": [
           "Seis campos y la redacción."
         ],

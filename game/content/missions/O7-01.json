@@ -87,6 +87,21 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "faltan",
+          "when": {
+            "type": "event",
+            "event": "asi.classified",
+            "where": {
+              "correct_count": {
+                "lt": 5
+              }
+            }
+          },
+          "message": "Aún no están bien los cinco primeros incidentes (I1–I5): revisa su categoría ASI."
+        }
+      ],
       "hints": [
         "I1 cambia el objetivo; I2 usa mal una herramienta legítima; I3 usa los permisos del agente; I4 viene de un tercero; I5 ejecuta código.",
         "asi classify I1 ASI01 · I2 ASI02 · I3 ASI03 · I4 ASI04 · I5 ASI05"
@@ -139,6 +154,21 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "faltan",
+          "when": {
+            "type": "event",
+            "event": "asi.classified",
+            "where": {
+              "correct_count": {
+                "lt": 10
+              }
+            }
+          },
+          "message": "Faltan I6–I10 por clasificar bien (10 en total)."
+        }
+      ],
       "hints": [
         "I6 memoria · I7 mensajes entre agentes · I8 propagación · I9 confianza de la persona · I10 el agente se desvía solo.",
         "asi classify I6 ASI06 · I7 ASI07 · I8 ASI08 · I9 ASI09 · I10 ASI10"

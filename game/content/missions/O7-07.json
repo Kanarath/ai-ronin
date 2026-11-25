@@ -81,6 +81,20 @@
           "complete": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "incompleta",
+          "when": {
+            "type": "event",
+            "event": "marco.card",
+            "where": {
+              "finding": "F1",
+              "complete": false
+            }
+          },
+          "message": "Completa la tarjeta de F1: mapea todos sus campos (marco set F1 …)."
+        }
+      ],
       "hints": [
         "marco set F1 asi ASI01 · llm LLM01 · atlas Initial Access · nist MAP; luego marco card F1.",
         "ATLAS: la táctica con la que el adversario entra. NIST: dónde se identifica el riesgo."
@@ -111,6 +125,20 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "incompleta",
+          "when": {
+            "type": "event",
+            "event": "marco.card",
+            "where": {
+              "finding": "F3",
+              "complete": false
+            }
+          },
+          "message": "Completa la tarjeta de F3 (el envenenamiento de memoria de O7-06)."
+        }
+      ],
       "hints": [
         "marco set F3 asi ASI06 · llm LLM04 · atlas Persistence · nist MEASURE.",
         "answer Persistence"
@@ -160,6 +188,21 @@
           "gaps": 0
         }
       },
+      "diagnostics": [
+        {
+          "id": "huecos",
+          "when": {
+            "type": "event",
+            "event": "asi.closed",
+            "where": {
+              "gaps": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Cierra el mapa que O7-02 dejó abierto: cubre los huecos con las defensas que has montado (gaps 0)."
+        }
+      ],
       "hints": [
         "asi close D10 ASI05 y asi close D11 ASI09.",
         "D10 es la caja de arena (O7-03); D11, la aprobación verificable (O7-04)."

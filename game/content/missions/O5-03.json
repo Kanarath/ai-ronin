@@ -284,6 +284,35 @@
           "needless_avoid": 0
         }
       },
+      "diagnostics": [
+        {
+          "id": "fuera-apetito",
+          "when": {
+            "type": "event",
+            "event": "gov.register",
+            "where": {
+              "within": {
+                "lt": 6
+              }
+            }
+          },
+          "message": "Deja los seis riesgos dentro del apetito: ajusta los controles de los que se salen."
+        },
+        {
+          "id": "evita",
+          "when": {
+            "type": "event",
+            "event": "gov.register",
+            "where": {
+              "within": 6,
+              "needless_avoid": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Has evitado algún sistema sin necesidad: mantén los seis dentro del apetito sin evitar ninguno."
+        }
+      ],
       "hints": [
         "gov treat forja R1 mitigar · … · gov risks forja",
         "R1 a R5: mitigar. R6 ya está evitado."
@@ -346,6 +375,35 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "fuera-apetito",
+            "when": {
+              "type": "event",
+              "event": "gov.register",
+              "where": {
+                "within": {
+                  "lt": 6
+                }
+              }
+            },
+            "message": "Deja los seis riesgos dentro del apetito."
+          },
+          {
+            "id": "evita",
+            "when": {
+              "type": "event",
+              "event": "gov.register",
+              "where": {
+                "within": 6,
+                "needless_avoid": {
+                  "gt": 0
+                }
+              }
+            },
+            "message": "No evites ningún sistema sin necesidad."
+          }
+        ],
         "hints": [
           "Seis tratamientos y un vistazo al registro."
         ],

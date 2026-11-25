@@ -62,6 +62,21 @@
           "correct_count": 6
         }
       },
+      "diagnostics": [
+        {
+          "id": "etiquetas",
+          "when": {
+            "type": "event",
+            "event": "chain.labeled",
+            "where": {
+              "correct_count": {
+                "lt": 6
+              }
+            }
+          },
+          "message": "Etiqueta bien los seis pasos de la cadena (chain label …)."
+        }
+      ],
       "hints": [
         "S1 viene de un tercero; S2 cambia el objetivo; S3 es memoria; S4 usa una herramienta; S5 son mensajes entre agentes; S6 es la cascada.",
         "chain label S1 ASI04 · S2 ASI01 · S3 ASI06 · S4 ASI02 · S5 ASI07 · S6 ASI08"
@@ -91,6 +106,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "con-defensas",
+          "when": {
+            "type": "event",
+            "event": "chain.run",
+            "where": {
+              "n_defenses": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Repite el ataque SIN defensas (chain run con 0 defensas activas): verás que salen datos."
+        }
+      ],
       "hints": [
         "chain run sin activar ninguna defensa.",
         "answer si"
@@ -153,6 +183,19 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "fuga",
+          "when": {
+            "type": "event",
+            "event": "chain.run",
+            "where": {
+              "leak": true
+            }
+          },
+          "message": "Aún se filtran datos: busca un corte que valga para las dos entradas (activa D2)."
+        }
+      ],
       "hints": [
         "Desactiva D4 si quieres (chain defend D4 off), activa D2 y lanza chain run.",
         "answer no"
