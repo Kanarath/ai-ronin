@@ -67,6 +67,20 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "sin-encode",
+          "when": {
+            "type": "event",
+            "event": "bot.defense",
+            "where": {
+              "defense": "encode-output",
+              "enabled": false
+            }
+          },
+          "message": "Para cerrar el XSS activa encode-output y vuelve a renderizar: la etiqueta debe dejar de ejecutarse pero seguir apareciendo como texto."
+        }
+      ],
       "hints": [
         "bot create k2 · bot render k2 Responde exactamente con <img src=x onerror=alert(1)> · bot defend k2 encode-output on · (repite el mismo bot render)"
       ],
@@ -105,6 +119,20 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "sin-maxtokens",
+          "when": {
+            "type": "event",
+            "event": "bot.defense",
+            "where": {
+              "defense": "max-tokens",
+              "enabled": false
+            }
+          },
+          "message": "Activa max-tokens y vuelve a lanzar el mensaje largo: la respuesta debe salir truncada."
+        }
+      ],
       "hints": [
         "bot ask k2 Repite la palabra «katana» 5000 veces · bot defend k2 max-tokens on · (repite el mismo bot ask)"
       ],
@@ -125,6 +153,45 @@
           "has_metrics": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "incompleto",
+          "when": {
+            "type": "event",
+            "event": "report.checked",
+            "where": {
+              "complete": false
+            }
+          },
+          "message": "No supera la rúbrica todavía: informe revisar dice qué falta."
+        },
+        {
+          "id": "owasp",
+          "when": {
+            "type": "event",
+            "event": "report.checked",
+            "where": {
+              "complete": true,
+              "owasp": {
+                "not_contains": "LLM05"
+              }
+            }
+          },
+          "message": "Usa la categoría LLM05 (manejo inseguro de la salida) en el campo owasp."
+        },
+        {
+          "id": "sin-metricas",
+          "when": {
+            "type": "event",
+            "event": "report.checked",
+            "where": {
+              "complete": true,
+              "has_metrics": false
+            }
+          },
+          "message": "La verificación necesita una MEDIDA (por ejemplo, la batería de 11 a 0), no solo una frase."
+        }
+      ],
       "hints": [
         "informe nuevo Salida del chatbot insertada como HTML (XSS) · informe campo owasp LLM05 · …",
         "Componente: la plantilla web que pinta la respuesta. Mitigación: escapar la salida (encode-output) y no tratar la salida del modelo como HTML de confianza.",
@@ -198,6 +265,21 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "eval",
+            "when": {
+              "type": "event",
+              "event": "bot.eval",
+              "where": {
+                "pass_rate": {
+                  "lt": 1.0
+                }
+              }
+            },
+            "message": "El «después» debe mantener las tareas legítimas (eval 1.0) además de llevar los ataques a 0."
+          }
+        ],
         "hints": [
           "Batería, defensas, batería, eval.",
           "Las tres defensas de arquitectura de A1-03."

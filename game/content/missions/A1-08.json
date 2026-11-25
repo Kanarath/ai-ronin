@@ -75,6 +75,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "frenadas",
+          "when": {
+            "type": "event",
+            "event": "jailbreak.eval",
+            "where": {
+              "frenadas": {
+                "ne": 1
+              }
+            }
+          },
+          "message": "Con solo el filtro de palabras debe frenar 1 de las de mal uso. Si frenas 0, actívalo (jailbreak defensa filtro_entrada on · jailbreak evaluar); si frenas más, has activado defensas de más."
+        }
+      ],
       "hints": [
         "jailbreak defensa filtro_entrada on y jailbreak evaluar.",
         "answer 1"
@@ -102,6 +117,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "frenadas",
+          "when": {
+            "type": "event",
+            "event": "jailbreak.eval",
+            "where": {
+              "frenadas": {
+                "ne": 3
+              }
+            }
+          },
+          "message": "Añade el clasificador (jailbreak defensa clasificador on) y evalúa: deben frenarse 3."
+        }
+      ],
       "hints": [
         "jailbreak defensa clasificador on y jailbreak evaluar.",
         "answer 3"
@@ -163,6 +193,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "frenadas",
+          "when": {
+            "type": "event",
+            "event": "jailbreak.eval",
+            "where": {
+              "frenadas": {
+                "ne": 6
+              }
+            }
+          },
+          "message": "Monta la defensa en profundidad (limite_turnos, limite_contexto y normalizar, además de las anteriores) y evalúa: deben frenarse las 6."
+        }
+      ],
       "hints": [
         "Tres jailbreak defensa … on y un jailbreak evaluar.",
         "answer 6"
