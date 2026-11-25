@@ -76,6 +76,21 @@
           "correct": 4
         }
       },
+      "diagnostics": [
+        {
+          "id": "casos",
+          "when": {
+            "type": "event",
+            "event": "audit.duty",
+            "where": {
+              "correct": {
+                "lt": 4
+              }
+            }
+          },
+          "message": "Aún no están bien los 4 casos: revisa cuáles exigen evaluación de impacto en el valle."
+        }
+      ],
       "hints": [
         "audit open valle · audit cases valle · audit duty valle <caso> <si|no> <si|no>",
         "Para la FRIA importa quién despliega (público o servicio público) y qué punto del anexo III es; para la EIPD, si se tratan datos personales con alto riesgo.",
@@ -95,6 +110,21 @@
           "correct": 10
         }
       },
+      "diagnostics": [
+        {
+          "id": "colocacion",
+          "when": {
+            "type": "event",
+            "event": "audit.placed",
+            "where": {
+              "correct": {
+                "lt": 10
+              }
+            }
+          },
+          "message": "Coloca bien los diez elementos del borrador en la FRIA; revisa los que fallan."
+        }
+      ],
       "hints": [
         "audit elements valle · audit place valle <E#> <fria|eipd|ambas>",
         "Necesidad y proporcionalidad, medidas de protección de datos y consulta previa son del RGPD. Periodo, colectivos, supervisión humana, reclamaciones y notificación a la autoridad de vigilancia del mercado son del art. 27.",
@@ -112,6 +142,21 @@
           "correct": 6
         }
       },
+      "diagnostics": [
+        {
+          "id": "asignacion",
+          "when": {
+            "type": "event",
+            "event": "audit.assigned",
+            "where": {
+              "correct": {
+                "lt": 6
+              }
+            }
+          },
+          "message": "Asigna las seis tareas a su actor correcto."
+        }
+      ],
       "hints": [
         "audit roles valle · audit assign valle <T#> <actor>",
         "El proveedor no hace la FRIA: la hace quien usa el sistema. El DPD asesora; no firma la EIPD.",
@@ -272,6 +317,47 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "casos",
+            "when": {
+              "type": "event",
+              "event": "audit.duty",
+              "where": {
+                "correct": {
+                  "lt": 4
+                }
+              }
+            },
+            "message": "Decide bien los 4 casos."
+          },
+          {
+            "id": "colocacion",
+            "when": {
+              "type": "event",
+              "event": "audit.placed",
+              "where": {
+                "correct": {
+                  "lt": 10
+                }
+              }
+            },
+            "message": "Coloca bien los 10 elementos."
+          },
+          {
+            "id": "asignacion",
+            "when": {
+              "type": "event",
+              "event": "audit.assigned",
+              "where": {
+                "correct": {
+                  "lt": 6
+                }
+              }
+            },
+            "message": "Asigna bien las 6 tareas."
+          }
+        ],
         "hints": [
           "Cuatro casos, diez elementos y seis tareas."
         ],

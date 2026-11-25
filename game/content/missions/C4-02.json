@@ -84,6 +84,39 @@
           "defense_count": 5
         }
       },
+      "diagnostics": [
+        {
+          "id": "brecha",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "a2a",
+              "system": "red",
+              "breached": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Aún se cuela algún ataque: activa los cinco controles de C4-01 (sin monitor)."
+        },
+        {
+          "id": "conteo",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "a2a",
+              "system": "red",
+              "breached": 0,
+              "defense_count": {
+                "ne": 5
+              }
+            }
+          },
+          "message": "Este paso mide exactamente 5 controles (sin monitor); crea la malla nueva para no acumular defensas."
+        }
+      ],
       "hints": [
         "a2a defend red message-auth on, y lo mismo con card-verification, hop-limit, context-minimization y delegated-authz.",
         "Después: lab resilience a2a red"
@@ -144,6 +177,23 @@
           "robust": 2
         }
       },
+      "diagnostics": [
+        {
+          "id": "poco-robusto",
+          "when": {
+            "type": "event",
+            "event": "lab.resilience",
+            "where": {
+              "kind": "a2a",
+              "system": "red",
+              "robust": {
+                "lt": 2
+              }
+            }
+          },
+          "message": "Añade el monitor como segunda capa (a2a defend red monitor on) y vuelve a medir: deben quedar 2 robustos."
+        }
+      ],
       "hints": [
         "Pon tu hipótesis y después los dos comandos del enunciado."
       ],

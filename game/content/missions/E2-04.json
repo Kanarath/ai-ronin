@@ -95,6 +95,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "clientes",
+          "when": {
+            "type": "event",
+            "event": "priv.federado",
+            "where": {
+              "clientes": {
+                "ne": 25
+              }
+            }
+          },
+          "message": "Entrena con 25 clientes: priv federado prestamos --clientes 25."
+        }
+      ],
       "hints": [
         "priv federado prestamos --clientes 25; mira la fila «federado».",
         "answer 0.845"
@@ -159,6 +174,19 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "no-detecta",
+          "when": {
+            "type": "event",
+            "event": "priv.olvidar",
+            "where": {
+              "detecta": false
+            }
+          },
+          "message": "Comprueba el ataque de pertenencia sobre los pesos: priv olvidar … debería delatar a alguien."
+        }
+      ],
       "hints": [
         "priv olvidar prestamos; mira la confianza con y sin la fila.",
         "answer si"

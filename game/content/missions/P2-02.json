@@ -92,6 +92,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "otro-dia",
+          "when": {
+            "type": "event",
+            "event": "monitor.trace",
+            "where": {
+              "day": {
+                "ne": 6
+              }
+            }
+          },
+          "message": "Abre la traza más lenta de ese día: monitor trace 6."
+        }
+      ],
       "hints": [
         "Mira la línea «Donde se va el tiempo».",
         "answer estado_envio"
@@ -160,6 +175,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "rate",
+          "when": {
+            "type": "event",
+            "event": "monitor.dashboard",
+            "where": {
+              "rate": {
+                "ne": 0.1
+              }
+            }
+          },
+          "message": "Ajusta el muestreo del juez al valor del enunciado (rate 0.1) para que se vea la caída de calidad."
+        }
+      ],
       "hints": [
         "Registra tu hipótesis y lanza el comando con --muestreo 0.1. Mira la fila del día 6.",
         "answer 0.78"

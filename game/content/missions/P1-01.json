@@ -140,6 +140,22 @@
           "valid": 9
         }
       },
+      "diagnostics": [
+        {
+          "id": "validas",
+          "when": {
+            "type": "event",
+            "event": "app.eval",
+            "where": {
+              "app": "ext",
+              "valid": {
+                "ne": 9
+              }
+            }
+          },
+          "message": "Pide salida JSON (app set ext formato_json on) y vuelve a medir: deben quedar 9 válidas."
+        }
+      ],
       "hints": [
         "Pon tu hipótesis y lanza los dos comandos."
       ],
@@ -157,6 +173,22 @@
           "valid": 10
         }
       },
+      "diagnostics": [
+        {
+          "id": "validas",
+          "when": {
+            "type": "event",
+            "event": "app.eval",
+            "where": {
+              "app": "ext",
+              "valid": {
+                "ne": 10
+              }
+            }
+          },
+          "message": "Valida contra el esquema y reintenta (app set ext esquema on): deben quedar 10 válidas."
+        }
+      ],
       "hints": [
         "app set ext esquema on y después app eval ext"
       ],

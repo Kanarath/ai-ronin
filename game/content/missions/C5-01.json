@@ -113,6 +113,20 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "en-alcance",
+          "when": {
+            "type": "event",
+            "event": "engagement.scoped",
+            "where": {
+              "asset": "A-06",
+              "in_scope": true
+            }
+          },
+          "message": "Revisa bien: A-06 (la API del proveedor) queda FUERA de alcance; no tienes autorización sobre ella."
+        }
+      ],
       "hints": [
         "engagement scope final A-06"
       ],
@@ -130,6 +144,21 @@
           "bound": 5
         }
       },
+      "diagnostics": [
+        {
+          "id": "faltan",
+          "when": {
+            "type": "event",
+            "event": "engagement.bound",
+            "where": {
+              "bound": {
+                "lt": 5
+              }
+            }
+          },
+          "message": "Vincula los cinco activos en alcance (engagement bind …)."
+        }
+      ],
       "hints": [
         "Cinco comandos de creación y cinco vínculos.",
         "bot create kuro · rag create docs · rag ingest docs · agent create taller · mcp host erp · supply forja pipe · engagement bind final A-01 kuro · engagement bind final A-02 docs · engagement bind final A-03 taller · engagement bind final A-04 erp · engagement bind final A-05 pipe"
@@ -148,6 +177,21 @@
           "covered": 5
         }
       },
+      "diagnostics": [
+        {
+          "id": "falta-cobertura",
+          "when": {
+            "type": "event",
+            "event": "engagement.threat",
+            "where": {
+              "covered": {
+                "lt": 5
+              }
+            }
+          },
+          "message": "Cubre al menos una amenaza en cada uno de los cinco activos."
+        }
+      ],
       "hints": [
         "Chatbot: A1. Buscador: A2. Asistente: A3. Host MCP: A4. Pipeline: A6.",
         "engagement threat final A-01 LLM07 · engagement threat final A-02 LLM01 · engagement threat final A-03 ASI01 · engagement threat final A-04 ASI04 · engagement threat final A-05 LLM03"
@@ -248,6 +292,34 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "faltan",
+            "when": {
+              "type": "event",
+              "event": "engagement.bound",
+              "where": {
+                "bound": {
+                  "lt": 5
+                }
+              }
+            },
+            "message": "Vincula los cinco activos."
+          },
+          {
+            "id": "falta-cobertura",
+            "when": {
+              "type": "event",
+              "event": "engagement.threat",
+              "where": {
+                "covered": {
+                  "lt": 5
+                }
+              }
+            },
+            "message": "Cubre amenazas en los cinco activos."
+          }
+        ],
         "hints": [
           "Puedes reutilizar las copias de laboratorio que ya creaste."
         ],

@@ -68,6 +68,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "validas",
+          "when": {
+            "type": "event",
+            "event": "app.eval",
+            "where": {
+              "app": "ext",
+              "valid": {
+                "ne": 10
+              }
+            }
+          },
+          "message": "Prepara el extractor como en P1-01 (formato_json y esquema): las 10 salidas deben ser válidas."
+        }
+      ],
       "hints": [
         "Son cuatro comandos; mira «campos correctos».",
         "answer 0.767"
@@ -85,6 +101,22 @@
           "right": 25
         }
       },
+      "diagnostics": [
+        {
+          "id": "aciertos",
+          "when": {
+            "type": "event",
+            "event": "app.eval",
+            "where": {
+              "app": "ext",
+              "right": {
+                "ne": 25
+              }
+            }
+          },
+          "message": "Añade instrucciones claras (app set ext instrucciones on) y mide: deben acertar 25."
+        }
+      ],
       "hints": [
         "app set ext instrucciones on y después app eval ext"
       ],
@@ -110,6 +142,22 @@
           "right": 28
         }
       },
+      "diagnostics": [
+        {
+          "id": "aciertos",
+          "when": {
+            "type": "event",
+            "event": "app.eval",
+            "where": {
+              "app": "ext",
+              "right": {
+                "ne": 28
+              }
+            }
+          },
+          "message": "Añade tres ejemplos resueltos (app set ext ejemplos on) y mide: deben acertar 28."
+        }
+      ],
       "hints": [
         "Pon tu hipótesis y lanza los dos comandos."
       ],
@@ -160,6 +208,22 @@
           "right": 29
         }
       },
+      "diagnostics": [
+        {
+          "id": "aciertos",
+          "when": {
+            "type": "event",
+            "event": "app.eval",
+            "where": {
+              "app": "ext",
+              "right": {
+                "ne": 29
+              }
+            }
+          },
+          "message": "Arregla el caso c07 delimitando la entrada (app set ext delimitar on) y mide: deben acertar 29."
+        }
+      ],
       "hints": [
         "Tres comandos: app run ext c07 · app set ext delimitar on · app eval ext"
       ],

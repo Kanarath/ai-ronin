@@ -56,6 +56,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "con-veneno",
+          "when": {
+            "type": "event",
+            "event": "backdoor.train",
+            "where": {
+              "veneno": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Para el modelo limpio entrena SIN veneno: backdoor entrenar (sin --veneno)."
+        }
+      ],
       "hints": [
         "backdoor entrenar; mira «éxito de la puerta trasera».",
         "answer 0"
@@ -89,6 +104,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "veneno",
+          "when": {
+            "type": "event",
+            "event": "backdoor.train",
+            "where": {
+              "veneno": {
+                "ne": 4
+              }
+            }
+          },
+          "message": "Envenena con 4 ejemplos: backdoor entrenar --veneno 4."
+        }
+      ],
       "hints": [
         "backdoor entrenar --veneno 4.",
         "answer 1"
@@ -117,6 +147,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "veneno",
+          "when": {
+            "type": "event",
+            "event": "backdoor.train",
+            "where": {
+              "veneno": {
+                "ne": 4
+              }
+            }
+          },
+          "message": "Usa el modelo envenenado con 4 ejemplos (backdoor entrenar --veneno 4) y mira su accuracy en datos normales."
+        }
+      ],
       "hints": [
         "Lo dice la línea «Accuracy en datos normales».",
         "answer 1"

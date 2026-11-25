@@ -68,6 +68,19 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "error",
+          "when": {
+            "type": "event",
+            "event": "py.ran",
+            "where": {
+              "ok": false
+            }
+          },
+          "message": "Tu código ha dado un error: míralo en el editor, corrígelo y vuelve a ejecutarlo con py run."
+        }
+      ],
       "hints": [
         "Escribe py, pon print(\"hola\") en el editor y escribe py run.",
         "Desde forja/ejercicios: python -m ronin_check P0-04 · y aquí: evidence import"

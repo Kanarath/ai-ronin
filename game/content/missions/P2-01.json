@@ -233,6 +233,20 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "v3-no-pasa",
+          "when": {
+            "type": "event",
+            "event": "evals.gate",
+            "where": {
+              "version": "v3",
+              "passed": false
+            }
+          },
+          "message": "Con la puerta puesta, v3 debe PASAR: revisa los umbrales (--media 0.7 --segmento 0.6 --prohibidas 0)."
+        }
+      ],
       "hints": [
         "Primero evals gate v2 con las tres opciones y después evals gate v3 con las mismas.",
         "evals gate v2 --media 0.7 --segmento 0.6 --prohibidas 0 y evals gate v3 --media 0.7 --segmento 0.6 --prohibidas 0"

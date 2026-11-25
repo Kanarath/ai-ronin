@@ -85,6 +85,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "sin-random",
+          "when": {
+            "type": "event",
+            "event": "audit.sampled",
+            "where": {
+              "mode": {
+                "ne": "random"
+              }
+            }
+          },
+          "message": "Primero prueba una muestra ALEATORIA para ver que no vale (audit sample … al azar)."
+        }
+      ],
       "hints": [
         "audit open valle · audit controls valle · audit sample valle --random 6 · audit plan valle"
       ],
@@ -101,6 +116,19 @@
           "valid": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "invalida",
+          "when": {
+            "type": "event",
+            "event": "audit.plan",
+            "where": {
+              "valid": false
+            }
+          },
+          "message": "La muestra no es válida: básala en el riesgo e incluye los cuatro controles de riesgo alto."
+        }
+      ],
       "hints": [
         "audit sample valle <C## C## …> · audit plan valle",
         "Los de riesgo alto son C05, C07, C08 y C10. ¿Qué función queda sin cubrir?",
@@ -195,6 +223,50 @@
           "alta_ok": 4
         }
       },
+      "diagnostics": [
+        {
+          "id": "pendientes",
+          "when": {
+            "type": "event",
+            "event": "audit.rated",
+            "where": {
+              "pending": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Te quedan controles sin clasificar: clasifícalos todos."
+        },
+        {
+          "id": "incorrectos",
+          "when": {
+            "type": "event",
+            "event": "audit.rated",
+            "where": {
+              "pending": 0,
+              "wrong": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Hay clasificaciones incorrectas: revisa la evidencia de cada control."
+        },
+        {
+          "id": "alta",
+          "when": {
+            "type": "event",
+            "event": "audit.rated",
+            "where": {
+              "pending": 0,
+              "wrong": 0,
+              "alta_ok": {
+                "lt": 4
+              }
+            }
+          },
+          "message": "Los cuatro controles de riesgo alto deben quedar bien clasificados."
+        }
+      ],
       "hints": [
         "audit evidence valle <C##> · audit rate valle <C##> <conforme|nc-mayor|nc-menor|observacion>",
         "¿Existe el control? ¿Falla siempre, una vez o todavía no?",
@@ -267,6 +339,32 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "invalida",
+            "when": {
+              "type": "event",
+              "event": "audit.plan",
+              "where": {
+                "valid": false
+              }
+            },
+            "message": "La muestra debe ser válida (basada en el riesgo)."
+          },
+          {
+            "id": "rated",
+            "when": {
+              "type": "event",
+              "event": "audit.rated",
+              "where": {
+                "wrong": {
+                  "gt": 0
+                }
+              }
+            },
+            "message": "Clasifica bien todos los controles de la muestra, sin errores."
+          }
+        ],
         "hints": [
           "Muestra, plan, evidencias, expedientes de C10 y clasificaciones."
         ],

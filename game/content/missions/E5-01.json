@@ -78,6 +78,21 @@
           "correct": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "otro-objetivo",
+          "when": {
+            "type": "event",
+            "event": "iso.flagged",
+            "where": {
+              "objective": {
+                "ne": "A.10"
+              }
+            }
+          },
+          "message": "El objetivo con exclusión injustificada es A.10: revísalo con iso check."
+        }
+      ],
       "hints": [
         "Es el único con «NO» en la columna aplica. ¿Tiene la forja terceros según iso context?",
         "iso check A.10 y después iso flag A.10 exclusion-injustificada"
@@ -130,6 +145,21 @@
           "correct": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "otro-objetivo",
+          "when": {
+            "type": "event",
+            "event": "iso.flagged",
+            "where": {
+              "objective": {
+                "ne": "A.5"
+              }
+            }
+          },
+          "message": "El objetivo incluido sin ninguna evidencia es A.5: revísalo."
+        }
+      ],
       "hints": [
         "Busca un 0 en la columna evidencias entre los que aplican.",
         "iso check A.5 y después iso flag A.5 sin-evidencia"
