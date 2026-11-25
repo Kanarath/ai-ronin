@@ -132,6 +132,20 @@
           "all_passed": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "check-falla",
+          "when": {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "A2-06-recall",
+              "all_passed": false
+            }
+          },
+          "message": "El py check no pasa todavía: recall@k solo cuenta lo que está entre los k PRIMEROS del ranking. Quédate con ranking[:k] antes de contar."
+        }
+      ],
       "hints": [
         "Solo cuentan los documentos que están entre los k primeros del ranking.",
         "La línea queda así: primeros = ranking[:k]"
@@ -163,6 +177,32 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "check-falla",
+          "when": {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "A2-06-forja",
+              "all_passed": false
+            }
+          },
+          "message": "El py check de rango_reciproco no pasa: devuelve 1 / posición contando desde 1. Como enumerate empieza en 0, es 1 / (pos + 1)."
+        },
+        {
+          "id": "evidencia-falla",
+          "when": {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "A2-06",
+              "all_passed": false
+            }
+          },
+          "message": "La evidencia importada no trae los 13 tests en verde: termina las siete funciones de reranking.py hasta que pasen y vuelve a hacer evidence import."
+        }
+      ],
       "hints": [
         "enumerate empieza en 0: la primera posición es pos + 1.",
         "La línea queda así: return 1 / (pos + 1)",
@@ -242,6 +282,34 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-baseline",
+          "when": {
+            "type": "event",
+            "event": "evidence.measured",
+            "where": {
+              "lab": "A2-06",
+              "has_baseline": false
+            }
+          },
+          "message": "La medición no incluye la línea base (la config «ninguna»). Escribe forja medir, o ejecuta bateria.py incluyendo «ninguna»."
+        },
+        {
+          "id": "pocas-configs",
+          "when": {
+            "type": "event",
+            "event": "evidence.measured",
+            "where": {
+              "lab": "A2-06",
+              "configs": {
+                "lt": 3
+              }
+            }
+          },
+          "message": "Mide al menos 3 configuraciones: python bateria.py --configs \"ninguna;cross-encoder;procedencia\"."
+        }
+      ],
       "hints": [
         "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "python bateria.py · la primera vez descarga el cross-encoder (unos 135 MB). La configuración llm son 230 peticiones: varios minutos.",

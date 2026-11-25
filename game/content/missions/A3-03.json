@@ -52,6 +52,21 @@
           "successes": 5
         }
       },
+      "diagnostics": [
+        {
+          "id": "con-defensas",
+          "when": {
+            "type": "event",
+            "event": "agent.attacks",
+            "where": {
+              "defenses": {
+                "ne": "ninguna"
+              }
+            }
+          },
+          "message": "Esta es la línea base SIN defensas. Crea el agente limpio (agent create kage) y lanza agent attack kage sin activar ningún control."
+        }
+      ],
       "hints": [
         "agent create kage · agent attack kage"
       ],
@@ -88,6 +103,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "sin-spotlight",
+          "when": {
+            "type": "event",
+            "event": "agent.attacks",
+            "where": {
+              "defenses": {
+                "not_contains": "spotlight"
+              }
+            }
+          },
+          "message": "Activa spotlight antes de medir: agent defend kage spotlight on, y después agent attack kage."
+        }
+      ],
       "hints": [
         "agent defend kage spotlight on · agent attack kage"
       ],
@@ -115,6 +145,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "solo-hitl",
+          "when": {
+            "type": "event",
+            "event": "agent.attacks",
+            "where": {
+              "defenses": {
+                "ne": "hitl"
+              }
+            }
+          },
+          "message": "Para este paso deja SOLO hitl: agent defend kage spotlight off · agent defend kage hitl on, y después agent attack kage."
+        }
+      ],
       "hints": [
         "agent defend kage spotlight off · agent defend kage hitl on · agent attack kage",
         "Mira la línea «Aprobaciones humanas pedidas durante la batería»."
@@ -176,6 +221,20 @@
           "all_passed": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "check-falla",
+          "when": {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "A3-03-permitido",
+              "all_passed": false
+            }
+          },
+          "message": "El py check no pasa: busca la lista de la tarea con PERMISOS.get(tarea, []) (vacía si no existe) y comprueba si la herramienta está dentro con in. Así una tarea desconocida no puede usar nada."
+        }
+      ],
       "hints": [
         "Busca la lista de la tarea con PERMISOS.get(tarea, []) y mira si la herramienta está dentro con in.",
         "La línea queda así: return herramienta in PERMISOS.get(tarea, [])"
@@ -212,6 +271,61 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "quita-spotlight-hitl",
+          "when": {
+            "type": "any",
+            "of": [
+              {
+                "type": "event",
+                "event": "agent.attacks",
+                "where": {
+                  "defenses": {
+                    "icontains": "spotlight"
+                  }
+                }
+              },
+              {
+                "type": "event",
+                "event": "agent.attacks",
+                "where": {
+                  "defenses": {
+                    "icontains": "hitl"
+                  }
+                }
+              }
+            ]
+          },
+          "message": "Este objetivo es solo con controles del código: desactiva spotlight y hitl (agent defend kage spotlight off · agent defend kage hitl off)."
+        },
+        {
+          "id": "pasan-ataques",
+          "when": {
+            "type": "event",
+            "event": "agent.attacks",
+            "where": {
+              "success_rate": {
+                "gt": 0.0
+              }
+            }
+          },
+          "message": "Aún pasa algún ataque. Activa los cinco controles del código: least-privilege, arg-validation, user-authz, memory-hygiene y step-budget."
+        },
+        {
+          "id": "eval-roto",
+          "when": {
+            "type": "event",
+            "event": "agent.eval",
+            "where": {
+              "pass_rate": {
+                "lt": 1.0
+              }
+            }
+          },
+          "message": "Llegas a 0 ataques pero rompes tareas legítimas: el eval debe quedar 3/3. Revisa qué control está bloqueando el trabajo normal."
+        }
+      ],
       "hints": [
         "Activa los cinco controles con agent defend kage <control> on (y desactiva hitl).",
         "Después: agent attack kage · agent eval kage"
@@ -285,6 +399,34 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "pasan-ataques",
+            "when": {
+              "type": "event",
+              "event": "agent.attacks",
+              "where": {
+                "success_rate": {
+                  "gt": 0.0
+                }
+              }
+            },
+            "message": "Aún pasa algún ataque con 4 controles o menos y sin spotlight, hitl ni arg-validation. Piensa qué cubre least-privilege por sí solo y qué le falta."
+          },
+          {
+            "id": "eval-roto",
+            "when": {
+              "type": "event",
+              "event": "agent.eval",
+              "where": {
+                "pass_rate": {
+                  "lt": 1.0
+                }
+              }
+            },
+            "message": "0 ataques pero el eval no es 3/3: algún control está rompiendo las tareas legítimas."
+          }
+        ],
         "hints": [
           "Mira qué ataques cubre least-privilege por sí solo y qué deja.",
           "least-privilege + user-authz + step-budget… ¿falta algo?"

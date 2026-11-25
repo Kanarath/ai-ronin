@@ -155,6 +155,36 @@
           "refund_total": 120
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-rol-empleado",
+          "when": {
+            "type": "event",
+            "event": "agent.chat",
+            "where": {
+              "refund_total": 120,
+              "role": {
+                "ne": "empleado"
+              }
+            }
+          },
+          "message": "El reembolso se ha hecho, pero no como empleado. Da la orden con --as empleado."
+        },
+        {
+          "id": "importe-distinto",
+          "when": {
+            "type": "event",
+            "event": "agent.chat",
+            "where": {
+              "role": "empleado",
+              "refund_total": {
+                "ne": 120
+              }
+            }
+          },
+          "message": "Todavía no se han reembolsado 120 monedas. Dile el importe y el pedido exactos: «Reembolsa 120 monedas del pedido P-101»."
+        }
+      ],
       "hints": [
         "agent chat kage Reembolsa 120 monedas del pedido P-101 por el arañazo --as empleado"
       ],
@@ -185,6 +215,19 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "orden",
+          "when": {
+            "type": "event",
+            "event": "agent.ran",
+            "where": {
+              "task": "presupuesto"
+            }
+          },
+          "message": "El orden importa: primero guarda la preferencia con «Recuerda que aiko@clientes.example…» y DESPUÉS ejecuta agent run kage presupuesto --cliente aiko@clientes.example."
+        }
+      ],
       "hints": [
         "agent chat kage Recuerda que aiko@clientes.example prefiere los envíos por la mañana. --as empleado",
         "agent run kage presupuesto --cliente aiko@clientes.example"
@@ -202,6 +245,21 @@
           "pass_rate": 1.0
         }
       },
+      "diagnostics": [
+        {
+          "id": "eval-no-pasa",
+          "when": {
+            "type": "event",
+            "event": "agent.eval",
+            "where": {
+              "pass_rate": {
+                "lt": 1.0
+              }
+            }
+          },
+          "message": "El eval no sale 3/3. Es tu línea base SIN defensas: no actives ningún control todavía; si has tocado algo, crea el agente limpio y vuelve a evaluar."
+        }
+      ],
       "hints": [
         "agent eval kage"
       ],
@@ -266,6 +324,21 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "sin-hitl",
+            "when": {
+              "type": "event",
+              "event": "agent.eval",
+              "where": {
+                "defenses": {
+                  "not_contains": "hitl"
+                }
+              }
+            },
+            "message": "Has evaluado sin HITL activo. Actívalo primero (agent defend kage hitl on) y repite agent eval kage."
+          }
+        ],
         "hints": [
           "Primero el control, después el eval: agent eval <agente>.",
           "Última línea del eval."

@@ -79,6 +79,32 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "check-falla",
+          "when": {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "A3-04-forja",
+              "all_passed": false
+            }
+          },
+          "message": "El py check no pasa: recorre ajenos y quédate con los que aparecen dentro de t (en minúsculas). La línea es return [d for d in ajenos if d.lower() in t]."
+        },
+        {
+          "id": "evidencia-falla",
+          "when": {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "A3-04",
+              "all_passed": false
+            }
+          },
+          "message": "La evidencia importada no trae los 28 tests en verde: termina las ocho funciones de agente.py hasta que pasen y vuelve a hacer evidence import."
+        }
+      ],
       "hints": [
         "Recorre ajenos y quédate con los que están dentro de t (en minúsculas).",
         "La línea queda así: return [d for d in ajenos if d.lower() in t]",
@@ -152,6 +178,34 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-baseline",
+          "when": {
+            "type": "event",
+            "event": "evidence.measured",
+            "where": {
+              "lab": "A3-04",
+              "has_baseline": false
+            }
+          },
+          "message": "La medición no incluye la línea base (config «ninguna», sin defensas). Escribe forja medir, o ejecuta bateria.py incluyendo «ninguna»."
+        },
+        {
+          "id": "pocas-configs",
+          "when": {
+            "type": "event",
+            "event": "evidence.measured",
+            "where": {
+              "lab": "A3-04",
+              "configs": {
+                "lt": 3
+              }
+            }
+          },
+          "message": "Mide al menos 3 configuraciones (una sin defensas): python bateria.py --n 2 --configs \"ninguna;permisos;permisos,aprobacion,spotlight,exfiltracion,limites\"."
+        }
+      ],
       "hints": [
         "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "ollama pull llama3.2:3b · python bateria.py · con --n 3 y las 5 configuraciones son 150 tareas: más de una hora en CPU (Central Processing Unit).",

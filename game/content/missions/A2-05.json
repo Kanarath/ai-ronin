@@ -75,6 +75,32 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "check-falla",
+          "when": {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "A2-05-forja",
+              "all_passed": false
+            }
+          },
+          "message": "El py check no pasa: quédate solo con los caracteres cuyo ord(c) NO está en INVISIBLES. La línea es return \"\".join(c for c in texto if ord(c) not in INVISIBLES)."
+        },
+        {
+          "id": "evidencia-falla",
+          "when": {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "A2-05",
+              "all_passed": false
+            }
+          },
+          "message": "La evidencia importada no trae los 18 tests en verde: termina las siete funciones de multimodal.py hasta que pasen y vuelve a hacer evidence import."
+        }
+      ],
       "hints": [
         "ord(c) da el código de cada carácter: quédate solo con los que NO están en INVISIBLES.",
         "La línea queda así: return \"\".join(c for c in texto if ord(c) not in INVISIBLES)",
