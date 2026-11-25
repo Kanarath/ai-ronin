@@ -85,6 +85,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "caught",
+          "when": {
+            "type": "event",
+            "event": "genia.eval",
+            "where": {
+              "caught": {
+                "ne": 1
+              }
+            }
+          },
+          "message": "Con solo el filtro de entrada debe cazar 1 de 4. Si cazas 0, actívalo (genia defensa filtro_entrada on · genia evaluar); si cazas más, has activado defensas de más."
+        }
+      ],
       "hints": [
         "genia defensa filtro_entrada on y genia evaluar.",
         "answer 1"
@@ -145,6 +160,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "caught",
+          "when": {
+            "type": "event",
+            "event": "genia.eval",
+            "where": {
+              "caught": {
+                "ne": 3
+              }
+            }
+          },
+          "message": "Añade el clasificador de salida y evalúa: deben cazarse 3 de 4 (genia defensa clasificador_salida on · genia evaluar)."
+        }
+      ],
       "hints": [
         "genia defensa clasificador_salida on y genia evaluar.",
         "answer 3"
@@ -173,6 +203,32 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "pocas",
+          "when": {
+            "type": "event",
+            "event": "genia.eval",
+            "where": {
+              "caught": {
+                "lt": 4
+              }
+            }
+          },
+          "message": "Activa también el filtro de copyright para cazar las 4: genia defensa filtro_copyright on."
+        },
+        {
+          "id": "sin-marca",
+          "when": {
+            "type": "event",
+            "event": "genia.eval",
+            "where": {
+              "marca": false
+            }
+          },
+          "message": "Falta activar la defensa que marca lo generado (la del enunciado) y volver a evaluar."
+        }
+      ],
       "hints": [
         "Dos genia defensa … on y un genia evaluar.",
         "answer 4"

@@ -76,6 +76,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "orden",
+          "when": {
+            "type": "event",
+            "event": "lm.next",
+            "where": {
+              "context": "la",
+              "order": {
+                "ne": 2
+              }
+            }
+          },
+          "message": "Entrena y consulta un modelo de BIGRAMAS (order 2): lm train lm2 --order 2."
+        }
+      ],
       "hints": [
         "lm train lm2 --order 2",
         "lm next lm2 la"
@@ -123,6 +139,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "temp",
+          "when": {
+            "type": "event",
+            "event": "lm.next",
+            "where": {
+              "context": "la",
+              "temperature": {
+                "ne": 0.1
+              }
+            }
+          },
+          "message": "Repite la consulta con temperatura 0.1: lm next lm2 la --temperature 0.1."
+        }
+      ],
       "hints": [
         "lm next lm2 la --temperature 0.1",
         "Columna «P final», fila forja."
@@ -148,6 +180,35 @@
           "order": 2
         }
       },
+      "diagnostics": [
+        {
+          "id": "temp",
+          "when": {
+            "type": "event",
+            "event": "lm.generated",
+            "where": {
+              "order": 2,
+              "temperature": {
+                "gt": 0.0
+              }
+            }
+          },
+          "message": "Genera con temperatura 0 (greedy): --temperature 0."
+        },
+        {
+          "id": "orden",
+          "when": {
+            "type": "event",
+            "event": "lm.generated",
+            "where": {
+              "order": {
+                "ne": 2
+              }
+            }
+          },
+          "message": "Usa el modelo de bigramas (lm2, order 2) para generar."
+        }
+      ],
       "hints": [
         "lm generate lm2 el maestro --temperature 0 --tokens 12"
       ],
@@ -168,6 +229,34 @@
           "gte": 2
         }
       },
+      "diagnostics": [
+        {
+          "id": "temp",
+          "when": {
+            "type": "event",
+            "event": "lm.generated",
+            "where": {
+              "order": 2,
+              "temperature": {
+                "ne": 1.0
+              }
+            }
+          },
+          "message": "Genera con temperatura 1 (--temperature 1)."
+        },
+        {
+          "id": "dos-semillas",
+          "when": {
+            "type": "event",
+            "event": "lm.generated",
+            "where": {
+              "order": 2,
+              "temperature": 1.0
+            }
+          },
+          "message": "Este paso pide DOS generaciones con semillas distintas para comparar: repite con --seed 1 y luego --seed 2."
+        }
+      ],
       "hints": [
         "lm generate lm2 el maestro --temperature 1 --seed 1",
         "Repite con --seed 2."
@@ -230,6 +319,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "topp",
+          "when": {
+            "type": "event",
+            "event": "lm.next",
+            "where": {
+              "context": "la",
+              "top_p": {
+                "ne": 0.5
+              }
+            }
+          },
+          "message": "Aplica top-p 0.5: lm next lm2 la --top-p 0.5."
+        }
+      ],
       "hints": [
         "lm next lm2 la --top-p 0.5",
         "Mira la última línea: «candidatos que quedan»."
@@ -256,6 +361,35 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "orden",
+          "when": {
+            "type": "event",
+            "event": "lm.generated",
+            "where": {
+              "order": {
+                "ne": 3
+              }
+            }
+          },
+          "message": "Entrena y usa un modelo de TRIGRAMAS (order 3): lm train lm3 --order 3."
+        },
+        {
+          "id": "poco-verbatim",
+          "when": {
+            "type": "event",
+            "event": "lm.generated",
+            "where": {
+              "order": 3,
+              "verbatim": {
+                "lt": 8
+              }
+            }
+          },
+          "message": "Con trigramas el modelo repite casi literal el texto de entrenamiento; genera 15 tokens desde «el maestro» con temperatura 1."
+        }
+      ],
       "hints": [
         "lm train lm3 --order 3",
         "lm generate lm3 el maestro --temperature 1 --seed 1 --tokens 15"
@@ -406,6 +540,22 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "temp",
+            "when": {
+              "type": "event",
+              "event": "lm.next",
+              "where": {
+                "context": "la",
+                "temperature": {
+                  "ne": 2.0
+                }
+              }
+            },
+            "message": "Usa temperatura 2: lm next lm2 la --temperature 2."
+          }
+        ],
         "hints": [
           "La temperatura es una opción de lm next.",
           "lm next lm2 la --temperature 2"

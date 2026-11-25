@@ -65,6 +65,33 @@
           "top": 10
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-norm",
+          "when": {
+            "type": "event",
+            "event": "kmeans.outliers",
+            "where": {
+              "dataset": "peticiones"
+            }
+          },
+          "message": "Búscalos sobre el normalizado pn: dataset normalize peticiones --method minmax --as pn primero."
+        },
+        {
+          "id": "top",
+          "when": {
+            "type": "event",
+            "event": "kmeans.outliers",
+            "where": {
+              "dataset": "pn",
+              "top": {
+                "ne": 10
+              }
+            }
+          },
+          "message": "Pide los 10 más raros: kmeans outliers pn --k 1 --top 10."
+        }
+      ],
       "hints": [
         "Dos comandos: el normalize y el kmeans outliers del enunciado."
       ],
@@ -94,6 +121,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "top",
+          "when": {
+            "type": "event",
+            "event": "kmeans.outliers",
+            "where": {
+              "dataset": "pn",
+              "top": {
+                "ne": 30
+              }
+            }
+          },
+          "message": "Mira los 30 primeros: kmeans outliers pn --k 1 --top 30."
+        }
+      ],
       "hints": [
         "Busca cli-041 en la lista de 30.",
         "answer no"

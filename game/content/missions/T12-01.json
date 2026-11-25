@@ -65,6 +65,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "tokens",
+          "when": {
+            "type": "event",
+            "event": "infer.kv",
+            "where": {
+              "tokens": {
+                "ne": 64
+              }
+            }
+          },
+          "message": "Mide con 64 tokens: infer kv --tokens 64."
+        }
+      ],
       "hints": [
         "infer kv --tokens 64; mira el «factor».",
         "answer 32"
@@ -99,6 +114,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "tokens",
+          "when": {
+            "type": "event",
+            "event": "infer.kv",
+            "where": {
+              "tokens": {
+                "ne": 128
+              }
+            }
+          },
+          "message": "Mide con 128 tokens: infer kv --tokens 128."
+        }
+      ],
       "hints": [
         "infer kv --tokens 128.",
         "answer 64"
@@ -169,6 +199,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "peticiones",
+          "when": {
+            "type": "event",
+            "event": "infer.batch",
+            "where": {
+              "peticiones": {
+                "ne": 16
+              }
+            }
+          },
+          "message": "Usa 16 peticiones: infer batch --peticiones 16."
+        }
+      ],
       "hints": [
         "infer batch --peticiones 16.",
         "answer 32000"
@@ -205,6 +250,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "peticiones",
+          "when": {
+            "type": "event",
+            "event": "infer.batch",
+            "where": {
+              "peticiones": {
+                "ne": 64
+              }
+            }
+          },
+          "message": "Sube el lote a 64: infer batch --peticiones 64."
+        }
+      ],
       "hints": [
         "infer batch --peticiones 64; mira el aviso.",
         "answer no"

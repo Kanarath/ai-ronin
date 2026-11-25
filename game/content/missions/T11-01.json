@@ -99,6 +99,20 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "amano",
+          "when": {
+            "type": "event",
+            "event": "reason.grpo",
+            "where": {
+              "model": "r",
+              "verifiable": false
+            }
+          },
+          "message": "Entrena con recompensa verificable (sin --amaño): reason grpo r --pasos 40 --grupo 8."
+        }
+      ],
       "hints": [
         "Registra tu hipótesis y lanza el comando.",
         "answer 1"
@@ -167,6 +181,20 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "sin-amano",
+          "when": {
+            "type": "event",
+            "event": "reason.grpo",
+            "where": {
+              "model": "h",
+              "verifiable": true
+            }
+          },
+          "message": "Rompe la recompensa con --amaño: reason grpo h --pasos 40 --grupo 8 --amaño."
+        }
+      ],
       "hints": [
         "reason new h, reason grpo h --pasos 40 --grupo 8 --amaño y reason ask h.",
         "answer 0"

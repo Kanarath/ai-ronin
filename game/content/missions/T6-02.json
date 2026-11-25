@@ -76,6 +76,20 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "causal",
+          "when": {
+            "type": "event",
+            "event": "attention.computed",
+            "where": {
+              "words": "herrera martillo katana fuego agua",
+              "causal": true
+            }
+          },
+          "message": "En este paso NO uses máscara causal (sin --causal): attention herrera martillo katana fuego agua."
+        }
+      ],
       "hints": [
         "attention herrera martillo katana fuego agua",
         "Mira la fila «katana» y busca el valor más alto fuera de la diagonal."
@@ -157,6 +171,19 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "sin-causal",
+          "when": {
+            "type": "event",
+            "event": "attention.computed",
+            "where": {
+              "causal": false
+            }
+          },
+          "message": "Usa la máscara causal (--causal) en este paso."
+        }
+      ],
       "hints": [
         "attention herrera martillo katana fuego agua --causal",
         "Primera fila, primera columna."
@@ -182,6 +209,19 @@
           "scaled": false
         }
       },
+      "diagnostics": [
+        {
+          "id": "escalada",
+          "when": {
+            "type": "event",
+            "event": "attention.computed",
+            "where": {
+              "scaled": true
+            }
+          },
+          "message": "Usa --no-scale para no dividir entre √d y poder comparar."
+        }
+      ],
       "hints": [
         "attention herrera martillo katana fuego agua --no-scale"
       ],
@@ -208,6 +248,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "n-palabras",
+          "when": {
+            "type": "event",
+            "event": "attention.computed",
+            "where": {
+              "n": {
+                "ne": 10
+              }
+            }
+          },
+          "message": "Usa una frase de exactamente 10 palabras del vocabulario (embed list las muestra)."
+        }
+      ],
       "hints": [
         "Elige 10 palabras de embed list.",
         "attention katana espada daga lanza arco escudo acero hierro fuego agua"
@@ -382,6 +437,20 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "sin-causal",
+            "when": {
+              "type": "event",
+              "event": "attention.computed",
+              "where": {
+                "words": "herrera martillo katana",
+                "causal": false
+              }
+            },
+            "message": "Usa --causal con esas tres palabras: attention herrera martillo katana --causal."
+          }
+        ],
         "hints": [
           "attention con --causal y esas tres palabras.",
           "Fila katana, columna martillo."

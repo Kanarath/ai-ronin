@@ -89,6 +89,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "umbral1",
+          "when": {
+            "type": "event",
+            "event": "fairness.threshold",
+            "where": {
+              "dataset": "prestamos",
+              "umbral1": {
+                "ne": 0.5
+              }
+            }
+          },
+          "message": "Mismo umbral para los dos grupos: fairness umbral prestamos --umbral 0.5 (sin --umbral1 distinto)."
+        }
+      ],
       "hints": [
         "fairness umbral prestamos --umbral 0.5",
         "answer 0.59"
@@ -160,6 +176,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "umbral1",
+          "when": {
+            "type": "event",
+            "event": "fairness.threshold",
+            "where": {
+              "dataset": "prestamos",
+              "umbral1": {
+                "ne": 0.45
+              }
+            }
+          },
+          "message": "Usa --umbral1 0.45 para el grupo 1: fairness umbral prestamos --umbral 0.5 --umbral1 0.45."
+        }
+      ],
       "hints": [
         "Lanza el comando y mira la línea «Igualdad de oportunidades».",
         "answer 0.003"
@@ -197,6 +229,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "umbral1",
+          "when": {
+            "type": "event",
+            "event": "fairness.threshold",
+            "where": {
+              "dataset": "prestamos",
+              "umbral1": {
+                "ne": 0.35
+              }
+            }
+          },
+          "message": "Usa --umbral1 0.35: fairness umbral prestamos --umbral 0.5 --umbral1 0.35."
+        }
+      ],
       "hints": [
         "Pon tu hipótesis, lanza el comando y mira la línea «Precisión».",
         "answer 0.64"

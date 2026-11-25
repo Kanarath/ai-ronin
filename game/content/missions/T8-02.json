@@ -57,6 +57,20 @@
           "contrast": false
         }
       },
+      "diagnostics": [
+        {
+          "id": "con-contraste",
+          "when": {
+            "type": "event",
+            "event": "image.shown",
+            "where": {
+              "image": "factura",
+              "contrast": true
+            }
+          },
+          "message": "Primero mira la factura normal, sin --contraste: image show factura."
+        }
+      ],
       "hints": [
         "image show factura"
       ]
@@ -80,6 +94,19 @@
           "hidden": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "imagen-limpia",
+          "when": {
+            "type": "event",
+            "event": "vision.read",
+            "where": {
+              "image": "factura_limpia"
+            }
+          },
+          "message": "Lee la factura ORIGINAL todavía (vision read factura); la limpia llega en el último paso."
+        }
+      ],
       "hints": [
         "Pon tu hipótesis y lanza vision read factura."
       ],
@@ -130,6 +157,20 @@
           "contrast": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-contraste",
+          "when": {
+            "type": "event",
+            "event": "image.shown",
+            "where": {
+              "image": "factura",
+              "contrast": false
+            }
+          },
+          "message": "Revela lo escondido con --contraste: image show factura --contraste."
+        }
+      ],
       "hints": [
         "image show factura --contraste"
       ],
@@ -156,6 +197,20 @@
           "hidden": false
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-limpiar",
+          "when": {
+            "type": "event",
+            "event": "vision.read",
+            "where": {
+              "image": "factura",
+              "hidden": true
+            }
+          },
+          "message": "Primero limpia la imagen (image clean factura --umbral 0.05) y lee la LIMPIA: vision read factura_limpia."
+        }
+      ],
       "hints": [
         "Dos comandos: image clean factura --umbral 0.05 y vision read factura_limpia"
       ],

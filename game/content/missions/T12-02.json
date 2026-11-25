@@ -64,6 +64,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "acierto",
+          "when": {
+            "type": "event",
+            "event": "infer.spec",
+            "where": {
+              "acierto": {
+                "ne": 0.8
+              }
+            }
+          },
+          "message": "Usa acierto 0.8: infer spec --borrador 4 --acierto 0.8."
+        }
+      ],
       "hints": [
         "infer spec --borrador 4 --acierto 0.8.",
         "answer 3.36"
@@ -130,6 +145,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "acierto",
+          "when": {
+            "type": "event",
+            "event": "infer.spec",
+            "where": {
+              "acierto": {
+                "ne": 0.3
+              }
+            }
+          },
+          "message": "Usa acierto 0.3: infer spec --borrador 4 --acierto 0.3."
+        }
+      ],
       "hints": [
         "infer spec --borrador 4 --acierto 0.3.",
         "answer 1.43"
@@ -170,6 +200,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "activos",
+          "when": {
+            "type": "event",
+            "event": "infer.moe",
+            "where": {
+              "expertos": 8,
+              "activos": {
+                "ne": 2
+              }
+            }
+          },
+          "message": "Usa 8 expertos y 2 activos: infer moe --expertos 8 --activos 2."
+        }
+      ],
       "hints": [
         "infer moe --expertos 8 --activos 2.",
         "answer 25"

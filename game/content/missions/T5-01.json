@@ -83,6 +83,22 @@
         ]
       },
       "wrong_answer": "Cuenta los tokens de la salida de tokenize (aparece en la última línea).",
+      "diagnostics": [
+        {
+          "id": "fusiones",
+          "when": {
+            "type": "event",
+            "event": "tokenize.done",
+            "where": {
+              "text": "la katana del maestro",
+              "merges": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Para este paso el tokenizador no debe tener fusiones: tokenizer train t0 --merges 0, y tokeniza con t0."
+        }
+      ],
       "hints": [
         "tokenizer train t0 --merges 0",
         "tokenize t0 la katana del maestro"
@@ -118,6 +134,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "fusiones",
+          "when": {
+            "type": "event",
+            "event": "tokenize.done",
+            "where": {
+              "text": "la katana del maestro",
+              "merges": {
+                "ne": 200
+              }
+            }
+          },
+          "message": "Usa el tokenizador de 200 fusiones: tokenizer train t200 --merges 200, y tokeniza con t200."
+        }
+      ],
       "hints": [
         "tokenizer train t200 --merges 200",
         "tokenize t200 la katana del maestro"
@@ -187,6 +219,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "fusiones",
+          "when": {
+            "type": "event",
+            "event": "tokenize.done",
+            "where": {
+              "text": "La Katana del Maestro",
+              "merges": {
+                "ne": 200
+              }
+            }
+          },
+          "message": "Tokeniza con el de 200 fusiones (t200) y respeta las mayúsculas tal cual."
+        }
+      ],
       "hints": [
         "tokenize t200 La Katana del Maestro"
       ],
@@ -233,6 +281,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "fusiones",
+          "when": {
+            "type": "event",
+            "event": "tokenize.done",
+            "where": {
+              "text": "the sword of the master",
+              "merges": {
+                "ne": 200
+              }
+            }
+          },
+          "message": "Tokeniza con t200 (el de 200 fusiones) la frase en inglés tal cual."
+        }
+      ],
       "hints": [
         "tokenize t200 the sword of the master"
       ],
@@ -358,6 +422,22 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "fusiones",
+            "when": {
+              "type": "event",
+              "event": "tokenize.done",
+              "where": {
+                "text": "katanaforjada",
+                "merges": {
+                  "ne": 200
+                }
+              }
+            },
+            "message": "Usa el tokenizador de 200 fusiones (t200) sobre katanaforjada."
+          }
+        ],
         "hints": [
           "Tokeniza la palabra y cuenta.",
           "tokenize <tokenizador de 200> katanaforjada"

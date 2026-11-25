@@ -67,6 +67,20 @@
         ]
       },
       "wrong_answer": "Busca la fila katana y, en ella, la columna espada.",
+      "diagnostics": [
+        {
+          "id": "causal",
+          "when": {
+            "type": "event",
+            "event": "attention.computed",
+            "where": {
+              "words": "katana espada fuego agua hielo brasa horno",
+              "causal": true
+            }
+          },
+          "message": "En este paso no uses máscara causal (sin --causal)."
+        }
+      ],
       "hints": [
         "attention katana espada fuego agua hielo brasa horno",
         "Fila katana, columna espada."
@@ -104,6 +118,20 @@
         ]
       },
       "wrong_answer": "Fila katana, última columna (espada).",
+      "diagnostics": [
+        {
+          "id": "causal",
+          "when": {
+            "type": "event",
+            "event": "attention.computed",
+            "where": {
+              "words": "katana fuego agua hielo brasa horno espada",
+              "causal": true
+            }
+          },
+          "message": "Sin --causal aquí: pon la instrucción (espada) al final y mide la atención normal."
+        }
+      ],
       "hints": [
         "attention katana fuego agua hielo brasa horno espada",
         "Fila katana, última columna."
@@ -173,6 +201,20 @@
         ]
       },
       "wrong_answer": "Última fila (katana), columna espada.",
+      "diagnostics": [
+        {
+          "id": "sin-causal",
+          "when": {
+            "type": "event",
+            "event": "attention.computed",
+            "where": {
+              "words": "fuego agua hielo brasa horno espada katana",
+              "causal": false
+            }
+          },
+          "message": "Usa la máscara causal (--causal) con katana al final."
+        }
+      ],
       "hints": [
         "attention fuego agua hielo brasa horno espada katana --causal",
         "Última fila, columna espada."

@@ -73,6 +73,22 @@
           "max_depth": 2
         }
       },
+      "diagnostics": [
+        {
+          "id": "prof",
+          "when": {
+            "type": "event",
+            "event": "tree.trained",
+            "where": {
+              "model": "t2",
+              "max_depth": {
+                "ne": 2
+              }
+            }
+          },
+          "message": "Este árbol es de profundidad 2: tree train t2 katanas_train --depth 2."
+        }
+      ],
       "hints": [
         "tree train t2 katanas_train --depth 2"
       ],
@@ -133,6 +149,20 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "en-train",
+          "when": {
+            "type": "event",
+            "event": "classic.evaluated",
+            "where": {
+              "model": "t2",
+              "same_as_train": true
+            }
+          },
+          "message": "Mídelo en TEST, no en train: classic evaluate t2 katanas_test."
+        }
+      ],
       "hints": [
         "classic evaluate t2 katanas_test",
         "answer 0.806"
@@ -168,6 +198,20 @@
           "same_as_train": false
         }
       },
+      "diagnostics": [
+        {
+          "id": "en-train",
+          "when": {
+            "type": "event",
+            "event": "classic.evaluated",
+            "where": {
+              "model": "t8",
+              "same_as_train": true
+            }
+          },
+          "message": "Mídelo en test: entrena tree train t8 katanas_train --depth 8 y luego classic evaluate t8 katanas_test."
+        }
+      ],
       "hints": [
         "Pon tu hipótesis y lanza los dos comandos del enunciado."
       ],

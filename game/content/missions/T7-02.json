@@ -85,6 +85,20 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "en-train",
+          "when": {
+            "type": "event",
+            "event": "classic.evaluated",
+            "where": {
+              "model": "p8",
+              "same_as_train": true
+            }
+          },
+          "message": "Mídelo en TEST, no en train: classic evaluate p8 peticiones_test."
+        }
+      ],
       "hints": [
         "classic evaluate p8 peticiones_test",
         "answer 0.889"
@@ -110,6 +124,20 @@
           "same_as_train": false
         }
       },
+      "diagnostics": [
+        {
+          "id": "en-train",
+          "when": {
+            "type": "event",
+            "event": "classic.evaluated",
+            "where": {
+              "model": "f",
+              "same_as_train": true
+            }
+          },
+          "message": "Mide el bosque en test: forest train f peticiones_train --trees 50 --depth 6 y classic evaluate f peticiones_test."
+        }
+      ],
       "hints": [
         "Pon tu hipótesis y lanza los dos comandos."
       ],

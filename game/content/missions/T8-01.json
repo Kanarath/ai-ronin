@@ -83,6 +83,20 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "sin-numeros",
+          "when": {
+            "type": "event",
+            "event": "image.shown",
+            "where": {
+              "image": "cruz",
+              "numbers": false
+            }
+          },
+          "message": "Muéstrala con los valores de los píxeles: image show cruz --numeros."
+        }
+      ],
       "hints": [
         "image show cruz --numeros",
         "answer 1"

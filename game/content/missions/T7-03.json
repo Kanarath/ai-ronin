@@ -68,6 +68,33 @@
           "k": 2
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-norm",
+          "when": {
+            "type": "event",
+            "event": "kmeans.done",
+            "where": {
+              "dataset": "katanas"
+            }
+          },
+          "message": "Agrupa sobre el dataset NORMALIZADO (kn), no sobre katanas: dataset normalize katanas --method minmax --as kn primero."
+        },
+        {
+          "id": "k",
+          "when": {
+            "type": "event",
+            "event": "kmeans.done",
+            "where": {
+              "dataset": "kn",
+              "k": {
+                "ne": 2
+              }
+            }
+          },
+          "message": "Agrupa en DOS grupos: kmeans kn --k 2."
+        }
+      ],
       "hints": [
         "Dos comandos: el normalize y el kmeans del enunciado."
       ]
@@ -143,6 +170,33 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "sin-norm",
+          "when": {
+            "type": "event",
+            "event": "kmeans.done",
+            "where": {
+              "dataset": "peticiones"
+            }
+          },
+          "message": "Agrupa sobre el normalizado pn: dataset normalize peticiones --method minmax --as pn primero."
+        },
+        {
+          "id": "k",
+          "when": {
+            "type": "event",
+            "event": "kmeans.done",
+            "where": {
+              "dataset": "pn",
+              "k": {
+                "ne": 2
+              }
+            }
+          },
+          "message": "Usa --k 2 sobre pn."
+        }
+      ],
       "hints": [
         "Pon tu hipótesis y lanza los dos comandos.",
         "answer 0.88"

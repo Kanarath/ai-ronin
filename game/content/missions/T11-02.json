@@ -141,6 +141,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "n",
+          "when": {
+            "type": "event",
+            "event": "reason.best",
+            "where": {
+              "model": "c",
+              "n": {
+                "ne": 8
+              }
+            }
+          },
+          "message": "Usa n=8: reason best c --n 8."
+        }
+      ],
       "hints": [
         "Cuatro comandos; el último es reason best c --n 8.",
         "answer 1"

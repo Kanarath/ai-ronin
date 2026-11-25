@@ -68,6 +68,22 @@
         ]
       },
       "wrong_answer": "Mira la línea «ids»: cada número corresponde, en orden, a un token de la línea de arriba. Busca el de ▁katana.",
+      "diagnostics": [
+        {
+          "id": "fusiones",
+          "when": {
+            "type": "event",
+            "event": "tokenize.done",
+            "where": {
+              "text": "quiero una katana",
+              "merges": {
+                "ne": 200
+              }
+            }
+          },
+          "message": "Usa el tokenizador de 200 fusiones: tokenizer train t200 --merges 200, y tokeniza con t200."
+        }
+      ],
       "hints": [
         "tokenizer train t200 --merges 200  y después  tokenize t200 quiero una katana",
         "▁katana es el último token: su id es el último número de la línea «ids»."
@@ -93,6 +109,22 @@
           "text": "quiero una KATANA"
         }
       },
+      "diagnostics": [
+        {
+          "id": "fusiones",
+          "when": {
+            "type": "event",
+            "event": "tokenize.done",
+            "where": {
+              "text": "quiero una KATANA",
+              "merges": {
+                "ne": 200
+              }
+            }
+          },
+          "message": "Tokeniza con t200 (200 fusiones) y deja las mayúsculas tal cual."
+        }
+      ],
       "hints": [
         "tokenize t200 quiero una KATANA"
       ],
@@ -150,6 +182,22 @@
           "text": "quiero una k a t a n a"
         }
       },
+      "diagnostics": [
+        {
+          "id": "fusiones",
+          "when": {
+            "type": "event",
+            "event": "tokenize.done",
+            "where": {
+              "text": "quiero una k a t a n a",
+              "merges": {
+                "ne": 200
+              }
+            }
+          },
+          "message": "Tokeniza con t200 las letras separadas tal cual, sin juntarlas."
+        }
+      ],
       "hints": [
         "tokenize t200 quiero una k a t a n a"
       ],
