@@ -99,6 +99,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "sin-backdoor",
+          "when": {
+            "type": "event",
+            "event": "supply.trained",
+            "where": {
+              "backdoor_rate": {
+                "lte": 0.5
+              }
+            }
+          },
+          "message": "Entrena con el dataset del espejo comunitario envenenado: la proporción de piezas con puerta trasera debe salir alta."
+        }
+      ],
       "hints": [
         "supply forja taller · supply inspect taller espejo-comunidad · supply train taller",
         "Línea «prueba de puerta trasera»."
@@ -129,6 +144,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "otro-artefacto",
+          "when": {
+            "type": "event",
+            "event": "supply.loaded",
+            "where": {
+              "artifact": {
+                "ne": "detector-grietas"
+              }
+            }
+          },
+          "message": "Carga el modelo detector-grietas del hub público (supply load detector-grietas): al deserializar el pickle se ejecuta código."
+        }
+      ],
       "hints": [
         "supply load taller detector-grietas · supply inspect taller detector-grietas"
       ],
@@ -159,6 +189,21 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "otro-artefacto",
+          "when": {
+            "type": "event",
+            "event": "supply.loaded",
+            "where": {
+              "artifact": {
+                "ne": "adaptador-estilo"
+              }
+            }
+          },
+          "message": "Carga el adapter adaptador-estilo (está en safetensors) y fíjate si el formato impidió la manipulación."
+        }
+      ],
       "hints": [
         "supply load taller adaptador-estilo · supply inspect taller adaptador-estilo"
       ],
@@ -188,6 +233,20 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "sin-script",
+          "when": {
+            "type": "event",
+            "event": "supply.installed",
+            "where": {
+              "package": "forja-metricas-pro",
+              "install_script_ran": false
+            }
+          },
+          "message": "Inspecciónalo e instálalo: su script de instalación se ejecuta al instalar el paquete."
+        }
+      ],
       "hints": [
         "supply inspect taller forja-metricas-pro · supply install taller forja-metricas-pro"
       ],
@@ -216,6 +275,31 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "no-alcanzable",
+          "when": {
+            "type": "event",
+            "event": "supply.probed",
+            "where": {
+              "reachable": false
+            }
+          },
+          "message": "El servidor no es alcanzable: despliégalo primero y vuelve a sondearlo."
+        },
+        {
+          "id": "sin-secreto",
+          "when": {
+            "type": "event",
+            "event": "supply.probed",
+            "where": {
+              "reachable": true,
+              "secret_found": false
+            }
+          },
+          "message": "Sondea el servidor desde fuera: en el historial de la imagen aparece un token; míralo con detalle."
+        }
+      ],
       "hints": [
         "supply probe taller"
       ],
@@ -262,6 +346,33 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "incompleto",
+          "when": {
+            "type": "event",
+            "event": "report.checked",
+            "where": {
+              "complete": false
+            }
+          },
+          "message": "El informe no supera la rúbrica todavía: informe revisar te dice qué campos faltan."
+        },
+        {
+          "id": "owasp",
+          "when": {
+            "type": "event",
+            "event": "report.checked",
+            "where": {
+              "complete": true,
+              "owasp": {
+                "not_contains": "LLM0"
+              }
+            }
+          },
+          "message": "Usa una categoría OWASP correcta (LLM0…) en el campo owasp."
+        }
+      ],
       "hints": [
         "informe nuevo Adapter manipulado del hub público aceptado sin verificar su huella · informe campo owasp LLM03 · …",
         "Pasos: «1) supply forja taller 2) supply inspect taller adaptador-estilo 3) supply load taller adaptador-estilo». Verificación: «la batería A6 tiene 7 de 7 éxitos sin controles»."
@@ -341,6 +452,20 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "sin-manipular",
+            "when": {
+              "type": "event",
+              "event": "supply.loaded",
+              "where": {
+                "tampered": false,
+                "code_exec": false
+              }
+            },
+            "message": "Necesitas cargar un artefacto manipulado (tampered) y uno que ejecute código (code_exec): usa los del hub público, no el modelo interno."
+          }
+        ],
         "hints": [
           "Uno falla por el contenido; el otro, por el formato."
         ],

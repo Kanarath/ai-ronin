@@ -90,6 +90,22 @@
           "replies": 3
         }
       },
+      "diagnostics": [
+        {
+          "id": "pocas-respuestas",
+          "when": {
+            "type": "event",
+            "event": "agent.ran",
+            "where": {
+              "task": "triaje",
+              "replies": {
+                "lt": 3
+              }
+            }
+          },
+          "message": "El triaje no ha respondido a los 3 correos de la bandeja: lanza agent run kage triaje con la bandeja completa."
+        }
+      ],
       "hints": [
         "agent run kage triaje"
       ],

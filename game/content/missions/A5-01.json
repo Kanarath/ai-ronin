@@ -164,6 +164,20 @@
           "accepted": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "no-contratado",
+          "when": {
+            "type": "event",
+            "event": "a2a.discovered",
+            "where": {
+              "mesh": "kuro",
+              "accepted": false
+            }
+          },
+          "message": "El proveedor no se ha contratado: a2a discover kuro acero-norte.example."
+        }
+      ],
       "hints": [
         "a2a discover kuro acero-norte.example"
       ]
@@ -187,6 +201,20 @@
           "leaked": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-fuga",
+          "when": {
+            "type": "event",
+            "event": "a2a.asked",
+            "where": {
+              "mesh": "kuro",
+              "leaked": false
+            }
+          },
+          "message": "El proveedor aún no filtra datos: pídele un presupuesto que le haga revelar información del cliente."
+        }
+      ],
       "hints": [
         "Primero hipotesis <opción>, después el a2a ask del enunciado."
       ],

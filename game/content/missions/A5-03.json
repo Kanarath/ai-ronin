@@ -83,6 +83,22 @@
           "pass_rate": 1.0
         }
       },
+      "diagnostics": [
+        {
+          "id": "eval",
+          "when": {
+            "type": "event",
+            "event": "a2a.eval",
+            "where": {
+              "mesh": "b",
+              "pass_rate": {
+                "lt": 1.0
+              }
+            }
+          },
+          "message": "El eval no sale 1.0: alguna defensa rompe las tareas legítimas del mesh b."
+        }
+      ],
       "hints": [
         "a2a eval b"
       ]
@@ -108,6 +124,20 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-monitor",
+          "when": {
+            "type": "event",
+            "event": "a2a.eval",
+            "where": {
+              "mesh": "mon",
+              "pass_rate": 1.0
+            }
+          },
+          "message": "Activa el monitor (a2a defend mon monitor on) y evalúa: verás que baja de 1.0 (tiene coste)."
+        }
+      ],
       "hints": [
         "Son cuatro comandos; pon tu hipótesis antes del a2a attack."
       ],
@@ -178,6 +208,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "sin-authz",
+          "when": {
+            "type": "event",
+            "event": "a2a.attacks",
+            "where": {
+              "mesh": "del",
+              "defenses": {
+                "not_contains": "delegated-authz"
+              }
+            }
+          },
+          "message": "Activa la autorización delegada (a2a defend del delegated-authz on) y lanza la batería."
+        }
+      ],
       "hints": [
         "Pon tu hipótesis, lanza los tres comandos y cuenta los ✗ ÉXITO.",
         "answer 4"

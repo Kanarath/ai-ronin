@@ -183,6 +183,19 @@
           "complete": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "incompleto",
+          "when": {
+            "type": "event",
+            "event": "report.checked",
+            "where": {
+              "complete": false
+            }
+          },
+          "message": "El informe no supera la rúbrica todavía: informe revisar te dice qué campos faltan."
+        }
+      ],
       "hints": [
         "informe nuevo … · informe campo owasp LLM02 · … · informe revisar",
         "En pasos: «1) rag create biblio 2) rag ingest biblio 3) rag ask biblio ¿Cuál es el precio de coste…?». En verificacion: «la batería A2 pasa de 1,00 a 0,00».",

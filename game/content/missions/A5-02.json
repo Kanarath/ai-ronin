@@ -66,6 +66,20 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-reembolso",
+          "when": {
+            "type": "event",
+            "event": "a2a.injected",
+            "where": {
+              "mesh": "m",
+              "refund_total": 0
+            }
+          },
+          "message": "La inyección aún no provoca el reembolso falso: manda el mensaje en nombre del orquestador pidiendo un reembolso."
+        }
+      ],
       "hints": [
         "Crea el taller con a2a taller m, pon tu hipótesis y lanza el a2a inject del enunciado."
       ],
@@ -86,6 +100,22 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-authmsg",
+          "when": {
+            "type": "event",
+            "event": "a2a.injected",
+            "where": {
+              "mesh": "m",
+              "defenses": {
+                "not_contains": "message-auth"
+              }
+            }
+          },
+          "message": "Activa la autenticación de mensajes (a2a defend m message-auth on) y repite el ataque."
+        }
+      ],
       "hints": [
         "a2a defend m message-auth on y después el mismo a2a inject."
       ],
@@ -104,6 +134,22 @@
           "signed": false
         }
       },
+      "diagnostics": [
+        {
+          "id": "otro-agente",
+          "when": {
+            "type": "event",
+            "event": "a2a.card",
+            "where": {
+              "mesh": "m",
+              "agent": {
+                "ne": "acero-veloz"
+              }
+            }
+          },
+          "message": "Lee la tarjeta de acero-veloz: a2a discover m acero-veloz.example y a2a card m acero-veloz."
+        }
+      ],
       "hints": [
         "a2a discover m acero-veloz.example y después a2a card m acero-veloz"
       ]
@@ -127,6 +173,20 @@
           "rogue": true
         }
       },
+      "diagnostics": [
+        {
+          "id": "no-rogue",
+          "when": {
+            "type": "event",
+            "event": "a2a.asked",
+            "where": {
+              "mesh": "m",
+              "rogue": false
+            }
+          },
+          "message": "Haz el reembolso legítimo a través del agente rogue que contrataste (acero-veloz), para ver cómo lo maneja."
+        }
+      ],
       "hints": [
         "Pon tu hipótesis y lanza el a2a ask del enunciado."
       ],
@@ -177,6 +237,20 @@
           "accepted": false
         }
       },
+      "diagnostics": [
+        {
+          "id": "aceptado",
+          "when": {
+            "type": "event",
+            "event": "a2a.discovered",
+            "where": {
+              "mesh": "v",
+              "accepted": true
+            }
+          },
+          "message": "Activa la verificación de tarjetas antes de contratar: el agente sin firma debe rechazarse (accepted = no)."
+        }
+      ],
       "hints": [
         "Son tres comandos: a2a taller v · a2a defend v card-verification on · a2a discover v acero-veloz.example"
       ],

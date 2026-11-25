@@ -172,6 +172,34 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-baseline",
+          "when": {
+            "type": "event",
+            "event": "evidence.measured",
+            "where": {
+              "lab": "A6-04",
+              "has_baseline": false
+            }
+          },
+          "message": "La medición no incluye la línea base (config sin defensas). Escribe forja medir, o ejecuta bateria.py con la configuración «ninguna»."
+        },
+        {
+          "id": "pocas-configs",
+          "when": {
+            "type": "event",
+            "event": "evidence.measured",
+            "where": {
+              "lab": "A6-04",
+              "configs": {
+                "lt": 3
+              }
+            }
+          },
+          "message": "Mide al menos 3 configuraciones (una sin defensas). Lo más rápido: forja medir, que usa la medición grabada."
+        }
+      ],
       "hints": [
         "Escribe forja medir: usa la medición grabada de este laboratorio.",
         "py -3.13 bateria.py · tarda menos de un segundo: no hay modelo de por medio.",

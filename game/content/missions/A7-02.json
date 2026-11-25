@@ -66,6 +66,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "con-defensa",
+          "when": {
+            "type": "event",
+            "event": "web.run",
+            "where": {
+              "scenario": "ordenador",
+              "attacks_ok": {
+                "lt": 5
+              }
+            }
+          },
+          "message": "Mide la línea base sin defensas: web show ordenador y web run ordenador (deben colarse los 5)."
+        }
+      ],
       "hints": [
         "web show ordenador y web run ordenador.",
         "answer 5"
@@ -102,6 +118,37 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "ataques",
+          "when": {
+            "type": "event",
+            "event": "web.run",
+            "where": {
+              "scenario": "ordenador",
+              "attacks_ok": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Enciérralo del todo (sesion_aislada, sin_descargas, confirmacion_verificada…): deben quedar 0 ataques."
+        },
+        {
+          "id": "legit",
+          "when": {
+            "type": "event",
+            "event": "web.run",
+            "where": {
+              "scenario": "ordenador",
+              "attacks_ok": 0,
+              "legit_ok": {
+                "ne": 2
+              }
+            }
+          },
+          "message": "Con todo encerrado quedan 0 ataques, pero solo 2 tareas legítimas pasan: fíjate en el coste."
+        }
+      ],
       "hints": [
         "Cinco web set … on y un web run. Mira «tareas legítimas».",
         "answer 2"
@@ -164,6 +211,37 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "reabre",
+          "when": {
+            "type": "event",
+            "event": "web.run",
+            "where": {
+              "scenario": "ordenador",
+              "attacks_ok": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Al afinar no reabras la puerta a los ataques: deben seguir en 0."
+        },
+        {
+          "id": "legit",
+          "when": {
+            "type": "event",
+            "event": "web.run",
+            "where": {
+              "scenario": "ordenador",
+              "attacks_ok": 0,
+              "legit_ok": {
+                "lt": 4
+              }
+            }
+          },
+          "message": "Afina: quita sesion_aislada y sin_descargas y añade la verificación de credenciales, para llegar a 4 tareas legítimas con 0 ataques."
+        }
+      ],
       "hints": [
         "Dos off y dos on, y web run. Deberían quedar 0 ataques y 4 tareas.",
         "answer 4"

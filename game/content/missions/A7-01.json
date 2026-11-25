@@ -67,6 +67,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "con-defensa",
+          "when": {
+            "type": "event",
+            "event": "web.run",
+            "where": {
+              "scenario": "navegador",
+              "attacks_ok": {
+                "lt": 5
+              }
+            }
+          },
+          "message": "Mide la línea base SIN defensas: web show navegador y web run navegador sin activar nada (deben colarse los 5)."
+        }
+      ],
       "hints": [
         "web show navegador y web run navegador; mira la línea final.",
         "answer 5"
@@ -102,6 +118,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "ataques",
+          "when": {
+            "type": "event",
+            "event": "web.run",
+            "where": {
+              "scenario": "navegador",
+              "attacks_ok": {
+                "ne": 3
+              }
+            }
+          },
+          "message": "Activa solo aislar_contenido (web set navegador aislar_contenido on) y repite web run navegador: deben quedar 3."
+        }
+      ],
       "hints": [
         "Registra tu hipótesis, activa la defensa y repite.",
         "answer 3"
@@ -133,6 +165,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "ataques",
+          "when": {
+            "type": "event",
+            "event": "web.run",
+            "where": {
+              "scenario": "navegador",
+              "attacks_ok": {
+                "ne": 1
+              }
+            }
+          },
+          "message": "Añade sin_acciones_desde_web y la defensa de salida, y repite: debe quedar 1 ataque (W3)."
+        }
+      ],
       "hints": [
         "Tres web set … on y un web run. El que queda no da ninguna orden.",
         "answer W3"
@@ -204,6 +252,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "ataques",
+          "when": {
+            "type": "event",
+            "event": "web.run",
+            "where": {
+              "scenario": "navegador",
+              "attacks_ok": {
+                "gt": 0
+              }
+            }
+          },
+          "message": "Añade allowlist_dominios (grounding) y repite: deben quedar 0 ataques."
+        }
+      ],
       "hints": [
         "Activa allowlist_dominios y repite. Mira «tareas legítimas que funcionan».",
         "answer 4"
@@ -347,6 +411,22 @@
           ]
         },
         "wrong_answer": "Revisa web run correo: el que queda no da ninguna orden, solo afirma algo falso.",
+        "diagnostics": [
+          {
+            "id": "ataques",
+            "when": {
+              "type": "event",
+              "event": "web.run",
+              "where": {
+                "scenario": "correo",
+                "attacks_ok": {
+                  "ne": 1
+                }
+              }
+            },
+            "message": "Sobre el escenario de correo, activa aislar_contenido y las defensas de acción y salida: debe quedar 1 ataque (E3)."
+          }
+        ],
         "hints": [
           "Cuatro web set correo … on y un web run correo.",
           "El mismo tipo de ataque que W3 en la misión: desinformación."

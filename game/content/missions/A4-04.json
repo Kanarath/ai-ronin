@@ -98,6 +98,32 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "check-falla",
+          "when": {
+            "type": "event",
+            "event": "py.checked",
+            "where": {
+              "exercise": "A4-04-forja",
+              "all_passed": false
+            }
+          },
+          "message": "El py check no pasa todavía: revisa la función scopes_que_faltan y vuelve a comprobarla con py check."
+        },
+        {
+          "id": "evidencia-falla",
+          "when": {
+            "type": "event",
+            "event": "evidence.imported",
+            "where": {
+              "exercise": "A4-04",
+              "all_passed": false
+            }
+          },
+          "message": "La evidencia importada no está toda en verde: termina las funciones del laboratorio hasta que pasen los tests y vuelve a hacer evidence import."
+        }
+      ],
       "hints": [
         "Quédate con cada scope de requeridos que no esté en concedidos.",
         "La línea queda así: faltan = [s for s in requeridos if s not in concedidos]",
@@ -178,6 +204,34 @@
           }
         }
       },
+      "diagnostics": [
+        {
+          "id": "sin-baseline",
+          "when": {
+            "type": "event",
+            "event": "evidence.measured",
+            "where": {
+              "lab": "A4-04",
+              "has_baseline": false
+            }
+          },
+          "message": "La medición no incluye la línea base (config sin defensas). Escribe forja medir, o ejecuta bateria.py incluyendo «ninguna»."
+        },
+        {
+          "id": "pocas-configs",
+          "when": {
+            "type": "event",
+            "event": "evidence.measured",
+            "where": {
+              "lab": "A4-04",
+              "configs": {
+                "lt": 3
+              }
+            }
+          },
+          "message": "Mide al menos 3 configuraciones (una sin defensas). Lo más rápido: forja medir, que usa la medición grabada."
+        }
+      ],
       "hints": [
         "Escribe forja medir: usa la medición grabada de este laboratorio.",
         ".\\.venv\\Scripts\\python.exe bateria.py · es determinista, así que una pasada basta (--n 1).",

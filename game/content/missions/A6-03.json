@@ -67,6 +67,21 @@
           "successes": 7
         }
       },
+      "diagnostics": [
+        {
+          "id": "con-defensa",
+          "when": {
+            "type": "event",
+            "event": "supply.attacks",
+            "where": {
+              "defenses": {
+                "ne": "ninguna"
+              }
+            }
+          },
+          "message": "Mide la línea base SIN defensas: crea el pipeline limpio y lanza la batería sin activar nada."
+        }
+      ],
       "hints": [
         "supply forja taller · supply attack taller"
       ],
@@ -237,6 +252,20 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "no-convierte",
+          "when": {
+            "type": "event",
+            "event": "supply.converted",
+            "where": {
+              "artifact": "clasificador-acero",
+              "ok": false
+            }
+          },
+          "message": "El modelo interno clasificador-acero sí se puede convertir a safetensors: inténtalo (el detector-grietas, en cambio, se rechaza)."
+        }
+      ],
       "hints": [
         "supply convert taller detector-grietas · supply convert taller clasificador-acero"
       ],
@@ -268,6 +297,47 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "pasan",
+          "when": {
+            "type": "event",
+            "event": "supply.attacks",
+            "where": {
+              "success_rate": {
+                "gt": 0.0
+              }
+            }
+          },
+          "message": "Aún pasan ataques: pon un control en cada eslabón (procedencia, firmas, safe-formats, escaneo, segmentación, non-root, secret-scan)."
+        },
+        {
+          "id": "eval",
+          "when": {
+            "type": "event",
+            "event": "supply.eval",
+            "where": {
+              "pass_rate": {
+                "lt": 1.0
+              }
+            }
+          },
+          "message": "0 ataques pero rompes tareas legítimas: el eval debe quedar 4/4."
+        },
+        {
+          "id": "sin-safeformats",
+          "when": {
+            "type": "event",
+            "event": "supply.eval",
+            "where": {
+              "defenses": {
+                "not_contains": "safe-formats"
+              }
+            }
+          },
+          "message": "Incluye safe-formats entre los controles de este reto."
+        }
+      ],
       "hints": [
         "Son siete ataques y siete controles.",
         "Activa los siete: data-provenance, safe-formats, artifact-signing, dependency-scan, segmentation, non-root y secret-scan. Después: supply attack taller · supply eval taller"
@@ -337,6 +407,34 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "pasan",
+            "when": {
+              "type": "event",
+              "event": "supply.attacks",
+              "where": {
+                "success_rate": {
+                  "gt": 0.0
+                }
+              }
+            },
+            "message": "Aún pasan ataques: te falta algún control."
+          },
+          {
+            "id": "eval",
+            "when": {
+              "type": "event",
+              "event": "supply.eval",
+              "where": {
+                "pass_rate": {
+                  "lt": 1.0
+                }
+              }
+            },
+            "message": "Rompes tareas legítimas: el eval debe quedar 4/4."
+          }
+        ],
         "hints": [
           "Siete controles y una conversión."
         ],

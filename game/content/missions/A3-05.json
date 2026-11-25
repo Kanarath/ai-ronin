@@ -86,6 +86,19 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "sin-politica",
+          "when": {
+            "type": "event",
+            "event": "context.build",
+            "where": {
+              "pol_ok": false
+            }
+          },
+          "message": "Falta la política: actívala con context set recuperar on y vuelve a context build."
+        }
+      ],
       "hints": [
         "context set recuperar on y context build.",
         "answer 1440"
@@ -156,6 +169,19 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "no-cabe",
+          "when": {
+            "type": "event",
+            "event": "context.build",
+            "where": {
+              "fits": false
+            }
+          },
+          "message": "Todavía no cabe en la ventana: carga herramientas a demanda (context set skills on) y compacta el historial, luego context build."
+        }
+      ],
       "hints": [
         "Dos context set … on y context build. Mira si puede responder.",
         "answer no"
@@ -219,6 +245,19 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "no-responde",
+          "when": {
+            "type": "event",
+            "event": "context.build",
+            "where": {
+              "answer": false
+            }
+          },
+          "message": "Aún no puede responder: guarda lo importante antes de compactar (context set recordar on) y vuelve a context build."
+        }
+      ],
       "hints": [
         "context set recordar on y context build.",
         "answer si"
@@ -365,6 +404,21 @@
           ]
         },
         "wrong_answer": "Revisa: sistema 120 + herramientas todas 400 + historial completo 720 + memoria 20 + documento 200.",
+        "diagnostics": [
+          {
+            "id": "total",
+            "when": {
+              "type": "event",
+              "event": "context.build",
+              "where": {
+                "total": {
+                  "ne": 1460
+                }
+              }
+            },
+            "message": "El total no cuadra: deja recuperar y recordar activos y quita skills y compactar (context set skills off · context set compactar off), luego context build."
+          }
+        ],
         "hints": [
           "context set recuperar on, context set recordar on y context build.",
           "Suma las piezas sin compactar ni skills."

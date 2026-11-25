@@ -110,6 +110,20 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "ninguno-peligroso",
+          "when": {
+            "type": "event",
+            "event": "supply.inspected",
+            "where": {
+              "kind": "artifact",
+              "dangerous": false
+            }
+          },
+          "message": "Inspecciona los DOS artefactos pickle: uno trae una importación peligrosa. Compáralos."
+        }
+      ],
       "hints": [
         "supply inspect taller clasificador-acero · supply inspect taller detector-grietas"
       ],
@@ -181,6 +195,20 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "no-instalado",
+          "when": {
+            "type": "event",
+            "event": "supply.installed",
+            "where": {
+              "package": "forja-metrics",
+              "installed": false
+            }
+          },
+          "message": "Instala la dependencia forja-metrics y despliega el servidor para ver con qué usuario corre."
+        }
+      ],
       "hints": [
         "supply load taller clasificador-acero · supply install taller forja-metrics · supply deploy taller",
         "Lee la línea «usuario del proceso»."
@@ -266,6 +294,20 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "modelo-interno",
+            "when": {
+              "type": "event",
+              "event": "supply.loaded",
+              "where": {
+                "artifact": "clasificador-acero",
+                "loaded": false
+              }
+            },
+            "message": "Sigue el orden: AI-BOM, entrenar, cargar el modelo INTERNO clasificador-acero y desplegar."
+          }
+        ],
         "hints": [
           "Las cuatro etapas, en orden: inventario, datos, artefacto, serving."
         ],

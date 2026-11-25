@@ -65,6 +65,21 @@
           "successes": 5
         }
       },
+      "diagnostics": [
+        {
+          "id": "con-defensa",
+          "when": {
+            "type": "event",
+            "event": "mcp.attacks",
+            "where": {
+              "defenses": {
+                "ne": "ninguna"
+              }
+            }
+          },
+          "message": "Mide la línea base SIN defensas: crea el host limpio y lanza la batería sin activar nada."
+        }
+      ],
       "hints": [
         "mcp host forja · mcp attack forja"
       ],
@@ -176,6 +191,22 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "sin-pin",
+          "when": {
+            "type": "event",
+            "event": "mcp.asked",
+            "where": {
+              "tool": "traducir",
+              "defenses": {
+                "not_contains": "pin-definitions"
+              }
+            }
+          },
+          "message": "Para este reto desactiva consent y activa pin-definitions: así la definición del traductor queda fijada hasta que apruebes la actualización."
+        }
+      ],
       "hints": [
         "mcp defend forja consent off · mcp defend forja pin-definitions on · mcp update forja traductor · mcp ask forja Traduce: katana",
         "mcp approve forja traductor · mcp ask forja Traduce: katana"
@@ -271,6 +302,47 @@
           }
         ]
       },
+      "diagnostics": [
+        {
+          "id": "con-consent",
+          "when": {
+            "type": "event",
+            "event": "mcp.attacks",
+            "where": {
+              "defenses": {
+                "icontains": "consent"
+              }
+            }
+          },
+          "message": "Este reto es SIN consent: usa solo sellos del host (namespacing, least-scope, pin-definitions, output-isolation)."
+        },
+        {
+          "id": "pasan",
+          "when": {
+            "type": "event",
+            "event": "mcp.attacks",
+            "where": {
+              "success_rate": {
+                "gt": 0.0
+              }
+            }
+          },
+          "message": "Aún pasan ataques: te falta activar algún sello del host."
+        },
+        {
+          "id": "eval",
+          "when": {
+            "type": "event",
+            "event": "mcp.eval",
+            "where": {
+              "pass_rate": {
+                "lt": 1.0
+              }
+            }
+          },
+          "message": "0 ataques pero rompes tareas legítimas: el eval debe quedar 4/4. Revisa qué sello bloquea el trabajo normal."
+        }
+      ],
       "hints": [
         "Necesitas cubrir los cinco ataques. Mira la tarjeta «Controles del host MCP» o la lista de la lección: un control por ataque.",
         "Por ejemplo: pin-definitions, namespacing, least-scope y output-isolation (con consent desactivado). Después: mcp attack forja · mcp eval forja"
@@ -346,6 +418,48 @@
             }
           ]
         },
+        "diagnostics": [
+          {
+            "id": "prohibidas",
+            "when": {
+              "type": "any",
+              "of": [
+                {
+                  "type": "event",
+                  "event": "mcp.attacks",
+                  "where": {
+                    "defenses": {
+                      "icontains": "consent"
+                    }
+                  }
+                },
+                {
+                  "type": "event",
+                  "event": "mcp.attacks",
+                  "where": {
+                    "defenses": {
+                      "icontains": "review-descriptions"
+                    }
+                  }
+                }
+              ]
+            },
+            "message": "Este reto es SIN consent y SIN review-descriptions: consíguelo con los otros sellos del host."
+          },
+          {
+            "id": "pasan",
+            "when": {
+              "type": "event",
+              "event": "mcp.attacks",
+              "where": {
+                "success_rate": {
+                  "gt": 0.0
+                }
+              }
+            },
+            "message": "Aún pasan ataques: piensa qué sello cubre el rug-pull cuando no puedes usar review-descriptions."
+          }
+        ],
         "hints": [
           "Sin revisar descripciones, ¿qué control deja al envenenamiento sin nada que robar?",
           "Un control por ataque, y uno de ellos cubre dos."
